@@ -36,12 +36,12 @@ import static com.minecolonies.api.util.constant.GuardConstants.*;
 //TODO
 public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuildingGuards>
 {
-    private static final double             STRAFING_SPEED                            = 0.7f;
-    private static final int                TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 4;
-    private static final double             SWITCH_STRAFING_DIRECTION                 = 0.3d;
-    public static final  int                GUARD_ATTACK_INTERVAL                     = 10;
-    private static final float              HEALTH_PERCENTAGE_MIN                     = .2f;
-    private static final int                MIN_POTION_DISTANCE                       = 5; //TODO ???
+    public static final  int    GUARD_ATTACK_INTERVAL                     = 10;
+    private static final double STRAFING_SPEED                            = 0.7f;
+    private static final int    TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 4;
+    private static final double SWITCH_STRAFING_DIRECTION                 = 0.3d;
+    private static final float  HEALTH_PERCENTAGE_MIN                     = .2f;
+    private static final int    MIN_POTION_DISTANCE                       = 5; //TODO ???
 
     /**
      * Whether the guard is moving towards his target
@@ -204,140 +204,6 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
         return targetAndThrowAtEntity(buffTarget, GUARD_ATTACK_BUFF);
     }
 
-    @Override
-    protected IAIState helping()
-    {
-        reduceAttackDelay(GUARD_TASK_INTERVAL * getTickRate());
-        if (helpCitizen.get() == null || !helpCitizen.get().isCurrentlyFleeing())
-        {
-            return GUARD_DECIDE;
-        }
-
-        if (target == null || !target.isAlive())
-        {
-            if (helpCitizen.get().getMaxHealth() / helpCitizen.get().getHealth() < HEALTH_PERCENTAGE_MIN)
-            {
-                return GUARD_ATTACK_HEAL;
-            }
-            target = helpCitizen.get().getRevengeTarget();
-            if (target == null || !target.isAlive())
-            {
-                return GUARD_DECIDE;
-            }
-        }
-
-        setNextPatrolTarget(null);
-        // Check if we're ready to attack the target
-        if (worker.getEntitySenses().canSee(target) && isWithinPersecutionDistance(target.getPosition()))
-        {
-            target.setRevengeTarget(worker);
-            return getAttackState();
-        }
-
-        // Move towards the target
-        moveInAttackPosition();
-
-        return HELP_CITIZEN;
-    }
-
-    /**
-     * Get a target for the guard. First check if we're under attack by anything and switch target if necessary.
-     *
-     * @return The next IAIState to go to.
-     */
-    @Override
-    protected LivingEntity searchNearbyTarget()
-    {
-        final IColony colony = worker.getCitizenColonyHandler().getColony();
-        if (colony == null)
-        {
-            resetTarget();
-            return null;
-        }
-
-        final List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, getSearchArea());
-
-        boolean isBuff = false;
-        int closest = Integer.MAX_VALUE;
-        LivingEntity closestTarget = null;
-        LivingEntity closestHeal = null;
-
-        for (final LivingEntity entity : entities)
-        {
-            if (!worker.canEntityBeSeen(entity) || !entity.isAlive())
-            {
-                continue;
-            }
-            final int tempDistance = (int) BlockPosUtil.getDistanceSquared(worker.getPosition(), entity.getPosition());
-
-            if (isAlly(entity))
-            {
-                /*if (entity instanceof EntityCitizen)
-                {
-                    final EntityCitizen citizen = (EntityCitizen) entity;
-
-                    // Found a sleeping guard nearby
-                    if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep())
-                    {
-                        sleepingGuard = new WeakReference<>(citizen);
-                        wakeTimer = 0;
-                        registerTarget(new AIOneTimeEventTarget(GUARD_WAKE));
-                        return null;
-                    }
-                }*///TODO should witch wake up other guards?
-                if (tempDistance < closest)
-                {
-                    if (entity.getMaxHealth() / entity.getHealth() < HEALTH_PERCENTAGE_MIN)
-                    {
-                        closest = tempDistance;
-                        closestHeal = entity;
-                    }
-                    else
-                    {
-                        closest = tempDistance;
-                        closestTarget = entity;
-                        isBuff = true;
-                    }
-                }
-            }
-            else if (isEntityValidTarget(entity))
-            {
-                // Find closest
-                if (tempDistance < closest)
-                {
-                    closest = tempDistance;
-                    closestTarget = entity;
-                    isBuff = false;
-                }
-            }
-        }
-
-        if (closestHeal != null)
-        {
-            healTarget = closestTarget;
-            buffTarget = null;
-            target = null;
-            return healTarget;
-        }
-
-        if (isBuff && buffTarget != null)
-        {
-            buffTarget = closestTarget;
-            healTarget = null;
-            target = null;
-            return buffTarget;
-        }
-        else if (closestTarget != null)
-        {
-            target = closestTarget;
-            healTarget = null;
-            buffTarget = null;
-            return target;
-        }
-
-        return null;
-    }
-
     private IAIState targetAndThrowAtEntity(final LivingEntity target, final IAIState returnOnSuccess)
     {
         final boolean canSee = worker.getEntitySenses().canSee(target);
@@ -492,6 +358,151 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
         potionentity.shoot(target.getPosX(), target.getPosY(), target.getPosZ(), 0.5F, inaccuracy);
         worker.world.addEntity(potionentity);
         worker.getActiveItemStack().shrink(1);
+    }
+
+    /**
+     * Can be overridden in implementations to return the exact building type the worker expects.
+     *
+     * @return the building type associated with this AI's worker.
+     */
+    @Override
+    public Class<AbstractBuildingGuards> getExpectedBuildingClass()
+    {
+        return AbstractBuildingGuards.class;
+    }
+
+    @Override
+    protected IAIState helping()
+    {
+        reduceAttackDelay(GUARD_TASK_INTERVAL * getTickRate());
+        if (helpCitizen.get() == null || !helpCitizen.get().isCurrentlyFleeing())
+        {
+            return GUARD_DECIDE;
+        }
+
+        if (target == null || !target.isAlive())
+        {
+            if (helpCitizen.get().getMaxHealth() / helpCitizen.get().getHealth() < HEALTH_PERCENTAGE_MIN)
+            {
+                return GUARD_ATTACK_HEAL;
+            }
+            target = helpCitizen.get().getRevengeTarget();
+            if (target == null || !target.isAlive())
+            {
+                return GUARD_DECIDE;
+            }
+        }
+
+        setNextPatrolTarget(null);
+        // Check if we're ready to attack the target
+        if (worker.getEntitySenses().canSee(target) && isWithinPersecutionDistance(target.getPosition()))
+        {
+            target.setRevengeTarget(worker);
+            return getAttackState();
+        }
+
+        // Move towards the target
+        moveInAttackPosition();
+
+        return HELP_CITIZEN;
+    }
+
+    /**
+     * Get a target for the guard. First check if we're under attack by anything and switch target if necessary.
+     *
+     * @return The next IAIState to go to.
+     */
+    @Override
+    protected LivingEntity searchNearbyTarget()
+    {
+        final IColony colony = worker.getCitizenColonyHandler().getColony();
+        if (colony == null)
+        {
+            resetTarget();
+            return null;
+        }
+
+        final List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, getSearchArea());
+
+        boolean isBuff = false;
+        int closest = Integer.MAX_VALUE;
+        LivingEntity closestTarget = null;
+        LivingEntity closestHeal = null;
+
+        for (final LivingEntity entity : entities)
+        {
+            if (!worker.canEntityBeSeen(entity) || !entity.isAlive())
+            {
+                continue;
+            }
+            final int tempDistance = (int) BlockPosUtil.getDistanceSquared(worker.getPosition(), entity.getPosition());
+
+            if (isAlly(entity))
+            {
+                /*if (entity instanceof EntityCitizen)
+                {
+                    final EntityCitizen citizen = (EntityCitizen) entity;
+
+                    // Found a sleeping guard nearby
+                    if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep())
+                    {
+                        sleepingGuard = new WeakReference<>(citizen);
+                        wakeTimer = 0;
+                        registerTarget(new AIOneTimeEventTarget(GUARD_WAKE));
+                        return null;
+                    }
+                }*///TODO should witch wake up other guards?
+                if (tempDistance < closest)
+                {
+                    if (entity.getMaxHealth() / entity.getHealth() < HEALTH_PERCENTAGE_MIN)
+                    {
+                        closest = tempDistance;
+                        closestHeal = entity;
+                    }
+                    else
+                    {
+                        closest = tempDistance;
+                        closestTarget = entity;
+                        isBuff = true;
+                    }
+                }
+            }
+            else if (isEntityValidTarget(entity))
+            {
+                // Find closest
+                if (tempDistance < closest)
+                {
+                    closest = tempDistance;
+                    closestTarget = entity;
+                    isBuff = false;
+                }
+            }
+        }
+
+        if (closestHeal != null)
+        {
+            healTarget = closestTarget;
+            buffTarget = null;
+            target = null;
+            return healTarget;
+        }
+
+        if (isBuff && buffTarget != null)
+        {
+            buffTarget = closestTarget;
+            healTarget = null;
+            target = null;
+            return buffTarget;
+        }
+        else if (closestTarget != null)
+        {
+            target = closestTarget;
+            healTarget = null;
+            buffTarget = null;
+            return target;
+        }
+
+        return null;
     }
 
     /**
@@ -753,17 +764,6 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
             }
         }
         return false;
-    }
-
-    /**
-     * Can be overridden in implementations to return the exact building type the worker expects.
-     *
-     * @return the building type associated with this AI's worker.
-     */
-    @Override
-    public Class<AbstractBuildingGuards> getExpectedBuildingClass()
-    {
-        return AbstractBuildingGuards.class;
     }
 
     /**

@@ -58,114 +58,93 @@ import static com.minecolonies.api.util.constant.GuardConstants.*;
 public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B extends AbstractBuildingGuards> extends AbstractEntityAIFight<J, B>
 {
     /**
-     * Entities to kill before dumping into chest.
-     */
-    private static final int ACTIONS_UNTIL_DUMPING = 5;
-
-    /**
-     * Max derivation of current position when patrolling.
-     */
-    private static final int MAX_PATROL_DERIVATION = 50;
-
-    /**
-     * Max derivation of current position when following..
-     */
-    private static final int MAX_FOLLOW_DERIVATION = 40;
-
-    /**
-     * Max derivation of current position when guarding.
-     */
-    private static final int MAX_GUARD_DERIVATION = 10;
-
-    /**
      * After this amount of ticks not seeing an entity stop persecution.
      */
-    protected static final int STOP_PERSECUTION_AFTER = TICKS_SECOND * 10;
-
-    /**
-     * How many more ticks we have until next attack.
-     */
-    protected int currentAttackDelay = 0;
-
-    /**
-     * The last time the target was seen.
-     */
-    private int lastSeen = 0;
-
-    /**
-     * The current target for our guard.
-     */
-    protected LivingEntity target = null;
-
-    /**
-     * The current blockPos we're patrolling at.
-     */
-    private BlockPos currentPatrolPoint = null;
-
-    /**
-     * The citizen this guard is helping out.
-     */
-    protected WeakReference<EntityCitizen> helpCitizen = new WeakReference<>(null);
-
-    /**
-     * The guard building assigned to this job.
-     */
-    protected final IGuardBuilding buildingGuards;
-
-    /**
-     * The interval between sleeping particles
-     */
-    private static final int PARTICLE_INTERVAL = 30;
-
-    /**
-     * Interval between sleep checks
-     */
-    private static final int SHOULD_SLEEP_INTERVAL = 200;
-
-    /**
-     * Check target interval
-     */
-    private static final int CHECK_TARGET_INTERVAL = 10;
-
-    /**
-     * Search area for target interval
-     */
-    private static final int SEARCH_TARGET_INTERVAL = 40;
-
+    protected static final int                          STOP_PERSECUTION_AFTER         = TICKS_SECOND * 10;
     /**
      * Interval between guard task updates
      */
-    protected static final int GUARD_TASK_INTERVAL = 100;
-
+    protected static final int                          GUARD_TASK_INTERVAL            = 100;
+    /**
+     * Entities to kill before dumping into chest.
+     */
+    private static final   int                          ACTIONS_UNTIL_DUMPING          = 5;
+    /**
+     * Max derivation of current position when patrolling.
+     */
+    private static final   int                          MAX_PATROL_DERIVATION          = 50;
+    /**
+     * Max derivation of current position when following..
+     */
+    private static final   int                          MAX_FOLLOW_DERIVATION          = 40;
+    /**
+     * Max derivation of current position when guarding.
+     */
+    private static final   int                          MAX_GUARD_DERIVATION           = 10;
+    /**
+     * The interval between sleeping particles
+     */
+    private static final   int                          PARTICLE_INTERVAL              = 30;
+    /**
+     * Interval between sleep checks
+     */
+    private static final   int                          SHOULD_SLEEP_INTERVAL          = 200;
+    /**
+     * Check target interval
+     */
+    private static final   int                          CHECK_TARGET_INTERVAL          = 10;
+    /**
+     * Search area for target interval
+     */
+    private static final   int                          SEARCH_TARGET_INTERVAL         = 40;
     /**
      * Interval between guard regen updates
      */
-    private static final int GUARD_REGEN_INTERVAL = 40;
-
+    private static final   int                          GUARD_REGEN_INTERVAL           = 40;
     /**
      * Interval between saturation losses during rallying. BIG_SATURATION_FACTOR loss per interval.
      */
-    private static final int RALLY_SATURATION_LOSS_INTERVAL = TICKS_SECOND * 12;
-
+    private static final   int                          RALLY_SATURATION_LOSS_INTERVAL = TICKS_SECOND * 12;
     /**
-     * The timer for sleeping.
+     * The guard building assigned to this job.
      */
-    private int sleepTimer = 0;
-
+    protected final        IGuardBuilding               buildingGuards;
+    /**
+     * How many more ticks we have until next attack.
+     */
+    protected              int                          currentAttackDelay             = 0;
+    /**
+     * The current target for our guard.
+     */
+    protected              LivingEntity                 target                         = null;
+    /**
+     * The citizen this guard is helping out.
+     */
+    protected              WeakReference<EntityCitizen> helpCitizen                    = new WeakReference<>(null);
     /**
      * Timer for the wakeup AI.
      */
-    protected int wakeTimer = 0;
-
+    protected              int                          wakeTimer                      = 0;
     /**
      * The sleeping guard we found
      */
-    protected WeakReference<EntityCitizen> sleepingGuard = new WeakReference<>(null);
-
+    protected              WeakReference<EntityCitizen> sleepingGuard                  = new WeakReference<>(null);
+    /**
+     * The last time the target was seen.
+     */
+    private                int                          lastSeen                       = 0;
+    /**
+     * The current blockPos we're patrolling at.
+     */
+    private                BlockPos                     currentPatrolPoint             = null;
+    /**
+     * The timer for sleeping.
+     */
+    private                int                          sleepTimer                     = 0;
     /**
      * Random generator for this AI.
      */
-    private Random randomGenerator = new Random();
+    private                Random                       randomGenerator                = new Random();
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -433,8 +412,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Rally to a location.
-     * This function assumes that the given location is reachable by the worker.
+     * Rally to a location. This function assumes that the given location is reachable by the worker.
      *
      * @return the next state to run into.
      */
@@ -464,8 +442,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Decrease the saturation while rallying.
-     * Rallying is hard work for the guards, so make sure they suffer from it.
+     * Decrease the saturation while rallying. Rallying is hard work for the guards, so make sure they suffer from it.
      *
      * @return The next state
      */
@@ -564,6 +541,118 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     {
         return !isEntityValidTarget(target) && getState() == GUARD_PATROL;
     }
+
+    /**
+     * Checks whether the given entity is a valid target to attack.
+     *
+     * @param entity Entity to check
+     * @return true if should attack
+     */
+    public boolean isEntityValidTarget(final LivingEntity entity)
+    {
+        if (entity == null || !entity.isAlive() || !isWithinPersecutionDistance(entity.getPosition()))
+        {
+            return false;
+        }
+
+        if (entity == worker.getRevengeTarget())
+        {
+            return true;
+        }
+
+        if (entity instanceof IMob)
+        {
+            final MobEntryView entry = buildingGuards.getMobsToAttack().get(entity.getType().getRegistryName());
+            if (entry != null && entry.shouldAttack())
+            {
+                return true;
+            }
+        }
+
+        final IColony colony = worker.getCitizenColonyHandler().getColony();
+        if (colony == null)
+        {
+            return false;
+        }
+
+        // Players
+        if (entity instanceof PlayerEntity && (colony.getPermissions().hasPermission((PlayerEntity) entity, Action.GUARDS_ATTACK)
+                                                 || colony.isValidAttackingPlayer((PlayerEntity) entity)))
+        {
+            return true;
+        }
+
+        // Other colonies guard citizen attacking the colony
+        if (entity instanceof EntityCitizen && colony.isValidAttackingGuard((AbstractEntityCitizen) entity))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a position is within the allowed persecution distance.
+     *
+     * @param entityPos the position to check.
+     * @return true if so.
+     */
+    protected boolean isWithinPersecutionDistance(final BlockPos entityPos)
+    {
+        return BlockPosUtil.getDistanceSquared(getTaskReferencePoint(), entityPos) <= Math.pow(getPersecutionDistance() + getAttackRange(), 2);
+    }
+
+    /**
+     * Get the reference point from which the guard comes.
+     *
+     * @return the position depending ont he task.
+     */
+    private BlockPos getTaskReferencePoint()
+    {
+        final ILocation location = buildingGuards.getRallyLocation();
+        if (location != null)
+        {
+            return buildingGuards.getRallyLocation().getInDimensionLocation();
+        }
+        switch (buildingGuards.getTask())
+        {
+            case PATROL:
+                return currentPatrolPoint != null ? currentPatrolPoint : worker.getPosition();
+            case FOLLOW:
+                return buildingGuards.getPositionToFollow();
+            default:
+                return buildingGuards.getGuardPos();
+        }
+    }
+
+    /**
+     * Returns the block distance at which a guard should chase his target
+     *
+     * @return the block distance at which a guard should chase his target
+     */
+    protected int getPersecutionDistance()
+    {
+        if (buildingGuards.getRallyLocation() != null)
+        {
+            return MAX_FOLLOW_DERIVATION;
+        }
+        switch (buildingGuards.getTask())
+        {
+            case PATROL:
+                return MAX_PATROL_DERIVATION;
+            case FOLLOW:
+                return MAX_FOLLOW_DERIVATION;
+            default:
+                return MAX_GUARD_DERIVATION + (buildingGuards.getGuardType() == ModGuardTypes.knight ? 20 : 0);
+        }
+    }
+
+    /**
+     * Method which calculates the possible attack range in Blocks.
+     *
+     * @return the calculated range.
+     */
+    protected abstract int getAttackRange();
 
     /**
      * Helping out a citizen, moving into range and setting attack target.
@@ -706,55 +795,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     public boolean isEntityValidTargetAndCanbeSeen(final LivingEntity entity)
     {
         return isEntityValidTarget(entity) && worker.canEntityBeSeen(entity);
-    }
-
-    /**
-     * Checks whether the given entity is a valid target to attack.
-     *
-     * @param entity Entity to check
-     * @return true if should attack
-     */
-    public boolean isEntityValidTarget(final LivingEntity entity)
-    {
-        if (entity == null || !entity.isAlive() || !isWithinPersecutionDistance(entity.getPosition()))
-        {
-            return false;
-        }
-
-        if (entity == worker.getRevengeTarget())
-        {
-            return true;
-        }
-
-        if (entity instanceof IMob)
-        {
-            final MobEntryView entry = buildingGuards.getMobsToAttack().get(entity.getType().getRegistryName());
-            if (entry != null && entry.shouldAttack())
-            {
-                return true;
-            }
-        }
-
-        final IColony colony = worker.getCitizenColonyHandler().getColony();
-        if (colony == null)
-        {
-            return false;
-        }
-
-        // Players
-        if (entity instanceof PlayerEntity && (colony.getPermissions().hasPermission((PlayerEntity) entity, Action.GUARDS_ATTACK)
-                                                 || colony.isValidAttackingPlayer((PlayerEntity) entity)))
-        {
-            return true;
-        }
-
-        // Other colonies guard citizen attacking the colony
-        if (entity instanceof EntityCitizen && colony.isValidAttackingGuard((AbstractEntityCitizen) entity))
-        {
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -911,17 +951,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Check if a position is within the allowed persecution distance.
-     *
-     * @param entityPos the position to check.
-     * @return true if so.
-     */
-    protected boolean isWithinPersecutionDistance(final BlockPos entityPos)
-    {
-        return BlockPosUtil.getDistanceSquared(getTaskReferencePoint(), entityPos) <= Math.pow(getPersecutionDistance() + getAttackRange(), 2);
-    }
-
-    /**
      * Calculates the dmg increase per level
      *
      * @return the level damage.
@@ -934,51 +963,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
         // Level scaling damage, +1 on 6,12,19,28,38,50,66 ...
         return worker.getCitizenData().getJobModifier() / (5 + worker.getCitizenData().getJobModifier() / 15);
-    }
-
-    /**
-     * Get the reference point from which the guard comes.
-     *
-     * @return the position depending ont he task.
-     */
-    private BlockPos getTaskReferencePoint()
-    {
-        final ILocation location = buildingGuards.getRallyLocation();
-        if (location != null)
-        {
-            return buildingGuards.getRallyLocation().getInDimensionLocation();
-        }
-        switch (buildingGuards.getTask())
-        {
-            case PATROL:
-                return currentPatrolPoint != null ? currentPatrolPoint : worker.getPosition();
-            case FOLLOW:
-                return buildingGuards.getPositionToFollow();
-            default:
-                return buildingGuards.getGuardPos();
-        }
-    }
-
-    /**
-     * Returns the block distance at which a guard should chase his target
-     *
-     * @return the block distance at which a guard should chase his target
-     */
-    protected int getPersecutionDistance()
-    {
-        if (buildingGuards.getRallyLocation() != null)
-        {
-            return MAX_FOLLOW_DERIVATION;
-        }
-        switch (buildingGuards.getTask())
-        {
-            case PATROL:
-                return MAX_PATROL_DERIVATION;
-            case FOLLOW:
-                return MAX_FOLLOW_DERIVATION;
-            default:
-                return MAX_GUARD_DERIVATION + (buildingGuards.getGuardType() == ModGuardTypes.knight ? 20 : 0);
-        }
     }
 
     /**
@@ -1002,11 +986,4 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
     }
-
-    /**
-     * Method which calculates the possible attack range in Blocks.
-     *
-     * @return the calculated range.
-     */
-    protected abstract int getAttackRange();
 }
