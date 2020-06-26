@@ -38,12 +38,11 @@ public enum BipedModelType implements ISimpleModelType
     FLETCHER("fletcher", 1),
     CONCRETE_MIXER("concretemixer", 1),
     RABBIT_HERDER("rabbitherder", 1),
-    PLANTER("planter", 1);
+    PLANTER("planter", 1),
+    BEEKEEPER("beekeeper", 1);
 
     /**
-     * String describing the citizen.
-     * Used by the renderer.
-     * Starts with a capital, and does not contain spaces or other special characters.
+     * String describing the citizen. Used by the renderer. Starts with a capital, and does not contain spaces or other special characters.
      */
     private final String textureBase;
 

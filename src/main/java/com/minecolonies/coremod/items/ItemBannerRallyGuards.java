@@ -435,14 +435,18 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         if (!banner.hasTag())
         {
             final CompoundNBT compound = new CompoundNBT();
-            compound.putUniqueId(TAG_ID, UUID.randomUUID());
-            compound.putBoolean(TAG_IS_ACTIVE, false);
-
-            @NotNull final ListNBT guardTowerList = new ListNBT();
-            compound.put(TAG_RALLIED_GUARDTOWERS, guardTowerList);
             banner.setTag(compound);
         }
-        return banner.getTag();
+
+        final CompoundNBT compound = banner.getTag();
+        if (!compound.contains(TAG_RALLIED_GUARDTOWERS))
+        {
+            compound.putUniqueId(TAG_ID, UUID.randomUUID());
+            compound.putBoolean(TAG_IS_ACTIVE, false);
+            @NotNull final ListNBT guardTowerList = new ListNBT();
+            compound.put(TAG_RALLIED_GUARDTOWERS, guardTowerList);
+        }
+        return compound;
     }
 
     @Override
