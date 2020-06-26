@@ -1,0 +1,11 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="false"
+        lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+
+    <image source="minecolonies:textures/gui/guide/background.png" size="100% 100%" id="guide1"/>
+    <buttonimage id="close" size="16 16" pos="400 5" source="minecolonies:textures/gui/guide/button.png"/>
+    <button id="confirm" pos="100 210" label="$(com.minecolonies.coremod.gui.workerhuts.guide.confirm)"/>
+    <text id="questionmark" size="100 30" color="black" pos="37 163" textscale="0.8"/>
+    <text id="arrow" size="90 30" color="black" pos="280 10" textscale="0.8"/>
+    <text id="chest" size="100 40" color="black" pos="285 160" textscale="0.8"/>
+</window>

@@ -7,6 +7,7 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -16,8 +17,10 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.TransferItemsRequestMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.Stats;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,6 +96,12 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     @Override
     public void onOpened()
     {
+        if (Minecraft.getInstance().player.getStats().getValue(Stats.ITEM_USED.get(ModItems.clipboard)) <= 0)
+        {
+            close();
+            new WindowHutGuide(building).open();
+            return;
+        }
         super.onOpened();
 
         pullResourcesFromHut();

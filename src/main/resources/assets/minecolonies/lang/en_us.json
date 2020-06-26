@@ -1506,5 +1506,10 @@
   "com.minecolonies.coremod.gui.workerhuts.rabbithutch": "Rabbit Hutch",
   "com.minecolonies.coremod.job.rabbitherder": "Rabbit Herder",
   "block.minecolonies.blockhutrabbithutch.name": "Rabbit hutch",
-  "block.minecolonies.blockhutrabbithutch": "Rabbit Hutch"
+  "block.minecolonies.blockhutrabbithutch": "Rabbit Hutch",
+
+  "com.minecolonies.coremod.gui.workerhuts.guide.confirm": "Understood",
+  "com.minecolonies.coremod.gui.workerhuts.guide.questionmark": "Some buildings have extra help pages.",
+  "com.minecolonies.coremod.gui.workerhuts.guide.arrow": "Make sure to check out all the building's pages!",
+  "com.minecolonies.coremod.gui.workerhuts.guide.chest": "Here you can have an overview of the combined building inventory."
 }
