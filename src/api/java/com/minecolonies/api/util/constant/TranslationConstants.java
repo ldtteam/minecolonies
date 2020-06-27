@@ -140,47 +140,53 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_TOOLTYPE_HOE                                       = "com.minecolonies.coremod.tooltype.hoe";
     @NonNls
-    public static final String COM_MINECOLONIES_TOOLTYPE_SWORD                                     = "com.minecolonies.coremod.tooltype.sword";
+    public static final String COM_MINECOLONIES_TOOLTYPE_SWORD                       = "com.minecolonies.coremod.tooltype.sword";
     @NonNls
-    public static final String COM_MINECOLONIES_TOOLTYPE_BOW                                       = "com.minecolonies.coremod.tooltype.bow";
+    public static final String COM_MINECOLONIES_TOOLTYPE_BOW                         = "com.minecolonies.coremod.tooltype.bow";
     @NonNls
-    public static final String COM_MINECOLONIES_TOOLTYPE_FISHINGROD                                = "com.minecolonies.coremod.tooltype.fishingrod";
+    public static final String COM_MINECOLONIES_TOOLTYPE_FISHINGROD                  = "com.minecolonies.coremod.tooltype.fishingrod";
     @NonNls
-    public static final String COM_MINECOLONIES_TOOLTYPE_SHEARS                                    = "com.minecolonies.coremod.tooltype.shears";
+    public static final String COM_MINECOLONIES_TOOLTYPE_SHEARS                      = "com.minecolonies.coremod.tooltype.shears";
     @NonNls
-    public static final String COM_MINECOLONIES_TOOLTYPE_SHIELD                                    = "com.minecolonies.coremod.tooltype.shield";
+    public static final String COM_MINECOLONIES_TOOLTYPE_SHIELD                      = "com.minecolonies.coremod.tooltype.shield";
     @NonNls
-    public static final String COM_MINECOLONIES_TOOLTYPE_HELMET                                    = "com.minecolonies.coremod.tooltype.helmet";
+    public static final String COM_MINECOLONIES_TOOLTYPE_HELMET                      = "com.minecolonies.coremod.tooltype.helmet";
     @NonNls
-    public static final String COM_MINECOLONIES_TOOLTYPE_LEGGINGS                                  = "com.minecolonies.coremod.tooltype.leggings";
+    public static final String COM_MINECOLONIES_TOOLTYPE_LEGGINGS                    = "com.minecolonies.coremod.tooltype.leggings";
     @NonNls
-    public static final String COM_MINECOLONIES_TOOLTYPE_CHESTPLATE                                = "com.minecolonies.coremod.tooltype.chestplate";
+    public static final String COM_MINECOLONIES_TOOLTYPE_CHESTPLATE                  = "com.minecolonies.coremod.tooltype.chestplate";
     @NonNls
-    public static final String COM_MINECOLONIES_TOOLTYPE_BOOTS                                     = "com.minecolonies.coremod.tooltype.boots";
+    public static final String COM_MINECOLONIES_TOOLTYPE_BOOTS                       = "com.minecolonies.coremod.tooltype.boots";
     @NonNls
-    public static final String COM_MINECOLONIES_TOOLTYPE_LIGHTER                                   = "com.minecolonies.coremod.tooltype.lighter";
+    public static final String COM_MINECOLONIES_TOOLTYPE_LIGHTER                     = "com.minecolonies.coremod.tooltype.lighter";
     @NonNls
-    public static final String COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME                            = "com.minecolonies.coremod.buildings.warehouse.name";
+    public static final String COM_MINECOLONIES_TOOLTYPE_HARM_POTION                 = "com.minecolonies.coremod.tooltype.harmpotion";
     @NonNls
-    public static final String COM_MINECOLONIES_CLIPBOARD_NEED_COLONY                              = "com.minecolonies.coremod.item.clipboard.needcolony";
+    public static final String COM_MINECOLONIES_TOOLTYPE_HEAL_POTION                 = "com.minecolonies.coremod.tooltype.healpotion";
     @NonNls
-    public static final String COM_MINECOLONIES_CLIPBOARD_COLONY_SET                               = "com.minecolonies.coremod.item.clipboard.registered";
+    public static final String COM_MINECOLONIES_TOOLTYPE_BUFF_POTION                 = "com.minecolonies.coremod.tooltype.buffpotion";
     @NonNls
-    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED                       = "com.minecolonies.coremod.item.bannerrallyguards.selected";
+    public static final String COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME              = "com.minecolonies.coremod.buildings.warehouse.name";
     @NonNls
-    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED                     = "com.minecolonies.coremod.item.bannerrallyguards.deselected";
+    public static final String COM_MINECOLONIES_CLIPBOARD_NEED_COLONY                = "com.minecolonies.coremod.item.clipboard.needcolony";
     @NonNls
-    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP                        = "com.minecolonies.coremod.item.bannerrallyguards.tooltip";
+    public static final String COM_MINECOLONIES_CLIPBOARD_COLONY_SET                 = "com.minecolonies.coremod.item.clipboard.registered";
     @NonNls
-    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY                  = "com.minecolonies.coremod.item.bannerrallyguards.tooltipempty";
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED         = "com.minecolonies.coremod.item.bannerrallyguards.selected";
     @NonNls
-    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_RALLY                  = "com.minecolonies.coremod.item.bannerrallyguards.rally";
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED       = "com.minecolonies.coremod.item.bannerrallyguards.deselected";
     @NonNls
-    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_GUI                    = "com.minecolonies.coremod.item.bannerrallyguards.gui";
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP          = "com.minecolonies.coremod.item.bannerrallyguards.tooltip";
     @NonNls
-    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR                      = "com.minecolonies.coremod.item.bannerrallyguards.gui.error";
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY    = "com.minecolonies.coremod.item.bannerrallyguards.tooltipempty";
     @NonNls
-    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING               = "com.minecolonies.coremod.item.bannerrallyguards.gui.towermissing";
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_RALLY    = "com.minecolonies.coremod.item.bannerrallyguards.rally";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_GUI      = "com.minecolonies.coremod.item.bannerrallyguards.gui";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR        = "com.minecolonies.coremod.item.bannerrallyguards.gui.error";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING = "com.minecolonies.coremod.item.bannerrallyguards.gui.towermissing";
     @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_REMOVE                     = "com.minecolonies.coremod.item.bannerrallyguards.gui.remove";
     @NonNls

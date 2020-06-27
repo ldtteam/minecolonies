@@ -11,23 +11,22 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobWitch;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PotionEntity;
-import net.minecraft.item.ThrowablePotionItem;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
-import net.minecraft.potion.Potions;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -113,6 +112,9 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
           new AITarget(GUARD_ATTACK_HEAL, () -> true, this::healAllies, GUARD_ATTACK_INTERVAL),
           new AITarget(GUARD_ATTACK_BUFF, () -> true, this::buffAllies, GUARD_ATTACK_INTERVAL)
         );
+        toolsNeeded.add(ToolType.HARM_POTION);
+        toolsNeeded.add(ToolType.HEAL_POTION);
+        toolsNeeded.add(ToolType.BUFF_POTION);
     }
 
     /**
@@ -567,91 +569,6 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
         return null;
     }
 
-    @Override
-    public boolean hasTool()
-    {
-        if (InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(),
-          stack -> stack.getItem() instanceof ThrowablePotionItem && getValidHealingPotions().contains(PotionUtils.getPotionFromItem(stack))) != -1)
-        {
-            if (InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(),
-              stack -> stack.getItem() instanceof ThrowablePotionItem && getValidBuffPotions().contains(PotionUtils.getPotionFromItem(stack))) != -1)
-            {
-                if (InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(),
-                  stack -> stack.getItem() instanceof ThrowablePotionItem && getValidHarmPotions().contains(PotionUtils.getPotionFromItem(stack))) != -1)
-                {
-
-                }
-            }
-        }
-        return hasMainWeapon();
-    }
-
-    @NotNull
-    private Collection<Potion> getValidHarmPotions()
-    {
-        final int level = getOwnBuilding().getBuildingLevel();
-        final Collection<Potion> potions = new HashSet<>();
-        switch (level)
-        {
-            case 5:
-                potions.add(Potions.STRONG_POISON);
-            case 4:
-                potions.add(Potions.LONG_POISON);
-            case 3:
-                potions.add(Potions.POISON);
-            case 2:
-                potions.add(Potions.STRONG_HARMING);
-            case 1:
-                potions.add(Potions.HARMING);
-        }
-        return potions;
-    }
-
-    @NotNull
-    private Collection<Potion> getValidBuffPotions()
-    {
-        final int level = getOwnBuilding().getBuildingLevel();
-        final Collection<Potion> potions = new HashSet<>();
-        switch (level)
-        {
-            case 5:
-                potions.add(Potions.STRONG_STRENGTH);
-                potions.add(Potions.LONG_STRENGTH);
-                potions.add(Potions.LONG_FIRE_RESISTANCE);
-            case 4:
-                potions.add(Potions.FIRE_RESISTANCE);
-            case 3:
-                potions.add(Potions.STRENGTH);
-            case 2:
-                potions.add(Potions.STRONG_SWIFTNESS);
-                potions.add(Potions.LONG_SWIFTNESS);
-            case 1:
-                potions.add(Potions.SWIFTNESS);
-        }
-        return potions;
-    }
-
-    @NotNull
-    private Collection<Potion> getValidHealingPotions()
-    {
-        final int level = getOwnBuilding().getBuildingLevel();
-        final Collection<Potion> potions = new HashSet<>();
-        switch (level)
-        {
-            case 5:
-                potions.add(Potions.STRONG_REGENERATION);
-            case 4:
-                potions.add(Potions.LONG_REGENERATION);
-            case 3:
-                potions.add(Potions.REGENERATION);
-            case 2:
-                potions.add(Potions.STRONG_HEALING);
-            case 1:
-                potions.add(Potions.HEALING);
-        }
-        return potions;
-    }
-
     private boolean checkForHealTarget()
     {
         if (healTarget == null || !healTarget.isAlive())
@@ -829,10 +746,7 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     @Override
     public boolean hasMainWeapon()
     {
-        return InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(),
-          stack -> stack.getItem() instanceof ThrowablePotionItem && getValidHealingPotions().contains(PotionUtils.getPotionFromItem(stack))) != -1 &&
-                 InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(),
-                   stack -> stack.getItem() instanceof ThrowablePotionItem && getValidHarmPotions().contains(PotionUtils.getPotionFromItem(stack))) != -1;
+        return hasTool();
     }
 
     /**
@@ -843,63 +757,35 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     {
         if (getState() instanceof AIWorkerState)
         {
-            switch ((AIWorkerState) getState())
+            final AIWorkerState state = (AIWorkerState) getState();
+            if (state == GUARD_ATTACK_HEAL)
             {
-                case GUARD_ATTACK_HEAL:
-                    equipHealingPotion();
-                    break;
-                case GUARD_ATTACK_BUFF:
-                    equipBuffPotion();
-                    break;
-                case GUARD_ATTACK_RANGED:
-                    if (target != null && target.isEntityUndead())
-                    {
-                        equipHealingPotion();
-                    }
-                    else
-                    {
-                        equipHarmingPotion();
-                    }
-                    break;
-                default:
-                    break;
+                equip(ToolType.HEAL_POTION);
+            }
+            else if (state == GUARD_ATTACK_BUFF)
+            {
+                equip(ToolType.BUFF_POTION);
+            }
+            else if (state == GUARD_ATTACK_RANGED)
+            {
+                if (target != null && target.isEntityUndead())
+                {
+                    equip(ToolType.HEAL_POTION);
+                }
+                else
+                {
+                    equip(ToolType.HARM_POTION);
+                }
             }
         }
     }
 
     /**
-     * Equip a heling potion.
+     * Equip a tool.
      */
-    protected void equipHealingPotion()
+    protected void equip(final IToolType toolType)
     {
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(),
-          stack -> stack.getItem() instanceof ThrowablePotionItem && getValidHealingPotions().contains(PotionUtils.getPotionFromItem(stack)));
-        if (slot != -1)
-        {
-            worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, slot);
-        }
-    }
-
-    /**
-     * Equip a buff potion.
-     */
-    protected void equipBuffPotion()
-    {
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(),
-          stack -> stack.getItem() instanceof ThrowablePotionItem && getValidBuffPotions().contains(PotionUtils.getPotionFromItem(stack)));
-        if (slot != -1)
-        {
-            worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, slot);
-        }
-    }
-
-    /**
-     * Equip a harming potion.
-     */
-    protected void equipHarmingPotion()
-    {
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(),
-          stack -> stack.getItem() instanceof ThrowablePotionItem && getValidHarmPotions().contains(PotionUtils.getPotionFromItem(stack)));
+        final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), toolType, 0, buildingGuards.getMaxToolLevel());
         if (slot != -1)
         {
             worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, slot);
