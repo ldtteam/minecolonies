@@ -51,7 +51,8 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
         return this.shapes[this.getIndex(state)];
     }
 
-    private static int getMask(Direction facing) {
+    private static int getMask(Direction facing)
+    {
         return 1 << facing.getHorizontalIndex();
     }
 
