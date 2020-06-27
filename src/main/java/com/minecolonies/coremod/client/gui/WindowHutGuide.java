@@ -2,14 +2,8 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import com.minecolonies.coremod.network.messages.server.UpdateStatsMessage;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.stats.Stats;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -42,11 +36,7 @@ public class WindowHutGuide extends AbstractWindowSkeleton
 
     private void closeGuide()
     {
-        final ClientPlayerEntity entity = Minecraft.getInstance().player;
-        entity.getStats().setValue(entity, Stats.ITEM_USED.get(ModItems.clipboard), 1);
-        Network.getNetwork().sendToServer(new UpdateStatsMessage(ModItems.clipboard, 1));
-
         close();
-        new WindowHutBuilder(building).open();
+        new WindowHutBuilder(building, false).open();
     }
 }

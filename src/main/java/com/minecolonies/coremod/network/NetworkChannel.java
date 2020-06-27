@@ -174,7 +174,6 @@ public class NetworkChannel
         registerMessage(++idx, AddMinimumStockToBuildingMessage.class, AddMinimumStockToBuildingMessage::new);
         registerMessage(++idx, RemoveMinimumStockFromBuildingMessage.class, RemoveMinimumStockFromBuildingMessage::new);
         registerMessage(++idx, PlantationSetPhaseMessage.class, PlantationSetPhaseMessage::new);
-        registerMessage(++idx, UpdateStatsMessage.class, UpdateStatsMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);
