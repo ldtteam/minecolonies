@@ -65,18 +65,6 @@ public class CitizenDataView implements ICitizenDataView
     private double happiness;
 
     /**
-     * holds the current citizen happiness modifiers for
-     * each type of modifier.
-     */
-    private double foodModifier;
-    private double healthmodifier;
-    private double damageModifier;
-    private double houseModifier;
-    private double jobModifier;
-    private double fieldsModifier;
-    private double toolsModifiers;
-
-    /**
      * The position of the guard.
      */
     private BlockPos position;
@@ -125,6 +113,7 @@ public class CitizenDataView implements ICitizenDataView
      * The citizen happiness handler.
      */
     private final CitizenHappinessHandler citizenHappinessHandler;
+
     /**
      * Set View id.
      *
@@ -311,69 +300,6 @@ public class CitizenDataView implements ICitizenDataView
     public InventoryCitizen getInventory()
     {
         return inventory;
-    }
-
-    /**
-     * @return returns the current modifier related to food.
-     */
-    @Override
-    public double getFoodModifier()
-    {
-        return foodModifier;
-    }
-
-    /**
-     * @return returns the current modifier related to food.
-     */
-    @Override
-    public double getHealthmodifier()
-    {
-        return healthmodifier;
-    }
-
-    /**
-     * @return returns the current modifier related to damage.
-     */
-    @Override
-    public double getDamageModifier()
-    {
-        return damageModifier;
-    }
-
-    /**
-     * @return returns the current modifier related to house.
-     */
-    @Override
-    public double getHouseModifier()
-    {
-        return houseModifier;
-    }
-
-    /**
-     * @return returns the current modifier related to job.
-     */
-    @Override
-    public double getJobModifier()
-    {
-        return jobModifier;
-    }
-
-    /**
-     * @return returns the current modifier related to fields.
-     */
-    @Override
-    public double getFieldsModifier()
-    {
-        return fieldsModifier;
-    }
-
-    /**
-     * @return returns the current modifier related to tools.
-     */
-    @Override
-    public double getToolsModifiers()
-    {
-        return toolsModifiers;
     }
 
     @Override

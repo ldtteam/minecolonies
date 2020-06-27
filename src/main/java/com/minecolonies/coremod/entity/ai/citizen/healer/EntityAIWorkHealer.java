@@ -40,12 +40,17 @@ import static com.minecolonies.api.util.constant.TranslationConstants.PATIENT_FU
 /**
  * Healer AI class.
  */
-public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
+public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, BuildingHospital>
 {
     /**
      * Base xp gain for the smelter.
      */
     private static final double BASE_XP_GAIN = 5;
+
+    /**
+     * How many of each cure item it should try to request at a time.
+     */
+    private static final int REQUEST_COUNT   = 16;
 
     /**
      * Area the worker targets.
@@ -111,7 +116,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
             return DECIDE;
         }
 
-        final BuildingHospital hospital = getOwnBuilding(BuildingHospital.class);
+        final BuildingHospital hospital = getOwnBuilding();
         for (final AbstractEntityCitizen citizen : world.getEntitiesWithinAABB(ModEntities.CITIZEN, getTargetableArea(), cit -> cit.getCitizenDiseaseHandler().isSick()))
         {
             hospital.checkOrCreatePatientFile(citizen.getCitizenId());
@@ -161,18 +166,26 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
                     final ImmutableList<IRequest<? extends Stack>> list = getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
                     for (final ItemStack cure : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName).getCure())
                     {
-                        boolean hasCureRequested = false;
-                        for (final IRequest<? extends Stack> request : list)
+                        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), cure::isItemEqual))
                         {
-                            if (request.getRequest().getStack().isItemEqual(cure))
+                            if (InventoryUtils.getItemCountInItemHandler(getOwnBuilding().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), stack -> stack.isItemEqual(cure)) < cure.getCount())
                             {
-                                hasCureRequested = true;
+                                needsCurrently = new Tuple<>(stack -> stack.isItemEqual(cure), cure.getCount());
+                                return GATHERING_REQUIRED_MATERIALS;
                             }
-                        }
-                        if (!hasCureRequested)
-                        {
-                            patient.setState(Patient.PatientState.NEW);
-                            break;
+                            boolean hasCureRequested = false;
+                            for (final IRequest<? extends Stack> request : list)
+                            {
+                                if (request.getRequest().getStack().isItemEqual(cure))
+                                {
+                                    hasCureRequested = true;
+                                }
+                            }
+                            if (!hasCureRequested)
+                            {
+                                patient.setState(Patient.PatientState.NEW);
+                                break;
+                            }
                         }
                     }
                 }
@@ -265,7 +278,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
                 }
                 if (!hasRequest)
                 {
-                    worker.getCitizenData().createRequestAsync(new Stack(cure));
+                    worker.getCitizenData().createRequestAsync(new Stack(cure, REQUEST_COUNT, 1));
                 }
             }
         }
@@ -515,7 +528,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer>
     }
 
     @Override
-    public Class<? extends BuildingHospital> getExpectedBuildingClass()
+    public Class<BuildingHospital> getExpectedBuildingClass()
     {
         return BuildingHospital.class;
     }

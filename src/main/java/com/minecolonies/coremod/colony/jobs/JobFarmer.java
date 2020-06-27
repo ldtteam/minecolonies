@@ -4,14 +4,13 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.EntityAIWorkFarmer;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Job class of the farmer, handles his fields.
  */
-public class JobFarmer extends AbstractJob
+public class JobFarmer extends AbstractJob<EntityAIWorkFarmer, JobFarmer>
 {
     /**
      * Public constructor of the farmer job.
@@ -48,7 +47,7 @@ public class JobFarmer extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobFarmer> generateAI()
+    public EntityAIWorkFarmer generateAI()
     {
         return new EntityAIWorkFarmer(this);
     }

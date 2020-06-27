@@ -58,7 +58,7 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
         final String branch = (String) context[2];
         final String desc = (String) context[3];
         final int depth = (int) context[4];
-        final IResearchEffect effect = (IResearchEffect) context[5];
+        final IResearchEffect<?> effect = (IResearchEffect<?>) context[5];
         return getNewInstance(id, parent, branch, desc, depth, effect);
     }
 
@@ -74,6 +74,6 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
      * @return a new Instance of Research.
      */
     @NotNull
-    IGlobalResearch getNewInstance(final String id, final String parent, final String branch, @NotNull final String desc, final int depth, final IResearchEffect effect);
+    IGlobalResearch getNewInstance(final String id, final String parent, final String branch, @NotNull final String desc, final int depth, final IResearchEffect<?> effect);
 }
 

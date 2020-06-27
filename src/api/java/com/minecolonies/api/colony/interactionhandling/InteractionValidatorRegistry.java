@@ -29,7 +29,7 @@ public final class InteractionValidatorRegistry
     /**
      * Map of all IToken based validator predicates.
      */
-    private static Map<ITextComponent, BiPredicate<ICitizenData, IToken>> tokenMap = new HashMap<>();
+    private static Map<ITextComponent, BiPredicate<ICitizenData, IToken<?>>> tokenMap = new HashMap<>();
 
     /**
      * Get the StandardInteractionValidatorPredicate.
@@ -56,7 +56,7 @@ public final class InteractionValidatorRegistry
      * @param key the key of it.
      * @return the predicate.
      */
-    public static BiPredicate<ICitizenData, IToken> getTokenBasedInteractionValidatorPredicate(final ITextComponent key)
+    public static BiPredicate<ICitizenData, IToken<?>> getTokenBasedInteractionValidatorPredicate(final ITextComponent key)
     {
         return tokenMap.get(key);
     }
@@ -86,7 +86,7 @@ public final class InteractionValidatorRegistry
      * @param key it's key.
      * @param predicate it's predicate.
      */
-    public static void registerTokenBasedPredicate(final ITextComponent key, final BiPredicate<ICitizenData, IToken> predicate)
+    public static void registerTokenBasedPredicate(final ITextComponent key, final BiPredicate<ICitizenData, IToken<?>> predicate)
     {
         tokenMap.put(key, predicate);
     }

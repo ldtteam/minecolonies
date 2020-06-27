@@ -108,7 +108,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * Alternative overriden constructor.
      * @param type the entity type.
      */
-    public TileEntityColonyBuilding(final TileEntityType type)
+    public TileEntityColonyBuilding(final TileEntityType<? extends AbstractTileEntityColonyBuilding> type)
     {
         super(type);
     }

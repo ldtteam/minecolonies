@@ -15,11 +15,14 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGuardTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.amazonevent.AmazonRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateEventUtils;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent.NorsemenRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent.NorsemenShipRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import net.minecraft.util.Direction;
@@ -53,6 +56,7 @@ public class RaidManager implements IRaiderManager
      */
     private static final String DESERT_BIOME_ID = "desert";
     private static final String JUNGLE_BIOME_ID = "jungle";
+    private static final String TAIGA_BIOME_ID = "taiga";
 
     /**
      * Whether there will be a raid in this colony tonight.
@@ -215,36 +219,51 @@ public class RaidManager implements IRaiderManager
             }
 
             // No rotation till spawners are moved into schematics
-            final int pirateShipRotation = 0;
-            if (PirateEventUtils.canSpawnPirateEventAt(colony, targetSpawnPoint, amount, pirateShipRotation))
+            final int shipRotation = new Random().nextInt(3);
+            final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath();
+
+            if (homeBiomePath.contains(TAIGA_BIOME_ID) && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, new NorsemenShipRaidEvent(colony)))
+            {
+                final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
+                event.setSpawnPoint(targetSpawnPoint);
+                event.setShipSize(ShipSize.getShipForRaidLevel(amount));
+                event.setShipRotation(shipRotation);
+                colony.getEventManager().addEvent(event);
+            }
+            else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, new PirateRaidEvent(colony)))
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaidLevel(amount));
-                event.setShipRotation(pirateShipRotation);
-                colony.getEventManager().addEvent(event);
-            }
-            else if (colony.getWorld().getBiome(targetSpawnPoint).getRegistryName().getPath().contains(DESERT_BIOME_ID))
-            {
-                final EgyptianRaidEvent event = new EgyptianRaidEvent(colony);
-                event.setSpawnPoint(targetSpawnPoint);
-                event.setHorde(new Horde(amount));
-                colony.getEventManager().addEvent(event);
-            }
-            else if (colony.getWorld().getBiome(targetSpawnPoint).getRegistryName().getPath().contains(JUNGLE_BIOME_ID))
-            {
-                final AmazonRaidEvent event = new AmazonRaidEvent(colony);
-                event.setSpawnPoint(targetSpawnPoint);
-                event.setHorde(new Horde(amount));
+                event.setShipRotation(shipRotation);
                 colony.getEventManager().addEvent(event);
             }
             else
             {
-                final BarbarianRaidEvent event = new BarbarianRaidEvent(colony);
+                final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getRegistryName().getPath();
+                final HordeRaidEvent event;
+                if (biomePath.contains(DESERT_BIOME_ID))
+                {
+                    event = new EgyptianRaidEvent(colony);
+                }
+                else if (biomePath.contains(JUNGLE_BIOME_ID))
+                {
+                    event = new AmazonRaidEvent(colony);
+                }
+                else if (biomePath.contains(TAIGA_BIOME_ID))
+                {
+                    event = new NorsemenRaidEvent(colony);
+                }
+                else
+                {
+                    event = new BarbarianRaidEvent(colony);
+                }
+
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setHorde(new Horde(amount));
                 colony.getEventManager().addEvent(event);
             }
+
             addRaiderSpawnPoint(targetSpawnPoint);
         }
         colony.markDirty();
@@ -457,19 +476,6 @@ public class RaidManager implements IRaiderManager
     {
         return Math.min(MineColonies.getConfig().getCommon().maxBarbarianSize.get(),
           (int) ((getColonyRaidLevel() / SPAWN_MODIFIER) * ((double) MineColonies.getConfig().getCommon().spawnBarbarianSize.get() * 0.2)));
-    }
-
-    /**
-     * Check if a certain vector matches two directions.
-     *
-     * @param directionX the direction x.
-     * @param directionZ the direction z.
-     * @param vector     the vector.
-     * @return true if so.
-     */
-    private static boolean isInDirection(final Direction directionX, final Direction directionZ, final BlockPos vector)
-    {
-        return Direction.getFacingFromVector(vector.getX(), 0, 0) == directionX && Direction.getFacingFromVector(0, 0, vector.getZ()) == directionZ;
     }
 
     @Override

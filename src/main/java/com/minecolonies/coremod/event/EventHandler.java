@@ -23,6 +23,7 @@ import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
+import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.minecolonies.coremod.loot.SupplyLoot;
 import com.minecolonies.coremod.network.messages.client.OpenSuggestionWindowMessage;
 import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMessage;
@@ -110,7 +111,7 @@ public class EventHandler
             if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof IMob) && !(event.getEntity() instanceof LlamaEntity))
             {
                 ((MobEntity) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityCitizen.class, true));
-                ((MobEntity) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal((MobEntity) event.getEntity(), EntityMercenary.class, true));
+                ((MobEntity) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityMercenary.class, true));
             }
         }
     }
@@ -180,6 +181,7 @@ public class EventHandler
 
     /**
      * Called when a chunk gets loaded for some reason.
+     *
      * @param event the event.
      */
     @SubscribeEvent
@@ -200,6 +202,7 @@ public class EventHandler
 
     /**
      * Called when a chunk gets unloaded
+     *
      * @param event the event.
      */
     @SubscribeEvent
@@ -255,7 +258,7 @@ public class EventHandler
 
             final Chunk newChunk = player.world.getChunk(player.chunkCoordX, player.chunkCoordZ);
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
-            
+
             if (newCloseColonies != null)
             {
                 // Add visiting/subscriber to new colony
@@ -380,6 +383,16 @@ public class EventHandler
                     colony.getPackageManager().addCloseSubscriber(player);
                 }
             }
+
+            final int size = player.inventory.getSizeInventory();
+            for (int i = 0; i < size; i++)
+            {
+                final ItemStack stack = player.inventory.getStackInSlot(i);
+                if (stack.getItem() instanceof ItemBannerRallyGuards)
+                {
+                    ItemBannerRallyGuards.broadcastPlayerToRally(stack, player.getServerWorld(), player);
+                }
+            }
         }
     }
 
@@ -432,7 +445,7 @@ public class EventHandler
                     final IColony colony = IColonyManager.getInstance().getColonyByWorld(chunkCapability.getOwningColony(), entityCitizen.world);
                     if (colony != null)
                     {
-                        colony.addGuardToAttackers(entityCitizen, ((IGuardBuilding) entityCitizen.getCitizenColonyHandler().getWorkBuilding()).getFollowPlayer());
+                        colony.addGuardToAttackers(entityCitizen, ((IGuardBuilding) entityCitizen.getCitizenColonyHandler().getWorkBuilding()).getPlayerToFollowOrRally());
                     }
                 }
             }
@@ -590,7 +603,7 @@ public class EventHandler
      */
     private static boolean playerRightClickInteract(@NotNull final PlayerEntity player, final World world, final BlockPos pos)
     {
-        return !player.isShiftKeyDown() || player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null
+        return !player.isSneaking() || player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null
                  || player.getHeldItemMainhand().getItem().doesSneakBypassUse(player.getHeldItemMainhand(), world, pos, player);
     }
 
@@ -602,7 +615,7 @@ public class EventHandler
      */
     private static void handleEventCancellation(@NotNull final PlayerInteractEvent event, @NotNull final PlayerEntity player)
     {
-        final Block heldBlock =Block.getBlockFromItem( event.getItemStack().getItem() );
+        final Block heldBlock = Block.getBlockFromItem(event.getItemStack().getItem());
         if (heldBlock instanceof AbstractBlockHut || heldBlock instanceof BlockScarecrow)
         {
             if (event.getWorld().isRemote)

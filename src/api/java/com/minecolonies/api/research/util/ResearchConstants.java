@@ -94,6 +94,10 @@ public final class ResearchConstants
     public static final String TOOL_DURABILITY = "Tool Durability";
     public static final String INV_SLOTS       = "Citizen Inv Slots";
 
+    public static final String PLANT_2       = "Plant 2";
+    public static final String CRUSHING_11   = "1:1 Crushing";
+    public static final String FIRE_RES      = "Miner Fire Res";
+
     /**
      * Private constructor to hide implicit public one.
      */

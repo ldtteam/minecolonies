@@ -1,0 +1,24 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
+        lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+    <image source="minecolonies:textures/gui/builderhut/builder_papper.png" pos="0 0" size="190 244"/>
+
+    <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
+           label="$(item.minecolonies.banner_rally_guards)"/>
+    <box size="158 178" pos="16 30" linewidth="2">
+        <list id="guardtowers" size="100% 100%">
+            <box id="guardtower" size="100% 44" linewidth="2">
+                <!--Item icon -->
+                <itemicon id="guardicon" size="16 16" pos="1 3"/>
+                <!--Request name-->
+                <label id="guardtype" size="50 12" pos="20 1" color="black"/>
+                <label id="position" size="50 12" pos="20 13" color="black"/>
+                <!-- button to cancel the request-->
+                <buttonimage id="remove" size="74 16" pos="74 25" textcolor="black"
+                             label="$(com.minecolonies.coremod.item.bannerrallyguards.gui.remove)" source="minecolonies:textures/gui/citizen/colonist_button_medium.png"/>
+            </box>
+        </list>
+    </box>
+    <buttonimage id="rally" size="147 16" pos="20 213" textcolor="black" source="minecolonies:textures/gui/citizen/colonist_button_big.png"/>
+
+</window>

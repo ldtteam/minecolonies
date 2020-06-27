@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import java.util.Random;
+
 import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
 import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;
 
@@ -21,13 +23,24 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
 {
     /**
+     * Amount of unique pirate textures.
+     */
+    private static final int PIRATE_TEXTURES = 4;
+
+    /**
+     * Texture id of the pirates.
+     */
+    private int textureId;
+
+    /**
      * Constructor method for Abstract Barbarians.
      * @param type the type.
      * @param world the world.
      */
-    public AbstractEntityPirate(final EntityType type, final World world)
+    public AbstractEntityPirate(final EntityType<? extends AbstractEntityPirate> type, final World world)
     {
         super(type, world);
+        this.textureId = new Random().nextInt(PIRATE_TEXTURES);
     }
 
     @Override
@@ -52,6 +65,15 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
     public boolean canSpawn(final IWorld worldIn, final SpawnReason spawnReasonIn)
     {
         return true;
+    }
+
+    /**
+     * Get the unique texture id.
+     * @return the texture id.
+     */
+    public int getTextureId()
+    {
+        return this.textureId;
     }
 
     @NotNull

@@ -4,14 +4,13 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.sifter.EntityAIWorkSifter;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The sifter job class.
  */
-public class JobSifter extends AbstractJobCrafter
+public class JobSifter extends AbstractJobCrafter<EntityAIWorkSifter, JobSifter>
 {
     /**
      * Create a sifter job.
@@ -60,7 +59,7 @@ public class JobSifter extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobSifter> generateAI()
+    public EntityAIWorkSifter generateAI()
     {
         return new EntityAIWorkSifter(this);
     }

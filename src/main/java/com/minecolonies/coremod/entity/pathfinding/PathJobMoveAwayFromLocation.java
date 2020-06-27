@@ -16,8 +16,6 @@ import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSIT
  */
 public class PathJobMoveAwayFromLocation extends AbstractPathJob
 {
-    private static final double TIE_BREAKER = 1.001D;
-
     /**
      * Position to run to, in order to avoid something.
      */

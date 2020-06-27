@@ -1,9 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
-import com.ldtteam.structurize.blocks.decorative.BlockShingle;
-import com.ldtteam.structurize.blocks.decorative.BlockShingleSlab;
-import com.ldtteam.structurize.blocks.decorative.BlockTimberFrame;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -20,14 +17,14 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
@@ -73,7 +70,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobSawmill(citizen);
     }
@@ -100,53 +97,54 @@ public class BuildingSawmill extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        if(!super.canRecipeBeAdded(token))
+        Optional<Boolean> isRecipeAllowed;
+
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        if (isRecipeAllowed.isPresent())
         {
-            return false;
+            return isRecipeAllowed.get();
         }
-
-        final Item item = storage.getPrimaryOutput().getItem();
-        if (item instanceof BlockItem && (((BlockItem) item).getBlock() instanceof BlockShingle || ((BlockItem) item).getBlock() instanceof BlockShingleSlab || ((BlockItem) item).getBlock() instanceof BlockTimberFrame))
+        else
         {
-            return true;
-        }
+            // Additional recipe rules
 
-        double amountOfValidBlocks = 0;
-        double blocks = 0;
-        for(final ItemStack stack : storage.getInput())
-        {
-            if(!ItemStackUtils.isEmpty(stack))
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+            double amountOfValidBlocks = 0;
+            double blocks = 0;
+            for (final ItemStack stack : storage.getInput())
             {
-                if (stack.getItem().isIn(ItemTags.PLANKS) || stack.getItem().isIn(ItemTags.LOGS))
+                if (!ItemStackUtils.isEmpty(stack))
                 {
-                    amountOfValidBlocks++;
-                    continue;
-                }
-                for (final ResourceLocation tag : stack.getItem().getTags())
-                {
-                    if(tag.getPath().contains("wood"))
+                    if (stack.getItem().isIn(ItemTags.PLANKS) || stack.getItem().isIn(ItemTags.LOGS))
                     {
                         amountOfValidBlocks++;
-                        break;
+                        continue;
                     }
-                    else if(tag.getPath().contains("ingot") || tag.getPath().contains("stone") || tag.getPath().contains("redstone") || tag.getPath().contains("string"))
+                    for (final ResourceLocation tag : stack.getItem().getTags())
                     {
-                        return false;
+                        if (tag.getPath().contains("wood"))
+                        {
+                            amountOfValidBlocks++;
+                            break;
+                        }
                     }
+                    blocks++;
                 }
-                blocks++;
             }
+
+            return amountOfValidBlocks > 0 && amountOfValidBlocks / blocks > MIN_PERCENTAGE_TO_CRAFT;
+
+            // End Additional recipe rules
         }
 
-        return amountOfValidBlocks > 0 && amountOfValidBlocks/blocks > MIN_PERCENTAGE_TO_CRAFT;
     }
 
     @Override

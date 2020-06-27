@@ -19,6 +19,7 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.RecipeBook;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -48,11 +49,6 @@ public abstract class CommonProxy implements IProxy
      * The special townhall recipe.
      */
     public static IRecipeSerializer<?> SPECIAL_REC;
-
-    /**
-     * The next entity id.
-     */
-    private int nextEntityId = 0;
 
     /**
      * Creates instance of proxy.
@@ -167,6 +163,14 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
+    public void openBannerRallyGuardsWindow(final ItemStack banner)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
     public void openClipBoardWindow(final IColonyView colonyView)
     {
         /*
@@ -186,18 +190,6 @@ public abstract class CommonProxy implements IProxy
     public File getSchematicsFolder()
     {
         return null;
-    }
-
-    /**
-     * Used for entity IDs, starts at 0 and increments for each call.
-     * <p>
-     * currently unused.
-     * 
-     * @return the next entity id.
-     */
-    private int getNextEntityId()
-    {
-        return nextEntityId++;
     }
 
     @NotNull

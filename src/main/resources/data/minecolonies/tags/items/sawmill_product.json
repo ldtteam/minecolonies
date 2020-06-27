@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#structurize:shingles",
+    "#structurize:shingle_slabs",
+    "#structurize:timber_frames"
+  ]
+}

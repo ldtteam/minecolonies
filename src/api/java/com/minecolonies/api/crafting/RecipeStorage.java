@@ -48,7 +48,7 @@ public class RecipeStorage implements IRecipeStorage
     /**
      * The token of the RecipeStorage.
      */
-    private final IToken token;
+    private final IToken<?> token;
 
     /**
      * Create an instance of the recipe storage.
@@ -59,7 +59,7 @@ public class RecipeStorage implements IRecipeStorage
      * @param primaryOutput   the primary output of the recipe.
      * @param intermediate    the intermediate to use (e.g furnace).
      */
-    public RecipeStorage(final IToken token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
+    public RecipeStorage(final IToken<?> token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
     {
         this.input = Collections.unmodifiableList(input);
         this.cleanedInput = this.calculateCleanedInput();
@@ -284,7 +284,7 @@ public class RecipeStorage implements IRecipeStorage
     }
 
     @Override
-    public IToken getToken()
+    public IToken<?> getToken()
     {
         return token;
     }

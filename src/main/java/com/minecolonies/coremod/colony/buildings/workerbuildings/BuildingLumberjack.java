@@ -214,7 +214,7 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobLumberjack(citizen);
     }
@@ -312,7 +312,7 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         return false;
     }

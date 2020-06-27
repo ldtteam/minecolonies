@@ -9,6 +9,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
@@ -34,7 +35,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
+public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBuildingGuards>
 {
     /**
      * Update interval for the guards attack ai
@@ -250,5 +251,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     public void moveInAttackPosition()
     {
         worker.getNavigator().tryMoveToEntityLiving(target, getCombatMovementSpeed());
+    }
+
+    @Override
+    public Class<AbstractBuildingGuards> getExpectedBuildingClass()
+    {
+        return AbstractBuildingGuards.class;
     }
 }

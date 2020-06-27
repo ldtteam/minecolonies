@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenJobHandler;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +36,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
      * @param job the new job.
      */
     @Override
-    public void setModelDependingOnJob(@Nullable final IJob job)
+    public void setModelDependingOnJob(@Nullable final IJob<?> job)
     {
         if (citizen.isChild())
         {
@@ -86,7 +86,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
      * @param job the set job.
      */
     @Override
-    public void onJobChanged(@Nullable final IJob job)
+    public void onJobChanged(@Nullable final IJob<?> job)
     {
         //  Model
         setModelDependingOnJob(job);
@@ -94,7 +94,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
         //  AI Tasks
         for (@NotNull final PrioritizedGoal task : citizen.getTasks().goals)
         {
-            if (task.getGoal() instanceof AbstractEntityAIInteract)
+            if (task.getGoal() instanceof AbstractAISkeleton)
             {
                 citizen.getTasks().removeGoal(task.getGoal());
             }
@@ -119,7 +119,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
      */
     @Override
     @Nullable
-    public <J extends IJob> J getColonyJob(@NotNull final Class<J> type)
+    public <J extends IJob<?>> J getColonyJob(@NotNull final Class<J> type)
     {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob(type);
     }
@@ -130,7 +130,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
      */
     @Override
     @Nullable
-    public IJob getColonyJob()
+    public IJob<?> getColonyJob()
     {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob();
     }

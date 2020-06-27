@@ -17,7 +17,7 @@ public interface IRequester
      *
      * @return The id of this requester.
      */
-    IToken getId();
+    IToken<?> getId();
 
     /**
      * Method to get the location of this locatable.

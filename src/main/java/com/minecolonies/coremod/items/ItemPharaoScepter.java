@@ -48,7 +48,7 @@ public class ItemPharaoScepter extends BowItem
             return ret;
 
         playerIn.setActiveHand(handIn);
-        return ActionResult.func_226249_b_(itemstack);
+        return ActionResult.resultConsume(itemstack);
     }
 
     @Override

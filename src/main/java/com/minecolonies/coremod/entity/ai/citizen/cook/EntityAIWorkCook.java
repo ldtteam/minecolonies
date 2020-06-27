@@ -46,7 +46,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 /**
  * Cook AI class.
  */
-public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
+public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, BuildingCook>
 {
     /**
      * The amount of food which should be served to the worker.
@@ -126,7 +126,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     }
 
     @Override
-    public Class<? extends BuildingCook> getExpectedBuildingClass()
+    public Class<BuildingCook> getExpectedBuildingClass()
     {
         return BuildingCook.class;
     }

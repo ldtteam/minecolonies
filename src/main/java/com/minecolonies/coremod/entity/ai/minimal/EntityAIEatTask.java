@@ -22,7 +22,6 @@ import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.Food;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
@@ -469,7 +468,7 @@ public class EntityAIEatTask extends Goal
             citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
         }
 
-        final IJob job = citizen.getCitizenJobHandler().getColonyJob();
+        final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
         if (job != null)
         {
             job.setActive(false);

@@ -137,5 +137,5 @@ public interface IGlobalResearch
      * Get the effect of the research.
      * @return the effect.
      */
-    IResearchEffect getEffect();
+    IResearchEffect<?> getEffect();
 }

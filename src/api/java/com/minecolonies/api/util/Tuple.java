@@ -39,7 +39,7 @@ public class Tuple<A, B>
     {
         if (o instanceof Tuple)
         {
-            return ((Tuple) o).getA().equals(this.getA()) && ((Tuple) o).getB().equals(this.getB());
+            return ((Tuple<?, ?>) o).getA().equals(this.getA()) && ((Tuple<?, ?>) o).getB().equals(this.getB());
         }
         return false;
     }

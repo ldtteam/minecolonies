@@ -60,7 +60,7 @@ public class PickupRequestResolverFactory implements IRequestResolverFactory<Pic
     @Override
     public PickupRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
-        final IToken token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
+        final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
 
         return new PickupRequestResolver(location, token);

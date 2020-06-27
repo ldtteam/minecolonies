@@ -170,7 +170,7 @@ public class ChunkCache implements IWorldReader
     }
 
     @Override
-    public BiomeManager func_225523_d_()
+    public BiomeManager getBiomeManager()
     {
         return null;
     }

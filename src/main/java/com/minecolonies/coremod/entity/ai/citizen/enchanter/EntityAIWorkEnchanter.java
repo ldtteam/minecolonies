@@ -42,7 +42,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.NO_WORKERS
 /**
  * Enchanter AI class.
  */
-public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter>
+public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter, BuildingEnchanter>
 {
     /**
      * Predicate to define an ancient tome which can be enchanted.
@@ -117,7 +117,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
 
         if (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) < getOwnBuilding().getBuildingLevel() * MANA_REQ_PER_LEVEL)
         {
-            final BuildingEnchanter enchanterBuilding = getOwnBuilding(BuildingEnchanter.class);
+            final BuildingEnchanter enchanterBuilding = getOwnBuilding();
             if (enchanterBuilding.getBuildingsToGatherFrom().isEmpty())
             {
                 if (worker.getCitizenData() != null)
@@ -267,7 +267,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         if (buildingWorker == null)
         {
             resetDraining();
-            getOwnBuilding(BuildingEnchanter.class).removeWorker(job.getPosToDrainFrom());
+            getOwnBuilding().removeWorker(job.getPosToDrainFrom());
             return IDLE;
         }
 
@@ -383,10 +383,16 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
      */
     private void resetDraining()
     {
-        getOwnBuilding(BuildingEnchanter.class).setAsGathered(job.getPosToDrainFrom());
+        getOwnBuilding().setAsGathered(job.getPosToDrainFrom());
         citizenToGatherFrom = null;
         job.setBuildingToDrainFrom(null);
         progressTicks = 0;
         incrementActionsDoneAndDecSaturation();
+    }
+
+    @Override
+    public Class<BuildingEnchanter> getExpectedBuildingClass()
+    {
+        return BuildingEnchanter.class;
     }
 }

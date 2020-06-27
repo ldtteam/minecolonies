@@ -4,7 +4,6 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.herders.EntityAIWorkShepherd;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The Shepherd job
  */
-public class JobShepherd extends AbstractJob
+public class JobShepherd extends AbstractJob<EntityAIWorkShepherd, JobShepherd>
 {
 
     /**
@@ -46,7 +45,7 @@ public class JobShepherd extends AbstractJob
      */
     @Nullable
     @Override
-    public AbstractAISkeleton<JobShepherd> generateAI()
+    public EntityAIWorkShepherd generateAI()
     {
         return new EntityAIWorkShepherd(this);
     }

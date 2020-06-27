@@ -84,7 +84,7 @@ public class DebugRendererChunkBorder
 
         final MatrixStack stack = event.getMatrixStack();
         stack.push();
-        final Matrix4f matrix = stack.getLast().getPositionMatrix();
+        final Matrix4f matrix = stack.getLast().getMatrix();
 
         for (final Map.Entry<Tuple<Integer, Integer>, Integer> c : colonies.entrySet())
         {

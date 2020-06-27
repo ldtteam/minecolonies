@@ -23,7 +23,7 @@ public abstract class AbstractEntityEgyptian extends AbstractEntityMinecoloniesM
      * @param type the type.
      * @param world the world.
      */
-    public AbstractEntityEgyptian(final EntityType type, final World world)
+    public AbstractEntityEgyptian(final EntityType<? extends AbstractEntityEgyptian> type, final World world)
     {
         super(type, world);
     }

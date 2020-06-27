@@ -61,6 +61,6 @@ public class PlantationSetPhaseMessage extends AbstractBuildingServerMessage<Bui
             return;
         }
 
-        building.setPhase(phase.getItem());
+        building.setSetting(phase.getItem());
     }
 }

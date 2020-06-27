@@ -86,6 +86,10 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
             case ASCENDING_NORTH:
             case ASCENDING_SOUTH:
                 ++y;
+                break;
+
+            default:
+                break;
         }
 
         Vec3d motion = this.getMotion();

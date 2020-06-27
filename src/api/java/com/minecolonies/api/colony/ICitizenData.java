@@ -141,14 +141,14 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      *
      * @return Job of the citizen.
      */
-    IJob getJob();
+    IJob<?> getJob();
 
     /**
      * Sets the job of this citizen.
      *
      * @param job Job of the citizen.
      */
-    void setJob(IJob job);
+    void setJob(IJob<?> job);
 
     /**
      * Returns the job subclass needed. Returns null on type mismatch.
@@ -158,7 +158,7 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @return the job this citizen has.
      */
     @Nullable
-    <J extends IJob> J getJob(@NotNull Class<J> type);
+    <J extends IJob<?>> J getJob(@NotNull Class<J> type);
 
     /**
      * Writes the citizen data to a byte buf for transition.
@@ -237,7 +237,7 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @param <R>       the Type
      * @return the token of the request.
      */
-    <R extends IRequestable> IToken createRequest(@NotNull R requested);
+    <R extends IRequestable> IToken<?> createRequest(@NotNull R requested);
 
     /**
      * Create an async request.
@@ -246,14 +246,14 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @param <R>       the Type
      * @return the token of the request.
      */
-    <R extends IRequestable> IToken createRequestAsync(@NotNull R requested);
+    <R extends IRequestable> IToken<?> createRequestAsync(@NotNull R requested);
 
     /**
      * Called on request canceled.
      *
      * @param token the token to be canceled.
      */
-    void onRequestCancelled(@NotNull IToken token);
+    void onRequestCancelled(@NotNull IToken<?> token);
 
     /**
      * Check if a request is async.
@@ -261,7 +261,7 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @param token the token to check.
      * @return true if it is.
      */
-    boolean isRequestAsync(@NotNull IToken token);
+    boolean isRequestAsync(@NotNull IToken<?> token);
 
     /**
      * The Handler for the citizens happiness.
@@ -349,4 +349,16 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @param idle true if so.
      */
     void setIdleAtJob(final boolean idle);
+
+    /**
+     * Get the texture suffix.
+     * @return the suffix.
+     */
+    String getTextureSuffix();
+
+    /**
+     * Set the suffix for a citizen.
+     * @param suffix the suffix to set.
+     */
+    void setSuffix(String suffix);
 }

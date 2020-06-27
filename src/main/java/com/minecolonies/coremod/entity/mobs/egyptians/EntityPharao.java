@@ -21,7 +21,7 @@ public class EntityPharao extends AbstractEntityEgyptian implements IPharaoEntit
      * @param type the entity type.
      * @param worldIn world to construct it in.
      */
-    public EntityPharao(final EntityType type, final World worldIn)
+    public EntityPharao(final EntityType<? extends EntityPharao> type, final World worldIn)
     {
         super(type, worldIn);
     }

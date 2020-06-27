@@ -169,8 +169,8 @@ public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptian>
     }
 
     @Override
-    public void render(AbstractEntityEgyptian entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        super.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    public void setRotationAngles(AbstractEntityEgyptian entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         this.bodyGoldenStrip.rotateAngleX = -Math.max(this.bipedRightLeg.rotateAngleX, this.bipedLeftLeg.rotateAngleX);
         this.jaw.rotateAngleX = 0.3F - 0.1F * sinPi(ageInTicks/ 20.0F) % 2.0F;
         this.jaw.rotateAngleY = 0.05F * sinPi((ageInTicks + 10.0F)/ 20.0F) % 2.0F;

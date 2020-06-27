@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.BiFunction;
@@ -21,7 +20,7 @@ import java.util.function.Supplier;
  * Also links a given {@link IBuilding} to a given {@link AbstractBlockHut}.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry> implements IForgeRegistryEntry<BuildingEntry>
+public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
 {
     private final AbstractBlockHut<?> buildingBlock;
 

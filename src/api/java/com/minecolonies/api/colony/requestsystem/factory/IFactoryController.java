@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.factory;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.util.constant.Suppression;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -62,7 +61,6 @@ public interface IFactoryController
      *
      * @throws IllegalArgumentException Thrown when no factory exists for the combination of input and output.
      */
-    @SuppressWarnings(Suppression.UNCHECKED)
     <Input, Output> IFactory<Input, Output> getFactoryForIO(@NotNull final TypeToken<? extends Input> inputTypeToken, @NotNull final TypeToken<? extends Output> outputTypeToken)
       throws IllegalArgumentException;
 

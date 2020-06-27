@@ -80,7 +80,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         final IBuilding building = getColony().getBuildingManager().getBuilding(barracks);
         if (building != null && buildingLevel < getMaxBuildingLevel() && buildingLevel < building.getBuildingLevel())
         {
-            requestWorkOrder(buildingLevel + 1, builder);
+            requestWorkOrder(buildingLevel + 1, builder, false);
         }
         else
         {

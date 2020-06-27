@@ -64,9 +64,9 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityCo
             float flipA = MathHelper.frac(pageFlip + 0.25F) * 1.6F - 0.3F;
             float flipB = MathHelper.frac(pageFlip + 0.75F) * 1.6F - 0.3F;
             float bookSpread = MathHelper.lerp(partialTicks, entity.bookSpreadPrev, entity.bookSpread);
-            this.modelBook.func_228247_a_(tick, MathHelper.clamp(flipA, 0.0F, 1.0F), MathHelper.clamp(flipB, 0.0F, 1.0F), bookSpread);
-            IVertexBuilder vertexConsumer = TEXTURE_BOOK.getBuffer(renderTypeBuffer, RenderType::entitySolid);
-            this.modelBook.func_228249_b_(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
+            this.modelBook.setBookState(tick, MathHelper.clamp(flipA, 0.0F, 1.0F), MathHelper.clamp(flipB, 0.0F, 1.0F), bookSpread);
+            IVertexBuilder vertexConsumer = TEXTURE_BOOK.getBuffer(renderTypeBuffer, RenderType::getEntitySolid);
+            this.modelBook.renderAll(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
             matrixStack.pop();
         }
     }

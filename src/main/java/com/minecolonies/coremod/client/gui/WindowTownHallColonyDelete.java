@@ -15,9 +15,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.TOWNHALL_COLONY
  */
 public class WindowTownHallColonyDelete extends AbstractWindowSkeleton
 {
-    private static final String BUTTON_CLOSE   = "close";
     private static final String BUTTON_CONFIRM = "confirm";
-    private static final String BUTTON_CANCEL  = "cancel";
 
     public WindowTownHallColonyDelete()
     {

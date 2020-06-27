@@ -4,7 +4,6 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.baker.EntityAIWorkBaker;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +13,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
  * The fisherman's job class.
  * implements some useful things for him.
  */
-public class JobBaker extends AbstractJob
+public class JobBaker extends AbstractJob<EntityAIWorkBaker, JobBaker>
 {
     /**
      * Initializes the job class.
@@ -63,7 +62,7 @@ public class JobBaker extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobBaker> generateAI()
+    public EntityAIWorkBaker generateAI()
     {
         return new EntityAIWorkBaker(this);
     }

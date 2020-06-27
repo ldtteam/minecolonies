@@ -109,7 +109,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
      * @param world the world.
      * @param type  the entity type.
      */
-    public AbstractEntityMinecoloniesMob(final EntityType type, final World world)
+    public AbstractEntityMinecoloniesMob(final EntityType<? extends AbstractEntityMinecoloniesMob> type, final World world)
     {
         super(type, world);
         worldTimeAtSpawn = world.getGameTime();

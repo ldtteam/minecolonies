@@ -130,6 +130,13 @@ public interface IBuildingView extends IRequester
     boolean isRepairing();
 
     /**
+     * Check if the building is currently being deconstructed..
+     *
+     * @return true if so.
+     */
+    boolean isDeconstructing();
+
+    /**
      * Get the claim radius for the building.
      *
      * @return the radius.
@@ -161,14 +168,12 @@ public interface IBuildingView extends IRequester
 
     Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen();
 
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull ICitizenDataView citizenData, Class<R> requestType);
 
-    @SuppressWarnings(RAWTYPES)
-    ImmutableList<IRequest> getOpenRequests(@NotNull ICitizenDataView data);
+    ImmutableList<IRequest<?>> getOpenRequests(@NotNull ICitizenDataView data);
 
-    @SuppressWarnings(RAWTYPES)
-    ImmutableList<IRequest> getOpenRequestsOfBuilding();
+    ImmutableList<IRequest<?>> getOpenRequestsOfBuilding();
 
     /**
      * Gets the ColonyView that this building belongs to.
@@ -177,7 +182,7 @@ public interface IBuildingView extends IRequester
      */
     IColonyView getColony();
 
-    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
+    @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
       @NotNull ICitizenDataView citizenData,
       Class<R> requestType,
@@ -199,4 +204,10 @@ public interface IBuildingView extends IRequester
      * @param name the new name.
      */
     void setCustomName(String name);
+
+    /**
+     * Check if the building was deconstructed.
+     * @return true if so.
+     */
+    boolean isDeconstructed();
 }

@@ -11,7 +11,6 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
@@ -44,7 +43,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Smelter AI class.
  */
-public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
+public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter, BuildingSmeltery>
 {
     /**
      * Time the worker delays until the next hit.
@@ -115,7 +114,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     }
 
     @Override
-    public Class<? extends BuildingSmeltery> getExpectedBuildingClass()
+    public Class<BuildingSmeltery> getExpectedBuildingClass()
     {
         return BuildingSmeltery.class;
     }
@@ -260,7 +259,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     protected void extractFromFurnace(final FurnaceTileEntity furnace)
     {
         final ItemStack ingots = new InvWrapper(furnace).extractItem(RESULT_SLOT, STACKSIZE, false);
-        final int multiplier = ((BuildingSmeltery) getOwnBuilding()).ingotMultiplier(worker.getCitizenData().getJobModifier(), worker.getRandom());
+        final int multiplier = getOwnBuilding().ingotMultiplier(worker.getCitizenData().getJobModifier(), worker.getRandom());
         int amount = ingots.getCount() * multiplier;
 
         while (amount > 0)
@@ -334,7 +333,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
               !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
                 req -> req.getShortDisplayString().getString().equals(LanguageHandler.format(COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE))))
         {
-            final Map<String, List<ItemStorage>> allowedItems = getOwnBuilding(AbstractBuildingFurnaceUser.class).getCopyOfAllowedItems();
+            final Map<String, List<ItemStorage>> allowedItems = getOwnBuilding().getCopyOfAllowedItems();
             if (allowedItems.containsKey(ORE_LIST))
             {
                 final List<ItemStack> requests = IColonyManager.getInstance().getCompatibilityManager().getSmeltableOres().stream()

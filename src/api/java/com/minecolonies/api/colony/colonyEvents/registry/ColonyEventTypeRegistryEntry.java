@@ -6,7 +6,6 @@ import com.minecolonies.api.util.Log;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
@@ -14,7 +13,7 @@ import java.util.function.BiFunction;
 /**
  * This is the colonies event registry entry class, used for registering any colony related events. Takes a function of colony, nbt to create the right event object.
  */
-public class ColonyEventTypeRegistryEntry extends ForgeRegistryEntry<ColonyEventTypeRegistryEntry> implements IForgeRegistryEntry<ColonyEventTypeRegistryEntry>
+public class ColonyEventTypeRegistryEntry extends ForgeRegistryEntry<ColonyEventTypeRegistryEntry>
 {
     /**
      * Function for creating the event objects.

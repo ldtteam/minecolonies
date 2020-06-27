@@ -20,9 +20,9 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends BipedModel<Ab
     }
 
     @Override
-    public void render(@NotNull final AbstractEntityCitizen citizen, float f1, float f2, float f3, float f4, float f5)
+    public void setRotationAngles(@NotNull final AbstractEntityCitizen citizen, float f1, float f2, float f3, float f4, float f5)
     {
-        super.render(citizen, f1, f2, f3, f4, f5);
+        super.setRotationAngles(citizen, f1, f2, f3, f4, f5);
         if (bipedBody.rotateAngleX == 0)
         {
             bipedBody.rotateAngleX = getActualRotation();

@@ -12,5 +12,5 @@ public interface ITokenHandler
      *
      * @return The new token.
      */
-    IToken generateNewToken();
+    IToken<?> generateNewToken();
 }

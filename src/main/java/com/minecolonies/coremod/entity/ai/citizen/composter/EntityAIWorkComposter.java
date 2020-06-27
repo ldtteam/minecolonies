@@ -29,7 +29,7 @@ import static com.minecolonies.api.util.constant.Constants.DOUBLE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
-public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter>
+public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter, BuildingComposter>
 {
     /**
      * Base xp gain for the composter.
@@ -95,23 +95,23 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             setDelay(2);
             return getState();
         }
-        if(getOwnBuilding(BuildingComposter.class).getCopyOfAllowedItems().isEmpty())
+        if(getOwnBuilding().getCopyOfAllowedItems().isEmpty())
         {
             complain();
             return getState();
         }
-        if(InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))))
+        if(InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))))
         {
             InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
               getOwnBuilding(),
-              InventoryUtils.findFirstSlotInProviderNotEmptyWith(getOwnBuilding(), stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))),
+              InventoryUtils.findFirstSlotInProviderNotEmptyWith(getOwnBuilding(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))),
               worker.getInventoryCitizen());
 
         }
 
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
           worker.getInventoryCitizen(),
-          stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))
+          stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))
         );
         if(slot >= 0)
         {
@@ -124,7 +124,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if(!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
         {
             final ArrayList<ItemStack> itemList = new ArrayList<>();
-            for (final ItemStorage item : getOwnBuilding(BuildingComposter.class).getCopyOfAllowedItems().get(COMPOSTABLE_LIST))
+            for (final ItemStorage item : getOwnBuilding().getCopyOfAllowedItems().get(COMPOSTABLE_LIST))
             {
                 final ItemStack itemStack = item.getItemStack();
                 itemStack.setCount(itemStack.getMaxStackSize());
@@ -197,7 +197,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if(worker.getHeldItem(Hand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-                            worker.getInventoryCitizen(), stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack)));
+                            worker.getInventoryCitizen(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack)));
 
             if(slot >= 0)
             {
@@ -253,7 +253,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             final TileEntityBarrel te = (TileEntityBarrel) world.getTileEntity(currentTarget);
             final ItemStack compost = te.retrieveCompost(getLootMultiplier(new Random()));
 
-            if (getOwnBuilding(BuildingComposter.class).shouldRetrieveDirtFromCompostBin())
+            if (getOwnBuilding().shouldRetrieveDirtFromCompostBin())
             {
                 InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.DIRT, MineColonies.getConfig().getCommon().dirtFromCompost.get()));
             }
@@ -320,5 +320,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         {
             ticksToComplain--;
         }
+    }
+
+    @Override
+    public Class<BuildingComposter> getExpectedBuildingClass()
+    {
+        return BuildingComposter.class;
     }
 }

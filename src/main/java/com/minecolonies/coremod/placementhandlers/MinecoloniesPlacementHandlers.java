@@ -457,10 +457,10 @@ public final class MinecoloniesPlacementHandlers
             BlockState southState = world.getBlockState(pos.south());
             BlockState westState = world.getBlockState(pos.west());
             final BlockState fence = blockState
-              .with(FenceBlock.NORTH, ((FenceBlock) blockState.getBlock()).func_220111_a(northState, northState.isSolidSide(world, pos.north(), Direction.SOUTH), Direction.SOUTH))
-              .with(FenceBlock.EAST, ((FenceBlock) blockState.getBlock()).func_220111_a(eastState, eastState.isSolidSide(world, pos.east(), Direction.WEST), Direction.WEST))
-              .with(FenceBlock.SOUTH, ((FenceBlock) blockState.getBlock()).func_220111_a(southState, southState.isSolidSide(world, pos.south(), Direction.NORTH), Direction.NORTH))
-              .with(FenceBlock.WEST, ((FenceBlock) blockState.getBlock()).func_220111_a(westState, westState.isSolidSide(world, pos.west(), Direction.EAST), Direction.EAST));
+              .with(FenceBlock.NORTH, ((FenceBlock) blockState.getBlock()).canConnect(northState, northState.isSolidSide(world, pos.north(), Direction.SOUTH), Direction.SOUTH))
+              .with(FenceBlock.EAST, ((FenceBlock) blockState.getBlock()).canConnect(eastState, eastState.isSolidSide(world, pos.east(), Direction.WEST), Direction.WEST))
+              .with(FenceBlock.SOUTH, ((FenceBlock) blockState.getBlock()).canConnect(southState, southState.isSolidSide(world, pos.south(), Direction.NORTH), Direction.NORTH))
+              .with(FenceBlock.WEST, ((FenceBlock) blockState.getBlock()).canConnect(westState, westState.isSolidSide(world, pos.west(), Direction.EAST), Direction.EAST));
 
             if (!world.setBlockState(pos, fence, UPDATE_FLAG))
             {

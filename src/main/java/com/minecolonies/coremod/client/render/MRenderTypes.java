@@ -42,13 +42,13 @@ public final class MRenderTypes extends RenderType
      */
     public static RenderType customTextRenderer(@NotNull final ResourceLocation resourceLocation)
     {
-        final RenderType.State state = RenderType.State.builder()
+        final State state = State.getBuilder()
                                          .texture(new RenderState.TextureState(resourceLocation, false, false))//Texture state
                                          .alpha(RenderState.HALF_ALPHA)
                                          .depthTest(RenderState.DEPTH_ALWAYS)
                                          .build(true);
 
-        return RenderType.get("custommctextrenderer", format, 7, 256, true, false, state);
+        return makeType("custommctextrenderer", format, 7, 256, true, false, state);
     }
 
     /**
@@ -57,8 +57,7 @@ public final class MRenderTypes extends RenderType
      */
     public static RenderType customLineRenderer()
     {
-
-        return get("minecolonieslines", DefaultVertexFormats.POSITION_COLOR, 1, 256,
-          RenderType.State.builder().line(new RenderState.LineState(OptionalDouble.empty())).build(false));
+        return makeType("minecolonieslines", DefaultVertexFormats.POSITION_COLOR, 1, 256,
+          State.getBuilder().line(new RenderState.LineState(OptionalDouble.empty())).build(false));
     }
 }

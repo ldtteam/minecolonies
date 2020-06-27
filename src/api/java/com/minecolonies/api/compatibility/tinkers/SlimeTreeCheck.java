@@ -9,8 +9,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class SlimeTreeCheck extends SlimeTreeProxy
 {
-    private static final String TCONSTRUCT = "tconstruct";
-
     /**
      * Check if block is slime block.
      *

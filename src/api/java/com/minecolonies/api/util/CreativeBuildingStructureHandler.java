@@ -127,10 +127,13 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
         try
         {
             @NotNull final IStructureHandler structure = new CreativeBuildingStructureHandler(worldObj, pos, name, new PlacementSettings(mirror, rotation), fancyPlacement);
-            structure.getBluePrint().rotateWithMirror(rotation, mirror, worldObj);
+            if (structure.hasBluePrint())
+            {
+                structure.getBluePrint().rotateWithMirror(rotation, mirror, worldObj);
 
-            @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);
-            Manager.addToQueue(new TickedWorldOperation(instantPlacer, player));
+                @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);
+                Manager.addToQueue(new TickedWorldOperation(instantPlacer, player));
+            }
             return structure.getBluePrint();
         }
         catch (final IllegalStateException e)

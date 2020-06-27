@@ -45,7 +45,7 @@ public class UnlockBuildingResearchEffect extends AbstractResearchEffect<Boolean
     }
 
     @Override
-    public boolean overrides(@NotNull final IResearchEffect other)
+    public boolean overrides(@NotNull final IResearchEffect<?> other)
     {
         return false;
     }

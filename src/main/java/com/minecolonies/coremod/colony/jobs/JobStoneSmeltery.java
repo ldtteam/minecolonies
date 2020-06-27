@@ -3,14 +3,13 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.stonesmeltery.EntityAIWorkStoneSmeltery;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class of the Stone Smeltery job.
  */
-public class JobStoneSmeltery extends AbstractJobCrafter
+public class JobStoneSmeltery extends AbstractJobCrafter<EntityAIWorkStoneSmeltery, JobStoneSmeltery>
 {
     /**
      * Instantiates the job for the Stone Smeltery.
@@ -42,7 +41,7 @@ public class JobStoneSmeltery extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobStoneSmeltery> generateAI()
+    public EntityAIWorkStoneSmeltery generateAI()
     {
         return new EntityAIWorkStoneSmeltery(this);
     }

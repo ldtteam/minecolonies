@@ -23,5 +23,5 @@ public interface IJobDataManager
      * @return New Job created from the data, or null.
      */
     @Nullable
-    IJob createFrom(ICitizenData citizen, @NotNull CompoundNBT compound);
+    IJob<?> createFrom(ICitizenData citizen, @NotNull CompoundNBT compound);
 }

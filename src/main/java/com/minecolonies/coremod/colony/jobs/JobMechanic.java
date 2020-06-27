@@ -1,16 +1,17 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.mechanic.EntityAIWorkMechanic;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class of the Mechanic job.
  */
-public class JobMechanic extends AbstractJobCrafter
+public class JobMechanic extends AbstractJobCrafter<EntityAIWorkMechanic, JobMechanic>
 {
     /**
      * Instantiates the job for the Mechanic.
@@ -42,8 +43,15 @@ public class JobMechanic extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobMechanic> generateAI()
+    public EntityAIWorkMechanic generateAI()
     {
         return new EntityAIWorkMechanic(this);
+    }
+
+    @NotNull
+    @Override
+    public IModelType getModel()
+    {
+        return BipedModelType.MECHANIST;
     }
 }

@@ -303,7 +303,7 @@ public class BuildToolPasteMessage implements IMessage
             world.setBlockState(buildPos, state);
             if (!complete)
             {
-                ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
+                ((AbstractBlockHut<?>) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
                 setupBuilding(world, player, sn, rotation, buildPos, mirror);
             }
         }

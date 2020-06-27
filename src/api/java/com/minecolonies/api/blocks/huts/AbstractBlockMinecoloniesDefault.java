@@ -1,11 +1,10 @@
 package com.minecolonies.api.blocks.huts;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesContainer;
-import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.state.DirectionProperty;
 
-public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMinecoloniesDefault<B>> extends AbstractBlockMinecoloniesContainer<B> implements IBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMinecoloniesDefault<B>> extends AbstractBlockMinecoloniesContainer<B>
 {
     /**
      * The position it faces.
@@ -34,7 +33,7 @@ public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMi
     /**
      * Height of the collision box.
      */
-    public static final double            HEIGHT_COLLISION = 2.5;
+    public static final double            HEIGHT_COLLISION = 2.2;
     /**
      * Registry name for this block.
      */

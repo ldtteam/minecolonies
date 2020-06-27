@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  * Determines how the fish hook is rendered.
  */
 @OnlyIn(Dist.CLIENT)
-public class RenderFishHook extends EntityRenderer
+public class RenderFishHook extends EntityRenderer<Entity>
 {
     /**
      * The resource location containing the particle textures (Spawned by the fishHook).
@@ -32,7 +32,7 @@ public class RenderFishHook extends EntityRenderer
     /**
      * The render type of the hook.
      */
-    private static final RenderType RENDER_TYPE = RenderType.entityCutout(TEXTURE);
+    private static final RenderType RENDER_TYPE = RenderType.getEntityCutout(TEXTURE);
 
     /**
      * Required constructor, sets the RenderManager.
@@ -56,8 +56,8 @@ public class RenderFishHook extends EntityRenderer
             matrixStack.rotate(this.renderManager.getCameraOrientation());
             matrixStack.rotate(Vector3f.YP.rotationDegrees(180.0F));
             MatrixStack.Entry matrixstack$entry = matrixStack.getLast();
-            Matrix4f matrix4f = matrixstack$entry.getPositionMatrix();
-            Matrix3f matrix3f = matrixstack$entry.getNormalMatrix();
+            Matrix4f matrix4f = matrixstack$entry.getMatrix();
+            Matrix3f matrix3f = matrixstack$entry.getNormal();
             IVertexBuilder ivertexbuilder = iRenderTypeBuffer.getBuffer(RENDER_TYPE);
             func_229106_a_(ivertexbuilder, matrix4f, matrix3f, light, 0.0F, 0, 0, 1);
             func_229106_a_(ivertexbuilder, matrix4f, matrix3f, light, 1.0F, 0, 1, 1);
@@ -77,7 +77,6 @@ public class RenderFishHook extends EntityRenderer
             double d0 = (double) MathHelper.sin(f2);
             double d1 = (double) MathHelper.cos(f2);
             double d2 = (double) i * 0.35D;
-            double d3 = 0.8D;
             double d4;
             double d5;
             double d6;
@@ -110,9 +109,8 @@ public class RenderFishHook extends EntityRenderer
             float f4 = (float) (d4 - d9);
             float f5 = (float) (d5 - d10) + f3;
             float f6 = (float) (d6 - d8);
-            IVertexBuilder ivertexbuilder1 = iRenderTypeBuffer.getBuffer(RenderType.lines());
-            Matrix4f matrix4f1 = matrixStack.getLast().getPositionMatrix();
-            int j = 16;
+            IVertexBuilder ivertexbuilder1 = iRenderTypeBuffer.getBuffer(RenderType.getLines());
+            Matrix4f matrix4f1 = matrixStack.getLast().getMatrix();
 
             for (int k = 0; k < 16; ++k)
             {
@@ -141,7 +139,7 @@ public class RenderFishHook extends EntityRenderer
       int p_229106_7_)
     {
         p_229106_0_.pos(p_229106_1_, p_229106_4_ - 0.5F, (float) p_229106_5_ - 0.5F, 0.0F).color(255, 255, 255, 255).tex((float) p_229106_6_, (float) p_229106_7_).overlay(
-          OverlayTexture.DEFAULT_LIGHT).lightmap(p_229106_3_).normal(p_229106_2_, 0.0F, 1.0F, 0.0F).endVertex();
+          OverlayTexture.NO_OVERLAY).lightmap(p_229106_3_).normal(p_229106_2_, 0.0F, 1.0F, 0.0F).endVertex();
     }
 
     private static void func_229104_a_(float p_229104_0_, float p_229104_1_, float p_229104_2_, IVertexBuilder p_229104_3_, Matrix4f p_229104_4_, float p_229104_5_)

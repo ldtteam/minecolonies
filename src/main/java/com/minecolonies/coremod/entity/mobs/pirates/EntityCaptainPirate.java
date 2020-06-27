@@ -20,7 +20,7 @@ public class EntityCaptainPirate extends AbstractEntityPirate implements ICaptai
      * @param type the entity type.
      * @param worldIn world to construct it in.
      */
-    public EntityCaptainPirate(final EntityType type, final World worldIn)
+    public EntityCaptainPirate(final EntityType<? extends EntityCaptainPirate> type, final World worldIn)
     {
         super(type, worldIn);
     }

@@ -83,7 +83,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobSmelter(citizen);
     }

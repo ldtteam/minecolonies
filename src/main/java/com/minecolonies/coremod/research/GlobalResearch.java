@@ -55,7 +55,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The research effect of this research.
      */
-    private final IResearchEffect effect;
+    private final IResearchEffect<?> effect;
 
     /**
      * The depth level in the tree.
@@ -85,7 +85,7 @@ public class GlobalResearch implements IGlobalResearch
      * @param depth the depth in the tree.
      * @param branch the branch it is on.
      */
-    public GlobalResearch(final String id, final String branch, final String desc, final int depth, final IResearchEffect effect)
+    public GlobalResearch(final String id, final String branch, final String desc, final int depth, final IResearchEffect<?> effect)
     {
         this.id = id;
         this.desc = desc;
@@ -256,7 +256,7 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public IResearchEffect getEffect()
+    public IResearchEffect<?> getEffect()
     {
         return effect;
     }

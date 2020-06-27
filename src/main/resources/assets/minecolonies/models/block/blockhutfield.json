@@ -1,6 +1,6 @@
 {
   "ambientocclusion": false,
-  "parent": "builtin/generated",
+  "parent": "item/generated",
   "textures": {
     "layer0": "minecolonies:items/scarecrow"
   },

@@ -3,9 +3,7 @@ package com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.sounds.RaidSounds;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
@@ -15,12 +13,12 @@ import com.minecolonies.coremod.entity.mobs.egyptians.EntityPharao;
 import com.minecolonies.coremod.network.messages.client.PlayMusicMessage;
 import com.minecolonies.coremod.network.messages.client.StopMusicMessage;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 
 import static com.minecolonies.api.entity.ModEntities.*;
@@ -155,14 +153,6 @@ public class EgyptianRaidEvent extends HordeRaidEvent
         sendHordeMessage();
     }
 
-    @Override
-    protected void spawnHorde(final BlockPos spawnPos, final IColony colony, final int id, final int numberOfBosses, final int numberOfArchers, final int numberOfRaiders)
-    {
-        RaiderMobUtils.spawn(MUMMY, numberOfRaiders, spawnPos, colony.getWorld(), colony, id);
-        RaiderMobUtils.spawn(PHARAO, numberOfBosses, spawnPos, colony.getWorld(), colony, id);
-        RaiderMobUtils.spawn(ARCHERMUMMY, numberOfArchers, spawnPos, colony.getWorld(), colony, id);
-    }
-
     /**
      * Loads the event from the nbt compound.
      *
@@ -175,5 +165,23 @@ public class EgyptianRaidEvent extends HordeRaidEvent
         EgyptianRaidEvent event = new EgyptianRaidEvent(colony);
         event.readFromNBT(compound);
         return event;
+    }
+
+    @Override
+    public EntityType<?> getNormalRaiderType()
+    {
+        return MUMMY;
+    }
+
+    @Override
+    public EntityType<?> getArcherRaiderType()
+    {
+        return ARCHERMUMMY;
+    }
+
+    @Override
+    public EntityType<?> getBossRaiderType()
+    {
+        return PHARAO;
     }
 }

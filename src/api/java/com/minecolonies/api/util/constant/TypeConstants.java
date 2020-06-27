@@ -4,10 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.data.*;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
-import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
-import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
-import com.minecolonies.api.colony.requestsystem.requestable.Tool;
+import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
@@ -27,12 +24,12 @@ import java.util.UUID;
 public class TypeConstants
 {
     /////Java types
-    public static final TypeToken<Integer>   INTEGER   = TypeToken.of(Integer.class);
-    public static final TypeToken<TypeToken> TYPETOKEN = TypeToken.of(TypeToken.class);
-    public static final TypeToken<Class>     CLASS     = TypeToken.of(Class.class);
+    public static final TypeToken<Integer>      INTEGER   = TypeToken.of(Integer.class);
+    public static final TypeToken<TypeToken<?>> TYPETOKEN = TypeToken.of((Class<TypeToken<?>>) (Class<?>) TypeToken.class);
+    public static final TypeToken<Class<?>>     CLASS     = TypeToken.of((Class<Class<?>>) (Class<?>)  Class.class);
 
     /////General purpose
-    public static final TypeToken<IToken>           ITOKEN           = TypeToken.of(IToken.class);
+    public static final TypeToken<IToken<?>>        ITOKEN           = TypeToken.of((Class<IToken<?>>) (Class<?>) IToken.class);
     public static final TypeToken<ILocation>        ILOCATION        = TypeToken.of(ILocation.class);
     public static final TypeToken<UUID>             UUID             = TypeToken.of(UUID.class);
     public static final TypeToken<FactoryVoidInput> FACTORYVOIDINPUT = TypeToken.of(FactoryVoidInput.class);
@@ -41,6 +38,7 @@ public class TypeConstants
     public static final TypeToken<IRetryable>       RETRYABLE        = TypeToken.of(IRetryable.class);
     public static final TypeToken<RecipeStorage>    RECIPE           = TypeToken.of(RecipeStorage.class);
     public static final TypeToken<IDeliverable>     DELIVERABLE      = TypeToken.of(IDeliverable.class);
+    public static final TypeToken<Tag>              TAG_REQUEST      = TypeToken.of(Tag.class);
     public static final TypeToken<ItemStorage>      ITEMSTORAGE      = TypeToken.of(ItemStorage.class);
 
     /////Request system specific

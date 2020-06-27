@@ -2,16 +2,14 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.trainingcamps.EntityAICombatTraining;
 
 /**
  * The Knight's Training Job class
  */
-public class JobCombatTraining extends AbstractJob
+public class JobCombatTraining extends AbstractJob<EntityAICombatTraining, JobCombatTraining>
 {
     /**
      * Initialize citizen data.
@@ -48,7 +46,7 @@ public class JobCombatTraining extends AbstractJob
     }
 
     @Override
-    public AbstractAISkeleton<? extends IJob> generateAI()
+    public EntityAICombatTraining generateAI()
     {
         return new EntityAICombatTraining(this);
     }

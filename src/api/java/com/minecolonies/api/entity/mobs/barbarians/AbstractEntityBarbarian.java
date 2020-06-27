@@ -22,7 +22,7 @@ public abstract class AbstractEntityBarbarian extends AbstractEntityMinecolonies
      * @param type the type.
      * @param world the world.
      */
-    public AbstractEntityBarbarian(final EntityType type, final World world)
+    public AbstractEntityBarbarian(final EntityType<? extends AbstractEntityBarbarian> type, final World world)
     {
         super(type, world);
     }

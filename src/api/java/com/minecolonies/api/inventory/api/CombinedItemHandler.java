@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
@@ -65,7 +64,6 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
         this.defaultName = defaultName;
     }
 
-    @SuppressWarnings(RAWTYPES)
     @Override
     public CompoundNBT serializeNBT()
     {
@@ -78,7 +76,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
         {
             if (handlerModifiable instanceof INBTSerializable)
             {
-                final INBTSerializable serializable = (INBTSerializable) handlerModifiable;
+                final INBTSerializable<?> serializable = (INBTSerializable<?>) handlerModifiable;
                 handlerList.add(serializable.serializeNBT());
                 indexList.add(IntNBT.valueOf(index));
             }
@@ -97,7 +95,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
         return compound;
     }
 
-    @SuppressWarnings({RAWTYPES, UNCHECKED})
+    @SuppressWarnings(UNCHECKED)
     @Override
     public void deserializeNBT(final CompoundNBT nbt)
     {
@@ -112,7 +110,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
                 final IItemHandlerModifiable modifiable = handlers[indexList.getInt(i)];
                 if (modifiable instanceof INBTSerializable)
                 {
-                    final INBTSerializable serializable = (INBTSerializable) modifiable;
+                    final INBTSerializable<CompoundNBT> serializable = (INBTSerializable<CompoundNBT>) modifiable;
                     serializable.deserializeNBT(handlerCompound);
                 }
             }

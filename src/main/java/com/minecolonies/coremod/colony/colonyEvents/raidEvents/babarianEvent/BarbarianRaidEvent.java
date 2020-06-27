@@ -3,17 +3,16 @@ package com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import static com.minecolonies.api.entity.ModEntities.*;
 
 /**
@@ -103,14 +102,6 @@ public class BarbarianRaidEvent extends HordeRaidEvent
         sendHordeMessage();
     }
 
-    @Override
-    protected void spawnHorde(final BlockPos spawnPos, final IColony colony, final int id, final int numberOfBosses, final int numberOfArchers, final int numberOfRaiders)
-    {
-        RaiderMobUtils.spawn(BARBARIAN, numberOfRaiders, spawnPos, colony.getWorld(), colony, id);
-        RaiderMobUtils.spawn(CHIEFBARBARIAN, numberOfBosses, spawnPos, colony.getWorld(), colony, id);
-        RaiderMobUtils.spawn(ARCHERBARBARIAN, numberOfArchers, spawnPos, colony.getWorld(), colony, id);
-    }
-
     /**
      * Loads the event from the nbt compound.
      *
@@ -123,5 +114,23 @@ public class BarbarianRaidEvent extends HordeRaidEvent
         BarbarianRaidEvent event = new BarbarianRaidEvent(colony);
         event.readFromNBT(compound);
         return event;
+    }
+
+    @Override
+    public EntityType<?> getNormalRaiderType()
+    {
+        return BARBARIAN;
+    }
+
+    @Override
+    public EntityType<?> getArcherRaiderType()
+    {
+        return ARCHERBARBARIAN;
+    }
+
+    @Override
+    public EntityType<?> getBossRaiderType()
+    {
+        return CHIEFBARBARIAN;
     }
 }

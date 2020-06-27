@@ -18,16 +18,10 @@ public class PathJobMoveToLocation extends AbstractPathJob {
     private static final float DESTINATION_SLACK_NONE = 0.1F;
     // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
     private static final float DESTINATION_SLACK_ADJACENT = (float) Math.sqrt(2f);
-    private static final double TIE_BREAKER = 1.001D;
     @NotNull
     private final BlockPos destination;
     // 0 = exact match
     private float destinationSlack = DESTINATION_SLACK_NONE;
-
-    /**
-     * The manhattan distance between start and end.
-     */
-    private final double startEndDist;
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -43,8 +37,6 @@ public class PathJobMoveToLocation extends AbstractPathJob {
         super(world, start, end, range, entity);
 
         this.destination = new BlockPos(end);
-
-        startEndDist = Math.sqrt(start.distanceSq(end));
     }
 
     /**

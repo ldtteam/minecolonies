@@ -87,8 +87,8 @@ public final class BlockPosUtil
      * @param world           the world.
      * @param currentPosition the current position.
      * @param def             the default position if none was found.
-     * @param minDist the minimum distance of the pos.
-     * @param maxDist the maximum distance.
+     * @param minDist         the minimum distance of the pos.
+     * @param maxDist         the maximum distance.
      * @return the BlockPos.
      */
     public static BlockPos getRandomPosition(final World world, final BlockPos currentPosition, final BlockPos def, final int minDist, final int maxDist)
@@ -202,6 +202,18 @@ public final class BlockPosUtil
     }
 
     /**
+     * Returns a string representation of the block position for use in GUIs and chats.
+     *
+     * @param position The position of the string to be returned
+     * @return The string representation of the block position
+     */
+    @NotNull
+    public static String getString(@NotNull final BlockPos position)
+    {
+        return "{x=" + position.getX() + ", y=" + position.getY() + ", z=" + position.getZ() + "}";
+    }
+
+    /**
      * this checks that you are not in liquid.  Will check for all liquids, even
      * those from other mods before TP
      *
@@ -214,7 +226,7 @@ public final class BlockPosUtil
         return !(sender.getBlockState(blockPos).getBlock() instanceof AirBlock)
                  && !sender.getBlockState(blockPos).getMaterial().isLiquid()
                  && !sender.getBlockState(blockPos.down()).getMaterial().isLiquid()
-          && sender.getWorldBorder().contains(blockPos);
+                 && sender.getWorldBorder().contains(blockPos);
     }
 
     /**
@@ -275,14 +287,14 @@ public final class BlockPosUtil
         }
 
         while (returnHeight >= 1 && world.isAirBlock(new BlockPos(MathHelper.floor(position.x),
-                (int) returnHeight,
-                MathHelper.floor(position.z))))
+          (int) returnHeight,
+          MathHelper.floor(position.z))))
         {
             returnHeight -= 1.0D;
         }
 
         while (!world.isAirBlock(
-                new BlockPos(MathHelper.floor(position.x), (int) returnHeight, MathHelper.floor(position.z))))
+          new BlockPos(MathHelper.floor(position.x), (int) returnHeight, MathHelper.floor(position.z))))
         {
             returnHeight += 1.0D;
         }
@@ -381,7 +393,7 @@ public final class BlockPosUtil
      * @param world   World the block is in.
      * @param coords  Coordinates of the block.
      * @param fortune Level of fortune on the pickaxe.
-     * @param stack the tool.
+     * @param stack   the tool.
      * @return List of {@link ItemStack} with possible drops.
      */
     public static List<ItemStack> getBlockDrops(@NotNull final World world, @NotNull final BlockPos coords, final int fortune, final ItemStack stack)
@@ -574,7 +586,7 @@ public final class BlockPosUtil
      * Calculates the direction a position is from the building.
      *
      * @param building the building.
-     * @param pos    the position.
+     * @param pos      the position.
      * @return a string describing the direction.
      */
     public static String calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos pos)
@@ -592,7 +604,7 @@ public final class BlockPosUtil
 
         if (pos.getX() > building.getX() + 1)
         {
-            if(!dist.toString().isEmpty())
+            if (!dist.toString().isEmpty())
             {
                 dist.append('/');
             }
@@ -600,7 +612,7 @@ public final class BlockPosUtil
         }
         else if (pos.getX() < building.getX() - 1)
         {
-            if(!dist.toString().isEmpty())
+            if (!dist.toString().isEmpty())
             {
                 dist.append('/');
             }

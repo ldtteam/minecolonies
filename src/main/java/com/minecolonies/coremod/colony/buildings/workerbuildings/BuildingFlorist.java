@@ -88,7 +88,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobFlorist(citizen);
     }
@@ -200,6 +200,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
 
     /**
      * Get the plantables from the compatibility manager the florist can build at the current level.
+     *
      * @param level the building level.
      * @return the restricted list.
      */

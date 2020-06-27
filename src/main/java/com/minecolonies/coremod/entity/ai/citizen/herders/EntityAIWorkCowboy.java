@@ -20,7 +20,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 /**
  * The AI behind the {@link JobCowboy} for Breeding, Killing and Milking Cows.
  */
-public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEntity>
+public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, BuildingCowboy, CowEntity>
 {
     /**
      * Max amount of animals per Hut Level.
@@ -42,7 +42,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEnt
     }
 
     @Override
-    public Class<? extends BuildingCowboy> getExpectedBuildingClass()
+    public Class<BuildingCowboy> getExpectedBuildingClass()
     {
         return BuildingCowboy.class;
     }
@@ -86,7 +86,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEnt
     public List<ItemStack> getExtraItemsNeeded()
     {
         final List<ItemStack> list = super.getExtraItemsNeeded();
-        if (getOwnBuilding(BuildingCowboy.class).isMilkingCows())
+        if (getOwnBuilding().isMilkingCows())
         {
             list.add(new ItemStack(Items.BUCKET));
         }

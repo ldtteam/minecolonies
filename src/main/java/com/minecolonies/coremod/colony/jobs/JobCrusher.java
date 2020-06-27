@@ -4,14 +4,13 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.crusher.EntityAIWorkCrusher;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The crusher job class.
  */
-public class JobCrusher extends AbstractJobCrafter
+public class JobCrusher extends AbstractJobCrafter<EntityAIWorkCrusher, JobCrusher>
 {
     /**
      * Create a crusher job.
@@ -60,7 +59,7 @@ public class JobCrusher extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobCrusher> generateAI()
+    public EntityAIWorkCrusher generateAI()
     {
         return new EntityAIWorkCrusher(this);
     }

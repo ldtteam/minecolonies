@@ -18,12 +18,14 @@ import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,12 +48,12 @@ public final class StandardRequests
      */
     public static class ItemStackRequest extends AbstractRequest<Stack>
     {
-        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Stack requested)
+        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Stack requested)
         {
             super(requester, token, requested);
         }
 
-        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Stack requested)
+        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Stack requested)
         {
             super(requester, token, state, requested);
         }
@@ -89,7 +91,7 @@ public final class StandardRequests
          * @param token     the token assigned to this request.
          * @param requested the request data.
          */
-        public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final StackList requested)
+        public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final StackList requested)
         {
             super(requester, token, requested);
             this.displayList = ImmutableList.copyOf(requested.getStacks());
@@ -104,7 +106,7 @@ public final class StandardRequests
          * @param state     the state of the request.
          * @param requested the request data.
          */
-        public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final StackList requested)
+        public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final StackList requested)
         {
             super(requester, token, state, requested);
             this.displayList = ImmutableList.copyOf(requested.getStacks());
@@ -133,11 +135,56 @@ public final class StandardRequests
     }
 
     /**
+     * Request for a single ItemStack.
+     */
+    public static class ItemTagRequest extends AbstractRequest<Tag>
+    {
+
+        private List<ItemStack> stacks;
+
+        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Tag requested)
+        {
+            super(requester, token, requested);
+            stacks = requested.getTag().getAllElements().stream().flatMap(item -> {
+                final NonNullList<ItemStack> list = NonNullList.create();
+                item.fillItemGroup(item.getGroup(), list);
+                return list.stream();
+            }).collect(Collectors.toList());
+        }
+
+        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Tag requested)
+        {
+            super(requester, token, state, requested);
+            stacks = requested.getTag().getAllElements().stream().flatMap(item -> {
+                final NonNullList<ItemStack> list = NonNullList.create();
+                item.fillItemGroup(item.getGroup(), list);
+                return list.stream();
+            }).collect(Collectors.toList());
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getShortDisplayString()
+        {
+            final ITextComponent combined = new NonSiblingFormattingTextComponent();
+            combined.appendSibling(new StringTextComponent(getRequest().getCount() + " "));
+            combined.appendSibling(new StringTextComponent("#" + getRequest().getTag().getId().toString()));
+            return combined;
+        }
+
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            return Collections.unmodifiableList(this.stacks);
+        }
+    }
+
+    /**
      * Generic delivery request.
      */
     public static class DeliveryRequest extends AbstractRequest<Delivery>
     {
-        public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Delivery requested)
+        public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Delivery requested)
         {
             super(requester, token, state, requested);
         }
@@ -181,7 +228,7 @@ public final class StandardRequests
      */
     public static class PickupRequest extends AbstractRequest<Pickup>
     {
-        public PickupRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Pickup requested)
+        public PickupRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Pickup requested)
         {
             super(requester, token, state, requested);
         }
@@ -226,14 +273,14 @@ public final class StandardRequests
     public abstract static class AbstractCraftingRequest<C extends AbstractCrafting> extends AbstractRequest<C>
     {
 
-        protected AbstractCraftingRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final C requested)
+        protected AbstractCraftingRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final C requested)
         {
             super(requester, token, requested);
         }
 
         protected AbstractCraftingRequest(
           @NotNull final IRequester requester,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState state,
           @NotNull final C requested)
         {
@@ -281,7 +328,7 @@ public final class StandardRequests
 
         protected PrivateCraftingRequest(
           @NotNull final IRequester requester,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final PrivateCrafting requested)
         {
             super(requester, token, requested);
@@ -289,7 +336,7 @@ public final class StandardRequests
 
         protected PrivateCraftingRequest(
           @NotNull final IRequester requester,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState state, @NotNull final PrivateCrafting requested)
         {
             super(requester, token, state, requested);
@@ -316,7 +363,7 @@ public final class StandardRequests
 
         protected PublicCraftingRequest(
           @NotNull final IRequester requester,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final PublicCrafting requested)
         {
             super(requester, token, requested);
@@ -324,7 +371,7 @@ public final class StandardRequests
 
         protected PublicCraftingRequest(
           @NotNull final IRequester requester,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState state, @NotNull final PublicCrafting requested)
         {
             super(requester, token, state, requested);
@@ -348,12 +395,12 @@ public final class StandardRequests
      */
     public static class ToolRequest extends AbstractRequest<Tool>
     {
-        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Tool requested)
+        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Tool requested)
         {
             super(requester, token, requested);
         }
 
-        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Tool requested)
+        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Tool requested)
         {
             super(requester, token, state, requested);
         }
@@ -412,14 +459,14 @@ public final class StandardRequests
          */
         private static ImmutableList<ItemStack> foodExamples;
 
-        FoodRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Food requested)
+        FoodRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Food requested)
         {
             super(requester, token, requested);
         }
 
         FoodRequest(
           @NotNull final IRequester requester,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState state,
           @NotNull final Food requested)
         {
@@ -463,14 +510,14 @@ public final class StandardRequests
          */
         private static ImmutableList<ItemStack> oreExamples;
 
-        SmeltAbleOreRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final SmeltableOre requested)
+        SmeltAbleOreRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final SmeltableOre requested)
         {
             super(requester, token, requested);
         }
 
         SmeltAbleOreRequest(
           @NotNull final IRequester requester,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState state,
           @NotNull final SmeltableOre requested)
         {
@@ -511,14 +558,14 @@ public final class StandardRequests
          */
         private static ImmutableList<ItemStack> burnableExamples;
 
-        BurnableRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Burnable requested)
+        BurnableRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Burnable requested)
         {
             super(requester, token, requested);
         }
 
         BurnableRequest(
           @NotNull final IRequester requester,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState state,
           @NotNull final Burnable requested)
         {

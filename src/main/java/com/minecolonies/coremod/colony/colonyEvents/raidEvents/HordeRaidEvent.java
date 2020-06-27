@@ -11,7 +11,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.ColonyState;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateEventUtils;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -68,7 +68,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
     /**
      * List of respawns to do
      */
-    private List<Tuple<EntityType, BlockPos>> respawns = new ArrayList<>();
+    private List<Tuple<EntityType<?>, BlockPos>> respawns = new ArrayList<>();
 
     /**
      * Currently active campfires
@@ -191,6 +191,22 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
     }
 
     /**
+     * Spawn a specific horde.
+     * @param spawnPos the pos to spawn them at.
+     * @param colony the colony to spawn them for.
+     * @param id the raid event id.
+     * @param numberOfArchers the archers.
+     * @param numberOfBosses the bosses.
+     * @param numberOfRaiders the normal raiders.
+     */
+    protected void spawnHorde(final BlockPos spawnPos, final IColony colony, final int id, final int numberOfBosses, final int numberOfArchers, final int numberOfRaiders)
+    {
+        RaiderMobUtils.spawn(getNormalRaiderType(), numberOfRaiders, spawnPos, colony.getWorld(), colony, id);
+        RaiderMobUtils.spawn(getBossRaiderType(), numberOfBosses, spawnPos, colony.getWorld(), colony, id);
+        RaiderMobUtils.spawn(getArcherRaiderType(), numberOfArchers, spawnPos, colony.getWorld(), colony, id);
+    }
+
+    /**
      * Prepares the horde event, makes them wait at campfires for a while,deciding on their plans.
      */
     private void prepareEvent()
@@ -271,7 +287,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
     @Override
     public void onStart()
     {
-        final BlockPos spawnPos = PirateEventUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_SPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
+        final BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_SPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
         if (spawnPos == null)
         {
             status = EventStatus.CANCELED;
@@ -323,9 +339,9 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
 
         if (!respawns.isEmpty())
         {
-            for (final Tuple<EntityType, BlockPos> entry : respawns)
+            for (final Tuple<EntityType<?>, BlockPos> entry : respawns)
             {
-                final BlockPos spawnPos = PirateEventUtils.getLoadedPositionTowardsCenter(entry.getB(), colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
+                final BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(entry.getB(), colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
                 if (spawnPos != null)
                 {
                     RaiderMobUtils.spawn(entry.getA(), 1, spawnPos, colony.getWorld(), colony, id);
@@ -337,7 +353,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
 
         if (boss.size() + archers.size() + normal.size() < horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers)
         {
-            final BlockPos spawnPos = PirateEventUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
+            final BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
             if (spawnPos != null)
             {
                 spawnHorde(spawnPos, colony, id, horde.numberOfBosses - boss.size(), horde.numberOfArchers - archers.size(), horde.numberOfRaiders- normal.size());
@@ -352,17 +368,6 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
             }
         }
     }
-
-    /**
-     * Spawn a specific horde.
-     * @param spawnPos the pos to spawn them at.
-     * @param colony the colony to spawn them for.
-     * @param id the raid event id.
-     * @param numberOfArchers the archers.
-     * @param numberOfBosses the bosses.
-     * @param numberOfRaiders the normal raiders.
-     */
-    protected abstract void spawnHorde(final BlockPos spawnPos, final IColony colony, final int id, final int numberOfRaiders, final int numberOfBosses, final int numberOfArchers);
 
     /**
      * Sends the right horde message.
@@ -428,5 +433,11 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
         daysToGo = compound.getInt(TAG_DAYS_LEFT);
         killedCitizenInRaid = compound.getBoolean(TAG_KILLED);
+    }
+
+    @Override
+    public void addSpawner(final BlockPos pos)
+    {
+        // do noting
     }
 }

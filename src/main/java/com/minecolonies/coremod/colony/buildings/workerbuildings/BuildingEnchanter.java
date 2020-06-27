@@ -48,7 +48,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     /**
      * List of buildings the enchanter gathers experience from.
      */
-    private Map<BlockPos, Boolean> buildingToGatherFrom = new HashMap();
+    private Map<BlockPos, Boolean> buildingToGatherFrom = new HashMap<>();
 
     /**
      * The random variable.
@@ -69,7 +69,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobEnchanter(citizen);
     }
@@ -256,6 +256,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         {
             super.deserialize(buf);
             final int size = buf.readInt();
+            buildingToGatherFrom.clear();
             for (int i = 0; i < size; i++)
             {
                 buildingToGatherFrom.add(buf.readBlockPos());

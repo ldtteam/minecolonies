@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -29,7 +28,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for a hut name entry.
  */
-public class WindowDecorationController extends AbstractWindowSkeleton implements ButtonHandler
+public class WindowDecorationController extends AbstractWindowSkeleton
 {
     /**
      * The max length of the name.

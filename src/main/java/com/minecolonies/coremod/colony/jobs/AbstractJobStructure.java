@@ -17,7 +17,7 @@ import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.T
 /**
  * Common job object for all structure AIs.
  */
-public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J extends AbstractJob<AI, J>> extends AbstractJob<AI, J>
+public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J extends AbstractJobStructure<AI, J>> extends AbstractJob<AI, J>
 {
     /**
      * Tag to store the workOrder id.
@@ -123,7 +123,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      */
     public void complete()
     {
-        getWorkOrder().onCompleted(getCitizen().getColony());
+        getWorkOrder().onCompleted(getCitizen().getColony(), this.getCitizen());
 
         final TileEntity tileEntity = getColony().getWorld().getTileEntity(getWorkOrder().getBuildingLocation());
 

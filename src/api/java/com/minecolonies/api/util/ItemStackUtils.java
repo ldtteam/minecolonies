@@ -430,6 +430,7 @@ public final class ItemStackUtils
                  || !Block.getBlockFromItem(item).getDefaultState().getMaterial().isSolid();
     }
 
+    /*
     private static int getToolLevel(final String material)
     {
         if ("WOOD".equals(material)
@@ -451,6 +452,7 @@ public final class ItemStackUtils
         }
         return -1;
     }
+    */
 
     /**
      * This routine converts the material type of armor

@@ -112,7 +112,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
         {
             if (citizen.getJob() instanceof AbstractJobCrafter)
             {
-                final List<IToken<?>> assignedTaskIds = ((AbstractJobCrafter) citizen.getJob()).getAssignedTasksFromDataStore();
+                final List<IToken<?>> assignedTaskIds = ((AbstractJobCrafter<?, ?>) citizen.getJob()).getAssignedTasksFromDataStore();
                 for (final IToken<?> taskToken : assignedTaskIds)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
@@ -203,7 +203,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
         return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes (getBuildingLevel(), super.getRecipes().size());
     }

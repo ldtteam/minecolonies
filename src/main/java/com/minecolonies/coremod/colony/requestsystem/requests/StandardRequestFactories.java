@@ -61,7 +61,7 @@ public final class StandardRequestFactories
         public StandardRequests.ItemStackRequest getNewInstance(
           @NotNull final Stack input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.ItemStackRequest(location, token, initialState, input);
@@ -134,7 +134,7 @@ public final class StandardRequestFactories
         public StandardRequests.ItemStackListRequest getNewInstance(
           @NotNull final StackList input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.ItemStackListRequest(location, token, initialState, input);
@@ -184,6 +184,79 @@ public final class StandardRequestFactories
         {
             return deserializeFromNBT(controller, nbt, StackList::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackListRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
+    }
+
+    @SuppressWarnings(Suppression.BIG_CLASS)
+    public static final class ItemTagRequestFactory implements IRequestFactory<Tag, StandardRequests.ItemTagRequest>
+    {
+        /**
+         * Method to get a new instance of a request given the input and token.
+         *
+         * @param input        The input to build a new request for.
+         * @param location     The location of the requester.
+         * @param token        The token to build the request from.
+         * @param initialState The initial state of the request request.
+         * @return The new output instance for a given input.
+         */
+        @Override
+        public StandardRequests.ItemTagRequest getNewInstance(
+          @NotNull final Tag input,
+          @NotNull final IRequester location,
+          @NotNull final IToken<?> token,
+          @NotNull final RequestState initialState)
+        {
+            return new StandardRequests.ItemTagRequest(location, token, initialState, input);
+        }
+
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public TypeToken<StandardRequests.ItemTagRequest> getFactoryOutputType()
+        {
+            return TypeToken.of(StandardRequests.ItemTagRequest.class);
+        }
+
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public TypeToken<Tag> getFactoryInputType()
+        {
+            return TypeToken.of(Tag.class);
+        }
+
+        /**
+         * Method to serialize a given Request.
+         *
+         * @param controller The controller that can be used to serialize complicated types.
+         * @param request    The request to serialize.
+         * @return The serialized data of the given requets.
+         */
+        @NotNull
+        @Override
+        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest request)
+        {
+            return serializeToNBT(controller, request, Tag::serialize);
+        }
+
+        /**
+         * Method to deserialize a given Request.
+         *
+         * @param controller The controller that can be used to deserialize complicated types.
+         * @param nbt        The data of the request that should be deserialized.
+         * @return The request that corresponds with the given data in the nbt
+         */
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        {
+            return deserializeFromNBT(controller, nbt, Tag::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemTagRequest.class),
                 requested,
                 token,
                 requester,
@@ -258,7 +331,7 @@ public final class StandardRequestFactories
         public StandardRequests.DeliveryRequest getNewInstance(
           @NotNull final Delivery input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.DeliveryRequest(location, token, initialState, input);
@@ -332,7 +405,7 @@ public final class StandardRequestFactories
         public StandardRequests.PickupRequest getNewInstance(
           @NotNull final Pickup input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.PickupRequest(location, token, initialState, input);
@@ -438,7 +511,7 @@ public final class StandardRequestFactories
         public StandardRequests.ToolRequest getNewInstance(
           @NotNull final Tool input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.ToolRequest(location, token, initialState, input);
@@ -486,7 +559,7 @@ public final class StandardRequestFactories
         public StandardRequests.FoodRequest getNewInstance(
           @NotNull final Food input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.FoodRequest(location, token, initialState, input);
@@ -534,7 +607,7 @@ public final class StandardRequestFactories
         public StandardRequests.SmeltAbleOreRequest getNewInstance(
           @NotNull final SmeltableOre input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.SmeltAbleOreRequest(location, token, initialState, input);
@@ -582,7 +655,7 @@ public final class StandardRequestFactories
         public StandardRequests.BurnableRequest getNewInstance(
           @NotNull final Burnable input,
           @NotNull final IRequester location,
-          @NotNull final IToken token,
+          @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
         {
             return new StandardRequests.BurnableRequest(location, token, initialState, input);
@@ -642,7 +715,7 @@ public final class StandardRequestFactories
         final CompoundNBT requestedCompound = typeSerialization.apply(controller, request.getRequest());
 
         final ListNBT childrenCompound = new ListNBT();
-        for (final IToken token : request.getChildren())
+        for (final IToken<?> token : request.getChildren())
         {
             childrenCompound.add(controller.serialize(token));
         }
@@ -679,11 +752,11 @@ public final class StandardRequestFactories
       final IObjectConstructor<T, R> objectConstructor)
     {
         final IRequester requester = controller.deserialize(compound.getCompound(NBT_REQUESTER));
-        final IToken token = controller.deserialize(compound.getCompound(NBT_TOKEN));
+        final IToken<?> token = controller.deserialize(compound.getCompound(NBT_TOKEN));
         final RequestState state = RequestState.deserializeNBT((IntNBT) compound.get(NBT_STATE));
         final T requested = typeDeserialization.apply(controller, compound.getCompound(NBT_REQUESTED));
 
-        final List<IToken> childTokens = new ArrayList<>();
+        final List<IToken<?>> childTokens = new ArrayList<>();
         final ListNBT childCompound = compound.getList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < childCompound.size(); i++)
         {
@@ -731,6 +804,6 @@ public final class StandardRequestFactories
     @FunctionalInterface
     public interface IObjectConstructor<T, O>
     {
-        O construct(@NotNull final T requested, @NotNull final IToken token, @NotNull final IRequester requester, @NotNull final RequestState requestState);
+        O construct(@NotNull final T requested, @NotNull final IToken<?> token, @NotNull final IRequester requester, @NotNull final RequestState requestState);
     }
 }

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <T>  The type of requesttoken.
  * @param <RT> The requesttoken type.
  */
-public interface ITokenFactory<T, RT extends IToken> extends IFactory<T, RT>
+public interface ITokenFactory<T, RT extends IToken<?>> extends IFactory<T, RT>
 {
 
     /**

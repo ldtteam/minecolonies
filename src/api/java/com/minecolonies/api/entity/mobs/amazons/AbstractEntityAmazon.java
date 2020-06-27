@@ -23,7 +23,7 @@ public abstract class AbstractEntityAmazon extends AbstractEntityMinecoloniesMob
      * @param type the type.
      * @param world the world.
      */
-    public AbstractEntityAmazon(final EntityType type, final World world)
+    public AbstractEntityAmazon(final EntityType<? extends AbstractEntityAmazon> type, final World world)
     {
         super(type, world);
     }

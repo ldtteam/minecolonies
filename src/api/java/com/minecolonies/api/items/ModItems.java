@@ -13,6 +13,7 @@ public final class ModItems
     public static Item supplyChest;
     public static Item permTool;
     public static Item scepterGuard;
+    public static Item bannerRallyGuards;
     public static Item supplyCamp;
     public static Item ancientTome;
     public static Item chiefSword;
@@ -20,6 +21,7 @@ public final class ModItems
     public static Item scepterLumberjack;
     public static Item pharaoscepter;
     public static Item firearrow;
+    public static Item scepterBeekeeper;
 
     public static Item clipboard;
     public static Item compost;

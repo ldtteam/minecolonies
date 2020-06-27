@@ -14,11 +14,11 @@ public interface IResearchEffectManager
      * @param <W> the Generic type.
      * @return one of the expected type or null.
      */
-    <W extends IResearchEffect> W getEffect(final String id, @NotNull final Class<W> type);
+    <W extends IResearchEffect<?>> W getEffect(final String id, @NotNull final Class<W> type);
 
     /**
      * Apply the effect to the research effects class.
      * @param effect the effect to apply.
      */
-    void applyEffect(final IResearchEffect effect);
+    void applyEffect(final IResearchEffect<?> effect);
 }

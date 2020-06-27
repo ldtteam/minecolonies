@@ -18,7 +18,7 @@ public class BlockStateUtils
      * Hashmap which links a block class + property name to its IProperty object
      * Used to shorten name searches
      */
-    private static final Map<String, IProperty> propertyBlockMap = new HashMap<>();
+    private static final Map<String, IProperty<?>> propertyBlockMap = new HashMap<>();
 
     /**
      * Private constructor to hide the public one.
@@ -63,14 +63,14 @@ public class BlockStateUtils
      */
     public static boolean stateEqualsStateInPropertyByName(@NotNull final BlockState state1, @NotNull final BlockState state2, @NotNull final String propertyName)
     {
-        final IProperty propertyOne = getPropertyByNameFromState(state1, propertyName);
+        final IProperty<?> propertyOne = getPropertyByNameFromState(state1, propertyName);
 
         if (propertyOne != null && state2.getProperties().contains(propertyOne))
         {
             return state1.get(propertyOne) == state2.get(propertyOne);
         }
 
-        final IProperty propertyTwo = getPropertyByNameFromState(state2, propertyName);
+        final IProperty<?> propertyTwo = getPropertyByNameFromState(state2, propertyName);
 
         if (propertyOne != null && propertyTwo != null && state1.getProperties().contains(propertyOne) && state2.getProperties().contains(propertyTwo))
         {
@@ -87,9 +87,9 @@ public class BlockStateUtils
      * @param name  name of the property to find
      * @return the property.
      */
-    public static IProperty getPropertyByNameFromState(@NotNull final BlockState state, @NotNull final String name)
+    public static IProperty<?> getPropertyByNameFromState(@NotNull final BlockState state, @NotNull final String name)
     {
-        IProperty property = propertyBlockMap.get(state.getBlock().getRegistryName().toString() + ":" + name);
+        IProperty<?> property = propertyBlockMap.get(state.getBlock().getRegistryName().toString() + ":" + name);
 
         if (property != null && state.getProperties().contains(property))
         {
@@ -115,9 +115,9 @@ public class BlockStateUtils
      * @param name       the property name we're looking for
      * @return IProperty object found
      */
-    public static IProperty getPropertyByName(@NotNull final Collection<IProperty<?>> properties, @NotNull final String name)
+    public static IProperty<?> getPropertyByName(@NotNull final Collection<IProperty<?>> properties, @NotNull final String name)
     {
-        for (final IProperty tProperty : properties)
+        for (final IProperty<?> tProperty : properties)
         {
             if (tProperty.getName().equals(name))
             {
@@ -135,7 +135,7 @@ public class BlockStateUtils
      * @param prop   IProperty to not compare
      * @return true if states are equal without the property
      */
-    public static boolean stateEqualsStateWithoutProp(@NotNull final BlockState state1, @NotNull final BlockState state2, @NotNull final IProperty prop)
+    public static <T extends Comparable<T>> boolean stateEqualsStateWithoutProp(@NotNull final BlockState state1, @NotNull final BlockState state2, @NotNull final IProperty<T> prop)
     {
         if (!state1.getProperties().contains(prop) || !state2.getProperties().contains(prop))
         {
@@ -169,7 +169,7 @@ public class BlockStateUtils
             return false;
         }
 
-        for (final IProperty prop : state1.getProperties())
+        for (final IProperty<?> prop : state1.getProperties())
         {
             if (!state2.getProperties().contains(prop))
             {

@@ -92,7 +92,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobDeliveryman(citizen);
     }

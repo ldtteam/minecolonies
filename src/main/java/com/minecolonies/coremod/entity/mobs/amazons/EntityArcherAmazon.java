@@ -15,7 +15,7 @@ public class EntityArcherAmazon extends AbstractEntityAmazon implements IArcherA
      * @param worldIn world to construct it in.
      * @param type the entity type.
      */
-    public EntityArcherAmazon(final EntityType type, final World worldIn)
+    public EntityArcherAmazon(final EntityType<? extends EntityArcherAmazon> type, final World worldIn)
     {
         super(type, worldIn);
     }

@@ -11,7 +11,7 @@ import static com.minecolonies.api.util.constant.Constants.PARAMS_RESEARCH_EFFEC
 /**
  * Interface for the IResearchEffectFactory which is responsible for creating and maintaining ResearchEffect objects.
  */
-public interface IResearchEffectFactory<T extends IResearchEffect> extends IFactory<FactoryVoidInput, T>
+public interface IResearchEffectFactory<T extends IResearchEffect<?>> extends IFactory<FactoryVoidInput, T>
 {
     @NotNull
     @Override

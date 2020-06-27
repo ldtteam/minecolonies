@@ -11,9 +11,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobBlacksmith;
@@ -22,8 +20,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
@@ -63,7 +62,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobBlacksmith(citizen);
     }
@@ -90,49 +89,38 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        if(!super.canRecipeBeAdded(token))
+
+        Optional<Boolean> isRecipeAllowed;
+
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        if (isRecipeAllowed.isPresent())
         {
-            return false;
+            return isRecipeAllowed.get();
+        }
+        else
+        {
+            // Additional recipe rules
+
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+            final ItemStack output = storage.getPrimaryOutput();
+            return output.getItem() instanceof ToolItem ||
+                     output.getItem() instanceof SwordItem ||
+                     output.getItem() instanceof ArmorItem ||
+                     output.getItem() instanceof HoeItem ||
+                     output.getItem() instanceof ShieldItem ||
+                     Compatibility.isTinkersWeapon(output);
+
+            // End Additional recipe rules
         }
 
-        final int size = storage.getCleanedInput().size();
-        int ingots = 0;
-        int nuggets = 0;
-        for(final ItemStorage itemStorage : storage.getCleanedInput())
-        {
-            final ItemStack stack = itemStorage.getItemStack();
-            if (!ItemStackUtils.isEmpty(stack))
-            {
-                if (stack.getItem().isIn(Tags.Items.INGOTS))
-                {
-                    ingots++;
-                    break;
-                }
-                else if (stack.getItem().isIn(Tags.Items.NUGGETS))
-                {
-                    nuggets++;
-                    break;
-                }
-            }
-        }
-
-        final ItemStack output = storage.getPrimaryOutput();
-        return output.getItem() instanceof ToolItem ||
-                output.getItem() instanceof SwordItem ||
-                output.getItem() instanceof ArmorItem ||
-                output.getItem() instanceof HoeItem ||
-                output.getItem() instanceof ShieldItem ||
-                Compatibility.isTinkersWeapon(output) ||
-                ingots == size ||
-                nuggets == size;
     }
 
     @Override

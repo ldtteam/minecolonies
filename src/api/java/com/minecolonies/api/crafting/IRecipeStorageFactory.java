@@ -16,11 +16,11 @@ import static com.minecolonies.api.util.constant.Constants.MIN_PARAMS_IRECIPESTO
 /**
  * Interface for the IRecipeStorageFactory which is responsible for creating and maintaining RecipeStorage objects.
  */
-public interface IRecipeStorageFactory extends IFactory<IToken, RecipeStorage>
+public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage>
 {
     @NotNull
     @Override
-    default RecipeStorage getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final IToken token, @NotNull final Object... context)
+    default RecipeStorage getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final IToken<?> token, @NotNull final Object... context)
     {
         if (context.length < MIN_PARAMS_IRECIPESTORAGE || context.length > MAX_PARAMS_IRECIPESTORAGE)
         {
@@ -65,7 +65,7 @@ public interface IRecipeStorageFactory extends IFactory<IToken, RecipeStorage>
      */
     @NotNull
     RecipeStorage getNewInstance(
-            @NotNull final IToken token,
+            @NotNull final IToken<?> token,
             @NotNull final List<ItemStack> input,
             final int gridSize,
             @NotNull final ItemStack primaryOutput,

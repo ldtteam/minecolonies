@@ -364,7 +364,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param shouldTriggerReassign The predicate to determine if the request should be reassigned.
      */
     @Override
-    public void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign)
+    public void onColonyUpdate(@NotNull final Predicate<IRequest<?>> shouldTriggerReassign)
     {
         getResolverHandler().onColonyUpdate(shouldTriggerReassign);
     }

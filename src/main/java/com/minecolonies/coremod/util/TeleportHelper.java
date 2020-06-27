@@ -127,7 +127,7 @@ public final class TeleportHelper
         player.stopRiding();
         if (player.isSleeping())
         {
-            player.func_225652_a_(true, true);
+            player.stopSleepInBed(true, true);
         }
 
         player.teleport(world, position.getX(), position.getY() + 2.0, position.getZ(), player.rotationYaw, player.rotationPitch);

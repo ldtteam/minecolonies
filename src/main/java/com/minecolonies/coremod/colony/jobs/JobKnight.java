@@ -18,7 +18,7 @@ import static com.minecolonies.api.util.constant.GuardConstants.KNIGHT_HP_BONUS;
  *
  * @author Asherslab
  */
-public class JobKnight extends AbstractJobGuard
+public class JobKnight extends AbstractJobGuard<JobKnight>
 {
     /**
      * Desc of knight job.
@@ -41,7 +41,7 @@ public class JobKnight extends AbstractJobGuard
      * @return The AI.
      */
     @Override
-    public AbstractEntityAIGuard generateGuardAI()
+    public EntityAIKnight generateGuardAI()
     {
         return new EntityAIKnight(this);
     }

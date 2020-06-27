@@ -17,7 +17,7 @@ public class EntityPirate extends AbstractEntityPirate implements IMeleePirateEn
      * @param type the entity type.
      * @param worldIn world to construct it in.
      */
-    public EntityPirate(final EntityType type, final World worldIn)
+    public EntityPirate(final EntityType<? extends EntityPirate> type, final World worldIn)
     {
         super(type, worldIn);
         this.moveController = new MovementHandler(this);

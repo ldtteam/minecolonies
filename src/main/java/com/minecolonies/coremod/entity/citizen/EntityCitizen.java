@@ -69,6 +69,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -88,7 +89,6 @@ import java.util.Objects;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
-import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
@@ -107,7 +107,12 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * The amount of damage a guard takes on blocking.
      */
-    private static final float                     GUARD_BLOCK_DAMAGE  = 0.5f;
+    private static final float GUARD_BLOCK_DAMAGE = 0.5f;
+    /**
+     * Max speed factor.
+     */
+    private static final double MAX_SPEED_FACTOR     = 0.5;
+
     /**
      * The citizen status handler.
      */
@@ -280,7 +285,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (CompatibilityUtils.getWorldFromCitizen(this).isRemote)
         {
-            if (player.isShiftKeyDown())
+            if (player.isSneaking())
             {
                 Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getFormattedText(), this.getEntityId()));
             }
@@ -296,11 +301,18 @@ public class EntityCitizen extends AbstractEntityCitizen
         return true;
     }
 
+    @Override
+    public String getScoreboardName()
+    {
+        return getName().getFormattedText() + " (" + getCitizenId() + ")";
+    }
+
     /**
      * Getter of the dataview, the clientside representation of the citizen.
      *
      * @return the view.
      */
+    @Override
     public ICitizenDataView getCitizenDataView()
     {
         if (this.citizenDataView == null)
@@ -335,7 +347,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         compound.putBoolean(TAG_DAY, isDay);
-        compound.putBoolean(TAG_CHILD, child);
         compound.putBoolean(TAG_MOURNING, mourning);
 
         citizenDiseaseHandler.write(compound);
@@ -356,7 +367,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         isDay = compound.getBoolean(TAG_DAY);
-        setIsChild(compound.getBoolean(TAG_CHILD));
 
         if (compound.keySet().contains(TAG_MOURNING))
         {
@@ -367,7 +377,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             this.dataBackup = compound;
         }
-
 
         citizenDiseaseHandler.read(compound);
     }
@@ -583,6 +592,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
         citizenItemHandler.pickupItems();
         citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+
         this.getNavigator().getPathingOptions().setCanUseRails(canPathOnRails());
 
         if (citizenData != null)
@@ -604,6 +614,9 @@ public class EntityCitizen extends AbstractEntityCitizen
             final AttributeModifier healthModLevel = new AttributeModifier(HEALTH, healthEffect.getEffect(), AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(this, healthModLevel);
         }
+
+        getDataManager().set(DATA_STYLE, citizenColonyHandler.getColony().getStyle());
+        getDataManager().set(DATA_TEXTURE_SUFFIX, citizenData.getTextureSuffix());
     }
 
     private void updateCitizenStatus()
@@ -924,7 +937,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void spawnEatingParticle()
     {
-        super.func_226293_b_(getHeldItemMainhand(), EATING_PARTICLE_COUNT);
+        super.triggerItemUseEffects(getHeldItemMainhand(), EATING_PARTICLE_COUNT);
     }
 
     /**
@@ -1312,6 +1325,26 @@ public class EntityCitizen extends AbstractEntityCitizen
         return false;
     }
 
+    @Override
+    public void move(final MoverType typeIn, final Vec3d pos)
+    {
+        //todo someaddons: removse this on the minimum AI rework.
+        if (pos.x != 0 || pos.z != 0)
+        {
+            if (getCitizenData() != null && getCitizenData().isAsleep())
+            {
+                getCitizenSleepHandler().onWakeUp();
+            }
+        }
+        super.move(typeIn, pos);
+    }
+
+    @Override
+    public float getAIMoveSpeed()
+    {
+        return (float) Math.min(MAX_SPEED_FACTOR, super.getAIMoveSpeed());
+    }
+
     private boolean handleDamagePerformed(@NotNull final DamageSource damageSource, final float damage, final Entity sourceEntity)
     {
         float damageInc = Math.min(damage, (getMaxHealth() * 0.2f));
@@ -1436,7 +1469,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
                 // Checking for guard nearby
                 if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId() && tdist < guardDistance && entry.getJob().getWorkerAI() != null
-                      && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
+                      && ((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
                 {
                     guardDistance = tdist;
                     guard = entry.getCitizenEntity().get();
@@ -1446,7 +1479,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (guard != null)
         {
-            ((AbstractEntityAIGuard) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
+            ((AbstractEntityAIGuard<?, ?>) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
         }
     }
 
@@ -1488,7 +1521,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
             InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) posX, (int) posY, (int) posZ);
-
         }
         super.onDeath(damageSource);
     }
@@ -1499,7 +1531,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @param source The damage source.
      * @param job    The job of the citizen.
      */
-    private void triggerDeathAchievement(final DamageSource source, final IJob job)
+    private void triggerDeathAchievement(final DamageSource source, final IJob<?> job)
     {
         // If the job is null, then we can trigger jobless citizen achievement
         if (job != null)
@@ -1616,7 +1648,15 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public Team getTeam()
     {
-        return this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.getCitizenColonyHandler().getColonyId());
+        if (getCitizenColonyHandler().getColony() != null)
+        {
+            return getCitizenColonyHandler().getColony().getTeam();
+        }
+        else
+        {
+            // Note: This function has always returned null on the client-side when the colony is not available yet.
+            return null;
+        }
     }
 
     @Override
@@ -1743,6 +1783,12 @@ public class EntityCitizen extends AbstractEntityCitizen
         buffer.writeVarInt(citizenColonyHandler.getColonyId());
         buffer.writeVarInt(citizenId);
         return new ContainerCitizenInventory(id, inv, buffer);
+    }
+
+    @Override
+    public void setTexture()
+    {
+        super.setTexture();
     }
 
     /**

@@ -170,7 +170,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobStudent(citizen);
     }

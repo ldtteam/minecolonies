@@ -17,7 +17,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_M
  *
  * @author Asherslab
  */
-public class JobRanger extends AbstractJobGuard
+public class JobRanger extends AbstractJobGuard<JobRanger>
 {
     /**
      * The name associated with the job.
@@ -40,7 +40,7 @@ public class JobRanger extends AbstractJobGuard
      * @return The AI.
      */
     @Override
-    public AbstractEntityAIGuard generateGuardAI()
+    public EntityAIRanger generateGuardAI()
     {
         return new EntityAIRanger(this);
     }

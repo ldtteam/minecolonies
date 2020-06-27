@@ -8,6 +8,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
+import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import net.minecraft.block.AirBlock;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
@@ -20,12 +21,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.PLANT_2;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 
 /**
  * Planter AI class.
  */
-public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAICrafting<J>
+public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, BuildingPlantation>
 {
     /**
      * Return to chest after this amount of stacks.
@@ -47,7 +49,7 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
      *
      * @param job a planter job to use.
      */
-    public EntityAIWorkPlanter(@NotNull final J job)
+    public EntityAIWorkPlanter(@NotNull final JobPlanter job)
     {
         super(job);
         super.registerTargets(
@@ -73,7 +75,7 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
             return getState();
         }
 
-        final ItemStack currentStack = new ItemStack(getOwnBuilding(BuildingPlantation.class).getCurrentPhase());
+        final ItemStack currentStack = new ItemStack(getOwnBuilding().getCurrentPhase());
         final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(currentStack));
         if (plantInInv <= 0)
         {
@@ -133,12 +135,11 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
     }
 
     @Override
-    public Class<? extends BuildingPlantation> getExpectedBuildingClass()
+    public Class<BuildingPlantation> getExpectedBuildingClass()
     {
         return BuildingPlantation.class;
     }
 
-    //todo check on healer
     @Override
     protected IAIState decide()
     {
@@ -148,7 +149,7 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
             return nextState;
         }
 
-        final BuildingPlantation plantation = getOwnBuilding(BuildingPlantation.class);
+        final BuildingPlantation plantation = getOwnBuilding();
 
         final List<BlockPos> list = plantation.getPosForPhase(world);
         for (final BlockPos pos : list)
@@ -184,6 +185,12 @@ public class EntityAIWorkPlanter<J extends JobPlanter> extends AbstractEntityAIC
                 this.workPos = pos;
                 return PLANTATION_PLANT;
             }
+        }
+
+        final UnlockAbilityResearchEffect researchEffect = plantation.getColony().getResearchManager().getResearchEffects().getEffect(PLANT_2, UnlockAbilityResearchEffect.class);
+        if (researchEffect != null && researchEffect.getEffect())
+        {
+            plantation.nextPhase();
         }
 
         return START_WORKING;

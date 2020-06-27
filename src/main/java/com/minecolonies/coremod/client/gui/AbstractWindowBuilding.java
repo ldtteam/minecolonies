@@ -90,14 +90,18 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
     private void buildClicked()
     {
         final String buttonLabel = buttonBuild.getLabel();
-        if (buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelBuild"))
-              || buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelUpgrade")))
+        if (buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelbuild"))
+              || buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelupgrade")))
         {
-            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD, BlockPos.ZERO));
+            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.BUILD, BlockPos.ZERO));
         }
-        else if (buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelRepair")))
+        else if (buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelrepair")))
         {
-            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR, BlockPos.ZERO));
+            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, BlockPos.ZERO));
+        }
+        else if (buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.canceldeconstruction")))
+        {
+            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, BlockPos.ZERO));
         }
         else
         {
@@ -164,20 +168,24 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
         {
             if (buildingView.getBuildingLevel() == 0)
             {
-                buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelBuild"));
+                buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelbuild"));
             }
             else
             {
-                buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelUpgrade"));
+                buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelupgrade"));
             }
         }
         else if (buildingView.isRepairing())
         {
-            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelRepair"));
+            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelrepair"));
+        }
+        else if (buildingView.isDeconstructing())
+        {
+            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.canceldeconstruction"));
         }
         else
         {
-            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.buildRepair"));
+            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.buildrepair"));
         }
     }
 

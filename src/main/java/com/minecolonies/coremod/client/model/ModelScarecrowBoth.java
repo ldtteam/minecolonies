@@ -30,7 +30,7 @@ public class ModelScarecrowBoth extends Model
 
     public ModelScarecrowBoth()
     {
-        super(RenderType::entityCutoutNoCull);
+        super(RenderType::getEntityCutoutNoCull);
         textureWidth = 128;
         textureHeight = 64;
         head = new ModelRenderer(this, 0, 0);

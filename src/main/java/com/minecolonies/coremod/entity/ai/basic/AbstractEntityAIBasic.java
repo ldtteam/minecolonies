@@ -38,8 +38,10 @@ import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -63,7 +65,6 @@ import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -73,7 +74,7 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  *
  * @param <J> The job this ai has to fulfil
  */
-public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends AbstractAISkeleton<J>
+public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B extends AbstractBuildingWorker> extends AbstractAISkeleton<J>
 {
     /**
      * The standard delay after each terminated action.
@@ -268,10 +269,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     @Nullable
-    public <W extends AbstractBuildingWorker> W getOwnBuilding()
+    public B getOwnBuilding()
     {
-        final IBuildingWorker worker = getOwnBuilding(getExpectedBuildingClass());
-        return worker == null ? null : (W) worker;
+        return getOwnBuilding(getExpectedBuildingClass());
     }
 
     /**
@@ -279,27 +279,29 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return the building type associated with this AI's worker.
      */
-    public Class<? extends AbstractBuildingWorker> getExpectedBuildingClass()
-    {
-        return AbstractBuildingWorker.class;
-    }
+    public abstract Class<B> getExpectedBuildingClass();
 
     /**
      * Can be overridden in implementations to return the exact building type.
      *
-     * @param <W>  the building type.
      * @param type the type.
      * @return the building associated with this AI's worker.
      */
     @Nullable
-    public <W extends AbstractBuildingWorker> W getOwnBuilding(@NotNull final Class<W> type)
+    @SuppressWarnings("unchecked")
+    private B getOwnBuilding(@NotNull final Class<B> type)
     {
         if (type.isInstance(worker.getCitizenColonyHandler().getWorkBuilding()))
         {
-            return (W) worker.getCitizenColonyHandler().getWorkBuilding();
+            return (B) worker.getCitizenColonyHandler().getWorkBuilding();
         }
         else
         {
+            Log.getLogger().warn("Citizen {} has lost its building, type does not match found {} expected {}.",
+                worker.getCitizenData().getName(),
+                getExpectedBuildingClass().getSimpleName(),
+                type.getSimpleName());
+
             if (worker.getCitizenData() != null)
             {
                 worker.getCitizenData().setJob(null);
@@ -323,7 +325,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 final String name = this.worker.getName().getFormattedText();
                 final BlockPos workerPosition = worker.getPosition();
-                final IJob colonyJob = worker.getCitizenJobHandler().getColonyJob();
+                final IJob<?> colonyJob = worker.getCitizenJobHandler().getColonyJob();
                 final String jobName = colonyJob == null ? "null" : colonyJob.getName();
                 Log.getLogger().error("Pausing Entity " + name + " (" + jobName + ") at " + workerPosition + " for " + timeout + " Seconds because of error:");
             }
@@ -400,7 +402,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @Nullable
     private IAIState initSafetyChecks()
     {
-        if (null == getOwnBuilding() || worker.getCitizenData() == null)
+        if (null == worker.getCitizenJobHandler().getColonyJob() || null == getOwnBuilding() || worker.getCitizenData() == null)
         {
             return INIT;
         }
@@ -427,7 +429,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
         {
-            for (final IRequest request : getOwnBuilding().getOpenRequests(worker.getCitizenData()))
+            for (final IRequest<?> request : getOwnBuilding().getOpenRequests(worker.getCitizenData()))
             {
                 final IRequestResolver<?> resolver = worker.getCitizenColonyHandler().getColony().getRequestManager().getResolverForRequest(request.getId());
                 if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
@@ -541,7 +543,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (!walkToBuilding() && getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            @SuppressWarnings(RAWTYPES) final ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
+            final ImmutableList<IRequest<?>> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
 
             completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getId()));
             final IRequest<?> firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
@@ -922,7 +924,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         final List<IRequest<? extends Tool>> openRequests =
           getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TOOL, iRequest -> iRequest.getRequest().getToolClass() == armorType);
-        for (final IRequest token : openRequests)
+        for (final IRequest<?> token : openRequests)
         {
             worker.getCitizenColonyHandler().getColony().getRequestManager().updateRequestState(token.getId(), RequestState.CANCELLED);
         }
@@ -1311,6 +1313,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Reset the done actions of the AI.
+     *
+     * @see #incrementActionsDone(int)
+     */
+    protected final void resetActionsDone()
+    {
+        job.clearActionsDone();
+    }
+
+    /**
      * Tell the ai that you have done numberOfActions more actions.
      * <p>
      * if the actions exceed a certain number, the ai will dump it's inventory.
@@ -1489,6 +1501,39 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             final Stack stackRequest = new Stack(stack);
             worker.getCitizenData().createRequestAsync(stackRequest);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a tag has been requested already or is in the inventory. If not in the inventory and not requested already, create request
+     *
+     * @param tag the requested tag.
+     * @return true if in the inventory, else false.
+     */
+    public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final Tag<Item> tag, final int count)
+    {
+        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> stack.getItem().isIn(tag) && stack.getCount() >= count))
+        {
+            return true;
+        }
+
+        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(),
+          itemStack -> itemStack.getItem().isIn(tag)) >= count &&
+              InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                getOwnBuilding(), itemStack -> itemStack.getItem().isIn(tag),
+                count,
+                worker.getInventoryCitizen()))
+        {
+            return true;
+        }
+
+        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TAG_REQUEST,
+          (IRequest<? extends com.minecolonies.api.colony.requestsystem.requestable.Tag> r) -> r.getRequest().getTag().getId().equals(tag.getId())).isEmpty())
+        {
+            final IDeliverable tagRequest = new com.minecolonies.api.colony.requestsystem.requestable.Tag(tag, count);
+            worker.getCitizenData().createRequestAsync(tagRequest);
         }
 
         return false;

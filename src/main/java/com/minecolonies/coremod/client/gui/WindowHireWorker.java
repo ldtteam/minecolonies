@@ -2,7 +2,6 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -32,7 +31,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the hiring or firing of a worker.
  */
-public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHandler
+public class WindowHireWorker extends AbstractWindowSkeleton
 {
     /**
      * The view of the current building.

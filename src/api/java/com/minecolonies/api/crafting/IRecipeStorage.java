@@ -78,5 +78,5 @@ public interface IRecipeStorage
      * Get the unique token of the recipe.
      * @return the IToken.
      */
-    IToken getToken();
+    IToken<?> getToken();
 }

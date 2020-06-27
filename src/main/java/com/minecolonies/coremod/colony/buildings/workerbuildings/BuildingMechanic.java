@@ -17,13 +17,13 @@ import com.minecolonies.coremod.colony.jobs.JobMechanic;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.HopperBlock;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.MinecartItem;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
@@ -63,7 +63,7 @@ public class BuildingMechanic extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobMechanic(citizen);
     }
@@ -90,47 +90,34 @@ public class BuildingMechanic extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken token)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        ResourceLocation builder_products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
-        ResourceLocation builder_ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
+        Optional<Boolean> isRecipeAllowed;
 
         if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if (storage == null)
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        if (isRecipeAllowed.isPresent())
         {
-            return false;
-        }
-
-        // Recipe includes tagged output
-        if (ItemTags.getCollection().getOrCreate(builder_products).contains(storage.getPrimaryOutput().getItem()))
-        {
-            return true;
-        }
-
-        // Recipe includes tagged ingredient
-        for (final ItemStack stack : storage.getInput())
-        {
-            if (ItemTags.getCollection().getOrCreate(builder_ingredients).contains(stack.getItem()))
-            {
-                return true;
-            }
-        }
-
-        // Additional rules for valid recipe
-        if (storage.getPrimaryOutput().getItem() instanceof MinecartItem
-              || (storage.getPrimaryOutput().getItem() instanceof BlockItem && ((BlockItem) storage.getPrimaryOutput().getItem()).getBlock() instanceof HopperBlock))
-        {
-            return true;
+            return isRecipeAllowed.get();
         }
         else
         {
-            return false;
+            // Additional recipe rules
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+            if (storage.getPrimaryOutput().getItem() instanceof MinecartItem
+                  || (storage.getPrimaryOutput().getItem() instanceof BlockItem && ((BlockItem) storage.getPrimaryOutput().getItem()).getBlock() instanceof HopperBlock))
+            {
+                return true;
+            }
+            // End Additional recipe rules
         }
+
+        return false;
     }
 
     @Override

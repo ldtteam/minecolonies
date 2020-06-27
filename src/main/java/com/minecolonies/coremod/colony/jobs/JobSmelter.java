@@ -4,14 +4,13 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The smelter job class.
  */
-public class JobSmelter extends AbstractJob
+public class JobSmelter extends AbstractJob<EntityAIWorkSmelter, JobSmelter>
 {
     /**
      * Create a smelter job.
@@ -60,7 +59,7 @@ public class JobSmelter extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobSmelter> generateAI()
+    public EntityAIWorkSmelter generateAI()
     {
         return new EntityAIWorkSmelter(this);
     }

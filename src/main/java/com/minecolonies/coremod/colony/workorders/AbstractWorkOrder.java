@@ -451,9 +451,10 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * Override this when something need to be done when the work order is completed
      *
      * @param colony in which the work order exist
+     * @param citizen citizen that completed the work order
      */
     @Override
-    public void onCompleted(final IColony colony)
+    public void onCompleted(final IColony colony, ICitizenData citizen)
     {
         /*
          * Intentionally left empty.

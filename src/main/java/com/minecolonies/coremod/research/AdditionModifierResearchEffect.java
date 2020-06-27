@@ -45,7 +45,7 @@ public class AdditionModifierResearchEffect extends AbstractResearchEffect<Doubl
     }
 
     @Override
-    public boolean overrides(@NotNull final IResearchEffect other)
+    public boolean overrides(@NotNull final IResearchEffect<?> other)
     {
         return effect > ((AdditionModifierResearchEffect) other).effect;
     }

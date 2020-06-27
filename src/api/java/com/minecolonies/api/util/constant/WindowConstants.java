@@ -146,6 +146,11 @@ public final class WindowConstants
     public static final String BUTTON_TP = "tp";
 
     /**
+     * Id of the rally guards button in the GUI.
+     */
+    public static final String BUTTON_RALLY_GUARDS = "rallyGuards";
+
+    /**
      * Id of the up button in the GUI.
      */
     public static final String BUTTON_DOWN = "minus";
