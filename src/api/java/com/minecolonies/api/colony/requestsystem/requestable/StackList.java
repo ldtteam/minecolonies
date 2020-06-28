@@ -5,6 +5,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -193,6 +195,57 @@ public class StackList implements IDeliverable
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);
         }
+
+        return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result, desc, count, minCount);
+    }
+
+    /**
+     * Serialize the deliverable.
+     * @param buffer the the buffer to write to.
+     * @param input the input to serialize.
+     * @return the compound.
+     */
+    public static void serializeToPacketBuffer(final PacketBuffer buffer, final StackList input)
+    {
+        buffer.writeInt(input.theStacks.size());
+        input.theStacks.forEach(res -> buffer.writeItemStack(res));
+
+        buffer.writeBoolean(input.matchMeta);
+        buffer.writeBoolean(input.matchNBT);
+        buffer.writeBoolean(input.matchOreDic);
+
+        buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
+        if (!ItemStackUtils.isEmpty(input.result))
+        {
+            buffer.writeCompoundTag(input.result.serializeNBT());
+        }
+        buffer.writeString(input.description);
+        buffer.writeInt(input.getCount());
+        buffer.writeInt(input.getMinimumCount());
+    }
+
+    /**
+     * Deserialize the deliverable.
+     * @param buffer the buffer to read.
+     * @return the deliverable.
+     */
+    public static StackList deserializeFromPacketBuffer(final PacketBuffer buffer)
+    {
+        final List<ItemStack> stacks = new ArrayList<>();
+
+        final int stacksSize = buffer.readInt();
+        for (int i = 0; i < stacksSize; ++i)
+        {
+            stacks.add(buffer.readItemStack());
+        }
+
+        final boolean matchMeta = buffer.readBoolean();
+        final boolean matchNBT = buffer.readBoolean();
+        final boolean matchOreDic = buffer.readBoolean();
+        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
+        final String desc = buffer.readString();
+        int count = buffer.readInt();
+        int minCount = buffer.readInt();
 
         return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result, desc, count, minCount);
     }
