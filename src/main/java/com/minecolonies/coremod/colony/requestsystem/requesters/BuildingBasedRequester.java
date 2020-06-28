@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +54,19 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
         compound.put(NBT_ID, controller.serialize(getId()));
 
         return compound;
+    }
+
+    public void serialize(final IFactoryController controller, final PacketBuffer buffer)
+    {
+        controller.serialize(buffer, getLocation());
+        controller.serialize(buffer, getId());
+    }
+
+    public static BuildingBasedRequester deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    {
+        final ILocation location = controller.deserialize(buffer);
+        final IToken<?> id = controller.deserialize(buffer);
+        return new BuildingBasedRequester(location, id);
     }
 
     @Override
