@@ -16,7 +16,7 @@ import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectM
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.Tuple;
+import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
