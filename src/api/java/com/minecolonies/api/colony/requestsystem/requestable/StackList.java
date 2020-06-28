@@ -203,7 +203,6 @@ public class StackList implements IDeliverable
      * Serialize the deliverable.
      * @param buffer the the buffer to write to.
      * @param input the input to serialize.
-     * @return the compound.
      */
     public static void serialize(final PacketBuffer buffer, final StackList input)
     {
