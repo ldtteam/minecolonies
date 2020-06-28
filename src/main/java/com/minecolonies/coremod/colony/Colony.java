@@ -39,6 +39,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.nbt.StringNBT;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -200,7 +201,8 @@ public class Colony implements IColony
     /**
      * The request manager assigned to the colony.
      */
-    private IResearchManager researchManager = new ResearchManager();;
+    private IResearchManager researchManager = new ResearchManager();
+    ;
 
     /**
      * The NBTTag compound of the colony itself.
@@ -301,7 +303,7 @@ public class Colony implements IColony
                     freeBlocks.add(block);
                 }
             }
-            catch(final Exception ex)
+            catch (final Exception ex)
             {
                 final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
                 if (pos != null)
@@ -317,7 +319,10 @@ public class Colony implements IColony
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
-        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, () -> { this.getCitizenManager().tickCitizenData(); return null; }, TICKS_SECOND));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, () -> {
+            this.getCitizenManager().tickCitizenData();
+            return null;
+        }, TICKS_SECOND));
 
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
@@ -493,16 +498,24 @@ public class Colony implements IColony
         }
     }
 
+    @Override
+    public ScorePlayerTeam getTeam()
+    {
+        // This getter will create the team if it doesn't exist. Could do something different though in the future.
+        return checkOrCreateTeam();
+    }
+
     /**
      * Check or create the team.
      */
-    private void checkOrCreateTeam()
+    private ScorePlayerTeam checkOrCreateTeam()
     {
-        if (this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id) == null)
+        if (this.world.getScoreboard().getTeam(getTeamName()) == null)
         {
-            this.world.getScoreboard().createTeam(TEAM_COLONY_NAME + id);
-            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + id).setAllowFriendlyFire(false);
+            this.world.getScoreboard().createTeam(getTeamName());
+            this.world.getScoreboard().getTeam(getTeamName()).setAllowFriendlyFire(false);
         }
+        return this.world.getScoreboard().getTeam(getTeamName());
     }
 
     /**
@@ -516,8 +529,8 @@ public class Colony implements IColony
         {
             checkOrCreateTeam();
             this.colonyTeamColor = colonyColor;
-            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setColor(colonyColor);
-            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setPrefix(new StringTextComponent(colonyColor.toString()));
+            this.world.getScoreboard().getTeam(getTeamName()).setColor(colonyColor);
+            this.world.getScoreboard().getTeam(getTeamName()).setPrefix(new StringTextComponent(colonyColor.toString()));
             this.markDirty();
         }
     }
@@ -526,7 +539,7 @@ public class Colony implements IColony
      * Load a saved colony.
      *
      * @param compound The NBT compound containing the colony's data.
-     * @param world the world to load it for.
+     * @param world    the world to load it for.
      * @return loaded colony.
      */
     @Nullable
@@ -961,7 +974,7 @@ public class Colony implements IColony
      * Calculate randomly if the colony should update the citizens.
      * By mean they update it at CLEANUP_TICK_INCREMENT.
      *
-     * @param world the world.
+     * @param world        the world.
      * @param averageTicks the average ticks to upate it.
      * @return a boolean by random.
      */

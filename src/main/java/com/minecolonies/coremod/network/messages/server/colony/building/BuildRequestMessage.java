@@ -18,19 +18,19 @@ import org.jetbrains.annotations.NotNull;
 public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     /**
-     * The int mode for a build job.
+     * The request mode.
      */
-    public static final int BUILD = 0;
-
-    /**
-     * The int mode for a repair job.
-     */
-    public static final int REPAIR = 1;
+    public enum Mode
+    {
+        BUILD,
+        REPAIR,
+        REMOVE
+    }
 
     /**
      * The mode id.
      */
-    private int mode;
+    private Mode mode;
 
     /**
      * The id of the building.
@@ -52,7 +52,7 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
      * @param mode     Mode of the request, 1 is repair, 0 is build.
      * @param builder  the builder we're assinging the request to
      */
-    public BuildRequestMessage(@NotNull final IBuildingView building, final int mode, final BlockPos builder)
+    public BuildRequestMessage(@NotNull final IBuildingView building, final Mode mode, final BlockPos builder)
     {
         super(building);
         this.mode = mode;
@@ -62,16 +62,14 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-
-        mode = buf.readInt();
+        mode = Mode.values()[buf.readInt()];
         builder = buf.readBlockPos();
     }
 
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
-        buf.writeInt(mode);
+        buf.writeInt(mode.ordinal());
         buf.writeBlockPos(builder);
     }
 
@@ -93,6 +91,8 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
                 case REPAIR:
                     building.requestRepair(builder);
                     break;
+                case REMOVE:
+                    building.requestRemoval(player, builder);
                 default:
                     break;
             }

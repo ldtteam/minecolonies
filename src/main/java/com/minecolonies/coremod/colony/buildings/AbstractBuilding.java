@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -37,7 +38,9 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
@@ -59,6 +62,7 @@ import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -321,7 +325,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param level   Desired level.
      * @param builder the assigned builder.
      */
-    protected void requestWorkOrder(final int level, final BlockPos builder)
+    protected void requestWorkOrder(final int level, final BlockPos builder, final boolean removal)
     {
         for (@NotNull final WorkOrderBuildBuilding o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildBuilding.class))
         {
@@ -331,15 +335,24 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             }
         }
 
-        final WorkOrderBuildBuilding workOrderBuildBuilding = new WorkOrderBuildBuilding(this, level);
-        if (!canBeBuiltByBuilder(level) && !workOrderBuildBuilding.canBeResolved(colony, level))
+        WorkOrderBuild workOrder;
+        if (removal)
+        {
+            workOrder = new WorkOrderBuildRemoval(this, level);
+        }
+        else
+        {
+            workOrder = new WorkOrderBuildBuilding(this, level);
+        }
+
+        if (!removal && !canBeBuiltByBuilder(level) && !workOrder.canBeResolved(colony, level))
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
               "entity.builder.messageBuilderNecessary", Integer.toString(level));
             return;
         }
 
-        if (workOrderBuildBuilding.tooFarFromAnyBuilder(colony, level) && builder.equals(BlockPos.ZERO))
+        if (workOrder.tooFarFromAnyBuilder(colony, level) && builder.equals(BlockPos.ZERO))
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
               "entity.builder.messageBuildersTooFar");
@@ -364,7 +377,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             final IBuilding building = colony.getBuildingManager().getBuilding(builder);
             if (building instanceof AbstractBuildingStructureBuilder && (building.getBuildingLevel() >= level || canBeBuiltByBuilder(level)))
             {
-                workOrderBuildBuilding.setClaimedBy(builder);
+                workOrder.setClaimedBy(builder);
             }
             else
             {
@@ -374,10 +387,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             }
         }
 
-        colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);
-        colony.getProgressManager().progressWorkOrderPlacement(workOrderBuildBuilding);
+        colony.getWorkManager().addWorkOrder(workOrder, false);
+        colony.getProgressManager().progressWorkOrderPlacement(workOrder);
 
-        if (workOrderBuildBuilding.getID() != 0)
+        if (workOrder.getID() != 0)
         {
             LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
         }
@@ -431,6 +444,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             }
         }
 
+        for (@NotNull final WorkOrderBuildRemoval o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildRemoval.class))
+        {
+            if (o.getBuildingLocation().equals(getID()))
+            {
+                return 0;
+            }
+        }
+
         return NO_WORK_ORDER;
     }
 
@@ -442,9 +463,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void removeWorkOrder()
     {
-        for (@NotNull final WorkOrderBuildBuilding o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildBuilding.class))
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
         {
-            if (o.getBuildingLocation().equals(getID()))
+            if (o.getBuildingLocation().equals(getID()) && (o instanceof WorkOrderBuildBuilding || o instanceof WorkOrderBuildRemoval))
             {
                 colony.getWorkManager().removeWorkOrder(o.getID());
                 markDirty();
@@ -528,6 +549,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             buf.writeInt(entry.getValue());
         }
         buf.writeBoolean(minimumStock.size() >= minimumStockSize());
+        buf.writeBoolean(isDeconstructed());
     }
 
     /**
@@ -584,33 +606,43 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public void onColonyTick(final IColony colony)
     {
         super.onColonyTick(colony);
-        final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
 
-        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
+        if (colony.getWorld().getChunkProvider().isChunkLoaded(new ChunkPos(getPosition().getX() >> 4, getPosition().getZ() >> 4)))
         {
-            final ItemStack itemStack = entry.getKey().getItemStack().copy();
-            final int count = InventoryUtils.getItemCountInProvider(getTileEntity(), stack -> !stack.isEmpty() && stack.isItemEqual(itemStack));
-            final int delta = entry.getValue() * itemStack.getMaxStackSize() - count;
-            final IToken<?> request = getMatchingRequest(itemStack, list);
-            if (delta > 0)
+            final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
+
+            for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
             {
-                if (request == null)
+                final ItemStack itemStack = entry.getKey().getItemStack().copy();
+
+                if (itemStack.isEmpty())
                 {
-                    itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
-                    final Stack stack = new Stack(itemStack);
-                    if (getMainCitizen() != null)
+                    continue;
+                }
+
+                final int count = InventoryUtils.hasBuildingEnoughElseCount(this, new ItemStorage(itemStack), entry.getValue() * itemStack.getMaxStackSize());
+                final int delta = (entry.getValue() * itemStack.getMaxStackSize()) - count;
+                final IToken<?> request = getMatchingRequest(itemStack, list);
+                if (delta > 0)
+                {
+                    if (request == null)
                     {
-                        getMainCitizen().createRequestAsync(stack);
-                    }
-                    else
-                    {
-                        createRequest(stack, false);
+                        itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
+                        final Stack stack = new Stack(itemStack);
+                        if (getMainCitizen() != null)
+                        {
+                            getMainCitizen().createRequestAsync(stack);
+                        }
+                        else
+                        {
+                            createRequest(stack, false);
+                        }
                     }
                 }
-            }
-            else if (request != null)
-            {
-                getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
+                else if (request != null)
+                {
+                    getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
+                }
             }
         }
     }
@@ -688,11 +720,36 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         if (getBuildingLevel() < getMaxBuildingLevel())
         {
-            requestWorkOrder(getBuildingLevel() + 1, builder);
+            requestWorkOrder(getBuildingLevel() + 1, builder, false);
         }
         else
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.noUpgrade"));
+        }
+    }
+
+    @Override
+    public void requestRemoval(final PlayerEntity player, final BlockPos builder)
+    {
+        if (this.isDeconstructed())
+        {
+            final ItemStack stack = new ItemStack(colony.getWorld().getBlockState(getPosition()).getBlock(), 1);
+            final CompoundNBT compoundNBT = new CompoundNBT();
+            compoundNBT.putInt(TAG_COLONY_ID, this.getColony().getID());
+            compoundNBT.putInt(TAG_OTHER_LEVEL, this.getBuildingLevel());
+            stack.setTag(compoundNBT);
+            if (InventoryUtils.addItemStackToProvider(player, stack))
+            {
+                colony.getWorld().destroyBlock(this.getPosition(), false);
+            }
+            else
+            {
+                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.playerinvfull");
+            }
+        }
+        else
+        {
+            requestWorkOrder(getBuildingLevel(), builder, true);
         }
     }
 
@@ -706,7 +763,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         if (getBuildingLevel() > 0)
         {
-            requestWorkOrder(getBuildingLevel(), builder);
+            requestWorkOrder(getBuildingLevel(), builder, false);
         }
     }
 

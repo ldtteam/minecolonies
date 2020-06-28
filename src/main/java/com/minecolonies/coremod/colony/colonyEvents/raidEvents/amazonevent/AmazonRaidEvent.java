@@ -4,14 +4,20 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
+import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
+import com.minecolonies.coremod.network.messages.client.PlayMusicMessage;
+import com.minecolonies.coremod.network.messages.client.StopMusicMessage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -27,6 +33,11 @@ public class AmazonRaidEvent extends HordeRaidEvent
      * This raids event id, registry entries use res locations as ids.
      */
     public static final ResourceLocation AMAZON_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "amazon_raid");
+
+    /**
+     * Cooldown for the music, to not play it too much/not overlap with itself
+     */
+    private int musicCooldown = 0;
 
     public AmazonRaidEvent(IColony colony)
     {
@@ -61,6 +72,21 @@ public class AmazonRaidEvent extends HordeRaidEvent
         }
 
         entity.remove();
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+        if (--musicCooldown <= 0)
+        {
+            for (final PlayerEntity player : getColony().getImportantMessageEntityPlayers())
+            {
+                Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayerEntity) player);
+                Network.getNetwork().sendToPlayer(new PlayMusicMessage(RaidSounds.DESERT_RAID), (ServerPlayerEntity) player);
+            }
+            musicCooldown = 20;
+        }
     }
 
     @Override

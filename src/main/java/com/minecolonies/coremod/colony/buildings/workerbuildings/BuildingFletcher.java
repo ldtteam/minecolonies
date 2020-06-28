@@ -21,11 +21,11 @@ import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
@@ -106,40 +106,36 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        if(!super.canRecipeBeAdded(token))
+        Optional<Boolean> isRecipeAllowed;
+
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        if (isRecipeAllowed.isPresent())
         {
-            return false;
+            return isRecipeAllowed.get();
         }
-
-        boolean hasValidItem = false;
-
-        if (storage.getPrimaryOutput().getItem() instanceof ArrowItem
-              || (storage.getPrimaryOutput().getItem() instanceof DyeableArmorItem
-              && ((DyeableArmorItem) storage.getPrimaryOutput().getItem()).getArmorMaterial() == ArmorMaterial.LEATHER))
+        else
         {
-            return true;
-        }
+            // Additional recipe rules
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
 
-        for(final ItemStack stack : storage.getInput())
-        {
-            if (Tags.Items.DYES.contains(stack.getItem()))
+            boolean hasValidItem = false;
+
+            if (storage.getPrimaryOutput().getItem() instanceof ArrowItem
+                  || (storage.getPrimaryOutput().getItem() instanceof DyeableArmorItem
+                        && ((DyeableArmorItem) storage.getPrimaryOutput().getItem()).getArmorMaterial() == ArmorMaterial.LEATHER))
             {
-                return false;
+                return true;
             }
 
-            if (ItemTags.WOOL.contains(stack.getItem()) || stack.getItem() == Items.STRING)
-            {
-                hasValidItem = true;
-            }
+            // End Additional recipe rules
         }
 
-        return hasValidItem;
+        return false;
     }
 
     @Override

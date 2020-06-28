@@ -31,7 +31,6 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -47,7 +46,6 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MAX_HEALTH;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
-import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -56,11 +54,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 @SuppressWarnings({Suppression.BIG_CLASS, "PMD.ExcessiveClassLength"})
 public class CitizenData implements ICitizenData
 {
-    /**
-     * Citizen data's registry id
-     */
-    public static final ResourceLocation CITIZEN_DATA_TYPE = new ResourceLocation(MOD_ID, "colonycitizendata");
-
     /**
      * The max health.
      */
@@ -75,6 +68,11 @@ public class CitizenData implements ICitizenData
      * Minimum saturation of a citizen.
      */
     private static final int MIN_SATURATION = 0;
+
+    /**
+     * Possible texture suffixes.
+     */
+    private static final List<String> SUFFIXES = Arrays.asList("_b", "_d", "_a", "_w");
 
     /**
      * The unique citizen id.
@@ -198,6 +196,11 @@ public class CitizenData implements ICitizenData
      * If idle at job.
      */
     private boolean idle;
+
+    /**
+     * The texture suffix.
+     */
+    private String textureSuffix;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -333,6 +336,7 @@ public class CitizenData implements ICitizenData
         final Random rand = new Random();
         //Assign the gender before name
         female = rand.nextBoolean();
+        textureSuffix = SUFFIXES.get(rand.nextInt(SUFFIXES.size()));
         paused = false;
         name = generateName(rand);
         textureId = rand.nextInt(255);
@@ -373,6 +377,7 @@ public class CitizenData implements ICitizenData
         citizen.getDataManager().set(DATA_CITIZEN_ID, citizen.getCitizenId());
         citizen.getDataManager().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
         citizen.getDataManager().set(DATA_TEXTURE, citizen.getTextureId());
+        citizen.getDataManager().set(DATA_TEXTURE_SUFFIX, getTextureSuffix());
         citizen.getDataManager().set(DATA_IS_ASLEEP, isAsleep());
         citizen.getDataManager().set(DATA_IS_CHILD, isChild());
         citizen.getDataManager().set(DATA_BED_POS, getBedPos());
@@ -813,6 +818,8 @@ public class CitizenData implements ICitizenData
 
         nbtTagCompound.putInt(TAG_ID, id);
         nbtTagCompound.putString(TAG_NAME, name);
+        nbtTagCompound.putString(TAG_SUFFIX, textureSuffix);
+
         nbtTagCompound.putBoolean(TAG_FEMALE, female);
         nbtTagCompound.putBoolean(TAG_PAUSED, paused);
         nbtTagCompound.putBoolean(TAG_CHILD, isChild);
@@ -863,6 +870,15 @@ public class CitizenData implements ICitizenData
         paused = nbtTagCompound.getBoolean(TAG_PAUSED);
         isChild = nbtTagCompound.getBoolean(TAG_CHILD);
         textureId = nbtTagCompound.getInt(TAG_TEXTURE);
+
+        if (nbtTagCompound.keySet().contains(TAG_SUFFIX))
+        {
+            textureSuffix = nbtTagCompound.getString(TAG_SUFFIX);
+        }
+        else
+        {
+            textureSuffix = SUFFIXES.get(new Random().nextInt(SUFFIXES.size()));
+        }
 
         lastPosition = BlockPosUtil.read(nbtTagCompound, TAG_POS);
 
@@ -1016,6 +1032,18 @@ public class CitizenData implements ICitizenData
     public void setIdleAtJob(final boolean idle)
     {
         this.idle = idle;
+    }
+
+    @Override
+    public String getTextureSuffix()
+    {
+        return this.textureSuffix;
+    }
+
+    @Override
+    public void setSuffix(final String suffix)
+    {
+        this.textureSuffix = suffix;
     }
 
     // --------------------------- Request Handling --------------------------- //

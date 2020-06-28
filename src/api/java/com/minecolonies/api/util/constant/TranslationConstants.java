@@ -28,6 +28,10 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE               = "entity.builder.messagebuildcomplete";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC       = "entity.builder.messagebuildcomplete_generic";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE     = "entity.builder.messageremovalcomplete";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP             = "entity.deliveryman.forcepickup";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED      = "entity.deliveryman.forcepickupfailed";
@@ -162,6 +166,28 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_CLIPBOARD_COLONY_SET                               = "com.minecolonies.coremod.item.clipboard.registered";
     @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED                       = "com.minecolonies.coremod.item.bannerrallyguards.selected";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED                     = "com.minecolonies.coremod.item.bannerrallyguards.deselected";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP                        = "com.minecolonies.coremod.item.bannerrallyguards.tooltip";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY                  = "com.minecolonies.coremod.item.bannerrallyguards.tooltipempty";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_RALLY                  = "com.minecolonies.coremod.item.bannerrallyguards.rally";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_GUI                    = "com.minecolonies.coremod.item.bannerrallyguards.gui";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR                      = "com.minecolonies.coremod.item.bannerrallyguards.gui.error";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING               = "com.minecolonies.coremod.item.bannerrallyguards.gui.towermissing";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_REMOVE                     = "com.minecolonies.coremod.item.bannerrallyguards.gui.remove";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_RALLY                      = "com.minecolonies.coremod.item.bannerrallyguards.gui.rally";
+    @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_DISMISS                    = "com.minecolonies.coremod.item.bannerrallyguards.gui.dismiss";
+    @NonNls
     public static final String CITIZEN_RENAME_SAME                                                 = "com.minecolonies.coremod.citizen.rename.same";
     @NonNls
     public static final String CITIZEN_RENAME_NOT_ALLOWED                                          = "com.minecolonies.coremod.citizen.rename.notallowed";
@@ -252,6 +278,10 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT                      = "com.minecolonies.coremod.gui.cowboy.notcollect";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT                      = "com.minecolonies.coremod.gui.beekeeper.collect";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT                   = "com.minecolonies.coremod.gui.beekeeper.notcollect";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO                   = "com.minecolonies.coremod.gui.workerhuts.modeA";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL                 = "com.minecolonies.coremod.gui.workerhuts.modeM";
@@ -277,6 +307,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING                   = "com.minecolonies.coremod.status.fillingbarrels";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING                = "com.minecolonies.coremod.status.harvestingbarrels";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_BEEKEEPER_HARVESTING                = "com.minecolonies.coremod.status.harvestinghives";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST                 = "entity.composter.noitems";
     @NonNls
@@ -308,15 +340,15 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE                           = "com.minecolonies.coremod.gui.hiring.buttonunpaused";
     @NonNls
-    public static final String CMC_GUI_TOWNHALL_BUILDING_LEVEL         = "com.minecolonies.coremod.gui.townhall.buildingLevel";
+    public static final String CMC_GUI_TOWNHALL_BUILDING_LEVEL                                     = "com.minecolonies.coremod.gui.townhall.buildingLevel";
     @NonNls
-    public static final String PIRATES_SAILING_OFF_MESSAGE             = "com.minecolonies.coremod.pirates.sailing.away";
+    public static final String PIRATES_SAILING_OFF_MESSAGE                                         = "com.minecolonies.coremod.pirates.sailing.away";
     @NonNls
-    public static final String ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE   = "com.minecolonies.coremod.pirates.spawners.destroyed";
+    public static final String ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE                               = "com.minecolonies.coremod.pirates.spawners.destroyed";
     @NonNls
-    public static final String ALL_PIRATES_KILLED_MESSAGE              = "com.minecolonies.coremod.pirates.killed";
+    public static final String ALL_PIRATES_KILLED_MESSAGE                                          = "com.minecolonies.coremod.pirates.killed";
     @NonNls
-    public static final String UNABLE_TO_ADD_RECIPE_MESSAGE            = "com.minecolonies.coremod.recipe.unable";
+    public static final String UNABLE_TO_ADD_RECIPE_MESSAGE                                        = "com.minecolonies.coremod.recipe.unable";
     @NonNls
     public static final String BAKER_HAS_NO_RECIPES                                                = "com.minecolonies.coremod.bakery.norecipe";
     @NonNls
@@ -342,9 +374,9 @@ public final class TranslationConstants
     @NonNls
     public static final String TOO_MANY_FILTERED_FLORIST                                           = "com.minecolonies.gui.workerhuts.florist.toomany";
     @NonNls
-    public static final String TOO_MANY_FILTERED_BELOW_LVL4_FLORIST = "com.minecolonies.gui.workerhuts.florist.toomanybelow";
+    public static final String TOO_MANY_FILTERED_BELOW_LVL4_FLORIST                                = "com.minecolonies.gui.workerhuts.florist.toomanybelow";
     @NonNls
-    public static final String FLORIST_BUILDING_NAME = "com.minecolonies.coremod.gui.workerhuts.florist";
+    public static final String FLORIST_BUILDING_NAME                                               = "com.minecolonies.coremod.gui.workerhuts.florist";
     @NonNls
     public static final String ENCHANTER_BUILDING_NAME                                             = "com.minecolonies.coremod.gui.workerhuts.enchanter";
     @NonNls
@@ -362,6 +394,10 @@ public final class TranslationConstants
     @NonNls
     public static final String WATER_TOO_FAR                                                       = "entity.fisherman.messagewatertoofar";
     @NonNls
+    public static final String NO_HIVES                                                            = "entity.beekeeper.messagenohives";
+    @NonNls
+    public static final String NO_BEES                                                             = "entity.beekeeper.messagenobees";
+    @NonNls
     public static final String NO_COMPOST                                                          = "com.minecolonies.coremod.florist.nocompost";
     @NonNls
     public static final String NEEDS_BETTER_HUT                                                    = "entity.miner.messagerequiresbetterhut";
@@ -371,6 +407,8 @@ public final class TranslationConstants
     public static final String NO_RESTAURANT                                                       = "com.minecolonies.coremod.ai.norestaurant";
     @NonNls
     public static final String NO_HOSPITAL                                                         = "com.minecolonies.coremod.ai.nohospital";
+    @NonNls
+    public static final String WAITING_FOR_CURE                                                    = "com.minecolonies.coremod.ai.waitingforcure";
     @NonNls
     public static final String ASYNC_REQUEST                                                       = "com.minecolonies.requestsystem.playerresolver.async";
     @NonNls
@@ -391,6 +429,7 @@ public final class TranslationConstants
     public static final String WAREHOUSE_SORTED                                                    = "com.minecolonies.coremod.gui.warehouse.sorted";
     @NonNls
     public static final String ALL_CITIZENS_ARE_SLEEPING                                           = "com.minecolonies.coremod.entity.citizen.sleep";
+
 
     private TranslationConstants()
     {

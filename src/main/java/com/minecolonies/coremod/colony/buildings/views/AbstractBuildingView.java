@@ -137,6 +137,11 @@ public abstract class AbstractBuildingView implements IBuildingView
     private boolean reachedLimit = false;
 
     /**
+     * If building is deconstructed.
+     */
+    private boolean isDeconstructed;
+
+    /**
      * Creates a building view.
      *
      * @param c ColonyView the building is in.
@@ -283,26 +288,22 @@ public abstract class AbstractBuildingView implements IBuildingView
         return workOrderLevel != NO_WORK_ORDER;
     }
 
-    /**
-     * Check if the building is current being built.
-     *
-     * @return true if so.
-     */
     @Override
     public boolean isBuilding()
     {
-        return workOrderLevel != NO_WORK_ORDER && workOrderLevel > buildingLevel;
+        return workOrderLevel != 0 && workOrderLevel != NO_WORK_ORDER && workOrderLevel > buildingLevel;
     }
 
-    /**
-     * Check if the building is currently being repaired.
-     *
-     * @return true if so.
-     */
     @Override
     public boolean isRepairing()
     {
-        return workOrderLevel != NO_WORK_ORDER && workOrderLevel == buildingLevel;
+        return workOrderLevel != 0 && workOrderLevel != NO_WORK_ORDER && workOrderLevel == buildingLevel;
+    }
+
+    @Override
+    public boolean isDeconstructing()
+    {
+        return workOrderLevel == 0;
     }
 
     /**
@@ -411,6 +412,7 @@ public abstract class AbstractBuildingView implements IBuildingView
             minimumStock.add(new Tuple<>(new ItemStorage(buf.readItemStack()), buf.readInt()));
         }
         reachedLimit = buf.readBoolean();
+        isDeconstructed = buf.readBoolean();
     }
 
     /**
@@ -606,5 +608,11 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         this.customName = name;
         Network.getNetwork().sendToServer(new HutRenameMessage(this, name));
+    }
+
+    @Override
+    public boolean isDeconstructed()
+    {
+        return isDeconstructed;
     }
 }

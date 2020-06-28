@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.colonyEvents;
 
 import net.minecraft.entity.EntityType;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * Interface type for raid events
@@ -29,4 +30,10 @@ public interface IColonyRaidEvent extends IColonyEntitySpawnEvent
      * @return the boss type.
      */
     EntityType<?> getBossRaiderType();
+
+    /**
+     * Add a spawner to an event.
+     * @param pos the pos to add the spawner at.
+     */
+    void addSpawner(final BlockPos pos);
 }

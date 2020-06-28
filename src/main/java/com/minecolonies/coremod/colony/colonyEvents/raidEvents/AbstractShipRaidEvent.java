@@ -16,16 +16,22 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyState;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.SpawnerBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -43,6 +49,8 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
      */
     public static final String TAG_DAYS_LEFT     = "pirateDaysLeft";
     public static final String TAG_SPAWNER_COUNT = "spawnerCount";
+    public static final String TAG_POS           = "pos";
+    public static final String TAG_SPAWNERS      = "spawners";
     public static final String TAG_SHIPSIZE      = "shipSize";
     public static final String TAG_SHIPROTATION  = "shipRotation";
     public static final String TAG_KILLED        = "killed";
@@ -70,7 +78,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * The ID of this raid
      */
-    private int id = 0;
+    private int id;
 
     /**
      * The associated colony
@@ -86,11 +94,6 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
      * The events shipsize
      */
     private ShipSize shipSize;
-
-    /**
-     * The current amount of spawners left for this ship.
-     */
-    private int spawnerCount;
 
     /**
      * The days the event lasts
@@ -118,6 +121,16 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     private int shipRotation = 0;
 
     /**
+     * List of all spawners.
+     */
+    private List<BlockPos> spawners = new ArrayList<>();
+
+    /**
+     * Count of spawners.
+     */
+    private int spawnerCount = 0;
+
+    /**
      * Create a new ship based raid event.
      * @param colony the colony.
      */
@@ -132,7 +145,6 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     {
         status = EventStatus.PREPARING;
         daysToGo = MineColonies.getConfig().getCommon().daysUntilPirateshipsDespawn.get();
-        spawnerCount = shipSize.spawnerCount;
 
         final CreativeBuildingStructureHandler structure =
           new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc(), new PlacementSettings(), true);
@@ -163,7 +175,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         status = EventStatus.PROGRESSING;
         colony.getRaiderManager().setNightsSinceLastRaid(0);
 
-        if (spawnerCount <= 0 && raiders.size() == 0)
+        if (spawners.size() <= 0 && spawnerCount <= 0 && raiders.size() == 0)
         {
             status = EventStatus.WAITING;
             return;
@@ -183,8 +195,12 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             return;
         }
 
+        spawners.removeIf(spawner -> colony.getWorld() != null
+                                       && colony.getWorld().getChunkProvider().isChunkLoaded(new ChunkPos(spawner.getX() >> 4, spawner.getZ() >> 4))
+                                       && colony.getWorld().getBlockState(spawner).getBlock() != Blocks.SPAWNER);
+
         // Spawns landing troops.
-        if (raiders.size() < spawnerCount * 2)
+        if (raiders.size() < spawners.size() * 2)
         {
             BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_LANDING_DISTANCE, spawnPoint, MIN_CENTER_DISTANCE, 10);
             if (spawnPos != null)
@@ -233,9 +249,11 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     {
         if (te instanceof MobSpawnerTileEntity)
         {
+            spawners.remove(te.getPos());
+
             spawnerCount--;
             // remove at nightfall after spawners are killed.
-            if (spawnerCount <= 0)
+            if (spawners.isEmpty() && spawnerCount <= 0)
             {
                 daysToGo = 1;
                 LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE);
@@ -257,7 +275,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     public void onEntityDeath(final LivingEntity entity)
     {
         raiders.remove(entity);
-        if (raiders.isEmpty() && spawnerCount == 0)
+        if (raiders.isEmpty() && spawnerCount == 0 && spawners.isEmpty())
         {
             LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),ALL_PIRATES_KILLED_MESSAGE);
         }
@@ -307,7 +325,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
      */
     private int getMaxRaiders()
     {
-        return spawnerCount * 2 + ADD_MAX_PIRATES;
+        return spawners.size() * 2 + ADD_MAX_PIRATES;
     }
 
     /**
@@ -386,6 +404,16 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         compound.putInt(TAG_EVENT_ID, id);
         compound.putInt(TAG_DAYS_LEFT, daysToGo);
         compound.putInt(TAG_EVENT_STATUS, status.ordinal());
+
+        @NotNull final ListNBT spawnerListCompound = new ListNBT();
+        for (@NotNull final BlockPos entry : spawners)
+        {
+            @NotNull final CompoundNBT spawnerCompound = new CompoundNBT();
+            spawnerCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
+            spawnerListCompound.add(spawnerCompound);
+        }
+        compound.put(TAG_SPAWNERS, spawnerListCompound);
+
         compound.putInt(TAG_SPAWNER_COUNT, spawnerCount);
         BlockPosUtil.write(compound, TAG_SPAWN_POS, spawnPoint);
         compound.putInt(TAG_SHIPSIZE, shipSize.ordinal());
@@ -400,11 +428,24 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         id = compound.getInt(TAG_EVENT_ID);
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
         daysToGo = compound.getInt(TAG_DAYS_LEFT);
+
+        @NotNull final ListNBT spawnerListCompound = compound.getList(TAG_SPAWNERS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < spawnerListCompound.size(); i++)
+        {
+            spawners.add(NBTUtil.readBlockPos(spawnerListCompound.getCompound(i).getCompound(TAG_POS)));
+        }
+
         spawnerCount = compound.getInt(TAG_SPAWNER_COUNT);
         spawnPoint = BlockPosUtil.read(compound, TAG_SPAWN_POS);
         shipSize = ShipSize.values()[compound.getInt(TAG_SHIPSIZE)];
         killedCitizenInRaid = compound.getBoolean(TAG_KILLED);
         shipRotation = compound.getInt(TAG_SHIPROTATION);
+    }
+
+    @Override
+    public void addSpawner(final BlockPos pos)
+    {
+        this.spawners.add(pos);
     }
 
     @Override

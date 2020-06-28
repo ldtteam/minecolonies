@@ -1,6 +1,9 @@
+# Before reporting please make sure that this issue was not reported yet (Check out similar issue suggestions).
+## Also update to the latest alpha of both minecolonies and structurize before reporting
+
 <!-- If you are making a bug report, please fill out this template as best as possible, this will help 
      us to understand your issue much easier. -->
-### Minecolonies version # Update to the newest minecolonies and structurize alpha first and see if your issue might be already fixed!
+
 <!-- Exact version, eg: 0.9.126-ALPHA or 0.9.2-RELEASE, please don't just give the Minecraft version you're playing.
 Before reporting: Update to the newest minecolonies alpha and see if your issue might be fixed already.
 -->
@@ -30,6 +33,6 @@ Version:
 4. ... Profit
 
 ### Logs: Latest.log and crashlog at https://gist.github.com/
-<!-- Add your latest.log and crashlog(if you got one) to https://gist.github.com/ and put the link below. Those are often important in figuring out where issues are. -->
-- latest.log:
-- crashlog:
+<!-- Add your latest.log and crashlog (if you got one) to https://gist.github.com/ and put the link below. Those are often important in figuring out where issues are. -->
+- latest.log: <!-- USE GIST DON'T DIRECT UPLOAD PLEASE -->
+- crashlog: <!-- USE GIST DON'T DIRECT UPLOAD PLEASE -->

@@ -152,9 +152,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         currentRequest = currentTask;
         job.setMaxCraftingCount(currentRequest.getRequest().getCount());
         final int currentCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> stack.isItemEqual(currentRecipeStorage.getPrimaryOutput()));
+        final int inProgressCount = getExtendedOutputCount(currentRecipeStorage.getPrimaryOutput());
+
         final int countPerIteration = currentRecipeStorage.getPrimaryOutput().getCount();
         final int doneOpsCount = currentCount / countPerIteration;
-        final int remainingOpsCount = currentRequest.getRequest().getCount() - doneOpsCount;
+        final int progressOpsCount = inProgressCount / countPerIteration;
+
+        final int remainingOpsCount = currentRequest.getRequest().getCount() - doneOpsCount - progressOpsCount;
 
         final List<ItemStorage> input = currentRecipeStorage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
@@ -171,6 +175,16 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
 
         job.setCraftCounter(doneOpsCount);
         return QUERY_ITEMS;
+    }
+
+    /**
+     * Get an extended output count that can be overriden.
+     * @param primaryOutput the type of output.
+     * @return the output count that should be added too.
+     */
+    protected int getExtendedOutputCount(final ItemStack primaryOutput)
+    {
+        return 0;
     }
 
     @Override
@@ -202,11 +216,15 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     protected IAIState checkForItems(@NotNull final IRecipeStorage storage)
     {
+        final int inProgressCount = getExtendedOutputCount(currentRecipeStorage.getPrimaryOutput());
+        final int countPerIteration = currentRecipeStorage.getPrimaryOutput().getCount();
+        final int progressOpsCount = inProgressCount / countPerIteration;
+
         final List<ItemStorage> input = storage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + (job.getCraftCounter() * inputStorage.getAmount())
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + ((job.getCraftCounter() + progressOpsCount ) * inputStorage.getAmount())
                   < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
@@ -230,7 +248,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     protected IAIState craft()
     {
-        if (currentRecipeStorage == null)
+        if (currentRecipeStorage == null || job.getCurrentTask() == null)
         {
             return START_WORKING;
         }

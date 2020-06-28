@@ -216,6 +216,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (!job.hasWorkOrder())
         {
             getOwnBuilding().searchWorkOrder();
+            getOwnBuilding().setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
             return false;
         }
 

@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -180,7 +180,7 @@ public abstract class AbstractScarescrowTileEntity extends TileEntity implements
      * Get the inventory of the scarecrow.
      * @return the IItemHandler.
      */
-    public abstract IItemHandlerModifiable getInventory();
+    public abstract IItemHandler getInventory();
 
     /**
      * Returns the type of the scarecrow (Important for the rendering).

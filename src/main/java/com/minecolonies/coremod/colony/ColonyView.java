@@ -32,6 +32,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -59,16 +60,16 @@ public final class ColonyView implements IColonyView
 
     //  General Attributes
     private final int                            id;
-    private final Map<Integer, WorkOrderView>    workOrders    = new HashMap<>();
+    private final Map<Integer, WorkOrderView>    workOrders  = new HashMap<>();
     //  Administration/permissions
     @NotNull
-    private final PermissionsView                permissions   = new PermissionsView();
+    private final PermissionsView                permissions = new PermissionsView();
     @NotNull
-    private final Map<BlockPos, IBuildingView>   buildings     = new HashMap<>();
+    private final Map<BlockPos, IBuildingView>   buildings   = new HashMap<>();
     //  Citizenry
     @NotNull
-    private final Map<Integer, ICitizenDataView> citizens      = new HashMap<>();
-    private       String                         name          = "Unknown";
+    private final Map<Integer, ICitizenDataView> citizens    = new HashMap<>();
+    private       String                         name        = "Unknown";
     private       int                            dimensionId;
 
     /**
@@ -1013,6 +1014,7 @@ public final class ColonyView implements IColonyView
 
     /**
      * Getter for the team colony color.
+     *
      * @return the color.
      */
     @Override
@@ -1075,6 +1077,12 @@ public final class ColonyView implements IColonyView
     public boolean hasWarehouse()
     {
         return hasColonyWarehouse;
+    }
+
+    @Override
+    public ScorePlayerTeam getTeam()
+    {
+        return world.getScoreboard().getTeam(getTeamName());
     }
 
     @Override
@@ -1198,6 +1206,7 @@ public final class ColonyView implements IColonyView
 
     /**
      * Get if progress should be printed.
+     *
      * @return true if so.
      */
     @Override
@@ -1262,6 +1271,7 @@ public final class ColonyView implements IColonyView
 
     /**
      * Get a list of all buildings.
+     *
      * @return a list of their views.
      */
     @Override
@@ -1272,6 +1282,7 @@ public final class ColonyView implements IColonyView
 
     /**
      * Get the cost multiplier of buying a citizen.
+     *
      * @return the current cost.
      */
     @Override
@@ -1295,6 +1306,7 @@ public final class ColonyView implements IColonyView
 
     /**
      * Get the style of the colony.
+     *
      * @return the current default style.
      */
     @Override

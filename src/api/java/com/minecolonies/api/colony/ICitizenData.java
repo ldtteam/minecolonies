@@ -349,4 +349,16 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @param idle true if so.
      */
     void setIdleAtJob(final boolean idle);
+
+    /**
+     * Get the texture suffix.
+     * @return the suffix.
+     */
+    String getTextureSuffix();
+
+    /**
+     * Set the suffix for a citizen.
+     * @param suffix the suffix to set.
+     */
+    void setSuffix(String suffix);
 }

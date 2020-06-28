@@ -40,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANT_2;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
@@ -228,18 +229,29 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        if(!super.canRecipeBeAdded(token))
+
+        Optional<Boolean> isRecipeAllowed;
+
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        if (isRecipeAllowed.isPresent())
         {
-            return false;
+            return isRecipeAllowed.get();
+        }
+        else
+        {
+            // Additional recipe rules
+
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+            // End Additional recipe rules
         }
 
-        return storage.getPrimaryOutput().getItem() == Items.BOOK || storage.getPrimaryOutput().getItem() == Items.PAPER;
+        return false;
     }
 
     @Override

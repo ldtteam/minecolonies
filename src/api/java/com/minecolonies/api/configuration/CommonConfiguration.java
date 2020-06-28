@@ -353,6 +353,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> gildedhammer;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> doubletrouble;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> hotboots;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> pavetheroad;
 
     /**
      * Builds common configuration.
@@ -1327,6 +1328,10 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         this.hotboots = defineList(builder, "hotboots",
           Arrays.asList("minecraft:leather*32", "minecraft:iron_ingot*16"),
+          s -> s instanceof String);
+
+        this.pavetheroad = defineList(builder, "pavetheroad",
+          Collections.singletonList("minecraft:white_concrete*32"),
           s -> s instanceof String);
 
         finishCategory(builder);

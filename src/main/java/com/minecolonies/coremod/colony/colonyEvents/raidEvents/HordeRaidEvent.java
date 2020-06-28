@@ -434,4 +434,10 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
         daysToGo = compound.getInt(TAG_DAYS_LEFT);
         killedCitizenInRaid = compound.getBoolean(TAG_KILLED);
     }
+
+    @Override
+    public void addSpawner(final BlockPos pos)
+    {
+        // do noting
+    }
 }

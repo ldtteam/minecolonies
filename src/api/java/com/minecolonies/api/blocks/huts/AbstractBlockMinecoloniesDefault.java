@@ -33,7 +33,7 @@ public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMi
     /**
      * Height of the collision box.
      */
-    public static final double            HEIGHT_COLLISION = 2.5;
+    public static final double            HEIGHT_COLLISION = 2.2;
     /**
      * Registry name for this block.
      */

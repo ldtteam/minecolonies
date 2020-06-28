@@ -38,7 +38,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -211,6 +213,57 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public boolean canRecipeBeAdded(final IToken<?> ignored)
     {
         return hasSpaceForMoreRecipes();
+    }
+
+    /**
+     * @param token
+     * @return whether the recipe can bee added based on tokens.
+     */
+    protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
+    {
+
+        ResourceLocation products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
+        ResourceLocation ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
+        ResourceLocation productsExcluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
+        ResourceLocation ingredientsExcluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+        if (storage == null)
+        {
+            return Optional.of(false);
+        }
+
+        // Check against excluded products
+        if (ItemTags.getCollection().getOrCreate(productsExcluded).contains(storage.getPrimaryOutput().getItem()))
+        {
+            return Optional.of(false);
+        }
+
+        // Check against excluded ingredients
+        for (final ItemStack stack : storage.getInput())
+        {
+            if (ItemTags.getCollection().getOrCreate(ingredientsExcluded).contains(stack.getItem()))
+            {
+                return Optional.of(false);
+            }
+        }
+
+        // Check against allowed products
+        if (ItemTags.getCollection().getOrCreate(products).contains(storage.getPrimaryOutput().getItem()))
+        {
+            return Optional.of(true);
+        }
+
+        // Check against allowed ingredients
+        for (final ItemStack stack : storage.getInput())
+        {
+            if (ItemTags.getCollection().getOrCreate(ingredients).contains(stack.getItem()))
+            {
+                return Optional.of(true);
+            }
+        }
+
+        return Optional.empty();
     }
 
     @Override

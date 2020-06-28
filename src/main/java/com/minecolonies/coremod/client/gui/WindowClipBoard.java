@@ -131,7 +131,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             }
             else
             {
-                final Image logo = findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
+                final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
                 logo.setVisible(true);
                 logo.setImage(request.getDisplayIcon());
             }

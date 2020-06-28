@@ -171,6 +171,14 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     void requestUpgrade(PlayerEntity player, BlockPos builder);
 
     /**
+     * Requests a removal for the current building.
+     *
+     * @param player  the requesting player.
+     * @param builder the assigned builder.
+     */
+    void requestRemoval(PlayerEntity player, BlockPos builder);
+
+    /**
      * Requests a repair for the current building.
      *
      * @param builder the assigned builder.

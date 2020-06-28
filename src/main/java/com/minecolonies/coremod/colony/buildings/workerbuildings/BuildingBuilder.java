@@ -212,7 +212,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         {
             double distanceToBuilder = Double.MAX_VALUE;
 
-            if (wo instanceof WorkOrderBuild && !((WorkOrderBuild) wo).canBuild(citizen))
+            if (wo instanceof WorkOrderBuild && !(wo instanceof WorkOrderBuildRemoval) && !((WorkOrderBuild) wo).canBuild(citizen))
             {
                 continue;
             }

@@ -291,12 +291,6 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
             return block1 == block2;
         }
 
-        if ((state1.getBlock() == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution && state2.getMaterial().isSolid())
-              || (state2.getBlock() == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution && state1.getMaterial().isSolid()))
-        {
-            return true;
-        }
-
         return block1 == Blocks.GRASS_BLOCK && block2 == Blocks.DIRT || block2 == Blocks.GRASS_BLOCK && block1 == Blocks.DIRT;
     }
 
@@ -310,6 +304,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         CLEAR_WATER,
         DECORATE,
         SPAWN,
-        REMOVE
+        REMOVE,
+        REMOVE_WATER
     }
 }

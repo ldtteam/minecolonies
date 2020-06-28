@@ -57,6 +57,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public static final DataParameter<Boolean>  DATA_IS_CHILD        = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
     public static final DataParameter<BlockPos> DATA_BED_POS         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BLOCK_POS);
     public static final DataParameter<String>   DATA_STYLE           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
+    public static final DataParameter<String>   DATA_TEXTURE_SUFFIX  = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
 
     /**
      * The default model.
@@ -219,7 +220,10 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     @NotNull
     public ResourceLocation getTexture()
     {
-        if (texture == null || textureDirty || !getTexture().getPath().contains(getDataManager().get(DATA_STYLE)))
+        if (texture == null
+              || textureDirty
+              || !getTexture().getPath().contains(getDataManager().get(DATA_STYLE))
+              || !getTexture().getPath().contains(getDataManager().get(DATA_TEXTURE_SUFFIX)))
         {
             setTexture();
         }
@@ -261,6 +265,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     protected void registerData()
     {
         super.registerData();
+        dataManager.register(DATA_TEXTURE_SUFFIX, "_b");
         dataManager.register(DATA_TEXTURE, 0);
         dataManager.register(DATA_LEVEL, 0);
         dataManager.register(DATA_STYLE, "default");

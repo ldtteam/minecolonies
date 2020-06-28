@@ -103,6 +103,7 @@ public final class ShipBasedRaiderUtils
         spawner.getSpawnerBaseLogic().spawnData.getNbt().putInt(TAG_EVENT_ID, event.getID());
         spawner.getSpawnerBaseLogic().spawnData.getNbt().putInt(TAG_COLONY_ID, colonyId);
 
+        event.addSpawner(location);
         world.setTileEntity(location, spawner);
     }
 

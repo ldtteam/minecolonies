@@ -20,7 +20,6 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -34,7 +33,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -180,26 +178,31 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        if (!AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size()))
+        Optional<Boolean> isRecipeAllowed;
+
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if (storage == null)
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        if (isRecipeAllowed.isPresent())
         {
-            return false;
+            return isRecipeAllowed.get();
+        }
+        else
+        {
+            // Additional recipe rules
+
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+            return ItemStackUtils.CAN_EAT.test(storage.getPrimaryOutput())
+                     || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance()
+                                                      .getSmeltingResult(storage.getPrimaryOutput()));
+
+            // End Additional recipe rules
         }
 
-        for (final ItemStorage input : storage.getCleanedInput())
-        {
-            if (Tags.Items.CROPS_WHEAT.contains(input.getItem()))
-            {
-                return false;
-            }
-        }
-
-       return ItemStackUtils.CAN_EAT.test(storage.getPrimaryOutput()) || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance().getSmeltingResult(storage.getPrimaryOutput()));
     }
 
     @NotNull

@@ -13,4 +13,6 @@ public class RaidSounds
     public static final SoundEvent DESERT_RAID_VICTORY = ModSoundEvents.getSoundID("raid.desert.desert_raid_victory");
     public static final SoundEvent DESERT_RAID_WARNING = ModSoundEvents.getSoundID("raid.desert.desert_raid_warning");
     public static final SoundEvent DESERT_RAID         = ModSoundEvents.getSoundID("raid.desert.desert_raid");
+    public static final SoundEvent AMAZON_RAID         = ModSoundEvents.getSoundID("raid.amazon.amazon_raid");
+
 }
