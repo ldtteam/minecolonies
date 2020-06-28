@@ -21,7 +21,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Tuple;
+import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -134,43 +134,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         final BuildingBuilder building = getOwnBuilding();
         final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
-        boolean only_64 = false;
 
-        Map<String, BuildingBuilderResource> neededRessourcesMap = building.getNeededResources();
-        if (neededRessourcesMap.size() > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
-        {
-            only_64 = true;
-        }
-        else
-        {
-            int stackCount = 0;
+        final Tuple<Map<String, Integer>, Integer> neededRessourcesMap = building.getRequiredResources();
 
-            for (final BuildingBuilderResource stack : neededRessourcesMap.values())
-            {
-                int amount = stack.getAmount();
-                while (amount > 0)
-                {
-                    stackCount++;
-                    amount = amount - stack.getItemStack().getMaxStackSize();
-                }
-            }
-            if (stackCount > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
-            {
-                only_64 = true;
-            }
-        }
-
-        for (final BuildingBuilderResource stack : neededRessourcesMap.values())
+        for (final Map.Entry<String, Integer> entry : neededRessourcesMap.getA().entrySet())
         {
-            int amount = stack.getAmount();
-            if (only_64)
+            final BuildingBuilderResource res = building.getResourceFromIdentifier(entry.getKey());
+            if (res != null)
             {
-                if (amount > stack.getItemStack().getMaxStackSize())
-                {
-                    amount = stack.getItemStack().getMaxStackSize();
-                }
+                int amount = entry.getValue();
+                neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(res.getItemStack(), itemstack, true, true), amount));
             }
-            neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), amount));
         }
 
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
