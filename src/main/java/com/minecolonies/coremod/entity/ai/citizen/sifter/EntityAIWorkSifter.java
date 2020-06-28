@@ -60,7 +60,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, SIFT, 1),
+          new AITarget(IDLE, START_WORKING, 10),
           new AITarget(START_WORKING, SIFT, 1),
           new AITarget(SIFT, this::sift, TICK_DELAY)
         );

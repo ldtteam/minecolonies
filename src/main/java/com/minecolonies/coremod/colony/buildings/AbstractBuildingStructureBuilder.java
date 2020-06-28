@@ -386,8 +386,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         return neededResources.get(res);
     }
 
-    // todo: decorations need to go in another bucket.
-
     /**
      * Check if the resources are in the bucket.
      * @param stack the stack to check.
@@ -480,13 +478,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 }
                 else
                 {
-                    map.remove(name);
+                     map.remove(name);
                 }
             }
 
             if (map.isEmpty())
             {
-                buckets.removeLast();
+                buckets.remove();
             }
         }
 
