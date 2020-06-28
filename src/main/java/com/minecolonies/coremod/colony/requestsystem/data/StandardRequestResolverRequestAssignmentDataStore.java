@@ -11,12 +11,15 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -122,5 +125,40 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
 
             return new StandardRequestResolverRequestAssignmentDataStore(token, map);
         }
+
+		@Override
+		public void serialize(IFactoryController controller, StandardRequestResolverRequestAssignmentDataStore input,
+				PacketBuffer packetBuffer)
+		{
+			controller.serialize(packetBuffer, input.id);
+            packetBuffer.writeInt(input.assignments.size());
+            input.assignments.forEach((key, value) -> {
+                controller.serialize(packetBuffer, key);
+                packetBuffer.writeInt(value.size());
+                value.forEach(token -> controller.serialize(token));
+            });
+		}
+
+		@Override
+		public StandardRequestResolverRequestAssignmentDataStore deserialize(IFactoryController controller,
+				PacketBuffer buffer) throws Throwable
+		{
+			final IToken<?> token = controller.deserialize(buffer);
+            final Map<IToken<?>, Collection<IToken<?>>> assignments = new HashMap<>();
+            final int assignmentsSize = buffer.readInt();
+            for (int i = 0; i < assignmentsSize; ++i)
+            {
+                final IToken<?> key = controller.deserialize(buffer);
+                final List<IToken<?>> tokens = new ArrayList<>();
+                final int tokensSize = buffer.readInt();
+                for (int ii = 0; ii < tokensSize; ++ii)
+                {
+                    tokens.add(controller.deserialize(buffer));
+                }
+                assignments.put(key, tokens);
+            }
+
+            return new StandardRequestResolverRequestAssignmentDataStore(token, assignments);
+		}
     }
 }

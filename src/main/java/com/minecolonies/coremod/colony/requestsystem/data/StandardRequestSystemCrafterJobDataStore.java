@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -138,6 +139,39 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
               .collect(Collectors.toList());
 
             return new StandardRequestSystemCrafterJobDataStore(token, queue, taskList);
+        }
+
+        @Override
+        public void serialize(IFactoryController controller, StandardRequestSystemCrafterJobDataStore input,
+                PacketBuffer packetBuffer)
+        {
+            controller.serialize(packetBuffer, input.id);
+            packetBuffer.writeInt(input.queue.size());
+            input.queue.forEach(entry -> controller.serialize(packetBuffer, entry));
+            packetBuffer.writeInt(input.tasks.size());
+            input.tasks.forEach(task -> controller.serialize(packetBuffer, task));
+        }
+
+        @Override
+        public StandardRequestSystemCrafterJobDataStore deserialize(IFactoryController controller, PacketBuffer buffer)
+                throws Throwable
+        {
+            final IToken<?> id = controller.deserialize(buffer);
+            final LinkedList<IToken<?>> queue = new LinkedList<>();
+            final int queueSize = buffer.readInt();
+            for (int i = 0; i < queueSize; ++i)
+            {
+                queue.add(controller.deserialize(buffer));
+            }
+
+            final List<IToken<?>> tasks = new ArrayList<>();
+            final int tasksSize = buffer.readInt();
+            for (int i = 0; i < tasksSize; ++i)
+            {
+                tasks.add(controller.deserialize(buffer));
+            }
+
+            return new StandardRequestSystemCrafterJobDataStore(id, queue, tasks);
         }
     }
 }

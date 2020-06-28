@@ -149,13 +149,14 @@ public class StandardRequestableTypeRequestResolverAssignmentDataStore implement
             final int assignmentsSize = buffer.readInt();
             for (int i = 0; i < assignmentsSize; ++i)
             {
+                final TypeToken<?> key = controller.deserialize(buffer);
             	final List<IToken<?>> tokens = new ArrayList<>();
                 final int tokensSize = buffer.readInt();
                 for (int ii = 0; ii < tokensSize; ++ii)
                 {
                     tokens.add(controller.deserialize(buffer));
                 }
-                assignments.put(controller.deserialize(buffer), tokens);
+                assignments.put(key, tokens);
             }
 
             return new StandardRequestableTypeRequestResolverAssignmentDataStore(token, assignments);
