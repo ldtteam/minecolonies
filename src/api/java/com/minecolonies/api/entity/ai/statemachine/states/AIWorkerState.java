@@ -185,14 +185,14 @@ public enum AIWorkerState implements IAIState
     GUARD_ATTACK_PROTECT(false),
 
     /**
-     * Allow the witch guard to heal allies.
+     * Allow the witch guard to debuff enemies.
      */
-    GUARD_ATTACK_HEAL(false),
+    WITCH_GUARD_ATTACK_DEBUFF(false),
 
     /**
      * Allow the witch guard to buff allies.
      */
-    GUARD_ATTACK_BUFF(false),
+    WITCH_GUARD_ATTACK_BUFF(false),
 
     /**
      * Patrol through the village.

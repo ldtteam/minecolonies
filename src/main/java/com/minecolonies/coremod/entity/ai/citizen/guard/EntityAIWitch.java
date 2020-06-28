@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
@@ -10,23 +9,21 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobWitch;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PotionEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -35,11 +32,10 @@ import static com.minecolonies.api.util.constant.GuardConstants.*;
 //TODO
 public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuildingGuards>
 {
-    public static final  int    GUARD_ATTACK_INTERVAL                     = 10;
-    private static final double STRAFING_SPEED                            = 0.7f;
+    public static final  int    GUARD_ATTACK_INTERVAL                     = 20;
+    private static final double STRAFING_SPEED                            = 0.6f;
     private static final int    TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 4;
     private static final double SWITCH_STRAFING_DIRECTION                 = 0.3d;
-    private static final float  HEALTH_PERCENTAGE_MIN                     = .2f;
     private static final int    MIN_POTION_DISTANCE                       = 5; //TODO ???
 
     /**
@@ -94,10 +90,10 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     private int          lastSeenBuff;
 
     /**
-     * The current healing target.
+     * The current debuffing target.
      */
-    private LivingEntity healTarget;
-    private int          lastSeenHeal;
+    private LivingEntity debuffTarget;
+    private int          lastSeenDebuff;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -108,19 +104,12 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     {
         super(job);
         super.registerTargets(
-          new AITarget(GUARD_ATTACK_RANGED, () -> true, this::attackEnemy, GUARD_ATTACK_INTERVAL),
-          new AITarget(GUARD_ATTACK_HEAL, () -> true, this::healAllies, GUARD_ATTACK_INTERVAL),
-          new AITarget(GUARD_ATTACK_BUFF, () -> true, this::buffAllies, GUARD_ATTACK_INTERVAL)
+          new AITarget(WITCH_GUARD_ATTACK_DEBUFF, this::debufEnemies, GUARD_ATTACK_INTERVAL),
+          new AITarget(WITCH_GUARD_ATTACK_BUFF, this::buffAllies, GUARD_ATTACK_INTERVAL)
         );
-        toolsNeeded.add(ToolType.HARM_POTION);
-        toolsNeeded.add(ToolType.HEAL_POTION);
-        toolsNeeded.add(ToolType.BUFF_POTION);
     }
 
-    /**
-     * Attack enemies with harmfull potions (harming, poison, slowness, ...)
-     */
-    protected IAIState attackEnemy()
+    private IAIState debufEnemies()
     {
         final IAIState state = preAttackChecks();
         if (state != getState())
@@ -136,52 +125,7 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
             return START_WORKING;
         }
 
-        return targetAndThrowAtEntity(target, GUARD_ATTACK_RANGED);
-    }
-
-    /**
-     * Heal allies with healing/regen potions
-     */
-    protected IAIState healAllies()
-    {
-        final IAIState state = preAttackChecks();
-        if (state != getState())
-        {
-            worker.getNavigator().clearPath();
-            worker.getMoveHelper().strafe(0, 0);
-            setDelay(STANDARD_DELAY);
-            return state;
-        }
-
-        if (worker.getCitizenData() == null)
-        {
-            return START_WORKING;
-        }
-
-        if (helpCitizen.get() == null || !helpCitizen.get().isCurrentlyFleeing())
-        {
-            final List<LivingEntity> allies = world.getEntitiesWithinAABB(LivingEntity.class,
-              new AxisAlignedBB(worker.getPosition()).grow(getPersecutionDistance() + getAttackRange()),
-              livingEntity -> !livingEntity.equals(worker) && isAlly(livingEntity));
-            LivingEntity target = null;
-            for (final LivingEntity ally : allies)
-            {
-                if (target == null || target.getMaxHealth() / target.getHealth() > ally.getMaxHealth() / ally.getHealth())
-                {
-                    target = ally;
-                }
-            }
-            if (target == null || target.getMaxHealth() / target.getHealth() > HEALTH_PERCENTAGE_MIN)
-            {
-                return getAttackState();
-            }
-            this.target = target;
-        }
-        else
-        {
-            return targetAndThrowAtEntity(this.helpCitizen.get(), GUARD_ATTACK_HEAL);
-        }
-        return targetAndThrowAtEntity(this.target, GUARD_ATTACK_HEAL);
+        return targetAndThrowAtEntity(buffTarget, WITCH_GUARD_ATTACK_DEBUFF);
     }
 
     /**
@@ -203,7 +147,7 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
             return START_WORKING;
         }
 
-        return targetAndThrowAtEntity(buffTarget, GUARD_ATTACK_BUFF);
+        return targetAndThrowAtEntity(buffTarget, WITCH_GUARD_ATTACK_BUFF);
     }
 
     private IAIState targetAndThrowAtEntity(final LivingEntity target, final IAIState returnOnSuccess)
@@ -353,13 +297,11 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     private void throwPotionAt(final LivingEntity target)
     {
         final int level = worker.getCitizenData().getCitizenSkillHandler().getLevel(ModGuardTypes.witch.getSecondarySkill());
-        worker.setActiveHand(Hand.MAIN_HAND);
         final PotionEntity potionentity = new PotionEntity(worker.world, worker);
         potionentity.setItem(worker.getActiveItemStack());
         final float inaccuracy = 99f / level;
         potionentity.shoot(target.getPosX(), target.getPosY(), target.getPosZ(), 0.5F, inaccuracy);
         worker.world.addEntity(potionentity);
-        worker.getActiveItemStack().shrink(1);
     }
 
     /**
@@ -371,42 +313,6 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     public Class<AbstractBuildingGuards> getExpectedBuildingClass()
     {
         return AbstractBuildingGuards.class;
-    }
-
-    @Override
-    protected IAIState helping()
-    {
-        reduceAttackDelay(GUARD_TASK_INTERVAL * getTickRate());
-        if (helpCitizen.get() == null || !helpCitizen.get().isCurrentlyFleeing())
-        {
-            return GUARD_DECIDE;
-        }
-
-        if (target == null || !target.isAlive())
-        {
-            if (helpCitizen.get().getMaxHealth() / helpCitizen.get().getHealth() < HEALTH_PERCENTAGE_MIN)
-            {
-                return GUARD_ATTACK_HEAL;
-            }
-            target = helpCitizen.get().getRevengeTarget();
-            if (target == null || !target.isAlive())
-            {
-                return GUARD_DECIDE;
-            }
-        }
-
-        setNextPatrolTarget(null);
-        // Check if we're ready to attack the target
-        if (worker.getEntitySenses().canSee(target) && isWithinPersecutionDistance(target.getPosition()))
-        {
-            target.setRevengeTarget(worker);
-            return getAttackState();
-        }
-
-        // Move towards the target
-        moveInAttackPosition();
-
-        return HELP_CITIZEN;
     }
 
     /**
@@ -426,10 +332,9 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
 
         final List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, getSearchArea());
 
-        boolean isBuff = false;
+        boolean isAlly = false;
         int closest = Integer.MAX_VALUE;
         LivingEntity closestTarget = null;
-        LivingEntity closestHeal = null;
 
         for (final LivingEntity entity : entities)
         {
@@ -456,17 +361,9 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
                 }*///TODO should witch wake up other guards?
                 if (tempDistance < closest)
                 {
-                    if (entity.getMaxHealth() / entity.getHealth() < HEALTH_PERCENTAGE_MIN)
-                    {
-                        closest = tempDistance;
-                        closestHeal = entity;
-                    }
-                    else
-                    {
-                        closest = tempDistance;
-                        closestTarget = entity;
-                        isBuff = true;
-                    }
+                    closest = tempDistance;
+                    closestTarget = entity;
+                    isAlly = true;
                 }
             }
             else if (isEntityValidTarget(entity))
@@ -476,32 +373,25 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
                 {
                     closest = tempDistance;
                     closestTarget = entity;
-                    isBuff = false;
+                    isAlly = false;
                 }
             }
         }
 
-        if (closestHeal != null)
+        if (closestTarget != null)
         {
-            healTarget = closestTarget;
-            buffTarget = null;
-            target = null;
-            return healTarget;
-        }
-
-        if (isBuff && buffTarget != null)
-        {
-            buffTarget = closestTarget;
-            healTarget = null;
-            target = null;
-            return buffTarget;
-        }
-        else if (closestTarget != null)
-        {
-            target = closestTarget;
-            healTarget = null;
-            buffTarget = null;
-            return target;
+            if (isAlly)
+            {
+                buffTarget = closestTarget;
+                debuffTarget = null;
+                return buffTarget;
+            }
+            else
+            {
+                debuffTarget = closestTarget;
+                buffTarget = null;
+                return target;
+            }
         }
 
         return null;
@@ -517,13 +407,12 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     {
         switch ((AIWorkerState) getState())
         {
-            case GUARD_ATTACK_BUFF:
+            case WITCH_GUARD_ATTACK_BUFF:
                 return checkForBuffTarget();
-            case GUARD_ATTACK_HEAL:
-                return checkForHealTarget();
-            case GUARD_ATTACK_RANGED:
+            case WITCH_GUARD_ATTACK_DEBUFF:
+                return checkForDebuffTarget();
             default:
-                return super.checkForTarget();
+                return false;
         }
     }
 
@@ -535,67 +424,55 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     @Override
     protected IAIState checkAndAttackTarget()
     {
-        if (checkForHealTarget())
+        if (checkForBuffTarget())
         {
             if (hasMainWeapon())
             {
-                return GUARD_ATTACK_HEAL;
+                return WITCH_GUARD_ATTACK_BUFF;
             }
             return START_WORKING;
         }
-        else if (checkForBuffTarget())
+        else if (checkForDebuffTarget())
         {
             if (hasMainWeapon())
             {
-                return GUARD_ATTACK_BUFF;
-            }
-            return START_WORKING;
-        }
-        else if (checkForTarget())
-        {
-            if (hasMainWeapon())
-            {
-                for (final ICitizenData citizen : getOwnBuilding().getAssignedCitizen())
-                {
-                    if (citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getRevengeTarget() == null)
-                    {
-                        citizen.getCitizenEntity().get().setRevengeTarget(target);
-                    }
-                }
-                return getAttackState();
+                return WITCH_GUARD_ATTACK_DEBUFF;
             }
             return START_WORKING;
         }
         return null;
     }
 
-    private boolean checkForHealTarget()
+    private boolean checkForDebuffTarget()
     {
-        if (healTarget == null || !healTarget.isAlive())
+        if (debuffTarget == null || !debuffTarget.isAlive())
         {
             return false;
         }
 
-        if (!(healTarget.getMaxHealth() / healTarget.getHealth() > HEALTH_PERCENTAGE_MIN))
+        final Collection<EffectInstance> effects = PotionUtils.getFullEffectsFromItem(worker.getHeldItemMainhand());
+        if (debuffTarget.getActivePotionEffects().isEmpty() || effects.stream()
+                                                                 .map(EffectInstance::getPotion)
+                                                                 .noneMatch(effect -> debuffTarget.getActivePotionEffect(effect) != null))
         {
             // Check sight
-            if (!worker.canEntityBeSeen(healTarget))
+            if (!worker.canEntityBeSeen(debuffTarget))
             {
-                lastSeenHeal += GUARD_TASK_INTERVAL;
+                lastSeenDebuff += GUARD_TASK_INTERVAL;
             }
             else
             {
-                lastSeenHeal = 0;
+                lastSeenDebuff = 0;
             }
 
-            if (lastSeenHeal > STOP_PERSECUTION_AFTER)
+            if (lastSeenDebuff > STOP_PERSECUTION_AFTER)
             {
                 resetTarget();
                 return false;
             }
 
             // Move into range
-            if (!isInAttackDistance(healTarget.getPosition()))
+            if (!isInAttackDistance(debuffTarget.getPosition()))
             {
                 if (worker.getNavigator().noPath())
                 {
@@ -619,11 +496,10 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
             return false;
         }
 
-        final Potion potion = PotionUtils.getPotionFromItem(worker.getHeldItemMainhand());
-        final Collection<EffectInstance> effects = buffTarget.getActivePotionEffects();
-        if (effects.isEmpty() || effects.stream()
-                                   .map(EffectInstance::getPotion)
-                                   .noneMatch(effect -> potion.getEffects().stream().map(EffectInstance::getPotion).anyMatch(effect::equals)))
+        final Collection<EffectInstance> effects = PotionUtils.getFullEffectsFromItem(worker.getHeldItemMainhand());
+        if (buffTarget.getActivePotionEffects().isEmpty() || effects.stream()
+                                                               .map(EffectInstance::getPotion)
+                                                               .noneMatch(effect -> buffTarget.getActivePotionEffect(effect) != null))
         {
             // Check sight
             if (!worker.canEntityBeSeen(buffTarget))
@@ -657,6 +533,18 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
             resetTarget();
         }
         return false;
+    }
+
+    @NotNull
+    private EffectInstance getBuffEffect()
+    {
+        return null;//TODO
+    }
+
+    @NotNull
+    private EffectInstance getDebuffEffect()
+    {
+        return null;//TODO
     }
 
     /**
@@ -703,15 +591,12 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
         final LivingEntity target;
         switch ((AIWorkerState) getState())
         {
-            case GUARD_ATTACK_BUFF:
+            case WITCH_GUARD_ATTACK_BUFF:
                 target = buffTarget;
                 break;
-            case GUARD_ATTACK_HEAL:
-                target = healTarget;
-                break;
-            case GUARD_ATTACK_RANGED:
+            case WITCH_GUARD_ATTACK_DEBUFF:
             default:
-                target = this.target;
+                target = debuffTarget;
         }
         worker.getNavigator().tryMoveToBlockPos(
           worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 8),
@@ -726,13 +611,12 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     {
         switch ((AIWorkerState) getState())
         {
-            case GUARD_ATTACK_BUFF:
+            case WITCH_GUARD_ATTACK_BUFF:
                 buffTarget = null;
                 break;
-            case GUARD_ATTACK_HEAL:
-                healTarget = null;
+            case WITCH_GUARD_ATTACK_DEBUFF:
+                debuffTarget = null;
                 break;
-            case GUARD_ATTACK_RANGED:
             default:
                 super.resetTarget();
         }
@@ -746,7 +630,7 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     @Override
     public boolean hasMainWeapon()
     {
-        return hasTool();
+        return true;
     }
 
     /**
@@ -758,37 +642,20 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
         if (getState() instanceof AIWorkerState)
         {
             final AIWorkerState state = (AIWorkerState) getState();
-            if (state == GUARD_ATTACK_HEAL)
+            final ItemStack stack = new ItemStack(Items.POTION);
+            if (state == WITCH_GUARD_ATTACK_BUFF)
             {
-                equip(ToolType.HEAL_POTION);
+                PotionUtils.appendEffects(stack, Collections.singleton(getBuffEffect()));
             }
-            else if (state == GUARD_ATTACK_BUFF)
+            else if (state == WITCH_GUARD_ATTACK_DEBUFF)
             {
-                equip(ToolType.BUFF_POTION);
+                PotionUtils.appendEffects(stack, Collections.singleton(getDebuffEffect()));
             }
-            else if (state == GUARD_ATTACK_RANGED)
+            else
             {
-                if (target != null && target.isEntityUndead())
-                {
-                    equip(ToolType.HEAL_POTION);
-                }
-                else
-                {
-                    equip(ToolType.HARM_POTION);
-                }
+                return;
             }
-        }
-    }
-
-    /**
-     * Equip a tool.
-     */
-    protected void equip(final IToolType toolType)
-    {
-        final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), toolType, 0, buildingGuards.getMaxToolLevel());
-        if (slot != -1)
-        {
-            worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, slot);
+            worker.setHeldItem(Hand.MAIN_HAND, stack);
         }
     }
 
