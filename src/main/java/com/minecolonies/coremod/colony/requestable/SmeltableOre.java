@@ -6,6 +6,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,14 +37,14 @@ public class SmeltableOre implements IDeliverable
         this.result = result;
     }
 
-    public static CompoundNBT serialize(final IFactoryController controller, final SmeltableOre food)
+    public static CompoundNBT serialize(final IFactoryController controller, final SmeltableOre ore)
     {
         final CompoundNBT compound = new CompoundNBT();
-        compound.putInt(NBT_COUNT, food.count);
+        compound.putInt(NBT_COUNT, ore.count);
 
-        if (!ItemStackUtils.isEmpty(food.result))
+        if (!ItemStackUtils.isEmpty(ore.result))
         {
-            compound.put(NBT_RESULT, food.result.serializeNBT());
+            compound.put(NBT_RESULT, ore.result.serializeNBT());
         }
 
         return compound;
@@ -52,6 +54,39 @@ public class SmeltableOre implements IDeliverable
     {
         final int count = compound.getInt(NBT_COUNT);
         final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+
+        return new SmeltableOre(count, result);
+    }
+
+    /**
+     * Serialize the deliverable.
+     * 
+     * @param controller the controller.
+     * @param buffer the the buffer to write to.
+     * @param input the input to serialize.
+     */
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final SmeltableOre input)
+    {
+        buffer.writeInt(input.getCount());
+
+        buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
+        if (!ItemStackUtils.isEmpty(input.result))
+        {
+            buffer.writeItemStack(input.result);
+        }
+    }
+
+    /**
+     * Deserialize the deliverable.
+     * 
+     * @param controller the controller.
+     * @param buffer the buffer to read.
+     * @return the deliverable.
+     */
+    public static SmeltableOre deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    {
+    	final int count = buffer.readInt();
+        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
 
         return new SmeltableOre(count, result);
     }
