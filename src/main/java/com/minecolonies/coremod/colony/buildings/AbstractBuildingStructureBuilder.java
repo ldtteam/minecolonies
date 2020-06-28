@@ -386,9 +386,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         return neededResources.get(res);
     }
 
-    //todo somewhere we reset to reload the resources again. We have to do this, when we need resources that are NOT in the current bucket.
-    // hasListOfResInInvOrRequest is the method where we check this. I don't remember where the reset code is -> search
-    // then test the shit out of this.
     // todo: decorations need to go in another bucket.
 
     /**

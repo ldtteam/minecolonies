@@ -161,11 +161,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return IDLE;
         }
 
-        if (structurePlacer.getB().getStage() != BuildingStructureHandler.Stage.DECORATE)
-        {
-            needsCurrently = new Tuple<>(needsCurrently.getA().and(stack -> !ItemStackUtils.isDecoration(stack)), needsCurrently.getB());
-        }
-
         if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently.getA()))
         {
             return GATHERING_REQUIRED_MATERIALS;
