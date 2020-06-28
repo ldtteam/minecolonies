@@ -5,6 +5,8 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -140,6 +142,29 @@ public class Stack implements IDeliverable
         return compound;
     }
 
+
+    /**
+     * Serialize the deliverable.
+     * @param controller the controller.
+     * @param input the input.
+     * @return the compound.
+     */
+    public static void serialize(final IFactoryController controller, final Stack input, PacketBuffer buffer)
+    {
+        buffer.writeItemStack(input.theStack);
+        buffer.writeBoolean(input.matchMeta);
+        buffer.writeBoolean(input.matchNBT);
+        buffer.writeBoolean(input.matchOreDic);
+
+        buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
+        if (!ItemStackUtils.isEmpty(input.result))
+        {
+            buffer.writeItemStack(input.result);
+        }
+        buffer.writeInt(input.getCount());
+        buffer.writeInt(input.getMinimumCount());
+    }
+
     /**
      * Deserialize the deliverable.
      * @param controller the controller.
@@ -161,6 +186,27 @@ public class Stack implements IDeliverable
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);
         }
+
+        return new Stack(stack, matchMeta, matchNBT, matchOreDic, result, count, minCount);
+    }
+
+    /**
+     * Deserialize the deliverable.
+     * @param controller the controller.
+     * @param buffer the buffer.
+     * @return the deliverable.
+     */
+    public static Stack deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    {
+        final ItemStack stack = buffer.readItemStack();
+        final boolean matchMeta = buffer.readBoolean();
+        final boolean matchNBT = buffer.readBoolean();
+        final boolean matchOreDic = buffer.readBoolean();
+
+        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStackUtils.EMPTY;
+
+        int count = buffer.readInt();
+        int minCount = buffer.readInt();
 
         return new Stack(stack, matchMeta, matchNBT, matchOreDic, result, count, minCount);
     }

@@ -284,14 +284,14 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    public <OUTPUT> void writeToBuffer(@NotNull final PacketBuffer buffer, @NotNull final OUTPUT object) throws IllegalArgumentException
+    public <OUTPUT> void serialize(@NotNull final PacketBuffer buffer, @NotNull final OUTPUT object) throws IllegalArgumentException
     {
         final CompoundNBT bufferCompound = serialize(object);
         buffer.writeCompoundTag(bufferCompound);
     }
 
     @Override
-    public <OUTPUT> OUTPUT readFromBuffer(@NotNull final PacketBuffer buffer) throws IllegalArgumentException
+    public <OUTPUT> OUTPUT deserialize(@NotNull final PacketBuffer buffer) throws IllegalArgumentException
     {
         final CompoundNBT bufferCompound = buffer.readCompoundTag();
         return deserialize(bufferCompound);

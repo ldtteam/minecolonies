@@ -22,6 +22,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.IntNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
+
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -115,6 +117,22 @@ public final class StandardRequestFactories
                 token,
                 requester,
                 requestState));
+        }
+
+        @NotNull
+        @Override
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest itemStackRequest, final PacketBuffer packetBuffer) {
+            serializeToPacketBuffer(controller, itemStackRequest, packetBuffer, Stack::serialize);
+        }
+
+        @NotNull
+        @Override
+        public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable {
+            return deserializeFromPacketBuffer(controller, buffer, Stack::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackRequest.class),
+                            requested,
+                            token,
+                            requester,
+                            requestState));
         }
     }
 
@@ -638,7 +656,7 @@ public final class StandardRequestFactories
 
         final CompoundNBT requesterCompound = controller.serialize(request.getRequester());
         final CompoundNBT tokenCompound = controller.serialize(request.getId());
-        final IntNBT stateCompound = request.getState().serializeNBT();
+        final IntNBT stateCompound = request.getState().serialize();
         final CompoundNBT requestedCompound = typeSerialization.apply(controller, request.getRequest());
 
         final ListNBT childrenCompound = new ListNBT();
@@ -672,6 +690,40 @@ public final class StandardRequestFactories
         return compound;
     }
 
+    public static <T extends IRequestable> void serializeToPacketBuffer(
+                    final IFactoryController controller,
+                    final IRequest<T> request,
+                    final PacketBuffer packetBuffer,
+                    final IObjectToPackBufferWriter<T> typeSerialization)
+    {
+
+        controller.serialize(packetBuffer, request.getRequester());
+        controller.serialize(packetBuffer, request.getId());
+        request.getState().serialize(packetBuffer);
+        typeSerialization.apply(controller, request.getRequest(), packetBuffer);
+
+        packetBuffer.writeInt(request.getChildren().size());
+        for (final IToken<?> token : request.getChildren())
+        {
+            controller.serialize(packetBuffer, token);
+        }
+
+        packetBuffer.writeBoolean(request.hasResult());
+        if (request.hasResult())
+        {
+            typeSerialization.apply(controller, request.getResult(), packetBuffer);
+        }
+
+        packetBuffer.writeBoolean(request.hasParent());
+        if (request.hasParent())
+        {
+            controller.serialize(packetBuffer, request.getParent());
+        }
+
+        packetBuffer.writeInt(request.getDeliveries().size());
+        request.getDeliveries().forEach(packetBuffer::writeItemStack);
+    }
+
     public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromNBT(
       final IFactoryController controller,
       final CompoundNBT compound,
@@ -680,7 +732,7 @@ public final class StandardRequestFactories
     {
         final IRequester requester = controller.deserialize(compound.getCompound(NBT_REQUESTER));
         final IToken<?> token = controller.deserialize(compound.getCompound(NBT_TOKEN));
-        final RequestState state = RequestState.deserializeNBT((IntNBT) compound.get(NBT_STATE));
+        final RequestState state = RequestState.deserialize((IntNBT) compound.get(NBT_STATE));
         final T requested = typeDeserialization.apply(controller, compound.getCompound(NBT_REQUESTED));
 
         final List<IToken<?>> childTokens = new ArrayList<>();
@@ -716,6 +768,46 @@ public final class StandardRequestFactories
         return request;
     }
 
+    public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromPacketBuffer(
+                    final IFactoryController controller,
+                    final PacketBuffer buffer,
+                    final IPacketBufferToObjectReader<T> typeDeserialization,
+                    final IObjectConstructor<T, R> objectConstructor)
+    {
+        final IRequester requester = controller.deserialize(buffer);
+        final IToken<?> token = controller.deserialize(buffer);
+        final RequestState state = RequestState.deserialize(buffer);
+        final T requested = typeDeserialization.apply(controller, buffer);
+
+        final List<IToken<?>> childTokens = new ArrayList<>();
+        for (int i = 0; i < buffer.readInt(); i++)
+        {
+            childTokens.add(controller.deserialize(buffer));
+        }
+
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE) final R request = objectConstructor.construct(requested, token, requester, state);
+        request.addChildren(childTokens);
+
+        if (buffer.readBoolean())
+        {
+            request.setResult(typeDeserialization.apply(controller, buffer));
+        }
+
+        if (buffer.readBoolean())
+        {
+            request.setParent(controller.deserialize(buffer));
+        }
+
+        final List<ItemStack> deliveries = new ArrayList<>();
+        for (int i = 0; i < buffer.readInt(); i++)
+        {
+            deliveries.add(buffer.readItemStack());
+        }
+
+        request.overrideCurrentDeliveries(ImmutableList.copyOf(deliveries));
+        return request;
+    }
+
     @FunctionalInterface
     public interface IObjectToNBTConverter<O>
     {
@@ -726,6 +818,18 @@ public final class StandardRequestFactories
     public interface INBTToObjectConverter<O>
     {
         O apply(IFactoryController controller, CompoundNBT compound);
+    }
+
+    @FunctionalInterface
+    public interface IObjectToPackBufferWriter<O>
+    {
+        void apply(IFactoryController controller, O object, PacketBuffer buffer);
+    }
+
+    @FunctionalInterface
+    public interface IPacketBufferToObjectReader<O>
+    {
+        O apply(IFactoryController controller, PacketBuffer buffer);
     }
 
     @FunctionalInterface

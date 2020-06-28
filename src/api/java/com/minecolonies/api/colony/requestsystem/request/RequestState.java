@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.request;
 
 import net.minecraft.nbt.IntNBT;
+import net.minecraft.network.PacketBuffer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -102,7 +103,7 @@ public enum RequestState
      * @param nbt The nbt to deserialize from.
      * @return The RequestState that is stored in the given NBT.
      */
-    public static RequestState deserializeNBT(final IntNBT nbt)
+    public static RequestState deserialize(final IntNBT nbt)
     {
         return indexList.get(nbt.getInt());
     }
@@ -112,9 +113,31 @@ public enum RequestState
      *
      * @return The NBT representation of the state.
      */
-    public IntNBT serializeNBT()
+    public IntNBT serialize()
     {
         return IntNBT.valueOf(indexList.indexOf(this));
+    }
+
+
+    /**
+     * Method used to deserialize a RequestState from a packet buffer
+     *
+     * @param buffer The buffer to deserialize from.
+     * @return The RequestState that is stored in the given NBT.
+     */
+    public static RequestState deserialize(final PacketBuffer buffer)
+    {
+        return indexList.get(buffer.readInt());
+    }
+
+    /**
+     * Method used to serialize a state to a packet buffer.
+     *
+     * @param buffer The buffer to write to.
+     */
+    public void serialize(PacketBuffer buffer)
+    {
+        buffer.writeInt(indexList.indexOf(this));
     }
 
 

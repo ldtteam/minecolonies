@@ -142,7 +142,7 @@ public interface IFactoryController
      * @param <Output> The type of the object to write.
      * @throws IllegalArgumentException is thrown when the given output type is unknown to this controller.
      */
-    <Output extends Object> void writeToBuffer(@NotNull final PacketBuffer buffer, @NotNull final Output object) throws IllegalArgumentException;
+    <Output extends Object> void serialize(@NotNull final PacketBuffer buffer, @NotNull final Output object) throws IllegalArgumentException;
 
     /**
      * Method used to quickly read an object from a given {@link ByteBuf}
@@ -153,7 +153,7 @@ public interface IFactoryController
      *
      * @throws IllegalArgumentException is thrown when the requested type is unknown to this controller.
      */
-    <Output> Output readFromBuffer(@NotNull final PacketBuffer buffer) throws IllegalArgumentException;
+    <Output> Output deserialize(@NotNull final PacketBuffer buffer) throws IllegalArgumentException;
 
     /**
      * Method used to create a new instance of the given input.
