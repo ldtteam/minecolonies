@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
@@ -18,6 +19,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
@@ -55,7 +57,7 @@ public final class ColonyView implements IColonyView
     /**
      * Max allowed CompoundNBT in bytes
      */
-    private static final int MAX_BYTES_NBTCOMPOUND = 350000;
+    private static final int REQUEST_MANAGER_MAX_SIZE = 700000;
 
     //  General Attributes
     private final int                            id;
@@ -269,16 +271,12 @@ public final class ColonyView implements IColonyView
         if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || hasNewSubscribers))
         {
             final int preSize = buf.writerIndex();
-            final int preState = buf.readerIndex();
             buf.writeBoolean(true);
-            buf.writeCompoundTag(colony.getRequestManager().serializeNBT());
+            colony.getRequestManager().serialize(StandardFactoryController.getInstance(), buf);
             final int postSize = buf.writerIndex();
-            if ((postSize - preSize) >= ColonyView.MAX_BYTES_NBTCOMPOUND)
+            if ((postSize - preSize) >= ColonyView.REQUEST_MANAGER_MAX_SIZE)
             {
-                colony.getRequestManager().reset();
-                buf.setIndex(preState, preSize);
-                buf.writeBoolean(true);
-                buf.writeCompoundTag(colony.getRequestManager().serializeNBT());
+            	Log.getLogger().warn("Colony " + colony.getID() + " has a very big memory imprint, this could be a memory leak, please contact the mod author!");
             }
         }
         else
@@ -778,9 +776,8 @@ public final class ColonyView implements IColonyView
 
         if (buf.readBoolean())
         {
-            final CompoundNBT compound = buf.readCompoundTag();
             this.requestManager = new StandardRequestManager(this);
-            this.requestManager.deserializeNBT(compound);
+            this.requestManager.deserialize(StandardFactoryController.getInstance(), buf);
         }
 
         final int barbSpawnListSize = buf.readInt();
