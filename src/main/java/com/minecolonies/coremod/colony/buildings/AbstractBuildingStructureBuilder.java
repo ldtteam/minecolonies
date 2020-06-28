@@ -485,6 +485,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             if (map.isEmpty())
             {
                 buckets.remove();
+                //todo we need a method where we get a bucket and check if we got the items, check if we got the request already and else request it.
+                //todo we need to make sure that when the builder actually creates a real request, that those don't cause problems with eachother.
+                //todo we want to request here always the next 2 buckets.
+                //todo in the creation of the buckets we already request the first bucket. (thus here we'll always request one additionally).
             }
         }
 
