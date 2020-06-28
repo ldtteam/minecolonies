@@ -155,11 +155,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
     /**
      * Iterates through all the required resources and stores them in the building.
-     * Suppressing Sonar Rule Squid:S135
-     * The rule thinks we should have less continue and breaks.
-     * But in this case the rule does not apply because code would become unreadable and uneffective without.
      */
-    private void requestMaterials()
+    @Override
+    public void requestMaterials()
     {
         final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
         buildingWorker.resetNeededResources();

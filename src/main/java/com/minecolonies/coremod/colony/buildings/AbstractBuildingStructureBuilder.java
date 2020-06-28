@@ -392,6 +392,18 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     // todo: decorations need to go in another bucket.
 
     /**
+     * Check if the resources are in the bucket.
+     * @param stack the stack to check.
+     * @return true if so.
+     */
+    public boolean hasResourceInBucket(final ItemStack stack)
+    {
+        final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
+        final String key = stack.getTranslationKey() + "-" + hashCode;
+        return getRequiredResources() != null && getRequiredResources().getA().containsKey(key);
+    }
+
+    /**
      * Add a new resource to the needed list.
      *
      * @param res    the resource.
@@ -457,7 +469,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         final int hashCode = res.hasTag() ? res.getTag().hashCode() : 0;
         final String name = res.getTranslationKey() + "-" + hashCode;
 
-        final Tuple<Map<String, Integer>, Integer> last = buckets.isEmpty() ? null : buckets.getLast();
+        final Tuple<Map<String, Integer>, Integer> last = buckets.isEmpty() ? null : getRequiredResources();
 
         if (last != null)
         {
