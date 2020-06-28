@@ -16,7 +16,6 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.potion.Potion;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.math.EntityRayTraceResult;
@@ -281,7 +280,7 @@ public final class ItemStackUtils
         if (toolType == ToolType.NONE)
         {
             //empty hand is best on blocks who don't care (0 better 1)
-            return stack == null || stack.isEmpty() ? 0 : 1;
+            return stack == null ? 0 : 1;
         }
         if (!Compatibility.getMiningLevelCompatibility(stack, toolType.toString()))
         {
@@ -315,18 +314,8 @@ public final class ItemStackUtils
         {
             if (stack.getItem() instanceof ArmorItem)
             {
-                final ArmorItem armorItem = (ArmorItem) stack.getItem();
-                return getArmorLevel(armorItem.getArmorMaterial());
-            }
-        }
-        else if (ToolType.HARM_POTION.equals(toolType)
-                   || ToolType.HEAL_POTION.equals(toolType)
-                   || ToolType.BUFF_POTION.equals(toolType))
-        {
-            if (stack.getItem() instanceof ThrowablePotionItem)
-            {
-                final Potion potion = net.minecraft.potion.PotionUtils.getPotionFromItem(stack);
-                return PotionUtils.getPotionLevel(potion);
+                final ArmorItem ArmorItem = (ArmorItem) stack.getItem();
+                return getArmorLevel(ArmorItem.getArmorMaterial());
             }
         }
         else if (!toolType.hasVariableMaterials())
@@ -403,18 +392,6 @@ public final class ItemStackUtils
         else if (ToolType.FLINT_N_STEEL.equals(toolType))
         {
             isATool = itemStack.getItem() instanceof FlintAndSteelItem;
-        }
-        else if (ToolType.HARM_POTION.equals(toolType))
-        {
-            isATool = itemStack.getItem() instanceof ThrowablePotionItem && PotionUtils.isHarmPotion(net.minecraft.potion.PotionUtils.getPotionFromItem(itemStack));
-        }
-        else if (ToolType.HEAL_POTION.equals(toolType))
-        {
-            isATool = itemStack.getItem() instanceof ThrowablePotionItem && PotionUtils.isHealPotion(net.minecraft.potion.PotionUtils.getPotionFromItem(itemStack));
-        }
-        else if (ToolType.BUFF_POTION.equals(toolType))
-        {
-            isATool = itemStack.getItem() instanceof ThrowablePotionItem && PotionUtils.isBuffPotion(net.minecraft.potion.PotionUtils.getPotionFromItem(itemStack));
         }
         return isATool;
     }
@@ -519,17 +496,23 @@ public final class ItemStackUtils
      */
     public static int getMaxEnchantmentLevel(final ItemStack itemStack)
     {
-        if (itemStack == null || itemStack.isEmpty())
+        if (itemStack == null)
         {
             return 0;
         }
         int maxLevel = 0;
-        final ListNBT listNBT = itemStack.getEnchantmentTagList();
-
-        for (int j = 0; j < listNBT.size(); ++j)
+        if (itemStack != null)
         {
-            final int level = listNBT.getCompound(j).getShort("lvl");
-            maxLevel = Math.max(level, maxLevel);
+            final ListNBT ListNBT = itemStack.getEnchantmentTagList();
+
+            if (ListNBT != null)
+            {
+                for (int j = 0; j < ListNBT.size(); ++j)
+                {
+                    final int level = ListNBT.getCompound(j).getShort("lvl");
+                    maxLevel = level > maxLevel ? level : maxLevel;
+                }
+            }
         }
         return Math.max(maxLevel - 1, 0);
     }

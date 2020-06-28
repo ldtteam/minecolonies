@@ -3,13 +3,11 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.PotionUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.potion.Potion;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -213,22 +211,6 @@ public class Tool implements IDeliverable
             else if (armor.getEquipmentSlot() == EquipmentSlotType.LEGS)
             {
                 set.add("leggings");
-            }
-        }
-        else if (stack.getItem() instanceof ThrowablePotionItem)
-        {
-            final Potion potion = net.minecraft.potion.PotionUtils.getPotionFromItem(stack);
-            if (PotionUtils.isHarmPotion(potion))
-            {
-                set.add("harmpotion");
-            }
-            if (PotionUtils.isHealPotion(potion))
-            {
-                set.add("healpotion");
-            }
-            if (PotionUtils.isBuffPotion(potion))
-            {
-                set.add("buffpotion");
             }
         }
         return set;
