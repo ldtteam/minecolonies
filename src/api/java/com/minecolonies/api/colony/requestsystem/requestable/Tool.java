@@ -95,10 +95,12 @@ public class Tool implements IDeliverable
 
     /**
      * Serialize the deliverable.
+     * 
+     * @param controller the controller.
      * @param buffer the the buffer to write to.
      * @param input the input to serialize.
      */
-    public static void serialize(final PacketBuffer buffer, final Tool input)
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Tool input)
     {
         buffer.writeString(input.getToolClass().getName());
         buffer.writeInt(input.getMinLevel());
@@ -112,10 +114,12 @@ public class Tool implements IDeliverable
 
     /**
      * Deserialize the deliverable.
+     * 
+     * @param controller the controller.
      * @param buffer the buffer to read.
      * @return the deliverable.
      */
-    public static Tool deserialize(final PacketBuffer buffer)
+    public static Tool deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
         final IToolType type = ToolType.getToolType(buffer.readString());
         final int minLevel = buffer.readInt();

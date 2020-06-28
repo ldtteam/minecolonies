@@ -67,10 +67,12 @@ public class Burnable implements IDeliverable
 
     /**
      * Serialize the deliverable.
+     * 
+     * @param controller the controller.
      * @param buffer the the buffer to write to.
      * @param input the input to serialize.
      */
-    public static void serialize(final PacketBuffer buffer, final Burnable input)
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Burnable input)
     {
         buffer.writeInt(input.count);
 
@@ -83,10 +85,12 @@ public class Burnable implements IDeliverable
 
     /**
      * Deserialize the deliverable.
+     * 
+     * @param controller the controller.
      * @param buffer the buffer to read.
      * @return the deliverable.
      */
-    public static Burnable deserialize(final PacketBuffer buffer)
+    public static Burnable deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
         final int count = buffer.readInt();
         final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;

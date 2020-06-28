@@ -201,10 +201,12 @@ public class StackList implements IDeliverable
 
     /**
      * Serialize the deliverable.
+     * 
+     * @param controller the controller.
      * @param buffer the the buffer to write to.
      * @param input the input to serialize.
      */
-    public static void serialize(final PacketBuffer buffer, final StackList input)
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final StackList input)
     {
         buffer.writeInt(input.theStacks.size());
         input.theStacks.forEach(res -> buffer.writeItemStack(res));
@@ -225,10 +227,12 @@ public class StackList implements IDeliverable
 
     /**
      * Deserialize the deliverable.
+     * 
+     * @param controller the controller.
      * @param buffer the buffer to read.
      * @return the deliverable.
      */
-    public static StackList deserialize(final PacketBuffer buffer)
+    public static StackList deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
         final List<ItemStack> stacks = new ArrayList<>();
 

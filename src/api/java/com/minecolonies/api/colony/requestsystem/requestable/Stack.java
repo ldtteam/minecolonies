@@ -169,10 +169,12 @@ public class Stack implements IDeliverable
 
     /**
      * Serialize the deliverable.
+     * 
+     * @param controller the controller.
      * @param buffer the the buffer to write to.
      * @param input the input to serialize.
      */
-    public static void serialize(final PacketBuffer buffer, final Stack input)
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Stack input)
     {
         buffer.writeItemStack(input.theStack);
         buffer.writeBoolean(input.matchMeta);
@@ -190,10 +192,12 @@ public class Stack implements IDeliverable
 
     /**
      * Deserialize the deliverable.
+     * 
+     * @param controller the controller.
      * @param buffer the buffer to read.
      * @return the deliverable.
      */
-    public static Stack deserialize(final PacketBuffer buffer)
+    public static Stack deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
         final ItemStack stack = buffer.readItemStack();
         final boolean matchMeta = buffer.readBoolean();

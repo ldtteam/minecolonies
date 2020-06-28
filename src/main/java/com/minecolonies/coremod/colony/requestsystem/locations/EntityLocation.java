@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -192,5 +193,36 @@ public class EntityLocation implements ILocation
         {
             return new EntityLocation(input.getUniqueID());
         }
+
+        @Override
+        public void serialize(IFactoryController controller, EntityLocation input, PacketBuffer packetBuffer) {
+            EntityLocation.serialize(packetBuffer, input);
+        }
+
+        @Override
+        public EntityLocation deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+            return EntityLocation.deserialize(buffer);
+        }
+    }
+
+    /**
+     * Serialize this location to the given {@link PacketBuffer}.
+     * 
+     * @param buffer the buffer to serialize this location to.
+     */
+    public static void serialize(PacketBuffer buffer, EntityLocation location) {
+        buffer.writeUniqueId(location.uuid);
+    }
+
+    /**
+     * Deserialize the location from the given {@link PacketBuffer}
+     * 
+     * @param buffer the buffer to read.
+     * @return the deserialized location.
+     */
+    public static EntityLocation deserialize(PacketBuffer buffer) {
+        final UUID uuid = buffer.readUniqueId();
+
+        return new EntityLocation(uuid);
     }
 }

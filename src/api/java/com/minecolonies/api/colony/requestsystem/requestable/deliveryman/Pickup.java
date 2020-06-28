@@ -1,7 +1,10 @@
 package com.minecolonies.api.colony.requestsystem.requestable.deliveryman;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,6 +36,32 @@ public class Pickup extends AbstractDeliverymanRequestable
     public static Pickup deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT compound)
     {
         final int priority = controller.deserialize(compound.getCompound(NBT_PRIORITY));
+        return new Pickup(priority);
+    }
+
+    /**
+     * Serialize the deliverable.
+     * 
+     * @param controller the controller.
+     * @param buffer the the buffer to write to.
+     * @param input the input to serialize.
+     */
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Pickup input)
+    {
+        buffer.writeInt(input.getPriority());
+    }
+
+    /**
+     * Deserialize the deliverable.
+     * 
+     * @param controller the controller.
+     * @param buffer the buffer to read.
+     * @return the deliverable.
+     */
+    public static Pickup deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    {
+        final int priority = buffer.readInt();
+
         return new Pickup(priority);
     }
 

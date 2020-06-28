@@ -3,8 +3,11 @@ package com.minecolonies.api.colony.requestsystem.requestable.deliveryman;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.ItemStackUtils;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -57,6 +60,49 @@ public class Delivery extends AbstractDeliverymanRequestable
     }
 
     @NotNull
+    public static Delivery deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT compound)
+    {
+        final ILocation start = controller.deserialize(compound.getCompound(NBT_START));
+        final ILocation target = controller.deserialize(compound.getCompound(NBT_TARGET));
+        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
+        final int priority = controller.deserialize(compound.getCompound(NBT_PRIORITY));
+
+        return new Delivery(start, target, stack, priority);
+    }
+
+    /**
+     * Serialize the deliverable.
+     * 
+     * @param controller the controller.
+     * @param buffer the the buffer to write to.
+     * @param input the input to serialize.
+     */
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Delivery input)
+    {
+        controller.serialize(buffer, input.getStack());
+        controller.serialize(buffer, input.getTarget());
+        buffer.writeItemStack(input.getStack());
+        buffer.writeInt(input.getPriority());
+    }
+
+    /**
+     * Deserialize the deliverable.
+     * 
+     * @param controller the controller.
+     * @param buffer the buffer to read.
+     * @return the deliverable.
+     */
+    public static Delivery deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    {
+        final ILocation start = controller.deserialize(buffer);
+        final ILocation target = controller.deserialize(buffer);
+        final ItemStack stack = buffer.readItemStack();
+        final int priority = buffer.readInt();
+
+        return new Delivery(start, target, stack, priority);
+    }
+
+    @NotNull
     public ILocation getStart()
     {
         return start;
@@ -72,17 +118,6 @@ public class Delivery extends AbstractDeliverymanRequestable
     public ItemStack getStack()
     {
         return stack;
-    }
-
-    @NotNull
-    public static Delivery deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT compound)
-    {
-        final ILocation start = controller.deserialize(compound.getCompound(NBT_START));
-        final ILocation target = controller.deserialize(compound.getCompound(NBT_TARGET));
-        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
-        final int priority = controller.deserialize(compound.getCompound(NBT_PRIORITY));
-
-        return new Delivery(start, target, stack, priority);
     }
 
     @Override
