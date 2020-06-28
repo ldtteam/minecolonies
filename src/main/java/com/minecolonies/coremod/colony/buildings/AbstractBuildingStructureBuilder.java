@@ -584,6 +584,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
 
     //todo we need to make sure that when the builder actually creates a real request, that those don't cause problems with eachother.
+    //todo we need to check what happens with partial deliveries or non-deliveries
+    //todo it seems that we request things completely that the builder already finished, also we seem to request from the current bucket AGAIN. (it seems only the count is off).
     /**
      * Check or request if the contents of a specific batch are in the inventory of the building.
      * This ignores the worker inventory (that is remaining stuff from previous rounds, or already belongs to another bucket)
@@ -628,7 +630,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
     /**
      * Return the next bucket to work on.
-     * @return the next bucket.
+     * @return the next bucket or a tuple with null inside if non available.
      */
     public Tuple<Map<String, Integer>, Integer> getNextBucket()
     {
@@ -642,6 +644,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             return iterator.next();
         }
-        return null;
+        return new Tuple<>(null, 0);
     }
 }
