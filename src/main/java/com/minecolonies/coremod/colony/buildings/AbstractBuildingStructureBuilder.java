@@ -1,19 +1,25 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.entity.ai.citizen.healer.Patient;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
-import net.minecraft.block.SweetBerryBushBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -21,6 +27,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -485,10 +492,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             if (map.isEmpty())
             {
                 buckets.remove();
-                //todo we need a method where we get a bucket and check if we got the items, check if we got the request already and else request it.
-                //todo we need to make sure that when the builder actually creates a real request, that those don't cause problems with eachother.
-                //todo we want to request here always the next 2 buckets.
-                //todo in the creation of the buckets we already request the first bucket. (thus here we'll always request one additionally).
             }
         }
 
@@ -577,5 +580,68 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public Map<Integer, List<BlockPos>> getFluidsToRemove()
     {
         return fluidsToRemove;
+    }
+
+
+    //todo we need to make sure that when the builder actually creates a real request, that those don't cause problems with eachother.
+    /**
+     * Check or request if the contents of a specific batch are in the inventory of the building.
+     * This ignores the worker inventory (that is remaining stuff from previous rounds, or already belongs to another bucket)
+     * @param requiredResources the bucket to check and request.
+     */
+    public void checkOrRequestBucket(final Map<String, Integer> requiredResources, final ICitizenData worker)
+    {
+        if (requiredResources == null)
+        {
+            return;
+        }
+
+        final ImmutableList<IRequest<? extends Stack>> list = getOpenRequestsOfType(worker, TypeToken.of(Stack.class));
+        for (final Map.Entry<String, Integer> entry : requiredResources.entrySet())
+        {
+            final ItemStorage itemStack = neededResources.get(entry.getKey());
+            if (itemStack == null)
+            {
+                continue;
+            }
+
+            boolean hasOpenRequest = false;
+            if (InventoryUtils.getItemCountInItemHandler(getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), stack -> stack.isItemEqual(itemStack.getItemStack())) < entry.getValue())
+            {
+                for (final IRequest<? extends Stack> request : list)
+                {
+                    if (request.getRequest().getStack().isItemEqual(itemStack.getItemStack()))
+                    {
+                        hasOpenRequest = true;
+                        break;
+                    }
+                }
+                if (hasOpenRequest)
+                {
+                    break;
+                }
+
+                worker.createRequestAsync(new Stack(itemStack.getItemStack(), entry.getValue(), entry.getValue()));
+            }
+        }
+    }
+
+    /**
+     * Return the next bucket to work on.
+     * @return the next bucket.
+     */
+    public Tuple<Map<String, Integer>, Integer> getNextBucket()
+    {
+        final Iterator<Tuple<Map<String, Integer>, Integer>> iterator = buckets.iterator();
+        if (iterator.hasNext())
+        {
+            iterator.next();
+        }
+
+        if (iterator.hasNext())
+        {
+            return iterator.next();
+        }
+        return null;
     }
 }
