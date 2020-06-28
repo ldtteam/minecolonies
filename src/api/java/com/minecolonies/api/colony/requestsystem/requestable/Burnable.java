@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,23 +32,65 @@ public class Burnable implements IDeliverable
         this.result = result;
     }
 
-    public static CompoundNBT serialize(final IFactoryController controller, final Burnable food)
+    /**
+     * Serialize the deliverable.
+     * @param controller the controller.
+     * @param burnable the input.
+     * @return the compound.
+     */
+    public static CompoundNBT serialize(final IFactoryController controller, final Burnable burnable)
     {
         final CompoundNBT compound = new CompoundNBT();
-        compound.putInt(NBT_COUNT, food.count);
+        compound.putInt(NBT_COUNT, burnable.count);
 
-        if (!ItemStackUtils.isEmpty(food.result))
+        if (!ItemStackUtils.isEmpty(burnable.result))
         {
-            compound.put(NBT_RESULT, food.result.serializeNBT());
+            compound.put(NBT_RESULT, burnable.result.serializeNBT());
         }
 
         return compound;
     }
 
+    /**
+     * Deserialize the deliverable.
+     * @param controller the controller.
+     * @param compound the compound.
+     * @return the deliverable.
+     */
     public static Burnable deserialize(final IFactoryController controller, final CompoundNBT compound)
     {
         final int count = compound.getInt(NBT_COUNT);
         final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+
+        return new Burnable(count, result);
+    }
+
+    /**
+     * Serialize the deliverable.
+     * @param buffer the the buffer to write to.
+     * @param input the input to serialize.
+     * @return the compound.
+     */
+    public static void serialize(final PacketBuffer buffer, final Burnable input)
+    {
+        buffer.writeInt(input.count);
+
+        buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
+        if (!ItemStackUtils.isEmpty(input.result))
+        {
+            buffer.writeItemStack(input.result);
+        }
+    }
+
+    /**
+     * Deserialize the deliverable.
+     * @param buffer the buffer to read.
+     * @return the deliverable.
+     */
+    public static Burnable deserialize(final PacketBuffer buffer)
+    {
+        final int count = buffer.readInt();
+        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
 
         return new Burnable(count, result);
     }

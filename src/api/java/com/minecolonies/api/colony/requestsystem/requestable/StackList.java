@@ -205,7 +205,7 @@ public class StackList implements IDeliverable
      * @param input the input to serialize.
      * @return the compound.
      */
-    public static void serializeToPacketBuffer(final PacketBuffer buffer, final StackList input)
+    public static void serialize(final PacketBuffer buffer, final StackList input)
     {
         buffer.writeInt(input.theStacks.size());
         input.theStacks.forEach(res -> buffer.writeItemStack(res));
@@ -217,7 +217,7 @@ public class StackList implements IDeliverable
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            buffer.writeCompoundTag(input.result.serializeNBT());
+            buffer.writeItemStack(input.result);
         }
         buffer.writeString(input.description);
         buffer.writeInt(input.getCount());
@@ -229,7 +229,7 @@ public class StackList implements IDeliverable
      * @param buffer the buffer to read.
      * @return the deliverable.
      */
-    public static StackList deserializeFromPacketBuffer(final PacketBuffer buffer)
+    public static StackList deserialize(final PacketBuffer buffer)
     {
         final List<ItemStack> stacks = new ArrayList<>();
 
