@@ -8,6 +8,8 @@ import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+
 import org.jetbrains.annotations.NotNull;
 
 public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
@@ -72,6 +74,25 @@ public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
         public TypeToken<TypeToken<?>> getOutputType()
         {
             return TypeConstants.TYPETOKEN;
+        }
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, TypeToken<?> input, PacketBuffer packetBuffer)
+    {
+        packetBuffer.writeString(input.getRawType().getName());
+    }
+
+    @Override
+    public TypeToken<?> deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
+        try
+        {
+            return TypeToken.of(Class.forName(buffer.readString()));
+        }
+        catch (ClassNotFoundException e)
+        {
+            throw new IllegalStateException("Failed to create TypeToken", e);
         }
     }
 }
