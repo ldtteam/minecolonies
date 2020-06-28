@@ -10,9 +10,12 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardPlayerRequestResolver;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -89,5 +92,28 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
         resolver.setAllAssignedRequests(assignedRequests);
 
         return resolver;
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, StandardPlayerRequestResolver input, PacketBuffer packetBuffer) {
+        controller.serialize(packetBuffer, input.getId());
+        controller.serialize(packetBuffer, input.getLocation());
+        packetBuffer.writeInt(input.getAllAssignedRequests().size());
+        input.getAllAssignedRequests().forEach(req -> controller.serialize(packetBuffer, req));
+    }
+
+    @Override
+    public StandardPlayerRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+        final IToken<?> token = controller.deserialize(buffer);
+        final ILocation location = controller.deserialize(buffer);
+
+        final List<IToken<?>> requests = new ArrayList<>();
+        final int requestsSize = buffer.readInt();
+        for (int i = 0; i < requestsSize; ++i)
+        {
+            requests.add(controller.deserialize(buffer));
+        }
+
+        return new StandardPlayerRequestResolver(location, token);
     }
 }

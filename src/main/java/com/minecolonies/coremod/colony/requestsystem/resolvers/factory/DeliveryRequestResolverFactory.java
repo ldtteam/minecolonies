@@ -8,6 +8,8 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+
 import org.jetbrains.annotations.NotNull;
 
 public class DeliveryRequestResolverFactory implements IRequestResolverFactory<DeliveryRequestResolver>
@@ -59,6 +61,20 @@ public class DeliveryRequestResolverFactory implements IRequestResolverFactory<D
     {
         final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
+
+        return new DeliveryRequestResolver(location, token);
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, DeliveryRequestResolver input, PacketBuffer packetBuffer) {
+        controller.serialize(packetBuffer, input.getId());
+        controller.serialize(packetBuffer, input.getLocation());
+    }
+
+    @Override
+    public DeliveryRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+        final IToken<?> token = controller.deserialize(buffer);
+        final ILocation location = controller.deserialize(buffer);
 
         return new DeliveryRequestResolver(location, token);
     }

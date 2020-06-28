@@ -8,6 +8,8 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+
 import org.jetbrains.annotations.NotNull;
 
 public class PublicWorkerCraftingProductionResolverFactory implements IRequestResolverFactory<PublicWorkerCraftingProductionResolver>
@@ -57,6 +59,20 @@ public class PublicWorkerCraftingProductionResolverFactory implements IRequestRe
     {
         final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
+
+        return new PublicWorkerCraftingProductionResolver(location, token);
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, PublicWorkerCraftingProductionResolver input, PacketBuffer packetBuffer) {
+        controller.serialize(packetBuffer, input.getId());
+        controller.serialize(packetBuffer, input.getLocation());
+    }
+
+    @Override
+    public PublicWorkerCraftingProductionResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+        final IToken<?> token = controller.deserialize(buffer);
+        final ILocation location = controller.deserialize(buffer);
 
         return new PublicWorkerCraftingProductionResolver(location, token);
     }

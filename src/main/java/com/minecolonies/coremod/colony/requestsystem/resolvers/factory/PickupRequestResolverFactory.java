@@ -8,6 +8,8 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PickupRequestResolver;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -62,6 +64,20 @@ public class PickupRequestResolverFactory implements IRequestResolverFactory<Pic
     {
         final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
+
+        return new PickupRequestResolver(location, token);
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, PickupRequestResolver input, PacketBuffer packetBuffer) {
+        controller.serialize(packetBuffer, input.getId());
+        controller.serialize(packetBuffer, input.getLocation());
+    }
+
+    @Override
+    public PickupRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+        final IToken<?> token = controller.deserialize(buffer);
+        final ILocation location = controller.deserialize(buffer);
 
         return new PickupRequestResolver(location, token);
     }
