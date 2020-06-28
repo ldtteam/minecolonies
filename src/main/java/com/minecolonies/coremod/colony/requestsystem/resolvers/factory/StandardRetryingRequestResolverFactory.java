@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardRetryingRequestResolver;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -110,5 +111,47 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
         final StandardRetryingRequestResolver retryingRequestResolver = new StandardRetryingRequestResolver(token, location);
         retryingRequestResolver.updateData(assignments, delays);
         return retryingRequestResolver;
+    }
+    
+    @Override
+    public void serialize(IFactoryController controller, StandardRetryingRequestResolver input, PacketBuffer packetBuffer) {
+        packetBuffer.writeInt(input.getAssignedRequests().size());
+        input.getAssignedRequests().forEach((key, value) -> {
+            controller.serialize(packetBuffer, key);
+            packetBuffer.writeInt(value);
+        });
+
+        packetBuffer.writeInt(input.getDelays().size());
+        input.getDelays().forEach((key, value) -> {
+            controller.serialize(packetBuffer, key);
+            packetBuffer.writeInt(value);
+        });
+        
+        controller.serialize(packetBuffer, input.getId());
+        controller.serialize(packetBuffer, input.getLocation());
+    }
+
+    @Override
+    public StandardRetryingRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+        final Map<IToken<?>, Integer> requests = new HashMap<>();
+        final int requestsSize = buffer.readInt();
+        for (int i = 0; i < requestsSize; ++i)
+        {
+            requests.put(controller.deserialize(buffer), buffer.readInt());
+        }
+
+        final Map<IToken<?>, Integer> delays = new HashMap<>();
+        final int delaysSize = buffer.readInt();
+        for (int i = 0; i < delaysSize; ++i)
+        {
+            delays.put(controller.deserialize(buffer), buffer.readInt());
+        }
+
+        final IToken<?> token = controller.deserialize(buffer);
+        final ILocation location = controller.deserialize(buffer);
+
+        final StandardRetryingRequestResolver resolver = new StandardRetryingRequestResolver(token, location);
+        resolver.updateData(requests, delays);
+        return resolver;
     }
 }

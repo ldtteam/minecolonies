@@ -14,8 +14,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -107,13 +106,16 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
 
-        final List<IToken<?>> requests = new ArrayList<>();
+        final Set<IToken<?>> requests = new HashSet<>();
         final int requestsSize = buffer.readInt();
         for (int i = 0; i < requestsSize; ++i)
         {
             requests.add(controller.deserialize(buffer));
         }
 
-        return new StandardPlayerRequestResolver(location, token);
+        final StandardPlayerRequestResolver resolver = new StandardPlayerRequestResolver(location, token);
+        resolver.setAllAssignedRequests(requests);
+
+        return resolver;
     }
 }
