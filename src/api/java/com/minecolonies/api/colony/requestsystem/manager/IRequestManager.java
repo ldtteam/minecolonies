@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.apache.logging.log4j.Logger;
@@ -217,5 +218,25 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
      */
     void markDirty();
 
+    /**
+     * Get a logger.
+     * @return a logger.
+     */
     Logger getLogger();
+
+    /**
+     * serialize this request manager to the give {@link PacketBuffer}
+     * 
+     * @param controller the controller.
+     * @param buffer     the {@link PacketBuffer} to serialize to.
+     */
+    void serialize(final IFactoryController controller, final PacketBuffer buffer);
+
+    /**
+     * deserialize this request manager from the give {@link PacketBuffer}
+     * 
+     * @param controller the controller.
+     * @param buffer     the {@link PacketBuffer} to deserialize from.
+     */
+    void deserialize(final IFactoryController controller, final PacketBuffer buffer);
 }

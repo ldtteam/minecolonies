@@ -16,6 +16,8 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -225,7 +227,17 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     {
         wrappedManager.deserializeNBT(nbt);
     }
+    
+    @Override
+    public void serialize(IFactoryController controller, PacketBuffer buffer) {
+        wrappedManager.serialize(controller, buffer);
+    }
 
+    @Override
+    public void deserialize(IFactoryController controller, PacketBuffer buffer) {
+        wrappedManager.deserialize(controller, buffer);
+    }
+    
     @Override
     public void tick()
     {
