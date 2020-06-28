@@ -127,6 +127,8 @@ public class ContainerField extends Container
     @Override
     public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
     {
+        if (colony == null)
+            return false;
         return colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS);
     }
 
