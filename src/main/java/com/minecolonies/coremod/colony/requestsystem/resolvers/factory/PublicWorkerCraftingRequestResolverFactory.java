@@ -64,13 +64,15 @@ public class PublicWorkerCraftingRequestResolverFactory implements IRequestResol
     }
 
     @Override
-    public void serialize(IFactoryController controller, PublicWorkerCraftingRequestResolver input, PacketBuffer packetBuffer) {
+    public void serialize(IFactoryController controller, PublicWorkerCraftingRequestResolver input, PacketBuffer packetBuffer)
+    {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
     }
 
     @Override
-    public PublicWorkerCraftingRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+    public PublicWorkerCraftingRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
 

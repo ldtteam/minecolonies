@@ -195,12 +195,14 @@ public class EntityLocation implements ILocation
         }
 
         @Override
-        public void serialize(IFactoryController controller, EntityLocation input, PacketBuffer packetBuffer) {
+        public void serialize(IFactoryController controller, EntityLocation input, PacketBuffer packetBuffer)
+        {
             EntityLocation.serialize(packetBuffer, input);
         }
 
         @Override
-        public EntityLocation deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+        public EntityLocation deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
             return EntityLocation.deserialize(buffer);
         }
     }
@@ -210,7 +212,8 @@ public class EntityLocation implements ILocation
      * 
      * @param buffer the buffer to serialize this location to.
      */
-    public static void serialize(PacketBuffer buffer, EntityLocation location) {
+    public static void serialize(PacketBuffer buffer, EntityLocation location)
+    {
         buffer.writeUniqueId(location.uuid);
     }
 
@@ -220,7 +223,8 @@ public class EntityLocation implements ILocation
      * @param buffer the buffer to read.
      * @return the deserialized location.
      */
-    public static EntityLocation deserialize(PacketBuffer buffer) {
+    public static EntityLocation deserialize(PacketBuffer buffer)
+    {
         final UUID uuid = buffer.readUniqueId();
 
         return new EntityLocation(uuid);

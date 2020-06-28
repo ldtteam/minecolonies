@@ -66,13 +66,15 @@ public class WarehouseRequestResolverFactory implements IRequestResolverFactory<
     }
 
     @Override
-    public void serialize(IFactoryController controller, WarehouseRequestResolver input, PacketBuffer packetBuffer) {
+    public void serialize(IFactoryController controller, WarehouseRequestResolver input, PacketBuffer packetBuffer)
+    {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
     }
 
     @Override
-    public WarehouseRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+    public WarehouseRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
 

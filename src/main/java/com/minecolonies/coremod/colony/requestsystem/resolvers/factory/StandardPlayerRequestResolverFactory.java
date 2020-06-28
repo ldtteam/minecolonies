@@ -94,7 +94,8 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
     }
 
     @Override
-    public void serialize(IFactoryController controller, StandardPlayerRequestResolver input, PacketBuffer packetBuffer) {
+    public void serialize(IFactoryController controller, StandardPlayerRequestResolver input, PacketBuffer packetBuffer)
+    {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
         packetBuffer.writeInt(input.getAllAssignedRequests().size());
@@ -102,7 +103,8 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
     }
 
     @Override
-    public StandardPlayerRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+    public StandardPlayerRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
 

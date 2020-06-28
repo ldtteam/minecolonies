@@ -67,13 +67,15 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
     }
 
     @Override
-    public void serialize(IFactoryController controller, BuildingRequestResolver input, PacketBuffer packetBuffer) {
+    public void serialize(IFactoryController controller, BuildingRequestResolver input, PacketBuffer packetBuffer)
+    {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
     }
 
     @Override
-    public BuildingRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+    public BuildingRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
 

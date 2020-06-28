@@ -69,13 +69,15 @@ public class PickupRequestResolverFactory implements IRequestResolverFactory<Pic
     }
 
     @Override
-    public void serialize(IFactoryController controller, PickupRequestResolver input, PacketBuffer packetBuffer) {
+    public void serialize(IFactoryController controller, PickupRequestResolver input, PacketBuffer packetBuffer)
+    {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
     }
 
     @Override
-    public PickupRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+    public PickupRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
 

@@ -114,7 +114,8 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
     }
     
     @Override
-    public void serialize(IFactoryController controller, StandardRetryingRequestResolver input, PacketBuffer packetBuffer) {
+    public void serialize(IFactoryController controller, StandardRetryingRequestResolver input, PacketBuffer packetBuffer)
+    {
         packetBuffer.writeInt(input.getAssignedRequests().size());
         input.getAssignedRequests().forEach((key, value) -> {
             controller.serialize(packetBuffer, key);
@@ -132,7 +133,8 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
     }
 
     @Override
-    public StandardRetryingRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+    public StandardRetryingRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
         final Map<IToken<?>, Integer> requests = new HashMap<>();
         final int requestsSize = buffer.readInt();
         for (int i = 0; i < requestsSize; ++i)

@@ -200,12 +200,14 @@ public class StaticLocation implements ILocation
         }
 
         @Override
-        public void serialize(IFactoryController controller, StaticLocation input, PacketBuffer packetBuffer) {
+        public void serialize(IFactoryController controller, StaticLocation input, PacketBuffer packetBuffer)
+        {
             StaticLocation.serialize(packetBuffer, input);
         }
 
         @Override
-        public StaticLocation deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+        public StaticLocation deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
             return StaticLocation.deserialize(buffer);
         }
     }
@@ -215,7 +217,8 @@ public class StaticLocation implements ILocation
      * 
      * @param buffer the buffer to serialize this location to.
      */
-    public static void serialize(PacketBuffer buffer, StaticLocation location) {
+    public static void serialize(PacketBuffer buffer, StaticLocation location)
+    {
         buffer.writeBlockPos(location.pos);
         buffer.writeInt(location.dimension);
     }
@@ -226,7 +229,8 @@ public class StaticLocation implements ILocation
      * @param buffer the buffer to read.
      * @return the deserialized location.
      */
-    public static StaticLocation deserialize(PacketBuffer buffer) {
+    public static StaticLocation deserialize(PacketBuffer buffer)
+    {
         final BlockPos pos = buffer.readBlockPos();
         final int dimension = buffer.readInt();
 

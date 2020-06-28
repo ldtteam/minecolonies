@@ -66,13 +66,15 @@ public class DeliveryRequestResolverFactory implements IRequestResolverFactory<D
     }
 
     @Override
-    public void serialize(IFactoryController controller, DeliveryRequestResolver input, PacketBuffer packetBuffer) {
+    public void serialize(IFactoryController controller, DeliveryRequestResolver input, PacketBuffer packetBuffer)
+    {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
     }
 
     @Override
-    public DeliveryRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+    public DeliveryRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
 
