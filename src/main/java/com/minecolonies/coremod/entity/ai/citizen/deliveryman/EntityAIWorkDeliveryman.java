@@ -517,6 +517,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return PREPARE_DELIVERY;
         }
 
+        if (i > 1)
+        {
+            job.setParallelDeliveries(i - 1);
+            return DELIVERY;
+        }
+
         job.finishRequest(false);
         return START_WORKING;
     }
