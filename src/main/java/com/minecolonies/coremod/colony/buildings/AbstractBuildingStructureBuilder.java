@@ -582,16 +582,14 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         return fluidsToRemove;
     }
 
-
-    //todo we need to make sure that when the builder actually creates a real request, that those don't cause problems with eachother.
-    //todo we need to check what happens with partial deliveries or non-deliveries
-    //todo it seems that we request things completely that the builder already finished, also we seem to request from the current bucket AGAIN. (it seems only the count is off).
     /**
      * Check or request if the contents of a specific batch are in the inventory of the building.
      * This ignores the worker inventory (that is remaining stuff from previous rounds, or already belongs to another bucket)
      * @param requiredResources the bucket to check and request.
+     * @param worker the worker.
+     * @param workerInv if the worker inv should be checked too.
      */
-    public void checkOrRequestBucket(final Map<String, Integer> requiredResources, final ICitizenData worker)
+    public void checkOrRequestBucket(final Map<String, Integer> requiredResources, final ICitizenData worker, final boolean workerInv)
     {
         if (requiredResources == null)
         {
@@ -608,8 +606,11 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             }
 
             boolean hasOpenRequest = false;
-            if (InventoryUtils.getItemCountInItemHandler(getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), stack -> stack.isItemEqual(itemStack.getItemStack())) < entry.getValue())
+            int count = InventoryUtils.getItemCountInItemHandler(getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), stack -> stack.isItemEqual(itemStack.getItemStack()));
+            int workerInvCount = workerInv ? InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> stack.isItemEqual(itemStack.getItemStack())) : 0;
+            if ((count + workerInvCount) < entry.getValue())
             {
+                int requestCount = entry.getValue() - count - workerInvCount;
                 for (final IRequest<? extends Stack> request : list)
                 {
                     if (request.getRequest().getStack().isItemEqual(itemStack.getItemStack()))
@@ -623,7 +624,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                     break;
                 }
 
-                worker.createRequestAsync(new Stack(itemStack.getItemStack(), entry.getValue(), entry.getValue()));
+                worker.createRequestAsync(new Stack(itemStack.getItemStack(), requestCount, requestCount));
             }
         }
     }

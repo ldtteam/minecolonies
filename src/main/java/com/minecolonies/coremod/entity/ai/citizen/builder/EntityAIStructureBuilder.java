@@ -149,7 +149,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
         {
-            getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getNextBucket().getA(), worker.getCitizenData());
+            getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources().getA(), worker.getCitizenData(), true);
+            getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getNextBucket().getA(), worker.getCitizenData(), false);
             pickUpCount = 0;
             return START_WORKING;
         }

@@ -197,7 +197,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             getOwnBuilding().addNeededResource(stack, stack.getCount());
         }
 
-        getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources().getA(), worker.getCitizenData());
+        getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources().getA(), worker.getCitizenData(), false);
     }
 
     @Override

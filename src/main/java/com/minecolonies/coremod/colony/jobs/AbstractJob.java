@@ -150,6 +150,12 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     @Override
+    public void markRequestSync(final IToken<?> id)
+    {
+        asyncRequests.remove(id);
+    }
+
+    @Override
     public void addWorkerAIToTaskList(@NotNull final GoalSelector tasks)
     {
         final AI tempAI = generateAI();

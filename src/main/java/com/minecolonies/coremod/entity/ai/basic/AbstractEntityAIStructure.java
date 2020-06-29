@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
@@ -458,17 +459,27 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 return false;
             }
 
-            if (placer.getOwnBuilding()
-                  .getOpenRequestsOfTypeFiltered(
-                    placer.getWorker().getCitizenData(),
-                    TypeConstants.DELIVERABLE,
-                    (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack.getKey().getItemStack()))
-                  .isEmpty())
+            final ImmutableList<IRequest<? extends IDeliverable>> requests = placer.getOwnBuilding()
+                                   .getOpenRequestsOfTypeFiltered(
+                                     placer.getWorker().getCitizenData(),
+                                     TypeConstants.DELIVERABLE,
+                                     (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack.getKey().getItemStack()));
+            if (requests.isEmpty())
             {
                 final com.minecolonies.api.colony.requestsystem.requestable.Stack stackRequest = new Stack(placedStack.getKey().getItemStack(), placedStack.getValue(), 1);
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
                 placer.registerBlockAsNeeded(placedStack.getKey().getItemStack());
                 return false;
+            }
+            else
+            {
+                for (final IRequest<? extends IDeliverable> request : requests)
+                {
+                    if (placer.worker.getCitizenJobHandler().getColonyJob().getAsyncRequests().contains(request.getId()))
+                    {
+                        placer.worker.getCitizenJobHandler().getColonyJob().markRequestSync(request.getId());
+                    }
+                }
             }
             return false;
         }
