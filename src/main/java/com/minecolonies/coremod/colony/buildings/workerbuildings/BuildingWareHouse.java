@@ -244,6 +244,12 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     }
 
     @Override
+    public boolean hasContainerPosition(final BlockPos inDimensionLocation)
+    {
+        return containerList.contains(inDimensionLocation) || getLocation().getInDimensionLocation().equals(inDimensionLocation);
+    }
+
+    @Override
     public int getMaxBuildingLevel()
     {
         return MAX_LEVEL;

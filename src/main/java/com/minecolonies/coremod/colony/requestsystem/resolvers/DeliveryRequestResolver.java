@@ -93,10 +93,9 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                                                                                 .getTarget()
                                                                                                 .isReachableFromLocation(entityCitizen.getLocation()))
                                                                         .orElse(false))
-                                               .filter(c -> c.getJob() instanceof JobDeliveryman)
-                                               .filter(c -> ((JobDeliveryman) c.getJob()).isActive())
-                                               .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
-                                                      .thenComparing(Comparator.comparing(c -> {
+                                               .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).isActive())
+                                               .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).hasSameDestinationDelivery(request)).thenComparing(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
+                                                      .thenComparing(c -> {
                                                           BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
                                                           //We can do an instant get here, since we are already filtering on anything that has no entity.
                                                           BlockPos entityLocation = c.getCitizenEntity().get().getLocation().getInDimensionLocation();
@@ -129,7 +128,6 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         return null;
     }
 
-    @Nullable
     @Override
     public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
@@ -161,14 +159,12 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
 
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
