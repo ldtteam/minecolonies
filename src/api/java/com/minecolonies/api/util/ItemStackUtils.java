@@ -685,8 +685,12 @@ public final class ItemStackUtils
      * @param matchNBT   Set to true to match nbt
      * @return True when they are equal except the stacksize, false when not.
      */
-    @NotNull
-    public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchMeta, final boolean matchNBT)
+    public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchMeta, final boolean matchNBT)
+    {
+        return compareItemStacksIgnoreStackSize(itemStack1, itemStack2, matchMeta, matchNBT, false);
+    }
+
+    public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchMeta, final boolean matchNBT, final boolean min)
     {
         if (isEmpty(itemStack1) && isEmpty(itemStack2))
         {
@@ -702,6 +706,11 @@ public final class ItemStackUtils
             {
                 // Not comparing nbt
                 return true;
+            }
+
+            if (min && itemStack1.getCount() > itemStack2.getCount())
+            {
+                return false;
             }
 
             // Then sort on NBT

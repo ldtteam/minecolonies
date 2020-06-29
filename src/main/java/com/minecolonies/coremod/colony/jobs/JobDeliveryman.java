@@ -253,7 +253,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         else if (request.getRequest() instanceof Delivery)
         {
             final List<IRequest<? extends Delivery>> taskList = getTaskListWithSameDestination((IRequest<? extends Delivery>) request);
-            for (int i = 0; i < ongoingDeliveries; i++)
+            for (int i = 0; i < Math.min(ongoingDeliveries, taskList.size()); i++)
             {
                 final IRequest<? extends Delivery> req = taskList.get(i);
                 if (req.getState() == RequestState.IN_PROGRESS)
