@@ -517,6 +517,11 @@ public final class WindowConstants
     public static final String STOCK_REMOVE                = "removeStock";
     public static final String QUANTITY_LABEL              = "resourceQty";
 
+    public static final String GUIDE_RESOURCE_SUFFIX       = ":gui/windowhutguide.xml";
+    public static final String GUIDE_CONFIRM               = "confirm";
+    public static final String GUIDE_CLOSE                 = "close";
+
+
     /**
      * Window resource list gui file.
      */

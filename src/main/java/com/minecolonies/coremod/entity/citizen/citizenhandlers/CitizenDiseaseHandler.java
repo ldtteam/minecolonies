@@ -56,7 +56,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public void tick()
     {
-        if (citizen.getTicksExisted() % TICKS_20 == 0 && !(citizen.getCitizenJobHandler().getColonyJob() instanceof JobHealer)
+        if (citizen.getTicksExisted() % TICKS_20 == 0 && citizen.getCitizenColonyHandler().getColony().isActive() && !(citizen.getCitizenJobHandler().getColonyJob() instanceof JobHealer)
               && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > IMinecoloniesAPI.getInstance().getConfig().getCommon().initialCitizenAmount.get())
         {
             final int citizenModifier = citizen.getCitizenJobHandler().getColonyJob() == null ? 1 : citizen.getCitizenJobHandler().getColonyJob().getDiseaseModifier();

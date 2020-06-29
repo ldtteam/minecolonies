@@ -7,6 +7,7 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -16,8 +17,11 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.TransferItemsRequestMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,13 +40,23 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      */
     public static final int RED       = Color.getByName("red", 0);
     public static final int DARKGREEN = Color.getByName("darkgreen", 0);
-    public static final int BLACK     = Color.getByName("black", 0);
+    public static final int BLACK              = Color.getByName("black", 0);
+
+    /**
+     * The advancement location.
+     */
+    private static final ResourceLocation GUIDE_ADVANCEMENT = new ResourceLocation(Constants.MOD_ID, "minecolonies/check_out_guide");
 
     /**
      * List of resources needed.
      */
     @NotNull
     private final List<BuildingBuilderResource> resources = new ArrayList<>();
+
+    /**
+     * If the guide should be attempted to be opened.
+     */
+    private final boolean needGuide;
 
     /**
      * Tick to update the list.
@@ -59,6 +73,21 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
         pullResourcesFromHut();
         registerButton(RESOURCE_ADD, this::transferItems);
+        this.needGuide = true;
+    }
+
+    /**
+     * Constructor for window builder hut.
+     *
+     * @param needGuide if the guide should be opened.
+     * @param building {@link BuildingBuilder.View}.
+     */
+    public WindowHutBuilder(final BuildingBuilder.View building, final boolean needGuide)
+    {
+        super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
+        pullResourcesFromHut();
+        registerButton(RESOURCE_ADD, this::transferItems);
+        this.needGuide = needGuide;
     }
 
     /**
@@ -93,6 +122,12 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     @Override
     public void onOpened()
     {
+        if (needGuide && Minecraft.getInstance().player.connection.getAdvancementManager().getAdvancementList().getAdvancement(GUIDE_ADVANCEMENT) == null)
+        {
+            close();
+            new WindowHutGuide(building).open();
+            return;
+        }
         super.onOpened();
 
         pullResourcesFromHut();
