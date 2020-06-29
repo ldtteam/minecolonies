@@ -111,7 +111,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
             final String key = stack.getTranslationKey() + "-" + hashCode;
-            if (getRequiredResources().getA().containsKey(key))
+            if (getRequiredResources() != null && getRequiredResources().getA().containsKey(key))
             {
                 final int qtyToKeep = getRequiredResources().getA().get(key);
                 if (localAlreadyKept.contains(new ItemStorage(stack)))
@@ -378,9 +378,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      *
      * @return the bucket.
      */
+    @Nullable
     public Tuple<Map<String, Integer>, Integer> getRequiredResources()
     {
-        return buckets.getFirst();
+        return buckets.isEmpty() ? null : buckets.getFirst();
     }
 
     /**
