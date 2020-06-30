@@ -525,7 +525,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         buf.writeInt(getRotation());
         buf.writeBoolean(isMirrored());
-        buf.writeCompoundTag(NBTUtils.writeBoundingBox(getBuildingArea(colony.getWorld())));
+        buf.writeCompoundTag(NBTUtils.writeBoundingBox(getBuildingFootprint(colony.getWorld())));
         buf.writeInt(getClaimRadius(getBuildingLevel()));
 
         final CompoundNBT requestSystemCompound = new CompoundNBT();

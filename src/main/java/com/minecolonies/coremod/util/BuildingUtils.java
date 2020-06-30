@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.util;
 
+import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -8,6 +10,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.colony.buildings.AbstractSchematicProvider;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -31,21 +34,63 @@ public final class BuildingUtils
 
     /**
      * Calculate the Size of the building given a world and a building.
-     * @param world the world.
+     *
+     * @param world    the world.
      * @param building the building.
      * @return the AxisAlignedBB box.
      */
-    public static AxisAlignedBB getBuildingArea(final World world, final AbstractSchematicProvider building)
+    public static AxisAlignedBB getBuildingFootprint(final World world, final AbstractSchematicProvider building)
+    {
+        final BlockPos location = building.getPosition();
+
+        final StructureName sn =
+          new StructureName(Structures.SCHEMATICS_PREFIX,
+            building.getStyle(),
+            building.getSchematicName() + building.getMaxBuildingLevel());
+
+        final String structureName = sn.toString();
+
+        final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getID(), structureName, new PlacementSettings(), true);
+        final Blueprint blueprint = wrapper.getBluePrint();
+        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, world);
+
+        final BlockPos pos = location.subtract(wrapper.getBluePrint().getPrimaryBlockOffset());
+        final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
+
+        Minecraft.getInstance().getProfiler().endStartSection("struct_box");
+
+        final BlockPos offset = new BlockPos(0, 0, 0);
+        final BlockPos corner1 = pos.subtract(offset);
+        final BlockPos corner2 = pos.add(size).subtract(new BlockPos(1, 1, 1)).subtract(offset);
+
+        return new AxisAlignedBB(
+          corner1.getX(),
+          corner1.getY(),
+          corner1.getZ(),
+          corner2.getX(),
+          corner2.getY(),
+          corner2.getZ()
+        );
+    }
+
+    /**
+     * Calculate the targetable Size of the building given a world and a building.
+     *
+     * @param world    the world.
+     * @param building the building.
+     * @return the AxisAlignedBB box.
+     */
+    public static AxisAlignedBB getTargetAbleArea(final World world, final AbstractSchematicProvider building)
     {
         final BlockPos location = building.getPosition();
         final int x1;
         final int z1;
         final int x2;
         final int z2;
-        final int y1 = location.getY();
+        final int y1 = location.getY() - 10;
         final int y2;
 
-        if(building.getHeight() == 0)
+        if (building.getHeight() == 0)
         {
             final StructureName sn =
               new StructureName(Structures.SCHEMATICS_PREFIX,
@@ -78,72 +123,23 @@ public final class BuildingUtils
             y2 = location.getY() + building.getHeight();
         }
 
-        final AxisAlignedBB result = new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
-        return result.grow(-1, 0, -1);
-    }
-
-    /**
-     * Calculate the targetable Size of the building given a world and a building.
-     * @param world the world.
-     * @param building the building.
-     * @return the AxisAlignedBB box.
-     */
-    public static AxisAlignedBB getTargetAbleArea(final World world, final AbstractSchematicProvider building)
-    {
-        final BlockPos location = building.getPosition();
-        final int x1;
-        final int z1;
-        final int x2;
-        final int z2;
-        final int y1 = location.getY() - 10;
-        final int y2;
-
-        if(building.getHeight() == 0)
-        {
-            final StructureName sn =
-                    new StructureName(Structures.SCHEMATICS_PREFIX,
-                            building.getStyle(),
-                            building.getSchematicName() + building.getBuildingLevel());
-
-            final String structureName = sn.toString();
-
-            final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getID(), structureName, new PlacementSettings(), true);
-            wrapper.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, world);
-
-            final BlockPos zeroPos = location.subtract(wrapper.getBluePrint().getPrimaryBlockOffset());
-
-            x1 = zeroPos.getX();
-            z1 = zeroPos.getZ();
-            x2 = zeroPos.getX() + wrapper.getBluePrint().getSizeX();
-            z2 = zeroPos.getZ() + wrapper.getBluePrint().getSizeZ();
-            y2 = location.getY() + wrapper.getBluePrint().getSizeY();
-
-            building.setCorners(x1, x2, z1, z2);
-            building.setHeight(wrapper.getBluePrint().getSizeY());
-        }
-        else
-        {
-            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = building.getCorners();
-            x1 = corners.getA().getA();
-            x2 = corners.getA().getB();
-            z1 = corners.getB().getA();
-            z2 = corners.getB().getB();
-            y2 = location.getY() + building.getHeight();
-        }
-
         return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
     }
 
     /**
      * Get the hut from the inventory.
+     *
      * @param inventory the inventory to search.
-     * @param hut the hut to fetch.
+     * @param hut       the hut to fetch.
      * @return the stack or if not found empty.
      */
     public static ItemStack getItemStackForHutFromInventory(final PlayerInventory inventory, final String hut)
     {
-        final int slot =  InventoryUtils.findFirstSlotInProviderNotEmptyWith(inventory.player,
-          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock().getRegistryName().getPath().contains(hut));
+        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(inventory.player,
+          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock()
+                                                                                                                                  .getRegistryName()
+                                                                                                                                  .getPath()
+                                                                                                                                  .contains(hut));
 
         if (slot != -1)
         {

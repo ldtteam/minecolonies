@@ -77,13 +77,43 @@ public class ClientEventHandler
         {
             handleRenderStructure(event, world, player);
         }
-        else if (player.getHeldItemMainhand().getItem() == ModItems.scepterGuard)
+
+        if (player.getHeldItemMainhand().getItem() == ModItems.scepterGuard)
         {
             handleRenderScepterGuard(event, world, player);
         }
         else if (player.getHeldItemMainhand().getItem() == ModItems.bannerRallyGuards)
         {
             handleRenderBannerRallyGuards(event, world, player);
+        }
+        else if (player.getHeldItemMainhand().getItem() == com.ldtteam.structurize.items.ModItems.buildTool)
+        {
+            handleRenderBuildTool(event, world, player);
+        }
+    }
+
+
+    private static void handleRenderBuildTool(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
+    {
+        final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
+        if (colony == null)
+        {
+            return;
+        }
+
+        for (final IBuildingView buildingView : colony.getBuildings())
+        {
+            RenderSystem.disableDepthTest();
+            RenderSystem.disableCull();
+
+            final AxisAlignedBB boxCorners = buildingView.getBoxCorners();
+            final BlockPos minCorner = new BlockPos(boxCorners.minX, boxCorners.minY, boxCorners.minZ);
+            final BlockPos maxCorner = new BlockPos(boxCorners.maxX, boxCorners.maxY, boxCorners.maxZ);
+
+            renderBuildingOutline(minCorner, maxCorner, event, 0, 0, 1);
+
+            RenderSystem.enableDepthTest();
+            RenderSystem.enableCull();
         }
     }
 
@@ -202,6 +232,65 @@ public class ClientEventHandler
      * @param blue  Blue component
      */
     private static void renderRalliedGuardbuildingIndicator(
+      final BlockPos posA,
+      final BlockPos posB,
+      final RenderWorldLastEvent event,
+      final float red,
+      final float green,
+      final float blue)
+    {
+        int x1 = posA.getX();
+        int y1 = posA.getY();
+        int z1 = posA.getZ();
+
+        int x2 = posB.getX();
+        int y2 = posB.getY();
+        int z2 = posB.getZ();
+
+        if (x1 > x2)
+        {
+            x1++;
+        }
+        else
+        {
+            x2++;
+        }
+
+        if (y1 > y2)
+        {
+            y1++;
+        }
+        else
+        {
+            y2++;
+        }
+
+        if (z1 > z2)
+        {
+            z1++;
+        }
+        else
+        {
+            z2++;
+        }
+
+        RenderSystem.enableDepthTest();
+
+        final ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().getRenderManager().info;
+        final Vec3d viewPosition = activeRenderInfo.getProjectedView();
+        final MatrixStack matrix = event.getMatrixStack();
+        matrix.push();
+        matrix.translate(-viewPosition.x, -viewPosition.y, -viewPosition.z);
+
+        final Matrix4f matrix4f = matrix.getLast().getMatrix();
+        final AxisAlignedBB axisalignedbb = new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
+        BoxRenderer.drawSelectionBoundingBox(matrix4f, axisalignedbb.grow(0.002D), red, green, blue, 1.0F);
+        matrix.pop();
+
+        RenderSystem.disableDepthTest();
+    }
+
+    private static void renderBuildingOutline(
       final BlockPos posA,
       final BlockPos posB,
       final RenderWorldLastEvent event,

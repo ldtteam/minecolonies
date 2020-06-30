@@ -61,7 +61,7 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
      * @param world the world.
      * @return the AxisAlignedBB.
      */
-    AxisAlignedBB getBuildingArea(World world);
+    AxisAlignedBB getBuildingFootprint(World world);
 
     /**
      * Returns the rotation of the current building.
