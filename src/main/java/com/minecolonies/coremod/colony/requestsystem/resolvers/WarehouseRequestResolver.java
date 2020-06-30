@@ -151,7 +151,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
             }
         }
 
-        if (totalAvailable >= totalRequested || totalAvailable > request.getRequest().getMinimumCount())
+        if (totalAvailable >= totalRequested || totalAvailable >= request.getRequest().getMinimumCount())
         {
             return Lists.newArrayList();
         }
