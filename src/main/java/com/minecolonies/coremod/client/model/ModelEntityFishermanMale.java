@@ -1,244 +1,192 @@
-package com.minecolonies.coremod.client.model;
+// Made with Blockbench 3.5.4
+// Exported for Minecraft version 1.15
+// Paste this class into your mod and generate all required imports
 
-import com.minecolonies.api.client.render.modeltype.CitizenModel;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityFishermanMale extends CitizenModel<AbstractEntityCitizen>
-{
-    //fields
-    private final ModelRenderer string;
-    private final ModelRenderer hookTie1;
-    private final ModelRenderer hookTie2;
-    private final ModelRenderer hookTie3;
-    private final ModelRenderer fish1;
-    private final ModelRenderer fish2;
-    private final ModelRenderer fish3;
-    private final ModelRenderer reel;
-    private final ModelRenderer line;
-    private final ModelRenderer pole;
-    private final ModelRenderer shape1;
-    private final ModelRenderer shape2;
-    private final ModelRenderer shape3;
-    private final ModelRenderer shape4;
-    private final ModelRenderer shape5;
-    private final ModelRenderer shape6;
-    private final ModelRenderer shape7;
-    private final ModelRenderer rightBoot;
-    private final ModelRenderer leftBoot;
+public class custom_model extends EntityModel<Entity> {
+	private final ModelRenderer bipedRightArm;
+	private final ModelRenderer bipedLeftArm;
+	private final ModelRenderer bipedRightLeg;
+	private final ModelRenderer rightBoot;
+	private final ModelRenderer bipedLeftLeg;
+	private final ModelRenderer leftBoot;
+	private final ModelRenderer bipedHead;
+	private final ModelRenderer Hat;
+	private final ModelRenderer shape6;
+	private final ModelRenderer shape7;
+	private final ModelRenderer shape5;
+	private final ModelRenderer shape4;
+	private final ModelRenderer shape3;
+	private final ModelRenderer shape2;
+	private final ModelRenderer shape1;
+	private final ModelRenderer bipedBody;
+	private final ModelRenderer string;
+	private final ModelRenderer pole;
+	private final ModelRenderer reel;
+	private final ModelRenderer line;
+	private final ModelRenderer hookTie1;
+	private final ModelRenderer fish1;
+	private final ModelRenderer hookTie2;
+	private final ModelRenderer fish2;
+	private final ModelRenderer hookTie3;
+	private final ModelRenderer fish3;
 
-    public ModelEntityFishermanMale()
-    {
-        textureWidth = 256;
-        textureHeight = 128;
+	public custom_model() {
+		textureWidth = 256;
+		textureHeight = 128;
 
-        bipedRightArm = new ModelRenderer(this, 40, 16);
-        bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
-        bipedRightArm.setRotationPoint(-5F, 2F, 0F);
-        bipedRightArm.setTextureSize(256, 128);
-        bipedRightArm.mirror = true;
-        setRotation(bipedRightArm, 0F, 0F, 0F);
+		bipedRightArm = new ModelRenderer(this);
+		bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
+		bipedRightArm.setTextureOffset(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        bipedLeftArm = new ModelRenderer(this, 40, 16);
-        bipedLeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
-        bipedLeftArm.setRotationPoint(5F, 2F, 0F);
-        bipedLeftArm.setTextureSize(256, 128);
-        bipedLeftArm.mirror = true;
-        setRotation(bipedLeftArm, 0F, 0F, 0F);
-        bipedLeftArm.mirror = false;
+		bipedLeftArm = new ModelRenderer(this);
+		bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
+		bipedLeftArm.setTextureOffset(40, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        bipedRightLeg = new ModelRenderer(this, 0, 16);
-        bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        bipedRightLeg.setRotationPoint(-2F, 12F, 0F);
-        bipedRightLeg.setTextureSize(256, 128);
-        bipedRightLeg.mirror = true;
-        setRotation(bipedRightLeg, 0F, 0F, 0F);
+		bipedRightLeg = new ModelRenderer(this);
+		bipedRightLeg.setRotationPoint(-2.0F, 12.0F, 0.0F);
+		bipedRightLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        bipedLeftLeg = new ModelRenderer(this, 0, 16);
-        bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
-        bipedLeftLeg.setTextureSize(256, 128);
-        bipedLeftLeg.mirror = true;
-        setRotation(bipedLeftLeg, 0F, 0F, 0F);
-        bipedLeftLeg.mirror = false;
+		rightBoot = new ModelRenderer(this);
+		rightBoot.setRotationPoint(-2.0F, 12.0F, 0.0F);
+		bipedRightLeg.addChild(rightBoot);
+		rightBoot.setTextureOffset(20, 79).addBox(-0.5F, -8.0F, -2.5F, 5.0F, 2.0F, 5.0F, 0.0F, true);
 
-        bipedHead = new ModelRenderer(this, 0, 0);
-        bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8);
-        bipedHead.setRotationPoint(0F, 0F, 0F);
-        bipedHead.setTextureSize(256, 128);
-        bipedHead.mirror = true;
-        setRotation(bipedHead, 0F, 0F, 0F);
+		bipedLeftLeg = new ModelRenderer(this);
+		bipedLeftLeg.setRotationPoint(2.0F, 12.0F, 0.0F);
+		bipedLeftLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        bipedBody = new ModelRenderer(this, 16, 16);
-        bipedBody.addBox(-4F, 0F, -2F, 8, 12, 4);
-        bipedBody.setRotationPoint(0F, 0F, 0F);
-        bipedBody.setTextureSize(256, 128);
-        bipedBody.mirror = true;
-        setRotation(bipedBody, 0F, 0F, 0F);
+		leftBoot = new ModelRenderer(this);
+		leftBoot.setRotationPoint(2.0F, 12.0F, 0.0F);
+		bipedLeftLeg.addChild(leftBoot);
+		leftBoot.setTextureOffset(0, 79).addBox(-4.5F, -8.0F, -2.5F, 5.0F, 2.0F, 5.0F, 0.0F, true);
 
-        fish3 = new ModelRenderer(this, 61, 46);
-        fish3.addBox(0.4F, 10F, -2.2F, 2, 4, 0);
-        fish3.setRotationPoint(0F, 0F, 0F);
-        fish3.setTextureSize(256, 128);
-        fish3.mirror = true;
-        setRotation(fish3, 0F, 0F, 0F);
+		bipedHead = new ModelRenderer(this);
+		bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, true);
+		bipedHead.setTextureOffset(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
 
-        hookTie3 = new ModelRenderer(this, 58, 46);
-        hookTie3.addBox(0.5F, 8F, -2.2F, 1, 2, 0);
-        hookTie3.setRotationPoint(0F, 0F, 0F);
-        hookTie3.setTextureSize(256, 128);
-        hookTie3.mirror = true;
-        setRotation(hookTie3, 0F, 0F, 0F);
+		Hat = new ModelRenderer(this);
+		Hat.setRotationPoint(0.0F, 24.0F, 0.0F);
+		bipedHead.addChild(Hat);
+		
 
-        hookTie1 = new ModelRenderer(this, 58, 38);
-        hookTie1.addBox(-3.5F, 3.5F, -2.2F, 1, 2, 0);
-        hookTie1.setRotationPoint(0F, 0F, 0F);
-        hookTie1.setTextureSize(256, 128);
-        hookTie1.mirror = true;
-        setRotation(hookTie1, 0F, 0F, 0F);
+		shape6 = new ModelRenderer(this);
+		shape6.setRotationPoint(0.0F, -24.0F, 0.0F);
+		Hat.addChild(shape6);
+		setRotationAngle(shape6, -0.0744F, 0.0F, 0.0F);
+		shape6.setTextureOffset(0, 33).addBox(-5.0F, -9.0F, -5.5F, 10.0F, 2.0F, 10.0F, 0.0F, true);
 
-        hookTie2 = new ModelRenderer(this, 58, 42);
-        hookTie2.addBox(-1.5F, 5.5F, -2.2F, 1, 2, 0);
-        hookTie2.setRotationPoint(0F, 0F, 0F);
-        hookTie2.setTextureSize(256, 128);
-        hookTie2.mirror = true;
-        setRotation(hookTie2, 0F, 0F, 0F);
+		shape7 = new ModelRenderer(this);
+		shape7.setRotationPoint(0.0F, 0.0F, 0.0F);
+		shape6.addChild(shape7);
+		setRotationAngle(shape7, -0.0744F, 0.0F, 0.0F);
+		shape7.setTextureOffset(0, 59).addBox(-4.0F, -10.4F, -4.5F, 8.0F, 2.0F, 8.0F, 0.0F, true);
 
-        fish1 = new ModelRenderer(this, 61, 38);
-        fish1.addBox(-4.4F, 5.5F, -2.2F, 2, 4, 0);
-        fish1.setRotationPoint(0F, 0F, 0F);
-        fish1.setTextureSize(256, 128);
-        fish1.mirror = true;
-        setRotation(fish1, 0F, 0F, 0F);
+		shape5 = new ModelRenderer(this);
+		shape5.setRotationPoint(0.0F, -0.5432F, 0.5612F);
+		shape6.addChild(shape5);
+		setRotationAngle(shape5, -0.0045F, 0.0F, -0.1487F);
+		shape5.setTextureOffset(24, 48).addBox(-5.7509F, -8.2682F, -6.0492F, 2.0F, 1.0F, 10.0F, 0.0F, true);
 
-        fish2 = new ModelRenderer(this, 61, 42);
-        fish2.addBox(-2F, 7.5F, -2.2F, 2, 4, 0);
-        fish2.setRotationPoint(0F, 0F, 0F);
-        fish2.setTextureSize(256, 128);
-        fish2.mirror = true;
-        setRotation(fish2, 0F, 0F, 0F);
+		shape4 = new ModelRenderer(this);
+		shape4.setRotationPoint(0.0F, -23.0F, 0.0F);
+		Hat.addChild(shape4);
+		setRotationAngle(shape4, -0.1616F, 0.0F, 0.0F);
+		shape4.setTextureOffset(0, 69).addBox(-3.0F, -12.0F, -3.5F, 6.0F, 1.0F, 6.0F, 0.0F, true);
 
-        string = new ModelRenderer(this, 53, 38);
-        string.addBox(-5F, -0.5F, -2.3F, 1, 12, 1);
-        string.setRotationPoint(0F, 0F, 0F);
-        string.setTextureSize(256, 128);
-        string.mirror = true;
-        setRotation(string, 0F, 0F, -0.7435722F);
+		shape3 = new ModelRenderer(this);
+		shape3.setRotationPoint(0.0F, -24.0F, 0.0F);
+		Hat.addChild(shape3);
+		setRotationAngle(shape3, 0.0744F, 0.0F, 0.0F);
+		shape3.setTextureOffset(0, 45).addBox(-5.0F, -8.7F, -6.2F, 10.0F, 1.0F, 2.0F, 0.0F, true);
 
-        reel = new ModelRenderer(this, 62, 64);
-        reel.addBox(-6F, 6F, 2F, 2, 2, 1);
-        reel.setRotationPoint(0F, 0F, 0F);
-        reel.setTextureSize(256, 128);
-        reel.mirror = true;
-        setRotation(reel, 0F, 0F, 0F);
+		shape2 = new ModelRenderer(this);
+		shape2.setRotationPoint(0.0F, -24.0F, 0.0F);
+		Hat.addChild(shape2);
+		setRotationAngle(shape2, -0.0744F, 0.0F, 0.1487F);
+		shape2.setTextureOffset(0, 48).addBox(3.7F, -8.65F, -5.5F, 2.0F, 1.0F, 10.0F, 0.0F, true);
 
-        line = new ModelRenderer(this, 62, 52);
-        line.addBox(-4.5F, -4.75F, 2.5F, 1, 11, 0);
-        line.setRotationPoint(0F, 0F, 0F);
-        line.setTextureSize(256, 128);
-        line.mirror = true;
-        setRotation(line, 0F, 0F, 0F);
+		shape1 = new ModelRenderer(this);
+		shape1.setRotationPoint(0.0F, -24.0F, 0.0F);
+		Hat.addChild(shape1);
+		setRotationAngle(shape1, -0.2231F, 0.0F, 0.0F);
+		shape1.setTextureOffset(24, 45).addBox(-5.0F, -8.6F, 3.2F, 10.0F, 1.0F, 2.0F, 0.0F, true);
 
-        pole = new ModelRenderer(this, 57, 52);
-        pole.addBox(-4F, -5F, 2F, 1, 16, 1);
-        pole.setRotationPoint(0F, 0F, 0F);
-        pole.setTextureSize(256, 128);
-        pole.mirror = true;
-        setRotation(pole, 0F, 0F, 0F);
+		bipedBody = new ModelRenderer(this);
+		bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, true);
 
-        shape1 = new ModelRenderer(this, 24, 45);
-        shape1.addBox(-5F, -8.6F, 3.2F, 10, 1, 2);
-        shape1.setRotationPoint(0F, 0F, 0F);
-        shape1.setTextureSize(256, 128);
-        shape1.mirror = true;
-        setRotation(shape1, -0.2230717F, 0F, 0F);
+		string = new ModelRenderer(this);
+		string.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedBody.addChild(string);
+		setRotationAngle(string, 0.0F, 0.0F, -0.7436F);
+		string.setTextureOffset(53, 38).addBox(-5.0F, -0.5F, -2.3F, 1.0F, 12.0F, 1.0F, 0.0F, true);
 
-        shape2 = new ModelRenderer(this, 0, 48);
-        shape2.addBox(3.7F, -8.65F, -5.5F, 2, 1, 10);
-        shape2.setRotationPoint(0F, 0F, 0F);
-        shape2.setTextureSize(256, 128);
-        shape2.mirror = true;
-        setRotation(shape2, -0.074351F, 0F, 0.1487195F);
+		pole = new ModelRenderer(this);
+		pole.setRotationPoint(0.0F, 0.0F, 0.0F);
+		string.addChild(pole);
+		pole.setTextureOffset(57, 52).addBox(-4.0F, -5.0F, 2.0F, 1.0F, 16.0F, 1.0F, 0.0F, true);
 
-        shape3 = new ModelRenderer(this, 0, 45);
-        shape3.addBox(-5F, -8.7F, -6.2F, 10, 1, 2);
-        shape3.setRotationPoint(0F, 0F, 0F);
-        shape3.setTextureSize(256, 128);
-        shape3.mirror = true;
-        setRotation(shape3, 0.0743572F, 0F, 0F);
+		reel = new ModelRenderer(this);
+		reel.setRotationPoint(0.0F, 0.0F, 0.0F);
+		pole.addChild(reel);
+		reel.setTextureOffset(62, 64).addBox(-6.0F, 6.0F, 2.0F, 2.0F, 2.0F, 1.0F, 0.0F, true);
 
-        shape4 = new ModelRenderer(this, 0, 69);
-        shape4.addBox(-3F, -13F, -3.5F, 6, 1, 6);
-        shape4.setRotationPoint(0F, 1F, 0F);
-        shape4.setTextureSize(256, 128);
-        shape4.mirror = true;
-        setRotation(shape4, -0.0743572F, 0F, 0F);
+		line = new ModelRenderer(this);
+		line.setRotationPoint(0.0F, 0.0F, 0.0F);
+		pole.addChild(line);
+		line.setTextureOffset(62, 52).addBox(-4.5F, -4.75F, 2.5F, 1.0F, 11.0F, 0.0F, 0.0F, true);
 
-        shape5 = new ModelRenderer(this, 24, 48);
-        shape5.addBox(-5.7F, -8.65F, -5.5F, 2, 1, 10);
-        shape5.setRotationPoint(0F, 0F, 0F);
-        shape5.setTextureSize(256, 128);
-        shape5.mirror = true;
-        setRotation(shape5, -0.074351F, 0F, -0.1487144F);
+		hookTie1 = new ModelRenderer(this);
+		hookTie1.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedBody.addChild(hookTie1);
+		hookTie1.setTextureOffset(58, 38).addBox(-3.5F, 3.5F, -2.2F, 1.0F, 2.0F, 0.0F, 0.0F, true);
 
-        shape6 = new ModelRenderer(this, 0, 33);
-        shape6.addBox(-5F, -9F, -5.5F, 10, 2, 10);
-        shape6.setRotationPoint(0F, 0F, 0F);
-        shape6.setTextureSize(256, 128);
-        shape6.mirror = true;
-        setRotation(shape6, -0.0743572F, 0F, 0F);
+		fish1 = new ModelRenderer(this);
+		fish1.setRotationPoint(0.0F, 0.0F, 0.0F);
+		hookTie1.addChild(fish1);
+		fish1.setTextureOffset(61, 38).addBox(-4.4F, 5.5F, -2.2F, 2.0F, 4.0F, 0.0F, 0.0F, true);
 
-        shape7 = new ModelRenderer(this, 0, 59);
-        shape7.addBox(-4F, -11F, -4.5F, 8, 2, 8);
-        shape7.setRotationPoint(0F, 0F, 0F);
-        shape7.setTextureSize(256, 128);
-        shape7.mirror = true;
-        setRotation(shape7, -0.0743572F, 0F, 0F);
+		hookTie2 = new ModelRenderer(this);
+		hookTie2.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedBody.addChild(hookTie2);
+		hookTie2.setTextureOffset(58, 42).addBox(-1.5F, 5.5F, -2.2F, 1.0F, 2.0F, 0.0F, 0.0F, true);
 
-        rightBoot = new ModelRenderer(this, 20, 38);
-        rightBoot.addBox(-0.5F, -8F, -2.5F, 5, 2, 5);
-        rightBoot.setRotationPoint(-2F, 12F, 0F);
-        rightBoot.setTextureSize(256, 128);
-        rightBoot.mirror = true;
-        setRotation(rightBoot, 0F, 0F, 0F);
+		fish2 = new ModelRenderer(this);
+		fish2.setRotationPoint(0.0F, 0.0F, 0.0F);
+		hookTie2.addChild(fish2);
+		fish2.setTextureOffset(61, 42).addBox(-2.0F, 7.5F, -2.2F, 2.0F, 4.0F, 0.0F, 0.0F, true);
 
-        leftBoot = new ModelRenderer(this, 0, 38);
-        leftBoot.addBox(-4.5F, -8F, -2.5F, 5, 2, 5);
-        leftBoot.setRotationPoint(2F, 12F, 0F);
-        leftBoot.setTextureSize(256, 128);
-        leftBoot.mirror = true;
-        setRotation(leftBoot, 0F, 0F, 0F);
+		hookTie3 = new ModelRenderer(this);
+		hookTie3.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedBody.addChild(hookTie3);
+		hookTie3.setTextureOffset(58, 46).addBox(0.5F, 8.0F, -2.2F, 1.0F, 2.0F, 0.0F, 0.0F, true);
 
-        bipedBody.addChild(hookTie1);
-        hookTie1.addChild(fish1);
-        bipedBody.addChild(hookTie2);
-        hookTie2.addChild(fish2);
-        bipedBody.addChild(hookTie3);
-        hookTie3.addChild(fish3);
+		fish3 = new ModelRenderer(this);
+		fish3.setRotationPoint(0.0F, 0.0F, 0.0F);
+		hookTie3.addChild(fish3);
+		fish3.setTextureOffset(61, 46).addBox(0.4F, 10.0F, -2.2F, 2.0F, 4.0F, 0.0F, 0.0F, true);
+	}
 
-        string.addChild(pole);
-        pole.addChild(reel);
-        pole.addChild(line);
+	@Override
+	public void setRotationAngles(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
+		//previously the render function, render code was moved to a method below
+	}
 
-        bipedRightLeg.addChild(rightBoot);
-        bipedLeftLeg.addChild(leftBoot);
+	@Override
+	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
+		bipedRightArm.render(matrixStack, buffer, packedLight, packedOverlay);
+		bipedLeftArm.render(matrixStack, buffer, packedLight, packedOverlay);
+		bipedRightLeg.render(matrixStack, buffer, packedLight, packedOverlay);
+		bipedLeftLeg.render(matrixStack, buffer, packedLight, packedOverlay);
+		bipedHead.render(matrixStack, buffer, packedLight, packedOverlay);
+		bipedBody.render(matrixStack, buffer, packedLight, packedOverlay);
+	}
 
-        bipedBody.addChild(shape1);
-        bipedBody.addChild(shape2);
-        bipedBody.addChild(shape3);
-        bipedBody.addChild(shape4);
-        bipedBody.addChild(shape5);
-        bipedBody.addChild(shape6);
-        bipedBody.addChild(shape7);
-
-        bipedHeadwear.showModel = false;
-    }
-
-    private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
-    {
-        model.rotateAngleX = x;
-        model.rotateAngleY = y;
-        model.rotateAngleZ = z;
-    }
+	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
+		modelRenderer.rotateAngleX = x;
+		modelRenderer.rotateAngleY = y;
+		modelRenderer.rotateAngleZ = z;
+	}
 }
