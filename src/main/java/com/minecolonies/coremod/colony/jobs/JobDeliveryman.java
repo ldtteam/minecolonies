@@ -198,7 +198,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         {
             final IToken theToken = iterator.next();
             final IRequest<? extends IDeliverymanRequestable> request = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(theToken));
-            if (request == null)
+            if (request == null || request.getState() == RequestState.COMPLETED)
             {
                 taskQueue.remove(theToken);
             }
