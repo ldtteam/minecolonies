@@ -1,39 +1,44 @@
-// Made with Blockbench 3.5.4
+// Made with Blockbench 3.5.1
 // Exported for Minecraft version 1.15
 // Paste this class into your mod and generate all required imports
 
+package com.minecolonies.coremod.client.model;
+
+import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.client.renderer.model.ModelRenderer;
 
 public class custom_model extends EntityModel<Entity> {
-	private final ModelRenderer bipedRightArm;
-	private final ModelRenderer bipedLeftArm;
-	private final ModelRenderer bipedRightLeg;
-	private final ModelRenderer rightBoot;
-	private final ModelRenderer bipedLeftLeg;
-	private final ModelRenderer leftBoot;
-	private final ModelRenderer bipedHead;
-	private final ModelRenderer hairBack1;
-	private final ModelRenderer hairBack2;
-	private final ModelRenderer hairBack3;
-	private final ModelRenderer hairBack4;
-	private final ModelRenderer hairBack5;
-	private final ModelRenderer hairBack6;
-	private final ModelRenderer hairBack7;
-	private final ModelRenderer hairBack8;
-	private final ModelRenderer hairBack9;
-	private final ModelRenderer hairBack10;
-	private final ModelRenderer bipedBody;
-	private final ModelRenderer string;
-	private final ModelRenderer string2;
-	private final ModelRenderer hookTie1;
-	private final ModelRenderer hookTie2;
-	private final ModelRenderer hookTie3;
-	private final ModelRenderer fish1;
-	private final ModelRenderer fish2;
-	private final ModelRenderer fish3;
-	private final ModelRenderer reel;
-	private final ModelRenderer line;
-	private final ModelRenderer pole;
-	private final ModelRenderer chest;
+	 ModelRenderer bipedRightArm;
+	 ModelRenderer bipedLeftArm;
+	 ModelRenderer bipedRightLeg;
+	 ModelRenderer rightBoot;
+	 ModelRenderer bipedLeftLeg;
+	 ModelRenderer leftBoot;
+	 ModelRenderer bipedHead;
+	 ModelRenderer hairBack1;
+	 ModelRenderer hairBack2;
+	 ModelRenderer hairBack3;
+	 ModelRenderer hairBack4;
+	 ModelRenderer hairBack5;
+	 ModelRenderer hairBack6;
+	 ModelRenderer hairBack7;
+	 ModelRenderer hairBack8;
+	 ModelRenderer hairBack9;
+	 ModelRenderer hairBack10;
+	 ModelRenderer bipedBody;
+	 ModelRenderer string;
+	 ModelRenderer string2;
+	 ModelRenderer hookTie1;
+	 ModelRenderer hookTie2;
+	 ModelRenderer hookTie3;
+	 ModelRenderer fish1;
+	 ModelRenderer fish2;
+	 ModelRenderer fish3;
+	 ModelRenderer reel;
+	 ModelRenderer line;
+	 ModelRenderer pole;
+	 ModelRenderer chest;
 
 	public custom_model() {
 		textureWidth = 256;
@@ -201,9 +206,33 @@ public class custom_model extends EntityModel<Entity> {
 		bipedRightArm.render(matrixStack, buffer, packedLight, packedOverlay);
 		bipedLeftArm.render(matrixStack, buffer, packedLight, packedOverlay);
 		bipedRightLeg.render(matrixStack, buffer, packedLight, packedOverlay);
+		rightBoot.render(matrixStack, buffer, packedLight, packedOverlay);
 		bipedLeftLeg.render(matrixStack, buffer, packedLight, packedOverlay);
+		leftBoot.render(matrixStack, buffer, packedLight, packedOverlay);
 		bipedHead.render(matrixStack, buffer, packedLight, packedOverlay);
+		hairBack1.render(matrixStack, buffer, packedLight, packedOverlay);
+		hairBack2.render(matrixStack, buffer, packedLight, packedOverlay);
+		hairBack3.render(matrixStack, buffer, packedLight, packedOverlay);
+		hairBack4.render(matrixStack, buffer, packedLight, packedOverlay);
+		hairBack5.render(matrixStack, buffer, packedLight, packedOverlay);
+		hairBack6.render(matrixStack, buffer, packedLight, packedOverlay);
+		hairBack7.render(matrixStack, buffer, packedLight, packedOverlay);
+		hairBack8.render(matrixStack, buffer, packedLight, packedOverlay);
+		hairBack9.render(matrixStack, buffer, packedLight, packedOverlay);
+		hairBack10.render(matrixStack, buffer, packedLight, packedOverlay);
 		bipedBody.render(matrixStack, buffer, packedLight, packedOverlay);
+		string.render(matrixStack, buffer, packedLight, packedOverlay);
+		string2.render(matrixStack, buffer, packedLight, packedOverlay);
+		hookTie1.render(matrixStack, buffer, packedLight, packedOverlay);
+		hookTie2.render(matrixStack, buffer, packedLight, packedOverlay);
+		hookTie3.render(matrixStack, buffer, packedLight, packedOverlay);
+		fish1.render(matrixStack, buffer, packedLight, packedOverlay);
+		fish2.render(matrixStack, buffer, packedLight, packedOverlay);
+		fish3.render(matrixStack, buffer, packedLight, packedOverlay);
+		reel.render(matrixStack, buffer, packedLight, packedOverlay);
+		line.render(matrixStack, buffer, packedLight, packedOverlay);
+		pole.render(matrixStack, buffer, packedLight, packedOverlay);
+		chest.render(matrixStack, buffer, packedLight, packedOverlay);
 	}
 
 	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {

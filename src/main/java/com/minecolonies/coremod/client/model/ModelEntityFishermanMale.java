@@ -1,35 +1,39 @@
-// Made with Blockbench 3.5.4
+// Made with Blockbench 3.5.1
 // Exported for Minecraft version 1.15
 // Paste this class into your mod and generate all required imports
+package com.minecolonies.coremod.client.model;
 
+import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.client.renderer.model.ModelRenderer;
 
 public class custom_model extends EntityModel<Entity> {
-	private final ModelRenderer bipedRightArm;
-	private final ModelRenderer bipedLeftArm;
-	private final ModelRenderer bipedRightLeg;
-	private final ModelRenderer rightBoot;
-	private final ModelRenderer bipedLeftLeg;
-	private final ModelRenderer leftBoot;
-	private final ModelRenderer bipedHead;
-	private final ModelRenderer Hat;
-	private final ModelRenderer shape6;
-	private final ModelRenderer shape7;
-	private final ModelRenderer shape5;
-	private final ModelRenderer shape4;
-	private final ModelRenderer shape3;
-	private final ModelRenderer shape2;
-	private final ModelRenderer shape1;
-	private final ModelRenderer bipedBody;
-	private final ModelRenderer string;
-	private final ModelRenderer pole;
-	private final ModelRenderer reel;
-	private final ModelRenderer line;
-	private final ModelRenderer hookTie1;
-	private final ModelRenderer fish1;
-	private final ModelRenderer hookTie2;
-	private final ModelRenderer fish2;
-	private final ModelRenderer hookTie3;
-	private final ModelRenderer fish3;
+	 ModelRenderer bipedRightArm;
+	 ModelRenderer bipedLeftArm;
+	 ModelRenderer bipedRightLeg;
+	 ModelRenderer rightBoot;
+	 ModelRenderer bipedLeftLeg;
+	 ModelRenderer leftBoot;
+	 ModelRenderer bipedHead;
+	 ModelRenderer Hat;
+	 ModelRenderer shape6;
+	 ModelRenderer shape7;
+	 ModelRenderer shape5;
+	 ModelRenderer shape4;
+	 ModelRenderer shape3;
+	 ModelRenderer shape2;
+	 ModelRenderer shape1;
+	 ModelRenderer bipedBody;
+	 ModelRenderer string;
+	 ModelRenderer pole;
+	 ModelRenderer reel;
+	 ModelRenderer line;
+	 ModelRenderer hookTie1;
+	 ModelRenderer fish1;
+	 ModelRenderer hookTie2;
+	 ModelRenderer fish2;
+	 ModelRenderer hookTie3;
+	 ModelRenderer fish3;
 
 	public custom_model() {
 		textureWidth = 256;
@@ -179,9 +183,29 @@ public class custom_model extends EntityModel<Entity> {
 		bipedRightArm.render(matrixStack, buffer, packedLight, packedOverlay);
 		bipedLeftArm.render(matrixStack, buffer, packedLight, packedOverlay);
 		bipedRightLeg.render(matrixStack, buffer, packedLight, packedOverlay);
+		rightBoot.render(matrixStack, buffer, packedLight, packedOverlay);
 		bipedLeftLeg.render(matrixStack, buffer, packedLight, packedOverlay);
+		leftBoot.render(matrixStack, buffer, packedLight, packedOverlay);
 		bipedHead.render(matrixStack, buffer, packedLight, packedOverlay);
+		Hat.render(matrixStack, buffer, packedLight, packedOverlay);
+		shape6.render(matrixStack, buffer, packedLight, packedOverlay);
+		shape7.render(matrixStack, buffer, packedLight, packedOverlay);
+		shape5.render(matrixStack, buffer, packedLight, packedOverlay);
+		shape4.render(matrixStack, buffer, packedLight, packedOverlay);
+		shape3.render(matrixStack, buffer, packedLight, packedOverlay);
+		shape2.render(matrixStack, buffer, packedLight, packedOverlay);
+		shape1.render(matrixStack, buffer, packedLight, packedOverlay);
 		bipedBody.render(matrixStack, buffer, packedLight, packedOverlay);
+		string.render(matrixStack, buffer, packedLight, packedOverlay);
+		pole.render(matrixStack, buffer, packedLight, packedOverlay);
+		reel.render(matrixStack, buffer, packedLight, packedOverlay);
+		line.render(matrixStack, buffer, packedLight, packedOverlay);
+		hookTie1.render(matrixStack, buffer, packedLight, packedOverlay);
+		fish1.render(matrixStack, buffer, packedLight, packedOverlay);
+		hookTie2.render(matrixStack, buffer, packedLight, packedOverlay);
+		fish2.render(matrixStack, buffer, packedLight, packedOverlay);
+		hookTie3.render(matrixStack, buffer, packedLight, packedOverlay);
+		fish3.render(matrixStack, buffer, packedLight, packedOverlay);
 	}
 
 	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
