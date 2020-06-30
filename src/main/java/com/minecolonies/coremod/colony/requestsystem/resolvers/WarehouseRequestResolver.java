@@ -201,6 +201,9 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                 completedRequest.addDelivery(deliveryStack.copy());
 
                 //this doesn't work well,
+                //lazy workaround, the dman picks up as many as he can find, and starts walking (i -1 and go)
+                // but that will make the dman slwoer, we can store in the delivery request not only the stack, but als the slot + quantity
+
                 final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> stack == itemStack);
                 final ILocation itemStackLocation =
                   manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().getDimension().getType().getId());
