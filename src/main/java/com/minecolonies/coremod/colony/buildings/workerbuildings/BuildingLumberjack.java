@@ -103,22 +103,6 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
         super(c, l);
 
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
-
-        if (recipes.isEmpty())
-        {
-            addStrippedWoodRecipe(Items.OAK_LOG, Items.STRIPPED_OAK_LOG);
-            addStrippedWoodRecipe(Items.SPRUCE_LOG, Items.STRIPPED_SPRUCE_LOG);
-            addStrippedWoodRecipe(Items.BIRCH_LOG, Items.STRIPPED_BIRCH_LOG);
-            addStrippedWoodRecipe(Items.JUNGLE_LOG, Items.STRIPPED_JUNGLE_LOG);
-            addStrippedWoodRecipe(Items.ACACIA_LOG, Items.STRIPPED_ACACIA_LOG);
-            addStrippedWoodRecipe(Items.DARK_OAK_LOG, Items.STRIPPED_DARK_OAK_LOG);
-            addStrippedWoodRecipe(Items.OAK_WOOD, Items.STRIPPED_OAK_WOOD);
-            addStrippedWoodRecipe(Items.SPRUCE_WOOD, Items.STRIPPED_SPRUCE_WOOD);
-            addStrippedWoodRecipe(Items.BIRCH_WOOD, Items.STRIPPED_BIRCH_WOOD);
-            addStrippedWoodRecipe(Items.JUNGLE_WOOD, Items.STRIPPED_JUNGLE_WOOD);
-            addStrippedWoodRecipe(Items.ACACIA_WOOD, Items.STRIPPED_ACACIA_WOOD);
-            addStrippedWoodRecipe(Items.DARK_OAK_WOOD, Items.STRIPPED_DARK_OAK_WOOD);
-        }
     }
 
     public final void addStrippedWoodRecipe(final Item baseVariant, final Item strippedVariant)
@@ -254,6 +238,22 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
         else
         {
             endRestriction = null;
+        }
+
+        if (recipes.isEmpty())
+        {
+            addStrippedWoodRecipe(Items.OAK_LOG, Items.STRIPPED_OAK_LOG);
+            addStrippedWoodRecipe(Items.SPRUCE_LOG, Items.STRIPPED_SPRUCE_LOG);
+            addStrippedWoodRecipe(Items.BIRCH_LOG, Items.STRIPPED_BIRCH_LOG);
+            addStrippedWoodRecipe(Items.JUNGLE_LOG, Items.STRIPPED_JUNGLE_LOG);
+            addStrippedWoodRecipe(Items.ACACIA_LOG, Items.STRIPPED_ACACIA_LOG);
+            addStrippedWoodRecipe(Items.DARK_OAK_LOG, Items.STRIPPED_DARK_OAK_LOG);
+            addStrippedWoodRecipe(Items.OAK_WOOD, Items.STRIPPED_OAK_WOOD);
+            addStrippedWoodRecipe(Items.SPRUCE_WOOD, Items.STRIPPED_SPRUCE_WOOD);
+            addStrippedWoodRecipe(Items.BIRCH_WOOD, Items.STRIPPED_BIRCH_WOOD);
+            addStrippedWoodRecipe(Items.JUNGLE_WOOD, Items.STRIPPED_JUNGLE_WOOD);
+            addStrippedWoodRecipe(Items.ACACIA_WOOD, Items.STRIPPED_ACACIA_WOOD);
+            addStrippedWoodRecipe(Items.DARK_OAK_WOOD, Items.STRIPPED_DARK_OAK_WOOD);
         }
     }
 
