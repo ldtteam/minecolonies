@@ -5,6 +5,8 @@ import com.minecolonies.coremod.colony.jobs.JobMechanic;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.CRAFT;
+
 /**
  * Crafts everything else basically (redstone stuff etc)
  */
@@ -24,5 +26,11 @@ public class EntityAIWorkMechanic extends AbstractEntityAICrafting<JobMechanic, 
     public Class<BuildingMechanic> getExpectedBuildingClass()
     {
         return BuildingMechanic.class;
+    }
+
+    @Override
+    protected void updateRenderMetaData()
+    {
+        worker.setRenderMetadata(getState() == CRAFT ? "mask" : "");
     }
 }

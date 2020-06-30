@@ -38,6 +38,7 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_HOSPITAL;
+import static com.minecolonies.api.util.constant.TranslationConstants.WAITING_FOR_CURE;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAISickTask.DiseaseState.*;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenDiseaseHandler.SEEK_DOCTOR_HEALTH;
 
@@ -452,6 +453,12 @@ public class EntityAISickTask extends Goal
             citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_HOSPITAL, disease.getName(), disease.getCureString()), new TranslationTextComponent(NO_HOSPITAL),
               ChatPriority.BLOCKING));
             return IDLE;
+        }
+        else if (!citizen.getCitizenDiseaseHandler().getDisease().isEmpty())
+        {
+            final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease());
+            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(WAITING_FOR_CURE, disease.getName(), disease.getCureString()), new TranslationTextComponent(WAITING_FOR_CURE),
+              ChatPriority.BLOCKING));
         }
 
         // Reset AI when starting to go to the hospital.

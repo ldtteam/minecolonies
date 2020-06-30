@@ -10,6 +10,8 @@ import com.minecolonies.coremod.network.messages.client.colony.building.guard.Gu
 import com.minecolonies.coremod.network.messages.server.*;
 import com.minecolonies.coremod.network.messages.server.colony.*;
 import com.minecolonies.coremod.network.messages.server.colony.building.*;
+import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperScepterMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperSetHarvestHoneycombsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.composter.ComposterRetrievalMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.cowboy.CowboySetMilkCowsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
@@ -94,6 +96,7 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage::new);
         registerMessage(++idx, UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage::new);
         registerMessage(++idx, GuardMobAttackListMessage.class, GuardMobAttackListMessage::new);
+        registerMessage(++idx, BeekeeperSetHarvestHoneycombsMessage.class, BeekeeperSetHarvestHoneycombsMessage::new);
 
         //  Permission Request messages
         registerMessage(++idx, PermissionsMessage.Permission.class, PermissionsMessage.Permission::new);
@@ -128,6 +131,7 @@ public class NetworkChannel
         registerMessage(++idx, CreateColonyMessage.class, CreateColonyMessage::new);
         registerMessage(++idx, ColonyDeleteOwnMessage.class, ColonyDeleteOwnMessage::new);
         registerMessage(++idx, ColonyViewRemoveMessage.class, ColonyViewRemoveMessage::new);
+        registerMessage(++idx, BeekeeperScepterMessage.class, BeekeeperScepterMessage::new);
 
         registerMessage(++idx, ToggleHousingMessage.class, ToggleHousingMessage::new);
         registerMessage(++idx, ToggleMoveInMessage.class, ToggleMoveInMessage::new);

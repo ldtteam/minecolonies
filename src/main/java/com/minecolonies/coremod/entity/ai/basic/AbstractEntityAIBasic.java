@@ -38,8 +38,10 @@ import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -282,7 +284,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * Can be overridden in implementations to return the exact building type.
      *
-     * @param <W>  the building type.
      * @param type the type.
      * @return the building associated with this AI's worker.
      */
@@ -1312,6 +1313,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
+     * Reset the done actions of the AI.
+     *
+     * @see #incrementActionsDone(int)
+     */
+    protected final void resetActionsDone()
+    {
+        job.clearActionsDone();
+    }
+
+    /**
      * Tell the ai that you have done numberOfActions more actions.
      * <p>
      * if the actions exceed a certain number, the ai will dump it's inventory.
@@ -1469,6 +1480,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack stack)
     {
+        return checkIfRequestForItemExistOrCreateAsynch(stack, stack.getCount(), stack.getCount());
+    }
+
+    /**
+     * Check if a stack has been requested already or is in the inventory. If not in the inventory and not requested already, create request
+     *
+     * @param stack the requested stack.
+     * @param count the total count.
+     * @param minCount the minimum count.
+     * @return true if in the inventory, else false.
+     */
+    public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack stack, final int count, final int minCount)
+    {
         if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
           s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
         {
@@ -1488,8 +1512,41 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
-            final Stack stackRequest = new Stack(stack);
+            final Stack stackRequest = new Stack(stack, count, minCount);
             worker.getCitizenData().createRequestAsync(stackRequest);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a tag has been requested already or is in the inventory. If not in the inventory and not requested already, create request
+     *
+     * @param tag the requested tag.
+     * @return true if in the inventory, else false.
+     */
+    public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final Tag<Item> tag, final int count)
+    {
+        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> stack.getItem().isIn(tag) && stack.getCount() >= count))
+        {
+            return true;
+        }
+
+        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(),
+          itemStack -> itemStack.getItem().isIn(tag)) >= count &&
+              InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                getOwnBuilding(), itemStack -> itemStack.getItem().isIn(tag),
+                count,
+                worker.getInventoryCitizen()))
+        {
+            return true;
+        }
+
+        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TAG_REQUEST,
+          (IRequest<? extends com.minecolonies.api.colony.requestsystem.requestable.Tag> r) -> r.getRequest().getTag().getId().equals(tag.getId())).isEmpty())
+        {
+            final IDeliverable tagRequest = new com.minecolonies.api.colony.requestsystem.requestable.Tag(tag, count);
+            worker.getCitizenData().createRequestAsync(tagRequest);
         }
 
         return false;

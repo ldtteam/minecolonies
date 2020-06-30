@@ -42,7 +42,6 @@ public class ModelEntityFarmerMale extends CitizenModel<AbstractEntityCitizen>
         bipedLeftArm.setTextureSize(128, 64);
         bipedLeftArm.mirror = true;
         setRotation(bipedLeftArm, 0F, 0F, 0F);
-        bipedLeftArm.mirror = false;
 
         bipedRightLeg = new ModelRenderer(this, 0, 16);
         bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);

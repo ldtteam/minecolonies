@@ -90,7 +90,11 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
         {
             if (citizen.getJob() instanceof AbstractJobCrafter)
             {
-                final List<IToken<?>> assignedTasks = citizen.getJob(AbstractJobCrafter.class).getAssignedTasks();
+                final List<IToken<?>> assignedTasks = new ArrayList<>(citizen.getJob(AbstractJobCrafter.class).getAssignedTasks());
+                if (((AbstractJobCrafter) citizen.getJob()).getCurrentTask() != null)
+                {
+                    assignedTasks.add(((AbstractJobCrafter) citizen.getJob()).getCurrentTask().getId());
+                }
                 for (final IToken<?> taskToken : assignedTasks)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
@@ -102,7 +106,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
                             int amount = itemStorage.getAmount() * request.getRequest().getCount();
                             if (recipeOutputs.containsKey(itemStorage))
                             {
-                                amount = recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount() * request.getRequest().getCount();
+                                amount += recipeOutputs.get(itemStorage).getA();
                             }
                             recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
                         }
@@ -111,7 +115,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
                         int amount = output.getAmount() * request.getRequest().getCount();
                         if (recipeOutputs.containsKey(output))
                         {
-                            amount = recipeOutputs.get(output).getA() + output.getAmount() * request.getRequest().getCount();
+                            amount += recipeOutputs.get(output).getA();
                         }
                         recipeOutputs.put(output, new Tuple<>(amount, false));
                     }
