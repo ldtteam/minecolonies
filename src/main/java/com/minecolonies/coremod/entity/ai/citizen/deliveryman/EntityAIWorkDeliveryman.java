@@ -453,10 +453,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final List<ItemStack> alreadyInInv = new ArrayList<>();
         Delivery nextPickUp = null;
 
-        int i = 0;
+        int parallelDeliveryCount = 0;
         for (final IRequest<? extends Delivery> task : taskList)
         {
-            i++;
+            parallelDeliveryCount++;
             int totalCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(task.getRequest().getStack(), itemStack));
             int hasCount = 0;
             for (final ItemStack stack : alreadyInInv)
@@ -480,7 +480,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (nextPickUp == null || cannotHoldMoreItems())
         {
-            job.setParallelDeliveries(i);
+            job.setParallelDeliveries(parallelDeliveryCount);
             return DELIVERY;
         }
 
@@ -517,9 +517,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return PREPARE_DELIVERY;
         }
 
-        if (i > 1)
+        if (parallelDeliveryCount > 1)
         {
-            job.setParallelDeliveries(i - 1);
+            job.setParallelDeliveries(parallelDeliveryCount - 1);
             return DELIVERY;
         }
 

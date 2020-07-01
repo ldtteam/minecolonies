@@ -592,7 +592,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @param worker the worker.
      * @param workerInv if the worker inv should be checked too.
      */
-    public void checkOrRequestBucket(BuilderBucket requiredResources, final ICitizenData worker, final boolean workerInv)
+    public void checkOrRequestBucket(@Nullable final BuilderBucket requiredResources, final ICitizenData worker, final boolean workerInv)
     {
         if (requiredResources == null)
         {
