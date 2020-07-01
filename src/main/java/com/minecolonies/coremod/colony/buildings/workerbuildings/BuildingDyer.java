@@ -59,7 +59,11 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     public BuildingDyer(final IColony c, final BlockPos l)
     {
         super(c, l);
+    }
 
+    @Override
+    public void checkForWorkerSpecificRecipes()
+    {
         final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
           TypeConstants.RECIPE,
           StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
@@ -67,8 +71,8 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
           1,
           new ItemStack(Items.GREEN_DYE, 1),
           Blocks.FURNACE);
-        recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
 
+        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
     }
 
     @NotNull
@@ -124,19 +128,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
         }
 
         isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
-        if (isRecipeAllowed.isPresent())
-        {
-            return isRecipeAllowed.get();
-        }
-        else
-        {
-            // Additional recipe rules
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-
-            // End Additional recipe rules
-        }
-
-        return false;
+        return isRecipeAllowed.orElse(false);
     }
 
     @Override

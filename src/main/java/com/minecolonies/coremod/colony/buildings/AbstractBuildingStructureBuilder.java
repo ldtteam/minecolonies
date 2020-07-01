@@ -12,6 +12,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -149,10 +151,40 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                         return stack.getCount() - qtyToKeep;
                     }
                 }
+
+                if (checkIfShouldKeepTool(ToolType.PICKAXE, stack, localAlreadyKept)
+                || checkIfShouldKeepTool(ToolType.SHOVEL, stack, localAlreadyKept)
+                || checkIfShouldKeepTool(ToolType.AXE, stack, localAlreadyKept))
+                {
+                    return 0;
+                }
+                return stack.getCount();
             }
-            return stack.getCount();
         }
         return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory);
+    }
+
+    /**
+     * Check if a certain tool should be kept or dumped.
+     * @param type the type of the tool.
+     * @param stack the stack to check.
+     * @param localAlreadyKept the already kept stacks.
+     * @return true if should keep.
+     */
+    private boolean checkIfShouldKeepTool(final ToolType type, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    {
+        if (ItemStackUtils.hasToolLevel(stack, type, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()))
+        {
+            for (final ItemStorage storage : localAlreadyKept)
+            {
+                if (ItemStackUtils.hasToolLevel(storage.getItemStack(), ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override

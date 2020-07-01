@@ -82,7 +82,11 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     {
         super(c, l);
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+    }
 
+    @Override
+    public void checkForWorkerSpecificRecipes()
+    {
         final List<ItemStack> input = new ArrayList<>();
         input.add(new ItemStack(Items.SAND, 4));
         input.add(new ItemStack(Items.GRAVEL, 4));
@@ -103,11 +107,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
               new ItemStack(item, 8),
               Blocks.AIR);
 
-            final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
-            if (!recipes.contains(token))
-            {
-                recipes.add(token);
-            }
+            addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
 
             final Block block = item instanceof BlockItem ? ((BlockItem) item).getBlock() : null;
             if (block instanceof ConcretePowderBlock)
@@ -120,11 +120,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
                   new ItemStack(((ConcretePowderBlock) block).solidifiedState.getBlock(), 1),
                   Blocks.AIR);
 
-                final IToken<?> token2 = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage2);
-                if (!recipes.contains(token2))
-                {
-                    recipes.add(token2);
-                }
+                addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage2));
             }
         }
     }

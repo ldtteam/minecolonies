@@ -18,14 +18,18 @@ import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobFletcher;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
+import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
@@ -121,20 +125,17 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void checkForWorkerSpecificRecipes()
     {
-        super.deserializeNBT(compound);
-        if (recipes.isEmpty())
-        {
-            final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              ImmutableList.of(new ItemStack(Items.WHITE_WOOL, 1)),
-              1,
-              new ItemStack(Items.STRING, 4),
-              Blocks.AIR);
-            recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
-        }
+        final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
+          TypeConstants.RECIPE,
+          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+          ImmutableList.of(new ItemStack(Items.WHITE_WOOL, 1)),
+          1,
+          new ItemStack(Items.STRING, 4),
+          Blocks.AIR);
+
+        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
     }
 
     @Override

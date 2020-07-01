@@ -438,7 +438,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     {
         if (canRecipeBeAdded(token))
         {
-            recipes.add(token);
+            addRecipeToList(token);
             markDirty();
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
@@ -448,6 +448,18 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             return true;
         }
         return false;
+    }
+
+    /**
+     * Add a recipe to the list of recipes.
+     * @param token the token to add.
+     */
+    public void addRecipeToList(final IToken<?> token)
+    {
+        if (!recipes.contains(token))
+        {
+            recipes.add(token);
+        }
     }
 
     @Override
@@ -461,6 +473,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public void onColonyTick(@NotNull final IColony colony)
     {
         super.onColonyTick(colony);
+        checkForWorkerSpecificRecipes();
 
         // If we have no active worker, grab one from the Colony
         if (!isFull() && ((getBuildingLevel() > 0 && isBuilt()) || this instanceof BuildingBuilder)
@@ -604,6 +617,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public boolean canEat(final ItemStack stack)
     {
         return true;
+    }
+
+    /**
+     * Check for worker specific recipes and add them if necessary.
+     */
+    public void checkForWorkerSpecificRecipes()
+    {
+        // Override if necessary.
     }
 
     /**
