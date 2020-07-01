@@ -7,7 +7,6 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
-import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -70,20 +69,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     public WindowHutBuilder(final BuildingBuilder.View building)
     {
         this(building, true);
-    }
-
-    /**
-     * Constructor for window builder hut.
-     *
-     * @param needGuide if the guide should be opened.
-     * @param building {@link BuildingBuilder.View}.
-     */
-    public WindowHutBuilder(final BuildingBuilder.View building, final boolean needGuide)
-    {
-        super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
-        pullResourcesFromHut();
-        registerButton(RESOURCE_ADD, this::transferItems);
-        this.needGuide = needGuide;
     }
 
     /**

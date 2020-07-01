@@ -109,8 +109,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
             final String key = stack.getTranslationKey() + "-" + hashCode;
-            if (getRequiredResources() != null && getRequiredResources().getA().containsKey(key))
-            if (getRequiredResources().getResourceMap().containsKey(key))
+            if (getRequiredResources() != null && getRequiredResources().getResourceMap().containsKey(key))
             {
                 final int qtyToKeep = getRequiredResources().getResourceMap().get(key);
                 if (localAlreadyKept.contains(new ItemStorage(stack)))
@@ -593,7 +592,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @param worker the worker.
      * @param workerInv if the worker inv should be checked too.
      */
-    public void checkOrRequestBucket(final Map<String, Integer> requiredResources, final ICitizenData worker, final boolean workerInv)
+    public void checkOrRequestBucket(BuilderBucket requiredResources, final ICitizenData worker, final boolean workerInv)
     {
         if (requiredResources == null)
         {
@@ -601,7 +600,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         }
 
         final ImmutableList<IRequest<? extends Stack>> list = getOpenRequestsOfType(worker, TypeToken.of(Stack.class));
-        for (final Map.Entry<String, Integer> entry : requiredResources.entrySet())
+        for (final Map.Entry<String, Integer> entry : requiredResources.getResourceMap().entrySet())
         {
             final ItemStorage itemStack = neededResources.get(entry.getKey());
             if (itemStack == null)
@@ -637,9 +636,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * Return the next bucket to work on.
      * @return the next bucket or a tuple with null inside if non available.
      */
-    public Tuple<Map<String, Integer>, Integer> getNextBucket()
+    @Nullable
+    public BuilderBucket getNextBucket()
     {
-        final Iterator<Tuple<Map<String, Integer>, Integer>> iterator = buckets.iterator();
+        final Iterator<BuilderBucket> iterator = buckets.iterator();
         if (iterator.hasNext())
         {
             iterator.next();
@@ -649,6 +649,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             return iterator.next();
         }
-        return new Tuple<>(null, 0);
+        return null;
     }
 }
