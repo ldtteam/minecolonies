@@ -2,11 +2,13 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
@@ -22,11 +24,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -63,6 +61,11 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     private Map<String, BuildingBuilderResource> neededResources = new LinkedHashMap<>();
 
     /**
+     * The different possible buckets.
+     */
+    private Deque<BuilderBucket> buckets = new ArrayDeque<>();
+
+    /**
      * The progress counter of the builder.
      */
     private int progressCounter = 0;
@@ -92,6 +95,59 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public int getMaxBuildingLevel()
     {
         return MAX_BUILDING_LEVEL;
+    }
+
+    @Override
+    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory)
+    {
+        if (inventory)
+        {
+            final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
+            final String key = stack.getTranslationKey() + "-" + hashCode;
+            if (getRequiredResources().getResourceMap().containsKey(key))
+            {
+                final int qtyToKeep = getRequiredResources().getResourceMap().get(key);
+                if (localAlreadyKept.contains(new ItemStorage(stack)))
+                {
+                    for (final ItemStorage storage : localAlreadyKept)
+                    {
+                        if (storage.equals(new ItemStorage(stack)))
+                        {
+                            if (storage.getAmount() >= qtyToKeep)
+                            {
+                                return stack.getCount();
+                            }
+                            final int kept = storage.getAmount();
+                            if (qtyToKeep >= kept +  stack.getCount())
+                            {
+                                storage.setAmount(kept + stack.getCount());
+                                return 0;
+                            }
+                            else
+                            {
+                                storage.setAmount(qtyToKeep);
+                                return qtyToKeep - kept - stack.getCount();
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (qtyToKeep >= stack.getCount())
+                    {
+                        localAlreadyKept.add(new ItemStorage(stack));
+                        return 0;
+                    }
+                    else
+                    {
+                        localAlreadyKept.add(new ItemStorage(stack, qtyToKeep, false));
+                        return stack.getCount() - qtyToKeep;
+                    }
+                }
+            }
+            return stack.getCount();
+        }
+        return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory);
     }
 
     @Override
@@ -311,6 +367,38 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     /**
+     * Get the needed resources for the current build.
+     *
+     * @return the bucket.
+     */
+    public BuilderBucket getRequiredResources()
+    {
+        return buckets.getFirst();
+    }
+
+    /**
+     * Get the resource from the identifier.
+     * @param res the resource to get.
+     * @return the resource.
+     */
+    public BuildingBuilderResource getResourceFromIdentifier(final String res)
+    {
+        return neededResources.get(res);
+    }
+
+    /**
+     * Check if the resources are in the bucket.
+     * @param stack the stack to check.
+     * @return true if so.
+     */
+    public boolean hasResourceInBucket(final ItemStack stack)
+    {
+        final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
+        final String key = stack.getTranslationKey() + "-" + hashCode;
+        return getRequiredResources() != null && getRequiredResources().getResourceMap().containsKey(key);
+    }
+
+    /**
      * Add a new resource to the needed list.
      *
      * @param res    the resource.
@@ -323,7 +411,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             return;
         }
         final int hashCode = res.hasTag() ? res.getTag().hashCode() : 0;
-        BuildingBuilderResource resource = this.neededResources.get(res.getTranslationKey() + "-" + hashCode);
+        final String key = res.getTranslationKey() + "-" + hashCode;
+        BuildingBuilderResource resource = this.neededResources.get(key);
         if (resource == null)
         {
             resource = new BuildingBuilderResource(res, amount);
@@ -332,7 +421,39 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        this.neededResources.put(res.getTranslationKey() + "-" + hashCode, resource);
+        this.neededResources.put(key, resource);
+
+        BuilderBucket last = buckets.isEmpty() ? null : buckets.removeLast();
+
+        final int stacks = (int) Math.ceil((double) amount / res.getMaxStackSize());
+        final int max = getMainCitizen().getInventory().getSlots() - 9;
+
+        if (last == null || last.getTotalStacks() >= max || last.getTotalStacks() + stacks >= max)
+        {
+            if (last != null)
+            {
+                buckets.add(last);
+            }
+            else
+            {
+                last = new BuilderBucket();
+            }
+
+            last.setTotalStacks(stacks);
+            last.addOrAdjustResource(key, amount);
+            buckets.add(last);
+        }
+        else
+        {
+            int currentQty = last.getResourceMap().getOrDefault(key, 0);
+            final int currentStacks = (int) Math.ceil((double) currentQty / res.getMaxStackSize());
+            final int newStacks = (int) Math.ceil((double) ( currentQty + amount ) / res.getMaxStackSize());
+            final Map<String, Integer> map = last.getResourceMap();
+            last.setTotalStacks(last.getTotalStacks()+ newStacks - currentStacks);
+            last.addOrAdjustResource(key, currentQty + amount);
+            buckets.add(last);
+        }
+
         this.markDirty();
     }
 
@@ -345,8 +466,33 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public void reduceNeededResource(final ItemStack res, final int amount)
     {
         final int hashCode = res.hasTag() ? res.getTag().hashCode() : 0;
-        int preAmount = 0;
         final String name = res.getTranslationKey() + "-" + hashCode;
+
+        final BuilderBucket last = buckets.isEmpty() ? null : getRequiredResources();
+
+        if (last != null)
+        {
+            final Map<String, Integer> map = last.getResourceMap();
+            if (map.containsKey(name))
+            {
+                int qty = map.get(name) - amount;
+                if (qty > 0)
+                {
+                    last.addOrAdjustResource(name, map.get(name) - amount);
+                }
+                else
+                {
+                    last.removeResources(name);
+                }
+            }
+
+            if (map.isEmpty())
+            {
+                buckets.remove();
+            }
+        }
+
+        int preAmount = 0;
         if (this.neededResources.containsKey(name))
         {
             preAmount = this.neededResources.get(name).getAmount();
@@ -369,6 +515,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public void resetNeededResources()
     {
         neededResources = new HashMap<>();
+        buckets.clear();
         this.markDirty();
     }
 
