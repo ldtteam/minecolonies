@@ -3,8 +3,10 @@ package com.minecolonies.coremod.util;
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
@@ -38,7 +40,7 @@ public final class BuildingUtils
      * @param building the building.
      * @return the AxisAlignedBB box.
      */
-    public static AxisAlignedBB getBuildingBoundingBox(final World world, final AbstractSchematicProvider building)
+    public static AxisAlignedBB getBuildingBoundingBox(final World world, final ISchematicProvider building)
     {
         final BlockPos location = building.getPosition();
 
@@ -49,14 +51,12 @@ public final class BuildingUtils
 
         final String structureName = sn.toString();
 
-        final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getID(), structureName, new PlacementSettings(), true);
+        final IStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getID(), structureName, new PlacementSettings(), true);
         final Blueprint blueprint = wrapper.getBluePrint();
         blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, world);
 
         final BlockPos pos = location.subtract(wrapper.getBluePrint().getPrimaryBlockOffset());
         final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
-
-        Minecraft.getInstance().getProfiler().endStartSection("struct_box");
 
         final BlockPos offset = new BlockPos(0, 0, 0);
         final BlockPos corner1 = pos.subtract(offset);
