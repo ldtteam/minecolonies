@@ -7,35 +7,33 @@ import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
-public class custom_model extends EntityModel<Entity> {
-	 ModelRenderer bipedRightArm;
-	 ModelRenderer bipedLeftArm;
-	 ModelRenderer bipedRightLeg;
-	 ModelRenderer rightBoot;
-	 ModelRenderer bipedLeftLeg;
-	 ModelRenderer leftBoot;
-	 ModelRenderer bipedHead;
-	 ModelRenderer Hat;
-	 ModelRenderer shape6;
-	 ModelRenderer shape7;
-	 ModelRenderer shape5;
-	 ModelRenderer shape4;
-	 ModelRenderer shape3;
-	 ModelRenderer shape2;
-	 ModelRenderer shape1;
-	 ModelRenderer bipedBody;
-	 ModelRenderer string;
-	 ModelRenderer pole;
-	 ModelRenderer reel;
-	 ModelRenderer line;
-	 ModelRenderer hookTie1;
-	 ModelRenderer fish1;
-	 ModelRenderer hookTie2;
-	 ModelRenderer fish2;
-	 ModelRenderer hookTie3;
-	 ModelRenderer fish3;
+public class ModelEntityFishermanMale extends CitizenModel<AbstractEntityCitizen>
+{
 
-	public custom_model() {
+	public ModelEntityFishermanMale()
+ 	{
+		ModelRenderer rightBoot;
+	 	ModelRenderer leftBoot;
+	 	ModelRenderer Hat;
+	 	ModelRenderer shape6;
+	 	ModelRenderer shape7;
+	 	ModelRenderer shape5;
+	 	ModelRenderer shape4;
+	 	ModelRenderer shape3;
+	 	ModelRenderer shape2;
+	 	ModelRenderer shape1;
+
+	 	ModelRenderer string;
+	 	ModelRenderer pole;
+	 	ModelRenderer reel;
+	 	ModelRenderer line;
+	 	ModelRenderer hookTie1;
+	 	ModelRenderer fish1;
+	 	ModelRenderer hookTie2;
+	 	ModelRenderer fish2;
+	 	ModelRenderer hookTie3;
+	 	ModelRenderer fish3;
+
 		textureWidth = 256;
 		textureHeight = 128;
 
@@ -74,7 +72,6 @@ public class custom_model extends EntityModel<Entity> {
 		Hat.setRotationPoint(0.0F, 24.0F, 0.0F);
 		bipedHead.addChild(Hat);
 		
-
 		shape6 = new ModelRenderer(this);
 		shape6.setRotationPoint(0.0F, -24.0F, 0.0F);
 		Hat.addChild(shape6);
@@ -171,44 +168,12 @@ public class custom_model extends EntityModel<Entity> {
 		fish3.setRotationPoint(0.0F, 0.0F, 0.0F);
 		hookTie3.addChild(fish3);
 		fish3.setTextureOffset(61, 46).addBox(0.4F, 10.0F, -2.2F, 2.0F, 4.0F, 0.0F, 0.0F, true);
+
+		bipedHeadwear.showModel = false;
 	}
 
-	@Override
-	public void setRotationAngles(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-		//previously the render function, render code was moved to a method below
-	}
-
-	@Override
-	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
-		bipedRightArm.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedLeftArm.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedRightLeg.render(matrixStack, buffer, packedLight, packedOverlay);
-		rightBoot.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedLeftLeg.render(matrixStack, buffer, packedLight, packedOverlay);
-		leftBoot.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedHead.render(matrixStack, buffer, packedLight, packedOverlay);
-		Hat.render(matrixStack, buffer, packedLight, packedOverlay);
-		shape6.render(matrixStack, buffer, packedLight, packedOverlay);
-		shape7.render(matrixStack, buffer, packedLight, packedOverlay);
-		shape5.render(matrixStack, buffer, packedLight, packedOverlay);
-		shape4.render(matrixStack, buffer, packedLight, packedOverlay);
-		shape3.render(matrixStack, buffer, packedLight, packedOverlay);
-		shape2.render(matrixStack, buffer, packedLight, packedOverlay);
-		shape1.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedBody.render(matrixStack, buffer, packedLight, packedOverlay);
-		string.render(matrixStack, buffer, packedLight, packedOverlay);
-		pole.render(matrixStack, buffer, packedLight, packedOverlay);
-		reel.render(matrixStack, buffer, packedLight, packedOverlay);
-		line.render(matrixStack, buffer, packedLight, packedOverlay);
-		hookTie1.render(matrixStack, buffer, packedLight, packedOverlay);
-		fish1.render(matrixStack, buffer, packedLight, packedOverlay);
-		hookTie2.render(matrixStack, buffer, packedLight, packedOverlay);
-		fish2.render(matrixStack, buffer, packedLight, packedOverlay);
-		hookTie3.render(matrixStack, buffer, packedLight, packedOverlay);
-		fish3.render(matrixStack, buffer, packedLight, packedOverlay);
-	}
-
-	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
+	private void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) 
+	{
 		modelRenderer.rotateAngleX = x;
 		modelRenderer.rotateAngleY = y;
 		modelRenderer.rotateAngleZ = z;

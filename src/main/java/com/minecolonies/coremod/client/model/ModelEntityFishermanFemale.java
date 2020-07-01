@@ -8,14 +8,13 @@ import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
-public class custom_model extends EntityModel<Entity> {
-	 ModelRenderer bipedRightArm;
-	 ModelRenderer bipedLeftArm;
-	 ModelRenderer bipedRightLeg;
+public class ModelEntityFishermanFemale extends CitizenModel<AbstractEntityCitizen> {
+	
+	
+	public ModelEntityFishermanFemale() 
+	{
 	 ModelRenderer rightBoot;
-	 ModelRenderer bipedLeftLeg;
 	 ModelRenderer leftBoot;
-	 ModelRenderer bipedHead;
 	 ModelRenderer hairBack1;
 	 ModelRenderer hairBack2;
 	 ModelRenderer hairBack3;
@@ -26,7 +25,6 @@ public class custom_model extends EntityModel<Entity> {
 	 ModelRenderer hairBack8;
 	 ModelRenderer hairBack9;
 	 ModelRenderer hairBack10;
-	 ModelRenderer bipedBody;
 	 ModelRenderer string;
 	 ModelRenderer string2;
 	 ModelRenderer hookTie1;
@@ -195,45 +193,8 @@ public class custom_model extends EntityModel<Entity> {
 		setRotationAngle(chest, -0.632F, 0.0F, 0.0F);
 		chest.setTextureOffset(25, 32).addBox(-3.5F, 3.5F, 0.0F, 7.0F, 3.0F, 3.0F, 0.0F, true);
 	}
-
-	@Override
-	public void setRotationAngles(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-		//previously the render function, render code was moved to a method below
 	}
 
-	@Override
-	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
-		bipedRightArm.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedLeftArm.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedRightLeg.render(matrixStack, buffer, packedLight, packedOverlay);
-		rightBoot.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedLeftLeg.render(matrixStack, buffer, packedLight, packedOverlay);
-		leftBoot.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedHead.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairBack1.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairBack2.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairBack3.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairBack4.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairBack5.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairBack6.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairBack7.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairBack8.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairBack9.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairBack10.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedBody.render(matrixStack, buffer, packedLight, packedOverlay);
-		string.render(matrixStack, buffer, packedLight, packedOverlay);
-		string2.render(matrixStack, buffer, packedLight, packedOverlay);
-		hookTie1.render(matrixStack, buffer, packedLight, packedOverlay);
-		hookTie2.render(matrixStack, buffer, packedLight, packedOverlay);
-		hookTie3.render(matrixStack, buffer, packedLight, packedOverlay);
-		fish1.render(matrixStack, buffer, packedLight, packedOverlay);
-		fish2.render(matrixStack, buffer, packedLight, packedOverlay);
-		fish3.render(matrixStack, buffer, packedLight, packedOverlay);
-		reel.render(matrixStack, buffer, packedLight, packedOverlay);
-		line.render(matrixStack, buffer, packedLight, packedOverlay);
-		pole.render(matrixStack, buffer, packedLight, packedOverlay);
-		chest.render(matrixStack, buffer, packedLight, packedOverlay);
-	}
 
 	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
 		modelRenderer.rotateAngleX = x;
