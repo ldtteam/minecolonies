@@ -38,7 +38,6 @@ public class ModelEntityFishermanFemale extends CitizenModel<AbstractEntityCitiz
 	 ModelRenderer pole;
 	 ModelRenderer chest;
 
-	public custom_model() {
 		textureWidth = 256;
 		textureHeight = 128;
 
@@ -192,7 +191,6 @@ public class ModelEntityFishermanFemale extends CitizenModel<AbstractEntityCitiz
 		bipedBody.addChild(chest);
 		setRotationAngle(chest, -0.632F, 0.0F, 0.0F);
 		chest.setTextureOffset(25, 32).addBox(-3.5F, 3.5F, 0.0F, 7.0F, 3.0F, 3.0F, 0.0F, true);
-	}
 	}
 
 
