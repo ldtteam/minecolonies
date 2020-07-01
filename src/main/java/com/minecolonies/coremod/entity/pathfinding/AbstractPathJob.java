@@ -1039,7 +1039,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
             else
             {
-                return !block.getMaterial().isLiquid() && (block.getBlock() != Blocks.SNOW || block.get(SnowBlock.LAYERS) == 1);
+                return !block.getMaterial().isLiquid() && (block.getBlock() != Blocks.SNOW || block.get(SnowBlock.LAYERS) == 1) && block.getBlock() != Blocks.SWEET_BERRY_BUSH;
             }
         }
 

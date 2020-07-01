@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
@@ -21,7 +22,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Tuple;
+import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -134,43 +135,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         final BuildingBuilder building = getOwnBuilding();
         final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
-        boolean only_64 = false;
 
-        Map<String, BuildingBuilderResource> neededRessourcesMap = building.getNeededResources();
-        if (neededRessourcesMap.size() > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
-        {
-            only_64 = true;
-        }
-        else
-        {
-            int stackCount = 0;
+        final BuilderBucket neededRessourcesMap = building.getRequiredResources();
 
-            for (final BuildingBuilderResource stack : neededRessourcesMap.values())
-            {
-                int amount = stack.getAmount();
-                while (amount > 0)
-                {
-                    stackCount++;
-                    amount = amount - stack.getItemStack().getMaxStackSize();
-                }
-            }
-            if (stackCount > InventoryUtils.openSlotCount(worker.getInventoryCitizen()) - MIN_OPEN_SLOTS)
-            {
-                only_64 = true;
-            }
-        }
-
-        for (final BuildingBuilderResource stack : neededRessourcesMap.values())
+        for (final Map.Entry<String, Integer> entry : neededRessourcesMap.getResourceMap().entrySet())
         {
-            int amount = stack.getAmount();
-            if (only_64)
+            final BuildingBuilderResource res = building.getResourceFromIdentifier(entry.getKey());
+            if (res != null)
             {
-                if (amount > stack.getItemStack().getMaxStackSize())
-                {
-                    amount = stack.getItemStack().getMaxStackSize();
-                }
+                int amount = entry.getValue();
+                neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(res.getItemStack(), itemstack, true, true), amount));
             }
-            neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true), amount));
         }
 
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
@@ -185,11 +160,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (structurePlacer == null || !structurePlacer.getB().hasBluePrint())
         {
             return IDLE;
-        }
-
-        if (structurePlacer.getB().getStage() != BuildingStructureHandler.Stage.DECORATE)
-        {
-            needsCurrently = new Tuple<>(needsCurrently.getA().and(stack -> !ItemStackUtils.isDecoration(stack)), needsCurrently.getB());
         }
 
         if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently.getA()))

@@ -13,7 +13,7 @@ import net.minecraft.block.AirBlock;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Tuple;
+import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
