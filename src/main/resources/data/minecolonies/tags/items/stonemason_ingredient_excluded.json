@@ -1,8 +1,9 @@
 {
-  "replace": false,
-  "values": [
-    "#minecraft:logs",
-    "#minecraft:planks",
-    "minecraft:stick"
-  ]
+    "replace": false,
+    "values": [
+        "#minecraft:logs",
+        "#minecraft:planks",
+        "minecraft:stick",
+        "#minecolonies:mechanic_ingredient"
+    ]
 }
