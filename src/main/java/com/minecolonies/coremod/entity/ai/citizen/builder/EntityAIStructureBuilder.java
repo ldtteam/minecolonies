@@ -137,14 +137,16 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
 
         final BuilderBucket neededRessourcesMap = building.getRequiredResources();
-
-        for (final Map.Entry<String, Integer> entry : neededRessourcesMap.getResourceMap().entrySet())
+        if (neededRessourcesMap != null)
         {
-            final BuildingBuilderResource res = building.getResourceFromIdentifier(entry.getKey());
-            if (res != null)
+            for (final Map.Entry<String, Integer> entry : neededRessourcesMap.getResourceMap().entrySet())
             {
-                int amount = entry.getValue();
-                neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(res.getItemStack(), itemstack, true, true), amount));
+                final BuildingBuilderResource res = building.getResourceFromIdentifier(entry.getKey());
+                if (res != null)
+                {
+                    int amount = entry.getValue();
+                    neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(res.getItemStack(), itemstack, true, true), amount));
+                }
             }
         }
 
