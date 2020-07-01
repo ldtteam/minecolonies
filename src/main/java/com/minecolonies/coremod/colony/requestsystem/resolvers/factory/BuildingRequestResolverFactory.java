@@ -36,8 +36,7 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
 
     @NotNull
     @Override
-    public BuildingRequestResolver getNewInstance(
-                                                   @NotNull final IFactoryController factoryController, @NotNull final ILocation iLocation, @NotNull final Object... context)
+    public BuildingRequestResolver getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final ILocation iLocation, @NotNull final Object... context)
       throws IllegalArgumentException
     {
         return new BuildingRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
