@@ -92,7 +92,6 @@ public class ClientEventHandler
         }
     }
 
-
     private static void handleRenderBuildTool(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
     {
         final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
@@ -106,13 +105,11 @@ public class ClientEventHandler
         {
 
 
-            final AxisAlignedBB boxCorners = buildingView.getBoxCorners();
+            final AxisAlignedBB boxCorners = buildingView.getBoundingBox();
             final BlockPos minCorner = new BlockPos(boxCorners.minX, boxCorners.minY, boxCorners.minZ);
             final BlockPos maxCorner = new BlockPos(boxCorners.maxX, boxCorners.maxY, boxCorners.maxZ);
 
             renderBoxEdges(minCorner, maxCorner, event, 0, 0, 1);
-
-
         }
         RenderSystem.enableDepthTest();
         RenderSystem.enableCull();

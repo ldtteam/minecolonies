@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -57,12 +56,10 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
@@ -83,7 +80,8 @@ import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.
 import static com.minecolonies.api.research.util.ResearchConstants.MINIMUM_STOCK;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
@@ -525,7 +523,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         buf.writeInt(getRotation());
         buf.writeBoolean(isMirrored());
-        buf.writeCompoundTag(NBTUtils.writeBoundingBox(getBuildingFootprint(colony.getWorld())));
+        buf.writeCompoundTag(NBTUtils.writeBoundingBox(getBuildingBoundingBox(colony.getWorld())));
         buf.writeInt(getClaimRadius(getBuildingLevel()));
 
         final CompoundNBT requestSystemCompound = new CompoundNBT();

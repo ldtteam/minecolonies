@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.util;
 
 import com.ldtteam.structures.blueprints.v1.Blueprint;
-import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -39,7 +38,7 @@ public final class BuildingUtils
      * @param building the building.
      * @return the AxisAlignedBB box.
      */
-    public static AxisAlignedBB getBuildingFootprint(final World world, final AbstractSchematicProvider building)
+    public static AxisAlignedBB getBuildingBoundingBox(final World world, final AbstractSchematicProvider building)
     {
         final BlockPos location = building.getPosition();
 

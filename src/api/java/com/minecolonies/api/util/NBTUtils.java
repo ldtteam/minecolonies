@@ -43,6 +43,12 @@ public class NBTUtils
           });
     }
 
+    /**
+     * Converts an AxisAlignedBB into NBT
+     *
+     * @param boundingBox the bounding box to be converted
+     * @return the CompoundNBT
+     */
     public static CompoundNBT writeBoundingBox(final AxisAlignedBB boundingBox)
     {
         final CompoundNBT nbt = new CompoundNBT();
@@ -51,6 +57,12 @@ public class NBTUtils
         return nbt;
     }
 
+    /**
+     * Reads an AxisAlignedBB from an CompoundNBT
+     *
+     * @param nbt the nbt to be read
+     * @return the AxisAlignedBB
+     */
     public static AxisAlignedBB readBoundingBox(final CompoundNBT nbt)
     {
         return new AxisAlignedBB(BlockPosUtil.read(nbt, NBT_BOUNDINGBOX_MINCORNER), BlockPosUtil.read(nbt, NBT_BOUNDINGBOX_MAXCORNER));

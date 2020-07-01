@@ -45,7 +45,7 @@ public interface IBuildingView extends IRequester
      * @return the AxisAlignedBB representing the box of the building.
      */
     @NotNull
-    AxisAlignedBB getBoxCorners();
+    AxisAlignedBB getBoundingBox();
 
     /**
      * Get the current level of the building.

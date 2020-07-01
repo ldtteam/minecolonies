@@ -56,12 +56,12 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
     AxisAlignedBB getTargetableArea(World world);
 
     /**
-     * Calculates the area of the building.
+     * Gets the bounding box specifying the maximum dimensions of the building.
      *
      * @param world the world.
      * @return the AxisAlignedBB.
      */
-    AxisAlignedBB getBuildingFootprint(World world);
+    AxisAlignedBB getBuildingBoundingBox(World world);
 
     /**
      * Returns the rotation of the current building.
@@ -150,6 +150,7 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
 
     /**
      * Check if the building was deconstructed.
+     *
      * @return true if so.
      */
     boolean isDeconstructed();

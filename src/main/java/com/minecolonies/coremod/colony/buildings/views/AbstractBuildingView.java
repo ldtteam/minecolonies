@@ -22,7 +22,6 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.HutRenameMessage;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -58,7 +57,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @NotNull
     private final BlockPos location;
 
-    private AxisAlignedBB boxCorners;
+    private AxisAlignedBB boundingBox;
 
     /**
      * The building level.
@@ -186,9 +185,9 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     @Override
     @NotNull
-    public AxisAlignedBB getBoxCorners()
+    public AxisAlignedBB getBoundingBox()
     {
-        return boxCorners;
+        return boundingBox;
     }
 
     /**
@@ -391,7 +390,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
         rotation = buf.readInt();
         isBuildingMirrored = buf.readBoolean();
-        boxCorners = NBTUtils.readBoundingBox(buf.readCompoundTag());
+        boundingBox = NBTUtils.readBoundingBox(buf.readCompoundTag());
         claimRadius = buf.readInt();
 
         final List<IToken<?>> list = new ArrayList<>();

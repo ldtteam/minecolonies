@@ -74,7 +74,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     /**
      * The outline box of this building
      */
-    private AxisAlignedBB buildingFootprint = null;
+    private AxisAlignedBB buildingBoundingBox = null;
 
     /**
      * The targetable area box of this building
@@ -284,13 +284,13 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     }
 
     @Override
-    public AxisAlignedBB getBuildingFootprint(final World world)
+    public AxisAlignedBB getBuildingBoundingBox(final World world)
     {
-        if (buildingFootprint == null)
+        if (buildingBoundingBox == null)
         {
-            buildingFootprint = BuildingUtils.getBuildingFootprint(world, this);
+            buildingBoundingBox = BuildingUtils.getBuildingBoundingBox(world, this);
         }
-        return buildingFootprint;
+        return buildingBoundingBox;
     }
 
     /**
@@ -329,7 +329,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
 
                     if (structureRotation <= worldRotation)
                     {
-                        cachedRotation = worldRotation - structureRotation;;
+                        cachedRotation = worldRotation - structureRotation;
+                        ;
                     }
                     else
                     {
@@ -343,7 +344,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         {
             Log.getLogger().error(String.format("Failed to get rotation for %s: ", structureName.toString()), e);
 
-            return  0;
+            return 0;
         }
 
         return 0;
