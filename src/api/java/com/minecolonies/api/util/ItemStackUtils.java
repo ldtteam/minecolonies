@@ -681,16 +681,16 @@ public final class ItemStackUtils
      *
      * @param itemStack1 The left stack to compare.
      * @param itemStack2 The right stack to compare.
-     * @param matchMeta  Set to true to match meta data.
+     * @param matchDamage  Set to true to match damage data.
      * @param matchNBT   Set to true to match nbt
      * @return True when they are equal except the stacksize, false when not.
      */
-    public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchMeta, final boolean matchNBT)
+    public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchDamage, final boolean matchNBT)
     {
-        return compareItemStacksIgnoreStackSize(itemStack1, itemStack2, matchMeta, matchNBT, false);
+        return compareItemStacksIgnoreStackSize(itemStack1, itemStack2, matchDamage, matchNBT, false);
     }
 
-    public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchMeta, final boolean matchNBT, final boolean min)
+    public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchDamage, final boolean matchNBT, final boolean min)
     {
         if (isEmpty(itemStack1) && isEmpty(itemStack2))
         {
@@ -700,7 +700,7 @@ public final class ItemStackUtils
         if (!isEmpty(itemStack1) &&
               !isEmpty(itemStack2) &&
               itemStack1.getItem() == itemStack2.getItem() &&
-              (itemStack1.getDamage() == itemStack2.getDamage() || !matchMeta))
+              (itemStack1.getDamage() == itemStack2.getDamage() || !matchDamage))
         {
             if (!matchNBT)
             {
@@ -745,15 +745,15 @@ public final class ItemStackUtils
      *
      * @param stacks    the list of stacks.
      * @param stack     the stack.
-     * @param matchMeta if meta has to match.
+     * @param matchDamage if damage has to match.
      * @param matchNBT  if nbt has to match.
      * @return true if so.
      */
-    public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack, final boolean matchMeta, final boolean matchNBT)
+    public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack, final boolean matchDamage, final boolean matchNBT)
     {
         for (final ItemStack tempStack : stacks)
         {
-            if (compareItemStacksIgnoreStackSize(tempStack, stack, matchMeta, matchNBT))
+            if (compareItemStacksIgnoreStackSize(tempStack, stack, matchDamage, matchNBT))
             {
                 return true;
             }
