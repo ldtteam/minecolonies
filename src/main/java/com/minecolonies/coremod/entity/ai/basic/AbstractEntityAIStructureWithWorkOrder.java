@@ -21,6 +21,9 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.PICK_UP_RESIDUALS;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -155,11 +158,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
     /**
      * Iterates through all the required resources and stores them in the building.
-     * Suppressing Sonar Rule Squid:S135
-     * The rule thinks we should have less continue and breaks.
-     * But in this case the rule does not apply because code would become unreadable and uneffective without.
      */
-    private void requestMaterials()
+    @Override
+    public void requestMaterials()
     {
         final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
         buildingWorker.resetNeededResources();
@@ -169,19 +170,32 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final StructurePlacer placer = new StructurePlacer(structure);
         BlockPos progressPos = NULL_POS;
 
+        final List<ItemStack> deco = new ArrayList<>();
+
         do
         {
             result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
               () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.and((info, pos, handler) -> false)), true);
             progressPos = result.getIteratorPos();
-
+            
             for (final ItemStack stack : result.getBlockResult().getRequiredItems())
             {
-                getOwnBuilding().addNeededResource(stack, stack.getCount());
+                if (ItemStackUtils.isDecoration(stack))
+                {
+                    deco.add(stack);
+                }
+                else
+                {
+                    getOwnBuilding().addNeededResource(stack, stack.getCount());
+                }
             }
-
         }
         while (result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
+
+        for (final ItemStack stack: deco)
+        {
+            getOwnBuilding().addNeededResource(stack, stack.getCount());
+        }
     }
 
     @Override
