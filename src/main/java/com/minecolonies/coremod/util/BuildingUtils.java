@@ -53,6 +53,12 @@ public final class BuildingUtils
 
         final IStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getID(), structureName, new PlacementSettings(), true);
         final Blueprint blueprint = wrapper.getBluePrint();
+
+        if (blueprint == null)
+        {
+            return new AxisAlignedBB(location);
+        }
+
         blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, world);
 
         final BlockPos pos = location.subtract(wrapper.getBluePrint().getPrimaryBlockOffset());
