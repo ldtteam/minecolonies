@@ -5,7 +5,7 @@ import com.minecolonies.api.util.Disease;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Tuple;
+import com.minecolonies.api.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

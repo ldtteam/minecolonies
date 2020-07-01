@@ -405,6 +405,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     public static <J extends AbstractJobStructure<?, J>, B extends AbstractBuildingStructureBuilder> boolean hasListOfResInInvOrRequest(@NotNull final AbstractEntityAIStructure<J, B> placer, final List<ItemStack> itemList, final boolean force)
     {
+        for (final ItemStack stack : itemList)
+        {
+            if (!placer.getOwnBuilding().hasResourceInBucket(stack))
+            {
+                placer.requestMaterials();
+                return false;
+            }
+        }
+
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(placer.getWorker().getInventoryCitizen(),
           itemStack -> itemList.stream().anyMatch(targetStack -> targetStack.isItemEqual(itemStack)));
         if (force)
@@ -464,6 +473,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             return false;
         }
         return true;
+    }
+
+    /**
+     * Iterates through all the required resources and stores them in the building.
+     */
+    public void requestMaterials()
+    {
+        /*
+         * Intentionally empty, Override if needed.
+         */
     }
 
     /**
