@@ -12,6 +12,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
@@ -67,7 +68,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     /**
      * The different possible buckets.
      */
-    private Deque<Tuple<Map<String, Integer>, Integer>> buckets = new ArrayDeque<>();
+    private Deque<BuilderBucket> buckets = new ArrayDeque<>();
 
     /**
      * The progress counter of the builder.
@@ -109,8 +110,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
             final String key = stack.getTranslationKey() + "-" + hashCode;
             if (getRequiredResources() != null && getRequiredResources().getA().containsKey(key))
+            if (getRequiredResources().getResourceMap().containsKey(key))
             {
-                final int qtyToKeep = getRequiredResources().getA().get(key);
+                final int qtyToKeep = getRequiredResources().getResourceMap().get(key);
                 if (localAlreadyKept.contains(new ItemStorage(stack)))
                 {
                     for (final ItemStorage storage : localAlreadyKept)
@@ -376,7 +378,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @return the bucket.
      */
     @Nullable
-    public Tuple<Map<String, Integer>, Integer> getRequiredResources()
+    public BuilderBucket getRequiredResources()
     {
         return buckets.isEmpty() ? null : buckets.getFirst();
     }
@@ -400,7 +402,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     {
         final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
         final String key = stack.getTranslationKey() + "-" + hashCode;
-        return getRequiredResources() != null && getRequiredResources().getA().containsKey(key);
+        return getRequiredResources() != null && getRequiredResources().getResourceMap().containsKey(key);
     }
 
     /**
@@ -428,31 +430,35 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         }
         this.neededResources.put(key, resource);
 
-        final Tuple<Map<String, Integer>, Integer> last = buckets.isEmpty() ? null : buckets.removeLast();
+        BuilderBucket last = buckets.isEmpty() ? null : buckets.removeLast();
 
         final int stacks = (int) Math.ceil((double) amount / res.getMaxStackSize());
         final int max = getMainCitizen().getInventory().getSlots() - 9;
 
-        if (last == null || last.getB() >= max || last.getB() + stacks >= max)
+        if (last == null || last.getTotalStacks() >= max || last.getTotalStacks() + stacks >= max)
         {
             if (last != null)
             {
                 buckets.add(last);
             }
-            final Map<String, Integer> map = new HashMap<>();
-            map.put(key, amount);
-            final Tuple<Map<String, Integer>, Integer> newTuple = new Tuple<>(map, stacks);
-            buckets.add(newTuple);
+            else
+            {
+                last = new BuilderBucket();
+            }
+
+            last.setTotalStacks(stacks);
+            last.addOrAdjustResource(key, amount);
+            buckets.add(last);
         }
         else
         {
-            int currentQty = last.getA().getOrDefault(key, 0);
+            int currentQty = last.getResourceMap().getOrDefault(key, 0);
             final int currentStacks = (int) Math.ceil((double) currentQty / res.getMaxStackSize());
             final int newStacks = (int) Math.ceil((double) ( currentQty + amount ) / res.getMaxStackSize());
-            final Map<String, Integer> map = last.getA();
-            map.put(key, currentQty + amount);
-            final Tuple<Map<String, Integer>, Integer> newTuple = new Tuple<>(map, last.getB() + newStacks - currentStacks);
-            buckets.add(newTuple);
+            final Map<String, Integer> map = last.getResourceMap();
+            last.setTotalStacks(last.getTotalStacks()+ newStacks - currentStacks);
+            last.addOrAdjustResource(key, currentQty + amount);
+            buckets.add(last);
         }
 
         this.markDirty();
@@ -469,21 +475,21 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         final int hashCode = res.hasTag() ? res.getTag().hashCode() : 0;
         final String name = res.getTranslationKey() + "-" + hashCode;
 
-        final Tuple<Map<String, Integer>, Integer> last = buckets.isEmpty() ? null : getRequiredResources();
+        final BuilderBucket last = buckets.isEmpty() ? null : getRequiredResources();
 
         if (last != null)
         {
-            final Map<String, Integer> map = last.getA();
+            final Map<String, Integer> map = last.getResourceMap();
             if (map.containsKey(name))
             {
                 int qty = map.get(name) - amount;
                 if (qty > 0)
                 {
-                    map.put(name, map.get(name) - amount);
+                    last.addOrAdjustResource(name, map.get(name) - amount);
                 }
                 else
                 {
-                     map.remove(name);
+                    last.removeResources(name);
                 }
             }
 
