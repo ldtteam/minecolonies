@@ -37,10 +37,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANT_2;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
@@ -162,36 +159,52 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     public List<BlockPos> getPosForPhase(final World world)
     {
         final List<BlockPos> filtered = new ArrayList<>();
-        for (final BlockPos pos : sand)
+        if (tileEntity != null && !tileEntity.getPositionedTags().isEmpty())
         {
-            if (currentPhase == Items.SUGAR_CANE)
+            for (final Map.Entry<BlockPos, List<String>> entry : tileEntity.getPositionedTags().entrySet())
             {
-                if (world.getBlockState(pos.down()).getBlock() == Blocks.COBBLESTONE
-                      && (world.getBlockState(pos.north()).getBlock() == Blocks.WATER
-                      || world.getBlockState(pos.south()).getBlock() == Blocks.WATER
-                      || world.getBlockState(pos.east()).getBlock() == Blocks.WATER
-                      || world.getBlockState(pos.west()).getBlock() == Blocks.WATER))
+                if ((entry.getValue().contains("bamboo") && currentPhase == Items.BAMBOO)
+                || (entry.getValue().contains("sugarcane") && currentPhase == Items.SUGAR_CANE)
+                || (entry.getValue().contains("cactus") && currentPhase == Items.CACTUS))
                 {
-                    filtered.add(pos);
+                    filtered.add(getPosition().add(entry.getKey()));
                 }
             }
-            else if (currentPhase == Items.CACTUS)
+        }
+
+        if (filtered.isEmpty())
+        {
+            for (final BlockPos pos : sand)
             {
-                if (world.getBlockState(pos.down()).getBlock() == Blocks.COBBLESTONE
-                      && world.getBlockState(pos.north()).getBlock() != Blocks.WATER
-                      && world.getBlockState(pos.south()).getBlock() != Blocks.WATER
-                      && world.getBlockState(pos.east()).getBlock() != Blocks.WATER
-                      && world.getBlockState(pos.west()).getBlock() != Blocks.WATER)
+                if (currentPhase == Items.SUGAR_CANE)
                 {
-                    filtered.add(pos);
+                    if (world.getBlockState(pos.down()).getBlock() == Blocks.COBBLESTONE
+                          && (world.getBlockState(pos.north()).getBlock() == Blocks.WATER
+                                || world.getBlockState(pos.south()).getBlock() == Blocks.WATER
+                                || world.getBlockState(pos.east()).getBlock() == Blocks.WATER
+                                || world.getBlockState(pos.west()).getBlock() == Blocks.WATER))
+                    {
+                        filtered.add(pos);
+                    }
                 }
-            }
-            else
-            {
-                //Bamboo
-                if (world.getBlockState(pos.down()).getBlock() == Blocks.STONE_BRICKS)
+                else if (currentPhase == Items.CACTUS)
                 {
-                    filtered.add(pos);
+                    if (world.getBlockState(pos.down()).getBlock() == Blocks.COBBLESTONE
+                          && world.getBlockState(pos.north()).getBlock() != Blocks.WATER
+                          && world.getBlockState(pos.south()).getBlock() != Blocks.WATER
+                          && world.getBlockState(pos.east()).getBlock() != Blocks.WATER
+                          && world.getBlockState(pos.west()).getBlock() != Blocks.WATER)
+                    {
+                        filtered.add(pos);
+                    }
+                }
+                else
+                {
+                    //Bamboo
+                    if (world.getBlockState(pos.down()).getBlock() == Blocks.STONE_BRICKS)
+                    {
+                        filtered.add(pos);
+                    }
                 }
             }
         }
