@@ -24,6 +24,8 @@ import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -488,6 +490,33 @@ public class StandardRequestManager implements IStandardRequestManager
         }
 
         updateIfRequired();
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, PacketBuffer buffer)
+    {
+    	buffer.writeInt(version);
+    	controller.serialize(buffer, dataStoreManager);
+    	controller.serialize(buffer, requestIdentitiesDataStoreId);
+    	controller.serialize(buffer, requestResolverIdentitiesDataStoreId);
+    	controller.serialize(buffer, providerRequestResolverAssignmentDataStoreId);
+    	controller.serialize(buffer, requestResolverRequestAssignmentDataStoreId);
+    	controller.serialize(buffer, requestableTypeRequestResolverAssignmentDataStoreId);
+    	controller.serialize(buffer, playerRequestResolverId);
+    	controller.serialize(buffer, retryingRequestResolverId);
+    }
+
+    @Override
+    public void deserialize(IFactoryController controller, PacketBuffer buffer) {
+    	version = buffer.readInt();
+    	dataStoreManager = controller.deserialize(buffer);
+    	requestIdentitiesDataStoreId = controller.deserialize(buffer);
+    	requestResolverIdentitiesDataStoreId = controller.deserialize(buffer);
+    	providerRequestResolverAssignmentDataStoreId = controller.deserialize(buffer);
+    	requestResolverRequestAssignmentDataStoreId = controller.deserialize(buffer);
+    	requestableTypeRequestResolverAssignmentDataStoreId = controller.deserialize(buffer);
+    	playerRequestResolverId = controller.deserialize(buffer);
+    	retryingRequestResolverId = controller.deserialize(buffer);
     }
 
     private <T> void executeDeserializationStepOrMarkForUpdate(

@@ -142,29 +142,6 @@ public class Stack implements IDeliverable
         return compound;
     }
 
-
-    /**
-     * Serialize the deliverable.
-     * @param controller the controller.
-     * @param input the input.
-     * @return the compound.
-     */
-    public static void serialize(final IFactoryController controller, final Stack input, PacketBuffer buffer)
-    {
-        buffer.writeItemStack(input.theStack);
-        buffer.writeBoolean(input.matchMeta);
-        buffer.writeBoolean(input.matchNBT);
-        buffer.writeBoolean(input.matchOreDic);
-
-        buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
-        if (!ItemStackUtils.isEmpty(input.result))
-        {
-            buffer.writeItemStack(input.result);
-        }
-        buffer.writeInt(input.getCount());
-        buffer.writeInt(input.getMinimumCount());
-    }
-
     /**
      * Deserialize the deliverable.
      * @param controller the controller.
@@ -191,9 +168,33 @@ public class Stack implements IDeliverable
     }
 
     /**
-     * Deserialize the deliverable.
+     * Serialize the deliverable.
+     * 
      * @param controller the controller.
-     * @param buffer the buffer.
+     * @param buffer the the buffer to write to.
+     * @param input the input to serialize.
+     */
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Stack input)
+    {
+        buffer.writeItemStack(input.theStack);
+        buffer.writeBoolean(input.matchMeta);
+        buffer.writeBoolean(input.matchNBT);
+        buffer.writeBoolean(input.matchOreDic);
+
+        buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
+        if (!ItemStackUtils.isEmpty(input.result))
+        {
+            buffer.writeItemStack(input.result);
+        }
+        buffer.writeInt(input.getCount());
+        buffer.writeInt(input.getMinimumCount());
+    }
+
+    /**
+     * Deserialize the deliverable.
+     * 
+     * @param controller the controller.
+     * @param buffer the buffer to read.
      * @return the deliverable.
      */
     public static Stack deserialize(final IFactoryController controller, final PacketBuffer buffer)
@@ -203,7 +204,7 @@ public class Stack implements IDeliverable
         final boolean matchNBT = buffer.readBoolean();
         final boolean matchOreDic = buffer.readBoolean();
 
-        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStackUtils.EMPTY;
+        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
 
         int count = buffer.readInt();
         int minCount = buffer.readInt();

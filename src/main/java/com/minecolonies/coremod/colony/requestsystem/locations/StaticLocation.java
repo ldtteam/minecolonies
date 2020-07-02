@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -197,5 +198,42 @@ public class StaticLocation implements ILocation
         {
             return new StaticLocation(input, 0);
         }
+
+        @Override
+        public void serialize(IFactoryController controller, StaticLocation input, PacketBuffer packetBuffer)
+        {
+            StaticLocation.serialize(packetBuffer, input);
+        }
+
+        @Override
+        public StaticLocation deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return StaticLocation.deserialize(buffer);
+        }
+    }
+
+    /**
+     * Serialize this location to the given {@link PacketBuffer}.
+     * 
+     * @param buffer the buffer to serialize this location to.
+     */
+    public static void serialize(PacketBuffer buffer, StaticLocation location)
+    {
+        buffer.writeBlockPos(location.pos);
+        buffer.writeInt(location.dimension);
+    }
+
+    /**
+     * Deserialize the location from the given {@link PacketBuffer}
+     * 
+     * @param buffer the buffer to read.
+     * @return the deserialized location.
+     */
+    public static StaticLocation deserialize(PacketBuffer buffer)
+    {
+        final BlockPos pos = buffer.readBlockPos();
+        final int dimension = buffer.readInt();
+
+        return new StaticLocation(pos, dimension);
     }
 }

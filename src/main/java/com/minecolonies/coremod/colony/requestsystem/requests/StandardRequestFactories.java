@@ -18,6 +18,14 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.BurnableRequest;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.DeliveryRequest;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.FoodRequest;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.ItemStackListRequest;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.PickupRequest;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.SmeltAbleOreRequest;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.ToolRequest;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.IntNBT;
@@ -121,13 +129,15 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest itemStackRequest, final PacketBuffer packetBuffer) {
-            serializeToPacketBuffer(controller, itemStackRequest, packetBuffer, Stack::serialize);
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest input, final PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, Stack::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable {
+        public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
+        {
             return deserializeFromPacketBuffer(controller, buffer, Stack::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackRequest.class),
                             requested,
                             token,
@@ -206,6 +216,22 @@ public final class StandardRequestFactories
                 token,
                 requester,
                 requestState));
+        }
+
+        @Override
+        public void serialize(IFactoryController controller, ItemStackListRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, StackList::serialize);
+        }
+
+        @Override
+        public ItemStackListRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller, buffer, StackList::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackListRequest.class),
+                    requested,
+                    token,
+                    requester,
+                    requestState));
         }
     }
 
@@ -354,6 +380,22 @@ public final class StandardRequestFactories
         {
             return new StandardRequests.DeliveryRequest(location, token, initialState, input);
         }
+
+        @Override
+        public void serialize(IFactoryController controller, DeliveryRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, Delivery::serialize);
+        }
+
+        @Override
+        public DeliveryRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller, buffer, Delivery::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.DeliveryRequest.class),
+                    requested,
+                    token,
+                    requester,
+                    requestState));
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -428,28 +470,51 @@ public final class StandardRequestFactories
         {
             return new StandardRequests.PickupRequest(location, token, initialState, input);
         }
+
+        @Override
+        public void serialize(IFactoryController controller, PickupRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, Pickup::serialize);
+        }
+
+        @Override
+        public PickupRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller, buffer, Pickup::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.PickupRequest.class),
+                    requested,
+                    token,
+                    requester,
+                    requestState));
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
     public static abstract class AbstractCraftingRequestFactory<C extends AbstractCrafting, R extends StandardRequests.AbstractCraftingRequest<C>> implements IRequestFactory<C, R>
     {
-        private final IObjectConstructor<C, R> constructor;
-        private final Class<C>                 cClass;
-        private final Class<R>                 rClass;
-        private final IObjectToNBTConverter<C> serializer;
-        private final INBTToObjectConverter<C> deserializer;
+        private final IObjectConstructor<C, R>       constructor;
+        private final Class<C>                       cClass;
+        private final Class<R>                       rClass;
+        private final IObjectToNBTConverter<C>       nbtSerializer;
+        private final INBTToObjectConverter<C>       nbtDeserializer;
+        private final IObjectToPackBufferWriter<C>   packetSerializer;
+        private final IPacketBufferToObjectReader<C> packetDeserializer;
 
         protected AbstractCraftingRequestFactory(
           final IObjectConstructor<C, R> constructor,
           final Class<C> cClass,
           final Class<R> rClass,
-          final IObjectToNBTConverter<C> serializer, final INBTToObjectConverter<C> deserializer)
+          final IObjectToNBTConverter<C> nbtSerializer,
+          final INBTToObjectConverter<C> nbtDeserializer,
+          final IObjectToPackBufferWriter<C> packetSerializer,
+          final IPacketBufferToObjectReader<C> packetDeserializer)
         {
             this.constructor = constructor;
             this.cClass = cClass;
             this.rClass = rClass;
-            this.serializer = serializer;
-            this.deserializer = deserializer;
+            this.nbtSerializer = nbtSerializer;
+            this.nbtDeserializer = nbtDeserializer;
+            this.packetSerializer = packetSerializer;
+            this.packetDeserializer = packetDeserializer;
         }
 
         @Override
@@ -477,18 +542,34 @@ public final class StandardRequestFactories
         @Override
         public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final R r)
         {
-            return serializeToNBT(controller, r, serializer);
+            return serializeToNBT(controller, r, nbtSerializer);
         }
 
         @NotNull
         @Override
         public R deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
         {
-            return deserializeFromNBT(controller, nbt, deserializer, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(rClass),
+            return deserializeFromNBT(controller, nbt, nbtDeserializer, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(rClass),
               requested,
               token,
               requester,
               requestState));
+        }
+
+        @Override
+        public void serialize(IFactoryController controller, R input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, packetSerializer);
+        }
+
+        @Override
+        public R deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller, buffer, packetDeserializer, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(rClass),
+                    requested,
+                    token,
+                    requester,
+                    requestState));
         }
     }
 
@@ -503,6 +584,8 @@ public final class StandardRequestFactories
               PrivateCrafting.class,
               StandardRequests.PrivateCraftingRequest.class,
               PrivateCrafting::serialize,
+              PrivateCrafting::deserialize,
+              PrivateCrafting::serialize,
               PrivateCrafting::deserialize);
         }
     }
@@ -516,6 +599,8 @@ public final class StandardRequestFactories
             super((requested, token, requester, requestState) -> new StandardRequests.PublicCraftingRequest(requester, token, requestState, requested),
               PublicCrafting.class,
               StandardRequests.PublicCraftingRequest.class,
+              PublicCrafting::serialize,
+              PublicCrafting::deserialize,
               PublicCrafting::serialize,
               PublicCrafting::deserialize);
         }
@@ -567,6 +652,22 @@ public final class StandardRequestFactories
                 requester,
                 requestState));
         }
+
+        @Override
+        public void serialize(IFactoryController controller, ToolRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, Tool::serialize);
+        }
+
+        @Override
+        public ToolRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller, buffer, Tool::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ToolRequest.class),
+                    requested,
+                    token,
+                    requester,
+                    requestState));
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -614,6 +715,22 @@ public final class StandardRequestFactories
                 token,
                 requester,
                 requestState));
+        }
+
+        @Override
+        public void serialize(IFactoryController controller, FoodRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, Food::serialize);
+        }
+
+        @Override
+        public FoodRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller, buffer, Food::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.FoodRequest.class),
+                    requested,
+                    token,
+                    requester,
+                    requestState));
         }
     }
 
@@ -663,6 +780,22 @@ public final class StandardRequestFactories
                 requester,
                 requestState));
         }
+
+        @Override
+        public void serialize(IFactoryController controller, SmeltAbleOreRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, SmeltableOre::serialize);
+        }
+
+        @Override
+        public SmeltAbleOreRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller, buffer, SmeltableOre::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.SmeltAbleOreRequest.class),
+                    requested,
+                    token,
+                    requester,
+                    requestState));
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -710,6 +843,22 @@ public final class StandardRequestFactories
                 token,
                 requester,
                 requestState));
+        }
+
+        @Override
+        public void serialize(IFactoryController controller, BurnableRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, Burnable::serialize);
+        }
+
+        @Override
+        public BurnableRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller, buffer, Burnable::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.BurnableRequest.class),
+                    requested,
+                    token,
+                    requester,
+                    requestState));
         }
     }
 
@@ -773,7 +922,7 @@ public final class StandardRequestFactories
         controller.serialize(packetBuffer, request.getRequester());
         controller.serialize(packetBuffer, request.getId());
         request.getState().serialize(packetBuffer);
-        typeSerialization.apply(controller, request.getRequest(), packetBuffer);
+        typeSerialization.apply(controller, packetBuffer, request.getRequest());
 
         packetBuffer.writeInt(request.getChildren().size());
         for (final IToken<?> token : request.getChildren())
@@ -784,7 +933,7 @@ public final class StandardRequestFactories
         packetBuffer.writeBoolean(request.hasResult());
         if (request.hasResult())
         {
-            typeSerialization.apply(controller, request.getResult(), packetBuffer);
+            typeSerialization.apply(controller, packetBuffer, request.getResult());
         }
 
         packetBuffer.writeBoolean(request.hasParent());
@@ -896,7 +1045,7 @@ public final class StandardRequestFactories
     @FunctionalInterface
     public interface IObjectToPackBufferWriter<O>
     {
-        void apply(IFactoryController controller, O object, PacketBuffer buffer);
+        void apply(IFactoryController controller, PacketBuffer buffer, O input);
     }
 
     @FunctionalInterface

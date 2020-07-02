@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -101,6 +102,41 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         final Block intermediate = NBTUtil.readBlockState(nbt.getCompound(BLOCK_TAG)).getBlock();
         final int gridSize = nbt.getInt(TAG_GRID);
         final IToken<?> token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
+
+        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate);
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, RecipeStorage input, PacketBuffer packetBuffer)
+    {
+        packetBuffer.writeInt(input.getInput().size());
+        input.getInput().forEach(stack -> packetBuffer.writeItemStack(stack));
+        packetBuffer.writeItemStack(input.getPrimaryOutput());
+
+        packetBuffer.writeBoolean(input.getIntermediate() != null);
+        if(input.getIntermediate() != null)
+        {
+            packetBuffer.writeInt(Block.getStateId(input.getIntermediate().getDefaultState()));
+        }
+
+        packetBuffer.writeInt(input.getGridSize());
+        controller.serialize(packetBuffer, input.getToken());
+    }
+
+    @Override
+    public RecipeStorage deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
+        final List<ItemStack> input = new ArrayList<>();
+        final int inputSize = buffer.readInt();
+        for (int i = 0; i < inputSize; ++i)
+        {
+            input.add(buffer.readItemStack());
+        }
+
+        final ItemStack primaryOutput = buffer.readItemStack();
+        final Block intermediate = buffer.readBoolean() ? Block.getStateById(buffer.readInt()).getBlock() : null;
+        final int gridSize = buffer.readInt();
+        final IToken<?> token = controller.deserialize(buffer);
 
         return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate);
     }

@@ -8,6 +8,8 @@ import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -73,6 +75,61 @@ public class Tool implements IDeliverable
     }
 
     /**
+     * Static method that constructs an instance from NBT.
+     *
+     * @param controller The {@link IFactoryController} to deserialize components with.
+     * @param nbt        The nbt to serialize from.
+     * @return An instance of Tool with the data contained in the given NBT.
+     */
+    @NotNull
+    public static Tool deserialize(final IFactoryController controller, final CompoundNBT nbt)
+    {
+        //API:Map the given strings a proper way.
+        final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
+        final Integer minLevel = nbt.getInt(NBT_MIN_LEVEL);
+        final Integer maxLevel = nbt.getInt(NBT_MAX_LEVEL);
+        final ItemStack result = ItemStack.read(nbt.getCompound(NBT_RESULT));
+
+        return new Tool(type, minLevel, maxLevel, result);
+    }
+
+    /**
+     * Serialize the deliverable.
+     * 
+     * @param controller the controller.
+     * @param buffer the the buffer to write to.
+     * @param input the input to serialize.
+     */
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Tool input)
+    {
+        buffer.writeString(input.getToolClass().getName());
+        buffer.writeInt(input.getMinLevel());
+        buffer.writeInt(input.getMaxLevel());
+        buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
+        if (!ItemStackUtils.isEmpty(input.result))
+        {
+            buffer.writeItemStack(input.result);
+        }
+    }
+
+    /**
+     * Deserialize the deliverable.
+     * 
+     * @param controller the controller.
+     * @param buffer the buffer to read.
+     * @return the deliverable.
+     */
+    public static Tool deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    {
+        final IToolType type = ToolType.getToolType(buffer.readString());
+        final int minLevel = buffer.readInt();
+        final int maxLevel = buffer.readInt();
+        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
+
+        return new Tool(type, minLevel, maxLevel, result);
+    }
+
+    /**
      * Returns the tool class that is requested.
      *
      * @return The tool class that is requested.
@@ -112,25 +169,6 @@ public class Tool implements IDeliverable
     public ItemStack getResult()
     {
         return result;
-    }
-
-    /**
-     * Static method that constructs an instance from NBT.
-     *
-     * @param controller The {@link IFactoryController} to deserialize components with.
-     * @param nbt        The nbt to serialize from.
-     * @return An instance of Tool with the data contained in the given NBT.
-     */
-    @NotNull
-    public static Tool deserialize(final IFactoryController controller, final CompoundNBT nbt)
-    {
-        //API:Map the given strings a proper way.
-        final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
-        final Integer minLevel = nbt.getInt(NBT_MIN_LEVEL);
-        final Integer maxLevel = nbt.getInt(NBT_MAX_LEVEL);
-        final ItemStack result = ItemStack.read(nbt.getCompound(NBT_RESULT));
-
-        return new Tool(type, minLevel, maxLevel, result);
     }
 
     @Override

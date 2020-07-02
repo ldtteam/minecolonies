@@ -33,5 +33,4 @@ public interface ILocation
      */
     boolean isReachableFromLocation(@NotNull ILocation location);
 
-
 }

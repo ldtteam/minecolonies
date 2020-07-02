@@ -14,10 +14,12 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -123,5 +125,33 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
 
             return new StandardRequestIdentitiesDataStore(token, biMap);
         }
+
+		@Override
+		public void serialize(IFactoryController controller, StandardRequestIdentitiesDataStore input, PacketBuffer packetBuffer)
+		{
+            controller.serialize(packetBuffer, input.id);
+            packetBuffer.writeInt(input.getIdentities().size());
+            input.getIdentities().forEach((key, value) -> {
+                controller.serialize(packetBuffer, key);
+                controller.serialize(packetBuffer, value);
+            });
+		}
+
+		@Override
+		public StandardRequestIdentitiesDataStore deserialize(IFactoryController controller, PacketBuffer buffer)
+				throws Throwable
+		{
+			final IToken<?> token = controller.deserialize(buffer);
+            final Map<IToken<?>, IRequest<?>> identities = new HashMap<>();
+            final int assignmentsSize = buffer.readInt();
+            for (int i = 0; i < assignmentsSize; ++i)
+            {
+                identities.put(controller.deserialize(buffer), controller.deserialize(buffer));
+            }
+
+            final BiMap<IToken<?>, IRequest<?>> biMap = HashBiMap.create(identities);
+
+            return new StandardRequestIdentitiesDataStore(token, biMap);
+		}
     }
 }

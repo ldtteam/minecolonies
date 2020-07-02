@@ -10,12 +10,15 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -207,6 +210,95 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
               }).collect(Collectors.toMap(Tuple::getA, Tuple::getB));
 
             return new StandardRequestSystemBuildingDataStore(token, openRequestsByRequestableType, openRequestsByCitizen, completedRequestsByCitizen, citizenByOpenRequest);
+        }
+
+        @Override
+        public void serialize(IFactoryController controller, StandardRequestSystemBuildingDataStore input,
+                PacketBuffer packetBuffer)
+        {
+            controller.serialize(packetBuffer, input.id);
+            packetBuffer.writeInt(input.openRequestsByRequestableType.size());
+            input.openRequestsByRequestableType.forEach((key, value) -> {
+                controller.serialize(packetBuffer, key);
+                packetBuffer.writeInt(value.size());
+                value.forEach(token -> controller.serialize(token));
+            });
+
+            packetBuffer.writeInt(input.openRequestsByCitizen.size());
+            input.openRequestsByCitizen.forEach((key, value) -> {
+                packetBuffer.writeInt(key);
+                packetBuffer.writeInt(value.size());
+                value.forEach(token -> controller.serialize(token));
+            });
+
+            packetBuffer.writeInt(input.completedRequestsByCitizen.size());
+            input.completedRequestsByCitizen.forEach((key, value) -> {
+                packetBuffer.writeInt(key);
+                packetBuffer.writeInt(value.size());
+                value.forEach(token -> controller.serialize(token));
+            });
+
+            packetBuffer.writeInt(input.citizenByOpenRequest.size());
+            input.citizenByOpenRequest.forEach((key, value) -> {
+                controller.serialize(packetBuffer, key);
+                controller.serialize(packetBuffer, value);
+            });
+        }
+
+        @Override
+        public StandardRequestSystemBuildingDataStore deserialize(IFactoryController controller, PacketBuffer buffer)
+                throws Throwable
+        {
+            final IToken<?> id = controller.deserialize(buffer);
+            final Map<TypeToken<?>, Collection<IToken<?>>> openRequestsByRequestableType = new HashMap<>();
+            final int openRequestsByRequestableTypeSize = buffer.readInt();
+            for (int i = 0; i < openRequestsByRequestableTypeSize; ++i)
+            {
+                final List<IToken<?>> tokens = new ArrayList<>();
+                final int tokensSize = buffer.readInt();
+                for (int ii = 0; ii < tokensSize; ++ii)
+                {
+                    tokens.add(controller.deserialize(buffer));
+                }
+                openRequestsByRequestableType.put(controller.deserialize(buffer), tokens);
+            }
+
+            final Map<Integer, Collection<IToken<?>>> openRequestsByCitizen = new HashMap<>();
+            final int openRequestsByCitizenSize = buffer.readInt();
+            for (int i = 0; i < openRequestsByCitizenSize; ++i)
+            {
+                final int key = buffer.readInt();
+                final List<IToken<?>> tokens = new ArrayList<>();
+                final int tokensSize = buffer.readInt();
+                for (int ii = 0; ii < tokensSize; ++ii)
+                {
+                    tokens.add(controller.deserialize(buffer));
+                }
+                openRequestsByCitizen.put(key, tokens);
+            }
+
+            final Map<Integer, Collection<IToken<?>>> completedRequestsByCitizen = new HashMap<>();
+            final int completedRequestsByCitizenSize = buffer.readInt();
+            for (int i = 0; i < completedRequestsByCitizenSize; ++i)
+            {
+                final int key = buffer.readInt();
+                final List<IToken<?>> tokens = new ArrayList<>();
+                final int tokensSize = buffer.readInt();
+                for (int ii = 0; ii < tokensSize; ++ii)
+                {
+                    tokens.add(controller.deserialize(buffer));
+                }
+                completedRequestsByCitizen.put(key, tokens);
+            }
+
+            final Map<IToken<?>, Integer> citizenByOpenRequest = new HashMap<>();
+            final int citizenByOpenRequestSize = buffer.readInt();
+            for (int i = 0; i < citizenByOpenRequestSize; ++i)
+            {
+                citizenByOpenRequest.put(controller.deserialize(buffer), buffer.readInt());
+            }
+
+            return new StandardRequestSystemBuildingDataStore(id, openRequestsByRequestableType, openRequestsByCitizen, completedRequestsByCitizen, citizenByOpenRequest);
         }
     }
 }
