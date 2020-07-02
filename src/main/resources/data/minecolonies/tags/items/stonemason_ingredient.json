@@ -1,9 +1,9 @@
 {
-    "replace": false,
-    "values": [
-        "#forge:stone",
-        "#forge:cobblestone",
-        "#forge:end_stones",
-        "minecraft:nether_brick"
-    ]
+  "replace": false,
+  "values": [
+    "#forge:stone",
+    "#forge:cobblestone",
+    "#forge:end_stones",
+    "minecraft:nether_brick"
+  ]
 }

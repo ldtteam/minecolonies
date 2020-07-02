@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 
 public interface IBuildingView extends IRequester
 {

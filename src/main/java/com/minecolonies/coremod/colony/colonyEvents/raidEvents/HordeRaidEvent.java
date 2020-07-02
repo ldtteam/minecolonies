@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
@@ -9,7 +10,6 @@ import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import net.minecraft.block.Blocks;

@@ -1482,8 +1482,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * Check if a stack has been requested already or is in the inventory. If not in the inventory and not requested already, create request
      *
-     * @param stack the requested stack.
-     * @param count the total count.
+     * @param stack    the requested stack.
+     * @param count    the total count.
      * @param minCount the minimum count.
      * @return true if in the inventory, else false.
      */

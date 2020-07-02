@@ -57,13 +57,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
-import static com.minecolonies.api.colony.ColonyState.*;
 
 /**
  * This class describes a colony and contains all the data and methods for manipulating a Colony.
@@ -999,8 +999,9 @@ public class Colony implements IColony
                     if (world.getChunkProvider().isChunkLoaded(new ChunkPos(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4)))
                     {
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
-                        if (((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint) && worldBlock != ModBlocks.blockConstructionTape)
-                              || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
+                        if (
+                          ((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint) && worldBlock != ModBlocks.blockConstructionTape)
+                            || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
                         {
                             wayPoints.remove(entry.getKey());
                             markDirty();

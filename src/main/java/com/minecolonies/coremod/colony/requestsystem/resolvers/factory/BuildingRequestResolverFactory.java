@@ -45,7 +45,7 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
     @NotNull
     @Override
     public CompoundNBT serialize(
-                                     @NotNull final IFactoryController controller, @NotNull final BuildingRequestResolver buildingRequestResolver)
+      @NotNull final IFactoryController controller, @NotNull final BuildingRequestResolver buildingRequestResolver)
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.put(NBT_TOKEN, controller.serialize(buildingRequestResolver.getId()));

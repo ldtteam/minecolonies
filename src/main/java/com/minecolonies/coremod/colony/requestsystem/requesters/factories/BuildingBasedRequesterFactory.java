@@ -10,7 +10,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-
 import org.jetbrains.annotations.NotNull;
 
 public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding, BuildingBasedRequester>

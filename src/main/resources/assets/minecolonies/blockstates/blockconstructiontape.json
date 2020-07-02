@@ -1,56 +1,156 @@
 {
   "multipart": [
     {
-      "apply": { "model": "minecolonies:block/blockconstructiontape_center" }
+      "apply": {
+        "model": "minecolonies:block/blockconstructiontape_center"
+      }
     },
     {
-       "when": { "north": "false", "east": "false", "south": "true", "west": "true" },
-      "apply": { "model": "minecolonies:block/blockconstructiontape_corner", "uvlock": true }
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "minecolonies:block/blockconstructiontape_corner",
+        "uvlock": true
+      }
     },
     {
-       "when": { "north": "true", "east": "false", "south": "false", "west": "true" },
-      "apply": { "model": "minecolonies:block/blockconstructiontape_corner", "uvlock": true }
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "minecolonies:block/blockconstructiontape_corner",
+        "uvlock": true
+      }
     },
     {
-       "when": { "north": "true", "east": "true", "south": "false", "west": "false" },
-      "apply": { "model": "minecolonies:block/blockconstructiontape_corner", "uvlock": true }
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "minecolonies:block/blockconstructiontape_corner",
+        "uvlock": true
+      }
     },
     {
-       "when": { "north": "false", "east": "true", "south": "true", "west": "false" },
-      "apply": { "model": "minecolonies:block/blockconstructiontape_corner", "uvlock": true }
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "minecolonies:block/blockconstructiontape_corner",
+        "uvlock": true
+      }
     },
 
-    {  "when": { "north": "true"},
-      "apply": { "model": "minecolonies:block/blockconstructiontape", "uvlock": true }
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "minecolonies:block/blockconstructiontape",
+        "uvlock": true
+      }
     },
-    {  "when": { "east": "true"},
-      "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 90, "uvlock": true }
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "minecolonies:block/blockconstructiontape",
+        "y": 90,
+        "uvlock": true
+      }
     },
-    {  "when": { "south": "true"},
-      "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 180, "uvlock": true }
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "minecolonies:block/blockconstructiontape",
+        "y": 180,
+        "uvlock": true
+      }
     },
-    {  "when": { "west": "true"},
-      "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 270, "uvlock": true }
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "minecolonies:block/blockconstructiontape",
+        "y": 270,
+        "uvlock": true
+      }
     },
     {
       "__comment": "A compatibility condition. If you see this in 1.16+, please remove it",
-      "when": { "facing": "east|west", "north":"false","east":"false","south":"false","west":"false" },
-      "apply": { "model": "minecolonies:block/blockconstructiontape", "uvlock": true }
+      "when": {
+        "facing": "east|west",
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "minecolonies:block/blockconstructiontape",
+        "uvlock": true
+      }
     },
     {
       "__comment": "A compatibility condition. If you see this in 1.16+, please remove it",
-      "when": { "facing": "east|west", "north":"false","east":"false","south":"false","west":"false" },
-      "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 180, "uvlock": true }
+      "when": {
+        "facing": "east|west",
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "minecolonies:block/blockconstructiontape",
+        "y": 180,
+        "uvlock": true
+      }
     },
     {
       "__comment": "A compatibility condition. If you see this in 1.16+, please remove it",
-      "when": { "facing": "north|south", "north":"false","east":"false","south":"false","west":"false" },
-      "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 90, "uvlock": true }
+      "when": {
+        "facing": "north|south",
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "minecolonies:block/blockconstructiontape",
+        "y": 90,
+        "uvlock": true
+      }
     },
     {
       "__comment": "A compatibility condition. If you see this in 1.16+, please remove it",
-      "when": { "facing": "north|south", "north":"false","east":"false","south":"false","west":"false" },
-      "apply": { "model": "minecolonies:block/blockconstructiontape", "y": 270, "uvlock": true }
+      "when": {
+        "facing": "north|south",
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "minecolonies:block/blockconstructiontape",
+        "y": 270,
+        "uvlock": true
+      }
     }
   ]
 }

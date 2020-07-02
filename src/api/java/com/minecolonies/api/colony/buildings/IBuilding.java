@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 
 public interface IBuilding extends IBuildingContainer, IRequestResolverProvider, IRequester
 {

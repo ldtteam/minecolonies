@@ -8,7 +8,6 @@ import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-
 import org.jetbrains.annotations.NotNull;
 
 public class IntegerFactory implements IFactory<FactoryVoidInput, Integer>

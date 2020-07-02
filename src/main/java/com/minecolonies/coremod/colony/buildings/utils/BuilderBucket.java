@@ -20,6 +20,7 @@ public class BuilderBucket
 
     /**
      * Get the required resources from the bucket.
+     *
      * @return the map with the identifiers and count.
      */
     public Map<String, Integer> getResourceMap()
@@ -29,6 +30,7 @@ public class BuilderBucket
 
     /**
      * Get how many total stacks were required up to now.
+     *
      * @return the total stacks.
      */
     public int getTotalStacks()
@@ -38,6 +40,7 @@ public class BuilderBucket
 
     /**
      * Set the required total stacks.
+     *
      * @param totalStacks the total stucks.
      */
     public void setTotalStacks(final int totalStacks)
@@ -47,6 +50,7 @@ public class BuilderBucket
 
     /**
      * Add additional resources.
+     *
      * @param key the key to add.
      * @param qty the quantity to add.
      */
@@ -57,6 +61,7 @@ public class BuilderBucket
 
     /**
      * Remove a specific resource.
+     *
      * @param name the key.
      */
     public void removeResources(final String name)

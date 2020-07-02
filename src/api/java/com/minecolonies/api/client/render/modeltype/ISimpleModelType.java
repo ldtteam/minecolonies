@@ -2,7 +2,6 @@ package com.minecolonies.api.client.render.modeltype;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.Constants;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;

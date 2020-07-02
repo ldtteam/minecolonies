@@ -22,7 +22,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-import static com.minecolonies.api.entity.ModEntities.*;
+import static com.minecolonies.api.entity.ModEntities.AMAZON;
+import static com.minecolonies.api.entity.ModEntities.AMAZONCHIEF;
 
 /**
  * Amazon raid event for the colony, triggers a horde of amazons that spawn and attack the colony.

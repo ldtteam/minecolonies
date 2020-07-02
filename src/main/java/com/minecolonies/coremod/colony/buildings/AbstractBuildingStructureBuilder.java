@@ -27,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * The structureBuilder building.
@@ -118,7 +118,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                                 return stack.getCount();
                             }
                             final int kept = storage.getAmount();
-                            if (qtyToKeep >= kept +  stack.getCount())
+                            if (qtyToKeep >= kept + stack.getCount())
                             {
                                 storage.setAmount(kept + stack.getCount());
                                 return 0;
@@ -378,6 +378,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
     /**
      * Get the resource from the identifier.
+     *
      * @param res the resource to get.
      * @return the resource.
      */
@@ -388,6 +389,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
     /**
      * Check if the resources are in the bucket.
+     *
      * @param stack the stack to check.
      * @return true if so.
      */
@@ -447,9 +449,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             int currentQty = last.getResourceMap().getOrDefault(key, 0);
             final int currentStacks = (int) Math.ceil((double) currentQty / res.getMaxStackSize());
-            final int newStacks = (int) Math.ceil((double) ( currentQty + amount ) / res.getMaxStackSize());
+            final int newStacks = (int) Math.ceil((double) (currentQty + amount) / res.getMaxStackSize());
             final Map<String, Integer> map = last.getResourceMap();
-            last.setTotalStacks(last.getTotalStacks()+ newStacks - currentStacks);
+            last.setTotalStacks(last.getTotalStacks() + newStacks - currentStacks);
             last.addOrAdjustResource(key, currentQty + amount);
             buckets.add(last);
         }

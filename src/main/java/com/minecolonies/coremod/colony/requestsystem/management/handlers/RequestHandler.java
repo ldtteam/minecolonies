@@ -1,17 +1,5 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
-import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
@@ -32,6 +20,12 @@ import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequest
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedBlacklistAssignmentRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * Class used to handle the inner workings of the request system with regards to requests.

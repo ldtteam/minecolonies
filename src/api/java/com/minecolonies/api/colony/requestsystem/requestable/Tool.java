@@ -9,7 +9,6 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;

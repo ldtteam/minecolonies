@@ -23,12 +23,12 @@ import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarba
 import com.minecolonies.coremod.client.render.mobs.egyptians.RendererArcherMummy;
 import com.minecolonies.coremod.client.render.mobs.egyptians.RendererMummy;
 import com.minecolonies.coremod.client.render.mobs.egyptians.RendererPharao;
-import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
-import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
-import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
 import com.minecolonies.coremod.client.render.mobs.norsemen.RendererArcherNorsemen;
 import com.minecolonies.coremod.client.render.mobs.norsemen.RendererChiefNorsemen;
 import com.minecolonies.coremod.client.render.mobs.norsemen.RendererShieldmaidenNorsemen;
+import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
+import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
+import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;

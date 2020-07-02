@@ -1,10 +1,8 @@
 package com.minecolonies.api.colony.requestsystem.requestable.deliveryman;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -21,10 +21,10 @@ import javax.annotation.Nullable;
  */
 public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockCompostedDirt>
 {
-    private static final String     BLOCK_NAME = "composted_dirt";
+    private static final String     BLOCK_NAME     = "composted_dirt";
     private static final float      BLOCK_HARDNESS = 5f;
-    private static final float      RESISTANCE = 1f;
-    private final static VoxelShape SHAPE = VoxelShapes.create(0, 0, 0, 1, 1, 1);
+    private static final float      RESISTANCE     = 1f;
+    private final static VoxelShape SHAPE          = VoxelShapes.create(0, 0, 0, 1, 1, 1);
 
     /**
      * The constructor of the block.

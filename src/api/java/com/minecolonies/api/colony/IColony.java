@@ -371,6 +371,7 @@ public interface IColony
 
     /**
      * Is the colony active currently.
+     *
      * @return true if so.
      */
     boolean isActive();

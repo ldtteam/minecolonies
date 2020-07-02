@@ -2,10 +2,10 @@ package com.minecolonies.api.compatibility;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Disease;
+import com.minecolonies.api.util.Tuple;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import com.minecolonies.api.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

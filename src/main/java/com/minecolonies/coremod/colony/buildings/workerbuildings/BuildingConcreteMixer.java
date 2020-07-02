@@ -43,7 +43,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WATER;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**

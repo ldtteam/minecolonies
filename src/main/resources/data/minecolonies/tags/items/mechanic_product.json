@@ -1,14 +1,14 @@
 {
-    "replace": false,
-    "values": [
-      "minecraft:blue_ice",
-      "minecraft:enchanting_table",
-      "minecraft:torch",
-      "minecraft:jack_o_lantern",
-      "minecraft:lantern",
-      "minecraft:packed_ice",
-      "minecraft:tripwire_hook",
-      "#minecraft:rails",
-      "#forge:storage_blocks"
-    ]
+  "replace": false,
+  "values": [
+    "minecraft:blue_ice",
+    "minecraft:enchanting_table",
+    "minecraft:torch",
+    "minecraft:jack_o_lantern",
+    "minecraft:lantern",
+    "minecraft:packed_ice",
+    "minecraft:tripwire_hook",
+    "#minecraft:rails",
+    "#forge:storage_blocks"
+  ]
 }

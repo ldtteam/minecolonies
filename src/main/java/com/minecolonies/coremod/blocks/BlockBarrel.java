@@ -31,15 +31,15 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     /**
      * The hardness this block has.
      */
-    private static final float BLOCK_HARDNESS = 5F;
+    private static final float  BLOCK_HARDNESS = 5F;
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME    = "barrel_block";
+    private static final String BLOCK_NAME     = "barrel_block";
     /**
      * The resistance this block has.
      */
-    private static final float RESISTANCE     = 1F;
+    private static final float  RESISTANCE     = 1F;
 
     public BlockBarrel()
     {

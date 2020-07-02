@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
@@ -29,8 +28,7 @@ public final class ConstructionTapeHelper
     public static final int               MAXHEIGHT = 256;
 
     /**
-     * Private Constructor to hide implicit one.
-     * Intentionally empty.
+     * Private Constructor to hide implicit one. Intentionally empty.
      */
     private ConstructionTapeHelper() {}
 
@@ -43,8 +41,11 @@ public final class ConstructionTapeHelper
     public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-          = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
-          new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true).getBluePrint(), workOrder.getRotation(world), workOrder.isMirrored());
+          = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(),
+          world,
+          new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true).getBluePrint(),
+          workOrder.getRotation(world),
+          workOrder.isMirrored());
         placeConstructionTape(workOrder.getBuildingLocation(), corners, world);
     }
 
@@ -57,7 +58,10 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(final BlockPos pos, final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
     {
-        if (!MineColonies.getConfig().getCommon().builderPlaceConstructionTape.get()) return;
+        if (!MineColonies.getConfig().getCommon().builderPlaceConstructionTape.get())
+        {
+            return;
+        }
 
         final BlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
 
@@ -68,39 +72,40 @@ public final class ConstructionTapeHelper
         final int sizeZ = Math.abs(corners.getB().getB() - corners.getB().getA());
         BlockPos working;
 
-        for (BlockPos place = new BlockPos(x,y,z); place.getX() < x+sizeX || place.getZ() < z+sizeZ;) {
-            if (place.getX() < x+sizeX)
+        for (BlockPos place = new BlockPos(x, y, z); place.getX() < x + sizeX || place.getZ() < z + sizeZ; )
+        {
+            if (place.getX() < x + sizeX)
             {
                 working = firstValidPosition(new BlockPos(place.getX(), y, z), world);
                 world.setBlockState(working,
-                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == x), world, working, Direction.SOUTH)
+                  BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == x), world, working, Direction.SOUTH)
                 );
 
-                working = firstValidPosition(new BlockPos(place.getX(), y, z+sizeZ), world);
+                working = firstValidPosition(new BlockPos(place.getX(), y, z + sizeZ), world);
                 world.setBlockState(working,
-                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == x), world, working, Direction.NORTH)
+                  BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == x), world, working, Direction.NORTH)
                 );
             }
 
-            if (place.getZ() < z+sizeZ)
+            if (place.getZ() < z + sizeZ)
             {
                 working = firstValidPosition(new BlockPos(x, y, place.getZ()), world);
                 world.setBlockState(working,
-                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == z), world, working, Direction.EAST)
+                  BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == z), world, working, Direction.EAST)
                 );
 
-                working = firstValidPosition(new BlockPos(x+sizeX, y, place.getZ()), world);
+                working = firstValidPosition(new BlockPos(x + sizeX, y, place.getZ()), world);
                 world.setBlockState(working,
-                        BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == z), world, working, place.getZ() == z? Direction.SOUTH : Direction.WEST)
+                  BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == z), world, working, place.getZ() == z ? Direction.SOUTH : Direction.WEST)
                 );
             }
 
             place = place.south().east();
         }
 
-        working = firstValidPosition(new BlockPos(x+sizeX, y, z+sizeZ), world);
+        working = firstValidPosition(new BlockPos(x + sizeX, y, z + sizeZ), world);
         world.setBlockState(working,
-                BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, true), world, working, Direction.WEST)
+          BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, true), world, working, Direction.WEST)
         );
     }
 
@@ -108,7 +113,7 @@ public final class ConstructionTapeHelper
      * Find and return the highest position that is directly above a non-replaceable block.
      *
      * @param target the target position for the block
-     * @param world the world.
+     * @param world  the world.
      * @return The new block position.
      */
     public static BlockPos firstValidPosition(@NotNull BlockPos target, @NotNull World world)
@@ -116,23 +121,29 @@ public final class ConstructionTapeHelper
         final Chunk chunk = world.getChunkAt(target);
 
         target = new BlockPos(target.getX(), chunk.getTopFilledSegment() + 16, target.getZ());
-                
+
         while (target.getY() > 0)
         {
             target = target.down();
 
             if (world.getBlockState(target).getBlock() instanceof LeavesBlock)
+            {
                 for (BlockPos seeker = new BlockPos(target.down()); seeker.getY() > 0; seeker = seeker.down())
+                {
                     if (world.getBlockState(seeker).getMaterial().isReplaceable() || world.isAirBlock(seeker))
                     {
                         target = seeker;
                         break;
                     }
+                }
+            }
 
-            
+
             if (!world.getBlockState(target).getMaterial().isReplaceable()
-             && !(world.getBlockState(target).getBlock() instanceof FlowerBlock)) 
+                  && !(world.getBlockState(target).getBlock() instanceof FlowerBlock))
+            {
                 break;
+            }
         }
 
         return target.up();
@@ -146,7 +157,8 @@ public final class ConstructionTapeHelper
      */
     public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
-        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true);
+        final LoadOnlyStructureHandler structure =
+          new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true);
         if (structure.hasBluePrint())
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
