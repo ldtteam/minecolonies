@@ -172,6 +172,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
             }
         }
 
+        //todo remove as soon as all schematics got tag support
         if (filtered.isEmpty())
         {
             for (final BlockPos pos : sand)
