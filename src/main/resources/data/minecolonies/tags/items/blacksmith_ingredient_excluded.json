@@ -2,7 +2,6 @@
   "replace": false,
   "values": [
     "#minecolonies:mechanic_ingredient",
-    "#forge:fruits",
     "#forge:crops",
     "#minecolonies:dyer_ingredient"
   ]
