@@ -691,8 +691,11 @@ public class CitizenData implements ICitizenData
     @Override
     public void decreaseSaturation(final double extraSaturation)
     {
-        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation * MineColonies.getConfig().getCommon().foodModifier.get()));
-        this.justAte = false;
+        if (colony != null && colony.isActive())
+        {
+            this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation * MineColonies.getConfig().getCommon().foodModifier.get()));
+            this.justAte = false;
+        }
     }
 
     @Override

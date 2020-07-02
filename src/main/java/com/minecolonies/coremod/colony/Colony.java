@@ -999,7 +999,7 @@ public class Colony implements IColony
                     if (world.getChunkProvider().isChunkLoaded(new ChunkPos(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4)))
                     {
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
-                        if ((worldBlock != (entry.getValue().getBlock()) && worldBlock != ModBlocks.blockConstructionTape)
+                        if (((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint) && worldBlock != ModBlocks.blockConstructionTape)
                               || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
                         {
                             wayPoints.remove(entry.getKey());
@@ -1697,5 +1697,11 @@ public class Colony implements IColony
     public ColonyState getState()
     {
         return colonyStateMachine.getState();
+    }
+
+    @Override
+    public boolean isActive()
+    {
+        return colonyStateMachine.getState() != INACTIVE;
     }
 }

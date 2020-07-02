@@ -139,7 +139,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     /**
      * After request cancel has been clicked cancel it and update the server side.
      *
-     * @param tRequest the request to cancel.
+     * @param request the request to cancel.
      */
     public void cancel(@NotNull final IRequest<?> request)
     {

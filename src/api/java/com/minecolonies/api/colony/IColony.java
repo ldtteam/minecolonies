@@ -368,4 +368,10 @@ public interface IColony
      * @return the state.
      */
     ColonyState getState();
+
+    /**
+     * Is the colony active currently.
+     * @return true if so.
+     */
+    boolean isActive();
 }

@@ -1306,6 +1306,8 @@
   "advancements.minecolonies.complete_build_request_1_florist.description": "The floral hut will use compost, or other types of \"bonemeal\" to grow you all those pesky flowers your buildings tend to want!",
   "advancements.minecolonies.complete_build_request_1_enchanter.title": "Enchanting Experience",
   "advancements.minecolonies.complete_build_request_1_enchanter.description": "The enchanter hut will consume Ancient tomes and Other workers experience to produce enchanted books for your personal usage!",
+  "advancements.minecolonies.check_out_guide.title": "Check out the Guide",
+  "advancements.minecolonies.check_out_guide.description": "Right click the builder hut to see how things work.",
 
   "block.minecolonies.blockhutflorist.name": "Flowershop",
 
@@ -1652,5 +1654,10 @@
   "com.minecolonies.coremod.gui.workerhuts.rabbithutch": "Rabbit Hutch",
   "com.minecolonies.coremod.job.rabbitherder": "Rabbit Herder",
   "block.minecolonies.blockhutrabbithutch.name": "Rabbit hutch",
-  "block.minecolonies.blockhutrabbithutch": "Rabbit Hutch"
+  "block.minecolonies.blockhutrabbithutch": "Rabbit Hutch",
+
+  "com.minecolonies.coremod.gui.workerhuts.guide.confirm": "Understood",
+  "com.minecolonies.coremod.gui.workerhuts.guide.questionmark": "Some buildings have extra help pages.",
+  "com.minecolonies.coremod.gui.workerhuts.guide.arrow": "Make sure to check out all the building's pages!",
+  "com.minecolonies.coremod.gui.workerhuts.guide.chest": "Here you can have an overview of the combined building inventory."
 }

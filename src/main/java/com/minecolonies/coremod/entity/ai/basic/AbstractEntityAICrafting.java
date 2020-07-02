@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Tuple;
+import com.minecolonies.api.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

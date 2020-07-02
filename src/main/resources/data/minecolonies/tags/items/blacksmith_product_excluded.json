@@ -1,4 +1,8 @@
 {
-  "replace": false,
-  "values": []
+    "replace": false,
+    "values": [
+        "#minecolonies:mechanic_product",
+        "#minecolonies:dyer_product",
+        "minecraft:firework_star"
+    ]
 }

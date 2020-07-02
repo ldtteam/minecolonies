@@ -560,6 +560,12 @@ public final class ColonyView implements IColonyView
         return null;
     }
 
+    @Override
+    public boolean isActive()
+    {
+        return true;
+    }
+
     /**
      * Sets if citizens can move in.
      *

@@ -421,8 +421,6 @@ public final class ItemStackUtils
         final Item item = stack.getItem();
         return item == Items.ITEM_FRAME
                  || item == Items.ARMOR_STAND
-                 || item instanceof BannerItem
-                 || !(item instanceof BlockItem)
                  || !Block.getBlockFromItem(item).getDefaultState().getMaterial().isSolid();
     }
 
