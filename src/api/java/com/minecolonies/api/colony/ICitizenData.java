@@ -29,8 +29,7 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
     int MAX_SATURATION = 10;
 
     /**
-     * Return the entity instance of the citizen data. Respawn the citizen if
-     * needed.
+     * Return the entity instance of the citizen data. Respawn the citizen if needed.
      *
      * @return {@link AbstractEntityCitizen} of the citizen data.
      */
@@ -93,9 +92,7 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
     void clearDirty();
 
     /**
-     * When a building is destroyed, inform the citizen so it can do any cleanup
-     * of associations that the building's. own IBuilding.onDestroyed did
-     * not do.
+     * When a building is destroyed, inform the citizen so it can do any cleanup of associations that the building's. own IBuilding.onDestroyed did not do.
      *
      * @param building building that is destroyed.
      */
@@ -272,18 +269,21 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
 
     /**
      * Get the citizen skill handler.
+     *
      * @return the handler.
      */
     ICitizenSkillHandler getCitizenSkillHandler();
 
     /**
      * Schedule restart and cleanup.
+     *
      * @param player the player scheduling it.
      */
     void scheduleRestart(ServerPlayerEntity player);
 
     /**
      * AI will be restarted, also restart building etc
+     *
      * @return true if so.
      */
     boolean shouldRestart();
@@ -302,21 +302,24 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
 
     /**
      * Check if the citizen just ate.
+     *
      * @return true if so.
      */
     boolean justAte();
 
     /**
      * Set or reset if the citizen just ate.
+     *
      * @param justAte true if justAte, false to reset.
      */
     void setJustAte(boolean justAte);
 
     /**
      * Trigger the response on the server side.
-     * @param key the key of the component.
+     *
+     * @param key      the key of the component.
      * @param response the triggered response.
-     * @param world the world it was triggered in.
+     * @param world    the world it was triggered in.
      */
     void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response, final World world);
 
@@ -327,37 +330,42 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
 
     /**
      * Trigger a possible interaction.
+     *
      * @param handler the new handler.
      */
     void triggerInteraction(@NotNull final IInteractionResponseHandler handler);
 
     /**
-     * Get the clean job modifier.
-     * Primary skill + secondary divided by 4.
+     * Get the clean job modifier. Primary skill + secondary divided by 4.
+     *
      * @return the int modifier.
      */
     int getJobModifier();
 
     /**
      * If is idle at job.
+     *
      * @return true if so.
      */
     boolean isIdleAtJob();
 
     /**
      * Set idle at job.
+     *
      * @param idle true if so.
      */
     void setIdleAtJob(final boolean idle);
 
     /**
      * Get the texture suffix.
+     *
      * @return the suffix.
      */
     String getTextureSuffix();
 
     /**
      * Set the suffix for a citizen.
+     *
      * @param suffix the suffix to set.
      */
     void setSuffix(String suffix);

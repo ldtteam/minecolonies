@@ -16,8 +16,7 @@ import java.util.Map;
 public interface IGuardBuilding extends IBuildingWorker
 {
     /**
-     * Worker gets this distance times building level away from his/her hut to
-     * patrol.
+     * Worker gets this distance times building level away from his/her hut to patrol.
      */
     int PATROL_DISTANCE = 30;
 

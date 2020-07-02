@@ -73,7 +73,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     /**
      * Flag used to be notified about block updates.
      */
-    private static final int                       BLOCK_UPDATE_FLAG = 3;
+    private static final int BLOCK_UPDATE_FLAG = 3;
 
     /**
      * The last field tag.
@@ -189,6 +189,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     /**
      * Retrieves a random field to work on for the farmer.
+     *
      * @param world the world it is in.
      * @return a field to work on.
      */
@@ -291,12 +292,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 ((ScarecrowTileEntity) scareCrow).setOwner(0);
 
                 getColony().getWorld()
-                        .notifyBlockUpdate(scareCrow.getPos(),
-                                getColony().getWorld().getBlockState(scareCrow.getPos()),
-                                getColony().getWorld().getBlockState(scareCrow.getPos()),
-                                BLOCK_UPDATE_FLAG);
+                  .notifyBlockUpdate(scareCrow.getPos(),
+                    getColony().getWorld().getBlockState(scareCrow.getPos()),
+                    getColony().getWorld().getBlockState(scareCrow.getPos()),
+                    BLOCK_UPDATE_FLAG);
                 ((ScarecrowTileEntity) scareCrow).setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
-                        LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
+                  LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
             }
         }
     }
@@ -323,9 +324,8 @@ public class BuildingFarmer extends AbstractBuildingWorker
     }
 
     /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
+     * Override this method if you want to keep an amount of items in inventory. When the inventory is full, everything get's dumped into the building chest. But you can use this
+     * method to hold some stacks back.
      *
      * @return a list of objects which should be kept.
      */
@@ -467,10 +467,10 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 {
                     ((ScarecrowTileEntity) scarecrow).setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER, getMainCitizen().getName()));
                     getColony().getWorld()
-                            .notifyBlockUpdate(scarecrow.getPos(),
-                                    getColony().getWorld().getBlockState(scarecrow.getPos()),
-                                    getColony().getWorld().getBlockState(scarecrow.getPos()),
-                                    BLOCK_UPDATE_FLAG);
+                      .notifyBlockUpdate(scarecrow.getPos(),
+                        getColony().getWorld().getBlockState(scarecrow.getPos()),
+                        getColony().getWorld().getBlockState(scarecrow.getPos()),
+                        BLOCK_UPDATE_FLAG);
                     ((ScarecrowTileEntity) scarecrow).setTaken(true);
                     if (getMainCitizen() != null)
                     {
@@ -514,13 +514,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
             ((ScarecrowTileEntity) scarecrow).setTaken(false);
             ((ScarecrowTileEntity) scarecrow).setOwner(0);
             getColony().getWorld()
-                        .notifyBlockUpdate(scarecrow.getPos(),
-                                getColony().getWorld().getBlockState(scarecrow.getPos()),
-                                getColony().getWorld().getBlockState(scarecrow.getPos()),
-                                BLOCK_UPDATE_FLAG);
+              .notifyBlockUpdate(scarecrow.getPos(),
+                getColony().getWorld().getBlockState(scarecrow.getPos()),
+                getColony().getWorld().getBlockState(scarecrow.getPos()),
+                BLOCK_UPDATE_FLAG);
             ((ScarecrowTileEntity) scarecrow).setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
-                        LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
-
+              LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
         }
     }
 
@@ -663,9 +662,9 @@ public class BuildingFarmer extends AbstractBuildingWorker
         /**
          * Change a field at a certain position.
          *
-         * @param id          the position of the field.
-         * @param addNewField should new field be added.
-         * @param scarecrowTileEntity         the tileEntity.
+         * @param id                  the position of the field.
+         * @param addNewField         should new field be added.
+         * @param scarecrowTileEntity the tileEntity.
          */
         public void changeFields(final BlockPos id, final boolean addNewField, final ScarecrowTileEntity scarecrowTileEntity)
         {

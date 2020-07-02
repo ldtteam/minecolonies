@@ -5,8 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents one building order to be cleared.
- * Has his own structure for the building.
+ * Represents one building order to be cleared. Has his own structure for the building.
  */
 public class WorkOrderBuildRemoval extends WorkOrderBuild
 {

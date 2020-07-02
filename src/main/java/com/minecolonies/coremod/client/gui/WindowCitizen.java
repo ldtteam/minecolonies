@@ -503,7 +503,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     {
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
-        if (building instanceof AbstractBuildingWorker.View && ! (building instanceof BuildingLibrary.View))
+        if (building instanceof AbstractBuildingWorker.View && !(building instanceof BuildingLibrary.View))
         {
             windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label",
               LanguageHandler.format(citizen.getJob())));

@@ -99,8 +99,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     private static final int MAX_ENCHANTED_BOOK_CHANCE = 100;
 
     /**
-     * Constructor for the Smelter.
-     * Defines the tasks the cook executes.
+     * Constructor for the Smelter. Defines the tasks the cook executes.
      *
      * @param job a cook job to use.
      */
@@ -341,11 +340,12 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                                                    .map(ItemStorage::getItemStack)
                                                    .collect(Collectors.toList());
 
-                if ( requests.isEmpty() )
+                if (requests.isEmpty())
                 {
                     if (worker.getCitizenData() != null)
                     {
-                        worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(FURNACE_USER_NO_ORE), ChatPriority.BLOCKING));
+                        worker.getCitizenData()
+                          .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(FURNACE_USER_NO_ORE), ChatPriority.BLOCKING));
                     }
                 }
                 else

@@ -21,19 +21,19 @@ public final class ModInteractionsInitializer
         final IForgeRegistry<InteractionResponseHandlerEntry> reg = event.getRegistry();
 
         ModInteractionResponseHandlers.standard = new InteractionResponseHandlerEntry.Builder()
-                            .setResponseHandlerProducer(StandardInteractionResponseHandler::new)
-                            .setRegistryName(ModInteractionResponseHandlers.STANDARD)
-                            .createEntry();
-
-        ModInteractionResponseHandlers.pos = new InteractionResponseHandlerEntry.Builder()
-                                                    .setResponseHandlerProducer(PosBasedInteractionResponseHandler::new)
-                                                    .setRegistryName(ModInteractionResponseHandlers.POS)
+                                                    .setResponseHandlerProducer(StandardInteractionResponseHandler::new)
+                                                    .setRegistryName(ModInteractionResponseHandlers.STANDARD)
                                                     .createEntry();
 
-        ModInteractionResponseHandlers.request = new InteractionResponseHandlerEntry.Builder()
-                                               .setResponseHandlerProducer(RequestBasedInteractionResponseHandler::new)
-                                               .setRegistryName(ModInteractionResponseHandlers.REQUEST)
+        ModInteractionResponseHandlers.pos = new InteractionResponseHandlerEntry.Builder()
+                                               .setResponseHandlerProducer(PosBasedInteractionResponseHandler::new)
+                                               .setRegistryName(ModInteractionResponseHandlers.POS)
                                                .createEntry();
+
+        ModInteractionResponseHandlers.request = new InteractionResponseHandlerEntry.Builder()
+                                                   .setResponseHandlerProducer(RequestBasedInteractionResponseHandler::new)
+                                                   .setRegistryName(ModInteractionResponseHandlers.REQUEST)
+                                                   .createEntry();
 
         reg.register(ModInteractionResponseHandlers.standard);
         reg.register(ModInteractionResponseHandlers.pos);

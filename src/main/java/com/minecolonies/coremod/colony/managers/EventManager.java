@@ -102,7 +102,7 @@ public class EventManager implements IEventManager
     /**
      * Registers an entity with the given event.
      *
-     * @param entity the entity to register.
+     * @param entity  the entity to register.
      * @param eventID the event id to register it to.
      */
     @Override
@@ -120,7 +120,7 @@ public class EventManager implements IEventManager
     /**
      * Unregisters an entity with the given event
      *
-     * @param entity the entity.
+     * @param entity  the entity.
      * @param eventID the id of th eevent.
      */
     @Override
@@ -136,7 +136,7 @@ public class EventManager implements IEventManager
     /**
      * Triggers on entity death(killed by player/environment) of an entity
      *
-     * @param entity the entity.
+     * @param entity  the entity.
      * @param eventID the id of the event.
      */
     @Override

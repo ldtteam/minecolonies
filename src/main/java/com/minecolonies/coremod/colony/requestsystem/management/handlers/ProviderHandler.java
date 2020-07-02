@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.management.IProviderHandler;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -33,7 +34,6 @@ public class ProviderHandler implements IProviderHandler
      *
      * @param provider The provider you are requesting the resolvers for.
      * @return The registered resolvers that belong to the given provider.
-     *
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
     @Override
@@ -73,7 +73,7 @@ public class ProviderHandler implements IProviderHandler
     /**
      * Internal method that handles the reassignment
      *
-     * @param token   The token of the provider that is being removed.
+     * @param token The token of the provider that is being removed.
      * @throws IllegalArgumentException is thrown when the token is not registered to a provider, or when the data stored in the manager is in conflict.
      */
     @VisibleForTesting
@@ -115,7 +115,7 @@ public class ProviderHandler implements IProviderHandler
      * Internal method that handles the removal of a single resolvers that is attached to a provider that is being removed.
      *
      * @param assignedResolvers The list of resolvers which are being removed.
-     * @param resolverToken The id of the resolver which is being removed, needs to be part of the assignedResolvers list.
+     * @param resolverToken     The id of the resolver which is being removed, needs to be part of the assignedResolvers list.
      */
     @VisibleForTesting
     void processResolverForRemoval(final Collection<IToken<?>> assignedResolvers, final IToken<?> resolverToken)
@@ -151,11 +151,11 @@ public class ProviderHandler implements IProviderHandler
     }
 
     /**
-     * Internal method that is handling the removal of a resolver that has requests currently assigned to it.
-     * Reassigns the assigned requests, using the provided list as blacklist.
+     * Internal method that is handling the removal of a resolver that has requests currently assigned to it. Reassigns the assigned requests, using the provided list as
+     * blacklist.
      *
      * @param assignedResolvers The resolvers from the provider that is being removed.
-     * @param resolverToken The particular resolver that is being removed. Needs to be part of the assignedResolvers list.
+     * @param resolverToken     The particular resolver that is being removed. Needs to be part of the assignedResolvers list.
      */
     @VisibleForTesting
     void removeResolverWithAssignedRequests(@NotNull final Collection<IToken<?>> assignedResolvers, final IToken<?> resolverToken)
@@ -181,15 +181,14 @@ public class ProviderHandler implements IProviderHandler
     /**
      * Method used to get the registered resolvers for a given provider.
      *
-     * @param token   The token of the provider you are requesting the resolvers for.
+     * @param token The token of the provider you are requesting the resolvers for.
      * @return The registered resolvers that belong to the given provider.
-     *
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
     @Override
     public Collection<IToken<?>> getRegisteredResolvers(@NotNull final IToken<?> token)
     {
-        Collection<IToken<?>> result =  manager.getProviderResolverAssignmentDataStore().getAssignments().get(token);
+        Collection<IToken<?>> result = manager.getProviderResolverAssignmentDataStore().getAssignments().get(token);
 
         if (result == null)
         {

@@ -78,12 +78,12 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
     {
         final CompoundNBT compound = super.serializeNBT();
         @NotNull final ListNBT filterableListCompound = new ListNBT();
-        for(@NotNull final Map.Entry<String, List<ItemStorage>> entry : itemsAllowed.entrySet())
+        for (@NotNull final Map.Entry<String, List<ItemStorage>> entry : itemsAllowed.entrySet())
         {
             @NotNull final CompoundNBT listCompound = new CompoundNBT();
             listCompound.putString(TAG_ID, entry.getKey());
             @NotNull final ListNBT filteredItems = new ListNBT();
-            for(@NotNull final ItemStorage item : entry.getValue())
+            for (@NotNull final ItemStorage item : entry.getValue())
             {
                 @NotNull final CompoundNBT itemCompound = new CompoundNBT();
                 item.getItemStack().write(itemCompound);
@@ -98,13 +98,13 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
 
     /**
      * Add a compostable item to the list.
-     * 
-     * @param id the string id of the item type.
+     *
+     * @param id   the string id of the item type.
      * @param item the item to add.
      */
     public void addItem(final String id, final ItemStorage item)
     {
-        if(itemsAllowed.containsKey(id))
+        if (itemsAllowed.containsKey(id))
         {
             if (!itemsAllowed.get(id).contains(item))
             {
@@ -124,9 +124,9 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
 
     /**
      * Check if the item is an allowed item.
-     * 
+     *
      * @param item the item to check.
-     * @param id the string id of the item type.
+     * @param id   the string id of the item type.
      * @return true if so.
      */
     public boolean isAllowedItem(final String id, final ItemStorage item)
@@ -136,13 +136,13 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
 
     /**
      * Remove a compostable item from the list.
-     * 
-     * @param id the string id of the item type.
+     *
+     * @param id   the string id of the item type.
      * @param item the item to remove.
      */
     public void removeItem(final String id, final ItemStorage item)
     {
-        if(itemsAllowed.containsKey(id) && itemsAllowed.get(id).contains(item))
+        if (itemsAllowed.containsKey(id) && itemsAllowed.get(id).contains(item))
         {
             final List<ItemStorage> list = itemsAllowed.get(id);
             list.remove(item);
@@ -153,7 +153,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
 
     /**
      * Getter of copy of all allowed items.
-     * 
+     *
      * @return a copy.
      */
     public Map<String, List<ItemStorage>> getCopyOfAllowedItems()

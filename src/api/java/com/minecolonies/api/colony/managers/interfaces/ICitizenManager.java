@@ -35,20 +35,23 @@ public interface ICitizenManager
 
     /**
      * Read the citizens from nbt.
+     *
      * @param compound the compound to read it from.
      */
     void read(@NotNull final CompoundNBT compound);
 
     /**
      * Write the citizens to nbt.
+     *
      * @param citizenCompound the compound to write it to.
      */
     void write(@NotNull final CompoundNBT citizenCompound);
 
     /**
      * Sends packages to update the citizens.
-     *  @param closeSubscribers    the existing subscribers.
-     * @param newSubscribers new subscribers
+     *
+     * @param closeSubscribers the existing subscribers.
+     * @param newSubscribers   new subscribers
      */
     void sendPackets(
       @NotNull final Set<ServerPlayerEntity> closeSubscribers,
@@ -60,11 +63,9 @@ public interface ICitizenManager
     void spawnOrCreateCitizen();
 
     /**
-     * Returns a map of citizens in the colony.
-     * The map has ID as key, and citizen data as value.
+     * Returns a map of citizens in the colony. The map has ID as key, and citizen data as value.
      *
-     * @return Map of citizens in the colony, with as key the citizen ID, and as
-     * value the citizen data.
+     * @return Map of citizens in the colony, with as key the citizen ID, and as value the citizen data.
      */
     @NotNull
     Map<Integer, ICitizenData> getCitizenMap();
@@ -80,7 +81,7 @@ public interface ICitizenManager
     /**
      * Spawn a citizen with specific citizen data.
      *
-     * @param data Data to use to spawn citizen.
+     * @param data  Data to use to spawn citizen.
      * @param world the world to spawn it in.
      * @return the citizen data of the spawned citizen.
      */
@@ -95,7 +96,6 @@ public interface ICitizenManager
      * @param data     Data to use to spawn citizen.
      * @param world    the world to spawn it in.
      * @param spawnPos the Blockposition to spawn at
-     *
      * @return the new citizen.
      */
     default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final World world, final BlockPos spawnPos)
@@ -105,9 +105,10 @@ public interface ICitizenManager
 
     /**
      * Spawns a citizen with the specific citizen data.
-     * @param data Data to use when spawn, null when new generation.
-     * @param world THe world.
-     * @param force True to skip max citizen test, false when not.
+     *
+     * @param data     Data to use when spawn, null when new generation.
+     * @param world    THe world.
+     * @param force    True to skip max citizen test, false when not.
      * @param spawnPos the pos to spawn it at.
      * @return the new citizen.
      */
@@ -152,38 +153,42 @@ public interface ICitizenManager
 
     /**
      * Get all citizens.
+     *
      * @return a copy of the list of citizens.
      */
     List<ICitizenData> getCitizens();
 
     /**
      * Get max citizens of the colony.
+     *
      * @return the amount.
      */
     int getMaxCitizens();
 
     /**
-     * Get potential max citizens of the colony.
-     * The potential considers all available beds including not assigned guard towers.
+     * Get potential max citizens of the colony. The potential considers all available beds including not assigned guard towers.
+     *
      * @return the amount.
      */
     int getPotentialMaxCitizens();
 
     /**
      * Get the current amount of citizens, might be bigger then {@link #getMaxCitizens()}
+     *
      * @return The current amount of citizens in the colony.
      */
     int getCurrentCitizenCount();
 
     /**
      * Set the new max citizens.
+     *
      * @param newMaxCitizens the amount to set.
      */
     void setMaxCitizens(final int newMaxCitizens);
 
     /**
-     * Set the new potential max citizens.
-     * The potential considers all available beds including not assigned guard towers.
+     * Set the new potential max citizens. The potential considers all available beds including not assigned guard towers.
+     *
      * @param newMaxCitizens the potential amount to set.
      */
     void setPotentialMaxCitizens(final int newMaxCitizens);
@@ -200,6 +205,7 @@ public interface ICitizenManager
 
     /**
      * Actions to execute on a colony tick.
+     *
      * @param colony the event.
      */
     void onColonyTick(final IColony colony);
@@ -220,19 +226,20 @@ public interface ICitizenManager
 
     /**
      * Get a random citizen.
+     *
      * @return the random citizen.
      */
     ICitizenData getRandomCitizen();
 
     /**
      * Update a modifier for all citizens.
+     *
      * @param id the name of it.
      */
     void updateModifier(final String id);
 
     /**
-     *  Call this when citizens sleep
+     * Call this when citizens sleep
      */
     void onCitizenSleep();
-
 }

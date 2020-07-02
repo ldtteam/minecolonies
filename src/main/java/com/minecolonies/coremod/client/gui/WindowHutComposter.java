@@ -67,7 +67,12 @@ public class WindowHutComposter extends AbstractHutFilterableLists
     @Override
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return IColonyManager.getInstance().getCompatibilityManager().getCopyOfCompostableItems().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
+        return IColonyManager.getInstance()
+                 .getCompatibilityManager()
+                 .getCopyOfCompostableItems()
+                 .stream()
+                 .filter(storage -> filterPredicate.test(storage.getItemStack()))
+                 .collect(Collectors.toList());
     }
 
     /**
@@ -89,7 +94,7 @@ public class WindowHutComposter extends AbstractHutFilterableLists
 
     /**
      * Method to send the message to switch the toggle to the server, then updates button
-     * 
+     *
      * @param retrieve the button to update.
      */
     private void switchReplant(final Button retrieve)

@@ -32,6 +32,7 @@ public class Patient
 
     /**
      * Create a new patient file.
+     *
      * @param id the id of the patient.
      */
     public Patient(final int id)
@@ -41,6 +42,7 @@ public class Patient
 
     /**
      * Load the Patient from nbt.
+     *
      * @param patientCompound the nbt to load it from.
      */
     public Patient(final CompoundNBT patientCompound)
@@ -51,6 +53,7 @@ public class Patient
 
     /**
      * Get the citizen id of the patient.
+     *
      * @return the int id.
      */
     public int getId()
@@ -60,6 +63,7 @@ public class Patient
 
     /**
      * Get the current state of the treatment.
+     *
      * @return the enum state.
      */
     public PatientState getState()
@@ -69,6 +73,7 @@ public class Patient
 
     /**
      * Progress the patient state.
+     *
      * @param state the state to set.
      */
     public void setState(final PatientState state)
@@ -78,6 +83,7 @@ public class Patient
 
     /**
      * Write the Patient to nbt.
+     *
      * @param compoundNBT the compound to write it to.
      */
     public void write(final CompoundNBT compoundNBT)

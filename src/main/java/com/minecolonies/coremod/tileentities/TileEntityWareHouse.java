@@ -17,12 +17,8 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -62,46 +58,14 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     {
         if (getBuilding() != null)
         {
-            final Set<TileEntity> tileEntities = new HashSet<>();
-            tileEntities.add(this);
-
-            return tileEntities.stream()
-                     .flatMap(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStackSelectionPredicate).stream())
-                     .filter(itemStacks -> !itemStacks.isEmpty())
-              .collect(Collectors.toList());
-
+            return InventoryUtils.filterItemHandler(getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), itemStackSelectionPredicate);
         }
 
         return Lists.newArrayList();
     }
 
     /**
-     * Check for a certain item and return the position of the chest containing it.
-     *
-     * @param itemStackSelectionPredicate the stack to search for.
-     * @return the position or null.
-     */
-    @Nullable
-    public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        if (getBuilding() != null)
-        {
-            final Set<TileEntity> tileEntities = getBuilding().getAdditionalCountainers().stream().map(pos -> getWorld().getTileEntity(pos)).collect(Collectors.toSet());
-            tileEntities.removeIf(Objects::isNull);
-            tileEntities.add(this);
-
-            return tileEntities.stream()
-                     .filter(tileEntity -> InventoryUtils.hasItemInProvider(tileEntity, itemStackSelectionPredicate))
-                     .map(TileEntity::getPos)
-                     .findFirst().orElse(null);
-        }
-
-        return null;
-    }
-
-    /**
-     * Dump the inventory of a citizen into the warehouse.
-     * Go through all items and search the right chest to dump it in.
+     * Dump the inventory of a citizen into the warehouse. Go through all items and search the right chest to dump it in.
      *
      * @param inventoryCitizen the inventory of the citizen
      */

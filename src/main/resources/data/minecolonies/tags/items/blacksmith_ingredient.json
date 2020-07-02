@@ -1,7 +1,7 @@
 {
-    "replace" : false,
-    "values" : [
-      "#forge:nuggets",
-      "#forge:ingots"
-    ]
+  "replace": false,
+  "values": [
+    "#forge:nuggets",
+    "#forge:ingots"
+  ]
 }

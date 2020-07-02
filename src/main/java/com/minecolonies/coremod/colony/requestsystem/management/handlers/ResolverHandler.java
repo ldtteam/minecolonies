@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.management.IResolverHandler;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -40,13 +41,11 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method used to register multiple resolvers simultaneously
      * <p>
-     * Is only used internally.
-     * The method modifies the resolverBiMap that is used to track resolvers.
+     * Is only used internally. The method modifies the resolverBiMap that is used to track resolvers.
      * </p>
      *
      * @param resolvers The resolvers to register.
      * @return The tokens of the resolvers that when registered.
-     *
      * @throws IllegalArgumentException is thrown when an IllegalArgumentException is thrown by the registerResolver method for any of the given Resolvers.
      */
     @Override
@@ -58,15 +57,12 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method used to register a resolver.
      * <p>
-     * Is only used internally.
-     * The method modifies the resolverBiMap that is used to track which resolver are registered.
+     * Is only used internally. The method modifies the resolverBiMap that is used to track which resolver are registered.
      * </p>
      *
      * @param resolver The resolver to register
      * @return The token of the newly registered resolver
-     *
-     * @throws IllegalArgumentException is thrown when either the token attached to the resolver is already registered or the resolver is already registered with a different
-     *                                  token
+     * @throws IllegalArgumentException is thrown when either the token attached to the resolver is already registered or the resolver is already registered with a different token
      */
     @Override
     public IToken<?> registerResolver(final IRequestResolver<? extends IRequestable> resolver)
@@ -101,13 +97,11 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method used to register multiple resolvers simultaneously
      * <p>
-     * Is only used internally.
-     * The method modifies the resolverBiMap that is used to track resolvers.
+     * Is only used internally. The method modifies the resolverBiMap that is used to track resolvers.
      * </p>
      *
      * @param resolvers The resolvers to register.
      * @return The tokens of the resolvers that when registered.
-     *
      * @throws IllegalArgumentException is thrown when an IllegalArgumentException is thrown by the registerResolver method for any of the given Resolvers.
      */
     @Override
@@ -119,11 +113,10 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method used to remove a registered resolver.
      * <p>
-     * Is only used internally.
-     * The method modifies the resolverBiMap that is used to track resolvers.
+     * Is only used internally. The method modifies the resolverBiMap that is used to track resolvers.
      * </p>
      *
-     * @param token   The token of the resolver to remove.
+     * @param token The token of the resolver to remove.
      * @throws IllegalArgumentException is thrown when the given resolver is not registered or the token of the given resolver is not registered to the same resolver.
      */
     @Override
@@ -140,8 +133,7 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method used to remove a registered resolver.
      * <p>
-     * Is only used internally.
-     * The method modifies the resolverBiMap that is used to track resolvers.
+     * Is only used internally. The method modifies the resolverBiMap that is used to track resolvers.
      * </p>
      *
      * @param resolver The resolver to remove
@@ -158,9 +150,9 @@ public class ResolverHandler implements IResolverHandler
         }
 
         if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments()
-                .containsKey(registeredResolver.getId())
-                && !manager.getRequestResolverRequestAssignmentDataStore().getAssignments()
-                .get(registeredResolver.getId()).isEmpty())
+              .containsKey(registeredResolver.getId())
+              && !manager.getRequestResolverRequestAssignmentDataStore().getAssignments()
+                    .get(registeredResolver.getId()).isEmpty())
         {
             throw new IllegalArgumentException("Cannot remove a resolver that is still in use. Reassign all registered requests before removing");
         }
@@ -172,7 +164,6 @@ public class ResolverHandler implements IResolverHandler
      * Method to get all requests currently assigned to a resolver.
      *
      * @param resolver The resolver to get the requests from.
-     *
      * @return A collection with requests tokens.
      */
     @Override
@@ -190,13 +181,11 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method to get a resolver from a given token.
      * <p>
-     * Is only used internally.
-     * Querries the resolverBiMap to get the resolver for a given Token.
+     * Is only used internally. Querries the resolverBiMap to get the resolver for a given Token.
      * </p>
      *
-     * @param token   The token of the resolver to look up.
+     * @param token The token of the resolver to look up.
      * @return The resolver registered with the given token.
-     *
      * @throws IllegalArgumentException is thrown when the given token is not registered to any IRequestResolver
      */
     @Override
@@ -227,8 +216,7 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method used to remove a multiple registered resolvers.
      * <p>
-     * Is only used internally.
-     * The method modifies the resolverBiMap that is used to track resolvers.
+     * Is only used internally. The method modifies the resolverBiMap that is used to track resolvers.
      * </p>
      *
      * @param resolvers The resolvers to remove.
@@ -243,8 +231,7 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method used to remove a multiple registered resolvers.
      * <p>
-     * Is only used internally.
-     * The method modifies the resolverBiMap that is used to track resolvers.
+     * Is only used internally. The method modifies the resolverBiMap that is used to track resolvers.
      * </p>
      *
      * @param resolvers The resolvers to remove.
@@ -259,8 +246,7 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method used to add a request to a resolver.
      * <p>
-     * Is only used internally.
-     * The method modifies the resolverRequestMap that is used to track which resolver handles which request.
+     * Is only used internally. The method modifies the resolverRequestMap that is used to track which resolver handles which request.
      * </p>
      *
      * @param resolver The resolver to add the request to.
@@ -284,8 +270,7 @@ public class ResolverHandler implements IResolverHandler
     /**
      * Method used to remove a request from a resolver.
      * <p>
-     * Is only used internally.
-     * The method modifies the resolverRequestMap that is used to track which resolver handles which request.
+     * Is only used internally. The method modifies the resolverRequestMap that is used to track which resolver handles which request.
      * </p>
      *
      * @param resolver The resolver to remove the given request from.
@@ -319,7 +304,6 @@ public class ResolverHandler implements IResolverHandler
      *
      * @param requestToken The token of a request a the assigned resolver is requested for.
      * @return The resolver for the request with the given token.
-     *
      * @throws IllegalArgumentException when the token is unknown or the request is not assigned yet.
      */
     @Override
@@ -327,8 +311,7 @@ public class ResolverHandler implements IResolverHandler
     {
         manager.getRequestHandler().getRequest(requestToken);
 
-        @Nullable
-        final IToken<?> resolverToken = manager.getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(requestToken);
+        @Nullable final IToken<?> resolverToken = manager.getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(requestToken);
         if (resolverToken == null)
         {
             throw new IllegalArgumentException("The given request: " + requestToken + " is not resolved.");
@@ -342,7 +325,6 @@ public class ResolverHandler implements IResolverHandler
      *
      * @param request The request a the assigned resolver is requested for.
      * @return The resolver for the request.
-     *
      * @throws IllegalArgumentException when the token is unknown or the request is not assigned yet.
      */
     @Override

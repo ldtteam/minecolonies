@@ -54,7 +54,6 @@ public class BuildingSawmill extends AbstractBuildingCrafter
         super(c, l);
     }
 
-
     @NotNull
     @Override
     public String getSchematicName()
@@ -144,7 +143,6 @@ public class BuildingSawmill extends AbstractBuildingCrafter
 
             // End Additional recipe rules
         }
-
     }
 
     @Override

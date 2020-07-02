@@ -23,12 +23,12 @@ public final class ModItemsInitializer
      */
     private static final int PRIMARY_COLOR_BARBARIAN   = 5;
     private static final int SECONDARY_COLOR_BARBARIAN = 700;
-    private static final int PRIMARY_COLOR_PIRATE   = 7;
-    private static final int SECONDARY_COLOR_PIRATE = 600;
-    private static final int PRIMARY_COLOR_MERC   = 8;
-    private static final int SECONDARY_COLOR_MERC = 300;
-    private static final int PRIMARY_COLOR_EG   = 10;
-    private static final int SECONDARY_COLOR_EG = 400;
+    private static final int PRIMARY_COLOR_PIRATE      = 7;
+    private static final int SECONDARY_COLOR_PIRATE    = 600;
+    private static final int PRIMARY_COLOR_MERC        = 8;
+    private static final int SECONDARY_COLOR_MERC      = 300;
+    private static final int PRIMARY_COLOR_EG          = 10;
+    private static final int SECONDARY_COLOR_EG        = 400;
 
     private ModItemsInitializer()
     {
@@ -41,9 +41,9 @@ public final class ModItemsInitializer
         ModItemsInitializer.init(event.getRegistry());
     }
 
-
     /**
      * Initates all the blocks. At the correct time.
+     *
      * @param registry the registry.
      */
     @SuppressWarnings("PMD.ExcessiveMethodLength")
@@ -70,7 +70,7 @@ public final class ModItemsInitializer
         ModItems.santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, EquipmentSlotType.HEAD, new Item.Properties());
 
         ModItems.pirateHelmet_1 = new ItemPirateGear("pirate_hat", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlotType.HEAD, new Item.Properties());
-        ModItems.pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1,  EquipmentSlotType.CHEST, new Item.Properties());
+        ModItems.pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlotType.CHEST, new Item.Properties());
         ModItems.pirateLegs_1 = new ItemPirateGear("pirate_leggins", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlotType.LEGS, new Item.Properties());
         ModItems.pirateBoots_1 = new ItemPirateGear("pirate_boots", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlotType.FEET, new Item.Properties());
 
@@ -107,25 +107,64 @@ public final class ModItemsInitializer
 
         registry.register(ModItems.santaHat);
 
-        registry.register(new SpawnEggItem(ModEntities.BARBARIAN, PRIMARY_COLOR_BARBARIAN, SECONDARY_COLOR_BARBARIAN, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("barbarianegg"));
-        registry.register(new SpawnEggItem(ModEntities.ARCHERBARBARIAN, PRIMARY_COLOR_BARBARIAN, SECONDARY_COLOR_BARBARIAN, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("barbarcheregg"));
-        registry.register(new SpawnEggItem(ModEntities.CHIEFBARBARIAN, PRIMARY_COLOR_BARBARIAN, SECONDARY_COLOR_BARBARIAN, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("barbchiefegg"));
+        registry.register(new SpawnEggItem(ModEntities.BARBARIAN,
+          PRIMARY_COLOR_BARBARIAN,
+          SECONDARY_COLOR_BARBARIAN,
+          (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("barbarianegg"));
+        registry.register(new SpawnEggItem(ModEntities.ARCHERBARBARIAN,
+          PRIMARY_COLOR_BARBARIAN,
+          SECONDARY_COLOR_BARBARIAN,
+          (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("barbarcheregg"));
+        registry.register(new SpawnEggItem(ModEntities.CHIEFBARBARIAN,
+          PRIMARY_COLOR_BARBARIAN,
+          SECONDARY_COLOR_BARBARIAN,
+          (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("barbchiefegg"));
 
-        registry.register(new SpawnEggItem(ModEntities.PIRATE, PRIMARY_COLOR_PIRATE, SECONDARY_COLOR_PIRATE, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("pirateegg"));
-        registry.register(new SpawnEggItem(ModEntities.ARCHERPIRATE, PRIMARY_COLOR_PIRATE, SECONDARY_COLOR_PIRATE, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("piratearcheregg"));
-        registry.register(new SpawnEggItem(ModEntities.CHIEFPIRATE, PRIMARY_COLOR_PIRATE, SECONDARY_COLOR_PIRATE, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("piratecaptainegg"));
+        registry.register(new SpawnEggItem(ModEntities.PIRATE,
+          PRIMARY_COLOR_PIRATE,
+          SECONDARY_COLOR_PIRATE,
+          (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("pirateegg"));
+        registry.register(new SpawnEggItem(ModEntities.ARCHERPIRATE,
+          PRIMARY_COLOR_PIRATE,
+          SECONDARY_COLOR_PIRATE,
+          (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("piratearcheregg"));
+        registry.register(new SpawnEggItem(ModEntities.CHIEFPIRATE,
+          PRIMARY_COLOR_PIRATE,
+          SECONDARY_COLOR_PIRATE,
+          (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("piratecaptainegg"));
 
-        registry.register(new SpawnEggItem(ModEntities.MUMMY, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("mummyegg"));
-        registry.register(new SpawnEggItem(ModEntities.ARCHERMUMMY, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("mummyarcheregg"));
-        registry.register(new SpawnEggItem(ModEntities.PHARAO, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("pharaoegg"));
+        registry.register(new SpawnEggItem(ModEntities.MUMMY, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName(
+          "mummyegg"));
+        registry.register(new SpawnEggItem(ModEntities.ARCHERMUMMY,
+          PRIMARY_COLOR_EG,
+          SECONDARY_COLOR_EG,
+          (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("mummyarcheregg"));
+        registry.register(new SpawnEggItem(ModEntities.PHARAO, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName(
+          "pharaoegg"));
 
-        registry.register(new SpawnEggItem(ModEntities.SHIELDMAIDEN, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("shieldmaidenegg"));
-        registry.register(new SpawnEggItem(ModEntities.NORSEMEN_ARCHER, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("norsemenarcheregg"));
-        registry.register(new SpawnEggItem(ModEntities.NORSEMEN_CHIEF, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("norsemenchiefegg"));
+        registry.register(new SpawnEggItem(ModEntities.SHIELDMAIDEN,
+          PRIMARY_COLOR_EG,
+          SECONDARY_COLOR_EG,
+          (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("shieldmaidenegg"));
+        registry.register(new SpawnEggItem(ModEntities.NORSEMEN_ARCHER,
+          PRIMARY_COLOR_EG,
+          SECONDARY_COLOR_EG,
+          (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("norsemenarcheregg"));
+        registry.register(new SpawnEggItem(ModEntities.NORSEMEN_CHIEF,
+          PRIMARY_COLOR_EG,
+          SECONDARY_COLOR_EG,
+          (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("norsemenchiefegg"));
 
-        registry.register(new SpawnEggItem(ModEntities.AMAZON, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("amazonegg"));
-        registry.register(new SpawnEggItem(ModEntities.AMAZONCHIEF, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("amazonchiefegg"));
+        registry.register(new SpawnEggItem(ModEntities.AMAZON, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName(
+          "amazonegg"));
+        registry.register(new SpawnEggItem(ModEntities.AMAZONCHIEF,
+          PRIMARY_COLOR_EG,
+          SECONDARY_COLOR_EG,
+          (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("amazonchiefegg"));
 
-        registry.register(new SpawnEggItem(ModEntities.MERCENARY, PRIMARY_COLOR_MERC, SECONDARY_COLOR_MERC, (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("mercegg"));
+        registry.register(new SpawnEggItem(ModEntities.MERCENARY,
+          PRIMARY_COLOR_MERC,
+          SECONDARY_COLOR_MERC,
+          (new Item.Properties()).group(ModCreativeTabs.MINECOLONIES)).setRegistryName("mercegg"));
     }
 }

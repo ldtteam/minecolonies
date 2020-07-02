@@ -94,7 +94,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     /**
      * Constructor for a new citizen typed entity.
      *
-     * @param type the Entity type.
+     * @param type  the Entity type.
      * @param world the world.
      */
     public AbstractEntityCitizen(final EntityType<? extends AgeableEntity> type, final World world)
@@ -193,8 +193,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     }
 
     /**
-     * Sets the textures of all citizens and distinguishes between male and
-     * female.
+     * Sets the textures of all citizens and distinguishes between male and female.
      */
     public void setTexture()
     {
@@ -204,10 +203,12 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
         }
 
         texture = getModelType().getTexture(this);
+        textureDirty = false;
     }
 
     /**
      * Get the citizen data view.
+     *
      * @return the view.
      */
     public abstract ICitizenDataView getCitizenDataView();
@@ -222,8 +223,9 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     {
         if (texture == null
               || textureDirty
-              || !getTexture().getPath().contains(getDataManager().get(DATA_STYLE))
-              || !getTexture().getPath().contains(getDataManager().get(DATA_TEXTURE_SUFFIX)))
+              || !texture.getPath().contains(getRenderMetadata())
+              || !texture.getPath().contains(getDataManager().get(DATA_STYLE))
+              || !texture.getPath().contains(getDataManager().get(DATA_TEXTURE_SUFFIX)))
         {
             setTexture();
         }
@@ -423,8 +425,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     }
 
     /**
-     * Entities treat being on ladders as not on ground; this breaks navigation
-     * logic.
+     * Entities treat being on ladders as not on ground; this breaks navigation logic.
      */
     @Override
     protected void updateFallState(final double y, final boolean onGroundIn, @NotNull final BlockState state, @NotNull final BlockPos pos)
@@ -469,8 +470,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public abstract ILocation getLocation();
 
     /**
-     * Checks if a worker is at his working site.
-     * If he isn't, sets it's path to the location
+     * Checks if a worker is at his working site. If he isn't, sets it's path to the location
      *
      * @param site  the place where he should walk to
      * @param range Range to check in
@@ -479,8 +479,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public abstract boolean isWorkerAtSiteWithMove(@NotNull BlockPos site, int range);
 
     /**
-     * Getter for the citizendata.
-     * Tries to get it from the colony is the data is null.
+     * Getter for the citizendata. Tries to get it from the colony is the data is null.
      *
      * @return the data.
      */
@@ -565,8 +564,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public abstract void setCitizenId(int id);
 
     /**
-     * Getter for the current position.
-     * Only approximated position, used for stuck checking.
+     * Getter for the current position. Only approximated position, used for stuck checking.
      *
      * @return the current position.
      */
@@ -657,7 +655,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
      * @return the instance of the handler.
      */
     public abstract ICitizenDiseaseHandler getCitizenDiseaseHandler();
-
 
     public abstract void setCitizenDiseaseHandler(ICitizenDiseaseHandler citizenDiseaseHandler);
 

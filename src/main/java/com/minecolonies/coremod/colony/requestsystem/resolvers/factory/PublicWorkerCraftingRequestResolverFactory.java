@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 public class PublicWorkerCraftingRequestResolverFactory implements IRequestResolverFactory<PublicWorkerCraftingRequestResolver>
@@ -34,9 +35,9 @@ public class PublicWorkerCraftingRequestResolverFactory implements IRequestResol
     @NotNull
     @Override
     public PublicWorkerCraftingRequestResolver getNewInstance(
-                                                    @NotNull final IFactoryController factoryController,
-                                                    @NotNull final ILocation iLocation,
-                                                    @NotNull final Object... context)
+      @NotNull final IFactoryController factoryController,
+      @NotNull final ILocation iLocation,
+      @NotNull final Object... context)
     {
         return new PublicWorkerCraftingRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
     }
@@ -57,6 +58,22 @@ public class PublicWorkerCraftingRequestResolverFactory implements IRequestResol
     {
         final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
+
+        return new PublicWorkerCraftingRequestResolver(location, token);
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, PublicWorkerCraftingRequestResolver input, PacketBuffer packetBuffer)
+    {
+        controller.serialize(packetBuffer, input.getId());
+        controller.serialize(packetBuffer, input.getLocation());
+    }
+
+    @Override
+    public PublicWorkerCraftingRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
+        final IToken<?> token = controller.deserialize(buffer);
+        final ILocation location = controller.deserialize(buffer);
 
         return new PublicWorkerCraftingRequestResolver(location, token);
     }

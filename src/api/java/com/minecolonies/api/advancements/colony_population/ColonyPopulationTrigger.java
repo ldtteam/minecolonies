@@ -9,7 +9,6 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-
 public class ColonyPopulationTrigger extends AbstractCriterionTrigger<ColonyPopulationListeners, ColonyPopulationCriterionInstance>
 {
     public ColonyPopulationTrigger()

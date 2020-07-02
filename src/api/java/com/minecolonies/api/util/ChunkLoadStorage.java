@@ -219,8 +219,9 @@ public class ChunkLoadStorage
 
     /**
      * Apply this ChunkLoadStorage to a capability.
+     *
      * @param chunk the chunk to apply it to.
-     * @param cap the capability to apply it to.
+     * @param cap   the capability to apply it to.
      */
     public void applyToCap(final IColonyTagCapability cap, final Chunk chunk)
     {
@@ -294,7 +295,6 @@ public class ChunkLoadStorage
                 coloniesToAdd.clear();
                 coloniesToRemove.clear();
             }
-
         }
         else
         {

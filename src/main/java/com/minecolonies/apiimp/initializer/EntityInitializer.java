@@ -29,6 +29,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
+
 import static com.minecolonies.api.util.constant.CitizenConstants.CITIZEN_HEIGHT;
 import static com.minecolonies.api.util.constant.CitizenConstants.CITIZEN_WIDTH;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -40,128 +41,128 @@ public class EntityInitializer
     public static void setupEntities()
     {
         ModEntities.CITIZEN = build("citizen",
-            EntityType.Builder.create(EntityCitizen::new, EntityClassification.CREATURE)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
-                .setShouldReceiveVelocityUpdates(true));
+          EntityType.Builder.create(EntityCitizen::new, EntityClassification.CREATURE)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+            .setShouldReceiveVelocityUpdates(true));
 
         ModEntities.FISHHOOK = build("fishhook",
-            EntityType.Builder.<NewBobberEntity> create(NewBobberEntity::new, EntityClassification.MISC)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
-                .size(0.25F, 0.25F)
-                .setShouldReceiveVelocityUpdates(true)
-                .setCustomClientFactory(NewBobberEntity::new));
+          EntityType.Builder.<NewBobberEntity>create(NewBobberEntity::new, EntityClassification.MISC)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
+            .size(0.25F, 0.25F)
+            .setShouldReceiveVelocityUpdates(true)
+            .setCustomClientFactory(NewBobberEntity::new));
 
         ModEntities.MERCENARY = build("mercenary",
-            EntityType.Builder.create(EntityMercenary::new, EntityClassification.CREATURE)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityMercenary::new, EntityClassification.CREATURE)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.BARBARIAN = build("barbarian",
-            EntityType.Builder.create(EntityBarbarian::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityBarbarian::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.ARCHERBARBARIAN = build("archerbarbarian",
-            EntityType.Builder.create(EntityArcherBarbarian::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityArcherBarbarian::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.CHIEFBARBARIAN = build("chiefbarbarian",
-            EntityType.Builder.create(EntityChiefBarbarian::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityChiefBarbarian::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.PIRATE = build("pirate",
-            EntityType.Builder.create(EntityPirate::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityPirate::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.ARCHERPIRATE = build("archerpirate",
-            EntityType.Builder.create(EntityArcherPirate::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityArcherPirate::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.CHIEFPIRATE = build("chiefpirate",
-            EntityType.Builder.create(EntityCaptainPirate::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityCaptainPirate::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.SITTINGENTITY = build("sittingentity",
-            EntityType.Builder.<SittingEntity> create(SittingEntity::new, EntityClassification.AMBIENT)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size(0F, 0.5F));
+          EntityType.Builder.<SittingEntity>create(SittingEntity::new, EntityClassification.AMBIENT)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size(0F, 0.5F));
 
         ModEntities.MINECART = build("mcminecart",
-            EntityType.Builder.create(MinecoloniesMinecart::new, EntityClassification.MISC)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size(0.98F, 0.7F));
+          EntityType.Builder.create(MinecoloniesMinecart::new, EntityClassification.MISC)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size(0.98F, 0.7F));
 
         ModEntities.MUMMY = build("mummy",
-            EntityType.Builder.create(EntityMummy::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityMummy::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.ARCHERMUMMY = build("archermummy",
-            EntityType.Builder.create(EntityArcherMummy::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityArcherMummy::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.PHARAO = build("pharao",
-            EntityType.Builder.create(EntityPharao::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityPharao::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.AMAZON = build("amazon",
-            EntityType.Builder.create(EntityArcherAmazon::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityArcherAmazon::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.AMAZONCHIEF = build("amazonchief",
-            EntityType.Builder.create(EntityAmazonChief::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityAmazonChief::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.FIREARROW = build("firearrow",
-            EntityType.Builder.create(FireArrowEntity::new, EntityClassification.MISC)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
-                .size(0.5F, 0.5F)
-                .setShouldReceiveVelocityUpdates(true));
-            
+          EntityType.Builder.create(FireArrowEntity::new, EntityClassification.MISC)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
+            .size(0.5F, 0.5F)
+            .setShouldReceiveVelocityUpdates(true));
+
         ModEntities.SHIELDMAIDEN = build("shieldmaiden",
-            EntityType.Builder.create(EntityShieldmaiden::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityShieldmaiden::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.NORSEMEN_ARCHER = build("norsemenarcher",
-            EntityType.Builder.create(EntityNorsemenArcher::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityNorsemenArcher::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.NORSEMEN_CHIEF = build("norsemenchief",
-            EntityType.Builder.create(EntityNorsemenChief::new, EntityClassification.MONSTER)
-                .setTrackingRange(ENTITY_TRACKING_RANGE)
-                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+          EntityType.Builder.create(EntityNorsemenChief::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
     }
 
     private static <T extends Entity> EntityType<T> build(final String key, final EntityType.Builder<T> builder)

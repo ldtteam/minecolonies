@@ -11,6 +11,7 @@ public class Network
 
     /**
      * Get the network handler.
+     *
      * @return the network handler.
      */
     public static NetworkChannel getNetwork()

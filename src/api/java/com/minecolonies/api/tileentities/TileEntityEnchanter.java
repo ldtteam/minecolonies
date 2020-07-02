@@ -35,6 +35,7 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
 
     /**
      * Alternative overriden constructor.
+     *
      * @param type the entity type.
      */
     public TileEntityEnchanter(final TileEntityType<? extends TileEntityEnchanter> type)

@@ -171,6 +171,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
 
     /**
      * Remove a piece of plantable ground because invalid.
+     *
      * @param pos the pos to remove it at.
      */
     public void removePlantableGround(final BlockPos pos)
@@ -180,6 +181,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
 
     /**
      * Get a random flower to grow at the moment.
+     *
      * @return the flower to grow.
      */
     @Nullable

@@ -20,7 +20,8 @@ public abstract class AbstractEntityAmazon extends AbstractEntityMinecoloniesMob
 {
     /**
      * Constructor method for Abstract egyptian..
-     * @param type the type.
+     *
+     * @param type  the type.
      * @param world the world.
      */
     public AbstractEntityAmazon(final EntityType<? extends AbstractEntityAmazon> type, final World world)

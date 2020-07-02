@@ -127,7 +127,7 @@ public class EntityAICitizenChild extends Goal
 
     /**
      * Exception handler for the statemachine
-     * 
+     *
      * @param ex the exception to handle
      */
     private void handleAIException(final RuntimeException ex)
@@ -138,7 +138,7 @@ public class EntityAICitizenChild extends Goal
 
     /**
      * Updates all timers
-     * 
+     *
      * @return false
      */
     private boolean updateTimers()
@@ -156,7 +156,7 @@ public class EntityAICitizenChild extends Goal
 
     /**
      * Whether the child moves to a new activity
-     * 
+     *
      * @return whether the child moves to a new activity
      */
     private boolean isReadyForActivity()
@@ -174,9 +174,8 @@ public class EntityAICitizenChild extends Goal
     }
 
     /**
-     * Follow activity preconditions
-     * Search for someone to follow around
-     * 
+     * Follow activity preconditions Search for someone to follow around
+     *
      * @return whether a entity to follow was found
      */
     private boolean searchEntityToFollow()
@@ -214,7 +213,7 @@ public class EntityAICitizenChild extends Goal
 
     /**
      * Follow an entity around
-     * 
+     *
      * @return the next ai state to go into
      */
     private IAIState followingEntity()
@@ -234,7 +233,7 @@ public class EntityAICitizenChild extends Goal
 
     /**
      * Child visits random buildings
-     * 
+     *
      * @return the next ai state to go into
      */
     private IAIState visitHuts()
@@ -301,7 +300,8 @@ public class EntityAICitizenChild extends Goal
             }
 
             double growthModifier = MineColonies.getConfig().getCommon().growthModifier.get();
-            final MultiplierModifierResearchEffect effect = child.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(GROWTH, MultiplierModifierResearchEffect.class);
+            final MultiplierModifierResearchEffect effect =
+              child.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(GROWTH, MultiplierModifierResearchEffect.class);
             if (effect != null)
             {
                 growthModifier *= (1 + effect.getEffect());
@@ -326,9 +326,7 @@ public class EntityAICitizenChild extends Goal
     }
 
     /**
-     * {@inheritDoc}
-     * Returns whether the Goal should begin execution.
-     * True when age less than 100, when a random (120) is chosen correctly, and when a citizen is nearby.
+     * {@inheritDoc} Returns whether the Goal should begin execution. True when age less than 100, when a random (120) is chosen correctly, and when a citizen is nearby.
      */
     @Override
     public boolean shouldExecute()
@@ -337,8 +335,7 @@ public class EntityAICitizenChild extends Goal
     }
 
     /**
-     * {@inheritDoc}
-     * Returns whether an in-progress Goal should continue executing.
+     * {@inheritDoc} Returns whether an in-progress Goal should continue executing.
      */
     @Override
     public boolean shouldContinueExecuting()

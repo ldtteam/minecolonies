@@ -41,8 +41,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public abstract class AbstractBuildingContainer extends AbstractCitizenAssignable implements IBuildingContainer
 {
     /**
-     * A list which contains the position of all containers which belong to the
-     * worker building.
+     * A list which contains the position of all containers which belong to the worker building.
      */
     protected final List<BlockPos> containerList = new ArrayList<>();
 

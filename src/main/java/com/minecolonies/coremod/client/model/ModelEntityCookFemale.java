@@ -109,5 +109,4 @@ public class ModelEntityCookFemale extends CitizenModel<AbstractEntityCitizen>
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
     }
-
 }

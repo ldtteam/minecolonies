@@ -31,8 +31,8 @@ public final class SortingUtils
     }
 
     /**
-     * Sort a combined item handler by certain conditions.
-     * Group into creative tabs if possible.
+     * Sort a combined item handler by certain conditions. Group into creative tabs if possible.
+     *
      * @param inv the item handler to sort.
      */
     public static void sort(final CombinedItemHandler inv)
@@ -76,13 +76,14 @@ public final class SortingUtils
 
     /**
      * Pushes a item storage to an inventory following certain rules.
-     * @param currentSlot the starting slot to start pushing.
-     * @param entry the map entry with storage and size.
-     * @param inv the inventory to push it to.
-     * @param requiredSlots the required slots in total to be pushed to (counting down).
-     * @param totalSlots the total available slots.
+     *
+     * @param currentSlot      the starting slot to start pushing.
+     * @param entry            the map entry with storage and size.
+     * @param inv              the inventory to push it to.
+     * @param requiredSlots    the required slots in total to be pushed to (counting down).
+     * @param totalSlots       the total available slots.
      * @param totalRequirement the required slots in total to be pushed to.
-     * @param creativeTabs the creative tabs information for the items.
+     * @param creativeTabs     the creative tabs information for the items.
      */
     private static void pushIntoInv(
       final AtomicInteger currentSlot,
@@ -113,7 +114,7 @@ public final class SortingUtils
         if (creativeTabs.get(creativeTabId) <= 0 && (totalSlots - slotLimit) >= requiredSlots.get())
         {
             final double dumpedSlots = (totalRequirement - requiredSlots.get());
-            final double usageFactor = totalSlots/dumpedSlots;
+            final double usageFactor = totalSlots / dumpedSlots;
             final double theoreticalJumpFactor = (totalSlots - slotLimit) / requiredSlots.get();
 
             if (theoreticalJumpFactor <= usageFactor || theoreticalJumpFactor > 4)
@@ -124,11 +125,8 @@ public final class SortingUtils
     }
 
     /**
-     * Compared to itemStorage entries.
-     * Based on:
-     * - Creative tab
-     * - Id
-     * - Damage value
+     * Compared to itemStorage entries. Based on: - Creative tab - Id - Damage value
+     *
      * @param t1 the first itemStorage entry.
      * @param t2 the second itemStorage entry.
      * @return an integer which describes the difference.
@@ -155,6 +153,7 @@ public final class SortingUtils
 
     /**
      * Get the item ID of an item.
+     *
      * @param item the item to check.
      * @return the integer id of minecraft.
      */
@@ -164,8 +163,8 @@ public final class SortingUtils
     }
 
     /**
-     * Calculate how many slots in total will be required for a map of item storages.
-     * Also calculate and return how many creativeTabs are involved and how many items per tab.
+     * Calculate how many slots in total will be required for a map of item storages. Also calculate and return how many creativeTabs are involved and how many items per tab.
+     *
      * @param map the map of itemStorages with amount.
      * @return a tuple containing the required information.
      */
@@ -182,5 +181,4 @@ public final class SortingUtils
 
         return new Tuple<>(new AtomicInteger(sum), creativeTabs);
     }
-
 }

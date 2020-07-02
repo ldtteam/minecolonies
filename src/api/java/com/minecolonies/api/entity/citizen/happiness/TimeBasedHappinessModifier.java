@@ -8,8 +8,7 @@ import java.util.function.DoubleSupplier;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DAY;
 
 /**
- * The time based happiness modifier.
- * Over a time the buff/boost gets worse.
+ * The time based happiness modifier. Over a time the buff/boost gets worse.
  */
 public class TimeBasedHappinessModifier extends StaticHappinessModifier
 {
@@ -26,9 +25,9 @@ public class TimeBasedHappinessModifier extends StaticHappinessModifier
     /**
      * Create an instance of the happiness modifier.
      *
-     * @param id     its string id.
-     * @param weight its weight.
-     * @param supplier the supplier to get the factor.
+     * @param id              its string id.
+     * @param weight          its weight.
+     * @param supplier        the supplier to get the factor.
      * @param timeBasedFactor tuples about the boost/buff factor over time.
      */
     public TimeBasedHappinessModifier(final String id, final double weight, final DoubleSupplier supplier, final Tuple<Integer, Double>[] timeBasedFactor)

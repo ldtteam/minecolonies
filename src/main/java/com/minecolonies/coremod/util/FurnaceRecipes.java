@@ -42,6 +42,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
 
     /**
      * Load all the recipes in the recipe storage.
+     *
      * @param server the server obj to load.
      */
     private void loadRecipes(final MinecraftServer server)
@@ -72,7 +73,8 @@ public class FurnaceRecipes implements IFurnaceRecipes
     {
         ItemStackUtils.ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood();
         ItemStackUtils.IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(instance.getSmeltingResult(itemStack));
-        ItemStackUtils.CAN_EAT = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood() && !ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
+        ItemStackUtils.CAN_EAT =
+          itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood() && !ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
         ItemStackUtils.ISCOOKABLE = itemStack -> ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
     }
 
@@ -93,8 +95,8 @@ public class FurnaceRecipes implements IFurnaceRecipes
     }
 
     /**
-     * Set the map.
-     * This is called from the client side message.
+     * Set the map. This is called from the client side message.
+     *
      * @param map the map to set.
      */
     public void setMap(final Map<ItemStorage, RecipeStorage> map)
@@ -108,6 +110,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
 
     /**
      * Get the smelting result for a certain itemStack.
+     *
      * @param itemStack the itemStack to test.
      * @return the result or empty if not existent.
      */
@@ -123,6 +126,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
 
     /**
      * Get the instance of the class.
+     *
      * @return the instance.
      */
     public static FurnaceRecipes getInstance()
@@ -136,6 +140,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
 
     /**
      * Method to check if the furnace recipes are loaded already.
+     *
      * @return true if so.
      */
     public boolean loaded()

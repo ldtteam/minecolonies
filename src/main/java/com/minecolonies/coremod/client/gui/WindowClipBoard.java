@@ -94,6 +94,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
     /**
      * Constructor of the clipboard GUI.
+     *
      * @param colony the colony to check the requests for.
      */
     public WindowClipBoard(final IColonyView colony)
@@ -103,8 +104,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     }
 
     /**
-     * Called when the window is opened.
-     * Sets up the buttons for either hut mode or decoration mode.
+     * Called when the window is opened. Sets up the buttons for either hut mode or decoration mode.
      */
     @Override
     public void onOpened()
@@ -124,7 +124,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
             if (!displayStacks.isEmpty())
             {
-                if(exampleStackDisplay != null)
+                if (exampleStackDisplay != null)
                 {
                     exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
                 }
@@ -146,6 +146,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
     /**
      * The requests to display.
+     *
      * @return the list of requests.
      */
     public ImmutableList<IRequest<?>> getOpenRequests()
@@ -175,8 +176,8 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         final BlockPos playerPos = Minecraft.getInstance().player.getPosition();
         requests.sort(Comparator.comparing((IRequest<?> request) -> request.getRequester().getLocation().getInDimensionLocation()
-                .distanceSq(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
-                .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));
+                                                                      .distanceSq(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
+                        .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));
 
         return ImmutableList.copyOf(requests);
     }

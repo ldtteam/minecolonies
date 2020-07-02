@@ -563,7 +563,6 @@ public class ModelEntityBlacksmithFemale extends CitizenModel<AbstractEntityCiti
         this.bipedHeadwear.addChild(hairF45);
         this.bipedHeadwear.addChild(hairF46);
         this.bipedHeadwear.addChild(hairF47);
-
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)

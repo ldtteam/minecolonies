@@ -34,6 +34,7 @@ public final class ModSoundEvents
 
     /**
      * Register the {@link SoundEvent}s.
+     *
      * @param registry the registry to register at.
      */
     public static void registerSounds(final IForgeRegistry<SoundEvent> registry)

@@ -6,8 +6,7 @@ import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequest
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Class used to handle internal state changes that might cause a loop.
- * Simply returns without notifying its wrapped manager about the state change.
+ * Class used to handle internal state changes that might cause a loop. Simply returns without notifying its wrapped manager about the state change.
  */
 public final class WrappedStaticStateRequestManager extends AbstractWrappedRequestManager
 {

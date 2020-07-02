@@ -2,10 +2,10 @@ package com.minecolonies.api.compatibility;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Disease;
+import com.minecolonies.api.util.Tuple;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import com.minecolonies.api.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -14,26 +14,28 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Interface for all compatabilityManagers.
- * The compatability manager retrieves certain blocks from oreData and stores them.
+ * Interface for all compatabilityManagers. The compatability manager retrieves certain blocks from oreData and stores them.
  */
 public interface ICompatibilityManager
 {
     /**
      * Getter for the different meshes the sifter is allowed to use.
+     *
      * @return a copy of the list of tuples containing the itemStorage and the chance of it breaking.
      */
     List<Tuple<ItemStorage, Double>> getMeshes();
 
     /**
      * Getter for the blocks which can be sieved.
+     *
      * @return a copy of the list of itemStorages.
      */
     ArrayList<ItemStorage> getSievableBlock();
 
     /**
      * Get a random item return for a certain mesh and certain block which is in the sieve.
-     * @param mesh the used mesh.
+     *
+     * @param mesh  the used mesh.
      * @param block the used block.
      * @return the ItemStack.
      */
@@ -41,12 +43,14 @@ public interface ICompatibilityManager
 
     /**
      * Method called to instantiate the requirements.
+     *
      * @param serverSide if server side (true) or client side (false).
      */
     void discover(final boolean serverSide);
 
     /**
      * Gets the sapling matching a leave.
+     *
      * @param block the leave.
      * @return the sapling stack.
      */
@@ -54,30 +58,35 @@ public interface ICompatibilityManager
 
     /**
      * Get a copy of the list of saplings.
+     *
      * @return the list of saplings.
      */
     List<ItemStorage> getCopyOfSaplings();
 
     /**
      * Get a set of all fuel items.
+     *
      * @return an immutable set.
      */
     Set<ItemStorage> getFuel();
 
     /**
      * Get a set of all food items.
+     *
      * @return an immutable set.
      */
     Set<ItemStorage> getFood();
 
     /**
      * Get a set of all smeltable ores.
+     *
      * @return an immutable set.
      */
     Set<ItemStorage> getSmeltableOres();
 
     /**
      * Check if a stack belongs to a minable ore.
+     *
      * @param stack the stack to test.
      * @return true if so.
      */
@@ -85,24 +94,28 @@ public interface ICompatibilityManager
 
     /**
      * Get a copy of the list of compostable items.
+     *
      * @return the list of compostable items.
      */
     List<ItemStorage> getCopyOfCompostableItems();
 
     /**
      * Get a copy of the list of plantables.
+     *
      * @return the list of plantables.
      */
     List<ItemStorage> getCopyOfPlantables();
 
     /**
      * Get a random disease of the compat manager.
+     *
      * @return a randomly chosen disease.
      */
     String getRandomDisease();
 
     /**
      * Get a disease by the ID.
+     *
      * @param disease the id.
      * @return the disease.
      */
@@ -110,12 +123,14 @@ public interface ICompatibilityManager
 
     /**
      * Get the list of diseases.
+     *
      * @return a copy of the list.
      */
     List<Disease> getDiseases();
 
     /**
      * Checks if a certain Block is an ore.
+     *
      * @param block the block to check.
      * @return boolean if so.
      */
@@ -123,6 +138,7 @@ public interface ICompatibilityManager
 
     /**
      * Test if an itemStack is an ore.
+     *
      * @param stack the stack to test.
      * @return true if so.
      */
@@ -130,12 +146,14 @@ public interface ICompatibilityManager
 
     /**
      * Get a list of all blocks.
+     *
      * @return the immutable list.
      */
     List<ItemStack> getBlockList();
 
     /**
      * Test if an itemStack is compostable
+     *
      * @param stack the stack to test
      * @return true if so
      */
@@ -143,6 +161,7 @@ public interface ICompatibilityManager
 
     /**
      * Get a map of all the crusher modes.
+     *
      * @return the modes.
      */
     Map<ItemStorage, ItemStorage> getCrusherModes();
@@ -163,6 +182,7 @@ public interface ICompatibilityManager
 
     /**
      * Connect a certain block as leave to an ItemStack as sapling.
+     *
      * @param block the block to connect the sapling to.
      * @param stack the sapling.
      */
@@ -170,12 +190,14 @@ public interface ICompatibilityManager
 
     /**
      * If discovery process ran already.
+     *
      * @return true if so.
      */
     boolean isDiscoveredAlready();
 
     /**
      * Test if an itemStack is plantable for the florist.
+     *
      * @param itemStack the stack to check.
      * @return true if so.
      */
@@ -183,6 +205,7 @@ public interface ICompatibilityManager
 
     /**
      * If an itemStack is a lucky block which can result in an extra ore drop.
+     *
      * @param itemStack the stack to check.
      * @return true if so.
      */
@@ -190,6 +213,7 @@ public interface ICompatibilityManager
 
     /**
      * Get a random lucky ore from a luckyblock.
+     *
      * @param chanceBonus the chance bonus.
      * @return the lucky ore.
      */
@@ -197,6 +221,7 @@ public interface ICompatibilityManager
 
     /**
      * Get a random enchantment book for a certain building level.
+     *
      * @param buildingLevel the building level.
      * @return a tuple containing the stack and the level applied to it.
      */

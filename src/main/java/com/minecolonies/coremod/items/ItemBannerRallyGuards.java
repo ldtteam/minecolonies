@@ -167,9 +167,8 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     }
 
     /**
-     * Toggles the banner. This cannot be done by "the system" but must happen from here by the player.
-     * (Note that it will also send chat messages to the player)
-     * Thus, this method is private on purpose (for now).
+     * Toggles the banner. This cannot be done by "the system" but must happen from here by the player. (Note that it will also send chat messages to the player) Thus, this method
+     * is private on purpose (for now).
      *
      * @param banner   The banner to toggle
      * @param playerIn The player toggling the banner
@@ -345,8 +344,8 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     }
 
     /**
-     * Fetches the (client-side) Views of the guard towers rallied by the banner.
-     * If a rallied position is not a guard tower anymore (tower was moved or destroyed), the corresponding entry will be null.
+     * Fetches the (client-side) Views of the guard towers rallied by the banner. If a rallied position is not a guard tower anymore (tower was moved or destroyed), the
+     * corresponding entry will be null.
      *
      * @return A list of maps. Map's key is the position, Map's value is a guard tower or null.
      */
@@ -424,8 +423,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     }
 
     /**
-     * Check for the compound and return it.
-     * If not available create and return it.
+     * Check for the compound and return it. If not available create and return it.
      *
      * @param banner the banner to check for a compound.
      * @return the compound of the item.

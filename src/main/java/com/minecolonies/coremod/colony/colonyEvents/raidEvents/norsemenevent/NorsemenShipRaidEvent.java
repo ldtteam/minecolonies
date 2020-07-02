@@ -22,6 +22,7 @@ public class NorsemenShipRaidEvent extends AbstractShipRaidEvent
 
     /**
      * Create a new Norsemen raid event.
+     *
      * @param colony the colony.
      */
     public NorsemenShipRaidEvent(@NotNull final IColony colony)

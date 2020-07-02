@@ -56,12 +56,10 @@ public class FMLEventHandler
     {
         EntryPoint.register(event.getCommandDispatcher());
     }
-    
+
     @SubscribeEvent
     public static void onServerStopped(final FMLServerStoppingEvent event)
     {
         Pathfinding.shutdown();
     }
-
-
 }

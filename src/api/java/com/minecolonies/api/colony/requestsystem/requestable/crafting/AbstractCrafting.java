@@ -13,9 +13,9 @@ import java.util.Objects;
 public abstract class AbstractCrafting implements IRequestable
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    protected static final String NBT_STACK       = "Stack";
-    protected static final String NBT_COUNT       = "Count";
-    protected static final String NBT_MIN_COUNT       = "Count";
+    protected static final String NBT_STACK     = "Stack";
+    protected static final String NBT_COUNT     = "Count";
+    protected static final String NBT_MIN_COUNT = "Count";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     /**
@@ -36,8 +36,9 @@ public abstract class AbstractCrafting implements IRequestable
 
     /**
      * Create a Stack deliverable.
-     * @param stack the required stack.
-     * @param count the crafting count.
+     *
+     * @param stack    the required stack.
+     * @param count    the crafting count.
      * @param minCount the min crafting count.
      */
     public AbstractCrafting(@NotNull final ItemStack stack, final int count, final int minCount)
@@ -62,6 +63,7 @@ public abstract class AbstractCrafting implements IRequestable
 
     /**
      * Get the count to fulfill.
+     *
      * @return the count.
      */
     public int getCount()
@@ -71,6 +73,7 @@ public abstract class AbstractCrafting implements IRequestable
 
     /**
      * Get the min count to fulfill.
+     *
      * @return the min count.
      */
     public int getMinCount()

@@ -18,10 +18,12 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.IntNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -116,6 +118,27 @@ public final class StandardRequestFactories
                 requester,
                 requestState));
         }
+
+        @NotNull
+        @Override
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest input, final PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, Stack::serialize);
+        }
+
+        @NotNull
+        @Override
+        public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Stack::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -189,6 +212,25 @@ public final class StandardRequestFactories
                 requester,
                 requestState));
         }
+
+        @Override
+        public void serialize(IFactoryController controller, ItemStackListRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, StackList::serialize);
+        }
+
+        @Override
+        public ItemStackListRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              StackList::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackListRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -256,6 +298,27 @@ public final class StandardRequestFactories
         public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
             return deserializeFromNBT(controller, nbt, Tag::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemTagRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
+
+        @NotNull
+        @Override
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest itemTagRequest, final PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, itemTagRequest, packetBuffer, Tag::serialize);
+        }
+
+        @NotNull
+        @Override
+        public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Tag::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemTagRequest.class),
                 requested,
                 token,
@@ -336,6 +399,25 @@ public final class StandardRequestFactories
         {
             return new StandardRequests.DeliveryRequest(location, token, initialState, input);
         }
+
+        @Override
+        public void serialize(IFactoryController controller, DeliveryRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, Delivery::serialize);
+        }
+
+        @Override
+        public DeliveryRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Delivery::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.DeliveryRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -410,28 +492,55 @@ public final class StandardRequestFactories
         {
             return new StandardRequests.PickupRequest(location, token, initialState, input);
         }
+
+        @Override
+        public void serialize(IFactoryController controller, PickupRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, Pickup::serialize);
+        }
+
+        @Override
+        public PickupRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Pickup::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.PickupRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
-    public static abstract class AbstractCraftingRequestFactory<C extends AbstractCrafting, R extends StandardRequests.AbstractCraftingRequest<C>> implements IRequestFactory<C, R>
+    public static abstract class AbstractCraftingRequestFactory<C extends AbstractCrafting, R extends StandardRequests.AbstractCraftingRequest<C>>
+      implements IRequestFactory<C, R>
     {
-        private final IObjectConstructor<C, R> constructor;
-        private final Class<C>                 cClass;
-        private final Class<R>                 rClass;
-        private final IObjectToNBTConverter<C> serializer;
-        private final INBTToObjectConverter<C> deserializer;
+        private final IObjectConstructor<C, R>       constructor;
+        private final Class<C>                       cClass;
+        private final Class<R>                       rClass;
+        private final IObjectToNBTConverter<C>       nbtSerializer;
+        private final INBTToObjectConverter<C>       nbtDeserializer;
+        private final IObjectToPackBufferWriter<C>   packetSerializer;
+        private final IPacketBufferToObjectReader<C> packetDeserializer;
 
         protected AbstractCraftingRequestFactory(
           final IObjectConstructor<C, R> constructor,
           final Class<C> cClass,
           final Class<R> rClass,
-          final IObjectToNBTConverter<C> serializer, final INBTToObjectConverter<C> deserializer)
+          final IObjectToNBTConverter<C> nbtSerializer,
+          final INBTToObjectConverter<C> nbtDeserializer,
+          final IObjectToPackBufferWriter<C> packetSerializer,
+          final IPacketBufferToObjectReader<C> packetDeserializer)
         {
             this.constructor = constructor;
             this.cClass = cClass;
             this.rClass = rClass;
-            this.serializer = serializer;
-            this.deserializer = deserializer;
+            this.nbtSerializer = nbtSerializer;
+            this.nbtDeserializer = nbtDeserializer;
+            this.packetSerializer = packetSerializer;
+            this.packetDeserializer = packetDeserializer;
         }
 
         @Override
@@ -459,18 +568,37 @@ public final class StandardRequestFactories
         @Override
         public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final R r)
         {
-            return serializeToNBT(controller, r, serializer);
+            return serializeToNBT(controller, r, nbtSerializer);
         }
 
         @NotNull
         @Override
         public R deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
         {
-            return deserializeFromNBT(controller, nbt, deserializer, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(rClass),
+            return deserializeFromNBT(controller, nbt, nbtDeserializer, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(rClass),
               requested,
               token,
               requester,
               requestState));
+        }
+
+        @Override
+        public void serialize(IFactoryController controller, R input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, packetSerializer);
+        }
+
+        @Override
+        public R deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              packetDeserializer,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(rClass),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
@@ -485,6 +613,8 @@ public final class StandardRequestFactories
               PrivateCrafting.class,
               StandardRequests.PrivateCraftingRequest.class,
               PrivateCrafting::serialize,
+              PrivateCrafting::deserialize,
+              PrivateCrafting::serialize,
               PrivateCrafting::deserialize);
         }
     }
@@ -498,6 +628,8 @@ public final class StandardRequestFactories
             super((requested, token, requester, requestState) -> new StandardRequests.PublicCraftingRequest(requester, token, requestState, requested),
               PublicCrafting.class,
               StandardRequests.PublicCraftingRequest.class,
+              PublicCrafting::serialize,
+              PublicCrafting::deserialize,
               PublicCrafting::serialize,
               PublicCrafting::deserialize);
         }
@@ -543,6 +675,25 @@ public final class StandardRequestFactories
         public StandardRequests.ToolRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
             return deserializeFromNBT(controller, nbt, Tool::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ToolRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
+
+        @Override
+        public void serialize(IFactoryController controller, ToolRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, Tool::serialize);
+        }
+
+        @Override
+        public ToolRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Tool::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ToolRequest.class),
                 requested,
                 token,
@@ -597,6 +748,25 @@ public final class StandardRequestFactories
                 requester,
                 requestState));
         }
+
+        @Override
+        public void serialize(IFactoryController controller, FoodRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, Food::serialize);
+        }
+
+        @Override
+        public FoodRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Food::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.FoodRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -639,6 +809,25 @@ public final class StandardRequestFactories
         public StandardRequests.SmeltAbleOreRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
             return deserializeFromNBT(controller, nbt, SmeltableOre::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.SmeltAbleOreRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
+
+        @Override
+        public void serialize(IFactoryController controller, SmeltAbleOreRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, SmeltableOre::serialize);
+        }
+
+        @Override
+        public SmeltAbleOreRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              SmeltableOre::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.SmeltAbleOreRequest.class),
                 requested,
                 token,
@@ -693,6 +882,25 @@ public final class StandardRequestFactories
                 requester,
                 requestState));
         }
+
+        @Override
+        public void serialize(IFactoryController controller, BurnableRequest input, PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, input, packetBuffer, Burnable::serialize);
+        }
+
+        @Override
+        public BurnableRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Burnable::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.BurnableRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
     }
 
     /**
@@ -711,7 +919,7 @@ public final class StandardRequestFactories
 
         final CompoundNBT requesterCompound = controller.serialize(request.getRequester());
         final CompoundNBT tokenCompound = controller.serialize(request.getId());
-        final IntNBT stateCompound = request.getState().serializeNBT();
+        final IntNBT stateCompound = request.getState().serialize();
         final CompoundNBT requestedCompound = typeSerialization.apply(controller, request.getRequest());
 
         final ListNBT childrenCompound = new ListNBT();
@@ -745,6 +953,40 @@ public final class StandardRequestFactories
         return compound;
     }
 
+    public static <T extends IRequestable> void serializeToPacketBuffer(
+      final IFactoryController controller,
+      final IRequest<T> request,
+      final PacketBuffer packetBuffer,
+      final IObjectToPackBufferWriter<T> typeSerialization)
+    {
+
+        controller.serialize(packetBuffer, request.getRequester());
+        controller.serialize(packetBuffer, request.getId());
+        request.getState().serialize(packetBuffer);
+        typeSerialization.apply(controller, packetBuffer, request.getRequest());
+
+        packetBuffer.writeInt(request.getChildren().size());
+        for (final IToken<?> token : request.getChildren())
+        {
+            controller.serialize(packetBuffer, token);
+        }
+
+        packetBuffer.writeBoolean(request.hasResult());
+        if (request.hasResult())
+        {
+            typeSerialization.apply(controller, packetBuffer, request.getResult());
+        }
+
+        packetBuffer.writeBoolean(request.hasParent());
+        if (request.hasParent())
+        {
+            controller.serialize(packetBuffer, request.getParent());
+        }
+
+        packetBuffer.writeInt(request.getDeliveries().size());
+        request.getDeliveries().forEach(packetBuffer::writeItemStack);
+    }
+
     public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromNBT(
       final IFactoryController controller,
       final CompoundNBT compound,
@@ -753,7 +995,7 @@ public final class StandardRequestFactories
     {
         final IRequester requester = controller.deserialize(compound.getCompound(NBT_REQUESTER));
         final IToken<?> token = controller.deserialize(compound.getCompound(NBT_TOKEN));
-        final RequestState state = RequestState.deserializeNBT((IntNBT) compound.get(NBT_STATE));
+        final RequestState state = RequestState.deserialize((IntNBT) compound.get(NBT_STATE));
         final T requested = typeDeserialization.apply(controller, compound.getCompound(NBT_REQUESTED));
 
         final List<IToken<?>> childTokens = new ArrayList<>();
@@ -789,6 +1031,46 @@ public final class StandardRequestFactories
         return request;
     }
 
+    public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromPacketBuffer(
+      final IFactoryController controller,
+      final PacketBuffer buffer,
+      final IPacketBufferToObjectReader<T> typeDeserialization,
+      final IObjectConstructor<T, R> objectConstructor)
+    {
+        final IRequester requester = controller.deserialize(buffer);
+        final IToken<?> token = controller.deserialize(buffer);
+        final RequestState state = RequestState.deserialize(buffer);
+        final T requested = typeDeserialization.apply(controller, buffer);
+
+        final List<IToken<?>> childTokens = new ArrayList<>();
+        for (int i = 0; i < buffer.readInt(); i++)
+        {
+            childTokens.add(controller.deserialize(buffer));
+        }
+
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE) final R request = objectConstructor.construct(requested, token, requester, state);
+        request.addChildren(childTokens);
+
+        if (buffer.readBoolean())
+        {
+            request.setResult(typeDeserialization.apply(controller, buffer));
+        }
+
+        if (buffer.readBoolean())
+        {
+            request.setParent(controller.deserialize(buffer));
+        }
+
+        final List<ItemStack> deliveries = new ArrayList<>();
+        for (int i = 0; i < buffer.readInt(); i++)
+        {
+            deliveries.add(buffer.readItemStack());
+        }
+
+        request.overrideCurrentDeliveries(ImmutableList.copyOf(deliveries));
+        return request;
+    }
+
     @FunctionalInterface
     public interface IObjectToNBTConverter<O>
     {
@@ -799,6 +1081,18 @@ public final class StandardRequestFactories
     public interface INBTToObjectConverter<O>
     {
         O apply(IFactoryController controller, CompoundNBT compound);
+    }
+
+    @FunctionalInterface
+    public interface IObjectToPackBufferWriter<O>
+    {
+        void apply(IFactoryController controller, PacketBuffer buffer, O input);
+    }
+
+    @FunctionalInterface
+    public interface IPacketBufferToObjectReader<O>
+    {
+        O apply(IFactoryController controller, PacketBuffer buffer);
     }
 
     @FunctionalInterface

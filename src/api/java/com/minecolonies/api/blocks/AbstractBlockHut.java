@@ -221,11 +221,11 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof TileEntityColonyBuilding)
         {
-            if (((TileEntityColonyBuilding) tileEntity).getBuildingName() != getBuildingEntry().getRegistryName())
+            @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
+            if (hut.getBuildingName() != getBuildingEntry().getRegistryName())
             {
-                ((TileEntityColonyBuilding) tileEntity).registryName = getBuildingEntry().getRegistryName();
+                hut.registryName = getBuildingEntry().getRegistryName();
             }
-            @NotNull final AbstractTileEntityColonyBuilding hut = (AbstractTileEntityColonyBuilding) tileEntity;
             @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, hut.getPosition());
 
             if (colony != null)

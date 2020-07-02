@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -60,6 +61,22 @@ public abstract class AbstractTokenFactory<I> implements ITokenFactory<I, Standa
 
         final UUID id = new UUID(msb, lsb);
 
+        return new StandardToken(id);
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, StandardToken input, PacketBuffer packetBuffer)
+    {
+        packetBuffer.writeLong(input.getIdentifier().getLeastSignificantBits());
+        packetBuffer.writeLong(input.getIdentifier().getMostSignificantBits());
+    }
+
+    @Override
+    public StandardToken deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
+        final long lsb = buffer.readLong();
+        final long msb = buffer.readLong();
+        final UUID id = new UUID(msb, lsb);
         return new StandardToken(id);
     }
 }

@@ -229,7 +229,7 @@ public class ModelEntityPlanterFemale extends CitizenModel<AbstractEntityCitizen
         ponytail_3.setTextureSize(128, 64);
         ponytail_3.mirror = true;
         setRotation(ponytail_3, -1.186824F, 0F, 0F);
-        
+
         bipedHeadwear.showModel = false;
 
         bipedBody.addChild(bipedChest);

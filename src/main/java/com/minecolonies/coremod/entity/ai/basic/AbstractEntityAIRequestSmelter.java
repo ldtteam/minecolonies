@@ -12,6 +12,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -20,7 +21,6 @@ import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -132,7 +132,8 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + (job.getCraftCounter() * inputStorage.getAmount()) < inputStorage.getAmount() * job.getMaxCraftingCount())
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + (job.getCraftCounter() * inputStorage.getAmount())
+                  < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {

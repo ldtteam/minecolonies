@@ -46,9 +46,10 @@ public class ContainerField extends Container
 
     /**
      * Constructs the GUI with the player.
-     * @param windowId the window id.
+     *
+     * @param windowId        the window id.
      * @param playerInventory the player inventory.
-     * @param extra extra data.
+     * @param extra           extra data.
      */
     public ContainerField(final int windowId, final PlayerInventory playerInventory, final PacketBuffer extra)
     {
@@ -77,11 +78,11 @@ public class ContainerField extends Container
             for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
                 addSlot(new Slot(
-                        playerInventory,
-                        j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
-                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * LINES_PER_OFFSET
-                                + i * PLAYER_INVENTORY_OFFSET_EACH
+                  playerInventory,
+                  j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
+                  PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                  PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * LINES_PER_OFFSET
+                    + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -89,9 +90,9 @@ public class ContainerField extends Container
         for (i = 0; i < INVENTORY_COLUMNS; i++)
         {
             addSlot(new Slot(
-                    playerInventory, i,
-                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                    PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * LINES_PER_OFFSET
+              playerInventory, i,
+              PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+              PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * LINES_PER_OFFSET
             ));
         }
     }
@@ -103,13 +104,17 @@ public class ContainerField extends Container
         ItemStack transfer = ItemStackUtils.EMPTY;
         Slot slot = this.inventorySlots.get(index);
 
-        if (slot == null || !slot.getHasStack()) return transfer;
+        if (slot == null || !slot.getHasStack())
+        {
+            return transfer;
+        }
 
         transfer = slot.getStack();
 
         if (index == 0)
         {
-            if (!mergeItemStack(transfer, 1, 37, true)) {
+            if (!mergeItemStack(transfer, 1, 37, true))
+            {
                 return ItemStackUtils.EMPTY;
             }
         }
@@ -128,12 +133,15 @@ public class ContainerField extends Container
     public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
     {
         if (colony == null)
+        {
             return false;
+        }
         return colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS);
     }
 
     /**
      * Get the assigned tile entity.
+     *
      * @return the tile.
      */
     public AbstractScarescrowTileEntity getTileEntity()

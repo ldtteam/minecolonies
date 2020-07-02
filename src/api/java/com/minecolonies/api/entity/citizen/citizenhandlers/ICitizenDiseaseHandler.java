@@ -14,24 +14,28 @@ public interface ICitizenDiseaseHandler
 
     /**
      * Check if the citizen is sick and must be healed..
+     *
      * @return true if so.
      */
     boolean isSick();
 
     /**
      * Write the handler to NBT.
+     *
      * @param compound the nbt to write it to.
      */
     void write(final CompoundNBT compound);
 
     /**
      * Read the handler from NBT.
+     *
      * @param compound the nbt to read it from.
      */
     void read(final CompoundNBT compound);
 
     /**
      * get the disease identifier.
+     *
      * @return the disease identifier.
      */
     String getDisease();

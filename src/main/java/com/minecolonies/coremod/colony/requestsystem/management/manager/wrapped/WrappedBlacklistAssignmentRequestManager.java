@@ -7,8 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 /**
- * Class used to handle internal reassignment changes.
- * Take the given blacklist into account when it assigns the requests.
+ * Class used to handle internal reassignment changes. Take the given blacklist into account when it assigns the requests.
  */
 public final class WrappedBlacklistAssignmentRequestManager extends AbstractWrappedRequestManager
 {

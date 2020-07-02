@@ -93,15 +93,20 @@ public class ViewFilterableList
     private final String id;
 
     /**
-     *
-     * @param window the view this belongs to.
-     * @param parent the parent window.
-     * @param building the building it belongs to.
-     * @param desc the description on the top of the page.
-     * @param id the id of this window (page order of filterable lists).
+     * @param window     the view this belongs to.
+     * @param parent     the parent window.
+     * @param building   the building it belongs to.
+     * @param desc       the description on the top of the page.
+     * @param id         the id of this window (page order of filterable lists).
      * @param isInverted if the list is inverted.
      */
-    public ViewFilterableList(final View window, final AbstractHutFilterableLists parent, final AbstractFilterableListsView building, final String desc, final String id, final boolean isInverted)
+    public ViewFilterableList(
+      final View window,
+      final AbstractHutFilterableLists parent,
+      final AbstractFilterableListsView building,
+      final String desc,
+      final String id,
+      final boolean isInverted)
     {
         this.window = window;
         this.id = id;
@@ -115,6 +120,7 @@ public class ViewFilterableList
 
     /**
      * To be called by the owning window on button click.
+     *
      * @param button the clicked button.
      */
     public void onButtonClick(final Button button)
@@ -195,7 +201,7 @@ public class ViewFilterableList
 
     /**
      * Add exceptions which do not match the predicate after scanning.
-     * 
+     *
      * @return a list of {@link ItemStorage}s that do not match the predicate.
      */
     private List<ItemStorage> getExceptions()

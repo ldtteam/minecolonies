@@ -20,35 +20,35 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
     {
         if (context.length < PARAMS_GLOBAL_RESEARCH)
         {
-            throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only " + PARAMS_GLOBAL_RESEARCH  + " are allowed!");
+            throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only " + PARAMS_GLOBAL_RESEARCH + " are allowed!");
         }
 
-        if(!(context[0] instanceof String))
+        if (!(context[0] instanceof String))
         {
             throw new IllegalArgumentException("First parameter is supposed to be the String ID!");
         }
 
-        if(!(context[1] instanceof String))
+        if (!(context[1] instanceof String))
         {
             throw new IllegalArgumentException("Second parameter is supposed to be the IResearch parent!");
         }
 
-        if(!(context[2] instanceof String))
+        if (!(context[2] instanceof String))
         {
             throw new IllegalArgumentException("Third parameter is supposed to be the Branch (String)!");
         }
 
-        if(!(context[3] instanceof String))
+        if (!(context[3] instanceof String))
         {
             throw new IllegalArgumentException("Fourth parameter is supposed to be the Desc (String)!");
         }
 
-        if(!(context[4] instanceof Integer))
+        if (!(context[4] instanceof Integer))
         {
             throw new IllegalArgumentException("Fifth parameter is supposed to be the Depth (int)!");
         }
 
-        if(!(context[5] instanceof IResearchEffect))
+        if (!(context[5] instanceof IResearchEffect))
         {
             throw new IllegalArgumentException("Last parameter is supposed to be the IResearchEffect!");
         }
@@ -65,11 +65,11 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
     /**
      * Method to get a new Instance of a Research.
      *
-     * @param id the id.
+     * @param id     the id.
      * @param parent the parent.
      * @param branch the branch.
-     * @param desc the description.
-     * @param depth the depth.
+     * @param desc   the description.
+     * @param depth  the depth.
      * @param effect the effect.
      * @return a new Instance of Research.
      */

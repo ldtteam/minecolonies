@@ -430,7 +430,6 @@ public final class TranslationConstants
     @NonNls
     public static final String ALL_CITIZENS_ARE_SLEEPING                                           = "com.minecolonies.coremod.entity.citizen.sleep";
 
-
     private TranslationConstants()
     {
         //empty default

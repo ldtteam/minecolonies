@@ -4,8 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 
 /**
- * Interface used to describe a class that provides resolvers.
- * Should be put on Buildings, Citizens etc who can resolve certain requests.
+ * Interface used to describe a class that provides resolvers. Should be put on Buildings, Citizens etc who can resolve certain requests.
  * <p>
  * If a provider is added to his or her colony
  */

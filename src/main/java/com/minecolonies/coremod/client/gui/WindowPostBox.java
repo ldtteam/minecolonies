@@ -32,35 +32,35 @@ public class WindowPostBox extends AbstractWindowRequestTree
     /**
      * Id of the deliver available button inside the GUI.
      */
-    private static final String TAG_BUTTON_DELIVER_AVAILABLE = "deliverAvailable";
+    private static final String               TAG_BUTTON_DELIVER_AVAILABLE = "deliverAvailable";
     /**
      * String which displays full delivery.
      */
-    private static final String RED_X = "§n§4X";
+    private static final String               RED_X                        = "§n§4X";
     /**
      * String which displays partial delivery..
      */
-    private static final String APPROVE = "✓";
+    private static final String               APPROVE                      = "✓";
     /**
      * List of all item stacks in the game.
      */
-    private final List<ItemStack> allItems = new ArrayList<>();
+    private final        List<ItemStack>      allItems                     = new ArrayList<>();
     /**
      * Resource scrolling list.
      */
-    private final ScrollingList stackList;
+    private final        ScrollingList        stackList;
     /**
      * The building view of this window.
      */
-    private final AbstractBuildingView buildingView;
+    private final        AbstractBuildingView buildingView;
     /**
      * The filter for the resource list.
      */
-    private String filter = "";
+    private              String               filter                       = "";
     /**
      * Whether to deliver what's currently in the warehouse and then cancel order.
      */
-    private boolean deliverAvailable;
+    private              boolean              deliverAvailable;
 
     /**
      * Create the postBox GUI.
@@ -137,7 +137,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
     public void onOpened()
     {
         super.onOpened();
-        findPaneOfTypeByID(TAG_BUTTON_DELIVER_AVAILABLE,Button.class).setLabel(RED_X);
+        findPaneOfTypeByID(TAG_BUTTON_DELIVER_AVAILABLE, Button.class).setLabel(RED_X);
 
         updateResources();
     }

@@ -14,6 +14,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
@@ -26,7 +27,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
-import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -50,7 +50,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
     /**
      * How many of each cure item it should try to request at a time.
      */
-    private static final int REQUEST_COUNT   = 16;
+    private static final int REQUEST_COUNT = 16;
 
     /**
      * Area the worker targets.
@@ -168,7 +168,8 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                     {
                         if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), cure::isItemEqual))
                         {
-                            if (InventoryUtils.getItemCountInItemHandler(getOwnBuilding().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), stack -> stack.isItemEqual(cure)) < cure.getCount())
+                            if (InventoryUtils.getItemCountInItemHandler(getOwnBuilding().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null),
+                              stack -> stack.isItemEqual(cure)) < cure.getCount())
                             {
                                 needsCurrently = new Tuple<>(stack -> stack.isItemEqual(cure), cure.getCount());
                                 return GATHERING_REQUIRED_MATERIALS;
@@ -179,6 +180,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                                 if (request.getRequest().getStack().isItemEqual(cure))
                                 {
                                     hasCureRequested = true;
+                                    break;
                                 }
                             }
                             if (!hasCureRequested)

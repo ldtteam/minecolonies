@@ -55,6 +55,7 @@ public class MobAIRegistry implements IMobAIRegistry
           .registerNewAiTaskForMobs(PRIORITY_ONE, EntityAIAttackArcher::new, mob -> mob instanceof IArcherMobEntity)
           .registerNewAiTaskForMobs(PRIORITY_ONE, EntityAIRaiderAttackMelee::new, mob -> !(mob instanceof IArcherMobEntity));
     }
+
     @NotNull
     @Override
     public Multimap<Integer, Goal> getEntityAiTasksForMobs(final AbstractEntityMinecoloniesMob mob)
@@ -102,9 +103,9 @@ public class MobAIRegistry implements IMobAIRegistry
      */
     private final class TaskInformationWrapper<M extends Entity>
     {
-        private final int                                                   priority;
+        private final int                                           priority;
         private final Function<AbstractEntityMinecoloniesMob, Goal> aiTaskProducer;
-        private final Predicate<M>                                          entityPredicate;
+        private final Predicate<M>                                  entityPredicate;
 
         TaskInformationWrapper(
           final int priority,

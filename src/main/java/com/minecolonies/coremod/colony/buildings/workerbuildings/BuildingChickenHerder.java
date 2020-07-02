@@ -22,7 +22,7 @@ public class BuildingChickenHerder extends AbstractBuildingWorker
     /**
      * Description of the job executed in the hut.
      */
-    private static final String JOB          = "chickenherder";
+    private static final String JOB = "chickenherder";
 
     /**
      * Description of the block used to set this block.
@@ -36,6 +36,7 @@ public class BuildingChickenHerder extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     *
      * @param c the colony.
      * @param l the location.
      */
@@ -98,6 +99,7 @@ public class BuildingChickenHerder extends AbstractBuildingWorker
     {
         /**
          * Instantiates the view of the building.
+         *
          * @param c the colonyView.
          * @param l the location of the block.
          */

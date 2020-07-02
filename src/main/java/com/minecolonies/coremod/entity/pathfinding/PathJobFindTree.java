@@ -15,8 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Find and return a path to the nearest tree.
- * Created: May 21, 2015
+ * Find and return a path to the nearest tree. Created: May 21, 2015
  */
 public class PathJobFindTree extends AbstractPathJob
 {
@@ -52,13 +51,13 @@ public class PathJobFindTree extends AbstractPathJob
      * @param colony     the colony.
      */
     public PathJobFindTree(
-                            final World world,
-                            @NotNull final BlockPos start,
-                            final BlockPos home,
-                            final int range,
-                            final List<ItemStorage> treesToCut,
-                            final IColony colony,
-                            final LivingEntity entity)
+      final World world,
+      @NotNull final BlockPos start,
+      final BlockPos home,
+      final int range,
+      final List<ItemStorage> treesToCut,
+      final IColony colony,
+      final LivingEntity entity)
     {
         super(world, start, start, range, new TreePathResult(), entity);
         this.treesToNotCut = treesToCut;
@@ -69,24 +68,24 @@ public class PathJobFindTree extends AbstractPathJob
     /**
      * AbstractPathJob constructor.
      *
-     * @param world      the world within which to path.
-     * @param start      the start position from which to path from.
-     * @param home       the position of the worker hut.
-     * @param startRestriction    start of the restricted area.
-     * @param endRestriction      end of the restricted area.
-     * @param treesToCut the trees the lj is supposed to cut.
-     * @param entity the entity.
-     * @param colony the colony.
+     * @param world            the world within which to path.
+     * @param start            the start position from which to path from.
+     * @param home             the position of the worker hut.
+     * @param startRestriction start of the restricted area.
+     * @param endRestriction   end of the restricted area.
+     * @param treesToCut       the trees the lj is supposed to cut.
+     * @param entity           the entity.
+     * @param colony           the colony.
      */
     public PathJobFindTree(
-            final World world,
-            @NotNull final BlockPos start,
-            final BlockPos home,
-            final BlockPos startRestriction,
-            final BlockPos endRestriction,
-            final List<ItemStorage> treesToCut,
-            final IColony colony,
-            final LivingEntity entity)
+      final World world,
+      @NotNull final BlockPos start,
+      final BlockPos home,
+      final BlockPos startRestriction,
+      final BlockPos endRestriction,
+      final List<ItemStorage> treesToCut,
+      final IColony colony,
+      final LivingEntity entity)
     {
         super(world, startRestriction, endRestriction, new TreePathResult(), entity);
         this.treesToNotCut = treesToCut;

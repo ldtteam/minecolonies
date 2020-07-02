@@ -12,8 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Hut for the warehouse.
- * No different from {@link AbstractBlockHut}
+ * Hut for the warehouse. No different from {@link AbstractBlockHut}
  */
 
 public class BlockHutWareHouse extends AbstractBlockHut<BlockHutWareHouse>
@@ -36,7 +35,7 @@ public class BlockHutWareHouse extends AbstractBlockHut<BlockHutWareHouse>
     public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
     {
         final TileEntityWareHouse building = (TileEntityWareHouse) MinecoloniesTileEntities.WAREHOUSE.create();
-        building.registryName =  this.getBuildingEntry().getRegistryName();
+        building.registryName = this.getBuildingEntry().getRegistryName();
         return building;
     }
 

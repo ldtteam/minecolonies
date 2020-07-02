@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -56,17 +57,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
-import static com.minecolonies.coremod.colony.ColonyState.*;
 
 /**
- * This class describes a colony and contains all the data and methods for
- * manipulating a Colony.
+ * This class describes a colony and contains all the data and methods for manipulating a Colony.
  */
 @SuppressWarnings({Suppression.BIG_CLASS, Suppression.SPLIT_CLASS})
 public class Colony implements IColony
@@ -949,9 +949,8 @@ public class Colony implements IColony
     }
 
     /**
-     * Any per-world-tick logic should be performed here.
-     * NOTE: If the Colony's world isn't loaded, it won't have a world tick.
-     * Use onServerTick for logic that should _always_ run.
+     * Any per-world-tick logic should be performed here. NOTE: If the Colony's world isn't loaded, it won't have a world tick. Use onServerTick for logic that should _always_
+     * run.
      *
      * @param event {@link TickEvent.WorldTickEvent}
      */
@@ -971,8 +970,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Calculate randomly if the colony should update the citizens.
-     * By mean they update it at CLEANUP_TICK_INCREMENT.
+     * Calculate randomly if the colony should update the citizens. By mean they update it at CLEANUP_TICK_INCREMENT.
      *
      * @param world        the world.
      * @param averageTicks the average ticks to upate it.
@@ -1001,8 +999,9 @@ public class Colony implements IColony
                     if (world.getChunkProvider().isChunkLoaded(new ChunkPos(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4)))
                     {
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
-                        if (((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint) && worldBlock != ModBlocks.blockConstructionTape)
-                              || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
+                        if (
+                          ((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint) && worldBlock != ModBlocks.blockConstructionTape)
+                            || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
                         {
                             wayPoints.remove(entry.getKey());
                             markDirty();
@@ -1034,8 +1033,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Sets the name of the colony.
-     * Marks dirty.
+     * Sets the name of the colony. Marks dirty.
      *
      * @param n new name.
      */

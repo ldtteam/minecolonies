@@ -88,8 +88,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     private double lastDistance = 0.0f;
 
     /**
-     * Creates the abstract part of the AI.inte
-     * Always use this constructor!
+     * Creates the abstract part of the AI.inte Always use this constructor!
      *
      * @param job the job to fulfill
      */
@@ -448,8 +447,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     /**
      * Gets the aim height for ranged guards.
      *
-     * @return the aim height.
-     * Suppression because the method already explains the value.
+     * @return the aim height. Suppression because the method already explains the value.
      */
     @SuppressWarnings({"squid:S3400", "squid:S109"})
     private double getAimHeight()

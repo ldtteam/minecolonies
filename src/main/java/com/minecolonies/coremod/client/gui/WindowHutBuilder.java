@@ -7,7 +7,6 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
-import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -20,7 +19,6 @@ import com.minecolonies.coremod.network.messages.server.colony.building.Transfer
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.Stats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +38,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      */
     public static final int RED       = Color.getByName("red", 0);
     public static final int DARKGREEN = Color.getByName("darkgreen", 0);
-    public static final int BLACK              = Color.getByName("black", 0);
+    public static final int BLACK     = Color.getByName("black", 0);
 
     /**
      * The advancement location.
@@ -70,17 +68,14 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      */
     public WindowHutBuilder(final BuildingBuilder.View building)
     {
-        super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
-        pullResourcesFromHut();
-        registerButton(RESOURCE_ADD, this::transferItems);
-        this.needGuide = true;
+        this(building, true);
     }
 
     /**
      * Constructor for window builder hut.
      *
      * @param needGuide if the guide should be opened.
-     * @param building {@link BuildingBuilder.View}.
+     * @param building  {@link BuildingBuilder.View}.
      */
     public WindowHutBuilder(final BuildingBuilder.View building, final boolean needGuide)
     {

@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -100,6 +101,32 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
                                                   .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
                                                   .collect(Collectors.toCollection(LinkedList<IToken<?>>::new));
             return new StandardRequestSystemDeliveryManJobDataStore(token, queue);
+        }
+
+        @Override
+        public void serialize(
+          IFactoryController controller, StandardRequestSystemDeliveryManJobDataStore input,
+          PacketBuffer packetBuffer)
+        {
+            controller.serialize(packetBuffer, input.id);
+            packetBuffer.writeInt(input.queue.size());
+            input.queue.forEach(entry -> controller.serialize(packetBuffer, entry));
+        }
+
+        @Override
+        public StandardRequestSystemDeliveryManJobDataStore deserialize(
+          IFactoryController controller,
+          PacketBuffer buffer) throws Throwable
+        {
+            final IToken<?> id = controller.deserialize(buffer);
+            final LinkedList<IToken<?>> queue = new LinkedList<>();
+            final int queueSize = buffer.readInt();
+            for (int i = 0; i < queueSize; ++i)
+            {
+                queue.add(controller.deserialize(buffer));
+            }
+
+            return new StandardRequestSystemDeliveryManJobDataStore(id, queue);
         }
     }
 }

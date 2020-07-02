@@ -49,8 +49,7 @@ public final class EntityUtils
     }
 
     /**
-     * Checks if a player is a fakePlayer and tries to get the owning player if
-     * possible.
+     * Checks if a player is a fakePlayer and tries to get the owning player if possible.
      *
      * @param player the incoming player.
      * @param world  the world.
@@ -97,12 +96,10 @@ public final class EntityUtils
     }
 
     /**
-     * Returns the new rotation degree calculated from the current and intended
-     * rotation up to a max.
+     * Returns the new rotation degree calculated from the current and intended rotation up to a max.
      *
      * @param currentRotation  the current rotation the citizen has.
-     * @param intendedRotation the wanted rotation he should have after applying
-     *                         this.
+     * @param intendedRotation the wanted rotation he should have after applying this.
      * @param maxIncrement     the 'movement speed.
      * @return a rotation value he should move.
      */
@@ -147,8 +144,7 @@ public final class EntityUtils
     /**
      * Checks if a blockPos in a world is solid or liquid.
      * <p>
-     * Useful to find a suitable Place to stand.
-     * (avoid these blocks to find one)
+     * Useful to find a suitable Place to stand. (avoid these blocks to find one)
      *
      * @param world    the world to look in
      * @param blockPos the blocks position
@@ -185,9 +181,7 @@ public final class EntityUtils
     }
 
     /**
-     * Sets the movement of the entity to specific point.
-     * Returns true if direction is set, otherwise false.
-     * {@link #tryMoveLivingToXYZ(MobEntity, int, int, int, double)}
+     * Sets the movement of the entity to specific point. Returns true if direction is set, otherwise false. {@link #tryMoveLivingToXYZ(MobEntity, int, int, int, double)}
      *
      * @param living Entity to move
      * @param x      x-coordinate
@@ -201,8 +195,7 @@ public final class EntityUtils
     }
 
     /**
-     * Sets the movement of the entity to specific point.
-     * Returns true if direction is set, otherwise false.
+     * Sets the movement of the entity to specific point. Returns true if direction is set, otherwise false.
      *
      * @param living Entity to move
      * @param x      x-coordinate
@@ -233,8 +226,7 @@ public final class EntityUtils
     }
 
     /**
-     * Checks if a entity is at his working site.
-     * If he isn't, sets it's path to the location.
+     * Checks if a entity is at his working site. If he isn't, sets it's path to the location.
      *
      * @param entity entity to check
      * @param x      X-coordinate
@@ -306,8 +298,7 @@ public final class EntityUtils
     }
 
     /**
-     * Returns whether or not the entity is within a specific range of his
-     * working site.
+     * Returns whether or not the entity is within a specific range of his working site.
      *
      * @param entityLiving entity to check
      * @param x            X-coordinate

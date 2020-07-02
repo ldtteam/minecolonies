@@ -12,20 +12,22 @@ public interface IRecipeManager
 {
     /**
      * Get a unmodifiable copy of the recipes map.
+     *
      * @return a map of Token, RecipeStorage.
      */
     ImmutableMap<IToken<?>, IRecipeStorage> getRecipes();
 
     /**
      * Add a recipe to the map.
+     *
      * @param storage the recipe to add
      * @return the IToken.
      */
     IToken<?> addRecipe(final IRecipeStorage storage);
 
     /**
-     * Check if recipe is in map already, if not.
-     * Add a recipe to the map.
+     * Check if recipe is in map already, if not. Add a recipe to the map.
+     *
      * @param storage the recipe to add
      * @return the iToken.
      */
@@ -33,6 +35,7 @@ public interface IRecipeManager
 
     /**
      * Get the recipe id of a given recipeStorage.
+     *
      * @param storage the storage.
      * @return the id or null if inexistent.
      */
@@ -44,7 +47,6 @@ public interface IRecipeManager
      * @param compound NBT-Tag.
      */
     void write(@NotNull final CompoundNBT compound);
-
 
     /**
      * Read Colonies from saved NBT data.

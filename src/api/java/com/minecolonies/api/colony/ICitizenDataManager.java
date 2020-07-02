@@ -20,7 +20,7 @@ public interface ICitizenDataManager
      * Creates a citizen data instance from the stored nbt.
      *
      * @param compound The nbt data to create an instance from.
-     * @param colony The colony to create an instance in.
+     * @param colony   The colony to create an instance in.
      * @return The citizen data, loaded from the nbt into the colony.
      */
     ICitizenData createFromNBT(@NotNull CompoundNBT compound, IColony colony);
@@ -28,9 +28,9 @@ public interface ICitizenDataManager
     /**
      * Creates a citizen data view from a given network buffer, containing the views data.
      *
-     * @param id the id of the citizen.
+     * @param id            the id of the citizen.
      * @param networkBuffer The network buffer to read from.
-     * @param colonyView the colony the citizen belongs to.
+     * @param colonyView    the colony the citizen belongs to.
      * @return The citizen data view.
      */
     ICitizenDataView createFromNetworkData(@NotNull final int id, @NotNull final PacketBuffer networkBuffer, final IColonyView colonyView);

@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.requestsystem.management.handlers;
+package com.minecolonies.api.colony.requestsystem.management;
 
 import com.minecolonies.api.colony.requestsystem.manager.AssigningStrategy;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -122,8 +122,8 @@ public interface IRequestHandler
      * Method used to get a registered request from a given token.
      *
      * @param token The token to query
-     * @throws IllegalArgumentException when the token is unknown to the given manager.
      * @return the request.
+     * @throws IllegalArgumentException when the token is unknown to the given manager.
      */
     IRequest<?> getRequest(IToken<?> token);
 
@@ -142,5 +142,4 @@ public interface IRequestHandler
      * @return A collection with request instances that are made by the given requester.
      */
     Collection<IRequest<?>> getRequestsMadeByRequester(IRequester requester);
-
 }

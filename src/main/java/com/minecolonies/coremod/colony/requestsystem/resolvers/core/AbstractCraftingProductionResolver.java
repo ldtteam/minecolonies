@@ -34,9 +34,10 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
 
     /**
      * Constructor to initialize.
+     *
      * @param location the location.
-     * @param token the id.
-     * @param cClass the class.
+     * @param token    the id.
+     * @param cClass   the class.
      */
     public AbstractCraftingProductionResolver(
       @NotNull final ILocation location,
@@ -96,7 +97,12 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     }
 
     @Nullable
-    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, final ItemStack stack, final int count, final int minCount)
+    protected List<IToken<?>> attemptResolveForBuildingAndStack(
+      @NotNull final IRequestManager manager,
+      @NotNull final AbstractBuildingWorker building,
+      final ItemStack stack,
+      final int count,
+      final int minCount)
     {
         if (!canBuildingCraftStack(manager, building, stack))
         {
@@ -125,13 +131,13 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
 
     @Nullable
     protected List<IToken<?>> createRequestsForRecipe(
-            @NotNull final IRequestManager manager,
-            final int count,
-            final int minCount,
-            @NotNull final IRecipeStorage storage)
+      @NotNull final IRequestManager manager,
+      final int count,
+      final int minCount,
+      @NotNull final IRecipeStorage storage)
     {
         final List<IToken<?>> materialRequests = new ArrayList<>();
-        for (final ItemStorage ingredient: storage.getCleanedInput())
+        for (final ItemStorage ingredient : storage.getCleanedInput())
         {
             if (!ItemStackUtils.isEmpty(ingredient.getItemStack()))
             {
@@ -181,8 +187,9 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
 
     /**
      * Resolve the request in a building.
-     * @param manager the request manager.
-     * @param request the request.
+     *
+     * @param manager  the request manager.
+     * @param request  the request.
      * @param building the building.
      */
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final AbstractBuilding building)

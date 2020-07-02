@@ -10,7 +10,7 @@
       "tag": "forge:chests"
     }
   },
-    "result": {
-      "item": "minecolonies:supplycampdeployer"
-    }
+  "result": {
+    "item": "minecolonies:supplycampdeployer"
+  }
 }

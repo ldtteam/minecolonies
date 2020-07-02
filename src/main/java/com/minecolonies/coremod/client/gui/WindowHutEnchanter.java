@@ -70,9 +70,10 @@ public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnc
         super.onOpened();
         selectedBuildings = building.getBuildingsToGatherFrom();
         allBuildings = building.getColony().getBuildings().stream()
-                                                   .filter(b -> b instanceof AbstractBuildingWorker.View && !(b instanceof BuildingEnchanter.View))
-                                                   .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(building.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(building.getPosition(), b2.getPosition())))
-                                                   .collect(Collectors.toList());
+                         .filter(b -> b instanceof AbstractBuildingWorker.View && !(b instanceof BuildingEnchanter.View))
+                         .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(building.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(building.getPosition(),
+                           b2.getPosition())))
+                         .collect(Collectors.toList());
         workerList = findPaneOfTypeByID(LIST_WORKERS, ScrollingList.class);
         workerList.setDataProvider(new ScrollingList.DataProvider()
         {

@@ -39,9 +39,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
     protected boolean main = false;
 
     /**
-     * whether this rack is in a warehouse or not.
-     * defaults to not
-     * set by the warehouse building upon being built
+     * whether this rack is in a warehouse or not. defaults to not set by the warehouse building upon being built
      */
     protected boolean inWarehouse = false;
 
@@ -108,6 +106,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
 
     /**
      * Update the warehouse if available with the updated stack.
+     *
      * @param stack the incoming stack.
      */
     private void updateWarehouseIfAvailable(final ItemStack stack)
@@ -116,7 +115,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
         {
             if (inWarehouse || !buildingPos.equals(BlockPos.ZERO))
             {
-                if ( IColonyManager.getInstance().isCoordinateInAnyColony(world, pos))
+                if (IColonyManager.getInstance().isCoordinateInAnyColony(world, pos))
                 {
                     final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
                     if (inWarehouse && colony != null && colony.getRequestManager() != null)
@@ -153,6 +152,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
 
     /**
      * Set the building pos it belongs to.
+     *
      * @param pos the pos of the building.
      */
     public void setBuildingPos(final BlockPos pos)

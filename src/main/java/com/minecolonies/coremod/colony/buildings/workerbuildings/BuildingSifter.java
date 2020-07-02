@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutSifter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
@@ -21,7 +22,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public class BuildingSifter extends AbstractBuildingWorker
     /**
      * The TAG to store the mesh of the building.
      */
-    private static final String TAG_MESH   = "mesh";
+    private static final String TAG_MESH = "mesh";
 
     /**
      * The TAG to store the probability of the mesh to break.
@@ -151,6 +151,7 @@ public class BuildingSifter extends AbstractBuildingWorker
 
     /**
      * Get the daily quantity the sifter shall produce.
+     *
      * @return the quantity.
      */
     public int getDailyQuantity()
@@ -160,6 +161,7 @@ public class BuildingSifter extends AbstractBuildingWorker
 
     /**
      * Getter for the current block which should be sieved.
+     *
      * @return the ItemStorage.
      */
     public ItemStorage getSievableBlock()
@@ -169,6 +171,7 @@ public class BuildingSifter extends AbstractBuildingWorker
 
     /**
      * Getter for the currently used mesh.
+     *
      * @return the ItemStorage.
      */
     public Tuple<ItemStorage, Double> getMesh()
@@ -188,6 +191,7 @@ public class BuildingSifter extends AbstractBuildingWorker
 
     /**
      * Calculate the max quantity to be crafted per day.
+     *
      * @return the max.
      */
     public int getMaxDailyQuantity()
@@ -213,8 +217,9 @@ public class BuildingSifter extends AbstractBuildingWorker
 
     /**
      * Setup the settings to be used by the sifter.
-     * @param block the block to be sieved.
-     * @param mesh the mesh to be used.
+     *
+     * @param block    the block to be sieved.
+     * @param mesh     the mesh to be used.
      * @param quantity the daily quantity.
      */
     public void setup(final ItemStorage block, final ItemStorage mesh, final int quantity)
@@ -390,6 +395,7 @@ public class BuildingSifter extends AbstractBuildingWorker
 
         /**
          * Getter for the current set daily quantity.
+         *
          * @return the quantity set.
          */
         public int getDailyQuantity()
@@ -399,6 +405,7 @@ public class BuildingSifter extends AbstractBuildingWorker
 
         /**
          * Getter for the current sifter block.
+         *
          * @return an ItemStorage.
          */
         public ItemStorage getSifterBlock()
@@ -408,6 +415,7 @@ public class BuildingSifter extends AbstractBuildingWorker
 
         /**
          * Getter for the currently used mesh.
+         *
          * @return an ItemStorage.
          */
         public ItemStorage getMesh()
@@ -417,6 +425,7 @@ public class BuildingSifter extends AbstractBuildingWorker
 
         /**
          * Get a list of all sievable blocks.
+         *
          * @return the list.
          */
         public List<ItemStorage> getSievableBlocks()
@@ -426,6 +435,7 @@ public class BuildingSifter extends AbstractBuildingWorker
 
         /**
          * Get a list of all meshes.
+         *
          * @return the list.
          */
         public List<ItemStorage> getMeshes()
@@ -435,10 +445,11 @@ public class BuildingSifter extends AbstractBuildingWorker
 
         /**
          * Save the setup.
-         * @param sifterBlock the block to sift.
-         * @param mesh the mesh to use.
+         *
+         * @param sifterBlock   the block to sift.
+         * @param mesh          the mesh to use.
          * @param dailyQuantity the daily quantity.
-         * @param buy if buying the mesh is involved.
+         * @param buy           if buying the mesh is involved.
          */
         public void save(final ItemStorage sifterBlock, final ItemStorage mesh, final int dailyQuantity, final boolean buy)
         {

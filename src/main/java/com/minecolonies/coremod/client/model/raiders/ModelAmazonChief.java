@@ -1,4 +1,5 @@
 package com.minecolonies.coremod.client.model.raiders;
+
 import com.minecolonies.api.client.render.modeltype.AmazonModel;
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
 import net.minecraft.client.renderer.model.ModelRenderer;

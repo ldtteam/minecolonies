@@ -49,7 +49,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
             return 0;
         }
 
-        final boolean deleteBuildings = BoolArgumentType.getBool(context,DELETE_BUILDNGS_ARG);
+        final boolean deleteBuildings = BoolArgumentType.getBool(context, DELETE_BUILDNGS_ARG);
 
         BackUpHelper.backupColonyData();
         IColonyManager.getInstance().deleteColonyByDimension(colonyID, deleteBuildings, context.getSource().getWorld().dimension.getType().getId());

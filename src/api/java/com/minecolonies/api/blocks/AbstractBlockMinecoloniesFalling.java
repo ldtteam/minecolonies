@@ -2,7 +2,8 @@ package com.minecolonies.api.blocks;
 
 import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.util.constant.Suppression;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.FallingBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -27,6 +28,7 @@ public abstract class AbstractBlockMinecoloniesFalling<B extends AbstractBlockMi
         registry.register(this);
         return (B) this;
     }
+
     /**
      * Registery block at gameregistry.
      *

@@ -20,12 +20,13 @@ public class ModContainerInitializers
     {
         ModContainers.craftingFurnace = (ContainerType<ContainerCraftingFurnace>) IForgeContainerType.create(ContainerCraftingFurnace::new).setRegistryName("crafting_furnace");
         ModContainers.buildingInv = (ContainerType<ContainerBuildingInventory>) IForgeContainerType.create(ContainerBuildingInventory::new).setRegistryName("bulding_inv");
-        ModContainers.citizenInv =  (ContainerType<ContainerCitizenInventory>) IForgeContainerType.create(ContainerCitizenInventory::new).setRegistryName("citizen_inv");
+        ModContainers.citizenInv = (ContainerType<ContainerCitizenInventory>) IForgeContainerType.create(ContainerCitizenInventory::new).setRegistryName("citizen_inv");
         ModContainers.rackInv = (ContainerType<ContainerRack>) IForgeContainerType.create(ContainerRack::new).setRegistryName("rack_inv");
         ModContainers.craftingGrid = (ContainerType<ContainerCrafting>) IForgeContainerType.create(ContainerCrafting::new).setRegistryName("crafting_building");
         ModContainers.field = (ContainerType<ContainerField>) IForgeContainerType.create(ContainerField::new).setRegistryName("field");
 
-        event.getRegistry().registerAll(ModContainers.craftingFurnace, ModContainers.buildingInv, ModContainers.citizenInv, ModContainers.rackInv, ModContainers.craftingGrid, ModContainers.field);
+        event.getRegistry()
+          .registerAll(ModContainers.craftingFurnace, ModContainers.buildingInv, ModContainers.citizenInv, ModContainers.rackInv, ModContainers.craftingGrid, ModContainers.field);
     }
 
     @SubscribeEvent

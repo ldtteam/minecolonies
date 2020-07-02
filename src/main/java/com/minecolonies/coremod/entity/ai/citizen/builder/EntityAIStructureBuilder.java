@@ -22,7 +22,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
-import com.minecolonies.api.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -137,19 +136,23 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
 
         final BuilderBucket neededRessourcesMap = building.getRequiredResources();
-
-        for (final Map.Entry<String, Integer> entry : neededRessourcesMap.getResourceMap().entrySet())
+        if (neededRessourcesMap != null)
         {
-            final BuildingBuilderResource res = building.getResourceFromIdentifier(entry.getKey());
-            if (res != null)
+            for (final Map.Entry<String, Integer> entry : neededRessourcesMap.getResourceMap().entrySet())
             {
-                int amount = entry.getValue();
-                neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(res.getItemStack(), itemstack, true, true), amount));
+                final BuildingBuilderResource res = building.getResourceFromIdentifier(entry.getKey());
+                if (res != null)
+                {
+                    int amount = entry.getValue();
+                    neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(res.getItemStack(), itemstack, true, true), amount));
+                }
             }
         }
 
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
         {
+            getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources(), worker.getCitizenData(), true);
+            getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getNextBucket(), worker.getCitizenData(), false);
             pickUpCount = 0;
             return START_WORKING;
         }

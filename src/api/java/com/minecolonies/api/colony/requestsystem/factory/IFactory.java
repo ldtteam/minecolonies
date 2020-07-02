@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.requestsystem.factory;
 
 import com.google.common.reflect.TypeToken;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,7 +36,6 @@ public interface IFactory<Input, Output>
      * @param input             The input to build a new output for.
      * @param context           The context of the request.
      * @return The new output instance for a given input.
-     *
      * @throws IllegalArgumentException is thrown when the factory cannot produce a new instance out of the given context and input.
      */
     @NotNull
@@ -61,4 +61,26 @@ public interface IFactory<Input, Output>
      */
     @NotNull
     Output deserialize(@NotNull IFactoryController controller, @NotNull CompoundNBT nbt) throws Throwable;
+
+    /**
+     * Method to serialize a given constructable.
+     *
+     * @param controller   The controller that can be used to serialize complicated types.
+     * @param output       The request to serialize.
+     * @param packetBuffer The buffer to serialize into.
+     * @return The serialized data of the given requests.
+     */
+    @NotNull
+    void serialize(@NotNull IFactoryController controller, @NotNull Output output, PacketBuffer packetBuffer);
+
+    /**
+     * Method to deserialize a given constructable.
+     *
+     * @param buffer     The data buffer of the request that should be deserialized.
+     * @param controller The controller that can be used to deserialize complicated types.
+     * @return The request that corresponds with the given data in the nbt
+     * @throws Exception if somethings goes wrong during the deserialization.
+     */
+    @NotNull
+    Output deserialize(@NotNull IFactoryController controller, @NotNull PacketBuffer buffer) throws Throwable;
 }

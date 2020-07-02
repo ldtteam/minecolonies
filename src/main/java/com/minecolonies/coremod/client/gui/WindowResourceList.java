@@ -46,7 +46,8 @@ public class WindowResourceList extends AbstractWindowSkeleton
 
     /**
      * Constructor for the resource scroll window.
-     * @param colonyId the colony id.
+     *
+     * @param colonyId    the colony id.
      * @param buildingPos the building position.
      */
     public WindowResourceList(final int colonyId, final BlockPos buildingPos)
@@ -91,8 +92,8 @@ public class WindowResourceList extends AbstractWindowSkeleton
                 else
                 {
                     amountToSet =
-                            InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
-                                    stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(resource.getItemStack()));
+                      InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
+                        stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(resource.getItemStack()));
                 }
                 resource.setPlayerAmount(amountToSet);
             }

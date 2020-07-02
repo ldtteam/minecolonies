@@ -86,11 +86,11 @@ public class ModelEntityLumberjackMale extends CitizenModel<AbstractEntityCitize
         Log2.setTextureSize(64, 64);
         setRotation(Log2, 0.5585054F, 0F, 0F);
 
-		/*
+        /*
          * Log3 = new ModelRenderer(this, 28, 33); Log3.addBox(-2F, 0F, 3F, 10,
-		 * 3, 3); Log3.setRotationPoint(0F, 0F, 0F); Log3.setTextureSize(64,
-		 * 64); setRotation(Log3, 0F, 0F, 1.099557F);
-		 */
+         * 3, 3); Log3.setRotationPoint(0F, 0F, 0F); Log3.setTextureSize(64,
+         * 64); setRotation(Log3, 0F, 0F, 1.099557F);
+         */
 
         Log3 = new ModelRenderer(this, 52, 33);
         Log3.addBox(-3F, -2F, 3F, 3, 10, 3);

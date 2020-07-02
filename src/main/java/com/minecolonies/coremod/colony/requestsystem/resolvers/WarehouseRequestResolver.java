@@ -200,7 +200,9 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                 final ItemStack deliveryStack = matchingStack.copy();
                 completedRequest.addDelivery(deliveryStack.copy());
 
-                final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
+                //todo This works okay for now. In the future we want something better here though.
+
+                final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> stack == itemStack);
                 final ILocation itemStackLocation =
                   manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().getDimension().getType().getId());
 

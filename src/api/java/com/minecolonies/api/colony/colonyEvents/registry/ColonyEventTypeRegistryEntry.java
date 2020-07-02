@@ -24,7 +24,7 @@ public class ColonyEventTypeRegistryEntry extends ForgeRegistryEntry<ColonyEvent
      * Creates a new registry entry for the given function and registry name
      *
      * @param eventCreator the event creator.
-     * @param registryID the registry id.
+     * @param registryID   the registry id.
      */
     public ColonyEventTypeRegistryEntry(@NotNull final BiFunction<IColony, CompoundNBT, IColonyEvent> eventCreator, @NotNull final ResourceLocation registryID)
     {

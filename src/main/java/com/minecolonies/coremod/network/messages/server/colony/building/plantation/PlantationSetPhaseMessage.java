@@ -31,8 +31,8 @@ public class PlantationSetPhaseMessage extends AbstractBuildingServerMessage<Bui
     /**
      * Set the phase of the planter.
      *
-     * @param building      the building to set it for.
-     * @param phase         the phase to set.
+     * @param building the building to set it for.
+     * @param phase    the phase to set.
      */
     public PlantationSetPhaseMessage(@NotNull final BuildingPlantation.View building, final Item phase)
     {

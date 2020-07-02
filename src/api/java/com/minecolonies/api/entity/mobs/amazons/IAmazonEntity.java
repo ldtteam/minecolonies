@@ -7,5 +7,5 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 public interface IAmazonEntity extends IMob, ICommandSource, ICapabilitySerializable<CompoundNBT>
 {
-    
+
 }

@@ -6,8 +6,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Hut for the citizen.
- * No different from {@link AbstractBlockHut}
+ * Hut for the citizen. No different from {@link AbstractBlockHut}
  */
 
 public class BlockHutCitizen extends AbstractBlockHut<BlockHutCitizen>

@@ -1027,11 +1027,11 @@ public abstract class AbstractPathJob implements Callable<Path>
             {
                 return pathingOptions.canEnterDoors() && (block.getBlock() instanceof DoorBlock
                                                             || block.getBlock() instanceof FenceGateBlock)
-                                                            || block.getBlock() instanceof AbstractBlockMinecoloniesConstructionTape
-                                                            || block.getBlock() instanceof PressurePlateBlock
-                                                            || block.getBlock() instanceof BlockDecorationController
-                                                            || block.getBlock() instanceof AbstractSignBlock
-                                                            || block.getBlock() instanceof VineBlock;
+                         || block.getBlock() instanceof AbstractBlockMinecoloniesConstructionTape
+                         || block.getBlock() instanceof PressurePlateBlock
+                         || block.getBlock() instanceof BlockDecorationController
+                         || block.getBlock() instanceof AbstractSignBlock
+                         || block.getBlock() instanceof VineBlock;
             }
             else if (block.getBlock() instanceof FireBlock)
             {
@@ -1081,7 +1081,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         final IFluidState fluid = world.getFluidState(pos);
-        if (fluid != null && !fluid.isEmpty() && (fluid.getFluid() == Fluids.LAVA ||fluid.getFluid() == Fluids.FLOWING_LAVA))
+        if (fluid != null && !fluid.isEmpty() && (fluid.getFluid() == Fluids.LAVA || fluid.getFluid() == Fluids.FLOWING_LAVA))
         {
             return SurfaceType.NOT_PASSABLE;
         }

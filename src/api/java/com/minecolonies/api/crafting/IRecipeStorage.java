@@ -15,18 +15,15 @@ import java.util.List;
 public interface IRecipeStorage
 {
     /**
-     * Get the list of input items.
-     * Suppressing Sonar Rule Squid:S2384
-     * The rule thinks we should return a copy of the list and not the list itself.
-     * But in this case the rule does not apply because the list is an unmodifiable list already
+     * Get the list of input items. Suppressing Sonar Rule Squid:S2384 The rule thinks we should return a copy of the list and not the list itself. But in this case the rule does
+     * not apply because the list is an unmodifiable list already
      *
      * @return the list.
      */
     List<ItemStack> getInput();
 
     /**
-     * Get the cleaned up list of the recipes.
-     * Air gets removed and equal items get put together.
+     * Get the cleaned up list of the recipes. Air gets removed and equal items get put together.
      *
      * @return the list.
      */
@@ -56,7 +53,7 @@ public interface IRecipeStorage
     /**
      * Method to check if with the help of inventories this recipe can be fullfilled.
      *
-     * @param qty the quantity to craft.
+     * @param qty         the quantity to craft.
      * @param inventories the inventories to check.
      * @return true if possible, else false.
      */
@@ -69,6 +66,7 @@ public interface IRecipeStorage
 
     /**
      * Check for space, remove items, and insert crafted items.
+     *
      * @param handlers the handlers to use.
      * @return true if succesful.
      */
@@ -76,6 +74,7 @@ public interface IRecipeStorage
 
     /**
      * Get the unique token of the recipe.
+     *
      * @return the IToken.
      */
     IToken<?> getToken();

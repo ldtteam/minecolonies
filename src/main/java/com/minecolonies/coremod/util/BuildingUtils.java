@@ -31,7 +31,8 @@ public final class BuildingUtils
 
     /**
      * Calculate the Size of the building given a world and a building.
-     * @param world the world.
+     *
+     * @param world    the world.
      * @param building the building.
      * @return the AxisAlignedBB box.
      */
@@ -45,12 +46,12 @@ public final class BuildingUtils
         final int y1 = location.getY() - 10;
         final int y2;
 
-        if(building.getHeight() == 0)
+        if (building.getHeight() == 0)
         {
             final StructureName sn =
-                    new StructureName(Structures.SCHEMATICS_PREFIX,
-                            building.getStyle(),
-                            building.getSchematicName() + building.getBuildingLevel());
+              new StructureName(Structures.SCHEMATICS_PREFIX,
+                building.getStyle(),
+                building.getSchematicName() + building.getBuildingLevel());
 
             final String structureName = sn.toString();
 
@@ -83,14 +84,18 @@ public final class BuildingUtils
 
     /**
      * Get the hut from the inventory.
+     *
      * @param inventory the inventory to search.
-     * @param hut the hut to fetch.
+     * @param hut       the hut to fetch.
      * @return the stack or if not found empty.
      */
     public static ItemStack getItemStackForHutFromInventory(final PlayerInventory inventory, final String hut)
     {
-        final int slot =  InventoryUtils.findFirstSlotInProviderNotEmptyWith(inventory.player,
-          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock().getRegistryName().getPath().contains(hut));
+        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(inventory.player,
+          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock()
+                                                                                                                                  .getRegistryName()
+                                                                                                                                  .getPath()
+                                                                                                                                  .contains(hut));
 
         if (slot != -1)
         {

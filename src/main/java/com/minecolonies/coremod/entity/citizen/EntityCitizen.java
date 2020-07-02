@@ -103,109 +103,109 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Cooldown for calling help, in ticks.
      */
-    private static final int                       CALL_HELP_CD        = 100;
+    private static final int    CALL_HELP_CD       = 100;
     /**
      * The amount of damage a guard takes on blocking.
      */
-    private static final float GUARD_BLOCK_DAMAGE = 0.5f;
+    private static final float  GUARD_BLOCK_DAMAGE = 0.5f;
     /**
      * Max speed factor.
      */
-    private static final double MAX_SPEED_FACTOR     = 0.5;
+    private static final double MAX_SPEED_FACTOR   = 0.5;
 
     /**
      * The citizen status handler.
      */
-    private final        ICitizenStatusHandler     citizenStatusHandler;
+    private final ICitizenStatusHandler     citizenStatusHandler;
     /**
      * It's citizen Id.
      */
-    private              int                       citizenId           = 0;
+    private       int                       citizenId           = 0;
     /**
      * The Walk to proxy (Shortest path through intermediate blocks).
      */
-    private              IWalkToProxy              proxy;
+    private       IWalkToProxy              proxy;
     /**
      * Reference to the data representation inside the colony.
      */
     @Nullable
-    private              ICitizenData              citizenData;
+    private       ICitizenData              citizenData;
     /**
      * The entities current Position.
      */
-    private              BlockPos                  currentPosition     = null;
+    private       BlockPos                  currentPosition     = null;
     /**
      * Variable to check what time it is for the citizen.
      */
-    private              boolean                   isDay               = true;
+    private       boolean                   isDay               = true;
     /**
      * Backup of the citizen.
      */
-    private              CompoundNBT               dataBackup          = null;
+    private       CompoundNBT               dataBackup          = null;
     /**
      * The citizen experience handler.
      */
-    private              ICitizenExperienceHandler citizenExperienceHandler;
+    private       ICitizenExperienceHandler citizenExperienceHandler;
     /**
      * The citizen chat handler.
      */
-    private              ICitizenChatHandler       citizenChatHandler;
+    private       ICitizenChatHandler       citizenChatHandler;
     /**
      * The citizen item handler.
      */
-    private              ICitizenItemHandler       citizenItemHandler;
+    private       ICitizenItemHandler       citizenItemHandler;
     /**
      * The citizen inv handler.
      */
-    private              ICitizenInventoryHandler  citizenInventoryHandler;
+    private       ICitizenInventoryHandler  citizenInventoryHandler;
     /**
      * The citizen stuck handler.
      */
-    private              ICitizenStuckHandler      citizenStuckHandler;
+    private       ICitizenStuckHandler      citizenStuckHandler;
     /**
      * The citizen colony handler.
      */
-    private              ICitizenColonyHandler     citizenColonyHandler;
+    private       ICitizenColonyHandler     citizenColonyHandler;
     /**
      * The citizen job handler.
      */
-    private              ICitizenJobHandler        citizenJobHandler;
+    private       ICitizenJobHandler        citizenJobHandler;
     /**
      * The citizen sleep handler.
      */
-    private              ICitizenSleepHandler      citizenSleepHandler;
+    private       ICitizenSleepHandler      citizenSleepHandler;
     /**
      * The citizen sleep handler.
      */
-    private              ICitizenDiseaseHandler    citizenDiseaseHandler;
+    private       ICitizenDiseaseHandler    citizenDiseaseHandler;
     /**
      * The path-result of trying to move away
      */
-    private              PathResult                moveAwayPath;
+    private       PathResult                moveAwayPath;
     /**
      * Indicate if the citizen is mourning or not.
      */
-    private              boolean                   mourning            = false;
+    private       boolean                   mourning            = false;
     /**
      * Indicates if the citizen is hiding from the rain or not.
      */
-    private              boolean                   hidingFromRain      = false;
+    private       boolean                   hidingFromRain      = false;
     /**
      * IsChild flag
      */
-    private              boolean                   child               = false;
+    private       boolean                   child               = false;
     /**
      * Whether the citizen is currently running away
      */
-    private              boolean                   currentlyFleeing    = false;
+    private       boolean                   currentlyFleeing    = false;
     /**
      * Timer for the call for help cd.
      */
-    private              int                       callForHelpCooldown = 0;
+    private       int                       callForHelpCooldown = 0;
     /**
      * Citizen data view.
      */
-    private              ICitizenDataView          citizenDataView;
+    private       ICitizenDataView          citizenDataView;
 
     /**
      * Constructor for a new citizen typed entity.
@@ -236,10 +236,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Initiates citizen goalSelector
-     * Suppressing Sonar Rule Squid:S881
-     * The rule thinks we should extract ++priority in a proper statement.
-     * But in this case the rule does not apply because that would remove the readability.
+     * Initiates citizen goalSelector Suppressing Sonar Rule Squid:S881 The rule thinks we should extract ++priority in a proper statement. But in this case the rule does not apply
+     * because that would remove the readability.
      */
     @SuppressWarnings(INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION)
     private void initTasks()

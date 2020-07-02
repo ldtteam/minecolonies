@@ -133,8 +133,7 @@ public final class Suppression
     public static final String GENERIC_WILDCARD = "squid:S1452";
 
     /**
-     * Sometimes we don't need to override the equals of subclasses.
-     * (Building IDS are unique enough for equals for example).
+     * Sometimes we don't need to override the equals of subclasses. (Building IDS are unique enough for equals for example).
      */
     @NonNls
     public static final String OVERRIDE_EQUALS = "squid:S2160";

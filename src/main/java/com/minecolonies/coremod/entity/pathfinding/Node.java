@@ -49,20 +49,17 @@ public class Node implements Comparable<Node>
     private int steps;
 
     /**
-     * The cost of the node.
-     * A* g value.
+     * The cost of the node. A* g value.
      */
     private double cost;
 
     /**
-     * The heuristic of the node.
-     * A* h value.
+     * The heuristic of the node. A* h value.
      */
     private double heuristic;
 
     /**
-     * The score of the node.
-     * A* f value (g + h).
+     * The score of the node. A* f value (g + h).
      */
     private double score;
 
@@ -341,6 +338,7 @@ public class Node implements Comparable<Node>
 
     /**
      * Setup rails params.
+     *
      * @param isOnRails if on rails.
      */
     public void setOnRails(final boolean isOnRails)
@@ -350,6 +348,7 @@ public class Node implements Comparable<Node>
 
     /**
      * Check if is on rails.
+     *
      * @return true if so.
      */
     public boolean isOnRails()

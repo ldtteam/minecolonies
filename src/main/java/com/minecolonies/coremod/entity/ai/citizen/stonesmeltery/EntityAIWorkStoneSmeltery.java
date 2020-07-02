@@ -5,7 +5,6 @@ import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIRequestSmelter;
 import org.jetbrains.annotations.NotNull;
 
-
 /**
  * Crafts furnace stone related block when needed.
  */

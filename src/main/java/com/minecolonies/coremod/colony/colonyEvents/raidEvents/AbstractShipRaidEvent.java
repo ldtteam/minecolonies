@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.colonyEvents.raidEvents;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
@@ -13,11 +14,9 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyState;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.SpawnerBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -132,6 +131,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
     /**
      * Create a new ship based raid event.
+     *
      * @param colony the colony.
      */
     public AbstractShipRaidEvent(@NotNull final IColony colony)
@@ -147,7 +147,11 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         daysToGo = MineColonies.getConfig().getCommon().daysUntilPirateshipsDespawn.get();
 
         final CreativeBuildingStructureHandler structure =
-          new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc(), new PlacementSettings(), true);
+          new CreativeBuildingStructureHandler(colony.getWorld(),
+            spawnPoint,
+            Structures.SCHEMATICS_PREFIX + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc(),
+            new PlacementSettings(),
+            true);
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
 
         if (!ShipBasedRaiderUtils.canPlaceShipAt(spawnPoint, structure.getBluePrint(), colony.getWorld()))
@@ -256,7 +260,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             if (spawners.isEmpty() && spawnerCount <= 0)
             {
                 daysToGo = 1;
-                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE);
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE);
             }
         }
     }
@@ -277,7 +281,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         raiders.remove(entity);
         if (raiders.isEmpty() && spawnerCount == 0 && spawners.isEmpty())
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),ALL_PIRATES_KILLED_MESSAGE);
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_PIRATES_KILLED_MESSAGE);
         }
     }
 

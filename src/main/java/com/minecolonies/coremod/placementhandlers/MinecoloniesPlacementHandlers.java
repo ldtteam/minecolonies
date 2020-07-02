@@ -112,7 +112,12 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState, @Nullable final CompoundNBT tileEntityData, final boolean complete)
+        public List<ItemStack> getRequiredItems(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final BlockState blockState,
+          @Nullable final CompoundNBT tileEntityData,
+          final boolean complete)
         {
             return new ArrayList<>();
         }
@@ -164,7 +169,12 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState, @Nullable final CompoundNBT tileEntityData, final boolean complete)
+        public List<ItemStack> getRequiredItems(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final BlockState blockState,
+          @Nullable final CompoundNBT tileEntityData,
+          final boolean complete)
         {
             final List<ItemStack> itemList = new ArrayList<>();
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
@@ -221,7 +231,12 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState, @Nullable final CompoundNBT tileEntityData, final boolean complete)
+        public List<ItemStack> getRequiredItems(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final BlockState blockState,
+          @Nullable final CompoundNBT tileEntityData,
+          final boolean complete)
         {
             final List<ItemStack> itemList = new ArrayList<>();
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
@@ -288,7 +303,12 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState, @Nullable final CompoundNBT tileEntityData, final boolean complete)
+        public List<ItemStack> getRequiredItems(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final BlockState blockState,
+          @Nullable final CompoundNBT tileEntityData,
+          final boolean complete)
         {
             if (tileEntityData != null)
             {
@@ -360,12 +380,16 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState, @Nullable final CompoundNBT tileEntityData, final boolean complete)
+        public List<ItemStack> getRequiredItems(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final BlockState blockState,
+          @Nullable final CompoundNBT tileEntityData,
+          final boolean complete)
         {
             return Collections.emptyList();
         }
     }
-
 
     public static class GeneralBlockPlacementHandler implements IPlacementHandler
     {
@@ -412,7 +436,12 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState, @Nullable final CompoundNBT tileEntityData, final boolean complete)
+        public List<ItemStack> getRequiredItems(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final BlockState blockState,
+          @Nullable final CompoundNBT tileEntityData,
+          final boolean complete)
         {
             final List<ItemStack> itemList = new ArrayList<>();
             if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState))
@@ -457,10 +486,14 @@ public final class MinecoloniesPlacementHandlers
             BlockState southState = world.getBlockState(pos.south());
             BlockState westState = world.getBlockState(pos.west());
             final BlockState fence = blockState
-              .with(FenceBlock.NORTH, ((FenceBlock) blockState.getBlock()).canConnect(northState, northState.isSolidSide(world, pos.north(), Direction.SOUTH), Direction.SOUTH))
-              .with(FenceBlock.EAST, ((FenceBlock) blockState.getBlock()).canConnect(eastState, eastState.isSolidSide(world, pos.east(), Direction.WEST), Direction.WEST))
-              .with(FenceBlock.SOUTH, ((FenceBlock) blockState.getBlock()).canConnect(southState, southState.isSolidSide(world, pos.south(), Direction.NORTH), Direction.NORTH))
-              .with(FenceBlock.WEST, ((FenceBlock) blockState.getBlock()).canConnect(westState, westState.isSolidSide(world, pos.west(), Direction.EAST), Direction.EAST));
+                                       .with(FenceBlock.NORTH,
+                                         ((FenceBlock) blockState.getBlock()).canConnect(northState, northState.isSolidSide(world, pos.north(), Direction.SOUTH), Direction.SOUTH))
+                                       .with(FenceBlock.EAST,
+                                         ((FenceBlock) blockState.getBlock()).canConnect(eastState, eastState.isSolidSide(world, pos.east(), Direction.WEST), Direction.WEST))
+                                       .with(FenceBlock.SOUTH,
+                                         ((FenceBlock) blockState.getBlock()).canConnect(southState, southState.isSolidSide(world, pos.south(), Direction.NORTH), Direction.NORTH))
+                                       .with(FenceBlock.WEST,
+                                         ((FenceBlock) blockState.getBlock()).canConnect(westState, westState.isSolidSide(world, pos.west(), Direction.EAST), Direction.EAST));
 
             if (!world.setBlockState(pos, fence, UPDATE_FLAG))
             {
@@ -471,7 +504,12 @@ public final class MinecoloniesPlacementHandlers
         }
 
         @Override
-        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState, @Nullable final CompoundNBT tileEntityData, final boolean complete)
+        public List<ItemStack> getRequiredItems(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final BlockState blockState,
+          @Nullable final CompoundNBT tileEntityData,
+          final boolean complete)
         {
             final List<ItemStack> itemList = new ArrayList<>();
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));

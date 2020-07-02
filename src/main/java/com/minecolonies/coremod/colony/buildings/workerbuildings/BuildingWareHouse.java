@@ -146,6 +146,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
     /**
      * Get the maximimum number of dmen that can be assigned to the warehoue.
+     *
      * @return the maximum amount.
      */
     private int getMaxAssignedDmen()
@@ -203,7 +204,8 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         for (int i = 0; i < deliverymanTagList.size(); i++)
         {
             final BlockPos pos = NBTUtil.readBlockPos(deliverymanTagList.getCompound(i));
-            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker) {
+            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker)
+            {
                 registeredDeliverymen.add(new Vec3d(pos));
             }
         }
@@ -241,6 +243,12 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     {
         final AbstractTileEntityColonyBuilding entity = super.getTileEntity();
         return !(entity instanceof TileEntityWareHouse) ? null : (AbstractTileEntityWareHouse) entity;
+    }
+
+    @Override
+    public boolean hasContainerPosition(final BlockPos inDimensionLocation)
+    {
+        return containerList.contains(inDimensionLocation) || getLocation().getInDimensionLocation().equals(inDimensionLocation);
     }
 
     @Override

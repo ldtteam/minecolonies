@@ -320,7 +320,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
 
                     if (structureRotation <= worldRotation)
                     {
-                        cachedRotation = worldRotation - structureRotation;;
+                        cachedRotation = worldRotation - structureRotation;
+                        ;
                     }
                     else
                     {
@@ -334,7 +335,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         {
             Log.getLogger().error(String.format("Failed to get rotation for %s: ", structureName.toString()), e);
 
-            return  0;
+            return 0;
         }
 
         return 0;

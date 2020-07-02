@@ -51,7 +51,7 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
     public WindowCitizenInventory(final ContainerCitizenInventory container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
-        this.inventoryRows = (container.getInventory().size() - 36)/ 9;
+        this.inventoryRows = (container.getInventory().size() - 36) / 9;
 
         this.ySize = Y_OFFSET + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET;
         if (this.inventoryRows > SLOTS_EACH_ROW - 1)
@@ -74,13 +74,14 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
     protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
     {
         this.font.drawString(this.container.getDisplayName(), 8, 6, 4210752);
-        this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8, 20 + this.inventoryRows  * SLOT_OFFSET, 4210752);
+        this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8, 20 + this.inventoryRows * SLOT_OFFSET, 4210752);
     }
 
-     /**
+    /**
      * Draws the background layer of this container (behind the items).
      */
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+    {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         this.minecraft.getTextureManager().bindTexture(new ResourceLocation(Constants.MOD_ID, "textures/gui/generic_108.png"));

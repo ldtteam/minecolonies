@@ -17,8 +17,7 @@ public final class RecipeHandler
      * Initialize all recipes for minecolonies.
      *
      * @param enableInDevelopmentFeatures if we want development recipes.
-     * @param supplyChests                if we want supply chests or direct
-     *                                    town hall crafting.
+     * @param supplyChests                if we want supply chests or direct town hall crafting.
      */
     public static void init(final boolean enableInDevelopmentFeatures, final boolean supplyChests)
     {

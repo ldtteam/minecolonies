@@ -34,6 +34,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
 
     /**
      * Sets the name, creative tab, and registers the Ancient Tome item.
+     *
      * @param properties the properties.
      */
     public ItemClipBoard(final Item.Properties properties)
@@ -110,8 +111,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
     }
 
     /**
-     * Check for the compound and return it.
-     * If not available create and return it.
+     * Check for the compound and return it. If not available create and return it.
      *
      * @param scepter the scepter to check in for.
      * @return the compound of the scepter.

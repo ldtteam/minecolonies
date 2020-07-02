@@ -68,10 +68,10 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         // the user will think it is one big block
         return VoxelShapes.create(
           (float) START_COLLISION,
-          (float)(BOTTOM_COLLISION - (state.get(HALF) == DoubleBlockHalf.UPPER ? 1 : 0)),
+          (float) (BOTTOM_COLLISION - (state.get(HALF) == DoubleBlockHalf.UPPER ? 1 : 0)),
           (float) START_COLLISION,
           (float) END_COLLISION,
-          (float)(HEIGHT_COLLISION - (state.get(HALF) == DoubleBlockHalf.UPPER ? 1 : 0)),
+          (float) (HEIGHT_COLLISION - (state.get(HALF) == DoubleBlockHalf.UPPER ? 1 : 0)),
           (float) END_COLLISION
         );
     }
@@ -98,7 +98,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             // Get the entity of the bottom half
             DoubleBlockHalf half = state.get(HALF);
             final TileEntity entity = worldIn.getTileEntity(
-                half == DoubleBlockHalf.UPPER ? pos.down() : pos
+              half == DoubleBlockHalf.UPPER ? pos.down() : pos
             );
 
             if (entity instanceof ScarecrowTileEntity)
@@ -199,8 +199,9 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
     /**
      * Notify the colony about the destruction of the field.
+     *
      * @param worldIn the world.
-     * @param pos the position.
+     * @param pos     the position.
      */
     private static void notifyColonyAboutDestruction(final IWorld worldIn, final BlockPos pos)
     {
