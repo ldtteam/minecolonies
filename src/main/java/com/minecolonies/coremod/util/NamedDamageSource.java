@@ -16,7 +16,8 @@ public class NamedDamageSource extends EntityDamageSource
 {
     /**
      * Create a specific named damage source.
-     * @param damageTypeIn the string to print.
+     *
+     * @param damageTypeIn         the string to print.
      * @param damageSourceEntityIn the inflicting entity.
      */
     public NamedDamageSource(final String damageTypeIn, @Nullable final Entity damageSourceEntityIn)

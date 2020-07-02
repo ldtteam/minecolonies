@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 
 public class ModelChiefNorsemen extends NorsemenModel
 {
-	public ModelChiefNorsemen()
+    public ModelChiefNorsemen()
     {
         final ModelRenderer hornr;
         final ModelRenderer boner;
@@ -211,7 +211,7 @@ public class ModelChiefNorsemen extends NorsemenModel
         robe3.setTextureOffset(58, 49).addBox(-1.52F, -17.9F, 12.6982F, 10.25F, 3.5F, 0.5F, 0.0F, false);
 
         bipedHeadwear.showModel = false;
-	}
+    }
 
     private void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
     {

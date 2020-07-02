@@ -36,9 +36,9 @@ public class WarehouseRequestResolverFactory implements IRequestResolverFactory<
     @NotNull
     @Override
     public WarehouseRequestResolver getNewInstance(
-                                                    @NotNull final IFactoryController factoryController,
-                                                    @NotNull final ILocation iLocation,
-                                                    @NotNull final Object... context)
+      @NotNull final IFactoryController factoryController,
+      @NotNull final ILocation iLocation,
+      @NotNull final Object... context)
       throws IllegalArgumentException
     {
         return new WarehouseRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
@@ -47,7 +47,7 @@ public class WarehouseRequestResolverFactory implements IRequestResolverFactory<
     @NotNull
     @Override
     public CompoundNBT serialize(
-                                     @NotNull final IFactoryController controller, @NotNull final WarehouseRequestResolver warehouseRequestResolver)
+      @NotNull final IFactoryController controller, @NotNull final WarehouseRequestResolver warehouseRequestResolver)
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.put(NBT_TOKEN, controller.serialize(warehouseRequestResolver.getId()));

@@ -37,8 +37,9 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
     /**
      * Constructor to initialize.
-     * @param location the location.
-     * @param token the id.
+     *
+     * @param location        the location.
+     * @param token           the id.
      * @param isPublicCrafter if public crafter or not.
      */
     public AbstractCraftingRequestResolver(
@@ -69,7 +70,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     @Override
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-	    //Noop
+        //Noop
     }
 
     @Override
@@ -90,8 +91,9 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
     /**
      * Check if the request can be resolved for this building.
-     * @param manager the manager.
-     * @param request the request to check.
+     *
+     * @param manager  the manager.
+     * @param request  the request to check.
      * @param building the building to check.
      * @return true if so.
      */
@@ -110,7 +112,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      *
      * @param manager the manager.
      * @param request the request.
-     * @param target the target.
+     * @param target  the target.
      * @return true if so.
      */
     protected boolean createsCraftingCycle(
@@ -126,9 +128,9 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      *
      * @param manager the manager.
      * @param request the request.
-     * @param target the target to create.
-     * @param count the itemCount.
-     * @param reqs the list of reqs.
+     * @param target  the target to create.
+     * @param count   the itemCount.
+     * @param reqs    the list of reqs.
      * @return true if possible.
      */
     protected boolean createsCraftingCycle(
@@ -145,7 +147,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
                 if (requestable.equals(request.getRequest())
                       && request.getRequest() instanceof IDeliverable
                       && requestable instanceof IDeliverable
-                      && ((IDeliverable) request.getRequest()).getCount() < ((IDeliverable) requestable).getCount() )
+                      && ((IDeliverable) request.getRequest()).getCount() < ((IDeliverable) requestable).getCount())
                 {
                     return true;
                 }
@@ -171,12 +173,13 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             return false;
         }
 
-        return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target, count+1, reqs);
+        return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target, count + 1, reqs);
     }
 
     /**
      * Check if a building can craft a certain stack.
-     * @param building the building to check in.
+     *
+     * @param building       the building to check in.
      * @param stackPredicate predicate used to check if a building knows the recipe.
      * @return true if so.
      */
@@ -191,14 +194,26 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     }
 
     @Nullable
-    public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
+    public List<IToken<?>> attemptResolveForBuilding(
+      @NotNull final IRequestManager manager,
+      @NotNull final IRequest<? extends IDeliverable> request,
+      @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        return attemptResolveForBuildingAndStack(manager, buildingWorker, itemStack -> request.getRequest().matches(itemStack), request.getRequest().getCount(), request.getRequest().getMinimumCount());
+        return attemptResolveForBuildingAndStack(manager,
+          buildingWorker,
+          itemStack -> request.getRequest().matches(itemStack),
+          request.getRequest().getCount(),
+          request.getRequest().getMinimumCount());
     }
 
     @Nullable
-    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final Predicate<ItemStack> stackPrecicate, final int count, final int minCount)
+    protected List<IToken<?>> attemptResolveForBuildingAndStack(
+      @NotNull final IRequestManager manager,
+      @NotNull final AbstractBuildingWorker building,
+      @NotNull final Predicate<ItemStack> stackPrecicate,
+      final int count,
+      final int minCount)
     {
         final IRecipeStorage craftableCrafting = building.getFirstRecipe(stackPrecicate);
         if (craftableCrafting == null)
@@ -211,21 +226,22 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
     @Nullable
     protected List<IToken<?>> createRequestsForRecipe(
-            @NotNull final IRequestManager manager,
-            final ItemStack requestStack,
-            final int count,
-            final int minCount)
+      @NotNull final IRequestManager manager,
+      final ItemStack requestStack,
+      final int count,
+      final int minCount)
     {
-        final int recipeExecutionsCount = (int) Math.ceil( (double) count / requestStack.getCount());
-        final int minRecipeExecutionsCount = (int) Math.ceil( (double) minCount / requestStack.getCount());
+        final int recipeExecutionsCount = (int) Math.ceil((double) count / requestStack.getCount());
+        final int minRecipeExecutionsCount = (int) Math.ceil((double) minCount / requestStack.getCount());
 
         return ImmutableList.of(manager.createRequest(this, createNewRequestableForStack(requestStack.copy(), recipeExecutionsCount, Math.max(1, minRecipeExecutionsCount))));
     }
 
     /**
      * Create a new requestable for a stack.
-     * @param stack the stack to request.
-     * @param count the count needed.
+     *
+     * @param stack    the stack to request.
+     * @param count    the count needed.
      * @param minCount the min count to fulfill.
      * @return the requestable.
      */
@@ -240,14 +256,13 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
     /**
      * Resolve the request in a building.
-     * @param manager the request manager.
-     * @param request the request.
+     *
+     * @param manager  the request manager.
+     * @param request  the request.
      * @param building the building.
      */
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
         manager.updateRequestState(request.getId(), RequestState.RESOLVED);
     }
-
-
 }

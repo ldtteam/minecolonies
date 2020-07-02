@@ -40,8 +40,7 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 public final class ItemStackUtils
 {
     /**
-     * Variable representing the empty itemstack in 1.10.
-     * Used for easy updating to 1.11
+     * Variable representing the empty itemstack in 1.10. Used for easy updating to 1.11
      */
     public static final ItemStack EMPTY = ItemStack.EMPTY;
 
@@ -134,7 +133,6 @@ public final class ItemStackUtils
                     return entity;
                 }
             }
-
         }
         catch (final RuntimeException e)
         {
@@ -229,8 +227,7 @@ public final class ItemStackUtils
     }
 
     /**
-     * Verifies if there is one tool with an acceptable level
-     * in a worker's inventory.
+     * Verifies if there is one tool with an acceptable level in a worker's inventory.
      *
      * @param stack        the stack to test.
      * @param toolType     the type of tool needed
@@ -250,8 +247,7 @@ public final class ItemStackUtils
     }
 
     /**
-     * Wrapper method to check if a stack is empty.
-     * Used for easy updating to 1.11.
+     * Wrapper method to check if a stack is empty. Used for easy updating to 1.11.
      *
      * @param stack The stack to check.
      * @return True when the stack is empty, false when not.
@@ -455,8 +451,7 @@ public final class ItemStackUtils
     */
 
     /**
-     * This routine converts the material type of armor
-     * into a numerical value for the request system.
+     * This routine converts the material type of armor into a numerical value for the request system.
      *
      * @param material type of material of the armor
      * @return armor level
@@ -661,8 +656,7 @@ public final class ItemStackUtils
     }
 
     /**
-     * get the size of the stack.
-     * This is for compatibility between 1.10 and 1.11
+     * get the size of the stack. This is for compatibility between 1.10 and 1.11
      *
      * @param stack to get the size from
      * @return the size of the stack
@@ -755,8 +749,7 @@ public final class ItemStackUtils
     }
 
     /**
-     * set the size of the stack.
-     * This is for compatibility between 1.10 and 1.11
+     * set the size of the stack. This is for compatibility between 1.10 and 1.11
      *
      * @param stack to set the size to
      * @param size  of the stack

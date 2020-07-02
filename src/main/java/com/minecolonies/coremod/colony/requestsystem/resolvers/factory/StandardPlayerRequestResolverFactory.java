@@ -48,16 +48,18 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
     @NotNull
     @Override
     public StandardPlayerRequestResolver getNewInstance(
-                                                 @NotNull final IFactoryController factoryController,
-                                                 @NotNull final IRequestManager iRequestManager,
-                                                 @NotNull final Object... context)
+      @NotNull final IFactoryController factoryController,
+      @NotNull final IRequestManager iRequestManager,
+      @NotNull final Object... context)
       throws IllegalArgumentException
     {
         final ILocation location;
-        try {
+        try
+        {
             location =
-            factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getDimension());
-        } catch (final Exception ex)
+              factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getDimension());
+        }
+        catch (final Exception ex)
         {
             throw ex;
         }

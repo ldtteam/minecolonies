@@ -24,16 +24,16 @@ public class EntityAIGateInteract extends Goal
     /**
      * Number of blocks to check for the fence gate - height.
      */
-    private static final int    HEIGHT_TO_CHECK = 2;
+    private static final int HEIGHT_TO_CHECK = 2;
     /**
      * Number of blocks to check for the fence gate - length.
      */
-    private static final int    LENGTH_TO_CHECK = 2;
+    private static final int LENGTH_TO_CHECK = 2;
 
     /**
      * The min distance the gate has to be from the citizen.
      */
-    private static final double         MIN_DISTANCE    = 2.25D;
+    private static final double         MIN_DISTANCE = 2.25D;
     /**
      * Our citizen.
      */

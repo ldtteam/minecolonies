@@ -27,9 +27,10 @@ public class Disease
 
     /**
      * Create a disease.
-     * @param name the name of it.
+     *
+     * @param name   the name of it.
      * @param rarity its rarity.
-     * @param cure the cure.
+     * @param cure   the cure.
      */
     public Disease(final String name, final int rarity, final List<ItemStack> cure)
     {
@@ -40,6 +41,7 @@ public class Disease
 
     /**
      * Get the name of the disease.
+     *
      * @return the name.
      */
     public String getName()
@@ -49,6 +51,7 @@ public class Disease
 
     /**
      * Get the rarity modifier of the disease.
+     *
      * @return the rarity.
      */
     public int getRarity()
@@ -58,6 +61,7 @@ public class Disease
 
     /**
      * Get the cure list.
+     *
      * @return the cure.
      */
     public List<ItemStack> getCure()
@@ -67,6 +71,7 @@ public class Disease
 
     /**
      * The Cure String.
+     *
      * @return the cure string.
      */
     public String getCureString()
@@ -77,7 +82,7 @@ public class Disease
             cureString.append(cureStack.getDisplayName().getString());
             cureString.append("+");
         }
-        cureString.deleteCharAt(cureString.length()-1);
+        cureString.deleteCharAt(cureString.length() - 1);
         return cureString.toString();
     }
 }

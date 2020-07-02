@@ -9,8 +9,7 @@ import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Eatable requestable.
- * Delivers a stack of food.
+ * Eatable requestable. Delivers a stack of food.
  */
 public class Food implements IDeliverable
 {
@@ -35,8 +34,9 @@ public class Food implements IDeliverable
 
     /**
      * Serialize the deliverable.
+     *
      * @param controller the controller.
-     * @param food the input.
+     * @param food       the input.
      * @return the compound.
      */
     public static CompoundNBT serialize(final IFactoryController controller, final Food food)
@@ -54,8 +54,9 @@ public class Food implements IDeliverable
 
     /**
      * Deserialize the deliverable.
+     *
      * @param controller the controller.
-     * @param compound the compound.
+     * @param compound   the compound.
      * @return the deliverable.
      */
     public static Food deserialize(final IFactoryController controller, final CompoundNBT compound)
@@ -68,10 +69,10 @@ public class Food implements IDeliverable
 
     /**
      * Serialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the the buffer to write to.
-     * @param input the input to serialize.
+     * @param buffer     the the buffer to write to.
+     * @param input      the input to serialize.
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Food input)
     {
@@ -86,9 +87,9 @@ public class Food implements IDeliverable
 
     /**
      * Deserialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the buffer to read.
+     * @param buffer     the buffer to read.
      * @return the deliverable.
      */
     public static Food deserialize(final IFactoryController controller, final PacketBuffer buffer)

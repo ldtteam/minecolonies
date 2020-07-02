@@ -21,14 +21,15 @@ public final class MRenderTypes extends RenderType
 
     /**
      * Private constructor to hide implicit one.
-     * @param name the name of the rendertype.
+     *
+     * @param name   the name of the rendertype.
      * @param format its format.
-     * @param id1 no idea.
-     * @param id2 no idea.
-     * @param b1 no idea.
-     * @param b2 no idea.
-     * @param b3 no idea.
-     * @param state the rendertype state.
+     * @param id1    no idea.
+     * @param id2    no idea.
+     * @param b1     no idea.
+     * @param b2     no idea.
+     * @param b3     no idea.
+     * @param state  the rendertype state.
      */
     private MRenderTypes(final String name, final VertexFormat format, final int id1, final int id2, final boolean b1, final boolean b2, final Runnable b3, final Runnable state)
     {
@@ -37,22 +38,24 @@ public final class MRenderTypes extends RenderType
 
     /**
      * Custom texture renderer type.
+     *
      * @param resourceLocation the location fo the texture.
      * @return the renderType which is created.
      */
     public static RenderType customTextRenderer(@NotNull final ResourceLocation resourceLocation)
     {
         final State state = State.getBuilder()
-                                         .texture(new RenderState.TextureState(resourceLocation, false, false))//Texture state
-                                         .alpha(RenderState.HALF_ALPHA)
-                                         .depthTest(RenderState.DEPTH_ALWAYS)
-                                         .build(true);
+                              .texture(new RenderState.TextureState(resourceLocation, false, false))//Texture state
+                              .alpha(RenderState.HALF_ALPHA)
+                              .depthTest(RenderState.DEPTH_ALWAYS)
+                              .build(true);
 
         return makeType("custommctextrenderer", format, 7, 256, true, false, state);
     }
 
     /**
      * Custom line renderer type.
+     *
      * @return the renderType which is created.
      */
     public static RenderType customLineRenderer()

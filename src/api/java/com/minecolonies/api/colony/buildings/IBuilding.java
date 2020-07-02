@@ -46,16 +46,14 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     void onWakeUp();
 
     /**
-     * Executed every time when citizen finish inventory cleanup called after citizen got paused.
-     * Use for cleaning a state only.
+     * Executed every time when citizen finish inventory cleanup called after citizen got paused. Use for cleaning a state only.
      *
      * @param citizen cleanup for citizen.
      */
     void onCleanUp(ICitizenData citizen);
 
     /**
-     * Executed when RestartCitizenMessage is called and worker is paused.
-     * Use for reseting, onCleanUp is called before this
+     * Executed when RestartCitizenMessage is called and worker is paused. Use for reseting, onCleanUp is called before this
      *
      * @param citizen the citizen assigned to the building.
      */
@@ -96,8 +94,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     void onBuildingMove(final IBuilding oldBuilding);
 
     /**
-     * Destroys the block.
-     * Calls {@link #onDestroyed()}.
+     * Destroys the block. Calls {@link #onDestroyed()}.
      */
     void destroy();
 
@@ -138,11 +135,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     int getClaimRadius(int buildingLevel);
 
     /**
-     * Serializes to view.
-     * Sends 3 integers.
-     * 1) hashcode of the name of the class.
-     * 2) building level.
-     * 3) max building level.
+     * Serializes to view. Sends 3 integers. 1) hashcode of the name of the class. 2) building level. 3) max building level.
      *
      * @param buf PacketBuffer to write to.
      */
@@ -198,16 +191,15 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     void deconstruct();
 
     /**
-     * Called upon completion of an upgrade process.
-     * We suppress this warning since this parameter will be used in child classes which override this method.
+     * Called upon completion of an upgrade process. We suppress this warning since this parameter will be used in child classes which override this method.
      *
      * @param newLevel The new level.
      */
     void onUpgradeComplete(int newLevel);
 
     /**
-     * Check if the worker requires a certain amount of that item and the alreadykept list contains it.
-     * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
+     * Check if the worker requires a certain amount of that item and the alreadykept list contains it. Always leave one stack behind if the worker requires a certain amount of it.
+     * Just to be sure.
      *
      * @param stack            the stack to check it with.
      * @param localAlreadyKept already kept items.
@@ -217,9 +209,8 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     int buildingRequiresCertainAmountOfItem(ItemStack stack, List<ItemStorage> localAlreadyKept, boolean inventory);
 
     /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
+     * Override this method if you want to keep an amount of items in inventory. When the inventory is full, everything get's dumped into the building chest. But you can use this
+     * method to hold some stacks back.
      *
      * @return a list of objects which should be kept.
      */
@@ -289,8 +280,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     /**
      * Overrule the next open request with a give stack.
      * <p>
-     * We squid:s135 which takes care that there are not too many continue statements in a loop since it makes sense here
-     * out of performance reasons.
+     * We squid:s135 which takes care that there are not too many continue statements in a loop since it makes sense here out of performance reasons.
      *
      * @param stack the stack.
      */
@@ -306,11 +296,8 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     boolean overruleNextOpenRequestOfCitizenWithStack(@NotNull ICitizenData citizenData, @NotNull ItemStack stack);
 
     /**
-     * Creates a pickup request for the building.
-     * It will make sure that only one pickup request exists per building,
-     * so it's safe to call multiple times.
-     * The call will return false if a pickup request already exists, or if the priority is not within
-     * the proper range, or if the pickup priority is set to NEVER (0).
+     * Creates a pickup request for the building. It will make sure that only one pickup request exists per building, so it's safe to call multiple times. The call will return
+     * false if a pickup request already exists, or if the priority is not within the proper range, or if the pickup priority is set to NEVER (0).
      *
      * @param scaledPriority The priority of the pickup request. This value is considered already scaled!
      * @return true if a pickup request could be created, false if not.

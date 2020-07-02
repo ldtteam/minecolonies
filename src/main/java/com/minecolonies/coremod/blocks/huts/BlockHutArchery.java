@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import org.jetbrains.annotations.NotNull;
 
-
 /**
  * Block of the Archers trainings camp.
  */

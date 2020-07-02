@@ -47,15 +47,14 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Map<BlockStateStorage, ItemStorage> leavesToSaplingMap = new HashMap<>();
 
     /**
-     * List of saplings.
-     * Works on client and server-side.
+     * List of saplings. Works on client and server-side.
      */
     private final List<ItemStorage> saplings = new ArrayList<>();
 
     /**
      * List of properties we're ignoring when comparing leaves.
      */
-    private final List<IProperty<?>> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO,TREE_DISTANCE);
+    private final List<IProperty<?>> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO, TREE_DISTANCE);
 
     /**
      * Properties for leaves we're ignoring upon comparing.
@@ -63,11 +62,10 @@ public class CompatibilityManager implements ICompatibilityManager
     private static final BooleanProperty checkDecay     = BooleanProperty.create("check_decay");
     private static final BooleanProperty decayable      = BooleanProperty.create("decayable");
     public static final  IntegerProperty DYN_PROP_HYDRO = IntegerProperty.create("hydro", 1, 4);
-    public static final  IntegerProperty TREE_DISTANCE = IntegerProperty.create("distance", 1, 7);
+    public static final  IntegerProperty TREE_DISTANCE  = IntegerProperty.create("distance", 1, 7);
 
     /**
-     * List of all ore-like blocks.
-     * Works on client and server-side.
+     * List of all ore-like blocks. Works on client and server-side.
      */
     private final Set<Block> oreBlocks = new HashSet<>();
 
@@ -235,7 +233,8 @@ public class CompatibilityManager implements ICompatibilityManager
             return false;
         }
 
-        if (itemStack.getItem().isFood() || (itemStack.getItem() instanceof BlockItem && (((BlockItem) itemStack.getItem()).getBlock() instanceof CropsBlock || ((BlockItem) itemStack.getItem()).getBlock() instanceof StemBlock)))
+        if (itemStack.getItem().isFood() || (itemStack.getItem() instanceof BlockItem && (((BlockItem) itemStack.getItem()).getBlock() instanceof CropsBlock
+                                                                                            || ((BlockItem) itemStack.getItem()).getBlock() instanceof StemBlock)))
         {
             return true;
         }
@@ -506,7 +505,8 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             ench = list.get(random.nextInt(list.size()));
         }
-        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())), ench.getB());
+        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())),
+          ench.getB());
     }
 
     //------------------------------- Private Utility Methods -------------------------------//

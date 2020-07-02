@@ -54,13 +54,12 @@ public class BuildingFletcher extends AbstractBuildingCrafter
               TypeConstants.RECIPE,
               StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
               ImmutableList.of(new ItemStack(Items.WHITE_WOOL, 1)),
-                      1,
-                      new ItemStack(Items.STRING, 4),
-                      Blocks.AIR);
+              1,
+              new ItemStack(Items.STRING, 4),
+              Blocks.AIR);
             recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
         }
     }
-
 
     @NotNull
     @Override

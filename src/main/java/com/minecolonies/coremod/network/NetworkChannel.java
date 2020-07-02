@@ -200,7 +200,6 @@ public class NetworkChannel
         // Colony-Independent items
         registerMessage(++idx, RemoveFromRallyingListMessage.class, RemoveFromRallyingListMessage::new);
         registerMessage(++idx, ToggleBannerRallyGuardsMessage.class, ToggleBannerRallyGuardsMessage::new);
-
     }
 
     /**

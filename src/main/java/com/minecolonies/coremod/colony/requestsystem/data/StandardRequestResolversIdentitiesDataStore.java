@@ -30,12 +30,13 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  */
 public class StandardRequestResolversIdentitiesDataStore implements IRequestResolverIdentitiesDataStore
 {
-    private IToken<?>                                   id;
+    private       IToken<?>                             id;
     private final BiMap<IToken<?>, IRequestResolver<?>> map;
 
     public StandardRequestResolversIdentitiesDataStore(
       final IToken<?> id,
-      final BiMap<IToken<?>, IRequestResolver<?>> map) {
+      final BiMap<IToken<?>, IRequestResolver<?>> map)
+    {
         this.id = id;
         this.map = map;
     }
@@ -128,23 +129,25 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
             return new StandardRequestResolversIdentitiesDataStore(token, biMap);
         }
 
-		@Override
-		public void serialize(IFactoryController controller, StandardRequestResolversIdentitiesDataStore input,
-				PacketBuffer packetBuffer)
-		{
-			controller.serialize(packetBuffer, input.id);
+        @Override
+        public void serialize(
+          IFactoryController controller, StandardRequestResolversIdentitiesDataStore input,
+          PacketBuffer packetBuffer)
+        {
+            controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.getIdentities().size());
             input.getIdentities().forEach((key, value) -> {
                 controller.serialize(packetBuffer, key);
                 controller.serialize(packetBuffer, value);
             });
-		}
+        }
 
-		@Override
-		public StandardRequestResolversIdentitiesDataStore deserialize(IFactoryController controller,
-				PacketBuffer buffer) throws Throwable
-		{
-			final IToken<?> token = controller.deserialize(buffer);
+        @Override
+        public StandardRequestResolversIdentitiesDataStore deserialize(
+          IFactoryController controller,
+          PacketBuffer buffer) throws Throwable
+        {
+            final IToken<?> token = controller.deserialize(buffer);
             final Map<IToken<?>, IRequestResolver<?>> identities = new HashMap<>();
             final int assignmentsSize = buffer.readInt();
             for (int i = 0; i < assignmentsSize; ++i)
@@ -155,6 +158,6 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
             final BiMap<IToken<?>, IRequestResolver<?>> biMap = HashBiMap.create(identities);
 
             return new StandardRequestResolversIdentitiesDataStore(token, biMap);
-		}
+        }
     }
 }

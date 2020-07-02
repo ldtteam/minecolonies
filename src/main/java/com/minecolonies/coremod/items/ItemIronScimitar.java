@@ -15,6 +15,7 @@ public class ItemIronScimitar extends SwordItem
 {
     /**
      * Constructor method for the Scimitar Item
+     *
      * @param properties the properties.
      */
     public ItemIronScimitar(final Item.Properties properties)

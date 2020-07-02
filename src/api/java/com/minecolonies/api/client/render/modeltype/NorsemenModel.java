@@ -10,6 +10,7 @@ public class NorsemenModel extends BipedModel<AbstractEntityNorsemen>
 {
     /**
      * Create a model of a specific size.
+     *
      * @param size the size.
      */
     public NorsemenModel(final float size)

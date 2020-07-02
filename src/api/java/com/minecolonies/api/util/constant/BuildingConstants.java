@@ -23,7 +23,7 @@ public final class BuildingConstants
     /**
      * Min slots required to be recognized as storage.
      */
-    public static final int  MIN_SLOTS_FOR_RECOGNITION = 5;
+    public static final int MIN_SLOTS_FOR_RECOGNITION = 5;
 
     // --------------- Miner building constants ---------------//
 

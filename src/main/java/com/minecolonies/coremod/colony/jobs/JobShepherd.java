@@ -8,7 +8,6 @@ import com.minecolonies.coremod.entity.ai.citizen.herders.EntityAIWorkShepherd;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 /**
  * The Shepherd job
  */
@@ -61,5 +60,4 @@ public class JobShepherd extends AbstractJob<EntityAIWorkShepherd, JobShepherd>
     {
         return BipedModelType.SHEEP_FARMER;
     }
-
 }

@@ -27,12 +27,13 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
 {
 
     private final Map<IToken<?>, Collection<IToken<?>>> assignments;
-    private IToken<?> id;
+    private       IToken<?>                             id;
 
     public StandardProviderRequestResolverAssignmentDataStore(
       final IToken<?> id,
       final Map<IToken<?>, Collection<IToken<?>>> assignments
-      ) {
+    )
+    {
         this.id = id;
         this.assignments = assignments;
     }
@@ -99,8 +100,8 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
 
                 entryCompound.put(NbtTagConstants.TAG_TOKEN, controller.serialize(t));
                 entryCompound.put(NbtTagConstants.TAG_LIST, standardProviderRequestResolverAssignmentDataStore.assignments.get(t).stream()
-                                                                 .map(StandardFactoryController.getInstance()::serialize)
-                                                                 .collect(NBTUtils.toListNBT()));
+                                                              .map(StandardFactoryController.getInstance()::serialize)
+                                                              .collect(NBTUtils.toListNBT()));
 
                 return entryCompound;
             }).collect(NBTUtils.toListNBT()));
@@ -118,7 +119,7 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
                                                               final IToken<?> elementToken = controller.deserialize(CompoundNBT.getCompound(NbtTagConstants.TAG_TOKEN));
                                                               final Collection<IToken<?>> elements = NBTUtils.streamCompound(CompoundNBT.getList(NbtTagConstants.TAG_LIST,
                                                                 Constants.NBT.TAG_COMPOUND)).map(elementCompound -> (IToken<?>) controller.deserialize(elementCompound))
-                                                                                               .collect(Collectors.toList());
+                                                                                                       .collect(Collectors.toList());
 
                                                               return new Tuple<>(elementToken, elements);
                                                           }).collect(Collectors.toMap(t -> t.getA(), t -> t.getB()));
@@ -127,8 +128,9 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
         }
 
         @Override
-        public void serialize(IFactoryController controller, StandardProviderRequestResolverAssignmentDataStore input,
-                PacketBuffer packetBuffer)
+        public void serialize(
+          IFactoryController controller, StandardProviderRequestResolverAssignmentDataStore input,
+          PacketBuffer packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.assignments.size());
@@ -140,8 +142,9 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
         }
 
         @Override
-        public StandardProviderRequestResolverAssignmentDataStore deserialize(IFactoryController controller,
-                PacketBuffer buffer) throws Throwable
+        public StandardProviderRequestResolverAssignmentDataStore deserialize(
+          IFactoryController controller,
+          PacketBuffer buffer) throws Throwable
         {
             final IToken<?> token = controller.deserialize(buffer);
             final Map<IToken<?>, Collection<IToken<?>>> assignments = new HashMap<>();

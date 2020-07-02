@@ -596,11 +596,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine)
-     * - If not: Check if there is a request for this already.
-     * -- If not: Create a request.
-     * - If so: Check if there is a request for this still.
-     * -- If so: cancel it.
+     * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine) - If not: Check if there is a request for this already. -- If not:
+     * Create a request. - If so: Check if there is a request for this still. -- If so: cancel it.
      */
     @Override
     public void onColonyTick(final IColony colony)

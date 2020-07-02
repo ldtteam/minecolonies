@@ -50,7 +50,6 @@ public class BuildingStonemason extends AbstractBuildingCrafter
         super(c, l);
     }
 
-
     @NotNull
     @Override
     public String getSchematicName()

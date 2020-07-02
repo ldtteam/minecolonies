@@ -34,7 +34,8 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
 
     /**
      * Constructor method for Abstract Barbarians.
-     * @param type the type.
+     *
+     * @param type  the type.
      * @param world the world.
      */
     public AbstractEntityPirate(final EntityType<? extends AbstractEntityPirate> type, final World world)
@@ -69,6 +70,7 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
 
     /**
      * Get the unique texture id.
+     *
      * @return the texture id.
      */
     public int getTextureId()

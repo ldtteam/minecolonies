@@ -17,17 +17,17 @@ public class PermissionEvent
      * Player UUID.
      */
     @Nullable
-    private final UUID     id;
+    private final UUID id;
 
     /**
      * Player name.
      */
-    private final String   name;
+    private final String name;
 
     /**
      * Action happening.
      */
-    private final Action   action;
+    private final Action action;
 
     /**
      * Impact permission.
@@ -36,9 +36,10 @@ public class PermissionEvent
 
     /**
      * Constructor for permissionevents.
-     * @param id the player UUID.
-     * @param name the player name.
-     * @param action the action happening.
+     *
+     * @param id       the player UUID.
+     * @param name     the player name.
+     * @param action   the action happening.
      * @param position the position of the action.
      */
     public PermissionEvent(final UUID id, final String name, final Action action, final BlockPos position)
@@ -51,12 +52,13 @@ public class PermissionEvent
 
     /**
      * Constructor for permissionevents. to load them from a ByteBuf.
+     *
      * @param buf the ByteBuf.
      */
     public PermissionEvent(final PacketBuffer buf)
     {
         final UUID uuid = PacketUtils.readUUID(buf);
-        if(uuid.equals(UUID.fromString("1-2-3-4-5")))
+        if (uuid.equals(UUID.fromString("1-2-3-4-5")))
         {
             this.id = null;
         }
@@ -71,6 +73,7 @@ public class PermissionEvent
 
     /**
      * The UUID of the player causing the event.
+     *
      * @return the UUID.
      */
     @Nullable
@@ -81,6 +84,7 @@ public class PermissionEvent
 
     /**
      * The name of the player causing the event.
+     *
      * @return the name String.
      */
     public String getName()
@@ -90,6 +94,7 @@ public class PermissionEvent
 
     /**
      * The action causing the event.
+     *
      * @return the Action
      */
     public Action getAction()
@@ -99,6 +104,7 @@ public class PermissionEvent
 
     /**
      * The position at which the event had happened.
+     *
      * @return the BlockPos.
      */
     public BlockPos getPosition()
@@ -108,11 +114,12 @@ public class PermissionEvent
 
     /**
      * Serialize the PermissioNEvent to a ByteBuf.
+     *
      * @param buf the buffer.
      */
     public void serialize(final PacketBuffer buf)
     {
-        if(id == null)
+        if (id == null)
         {
             PacketUtils.writeUUID(buf, UUID.fromString("1-2-3-4-5"));
         }
@@ -138,9 +145,9 @@ public class PermissionEvent
         }
         final PermissionEvent that = (PermissionEvent) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(name, that.name) &&
-                action == that.action &&
-                Objects.equals(position, that.position);
+                 Objects.equals(name, that.name) &&
+                 action == that.action &&
+                 Objects.equals(position, that.position);
     }
 
     @Override

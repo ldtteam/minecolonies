@@ -146,6 +146,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
     /**
      * Get the maximimum number of dmen that can be assigned to the warehoue.
+     *
      * @return the maximum amount.
      */
     private int getMaxAssignedDmen()
@@ -203,7 +204,8 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         for (int i = 0; i < deliverymanTagList.size(); i++)
         {
             final BlockPos pos = NBTUtil.readBlockPos(deliverymanTagList.getCompound(i));
-            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker) {
+            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker)
+            {
                 registeredDeliverymen.add(new Vec3d(pos));
             }
         }

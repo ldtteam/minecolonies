@@ -8,8 +8,7 @@ import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Class used to represent pickups inside the request system.
- * This class can be used to request a pickup of
+ * Class used to represent pickups inside the request system. This class can be used to request a pickup of
  */
 public class Pickup extends AbstractDeliverymanRequestable
 {
@@ -41,10 +40,10 @@ public class Pickup extends AbstractDeliverymanRequestable
 
     /**
      * Serialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the the buffer to write to.
-     * @param input the input to serialize.
+     * @param buffer     the the buffer to write to.
+     * @param input      the input to serialize.
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Pickup input)
     {
@@ -53,9 +52,9 @@ public class Pickup extends AbstractDeliverymanRequestable
 
     /**
      * Deserialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the buffer to read.
+     * @param buffer     the buffer to read.
      * @return the deliverable.
      */
     public static Pickup deserialize(final IFactoryController controller, final PacketBuffer buffer)

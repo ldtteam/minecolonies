@@ -277,7 +277,7 @@ public final class ColonyView implements IColonyView
             final int postSize = buf.writerIndex();
             if ((postSize - preSize) >= ColonyView.REQUEST_MANAGER_MAX_SIZE)
             {
-            	Log.getLogger().warn("Colony " + colony.getID() + " has a very big memory imprint, this could be a memory leak, please contact the mod author!");
+                Log.getLogger().warn("Colony " + colony.getID() + " has a very big memory imprint, this could be a memory leak, please contact the mod author!");
             }
         }
         else
@@ -581,14 +581,12 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Get a AbstractBuilding.View for a given building (by coordinate-id) using
-     * raw x,y,z.
+     * Get a AbstractBuilding.View for a given building (by coordinate-id) using raw x,y,z.
      *
      * @param x x-coordinate.
      * @param y y-coordinate.
      * @param z z-coordinate.
-     * @return {@link AbstractBuildingView} of a AbstractBuilding for the given
-     * Coordinates/ID, or null.
+     * @return {@link AbstractBuildingView} of a AbstractBuilding for the given Coordinates/ID, or null.
      */
     @Override
     public IBuildingView getBuilding(final int x, final int y, final int z)
@@ -597,12 +595,10 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Get a AbstractBuilding.View for a given building (by coordinate-id) using
-     * ChunkCoordinates.
+     * Get a AbstractBuilding.View for a given building (by coordinate-id) using ChunkCoordinates.
      *
      * @param buildingId Coordinates/ID of the AbstractBuilding.
-     * @return {@link AbstractBuildingView} of a AbstractBuilding for the given
-     * Coordinates/ID, or null.
+     * @return {@link AbstractBuildingView} of a AbstractBuilding for the given Coordinates/ID, or null.
      */
     @Override
     public IBuildingView getBuilding(final BlockPos buildingId)
@@ -611,8 +607,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Returns a map of players in the colony. Key is the UUID, value is {@link
-     * Player}
+     * Returns a map of players in the colony. Key is the UUID, value is {@link Player}
      *
      * @return Map of UUID's and {@link Player}
      */
@@ -624,8 +619,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Sets a specific permission to a rank. If the permission wasn't already
-     * set, it sends a message to the server.
+     * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server.
      *
      * @param rank   Rank to get the permission.
      * @param action Permission to get.
@@ -640,8 +634,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * removes a specific permission to a rank. If the permission was set, it
-     * sends a message to the server.
+     * removes a specific permission to a rank. If the permission was set, it sends a message to the server.
      *
      * @param rank   Rank to remove permission from.
      * @param action Action to remove permission of.
@@ -835,9 +828,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Update a ColonyView's workOrders given a network data ColonyView update
-     * packet. This uses a full-replacement - workOrders do not get updated and
-     * are instead overwritten.
+     * Update a ColonyView's workOrders given a network data ColonyView update packet. This uses a full-replacement - workOrders do not get updated and are instead overwritten.
      *
      * @param buf Network data.
      * @return null == no response.
@@ -860,9 +851,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Update a ColonyView's citizens given a network data ColonyView update
-     * packet. This uses a full-replacement - citizens do not get updated and
-     * are instead overwritten.
+     * Update a ColonyView's citizens given a network data ColonyView update packet. This uses a full-replacement - citizens do not get updated and are instead overwritten.
      *
      * @param id  ID of the citizen.
      * @param buf Network data.
@@ -929,9 +918,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Update a ColonyView's buildings given a network data ColonyView update
-     * packet. This uses a full-replacement - buildings do not get updated and
-     * are instead overwritten.
+     * Update a ColonyView's buildings given a network data ColonyView update packet. This uses a full-replacement - buildings do not get updated and are instead overwritten.
      *
      * @param buildingId location of the building.
      * @param buf        buffer containing ColonyBuilding information.

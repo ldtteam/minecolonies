@@ -5,8 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Marker interface used to specify a factory for requesttokens.
- * Restricts the output type of the general factory interface to IToken
+ * Marker interface used to specify a factory for requesttokens. Restricts the output type of the general factory interface to IToken
  *
  * @param <T>  The type of requesttoken.
  * @param <RT> The requesttoken type.
@@ -21,7 +20,6 @@ public interface ITokenFactory<T, RT extends IToken<?>> extends IFactory<T, RT>
      * @param t                 The input to build a new output for.
      * @param context           The context of the token.
      * @return The new output instance for a given input.
-     *
      * @throws IllegalArgumentException is thrown when the factory cannot produce a new instance out of the given context and input.
      */
     @NotNull

@@ -11,8 +11,7 @@ import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Class used to represent deliveries inside the request system.
- * This class can be used to request a getDelivery of a given ItemStack from a source to a target.
+ * Class used to represent deliveries inside the request system. This class can be used to request a getDelivery of a given ItemStack from a source to a target.
  */
 public class Delivery extends AbstractDeliverymanRequestable
 {
@@ -72,10 +71,10 @@ public class Delivery extends AbstractDeliverymanRequestable
 
     /**
      * Serialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the the buffer to write to.
-     * @param input the input to serialize.
+     * @param buffer     the the buffer to write to.
+     * @param input      the input to serialize.
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Delivery input)
     {
@@ -87,9 +86,9 @@ public class Delivery extends AbstractDeliverymanRequestable
 
     /**
      * Deserialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the buffer to read.
+     * @param buffer     the buffer to read.
      * @return the deliverable.
      */
     public static Delivery deserialize(final IFactoryController controller, final PacketBuffer buffer)

@@ -129,15 +129,16 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     {
         super();
         this.name = LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner));
-        this.inventory = new ItemStackHandler() {
+        this.inventory = new ItemStackHandler()
+        {
             @Override
             public int getSlotLimit(int slot) { return 1; }
 
             @Override
-            public boolean isItemValid (int slot, @Nonnull ItemStack stack)
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack)
             {
                 return Tags.Items.SEEDS.contains(stack.getItem())
-                    || (stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof CropsBlock);
+                         || (stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof CropsBlock);
             }
         };
     }
@@ -222,17 +223,19 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     @Override
     public boolean isNoPartOfField(@NotNull final World world, @NotNull final BlockPos position)
     {
-        return world.isAirBlock(position) ||  isValidDelimiter(world.getBlockState(position.up()).getBlock());
+        return world.isAirBlock(position) || isValidDelimiter(world.getBlockState(position.up()).getBlock());
     }
 
     /**
      * Check if a block is a valid delimiter of the field.
+     *
      * @param block the block to analyze.
      * @return true if so.
      */
     private static boolean isValidDelimiter(final Block block)
     {
-        return block instanceof FenceBlock || block instanceof FenceGateBlock || block == ModBlocks.blockCactusFence || block == ModBlocks.blockCactusFenceGate || block instanceof WallBlock;
+        return block instanceof FenceBlock || block instanceof FenceGateBlock || block == ModBlocks.blockCactusFence || block == ModBlocks.blockCactusFenceGate
+                 || block instanceof WallBlock;
     }
 
     /**
@@ -408,6 +411,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
 
     /**
      * Getter for the ownerId of the field.
+     *
      * @return the int id.
      */
     @Override
@@ -425,9 +429,9 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     public void setOwner(final int ownerId)
     {
         this.ownerId = ownerId;
-        if(colony != null)
+        if (colony != null)
         {
-            if(colony.getCitizenManager().getCitizen(ownerId) == null)
+            if (colony.getCitizenManager().getCitizen(ownerId) == null)
             {
                 owner = "";
             }
@@ -443,16 +447,16 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     /**
      * Sets the owner of the field.
      *
-     * @param ownerId the name of the citizen.
+     * @param ownerId    the name of the citizen.
      * @param tempColony the colony view.
      */
     @Override
     public void setOwner(final int ownerId, final IColonyView tempColony)
     {
         this.ownerId = ownerId;
-        if(tempColony != null)
+        if (tempColony != null)
         {
-            if(tempColony.getCitizen(ownerId) == null)
+            if (tempColony.getCitizen(ownerId) == null)
             {
                 owner = "";
             }
@@ -466,6 +470,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
 
     /**
      * Get the inventory of the scarecrow.
+     *
      * @return the IItemHandler.
      */
     @Override
@@ -481,7 +486,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     {
         final CompoundNBT compound = new CompoundNBT();
         this.write(compound);
-        if(colony != null)
+        if (colony != null)
         {
             compound.putInt(TAG_COLONY_ID, colony.getID());
         }
@@ -500,7 +505,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     {
         final CompoundNBT compound = packet.getNbtCompound();
         this.read(compound);
-        if(compound.keySet().contains(TAG_COLONY_ID))
+        if (compound.keySet().contains(TAG_COLONY_ID))
         {
             setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), world.getDimension().getType().getId()));
         }
@@ -577,6 +582,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
 
     /**
      * Set the colony of the field.
+     *
      * @param colony the colony to set.
      */
     public void setColony(final IColony colony)

@@ -76,9 +76,10 @@ public class StackList implements IDeliverable
 
     /**
      * Create a Stacks deliverable.
-     * @param stacks the required stacks.
+     *
+     * @param stacks      the required stacks.
      * @param description the description.
-     * @param count the count.
+     * @param count       the count.
      */
     public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count)
     {
@@ -87,10 +88,11 @@ public class StackList implements IDeliverable
 
     /**
      * Create a Stacks deliverable.
-     * @param stacks the required stacks.
+     *
+     * @param stacks      the required stacks.
      * @param description the description.
-     * @param count the count.
-     * @param minCount the min count.
+     * @param count       the count.
+     * @param minCount    the min count.
      */
     public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count, final int minCount)
     {
@@ -99,24 +101,25 @@ public class StackList implements IDeliverable
 
     /**
      * Create a Stacks deliverable.
-     * @param stacks the required stacks.
-     * @param matchMeta if meta has to be matched.
-     * @param matchNBT if NBT has to be matched.
+     *
+     * @param stacks      the required stacks.
+     * @param matchMeta   if meta has to be matched.
+     * @param matchNBT    if NBT has to be matched.
      * @param matchOreDic if the oredict has to be matched.
-     * @param result the result stack.
+     * @param result      the result stack.
      * @param description the description.
-     * @param count the count.
-     * @param minCount the min count.
+     * @param count       the count.
+     * @param minCount    the min count.
      */
     public StackList(
-            @NotNull final List<ItemStack> stacks,
-            final boolean matchMeta,
-            final boolean matchNBT,
-            final boolean matchOreDic,
-            @NotNull final ItemStack result,
-            final String description,
-            final int count,
-            final int minCount)
+      @NotNull final List<ItemStack> stacks,
+      final boolean matchMeta,
+      final boolean matchNBT,
+      final boolean matchOreDic,
+      @NotNull final ItemStack result,
+      final String description,
+      final int count,
+      final int minCount)
     {
         this.description = description;
         for (final ItemStack stack : stacks)
@@ -137,8 +140,9 @@ public class StackList implements IDeliverable
 
     /**
      * Serialize the deliverable.
+     *
      * @param controller the controller.
-     * @param input the input.
+     * @param input      the input.
      * @return the compound.
      */
     public static CompoundNBT serialize(final IFactoryController controller, final StackList input)
@@ -168,8 +172,9 @@ public class StackList implements IDeliverable
 
     /**
      * Deserialize the deliverable.
+     *
      * @param controller the controller.
-     * @param compound the compound.
+     * @param compound   the compound.
      * @return the deliverable.
      */
     public static StackList deserialize(final IFactoryController controller, final CompoundNBT compound)
@@ -201,10 +206,10 @@ public class StackList implements IDeliverable
 
     /**
      * Serialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the the buffer to write to.
-     * @param input the input to serialize.
+     * @param buffer     the the buffer to write to.
+     * @param input      the input to serialize.
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final StackList input)
     {
@@ -227,9 +232,9 @@ public class StackList implements IDeliverable
 
     /**
      * Deserialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the buffer to read.
+     * @param buffer     the buffer to read.
      * @return the deliverable.
      */
     public static StackList deserialize(final IFactoryController controller, final PacketBuffer buffer)
@@ -364,6 +369,7 @@ public class StackList implements IDeliverable
 
     /**
      * Getter for the display description of the list.
+     *
      * @return the description.
      */
     public String getDescription()

@@ -118,7 +118,7 @@ public final class WindowConstants
     /**
      * Id of the toggle print progress button in the GUI.
      */
-    public static final String BUTTON_TOGGLE_PRINT_PROGRESS= "togglePrintProgress";
+    public static final String BUTTON_TOGGLE_PRINT_PROGRESS = "togglePrintProgress";
 
     /**
      * Id of the remove player button in the GUI..
@@ -523,37 +523,37 @@ public final class WindowConstants
     public static final String RESOURCE_SCROLL_RESOURCE_SUFFIX = ":gui/windowresourcescroll.xml";
 
     /**
-     *  Window all Items list gui file.
+     * Window all Items list gui file.
      */
     public static final String HUT_ALL_INVENTORY_SUFFIX = ":gui/windowhutallinventory.xml";
     /**
      * No Sorting stage. how it comes from Database so it gets feeded
      */
-    public static final int NO_SORT         = 0;
+    public static final int    NO_SORT                  = 0;
     /**
      * Name Ascending
      */
-    public static final int ASC_SORT        = 1;
+    public static final int    ASC_SORT                 = 1;
     /**
      * Name Descending
      */
-    public static final int DESC_SORT       = 2;
+    public static final int    DESC_SORT                = 2;
     /**
      * Itemcount Ascending
      */
-    public static final int COUNT_ASC_SORT  = 3;
+    public static final int    COUNT_ASC_SORT           = 3;
     /**
      * Itemcount Descending
      */
-    public static final int COUNT_DESC_SORT = 4;
+    public static final int    COUNT_DESC_SORT          = 4;
     /**
      * The Stringdefine for the GUI page
      */
-    public static final String LIST_ALLINVENTORY          = "allinventorylist";
+    public static final String LIST_ALLINVENTORY        = "allinventorylist";
     /**
-     *  The Sort Button
+     * The Sort Button
      */
-     public static final String BUTTON_SORT = "sortStorageFilter";
+    public static final String BUTTON_SORT              = "sortStorageFilter";
 
     /**
      * Window resource list gui file.
@@ -630,12 +630,12 @@ public final class WindowConstants
     public static final String RED_ICON    = "minecolonies:textures/gui/red_icon.png";
     public static final String YELLOW_ICON = "minecolonies:textures/gui/yellow_icon.png";
     public static final String GREEN_ICON  = "minecolonies:textures/gui/green_icon.png";
-    public static final String BLUE_ICON = "minecolonies:textures/gui/blue_icon.png";
+    public static final String BLUE_ICON   = "minecolonies:textures/gui/blue_icon.png";
 
-    public static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
-    public static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
-    public static final String LABEL_PROGRESS =  "progress";
-    public static final String LABEL_WORKERNAME = "workerName";
+    public static final String LABEL_CONSTRUCTION_NAME = "constructionName";
+    public static final String LABEL_CONSTRUCTION_POS  = "constructionPos";
+    public static final String LABEL_PROGRESS          = "progress";
+    public static final String LABEL_WORKERNAME        = "workerName";
 
     public static final String LABEL_PAGE_NUMBER = "pageNum";
 
@@ -996,7 +996,7 @@ public final class WindowConstants
      */
     public static final String INPUT_NAME     = "name";
     public static final String WINDOW_POSTBOX = ":gui/windowpostbox.xml";
-    public static final String INPUT_QTY    = "qty";
+    public static final String INPUT_QTY      = "qty";
     public static final String BUTTON_REQUEST = "request";
 
     /**
@@ -1092,7 +1092,7 @@ public final class WindowConstants
     /**
      * Id of the direct placement button.
      */
-    public static final String BUTTON_DIRECT                = "direct";
+    public static final String BUTTON_DIRECT = "direct";
 
     /**
      * String of the suggest building GUI.
@@ -1122,21 +1122,21 @@ public final class WindowConstants
     /**
      * WindowInteraction constants.
      */
-    public static final int SLIGHTLY_BLUE           = 100;
-    public static final int BUTTON_HEIGHT           = 17;
-    public static final int BUTTON_LENGTH           = 129;
-    public static final int BUTTON_BUFFER           = 3;
-    public static final String RESPONSE_BOX_ID      = "responseOptions";
+    public static final int    SLIGHTLY_BLUE           = 100;
+    public static final int    BUTTON_HEIGHT           = 17;
+    public static final int    BUTTON_LENGTH           = 129;
+    public static final int    BUTTON_BUFFER           = 3;
+    public static final String RESPONSE_BOX_ID         = "responseOptions";
     public static final String MEDIUM_SIZED_BUTTON_RES = "textures/gui/builderhut/builder_button_medium_large.png";
 
     /**
      * The resource string.
      */
-    public static final String RESOURCE_STRING = ":gui/windowhutuniversity.xml";
-    public static final String BRANCH_VIEW_ID = "pageBranches";
-    public static final int INITITAL_X_OFFSET = 30;
-    public static final int INITITAL_Y_OFFSET = 60;
-    public static final int BUTTON_PADDING    = 10;
+    public static final String RESOURCE_STRING   = ":gui/windowhutuniversity.xml";
+    public static final String BRANCH_VIEW_ID    = "pageBranches";
+    public static final int    INITITAL_X_OFFSET = 30;
+    public static final int    INITITAL_Y_OFFSET = 60;
+    public static final int    BUTTON_PADDING    = 10;
 
     /**
      * The job modifier page.

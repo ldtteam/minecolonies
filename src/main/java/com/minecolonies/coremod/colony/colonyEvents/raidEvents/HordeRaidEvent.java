@@ -9,7 +9,7 @@ import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import com.minecolonies.coremod.colony.ColonyState;
+import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import net.minecraft.block.Blocks;
@@ -34,7 +34,7 @@ import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEven
 import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_KILLED;
 
 /**
- *  Horde raid event for the colony, triggers a horde that spawn and attack the colony.
+ * Horde raid event for the colony, triggers a horde that spawn and attack the colony.
  */
 public abstract class HordeRaidEvent implements IColonyRaidEvent
 {
@@ -192,11 +192,12 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
 
     /**
      * Spawn a specific horde.
-     * @param spawnPos the pos to spawn them at.
-     * @param colony the colony to spawn them for.
-     * @param id the raid event id.
+     *
+     * @param spawnPos        the pos to spawn them at.
+     * @param colony          the colony to spawn them for.
+     * @param id              the raid event id.
      * @param numberOfArchers the archers.
-     * @param numberOfBosses the bosses.
+     * @param numberOfBosses  the bosses.
      * @param numberOfRaiders the normal raiders.
      */
     protected void spawnHorde(final BlockPos spawnPos, final IColony colony, final int id, final int numberOfBosses, final int numberOfArchers, final int numberOfRaiders)
@@ -315,6 +316,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
 
     /**
      * Get the assigned colony.
+     *
      * @return the colony.
      */
     public IColony getColony()
@@ -356,7 +358,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
             final BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
             if (spawnPos != null)
             {
-                spawnHorde(spawnPos, colony, id, horde.numberOfBosses - boss.size(), horde.numberOfArchers - archers.size(), horde.numberOfRaiders- normal.size());
+                spawnHorde(spawnPos, colony, id, horde.numberOfBosses - boss.size(), horde.numberOfArchers - archers.size(), horde.numberOfRaiders - normal.size());
             }
         }
 
@@ -410,7 +412,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
             campFiresNBT.add(BlockPosUtil.write(new CompoundNBT(), NbtTagConstants.TAG_POS, pos));
         }
 
-        compound.put(TAG_CAMPFIRE_LIST,campFiresNBT);
+        compound.put(TAG_CAMPFIRE_LIST, campFiresNBT);
         compound.putInt(TAG_EVENT_STATUS, status.ordinal());
         compound.putInt(TAG_DAYS_LEFT, daysToGo);
         horde.writeToNbt(compound);

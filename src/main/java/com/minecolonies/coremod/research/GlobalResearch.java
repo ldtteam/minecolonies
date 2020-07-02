@@ -79,10 +79,11 @@ public class GlobalResearch implements IGlobalResearch
 
     /**
      * Create the new research.
-     * @param id it's id.
-     * @param desc it's description text.
+     *
+     * @param id     it's id.
+     * @param desc   it's description text.
      * @param effect it's effect.
-     * @param depth the depth in the tree.
+     * @param depth  the depth in the tree.
      * @param branch the branch it is on.
      */
     public GlobalResearch(final String id, final String branch, final String desc, final int depth, final IResearchEffect<?> effect)
@@ -101,7 +102,10 @@ public class GlobalResearch implements IGlobalResearch
         final ILocalResearch localParentResearch = parent.isEmpty() ? null : localTree.getResearch(branch, parentResearch.getId());
         final ILocalResearch localResearch = localTree.getResearch(this.getBranch(), this.getId());
 
-        return localResearch == null && canDisplay(uni_level) && (parentResearch == null || localParentResearch != null && localParentResearch.getState() == ResearchState.FINISHED) && ( parentResearch == null || !parentResearch.hasResearchedChild(localTree) || !parentResearch.hasOnlyChild()) && (depth < 6 || !localTree.branchFinishedHighestLevel(branch));
+        return localResearch == null && canDisplay(uni_level) && (parentResearch == null || localParentResearch != null && localParentResearch.getState() == ResearchState.FINISHED)
+                 && (parentResearch == null || !parentResearch.hasResearchedChild(localTree) || !parentResearch.hasOnlyChild()) && (depth < 6
+                                                                                                                                      || !localTree.branchFinishedHighestLevel(
+          branch));
     }
 
     @Override
@@ -117,7 +121,8 @@ public class GlobalResearch implements IGlobalResearch
         try
         {
             final CommonConfiguration configuration = MinecoloniesAPIProxy.getInstance().getConfig().getCommon();
-            final ForgeConfigSpec.ConfigValue<List<? extends String>> researchCost = (ForgeConfigSpec.ConfigValue<List<? extends String>>) configuration.getClass().getDeclaredField(id).get(configuration);
+            final ForgeConfigSpec.ConfigValue<List<? extends String>> researchCost =
+              (ForgeConfigSpec.ConfigValue<List<? extends String>>) configuration.getClass().getDeclaredField(id).get(configuration);
             for (final String cost : researchCost.get())
             {
                 final String[] tuple = cost.split("\\*");
@@ -139,7 +144,7 @@ public class GlobalResearch implements IGlobalResearch
     @Override
     public boolean hasEnoughResources(final IItemHandler inventory)
     {
-        for (final ItemStorage cost: costList)
+        for (final ItemStorage cost : costList)
         {
             final int count = InventoryUtils.getItemCountInItemHandler(inventory, stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(cost.getItemStack()));
             if (count < cost.getAmount())
@@ -212,7 +217,7 @@ public class GlobalResearch implements IGlobalResearch
     @Override
     public boolean hasResearchedChild(@NotNull final ILocalResearchTree localTree)
     {
-        for (final String child: this.childs)
+        for (final String child : this.childs)
         {
             final IGlobalResearch childResearch = IGlobalResearchTree.getInstance().getResearch(branch, child);
             final ILocalResearch localResearch = localTree.getResearch(childResearch.getBranch(), childResearch.getId());

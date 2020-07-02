@@ -32,7 +32,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     /**
      * Return to chest after this amount of stacks.
      */
-    private static final int    MAX_BLOCKS_MINED    = 64;
+    private static final int MAX_BLOCKS_MINED = 64;
 
     /**
      * The quantity to request.
@@ -61,6 +61,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
     /**
      * Plant something for the current state.
+     *
      * @return the next state to go to.
      */
     private IAIState plant()
@@ -92,6 +93,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
     /**
      * Farm some of the plants.
+     *
      * @return next state to go to.
      */
     private IAIState farm()
@@ -198,6 +200,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
     /**
      * Async request for paper to the colony.
+     *
      * @param current the current plantable.
      */
     private void requestPlantable(final Item current)
@@ -211,13 +214,14 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
     /**
      * Check if the plant at pos it at least three high.
+     *
      * @param pos the pos to check
      * @return true if so.
      */
     private boolean isAtLeastThreeHigh(final BlockPos pos)
     {
         return !(world.getBlockState(pos.up(1)).getBlock() instanceof AirBlock)
-        && !(world.getBlockState(pos.up(2)).getBlock() instanceof AirBlock)
-        && !(world.getBlockState(pos.up(3)).getBlock() instanceof AirBlock);
+                 && !(world.getBlockState(pos.up(2)).getBlock() instanceof AirBlock)
+                 && !(world.getBlockState(pos.up(3)).getBlock() instanceof AirBlock);
     }
 }

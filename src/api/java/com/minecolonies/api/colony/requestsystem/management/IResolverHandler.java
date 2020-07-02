@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.requestsystem.management.handlers;
+package com.minecolonies.api.colony.requestsystem.management;
 
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;

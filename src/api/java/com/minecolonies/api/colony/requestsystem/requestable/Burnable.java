@@ -9,8 +9,7 @@ import net.minecraft.tileentity.FurnaceTileEntity;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Burnable requestable.
- * Delivers a stack of burnable fuel.
+ * Burnable requestable. Delivers a stack of burnable fuel.
  */
 public class Burnable implements IDeliverable
 {
@@ -34,8 +33,9 @@ public class Burnable implements IDeliverable
 
     /**
      * Serialize the deliverable.
+     *
      * @param controller the controller.
-     * @param burnable the input.
+     * @param burnable   the input.
      * @return the compound.
      */
     public static CompoundNBT serialize(final IFactoryController controller, final Burnable burnable)
@@ -53,8 +53,9 @@ public class Burnable implements IDeliverable
 
     /**
      * Deserialize the deliverable.
+     *
      * @param controller the controller.
-     * @param compound the compound.
+     * @param compound   the compound.
      * @return the deliverable.
      */
     public static Burnable deserialize(final IFactoryController controller, final CompoundNBT compound)
@@ -67,10 +68,10 @@ public class Burnable implements IDeliverable
 
     /**
      * Serialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the the buffer to write to.
-     * @param input the input to serialize.
+     * @param buffer     the the buffer to write to.
+     * @param input      the input to serialize.
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Burnable input)
     {
@@ -85,9 +86,9 @@ public class Burnable implements IDeliverable
 
     /**
      * Deserialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the buffer to read.
+     * @param buffer     the buffer to read.
      * @return the deliverable.
      */
     public static Burnable deserialize(final IFactoryController controller, final PacketBuffer buffer)

@@ -86,11 +86,11 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * The colony id.
      */
-    private final int colonyId;
+    private final int         colonyId;
     /**
      * Life count.
      */
-    private int lifeCount = 0;
+    private       int         lifeCount = 0;
 
     /**
      * The previous window.

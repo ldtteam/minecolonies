@@ -24,7 +24,7 @@ public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<In
     public static final class Builder
     {
         private Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer;
-        private ResourceLocation                                    registryName;
+        private ResourceLocation                                registryName;
 
         /**
          * Setter the for the producer.

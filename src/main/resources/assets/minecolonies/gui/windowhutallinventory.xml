@@ -6,8 +6,8 @@
     <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.allinventory)"/>
     <input id="names" size="132 18" pos="20 30" maxlength="25"/>
     <buttonimage id="sortStorageFilter" size="14 15" pos="158 31" textcolor="black"
-                     source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
-                     label="v^"/>
+                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
+                 label="v^"/>
     <list id="allinventorylist" size="157 156" pos="20 55">
         <box size="100% 18" linewidth="2">
             <itemicon id="resourceIcon" size="17 17" pos="0 0"/>

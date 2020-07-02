@@ -20,6 +20,7 @@ public interface IColonyEvent
 
     /**
      * Sets the current event status
+     *
      * @param status the status to set.
      */
     void setStatus(final EventStatus status);

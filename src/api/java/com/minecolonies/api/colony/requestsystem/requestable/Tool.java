@@ -58,7 +58,7 @@ public class Tool implements IDeliverable
      * Serializes this Tool into NBT.
      *
      * @param controller The IFactoryController used to serialize sub types.
-     * @param tool the tool to serialize.
+     * @param tool       the tool to serialize.
      * @return The CompoundNBT containing the tool data.
      */
     @NotNull
@@ -95,10 +95,10 @@ public class Tool implements IDeliverable
 
     /**
      * Serialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the the buffer to write to.
-     * @param input the input to serialize.
+     * @param buffer     the the buffer to write to.
+     * @param input      the input to serialize.
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Tool input)
     {
@@ -114,9 +114,9 @@ public class Tool implements IDeliverable
 
     /**
      * Deserialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the buffer to read.
+     * @param buffer     the buffer to read.
      * @return the deliverable.
      */
     public static Tool deserialize(final IFactoryController controller, final PacketBuffer buffer)
@@ -160,7 +160,9 @@ public class Tool implements IDeliverable
     public Integer getMaxLevel()
     {
         return maxLevel;
-    }    /**
+    }
+
+    /**
      * The resulting stack if set during creation, else ItemStack.Empty.
      *
      * @return The resulting stack.
@@ -176,11 +178,14 @@ public class Tool implements IDeliverable
     {
         //API:Map the given strings a proper way.
         final boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
-                && stack.getCount() >= 1
-                && getToolClasses(stack).stream()
-                .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
-                .map(ToolType::getToolType)
-                .anyMatch(t -> t != ToolType.NONE && (stack.getDamage() > 0 || !stack.isDamaged()) && ItemStackUtils.hasToolLevel(stack, t, getMinLevel(), getMaxLevel()));
+                                         && stack.getCount() >= 1
+                                         && getToolClasses(stack).stream()
+                                              .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
+                                              .map(ToolType::getToolType)
+                                              .anyMatch(t -> t != ToolType.NONE && (stack.getDamage() > 0 || !stack.isDamaged()) && ItemStackUtils.hasToolLevel(stack,
+                                                t,
+                                                getMinLevel(),
+                                                getMaxLevel()));
 
         if (!toolTypeResult)
         {
@@ -194,38 +199,38 @@ public class Tool implements IDeliverable
     {
         final Set<String> set = new HashSet<>();
 
-        if(ItemStackUtils.isEmpty(stack))
+        if (ItemStackUtils.isEmpty(stack))
         {
             return set;
         }
 
         set.addAll(stack.getItem().getToolTypes(stack).stream().map(net.minecraftforge.common.ToolType::getName).collect(Collectors.toList()));
 
-        if(stack.getItem() instanceof BowItem)
+        if (stack.getItem() instanceof BowItem)
         {
             set.add("bow");
         }
-        else if(stack.getItem() instanceof SwordItem || Compatibility.isTinkersWeapon(stack))
+        else if (stack.getItem() instanceof SwordItem || Compatibility.isTinkersWeapon(stack))
         {
             set.add("weapon");
         }
-        else if(stack.getItem() instanceof HoeItem)
+        else if (stack.getItem() instanceof HoeItem)
         {
             set.add("hoe");
         }
-        else if(stack.getItem() instanceof FishingRodItem)
+        else if (stack.getItem() instanceof FishingRodItem)
         {
             set.add("rod");
         }
-        else if(stack.getItem() instanceof  ShearsItem)
+        else if (stack.getItem() instanceof ShearsItem)
         {
             set.add("shears");
         }
-        else if(stack.getItem() instanceof  ShieldItem)
+        else if (stack.getItem() instanceof ShieldItem)
         {
             set.add("shield");
         }
-        else if(stack.getItem() instanceof ArmorItem)
+        else if (stack.getItem() instanceof ArmorItem)
         {
             /*
              * There is no armor class for each type of armor.
@@ -256,6 +261,7 @@ public class Tool implements IDeliverable
 
     /**
      * Check if the tool is armor.
+     *
      * @return true if so.
      */
     public boolean isArmor()

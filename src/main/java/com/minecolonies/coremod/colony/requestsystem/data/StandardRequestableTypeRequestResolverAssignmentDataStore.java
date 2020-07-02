@@ -26,12 +26,13 @@ import java.util.stream.Collectors;
 public class StandardRequestableTypeRequestResolverAssignmentDataStore implements IRequestableTypeRequestResolverAssignmentDataStore
 {
 
-    private IToken<?> id;
+    private       IToken<?>                                id;
     private final Map<TypeToken<?>, Collection<IToken<?>>> assignments;
 
     public StandardRequestableTypeRequestResolverAssignmentDataStore(
       final IToken<?> id,
-      final Map<TypeToken<?>, Collection<IToken<?>>> assignments) {
+      final Map<TypeToken<?>, Collection<IToken<?>>> assignments)
+    {
         this.id = id;
         this.assignments = assignments;
     }
@@ -99,8 +100,8 @@ public class StandardRequestableTypeRequestResolverAssignmentDataStore implement
 
                 entryCompound.put(NbtTagConstants.TAG_TOKEN, controller.serialize(t));
                 entryCompound.put(NbtTagConstants.TAG_LIST, standardRequestableTypeRequestResolverAssignmentDataStore.assignments.get(t).stream()
-                                                                 .map(StandardFactoryController.getInstance()::serialize)
-                                                                 .collect(NBTUtils.toListNBT()));
+                                                              .map(StandardFactoryController.getInstance()::serialize)
+                                                              .collect(NBTUtils.toListNBT()));
 
                 return entryCompound;
             }).collect(NBTUtils.toListNBT()));
@@ -115,21 +116,22 @@ public class StandardRequestableTypeRequestResolverAssignmentDataStore implement
         {
             IToken<?> token = controller.deserialize(nbt.getCompound(NbtTagConstants.TAG_TOKEN));
             Map<TypeToken<?>, Collection<IToken<?>>> map = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Constants.NBT.TAG_COMPOUND))
-                                                          .map(CompoundNBT -> {
-                                                              final TypeToken<?> elementToken = controller.deserialize(CompoundNBT.getCompound(NbtTagConstants.TAG_TOKEN));
-                                                              final Collection<IToken<?>> elements = NBTUtils.streamCompound(CompoundNBT.getList(NbtTagConstants.TAG_LIST,
-                                                                Constants.NBT.TAG_COMPOUND)).map(elementCompound -> (IToken<?>) controller.deserialize(elementCompound))
-                                                                                                       .collect(Collectors.toList());
+                                                             .map(CompoundNBT -> {
+                                                                 final TypeToken<?> elementToken = controller.deserialize(CompoundNBT.getCompound(NbtTagConstants.TAG_TOKEN));
+                                                                 final Collection<IToken<?>> elements = NBTUtils.streamCompound(CompoundNBT.getList(NbtTagConstants.TAG_LIST,
+                                                                   Constants.NBT.TAG_COMPOUND)).map(elementCompound -> (IToken<?>) controller.deserialize(elementCompound))
+                                                                                                          .collect(Collectors.toList());
 
-                                                              return new Tuple<>(elementToken, elements);
-                                                          }).collect(Collectors.toMap(t -> t.getA(), t -> t.getB()));
+                                                                 return new Tuple<>(elementToken, elements);
+                                                             }).collect(Collectors.toMap(t -> t.getA(), t -> t.getB()));
 
             return new StandardRequestableTypeRequestResolverAssignmentDataStore(token, map);
         }
 
         @Override
-        public void serialize(IFactoryController controller, StandardRequestableTypeRequestResolverAssignmentDataStore input,
-                PacketBuffer packetBuffer)
+        public void serialize(
+          IFactoryController controller, StandardRequestableTypeRequestResolverAssignmentDataStore input,
+          PacketBuffer packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.assignments.size());
@@ -141,8 +143,9 @@ public class StandardRequestableTypeRequestResolverAssignmentDataStore implement
         }
 
         @Override
-        public StandardRequestableTypeRequestResolverAssignmentDataStore deserialize(IFactoryController controller,
-                PacketBuffer buffer) throws Throwable
+        public StandardRequestableTypeRequestResolverAssignmentDataStore deserialize(
+          IFactoryController controller,
+          PacketBuffer buffer) throws Throwable
         {
             final IToken<?> token = controller.deserialize(buffer);
             final Map<TypeToken<?>, Collection<IToken<?>>> assignments = new HashMap<>();
@@ -150,7 +153,7 @@ public class StandardRequestableTypeRequestResolverAssignmentDataStore implement
             for (int i = 0; i < assignmentsSize; ++i)
             {
                 final TypeToken<?> key = controller.deserialize(buffer);
-            	final List<IToken<?>> tokens = new ArrayList<>();
+                final List<IToken<?>> tokens = new ArrayList<>();
                 final int tokensSize = buffer.readInt();
                 for (int ii = 0; ii < tokensSize; ++ii)
                 {

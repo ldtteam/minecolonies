@@ -59,6 +59,7 @@ public class Stack implements IDeliverable
 
     /**
      * Create a Stack deliverable.
+     *
      * @param stack the required stack.
      */
     public Stack(@NotNull final ItemStack stack)
@@ -68,8 +69,9 @@ public class Stack implements IDeliverable
 
     /**
      * Create a Stack deliverable.
-     * @param stack the required stack.
-     * @param count the count.
+     *
+     * @param stack    the required stack.
+     * @param count    the count.
      * @param minCount the min count.
      */
     public Stack(@NotNull final ItemStack stack, final int count, final int minCount)
@@ -79,6 +81,7 @@ public class Stack implements IDeliverable
 
     /**
      * Transform an itemStorage into this predicate.
+     *
      * @param itemStorage the storage to use.
      */
     public Stack(@NotNull final ItemStorage itemStorage)
@@ -88,22 +91,23 @@ public class Stack implements IDeliverable
 
     /**
      * Create a Stack deliverable.
-     * @param stack the required stack.
-     * @param matchMeta if meta has to be matched.
-     * @param matchNBT if NBT has to be matched.
+     *
+     * @param stack       the required stack.
+     * @param matchMeta   if meta has to be matched.
+     * @param matchNBT    if NBT has to be matched.
      * @param matchOreDic if the oredict has to be matched.
-     * @param result the result stack.
-     * @param count the count.
-     * @param minCount the min count.
+     * @param result      the result stack.
+     * @param count       the count.
+     * @param minCount    the min count.
      */
     public Stack(
-            @NotNull final ItemStack stack,
-            final boolean matchMeta,
-            final boolean matchNBT,
-            final boolean matchOreDic,
-            @NotNull final ItemStack result ,
-            final int count,
-            final int minCount)
+      @NotNull final ItemStack stack,
+      final boolean matchMeta,
+      final boolean matchNBT,
+      final boolean matchOreDic,
+      @NotNull final ItemStack result,
+      final int count,
+      final int minCount)
     {
         if (ItemStackUtils.isEmpty(stack))
         {
@@ -121,8 +125,9 @@ public class Stack implements IDeliverable
 
     /**
      * Serialize the deliverable.
+     *
      * @param controller the controller.
-     * @param input the input.
+     * @param input      the input.
      * @return the compound.
      */
     public static CompoundNBT serialize(final IFactoryController controller, final Stack input)
@@ -144,8 +149,9 @@ public class Stack implements IDeliverable
 
     /**
      * Deserialize the deliverable.
+     *
      * @param controller the controller.
-     * @param compound the compound.
+     * @param compound   the compound.
      * @return the deliverable.
      */
     public static Stack deserialize(final IFactoryController controller, final CompoundNBT compound)
@@ -169,10 +175,10 @@ public class Stack implements IDeliverable
 
     /**
      * Serialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the the buffer to write to.
-     * @param input the input to serialize.
+     * @param buffer     the the buffer to write to.
+     * @param input      the input to serialize.
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Stack input)
     {
@@ -192,9 +198,9 @@ public class Stack implements IDeliverable
 
     /**
      * Deserialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the buffer to read.
+     * @param buffer     the buffer to read.
      * @return the deliverable.
      */
     public static Stack deserialize(final IFactoryController controller, final PacketBuffer buffer)

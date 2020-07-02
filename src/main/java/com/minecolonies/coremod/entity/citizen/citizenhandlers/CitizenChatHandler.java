@@ -25,6 +25,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
      * The citizen assigned to this manager.
      */
     private final EntityCitizen citizen;
+
     /**
      * Constructor for the experience handler.
      *
@@ -37,6 +38,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
 
     /**
      * Notify about death of citizen.
+     *
      * @param damageSource the damage source.
      */
     @Override
@@ -60,8 +62,8 @@ public class CitizenChatHandler implements ICitizenChatHandler
                 LanguageHandler.sendPlayersMessage(
                   citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "",
                   new TranslationTextComponent("block.blockhuttownhall.messagecolonistdead",
-                  citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY,
-                  (int) citizen.posZ, new TranslationTextComponent(damageSource.damageType)));
+                    citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY,
+                    (int) citizen.posZ, new TranslationTextComponent(damageSource.damageType)));
             }
         }
     }
@@ -91,7 +93,8 @@ public class CitizenChatHandler implements ICitizenChatHandler
         {
             final StringTextComponent colonyDescription = new StringTextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ": ");
             final List<PlayerEntity> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
-            final PlayerEntity owner = ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
+            final PlayerEntity owner =
+              ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
 
             if (owner != null)
             {
@@ -101,7 +104,10 @@ public class CitizenChatHandler implements ICitizenChatHandler
             }
 
             LanguageHandler.sendPlayersMessage(players,
-              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), citizenDescription, colonyDescription, requiredItem);
+              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(),
+              citizenDescription,
+              colonyDescription,
+              requiredItem);
         }
     }
 }

@@ -25,8 +25,7 @@ import java.util.Collection;
 import java.util.function.Predicate;
 
 /**
- * Interface used to describe classes that function as managers for requests inside a colony.
- * Extends INBTSerializable to allow for easy reading and writing from NBT.
+ * Interface used to describe classes that function as managers for requests inside a colony. Extends INBTSerializable to allow for easy reading and writing from NBT.
  */
 public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickableTileEntity
 {
@@ -54,7 +53,6 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
      * @param object    The Object that is being requested.
      * @param <T>       The type of request.
      * @return The token representing the request.
-     *
      * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
      */
     @NotNull
@@ -76,7 +74,6 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
      * @param object    The requestable
      * @param <T>       The type of the requestable
      * @return The token that represents the request.
-     *
      * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
      */
     @NotNull
@@ -90,10 +87,9 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
     /**
      * Method used to reassign a given request.
      *
-     * @param token The token of the request that should be reassigned.
+     * @param token                  The token of the request that should be reassigned.
      * @param resolverTokenBlackList the blacklist.
      * @return The token of the resolver that has gotten the assignment, null if none was found.
-     *
      * @throws IllegalArgumentException when the token is not known to this manager.
      */
     @Nullable
@@ -104,7 +100,6 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
      *
      * @param token The token to get a request for.
      * @return The request of the given type for that token.
-     *
      * @throws IllegalArgumentException when the token does not produce a request of the given type T.
      */
     @Nullable
@@ -112,9 +107,9 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
 
     /**
      * Method to get a resolver from its token.
+     *
      * @param token the token.
      * @return The resolver registered with the given token.
-     *
      * @throws IllegalArgumentException when the token is unknown.
      */
     @NotNull
@@ -125,7 +120,6 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
      *
      * @param requestToken The token of the request to get resolver for.
      * @return Null if the request is not yet resolved, or else the assigned resolver.
-     *
      * @throws IllegalArgumentException Thrown when the token is unknown.
      */
     @Nullable
@@ -142,8 +136,7 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
     void updateRequestState(@NotNull IToken<?> token, @NotNull RequestState state) throws IllegalArgumentException;
 
     /**
-     * Method used to overrule a request.
-     * Updates the state and sets the delivery if applicable.
+     * Method used to overrule a request. Updates the state and sets the delivery if applicable.
      *
      * @param token The token of the request that is being overruled.
      * @param stack The stack that should be treated as delivery. If no delivery is possible, this is null.
@@ -169,6 +162,7 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
 
     /**
      * Method used to indicate that a colony has updated their available items.
+     *
      * @param shouldTriggerReassign The request assigned
      */
     void onColonyUpdate(@NotNull final Predicate<IRequest<?>> shouldTriggerReassign);
@@ -191,6 +185,7 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
 
     /**
      * Get the data store manager.
+     *
      * @return The data store manager.
      */
     @NotNull
@@ -203,12 +198,14 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
 
     /**
      * Checks if dirty and needs to be updated.
+     *
      * @return true if so.
      */
     boolean isDirty();
 
     /**
      * Sets if dirty and needs to be updated.
+     *
      * @param isDirty true if so.
      */
     void setDirty(boolean isDirty);
@@ -220,13 +217,14 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
 
     /**
      * Get a logger.
+     *
      * @return a logger.
      */
     Logger getLogger();
 
     /**
      * serialize this request manager to the give {@link PacketBuffer}
-     * 
+     *
      * @param controller the controller.
      * @param buffer     the {@link PacketBuffer} to serialize to.
      */
@@ -234,7 +232,7 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
 
     /**
      * deserialize this request manager from the give {@link PacketBuffer}
-     * 
+     *
      * @param controller the controller.
      * @param buffer     the {@link PacketBuffer} to deserialize from.
      */

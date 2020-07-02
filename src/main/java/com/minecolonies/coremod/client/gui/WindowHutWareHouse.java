@@ -39,8 +39,6 @@ import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
 public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse.View>
 {
 
-
-
     /**
      * The Warehouse view
      */
@@ -118,8 +116,6 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
             new WindowSelectRes(this, building, stack -> true).open();
         }
     }
-
-
 
     @Override
     public void onOpened()

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers.update;
 
+import com.minecolonies.api.colony.requestsystem.management.update.UpdateType;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import org.jetbrains.annotations.NotNull;
 

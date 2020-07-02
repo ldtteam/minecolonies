@@ -8,8 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Class of the placeholder job.
- * Used if a certain building doesn't have a job yet.
+ * Class of the placeholder job. Used if a certain building doesn't have a job yet.
  */
 public class JobPlaceholder extends AbstractJob<AbstractAISkeleton<JobPlaceholder>, JobPlaceholder>
 {

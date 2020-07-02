@@ -27,7 +27,7 @@ public class ClickEventWithExecutable extends ClickEvent
     {
         if (actions != null)
         {
-            for (Runnable r: actions)
+            for (Runnable r : actions)
             {
                 r.run();
             }

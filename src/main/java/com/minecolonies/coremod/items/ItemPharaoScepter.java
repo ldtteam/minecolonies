@@ -45,7 +45,9 @@ public class ItemPharaoScepter extends BowItem
 
         ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, true);
         if (ret != null)
+        {
             return ret;
+        }
 
         playerIn.setActiveHand(handIn);
         return ActionResult.resultConsume(itemstack);
@@ -60,7 +62,10 @@ public class ItemPharaoScepter extends BowItem
 
             int useDuration = this.getUseDuration(stack) - timeLeft;
             useDuration = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, playerentity, useDuration, true);
-            if (useDuration < 0) return;
+            if (useDuration < 0)
+            {
+                return;
+            }
 
             float speed = getArrowVelocity(useDuration);
             if (!((double) speed < 0.1D))

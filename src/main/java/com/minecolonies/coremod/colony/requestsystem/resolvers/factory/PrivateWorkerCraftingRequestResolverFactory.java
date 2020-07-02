@@ -36,9 +36,9 @@ public class PrivateWorkerCraftingRequestResolverFactory implements IRequestReso
     @NotNull
     @Override
     public PrivateWorkerCraftingRequestResolver getNewInstance(
-                                                    @NotNull final IFactoryController factoryController,
-                                                    @NotNull final ILocation iLocation,
-                                                    @NotNull final Object... context)
+      @NotNull final IFactoryController factoryController,
+      @NotNull final ILocation iLocation,
+      @NotNull final Object... context)
     {
         return new PrivateWorkerCraftingRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
     }
@@ -46,7 +46,7 @@ public class PrivateWorkerCraftingRequestResolverFactory implements IRequestReso
     @NotNull
     @Override
     public CompoundNBT serialize(
-                                     @NotNull final IFactoryController controller, @NotNull final PrivateWorkerCraftingRequestResolver privateWorkerCraftingRequestResolverFactory)
+      @NotNull final IFactoryController controller, @NotNull final PrivateWorkerCraftingRequestResolver privateWorkerCraftingRequestResolverFactory)
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.put(NBT_TOKEN, controller.serialize(privateWorkerCraftingRequestResolverFactory.getId()));

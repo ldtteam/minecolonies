@@ -58,11 +58,11 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         compound.putBoolean(TAG_ONLY_CHILD, effect.hasOnlyChild());
 
         @NotNull final ListNBT childTagList = effect.getChilds().stream().map(child ->
-                                                     {
-                                                         final CompoundNBT childCompound = new CompoundNBT();
-                                                         childCompound.putString(TAG_RESEARCH_CHILD, child);
-                                                         return childCompound;
-                                                     }).collect(NBTUtils.toListNBT());
+        {
+            final CompoundNBT childCompound = new CompoundNBT();
+            childCompound.putString(TAG_RESEARCH_CHILD, child);
+            return childCompound;
+        }).collect(NBTUtils.toListNBT());
         compound.put(TAG_CHILDS, childTagList);
 
         return compound;

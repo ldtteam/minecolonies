@@ -49,7 +49,6 @@ public enum ShipSize
      */
     private static final int MEDIUM_SHIP_SIZE_AMOUNT = 18;
 
-
     /**
      * Array of pirates which are spawned for landing, one wave.
      */

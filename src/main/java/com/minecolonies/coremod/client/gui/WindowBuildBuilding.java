@@ -112,7 +112,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
      *
-     * @param c          the colony view.
+     * @param c        the colony view.
      * @param building the building.
      */
     public WindowBuildBuilding(final IColonyView c, final IBuildingView building)
@@ -203,7 +203,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         builders.clear();
         builders.add(new Tuple<>(LanguageHandler.format("com.minecolonies.coremod.job.Builder") + ":", BlockPos.ZERO));
         builders.addAll(building.getColony().getBuildings().stream()
-                          .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty() && !(build instanceof BuildingMiner.View))
+                          .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
+                                             && !(build instanceof BuildingMiner.View))
                           .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
                           .collect(Collectors.toList()));
 
@@ -290,7 +291,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             {
                 addNeededResource(stack, stack.getCount());
             }
-
         }
         while (result != null && result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
 
@@ -407,8 +407,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     }
 
     /**
-     * Called when the GUI has been opened.
-     * Will fill the fields and lists.
+     * Called when the GUI has been opened. Will fill the fields and lists.
      */
     @Override
     public void onOpened()

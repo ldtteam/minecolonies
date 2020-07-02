@@ -7,5 +7,5 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 public interface INorsemenEntity extends IMob, ICommandSource, ICapabilitySerializable<CompoundNBT>
 {
-    
+
 }

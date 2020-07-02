@@ -19,8 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import static net.minecraft.util.Direction.*;
 
 /**
- * This block is used as a border to show the size of the building.
- * It also shows that the building is in the progress of being built.
+ * This block is used as a border to show the size of the building. It also shows that the building is in the progress of being built.
  */
 public class BlockConstructionTape extends AbstractBlockMinecoloniesConstructionTape<BlockConstructionTape>
 {
@@ -158,16 +157,22 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
      */
     private static final double E_END_COLLISION_Z = 0.6375;
 
-    private static final VoxelShape SHAPE_NORTH = VoxelShapes.create(N_START_COLLISION_X, BOTTOM_COLLISION, N_START_COLLISION_Z, N_END_COLLISION_X, HEIGHT_COLLISION, N_END_COLLISION_Z);
-    private static final VoxelShape SHAPE_WEST  = VoxelShapes.create(W_START_COLLISION_X, BOTTOM_COLLISION, W_START_COLLISION_Z, W_END_COLLISION_X, HEIGHT_COLLISION, W_END_COLLISION_Z);
-    private static final VoxelShape SHAPE_SOUTH = VoxelShapes.create(S_START_COLLISION_X, BOTTOM_COLLISION, S_START_COLLISION_Z, S_END_COLLISION_X, HEIGHT_COLLISION, S_END_COLLISION_Z);;
-    private static final VoxelShape SHAPE_EAST  = VoxelShapes.create(E_START_COLLISION_X, BOTTOM_COLLISION, E_START_COLLISION_Z, E_END_COLLISION_X, HEIGHT_COLLISION, E_END_COLLISION_Z);
-    private static final VoxelShape EAST_WEST   = VoxelShapes.create(WE_START_COLLISION_X, BOTTOM_COLLISION, WE_START_COLLISION_Z, WE_END_COLLISION_X, HEIGHT_COLLISION, WE_END_COLLISION_Z);
-    private static final VoxelShape NORTH_SOUTH = VoxelShapes.create(SN_START_COLLISION_X, BOTTOM_COLLISION, SN_START_COLLISION_Z, SN_END_COLLISION_X, HEIGHT_COLLISION, SN_END_COLLISION_Z);
+    private static final VoxelShape SHAPE_NORTH =
+      VoxelShapes.create(N_START_COLLISION_X, BOTTOM_COLLISION, N_START_COLLISION_Z, N_END_COLLISION_X, HEIGHT_COLLISION, N_END_COLLISION_Z);
+    private static final VoxelShape SHAPE_WEST  =
+      VoxelShapes.create(W_START_COLLISION_X, BOTTOM_COLLISION, W_START_COLLISION_Z, W_END_COLLISION_X, HEIGHT_COLLISION, W_END_COLLISION_Z);
+    private static final VoxelShape SHAPE_SOUTH =
+      VoxelShapes.create(S_START_COLLISION_X, BOTTOM_COLLISION, S_START_COLLISION_Z, S_END_COLLISION_X, HEIGHT_COLLISION, S_END_COLLISION_Z);
+    ;
+    private static final VoxelShape SHAPE_EAST  =
+      VoxelShapes.create(E_START_COLLISION_X, BOTTOM_COLLISION, E_START_COLLISION_Z, E_END_COLLISION_X, HEIGHT_COLLISION, E_END_COLLISION_Z);
+    private static final VoxelShape EAST_WEST   =
+      VoxelShapes.create(WE_START_COLLISION_X, BOTTOM_COLLISION, WE_START_COLLISION_Z, WE_END_COLLISION_X, HEIGHT_COLLISION, WE_END_COLLISION_Z);
+    private static final VoxelShape NORTH_SOUTH =
+      VoxelShapes.create(SN_START_COLLISION_X, BOTTOM_COLLISION, SN_START_COLLISION_Z, SN_END_COLLISION_X, HEIGHT_COLLISION, SN_END_COLLISION_Z);
 
     /**
-     * Constructor for the Substitution block.
-     * sets the creative tab, as well as the resistance and the hardness.
+     * Constructor for the Substitution block. sets the creative tab, as well as the resistance and the hardness.
      */
     public BlockConstructionTape()
     {
@@ -180,7 +185,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     @Override
     public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
-        if(state.get(VARIANT).equals(AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.CORNER))
+        if (state.get(VARIANT).equals(AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.CORNER))
         {
             if (state.get(FACING).equals(NORTH))
             {
@@ -210,7 +215,13 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
 
     @NotNull
     @Override
-    public BlockState updatePostPlacement(@NotNull final BlockState stateIn, final Direction dir, final BlockState state, final IWorld worldIn, @NotNull final BlockPos currentPos, final BlockPos pos)
+    public BlockState updatePostPlacement(
+      @NotNull final BlockState stateIn,
+      final Direction dir,
+      final BlockState state,
+      final IWorld worldIn,
+      @NotNull final BlockPos currentPos,
+      final BlockPos pos)
     {
         super.updatePostPlacement(stateIn, dir, state, worldIn, currentPos, pos);
         return getOptimalStateForPlacement(stateIn, worldIn, currentPos);
@@ -218,19 +229,20 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
 
     /**
      * Get the step shape of the slab
-     * @param state the state.
-     * @param world the world.
+     *
+     * @param state    the state.
+     * @param world    the world.
      * @param position the position.Re
      * @return the blockState to use.
      */
     public static BlockState getOptimalStateForPlacement(@NotNull final BlockState state, @NotNull final IWorld world, @NotNull final BlockPos position)
     {
-        final boolean[] connectors = new boolean[]{world.getBlockState(position.east()).getBlock() instanceof BlockConstructionTape,
-                world.getBlockState(position.west()).getBlock() instanceof BlockConstructionTape,
-                world.getBlockState(position.north()).getBlock() instanceof BlockConstructionTape,
-                world.getBlockState(position.south()).getBlock() instanceof BlockConstructionTape};
+        final boolean[] connectors = new boolean[] {world.getBlockState(position.east()).getBlock() instanceof BlockConstructionTape,
+          world.getBlockState(position.west()).getBlock() instanceof BlockConstructionTape,
+          world.getBlockState(position.north()).getBlock() instanceof BlockConstructionTape,
+          world.getBlockState(position.south()).getBlock() instanceof BlockConstructionTape};
 
-        if((connectors[0] && connectors[2]) || (connectors[0] && connectors[3]) || (connectors[1] && connectors[3]) || (connectors[1] && connectors[2]))
+        if ((connectors[0] && connectors[2]) || (connectors[0] && connectors[3]) || (connectors[1] && connectors[3]) || (connectors[1] && connectors[2]))
         {
             return state.with(VARIANT, AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.CORNER);
         }

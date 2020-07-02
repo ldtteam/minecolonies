@@ -18,20 +18,12 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.BurnableRequest;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.DeliveryRequest;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.FoodRequest;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.ItemStackListRequest;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.PickupRequest;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.SmeltAbleOreRequest;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.ToolRequest;
-
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.IntNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
-
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -138,11 +130,14 @@ public final class StandardRequestFactories
         @Override
         public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
         {
-            return deserializeFromPacketBuffer(controller, buffer, Stack::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackRequest.class),
-                            requested,
-                            token,
-                            requester,
-                            requestState));
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Stack::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
@@ -227,11 +222,14 @@ public final class StandardRequestFactories
         @Override
         public ItemStackListRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
         {
-            return deserializeFromPacketBuffer(controller, buffer, StackList::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackListRequest.class),
-                    requested,
-                    token,
-                    requester,
-                    requestState));
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              StackList::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackListRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
@@ -300,6 +298,27 @@ public final class StandardRequestFactories
         public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
             return deserializeFromNBT(controller, nbt, Tag::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemTagRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
+
+        @NotNull
+        @Override
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest itemTagRequest, final PacketBuffer packetBuffer)
+        {
+            serializeToPacketBuffer(controller, itemTagRequest, packetBuffer, Tag::serialize);
+        }
+
+        @NotNull
+        @Override
+        public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
+        {
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Tag::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemTagRequest.class),
                 requested,
                 token,
@@ -390,11 +409,14 @@ public final class StandardRequestFactories
         @Override
         public DeliveryRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
         {
-            return deserializeFromPacketBuffer(controller, buffer, Delivery::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.DeliveryRequest.class),
-                    requested,
-                    token,
-                    requester,
-                    requestState));
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Delivery::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.DeliveryRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
@@ -480,16 +502,20 @@ public final class StandardRequestFactories
         @Override
         public PickupRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
         {
-            return deserializeFromPacketBuffer(controller, buffer, Pickup::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.PickupRequest.class),
-                    requested,
-                    token,
-                    requester,
-                    requestState));
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Pickup::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.PickupRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
-    public static abstract class AbstractCraftingRequestFactory<C extends AbstractCrafting, R extends StandardRequests.AbstractCraftingRequest<C>> implements IRequestFactory<C, R>
+    public static abstract class AbstractCraftingRequestFactory<C extends AbstractCrafting, R extends StandardRequests.AbstractCraftingRequest<C>>
+      implements IRequestFactory<C, R>
     {
         private final IObjectConstructor<C, R>       constructor;
         private final Class<C>                       cClass;
@@ -565,11 +591,14 @@ public final class StandardRequestFactories
         @Override
         public R deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
         {
-            return deserializeFromPacketBuffer(controller, buffer, packetDeserializer, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(rClass),
-                    requested,
-                    token,
-                    requester,
-                    requestState));
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              packetDeserializer,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(rClass),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
@@ -662,11 +691,14 @@ public final class StandardRequestFactories
         @Override
         public ToolRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
         {
-            return deserializeFromPacketBuffer(controller, buffer, Tool::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ToolRequest.class),
-                    requested,
-                    token,
-                    requester,
-                    requestState));
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Tool::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ToolRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
@@ -726,11 +758,14 @@ public final class StandardRequestFactories
         @Override
         public FoodRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
         {
-            return deserializeFromPacketBuffer(controller, buffer, Food::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.FoodRequest.class),
-                    requested,
-                    token,
-                    requester,
-                    requestState));
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Food::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.FoodRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
@@ -790,11 +825,14 @@ public final class StandardRequestFactories
         @Override
         public SmeltAbleOreRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
         {
-            return deserializeFromPacketBuffer(controller, buffer, SmeltableOre::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.SmeltAbleOreRequest.class),
-                    requested,
-                    token,
-                    requester,
-                    requestState));
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              SmeltableOre::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.SmeltAbleOreRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
@@ -854,11 +892,14 @@ public final class StandardRequestFactories
         @Override
         public BurnableRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
         {
-            return deserializeFromPacketBuffer(controller, buffer, Burnable::deserialize, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.BurnableRequest.class),
-                    requested,
-                    token,
-                    requester,
-                    requestState));
+            return deserializeFromPacketBuffer(controller,
+              buffer,
+              Burnable::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.BurnableRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
@@ -913,10 +954,10 @@ public final class StandardRequestFactories
     }
 
     public static <T extends IRequestable> void serializeToPacketBuffer(
-                    final IFactoryController controller,
-                    final IRequest<T> request,
-                    final PacketBuffer packetBuffer,
-                    final IObjectToPackBufferWriter<T> typeSerialization)
+      final IFactoryController controller,
+      final IRequest<T> request,
+      final PacketBuffer packetBuffer,
+      final IObjectToPackBufferWriter<T> typeSerialization)
     {
 
         controller.serialize(packetBuffer, request.getRequester());
@@ -991,10 +1032,10 @@ public final class StandardRequestFactories
     }
 
     public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromPacketBuffer(
-                    final IFactoryController controller,
-                    final PacketBuffer buffer,
-                    final IPacketBufferToObjectReader<T> typeDeserialization,
-                    final IObjectConstructor<T, R> objectConstructor)
+      final IFactoryController controller,
+      final PacketBuffer buffer,
+      final IPacketBufferToObjectReader<T> typeDeserialization,
+      final IObjectConstructor<T, R> objectConstructor)
     {
         final IRequester requester = controller.deserialize(buffer);
         final IToken<?> token = controller.deserialize(buffer);

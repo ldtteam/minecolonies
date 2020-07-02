@@ -126,9 +126,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
+     * Override this method if you want to keep an amount of items in inventory. When the inventory is full, everything get's dumped into the building chest. But you can use this
+     * method to hold some stacks back.
      *
      * @return a list of objects which should be kept.
      */
@@ -395,7 +394,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         final ListNBT recipesTags = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < recipesTags.size(); i++)
         {
-            final IToken<?> token  = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
+            final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
             if (!recipes.contains(token))
             {
                 recipes.add(token);
@@ -443,7 +442,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
             {
-                colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                colony.getRequestManager()
+                  .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
             }
             return true;
         }

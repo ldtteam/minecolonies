@@ -298,9 +298,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         else
         {
             Log.getLogger().warn("Citizen {} has lost its building, type does not match found {} expected {}.",
-                worker.getCitizenData().getName(),
-                getExpectedBuildingClass().getSimpleName(),
-                type.getSimpleName());
+              worker.getCitizenData().getName(),
+              getExpectedBuildingClass().getSimpleName(),
+              type.getSimpleName());
 
             if (worker.getCitizenData() != null)
             {
@@ -598,13 +598,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
-     * Checks whether automatic pickups after dumps are allowed.
-     * Usually we want this, but if the worker is currently crafting/building,
-     * he will handle deliveries/afterdumps in their resolvers, so we can disable automatic pickups in that time.
-     * Note that this is just a efficiency-thing. It doesn't hurt when the dman does a pickup
-     * during crafting, it's just a wasted run.
-     * Therefore, this flag is only considered for *automatic* pickups after dump.
-     * It is *ignored* for player-triggered forcePickups, and when the inventory is full.
+     * Checks whether automatic pickups after dumps are allowed. Usually we want this, but if the worker is currently crafting/building, he will handle deliveries/afterdumps in
+     * their resolvers, so we can disable automatic pickups in that time. Note that this is just a efficiency-thing. It doesn't hurt when the dman does a pickup during crafting,
+     * it's just a wasted run. Therefore, this flag is only considered for *automatic* pickups after dump. It is *ignored* for player-triggered forcePickups, and when the inventory
+     * is full.
      *
      * @return true if after-dump pickups are allowed currently.
      */

@@ -68,8 +68,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             return tileEntities.stream()
                      .flatMap(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStackSelectionPredicate).stream())
                      .filter(itemStacks -> !itemStacks.isEmpty())
-              .collect(Collectors.toList());
-
+                     .collect(Collectors.toList());
         }
 
         return Lists.newArrayList();
@@ -100,8 +99,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     }
 
     /**
-     * Dump the inventory of a citizen into the warehouse.
-     * Go through all items and search the right chest to dump it in.
+     * Dump the inventory of a citizen into the warehouse. Go through all items and search the right chest to dump it in.
      *
      * @param inventoryCitizen the inventory of the citizen
      */

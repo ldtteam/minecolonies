@@ -38,8 +38,7 @@ public enum RequestState
     IN_PROGRESS,
 
     /**
-     * States for a request who's primary processing has been completed.
-     * Followup processing still needs to be determined.
+     * States for a request who's primary processing has been completed. Followup processing still needs to be determined.
      */
     RESOLVED,
 
@@ -118,7 +117,6 @@ public enum RequestState
         return IntNBT.valueOf(indexList.indexOf(this));
     }
 
-
     /**
      * Method used to deserialize a RequestState from a packet buffer
      *
@@ -139,6 +137,4 @@ public enum RequestState
     {
         buffer.writeInt(indexList.indexOf(this));
     }
-
-
 }

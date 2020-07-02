@@ -19,6 +19,7 @@ public class ItemFireArrow extends ArrowItem
 {
     /**
      * Constructor method for the Chief Sword Item
+     *
      * @param properties the properties.
      */
     public ItemFireArrow(final Properties properties)

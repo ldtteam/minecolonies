@@ -15,6 +15,7 @@ public interface ICitizenSleepHandler
 
     /**
      * Returns the orientation of the bed in degrees.
+     *
      * @return the bed orientation.
      */
     @OnlyIn(Dist.CLIENT)
@@ -35,18 +36,21 @@ public interface ICitizenSleepHandler
 
     /**
      * Get the bed location of the citizen.
+     *
      * @return the bed location.
      */
     BlockPos getBedLocation();
 
     /**
      * Get the X render offset.
+     *
      * @return the offset.
      */
     float getRenderOffsetX();
 
     /**
      * Get the z render offset.
+     *
      * @return the offset.
      */
     float getRenderOffsetZ();

@@ -411,7 +411,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, Buil
 
     /**
      * This (re)initializes a field. Checks the block above to see if it is a plant, if so, breaks it. Then tills.
-     * 
+     *
      * @return the next state to go into.
      */
     private IAIState workAtField()

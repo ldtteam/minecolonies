@@ -72,8 +72,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     private AxisAlignedBB targetArea = null;
 
     /**
-     * Creates the abstract part of the AI.
-     * Always use this constructor!
+     * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill.
      */
@@ -109,6 +108,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
     /**
      * Get the extra tools needed for this job.
+     *
      * @return a list of tools or empty.
      */
     @NotNull
@@ -121,6 +121,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
     /**
      * Get the extra items needed for this job.
+     *
      * @return a list of items needed or empty.
      */
     @NotNull
@@ -231,10 +232,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         }
 
         final AnimalEntity animal = animals
-                                .stream()
-                                .filter(animalToButcher -> !animalToButcher.isChild())
-                                .findFirst()
-                                .orElse(null);
+                                      .stream()
+                                      .filter(animalToButcher -> !animalToButcher.isChild())
+                                      .findFirst()
+                                      .orElse(null);
 
         if (animal == null)
         {
@@ -301,9 +302,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     }
 
     /**
-     * Allows the worker to pickup any stray items around Hut.
-     * Specifically useful when he possibly leaves Butchered
-     * drops OR with chickens (that drop feathers and etc)!
+     * Allows the worker to pickup any stray items around Hut. Specifically useful when he possibly leaves Butchered drops OR with chickens (that drop feathers and etc)!
      *
      * @return The next {@link IAIState}.
      */
@@ -368,6 +367,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
     /**
      * Get the Animal's class from the none Abstract.
+     *
      * @return the class of the animal to work with.
      */
     public abstract Class<T> getAnimalClass();
@@ -384,7 +384,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return null;
         }
 
-        if(targetArea == null)
+        if (targetArea == null)
         {
             targetArea = getOwnBuilding().getTargetableArea(world);
         }
@@ -393,6 +393,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
     /**
      * Lets the herder walk to the animal.
+     *
      * @param animal the animal to walk to.
      * @return true if the herder is walking to the animal.
      */
@@ -434,8 +435,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     }
 
     /**
-     * Returns true if animals list is above max.
-     * Returns false if animals list is within max.
+     * Returns true if animals list is above max. Returns false if animals list is within max.
+     *
      * @param allAnimals the list of animals.
      * @return if amount of animals is over max.
      */
@@ -444,7 +445,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         if (getOwnBuilding() != null)
         {
             final List<T> animals = allAnimals.stream()
-                    .filter(animalToButcher -> !animalToButcher.isChild()).collect(Collectors.toList());
+                                      .filter(animalToButcher -> !animalToButcher.isChild()).collect(Collectors.toList());
 
             if (animals.isEmpty())
             {
@@ -463,7 +464,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * Sets the tool as held item.
      *
      * @param toolType the {@link ToolType} we want to equip
-     * @param hand the hand to equip it in.
+     * @param hand     the hand to equip it in.
      * @return true if the tool was equipped.
      */
     public boolean equipTool(final Hand hand, final ToolType toolType)
@@ -502,7 +503,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * Sets the {@link ItemStack} as held item or returns false.
      *
      * @param itemStack the {@link ItemStack} to equip.
-     * @param hand the hand to equip it in.
+     * @param hand      the hand to equip it in.
      * @return true if the item was equipped.
      */
     public boolean equipItem(final Hand hand, final ItemStack itemStack)

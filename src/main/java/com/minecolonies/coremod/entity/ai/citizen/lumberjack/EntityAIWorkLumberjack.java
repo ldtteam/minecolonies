@@ -85,15 +85,15 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     /**
      * The minimum range the lumberjack has to reach in order to construct or clear.
      */
-    private static final int    MIN_WORKING_RANGE      = 2;
+    private static final int MIN_WORKING_RANGE   = 2;
     /**
      * Time in ticks to wait before placing a sapling. Is used to collect falling saplings from the ground.
      */
-    private static final int    WAIT_BEFORE_SAPLING    = 50;
+    private static final int WAIT_BEFORE_SAPLING = 50;
     /**
      * Time in ticks to wait before placing a sapling. Is used to collect falling saplings from the ground.
      */
-    private static final int    MAX_WAITING_TIME       = 50;
+    private static final int MAX_WAITING_TIME    = 50;
 
     /**
      * Number of ticks to wait for tree.
@@ -117,7 +117,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     /**
      * Delay before going to gather after cutting a tree.
      */
-    private static final int GATHERING_DELAY       = 3;
+    private static final int GATHERING_DELAY = 3;
 
     /**
      * Position where the Builders constructs from.
@@ -186,9 +186,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     /**
      * {@inheritDoc}
      * <p>
-     * The lumberjack is a special worker.
-     * In their decision state, they will try to add lumberjack cycles
-     * If there's nothing left to craft, they will proceed with woodworking
+     * The lumberjack is a special worker. In their decision state, they will try to add lumberjack cycles If there's nothing left to craft, they will proceed with woodworking
      * </p>
      */
     @Override
@@ -548,7 +546,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         return blockState.getMaterial() == Material.LEAVES;
     }
 
-
     /**
      * Check if distance to block changed and if we are not moving for too long, try to get unstuck.
      *
@@ -593,7 +590,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 PathPoint next = path.getPathPointFromIndex(path.getCurrentPathIndex());
 
                 // Blocks in front of the worker
-                for(int i = 0; i <= 2; i++)
+                for (int i = 0; i <= 2; i++)
                 {
                     checkPositions.add(new BlockPos(next.x, next.y + i, next.z));
                 }
@@ -609,7 +606,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         // General unstuck
         ArrayList<BlockPos> checkPositions = new ArrayList<>();
 
-        for (Direction direction: Direction.Plane.HORIZONTAL)
+        for (Direction direction : Direction.Plane.HORIZONTAL)
         {
             checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY(), worker.getCurrentPosition().getZ()).offset(direction));
             checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 1, worker.getCurrentPosition().getZ()).offset(direction));
@@ -620,8 +617,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
     /**
      * Checks blocks for tag and mines the first it fines if its the same
+     *
      * @param blockPositions block positions
-     * @param tag tag to check
+     * @param tag            tag to check
      */
     private boolean mineIfEqualsBlockTag(List<BlockPos> blockPositions, Tag<Block> tag)
     {
@@ -629,7 +627,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         {
             if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() > 0)
             {
-                Log.getLogger().info(String.format("Check Leaves Pos(%d, %d, %d) is %s: %s", currentPos.getX(), currentPos.getY(), currentPos.getZ(), tag.toString(), world.getBlockState(currentPos).getBlock().isIn(tag)));
+                Log.getLogger()
+                  .info(String.format("Check Leaves Pos(%d, %d, %d) is %s: %s",
+                    currentPos.getX(),
+                    currentPos.getY(),
+                    currentPos.getZ(),
+                    tag.toString(),
+                    world.getBlockState(currentPos).getBlock().isIn(tag)));
             }
             if (world.getBlockState(currentPos).getBlock().isIn(tag))
             {

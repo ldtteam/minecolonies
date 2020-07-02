@@ -58,6 +58,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
     /**
      * Creates a new supplychest deployer. The item is not stackable.
+     *
      * @param properties the properties.
      */
     public ItemSupplyChestDeployer(final Item.Properties properties)
@@ -101,7 +102,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
     /**
      * Places a supply chest on the given position looking to the given direction.
-     * 
+     *
      * @param pos       the position to place the supply chest at.
      * @param direction the direction the supply chest should face.
      */

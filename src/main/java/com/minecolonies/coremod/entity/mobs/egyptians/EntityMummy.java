@@ -14,7 +14,8 @@ public class EntityMummy extends AbstractEntityEgyptian implements IMeleeMummyEn
 
     /**
      * Constructor of the entity.
-     * @param type the entity type.
+     *
+     * @param type    the entity type.
      * @param worldIn world to construct it in.
      */
     public EntityMummy(final EntityType<? extends EntityMummy> type, final World worldIn)

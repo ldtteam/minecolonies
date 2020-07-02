@@ -50,7 +50,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
     /**
      * How many of each cure item it should try to request at a time.
      */
-    private static final int REQUEST_COUNT   = 16;
+    private static final int REQUEST_COUNT = 16;
 
     /**
      * Area the worker targets.
@@ -168,7 +168,8 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                     {
                         if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), cure::isItemEqual))
                         {
-                            if (InventoryUtils.getItemCountInItemHandler(getOwnBuilding().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), stack -> stack.isItemEqual(cure)) < cure.getCount())
+                            if (InventoryUtils.getItemCountInItemHandler(getOwnBuilding().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null),
+                              stack -> stack.isItemEqual(cure)) < cure.getCount())
                             {
                                 needsCurrently = new Tuple<>(stack -> stack.isItemEqual(cure), cure.getCount());
                                 return GATHERING_REQUIRED_MATERIALS;

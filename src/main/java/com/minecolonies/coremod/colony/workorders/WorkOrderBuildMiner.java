@@ -39,12 +39,12 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
      * @param minerBuilding The id of the building of the miner.
      */
     public WorkOrderBuildMiner(
-            final String structureName,
-            final String workOrderName,
-            final int rotation,
-            final BlockPos location,
-            final boolean mirror,
-            final BlockPos minerBuilding)
+      final String structureName,
+      final String workOrderName,
+      final int rotation,
+      final BlockPos location,
+      final boolean mirror,
+      final BlockPos minerBuilding)
     {
         super(structureName, workOrderName, rotation, location, mirror);
         this.minerBuilding = minerBuilding;
@@ -52,8 +52,9 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
 
     /**
      * Read the WorkOrder data from the CompoundNBT.
+     *
      * @param compound NBT Tag compound.
-     * @param manager the work manager.
+     * @param manager  the work manager.
      */
     @Override
     public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
@@ -106,6 +107,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
 
     /**
      * Get the miner building position assigned to this request.
+     *
      * @return the BlockPos.
      */
     public BlockPos getMinerBuilding()

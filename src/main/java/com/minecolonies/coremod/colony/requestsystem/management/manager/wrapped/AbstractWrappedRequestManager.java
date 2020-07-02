@@ -26,8 +26,7 @@ import java.util.Collection;
 import java.util.function.Predicate;
 
 /**
- * Wrapper class for a Manager.
- * Subclasses of this have custom behaviour on at least one method.
+ * Wrapper class for a Manager. Subclasses of this have custom behaviour on at least one method.
  */
 public abstract class AbstractWrappedRequestManager implements IRequestManager
 {
@@ -69,7 +68,6 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @param requester The requester.
      * @param object    The Object that is being requested.
      * @return The token representing the request.
-     *
      * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
      */
     @NotNull
@@ -97,7 +95,6 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @param requester The requester of the requestable.
      * @param object    The requestable
      * @return The token that represents the request.
-     *
      * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
      */
     @NotNull
@@ -120,7 +117,6 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      *
      * @param token The token to get a request for.
      * @return The request of the given type for that token.
-     *
      * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
      */
     @Nullable
@@ -149,7 +145,6 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      *
      * @param requestToken The token of the request to get resolver for.
      * @return Null if the request is not yet resolved, or else the assigned resolver.
-     *
      * @throws IllegalArgumentException Thrown when the token is unknown.
      */
     @Nullable
@@ -227,17 +222,19 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     {
         wrappedManager.deserializeNBT(nbt);
     }
-    
+
     @Override
-    public void serialize(IFactoryController controller, PacketBuffer buffer) {
+    public void serialize(IFactoryController controller, PacketBuffer buffer)
+    {
         wrappedManager.serialize(controller, buffer);
     }
 
     @Override
-    public void deserialize(IFactoryController controller, PacketBuffer buffer) {
+    public void deserialize(IFactoryController controller, PacketBuffer buffer)
+    {
         wrappedManager.deserialize(controller, buffer);
     }
-    
+
     @Override
     public void tick()
     {

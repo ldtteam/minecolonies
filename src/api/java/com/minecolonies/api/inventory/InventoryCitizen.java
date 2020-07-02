@@ -344,8 +344,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     }
 
     /**
-     * For tile entities, ensures the chunk containing the tile entity is saved to disk later - the game won't think it
-     * hasn't changed and skip it.
+     * For tile entities, ensures the chunk containing the tile entity is saved to disk later - the game won't think it hasn't changed and skip it.
      */
     public void markDirty()
     {
@@ -366,8 +365,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     }
 
     /**
-     * Writes the inventory out as a list of compound tags. This is where the slot indices are used (+100 for armor, +80
-     * for crafting).
+     * Writes the inventory out as a list of compound tags. This is where the slot indices are used (+100 for armor, +80 for crafting).
      *
      * @param nbtTagList the taglist in.
      * @return the filled list.

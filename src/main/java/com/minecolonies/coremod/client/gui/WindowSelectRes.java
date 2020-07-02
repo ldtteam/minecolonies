@@ -65,9 +65,10 @@ public class WindowSelectRes extends AbstractWindowSkeleton
 
     /**
      * Create a selection window with the origin window as input.
-     * @param origin the origin.
+     *
+     * @param origin   the origin.
      * @param building the building.
-     * @param test the testing predicate for the selector.
+     * @param test     the testing predicate for the selector.
      */
     public WindowSelectRes(final Window origin, final IBuildingView building, final Predicate<ItemStack> test)
     {
@@ -86,6 +87,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
 
     /**
      * Select button clicked.
+     *
      * @param button the clicked button.
      */
     private void selectClicked(final Button button)
@@ -142,10 +144,10 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     {
         this.allItems.clear();
         this.allItems.addAll(ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
-                                                                 .map(ItemStack::new)
-                                                                 .filter((stack) -> (test.test(stack) && (this.filter.isEmpty() || stack.getTranslationKey().toLowerCase(Locale.US)
-                                                                                                                .contains(this.filter.toLowerCase(Locale.US)))))
-                                                                 .collect(Collectors.toList())));
+                                                    .map(ItemStack::new)
+                                                    .filter((stack) -> (test.test(stack) && (this.filter.isEmpty() || stack.getTranslationKey().toLowerCase(Locale.US)
+                                                                                                                        .contains(this.filter.toLowerCase(Locale.US)))))
+                                                    .collect(Collectors.toList())));
         this.updateResourceList();
     }
 

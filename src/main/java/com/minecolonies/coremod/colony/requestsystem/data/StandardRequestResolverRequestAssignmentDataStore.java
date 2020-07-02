@@ -27,12 +27,13 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
 {
 
     private final Map<IToken<?>, Collection<IToken<?>>> assignments;
-    private IToken<?> id;
+    private       IToken<?>                             id;
 
     public StandardRequestResolverRequestAssignmentDataStore(
       final IToken<?> id,
       final Map<IToken<?>, Collection<IToken<?>>> assignments
-      ) {
+    )
+    {
         this.id = id;
         this.assignments = assignments;
     }
@@ -91,7 +92,7 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
         public CompoundNBT serialize(
           @NotNull final IFactoryController controller, @NotNull final StandardRequestResolverRequestAssignmentDataStore standardProviderRequestResolverAssignmentDataStore)
         {
-           final CompoundNBT compound = new CompoundNBT();
+            final CompoundNBT compound = new CompoundNBT();
 
             compound.put(NbtTagConstants.TAG_TOKEN, controller.serialize(standardProviderRequestResolverAssignmentDataStore.id));
             compound.put(NbtTagConstants.TAG_LIST, standardProviderRequestResolverAssignmentDataStore.assignments.keySet().stream().map(t -> {
@@ -99,8 +100,8 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
 
                 entryCompound.put(NbtTagConstants.TAG_TOKEN, controller.serialize(t));
                 entryCompound.put(NbtTagConstants.TAG_LIST, standardProviderRequestResolverAssignmentDataStore.assignments.get(t).stream()
-                                                                 .map(StandardFactoryController.getInstance()::serialize)
-                                                                 .collect(NBTUtils.toListNBT()));
+                                                              .map(StandardFactoryController.getInstance()::serialize)
+                                                              .collect(NBTUtils.toListNBT()));
 
                 return entryCompound;
             }).collect(NBTUtils.toListNBT()));
@@ -114,36 +115,38 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(NbtTagConstants.TAG_TOKEN));
             final Map<IToken<?>, Collection<IToken<?>>> map = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Constants.NBT.TAG_COMPOUND))
-                                                          .map(CompoundNBT -> {
-                                                              final IToken<?> elementToken = controller.deserialize(CompoundNBT.getCompound(NbtTagConstants.TAG_TOKEN));
-                                                              final Collection<IToken<?>> elements = NBTUtils.streamCompound(CompoundNBT.getList(NbtTagConstants.TAG_LIST,
-                                                                Constants.NBT.TAG_COMPOUND)).map(elementCompound -> (IToken<?>) controller.deserialize(elementCompound))
-                                                                                                       .collect(Collectors.toList());
+                                                                .map(CompoundNBT -> {
+                                                                    final IToken<?> elementToken = controller.deserialize(CompoundNBT.getCompound(NbtTagConstants.TAG_TOKEN));
+                                                                    final Collection<IToken<?>> elements = NBTUtils.streamCompound(CompoundNBT.getList(NbtTagConstants.TAG_LIST,
+                                                                      Constants.NBT.TAG_COMPOUND)).map(elementCompound -> (IToken<?>) controller.deserialize(elementCompound))
+                                                                                                             .collect(Collectors.toList());
 
-                                                              return new Tuple<>(elementToken, elements);
-                                                          }).collect(Collectors.toMap(t -> t.getA(), t -> t.getB()));
+                                                                    return new Tuple<>(elementToken, elements);
+                                                                }).collect(Collectors.toMap(t -> t.getA(), t -> t.getB()));
 
             return new StandardRequestResolverRequestAssignmentDataStore(token, map);
         }
 
-		@Override
-		public void serialize(IFactoryController controller, StandardRequestResolverRequestAssignmentDataStore input,
-				PacketBuffer packetBuffer)
-		{
-			controller.serialize(packetBuffer, input.id);
+        @Override
+        public void serialize(
+          IFactoryController controller, StandardRequestResolverRequestAssignmentDataStore input,
+          PacketBuffer packetBuffer)
+        {
+            controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.assignments.size());
             input.assignments.forEach((key, value) -> {
                 controller.serialize(packetBuffer, key);
                 packetBuffer.writeInt(value.size());
                 value.forEach(token -> controller.serialize(token));
             });
-		}
+        }
 
-		@Override
-		public StandardRequestResolverRequestAssignmentDataStore deserialize(IFactoryController controller,
-				PacketBuffer buffer) throws Throwable
-		{
-			final IToken<?> token = controller.deserialize(buffer);
+        @Override
+        public StandardRequestResolverRequestAssignmentDataStore deserialize(
+          IFactoryController controller,
+          PacketBuffer buffer) throws Throwable
+        {
+            final IToken<?> token = controller.deserialize(buffer);
             final Map<IToken<?>, Collection<IToken<?>>> assignments = new HashMap<>();
             final int assignmentsSize = buffer.readInt();
             for (int i = 0; i < assignmentsSize; ++i)
@@ -159,6 +162,6 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
             }
 
             return new StandardRequestResolverRequestAssignmentDataStore(token, assignments);
-		}
+        }
     }
 }

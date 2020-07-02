@@ -27,8 +27,7 @@ public class BlockStateStorage
     private int hashCode;
 
     /**
-     * True: states are compared ignoring the properties in the given propertyList.
-     * False: states are only compared within the properties on the propertyList.
+     * True: states are compared ignoring the properties in the given propertyList. False: states are only compared within the properties on the propertyList.
      */
     private final boolean exclude;
 
@@ -37,8 +36,7 @@ public class BlockStateStorage
      *
      * @param state             The blockstate to store
      * @param compareProperties the list of properties to compare
-     * @param exclude           True: states are compared ignoring the properties in the given list.
-     *                          False: states are only compared within the properties on the list.
+     * @param exclude           True: states are compared ignoring the properties in the given list. False: states are only compared within the properties on the list.
      */
     public BlockStateStorage(@NotNull final BlockState state, @NotNull final List<IProperty<?>> compareProperties, final boolean exclude)
     {

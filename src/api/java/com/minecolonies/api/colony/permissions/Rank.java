@@ -19,9 +19,7 @@ public enum Rank
     /**
      * Ranks enum constructor.
      * <p>
-     * Subscribers are receiving events from the colony.
-     * They are either citizens or near enough.
-     * Ranks with true are automatically subscribed to the colony.
+     * Subscribers are receiving events from the colony. They are either citizens or near enough. Ranks with true are automatically subscribed to the colony.
      *
      * @param isSubscriber boolean whether auto-subscribed to this colony.
      */
@@ -29,5 +27,4 @@ public enum Rank
     {
         this.isSubscriber = isSubscriber;
     }
-
 }

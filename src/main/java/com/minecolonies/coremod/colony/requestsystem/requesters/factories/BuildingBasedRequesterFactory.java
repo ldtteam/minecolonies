@@ -60,12 +60,14 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
     }
 
     @Override
-    public void serialize(IFactoryController controller, BuildingBasedRequester output, PacketBuffer packetBuffer) {
+    public void serialize(IFactoryController controller, BuildingBasedRequester output, PacketBuffer packetBuffer)
+    {
         output.serialize(controller, packetBuffer);
     }
 
     @Override
-    public BuildingBasedRequester deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable {
+    public BuildingBasedRequester deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
         return BuildingBasedRequester.deserialize(controller, buffer);
     }
 }

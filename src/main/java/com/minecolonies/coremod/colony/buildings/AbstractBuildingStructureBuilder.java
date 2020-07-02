@@ -40,12 +40,12 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     /**
      * The maximum upgrade of the building.
      */
-    public static final  int    MAX_BUILDING_LEVEL = 5;
+    public static final int MAX_BUILDING_LEVEL = 5;
 
     /**
      * Progress amount to mark building dirty.
      */
-    private static final int COUNT_TO_STORE_POS  = 50;
+    private static final int COUNT_TO_STORE_POS = 50;
 
     /**
      * Progress position of the builder.
@@ -101,7 +101,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
         for (final BuildingBuilderResource stack : neededResources.values())
         {
-            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, false), new net.minecraft.util.Tuple<>(stack.getAmount(), true));
+            toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, false),
+              new net.minecraft.util.Tuple<>(stack.getAmount(), true));
         }
 
         return toKeep;
@@ -148,12 +149,12 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             fluidsToRemove.clear();
             ListNBT fluidsToRemove = (ListNBT) compound.get(TAG_FLUIDS_REMOVE);
             fluidsToRemove.forEach(fluidsRemove -> {
-            	int y = ((CompoundNBT) fluidsRemove).getInt(TAG_FLUIDS_REMOVE_Y);
+                int y = ((CompoundNBT) fluidsRemove).getInt(TAG_FLUIDS_REMOVE_Y);
                 ListNBT positions = (ListNBT) ((CompoundNBT) fluidsRemove).get(TAG_FLUIDS_REMOVE_POSITIONS);
                 final List<BlockPos> fluids = new ArrayList<BlockPos>();
                 for (int i = 0; i < positions.size(); i++)
                 {
-                	fluids.add(BlockPosUtil.readFromListNBT(positions, i));
+                    fluids.add(BlockPosUtil.readFromListNBT(positions, i));
                 }
                 this.fluidsToRemove.put(y, fluids);
             });
@@ -185,7 +186,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
         final ListNBT fluidsToRemove = new ListNBT();
         this.fluidsToRemove.forEach((y, fluids) -> {
-        	final CompoundNBT fluidsRemove = new CompoundNBT();
+            final CompoundNBT fluidsRemove = new CompoundNBT();
             final ListNBT positions = new ListNBT();
             fluids.forEach(fluid -> BlockPosUtil.writeToListNBT(positions, fluid));
             fluidsRemove.put(TAG_FLUIDS_REMOVE_POSITIONS, positions);
@@ -219,19 +220,19 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         }
 
         final ICitizenData data = this.getMainCitizen();
-        if(data != null && data.getJob() instanceof AbstractJobStructure)
+        if (data != null && data.getJob() instanceof AbstractJobStructure)
         {
             final AbstractJobStructure<?, ?> structureBuilderJob = (AbstractJobStructure<?, ?>) data.getJob();
             final WorkOrderBuildDecoration workOrderBuildDecoration = structureBuilderJob.getWorkOrder();
-            if(workOrderBuildDecoration != null)
+            if (workOrderBuildDecoration != null)
             {
                 final BlockPos pos = workOrderBuildDecoration.getBuildingLocation();
                 final String name =
-                        workOrderBuildDecoration instanceof WorkOrderBuild ? ((WorkOrderBuild) workOrderBuildDecoration).getUpgradeName() : workOrderBuildDecoration.getName();
+                  workOrderBuildDecoration instanceof WorkOrderBuild ? ((WorkOrderBuild) workOrderBuildDecoration).getUpgradeName() : workOrderBuildDecoration.getName();
                 buf.writeString(name);
 
                 final String desc;
-                if(pos.equals(getPosition()))
+                if (pos.equals(getPosition()))
                 {
                     desc = "here";
                 }
@@ -244,7 +245,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 }
 
                 buf.writeString(desc);
-                buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty/workOrderBuildDecoration.getAmountOfRes());
+                buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty / workOrderBuildDecoration.getAmountOfRes());
             }
             else
             {
@@ -260,7 +261,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             buf.writeDouble(0.0);
         }
         buf.writeString((getMainCitizen() == null || colony.getCitizenManager().getCitizen(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());
-
     }
 
     /**
@@ -288,7 +288,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 {
 
                     resource.addAvailable(InventoryUtils.getItemCountInItemHandler(structureBuilderInventory,
-                            stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
+                      stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
                 if (getTileEntity() != null)
@@ -391,8 +391,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
     /**
      * Set the progress position of the builder.
+     *
      * @param blockPos the last blockPos.
-     * @param stage the stage to set.
+     * @param stage    the stage to set.
      */
     public void setProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
     {
@@ -411,6 +412,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
     /**
      * Getter for the progress position.
+     *
      * @return the current progress and stage.
      */
     @Nullable
@@ -425,6 +427,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
     /**
      * Getter for the blocks to be removed in fluids_remove.
+     *
      * @return the blocks to be removed in fluids_remove.
      */
     public Map<Integer, List<BlockPos>> getFluidsToRemove()

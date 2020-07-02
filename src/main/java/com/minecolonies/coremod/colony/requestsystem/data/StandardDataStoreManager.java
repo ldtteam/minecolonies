@@ -135,7 +135,7 @@ public class StandardDataStoreManager implements IDataStoreManager
 
         @Override
         public StandardDataStoreManager deserialize(IFactoryController controller, PacketBuffer buffer)
-                throws Throwable
+          throws Throwable
         {
             final Map<IToken<?>, IDataStore> storeMap = new HashMap<>();
             final int storeSize = buffer.readInt();

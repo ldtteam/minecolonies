@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony;
+package com.minecolonies.api.colony;
 
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 

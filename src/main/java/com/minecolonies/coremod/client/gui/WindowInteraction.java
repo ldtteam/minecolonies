@@ -109,7 +109,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
             {
                 if (component.getFormattedText().equals(button.getLabel()))
                 {
-                    if ( handler.onClientResponseTriggered(component, Minecraft.getInstance().world, citizen, this) )
+                    if (handler.onClientResponseTriggered(component, Minecraft.getInstance().world, citizen, this))
                     {
                         currentInteraction++;
                         setupInteraction();

@@ -27,7 +27,7 @@ public final class ColonyUtils
      *
      * @param pos        the central position.
      * @param world      the world.
-     * @param blueprint    the structureWrapper.
+     * @param blueprint  the structureWrapper.
      * @param rotation   the rotation.
      * @param isMirrored if its mirrored.
      * @return a tuple with the required corners.

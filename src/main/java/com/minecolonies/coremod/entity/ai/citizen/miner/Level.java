@@ -89,7 +89,7 @@ public class Level
      *
      * @param buildingMiner reference to the miner building.
      * @param depth         the depth of this level.
-     * @param levelSign the position of the level sign.
+     * @param levelSign     the position of the level sign.
      */
     public Level(@NotNull final BuildingMiner buildingMiner, final int depth, final BlockPos levelSign)
     {
@@ -202,11 +202,10 @@ public class Level
     }
 
     /**
-     * Closes a given node. Or close the first in the list if null.
-     * Then creates the new nodes connected to it.
+     * Closes a given node. Or close the first in the list if null. Then creates the new nodes connected to it.
      *
      * @param rotation the rotation of the node.
-     * @param node the node to close.
+     * @param node     the node to close.
      */
     public void closeNextNode(final int rotation, final Node node)
     {
@@ -394,7 +393,7 @@ public class Level
 
     /**
      * Returns position of level's levelSign
-     * 
+     *
      * @return levelSign
      */
     public BlockPos getLevelSign()

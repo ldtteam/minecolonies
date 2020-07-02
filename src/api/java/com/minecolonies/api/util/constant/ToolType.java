@@ -11,11 +11,8 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 public enum ToolType implements IToolType
 {
     /**
-     * Note to future coders: You must add these to both:
-     * com.minecolonies.api.colony.requestsystem.requestable.Tool.getToolClasses
-     * and,
-     * com.minecolonies.api.util.ItemStackUtils.isTool
-     * to be usable by the RS system
+     * Note to future coders: You must add these to both: com.minecolonies.api.colony.requestsystem.requestable.Tool.getToolClasses and,
+     * com.minecolonies.api.util.ItemStackUtils.isTool to be usable by the RS system
      */
     NONE("", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_NONE)),
     PICKAXE("pickaxe", true, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_PICKAXE)),
@@ -44,6 +41,7 @@ public enum ToolType implements IToolType
     private final String         name;
     private final boolean        variableMaterials;
     private final ITextComponent displayName;
+
     private ToolType(final String name, final boolean variableMaterials, final ITextComponent displayName)
     {
         this.name = name;

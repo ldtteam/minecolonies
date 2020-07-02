@@ -29,17 +29,18 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
     /**
      * The id of the store.
      */
-    private       IToken<?>             id;
+    private IToken<?> id;
 
     /**
      * The queue of the store.
      */
     private final LinkedList<IToken<?>> queue;
-    private final List<IToken<?>> tasks;
+    private final List<IToken<?>>       tasks;
 
     /**
      * Constructor to create the data store.
-     * @param id the id of it.
+     *
+     * @param id    the id of it.
      * @param queue the queue to start with.
      * @param tasks the task.
      */
@@ -135,15 +136,16 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
                                                   .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
                                                   .collect(Collectors.toCollection(LinkedList::new));
             final List<IToken<?>> taskList = NBTUtils.streamCompound(nbt.getList(TAG_ASSIGNED_LIST, Constants.NBT.TAG_COMPOUND))
-              .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
-              .collect(Collectors.toList());
+                                               .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
+                                               .collect(Collectors.toList());
 
             return new StandardRequestSystemCrafterJobDataStore(token, queue, taskList);
         }
 
         @Override
-        public void serialize(IFactoryController controller, StandardRequestSystemCrafterJobDataStore input,
-                PacketBuffer packetBuffer)
+        public void serialize(
+          IFactoryController controller, StandardRequestSystemCrafterJobDataStore input,
+          PacketBuffer packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.queue.size());
@@ -154,7 +156,7 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
 
         @Override
         public StandardRequestSystemCrafterJobDataStore deserialize(IFactoryController controller, PacketBuffer buffer)
-                throws Throwable
+          throws Throwable
         {
             final IToken<?> id = controller.deserialize(buffer);
             final LinkedList<IToken<?>> queue = new LinkedList<>();

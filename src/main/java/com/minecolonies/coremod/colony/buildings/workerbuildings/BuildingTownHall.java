@@ -79,14 +79,14 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     }
 
     /**
-     * Add a colony permission event to the colony.
-     * Reduce the list by one if bigger than a treshhold.
+     * Add a colony permission event to the colony. Reduce the list by one if bigger than a treshhold.
+     *
      * @param event the event to add.
      */
     @Override
     public void addPermissionEvent(final PermissionEvent event)
     {
-        if(getBuildingLevel() >= 1 && !permissionEvents.contains(event))
+        if (getBuildingLevel() >= 1 && !permissionEvents.contains(event))
         {
             if (permissionEvents.size() >= MAX_PERMISSION_EVENTS)
             {
@@ -104,7 +104,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
         buf.writeBoolean(MineColonies.getConfig().getCommon().canPlayerUseAllyTHTeleport.get());
         buf.writeInt(permissionEvents.size());
-        for(final PermissionEvent event: permissionEvents)
+        for (final PermissionEvent event : permissionEvents)
         {
             event.serialize(buf);
         }
@@ -196,7 +196,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
             canPlayerUseTP = buf.readBoolean();
             final int size = buf.readInt();
-            for(int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
                 permissionEvents.add(new PermissionEvent(buf));
             }
@@ -204,6 +204,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
         /**
          * Get a list of permission events.
+         *
          * @return a copy of the list of events.
          */
         @Override
@@ -214,6 +215,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
         /**
          * Check if the player can use the teleport command.
+         *
          * @return true if so.
          */
         @Override

@@ -60,7 +60,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
      * Resource location for concrete tag.
      */
     private static final ResourceLocation CONCRETE_POWDER = new ResourceLocation("minecolonies", "concrete_powder");
-    private static final ResourceLocation CONCRETE_BLOCK = new ResourceLocation("minecolonies", "concrete");
+    private static final ResourceLocation CONCRETE_BLOCK  = new ResourceLocation("minecolonies", "concrete");
 
     /**
      * How deep the water can max be to place concrete in it.
@@ -267,6 +267,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
 
     /**
      * Check if there are open positions to mine.
+     *
      * @return the open position if so.
      */
     @Nullable
@@ -288,6 +289,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
 
     /**
      * Check if there are open positions to mine.
+     *
      * @return the open position if so.
      */
     @Nullable
@@ -309,6 +311,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
 
     /**
      * Get how much of an itemStack we already placed in the world.
+     *
      * @param primaryOutput the block to check for.
      * @return the total count.
      */

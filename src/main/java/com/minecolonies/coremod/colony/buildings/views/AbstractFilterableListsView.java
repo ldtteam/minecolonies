@@ -37,13 +37,14 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
 
     /**
      * Add item to the view and notify the server side.
+     *
      * @param item the item to add.
-     * @param id the id.
+     * @param id   the id.
      */
     public void addItem(final String id, final ItemStorage item)
     {
         Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this, id, item, true));
-        if(listsOfItems.containsKey(id))
+        if (listsOfItems.containsKey(id))
         {
             if (!listsOfItems.get(id).contains(item))
             {
@@ -62,8 +63,9 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
 
     /**
      * Check if an item is in the list of allowed items.
+     *
      * @param item the item to check.
-     * @param id the id.
+     * @param id   the id.
      * @return true if so.
      */
     public boolean isAllowedItem(final String id, final ItemStorage item)
@@ -73,6 +75,7 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
 
     /**
      * Get the size of allowed items.
+     *
      * @param key the key to check for.
      * @return the size.
      */
@@ -83,13 +86,14 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
 
     /**
      * Remove an item from the view and notify the server side.
-     * @param id the id.
+     *
+     * @param id   the id.
      * @param item the item to remove.
      */
     public void removeItem(final String id, final ItemStorage item)
     {
         Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this, id, item, false));
-        if(listsOfItems.containsKey(id) && listsOfItems.get(id).contains(item))
+        if (listsOfItems.containsKey(id) && listsOfItems.get(id).contains(item))
         {
             final List<ItemStorage> list = listsOfItems.get(id);
             list.remove(item);
@@ -103,7 +107,7 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
         super.deserialize(buf);
 
         final int ids = buf.readInt();
-        for(int i = 0; i < ids; i++)
+        for (int i = 0; i < ids; i++)
         {
             final String id = buf.readString(32767);
             final int size = buf.readInt();
@@ -112,7 +116,7 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
             {
                 list.add(new ItemStorage(buf.readItemStack()));
             }
-            listsOfItems.put(id,list);
+            listsOfItems.put(id, list);
         }
     }
 }

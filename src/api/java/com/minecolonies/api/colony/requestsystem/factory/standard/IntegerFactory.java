@@ -11,7 +11,7 @@ import net.minecraft.network.PacketBuffer;
 
 import org.jetbrains.annotations.NotNull;
 
-public class IntegerFactory implements IFactory<FactoryVoidInput,Integer>
+public class IntegerFactory implements IFactory<FactoryVoidInput, Integer>
 {
     @NotNull
     @Override

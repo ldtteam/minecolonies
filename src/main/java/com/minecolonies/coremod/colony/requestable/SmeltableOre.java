@@ -11,8 +11,7 @@ import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Smeltable requestable.
- * Delivers a stack of a smeltable ore.
+ * Smeltable requestable. Delivers a stack of a smeltable ore.
  */
 public class SmeltableOre implements IDeliverable
 {
@@ -60,10 +59,10 @@ public class SmeltableOre implements IDeliverable
 
     /**
      * Serialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the the buffer to write to.
-     * @param input the input to serialize.
+     * @param buffer     the the buffer to write to.
+     * @param input      the input to serialize.
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final SmeltableOre input)
     {
@@ -78,14 +77,14 @@ public class SmeltableOre implements IDeliverable
 
     /**
      * Deserialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the buffer to read.
+     * @param buffer     the buffer to read.
      * @return the deliverable.
      */
     public static SmeltableOre deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
-    	final int count = buffer.readInt();
+        final int count = buffer.readInt();
         final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
 
         return new SmeltableOre(count, result);

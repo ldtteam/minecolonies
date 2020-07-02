@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.requestsystem.management.handlers.update;
+package com.minecolonies.api.colony.requestsystem.management.update;
 
 /**
  * Update types (reset, or onLoad).

@@ -98,8 +98,10 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }
@@ -189,6 +191,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
 
     /**
      * Getter for all allowed fuel from the building.
+     *
      * @return the list of itemStacks.
      */
     public List<ItemStack> getAllowedFuel()
@@ -205,11 +208,12 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes (getBuildingLevel(), super.getRecipes().size());
+        return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
     }
 
     /**
      * Remove the furnace from the list.
+     *
      * @param pos the pos of the furnace.
      */
     public void removeFromFurnaces(final BlockPos pos)
@@ -257,18 +261,20 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
 
         /**
          * Check if an additional recipe can be added.
+         *
          * @return true if so.
          */
         public boolean canRecipeBeAdded()
         {
-            return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes (getBuildingLevel(), super.getRecipes().size());
+            return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
         }
     }
 
     /**
      * Check if an additional recipe can be added.
+     *
      * @param learnedRecipes the learned recipes.
-     * @param buildingLevel the building level.
+     * @param buildingLevel  the building level.
      * @return true if so.
      */
     public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)

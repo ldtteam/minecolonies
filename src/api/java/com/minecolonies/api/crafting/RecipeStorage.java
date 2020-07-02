@@ -53,11 +53,11 @@ public class RecipeStorage implements IRecipeStorage
     /**
      * Create an instance of the recipe storage.
      *
-     * @param token the token of the storage.
-     * @param input           the list of input items (required for the recipe).
-     * @param gridSize        the required grid size to make it.
-     * @param primaryOutput   the primary output of the recipe.
-     * @param intermediate    the intermediate to use (e.g furnace).
+     * @param token         the token of the storage.
+     * @param input         the list of input items (required for the recipe).
+     * @param gridSize      the required grid size to make it.
+     * @param primaryOutput the primary output of the recipe.
+     * @param intermediate  the intermediate to use (e.g furnace).
      */
     public RecipeStorage(final IToken<?> token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
     {
@@ -85,15 +85,15 @@ public class RecipeStorage implements IRecipeStorage
     {
         final List<ItemStorage> items = new ArrayList<>();
 
-        for(final ItemStack stack: input)
+        for (final ItemStack stack : input)
         {
-            if(ItemStackUtils.isEmpty(stack) || stack.getItem() == ModItems.buildTool)
+            if (ItemStackUtils.isEmpty(stack) || stack.getItem() == ModItems.buildTool)
             {
                 continue;
             }
 
             ItemStorage storage = new ItemStorage(stack.copy());
-            if(items.contains(storage))
+            if (items.contains(storage))
             {
                 final int index = items.indexOf(storage);
                 final ItemStorage tempStorage = items.remove(index);
@@ -127,7 +127,7 @@ public class RecipeStorage implements IRecipeStorage
     /**
      * Method to check if with the help of inventories this recipe can be fullfilled.
      *
-     * @param qty the quantity to craft.
+     * @param qty         the quantity to craft.
      * @param inventories the inventories to check.
      * @return true if possible, else false.
      */
@@ -167,15 +167,15 @@ public class RecipeStorage implements IRecipeStorage
         final RecipeStorage that = (RecipeStorage) o;
 
         if (gridSize != that.gridSize
-                || input.size() != that.input.size()
-                || !primaryOutput.isItemEqualIgnoreDurability(that.primaryOutput))
+              || input.size() != that.input.size()
+              || !primaryOutput.isItemEqualIgnoreDurability(that.primaryOutput))
         {
             return false;
         }
 
-        for(int i = 0; i < input.size(); i++)
+        for (int i = 0; i < input.size(); i++)
         {
-            if(!that.input.get(i).isItemEqual(input.get(i)))
+            if (!that.input.get(i).isItemEqual(input.get(i)))
             {
                 return false;
             }
@@ -196,13 +196,14 @@ public class RecipeStorage implements IRecipeStorage
 
     /**
      * Check for free space in the handlers.
+     *
      * @param handlers the handlers to check.
      * @return true if enough space.
      */
     private boolean checkForFreeSpace(final List<IItemHandler> handlers)
     {
         final List<ItemStack> secondaryStacks = new ArrayList<>();
-        for(final ItemStack stack: input)
+        for (final ItemStack stack : input)
         {
             final ItemStack container = stack.getItem().getContainerItem(stack);
             if (!ItemStackUtils.isEmpty(container))
@@ -211,12 +212,12 @@ public class RecipeStorage implements IRecipeStorage
             }
         }
         secondaryStacks.add(getPrimaryOutput());
-        if(secondaryStacks.size() > getInput().size())
+        if (secondaryStacks.size() > getInput().size())
         {
             int freeSpace = 0;
             for (final IItemHandler handler : handlers)
             {
-                freeSpace+= handler.getSlots() - InventoryUtils.getAmountOfStacksInItemHandler(handler);
+                freeSpace += handler.getSlots() - InventoryUtils.getAmountOfStacksInItemHandler(handler);
             }
 
             return freeSpace >= secondaryStacks.size() - getInput().size();
@@ -226,13 +227,14 @@ public class RecipeStorage implements IRecipeStorage
 
     /**
      * Check for space, remove items, and insert crafted items.
+     *
      * @param handlers the handlers to use.
      * @return true if succesful.
      */
     @Override
     public boolean fullfillRecipe(final List<IItemHandler> handlers)
     {
-        if(!checkForFreeSpace(handlers) || !canFullFillRecipe(1, handlers.toArray(new IItemHandler[0])))
+        if (!checkForFreeSpace(handlers) || !canFullFillRecipe(1, handlers.toArray(new IItemHandler[0])))
         {
             return false;
         }
@@ -248,7 +250,8 @@ public class RecipeStorage implements IRecipeStorage
 
             for (final IItemHandler handler : handlers)
             {
-                int slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack.getItemStack()));
+                int slotOfStack =
+                  InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack.getItemStack()));
 
                 while (slotOfStack != -1 && amountNeeded > 0)
                 {
@@ -291,6 +294,7 @@ public class RecipeStorage implements IRecipeStorage
 
     /**
      * Inserted the resulting items into the itemHandlers.
+     *
      * @param handlers the handlers.
      */
     private void insertCraftedItems(final List<IItemHandler> handlers)
@@ -304,7 +308,7 @@ public class RecipeStorage implements IRecipeStorage
         }
 
         final List<ItemStack> secondaryStacks = new ArrayList<>();
-        for(final ItemStack stack: input)
+        for (final ItemStack stack : input)
         {
             if (stack.getItem() == ModItems.buildTool)
             {

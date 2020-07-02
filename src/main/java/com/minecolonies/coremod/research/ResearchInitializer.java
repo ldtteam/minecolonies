@@ -11,6 +11,7 @@ public class ResearchInitializer
 {
     /**
      * Method to fill the research tree with the elements.
+     *
      * @param researchTree the research tree to fill.
      */
     public static void fillResearchTree(final IGlobalResearchTree researchTree)
@@ -72,16 +73,20 @@ public class ResearchInitializer
         final GlobalResearch hot = new GlobalResearch("hot", "technology", "Hot!", 1, new UnlockBuildingResearchEffect("Smeltery", true));
         hot.setRequirement(new BuildingResearchRequirement(2, "miner"));
 
-        final GlobalResearch isthisredstone = new GlobalResearch("isthisredstone", "technology", "Is this Redstone?", 2, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.1));
+        final GlobalResearch isthisredstone =
+          new GlobalResearch("isthisredstone", "technology", "Is this Redstone?", 2, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.1));
         bonemeal.setRequirement(new BuildingResearchRequirement(3, "miner"));
 
-        final GlobalResearch redstonepowered = new GlobalResearch("redstonepowered", "technology", "Redstone powered", 3, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.25));
+        final GlobalResearch redstonepowered =
+          new GlobalResearch("redstonepowered", "technology", "Redstone powered", 3, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.25));
         dung.setRequirement(new BuildingResearchRequirement(4, "miner"));
 
-        final GlobalResearch heavymachinery = new GlobalResearch("heavymachinery", "technology", "Heavy Machinery", 4, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.5));
+        final GlobalResearch heavymachinery =
+          new GlobalResearch("heavymachinery", "technology", "Heavy Machinery", 4, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.5));
         compost.setRequirement(new BuildingResearchRequirement(5, "miner"));
 
-        final GlobalResearch whatisthisspeed = new GlobalResearch("whatisthisspeed", "technology", "What is this speed?", 5, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 1.0));
+        final GlobalResearch whatisthisspeed =
+          new GlobalResearch("whatisthisspeed", "technology", "What is this speed?", 5, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 1.0));
         fertilizer.setRequirement(new BuildingResearchRequirement(3, "smeltery"));
 
         final GlobalResearch lightning = new GlobalResearch("lightning", "technology", "Lightning", 6, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 2.0));
@@ -204,7 +209,8 @@ public class ResearchInitializer
         final GlobalResearch tools = new GlobalResearch("tools", "technology", "Tools", 4, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 0.5));
         tools.setRequirement(new BuildingResearchRequirement(4, "blacksmith"));
 
-        final GlobalResearch seemsautomatic = new GlobalResearch("seemsautomatic", "technology", "Seems automatic", 5, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 1.0));
+        final GlobalResearch seemsautomatic =
+          new GlobalResearch("seemsautomatic", "technology", "Seems automatic", 5, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 1.0));
         seemsautomatic.setRequirement(new BuildingResearchRequirement(5, "blacksmith"));
 
         final GlobalResearch madness = new GlobalResearch("madness", "technology", "Madness!", 6, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 2.0));
@@ -305,7 +311,6 @@ public class ResearchInitializer
         researchTree.addResearch(compost.getBranch(), compost);
         researchTree.addResearch(fertilizer.getBranch(), fertilizer);
         researchTree.addResearch(magicCompost.getBranch(), magicCompost);
-
     }
 
     private static void buildCivilianTree(final IGlobalResearchTree researchTree)
@@ -472,7 +477,8 @@ public class ResearchInitializer
         final GlobalResearch fortitude = new GlobalResearch("fortitude", "civilian", "Fortitude", 5, new AdditionModifierResearchEffect("Healing Saturation Limit", -2.0));
         fortitude.setRequirement(new BuildingResearchRequirement(5, "cook"));
 
-        final GlobalResearch indefatigability = new GlobalResearch("indefatigability", "civilian", "Indefatigability", 6, new AdditionModifierResearchEffect("Healing Saturation Limit", -5));
+        final GlobalResearch indefatigability =
+          new GlobalResearch("indefatigability", "civilian", "Indefatigability", 6, new AdditionModifierResearchEffect("Healing Saturation Limit", -5));
 
         stamina.addChild(resistance);
         resistance.addChild(resilience);
@@ -602,7 +608,8 @@ public class ResearchInitializer
         final GlobalResearch captainTraining = new GlobalResearch("captaintraining", "combat", "Captain Training", 5, new MultiplierModifierResearchEffect(BLOCK_ATTACKS, 0.25));
         captainTraining.setRequirement(new BuildingResearchRequirement(5, "combatacademy"));
 
-        final GlobalResearch captainOfTheGuard = new GlobalResearch("captainoftheguard", "combat", "Captain of the Guard", 6, new MultiplierModifierResearchEffect(BLOCK_ATTACKS, 0.5));
+        final GlobalResearch captainOfTheGuard =
+          new GlobalResearch("captainoftheguard", "combat", "Captain of the Guard", 6, new MultiplierModifierResearchEffect(BLOCK_ATTACKS, 0.5));
 
         tacticTraining.addChild(improvedSwords);
         improvedSwords.addChild(squireTraining);

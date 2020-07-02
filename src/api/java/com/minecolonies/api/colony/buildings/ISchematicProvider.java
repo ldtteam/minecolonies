@@ -142,6 +142,7 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
 
     /**
      * Check if the building was deconstructed.
+     *
      * @return true if so.
      */
     boolean isDeconstructed();

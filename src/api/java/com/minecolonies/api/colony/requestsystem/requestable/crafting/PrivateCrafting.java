@@ -13,8 +13,8 @@ public class PrivateCrafting extends AbstractCrafting
     /**
      * Create a Stack deliverable.
      *
-     * @param stack the required stack.
-     * @param count the crafting count.
+     * @param stack    the required stack.
+     * @param count    the crafting count.
      * @param minCount the min count.
      */
     public PrivateCrafting(@NotNull final ItemStack stack, final int count, final int minCount)
@@ -57,10 +57,10 @@ public class PrivateCrafting extends AbstractCrafting
 
     /**
      * Serialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the the buffer to write to.
-     * @param input the input to serialize.
+     * @param buffer     the the buffer to write to.
+     * @param input      the input to serialize.
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final PrivateCrafting input)
     {
@@ -71,14 +71,14 @@ public class PrivateCrafting extends AbstractCrafting
 
     /**
      * Deserialize the deliverable.
-     * 
+     *
      * @param controller the controller.
-     * @param buffer the buffer to read.
+     * @param buffer     the buffer to read.
      * @return the deliverable.
      */
     public static PrivateCrafting deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
-    	final ItemStack stack = buffer.readItemStack();
+        final ItemStack stack = buffer.readItemStack();
         final int count = buffer.readInt();
         final int minCount = buffer.readInt();
 

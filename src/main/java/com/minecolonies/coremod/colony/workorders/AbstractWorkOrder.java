@@ -31,19 +31,18 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     /**
      * NBT for storage.
      */
-    private static final String TAG_BUILDING       = "building";
-    private static final String TAG_TYPE        = "type";
-    private static final String TAG_TH_PRIORITY = "priority";
-    private static final String TAG_ID          = "id";
-    private static final String TAG_CLAIMED_BY  = "claimedBy";
-    private static final String TAG_CLAIMED_BY_BUILDING  = "claimedByBuilding";
+    private static final String TAG_BUILDING            = "building";
+    private static final String TAG_TYPE                = "type";
+    private static final String TAG_TH_PRIORITY         = "priority";
+    private static final String TAG_ID                  = "id";
+    private static final String TAG_CLAIMED_BY          = "claimedBy";
+    private static final String TAG_CLAIMED_BY_BUILDING = "claimedByBuilding";
 
     /**
      * Bimap of workOrder from string to class.
      */
     @NotNull
     private static final BiMap<String, Class<? extends IWorkOrder>> nameToClassBiMap = HashBiMap.create();
-
     /**
      * WorkOrder registry.
      */
@@ -59,22 +58,22 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     /**
      * The id of the workOrder.
      */
-    protected int      id;
+    protected int id;
 
     /**
      * The position of the worker building claiming this workOrder.
      */
-    private   BlockPos claimedBy;
+    private BlockPos claimedBy;
 
     /**
      * The priority of the workOrder.
      */
-    private   int      priority;
+    private int priority;
 
     /**
      * If the workOrder changed.
      */
-    private   boolean  changed = false;
+    private boolean changed = false;
 
     /**
      * The location to built at.
@@ -82,8 +81,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     protected BlockPos buildingLocation;
 
     /**
-     * Default constructor; we also start with a new id and replace it during loading;
-     * this greatly simplifies creating subclasses.
+     * Default constructor; we also start with a new id and replace it during loading; this greatly simplifies creating subclasses.
      */
     public AbstractWorkOrder()
     {
@@ -121,7 +119,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * Create a Work Order from a saved CompoundNBT.
      *
      * @param compound the compound that contains the data for the Work Order
-     * @param manager the work manager.
+     * @param manager  the work manager.
      * @return {@link AbstractWorkOrder} from the NBT
      */
     public static AbstractWorkOrder createFromNBT(@NotNull final CompoundNBT compound, final WorkManager manager)
@@ -169,8 +167,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
 
     /**
      * Read the WorkOrder data from the CompoundNBT.
-     *  @param compound NBT Tag compound
-     * @param manager the workManager calling this method.
+     *
+     * @param compound NBT Tag compound
+     * @param manager  the workManager calling this method.
      */
     @Override
     public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
@@ -336,6 +335,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
 
     /**
      * Set the Work order as claimed by a given building.
+     *
      * @param builder the building position.
      */
     @Override
@@ -382,9 +382,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.
      * <p>
-     * Suppressing Sonar Rule squid:S1172
-     * This rule does " Unused method parameters should be removed"
-     * But in this case extending class may need to use the colony parameter
+     * Suppressing Sonar Rule squid:S1172 This rule does " Unused method parameters should be removed" But in this case extending class may need to use the colony parameter
      *
      * @param colony The colony that owns the Work Order
      * @return True if the WorkOrder is still valid, or False if it should be deleted
@@ -450,7 +448,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * <p>
      * Override this when something need to be done when the work order is completed
      *
-     * @param colony in which the work order exist
+     * @param colony  in which the work order exist
      * @param citizen citizen that completed the work order
      */
     @Override

@@ -100,7 +100,7 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
         meshList.show();
 
         final int size = building.getBuildingLevel() - building.getMeshes().size() + 3;
-        
+
         //Creates a dataProvider for the unemployed resourceList.
         meshList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -160,6 +160,7 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
 
     /**
      * Switch the mesh to a new one.
+     *
      * @param button the clicked button.
      */
     private void switchMesh(final Button button)

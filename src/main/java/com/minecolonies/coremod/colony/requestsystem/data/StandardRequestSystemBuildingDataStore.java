@@ -27,7 +27,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public class StandardRequestSystemBuildingDataStore implements IRequestSystemBuildingDataStore
 {
 
-    private IToken<?>                                id;
+    private       IToken<?>                                id;
     private final Map<TypeToken<?>, Collection<IToken<?>>> openRequestsByRequestableType;
     private final Map<Integer, Collection<IToken<?>>>      openRequestsByCitizen;
     private final Map<Integer, Collection<IToken<?>>>      completedRequestsByCitizen;
@@ -38,7 +38,8 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
       final Map<TypeToken<?>, Collection<IToken<?>>> openRequestsByRequestableType,
       final Map<Integer, Collection<IToken<?>>> openRequestsByCitizen,
       final Map<Integer, Collection<IToken<?>>> completedRequestsByCitizen,
-      final Map<IToken<?>, Integer> citizenByOpenRequest) {
+      final Map<IToken<?>, Integer> citizenByOpenRequest)
+    {
         this.id = id;
         this.openRequestsByRequestableType = openRequestsByRequestableType;
         this.openRequestsByCitizen = openRequestsByCitizen;
@@ -129,9 +130,9 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
 
                 entryCompound.put(TAG_TOKEN, controller.serialize(typeToken));
                 entryCompound.put(TAG_LIST, standardRequestSystemBuildingDataStore.openRequestsByRequestableType.get(typeToken)
-                                                 .stream()
-                                                 .map(controller::serialize)
-                                                 .collect(NBTUtils.toListNBT()));
+                                              .stream()
+                                              .map(controller::serialize)
+                                              .collect(NBTUtils.toListNBT()));
 
                 return entryCompound;
             }).collect(NBTUtils.toListNBT()));
@@ -140,9 +141,9 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
 
                 entryCompound.put(TAG_TOKEN, controller.serialize(integer));
                 entryCompound.put(TAG_LIST, standardRequestSystemBuildingDataStore.openRequestsByCitizen.get(integer)
-                                                 .stream()
-                                                 .map(controller::serialize)
-                                                 .collect(NBTUtils.toListNBT()));
+                                              .stream()
+                                              .map(controller::serialize)
+                                              .collect(NBTUtils.toListNBT()));
 
                 return entryCompound;
             }).collect(NBTUtils.toListNBT()));
@@ -151,9 +152,9 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
 
                 entryCompound.put(TAG_TOKEN, controller.serialize(integer));
                 entryCompound.put(TAG_LIST, standardRequestSystemBuildingDataStore.completedRequestsByCitizen.get(integer)
-                                                 .stream()
-                                                 .map(controller::serialize)
-                                                 .collect(NBTUtils.toListNBT()));
+                                              .stream()
+                                              .map(controller::serialize)
+                                              .collect(NBTUtils.toListNBT()));
 
                 return entryCompound;
             }).collect(NBTUtils.toListNBT()));
@@ -175,34 +176,47 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
             final Map<TypeToken<?>, Collection<IToken<?>>> openRequestsByRequestableType = NBTUtils
-                                                                                             .streamCompound(nbt.getList(TAG_OPEN_REQUESTS_BY_TYPE, Constants.NBT.TAG_COMPOUND)).map(CompoundNBT -> {
-                  final TypeToken<?> key = controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));
-                  final Collection<IToken<?>> values = NBTUtils.streamCompound(CompoundNBT.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
-                                                         .map(elementCompound -> (IToken<?>) controller.deserialize(elementCompound))
-                                                         .collect(Collectors.toList());
+                                                                                             .streamCompound(nbt.getList(TAG_OPEN_REQUESTS_BY_TYPE, Constants.NBT.TAG_COMPOUND))
+                                                                                             .map(CompoundNBT -> {
+                                                                                                 final TypeToken<?> key =
+                                                                                                   controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));
+                                                                                                 final Collection<IToken<?>> values = NBTUtils.streamCompound(CompoundNBT.getList(
+                                                                                                   TAG_LIST,
+                                                                                                   Constants.NBT.TAG_COMPOUND))
+                                                                                                                                        .map(elementCompound -> (IToken<?>) controller
+                                                                                                                                                                              .deserialize(
+                                                                                                                                                                                elementCompound))
+                                                                                                                                        .collect(Collectors.toList());
 
-                  return new Tuple<>(key, values);
-              }).collect(Collectors.toMap(Tuple::getA, Tuple::getB));
+                                                                                                 return new Tuple<>(key, values);
+                                                                                             })
+                                                                                             .collect(Collectors.toMap(Tuple::getA, Tuple::getB));
             final Map<Integer, Collection<IToken<?>>> openRequestsByCitizen = NBTUtils
-                                                                                             .streamCompound(nbt.getList(TAG_OPEN_REQUESTS_BY_CITIZEN, Constants.NBT.TAG_COMPOUND)).map(CompoundNBT -> {
-                  final Integer key = controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));
-                  final Collection<IToken<?>> values = NBTUtils.streamCompound(CompoundNBT.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
-                                                         .map(elementCompound -> (IToken<?>) controller.deserialize(elementCompound))
-                                                         .collect(Collectors.toList());
+                                                                                .streamCompound(nbt.getList(TAG_OPEN_REQUESTS_BY_CITIZEN, Constants.NBT.TAG_COMPOUND))
+                                                                                .map(CompoundNBT -> {
+                                                                                    final Integer key = controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));
+                                                                                    final Collection<IToken<?>> values =
+                                                                                      NBTUtils.streamCompound(CompoundNBT.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
+                                                                                        .map(elementCompound -> (IToken<?>) controller.deserialize(elementCompound))
+                                                                                        .collect(Collectors.toList());
 
-                  return new Tuple<>(key, values);
-              }).collect(Collectors.toMap(Tuple::getA, Tuple::getB));
+                                                                                    return new Tuple<>(key, values);
+                                                                                })
+                                                                                .collect(Collectors.toMap(Tuple::getA, Tuple::getB));
             final Map<Integer, Collection<IToken<?>>> completedRequestsByCitizen = NBTUtils
-                                                                                .streamCompound(nbt.getList(TAG_COMPLETED_REQUESTS_BY_CITIZEN, Constants.NBT.TAG_COMPOUND)).map(CompoundNBT -> {
-                  final Integer key = controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));
-                  final Collection<IToken<?>> values = NBTUtils.streamCompound(CompoundNBT.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
-                                                         .map(elementCompound -> (IToken<?>) controller.deserialize(elementCompound))
-                                                         .collect(Collectors.toList());
+                                                                                     .streamCompound(nbt.getList(TAG_COMPLETED_REQUESTS_BY_CITIZEN, Constants.NBT.TAG_COMPOUND))
+                                                                                     .map(CompoundNBT -> {
+                                                                                         final Integer key = controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));
+                                                                                         final Collection<IToken<?>> values =
+                                                                                           NBTUtils.streamCompound(CompoundNBT.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
+                                                                                             .map(elementCompound -> (IToken<?>) controller.deserialize(elementCompound))
+                                                                                             .collect(Collectors.toList());
 
-                  return new Tuple<>(key, values);
-              }).collect(Collectors.toMap(Tuple::getA, Tuple::getB));
+                                                                                         return new Tuple<>(key, values);
+                                                                                     })
+                                                                                     .collect(Collectors.toMap(Tuple::getA, Tuple::getB));
             final Map<IToken<?>, Integer> citizenByOpenRequest = NBTUtils
-                                                                                     .streamCompound(nbt.getList(TAG_CITIZEN_BY_OPEN_REQUEST, Constants.NBT.TAG_COMPOUND)).map(CompoundNBT -> {
+                                                                   .streamCompound(nbt.getList(TAG_CITIZEN_BY_OPEN_REQUEST, Constants.NBT.TAG_COMPOUND)).map(CompoundNBT -> {
                   final IToken<?> key = controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));
                   final Integer value = controller.deserialize(CompoundNBT.getCompound(TAG_VALUE));
 
@@ -213,8 +227,9 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
         }
 
         @Override
-        public void serialize(IFactoryController controller, StandardRequestSystemBuildingDataStore input,
-                PacketBuffer packetBuffer)
+        public void serialize(
+          IFactoryController controller, StandardRequestSystemBuildingDataStore input,
+          PacketBuffer packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.openRequestsByRequestableType.size());
@@ -247,7 +262,7 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
 
         @Override
         public StandardRequestSystemBuildingDataStore deserialize(IFactoryController controller, PacketBuffer buffer)
-                throws Throwable
+          throws Throwable
         {
             final IToken<?> id = controller.deserialize(buffer);
             final Map<TypeToken<?>, Collection<IToken<?>>> openRequestsByRequestableType = new HashMap<>();

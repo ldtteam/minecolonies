@@ -8,17 +8,14 @@ public interface ICitizenExperienceHandler
     void updateLevel();
 
     /**
-     * Add experience points to citizen.
-     * Increases the citizen level if he has sufficient experience.
-     * This will reset the experience.
+     * Add experience points to citizen. Increases the citizen level if he has sufficient experience. This will reset the experience.
      *
      * @param xp the amount of points added.
      */
     void addExperience(double xp);
 
     /**
-     * Drop some experience share depending on the experience and
-     * experienceLevel.
+     * Drop some experience share depending on the experience and experienceLevel.
      */
     void dropExperience();
 

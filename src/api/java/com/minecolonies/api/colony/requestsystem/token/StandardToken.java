@@ -5,8 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 /**
- * Internal implementation of the IToken interface.
- * Uses UUID to store the ID of the request.
+ * Internal implementation of the IToken interface. Uses UUID to store the ID of the request.
  */
 public class StandardToken implements IToken<UUID>
 {

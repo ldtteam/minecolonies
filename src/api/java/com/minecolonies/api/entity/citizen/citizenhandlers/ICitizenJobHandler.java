@@ -8,6 +8,7 @@ public interface ICitizenJobHandler
 {
     /**
      * Set Model depending on job.
+     *
      * @param job the new job.
      */
     void setModelDependingOnJob(@Nullable IJob<?> job);
@@ -31,6 +32,7 @@ public interface ICitizenJobHandler
 
     /**
      * Gets the job of the entity.
+     *
      * @return the job or els enull.
      */
     @Nullable
@@ -38,6 +40,7 @@ public interface ICitizenJobHandler
 
     /**
      * Method to check if the citizen job allows to run the avoidance task.
+     *
      * @return true if so.
      */
     boolean shouldRunAvoidance();

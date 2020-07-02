@@ -352,7 +352,8 @@ public class BuildingManager implements IBuildingManager
                     building.onPlacement();
 
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
-                    final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
+                    final LoadOnlyStructureHandler wrapper =
+                      new LoadOnlyStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
                     final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
                       = ColonyUtils.calculateCorners(building.getPosition(),
                       world,

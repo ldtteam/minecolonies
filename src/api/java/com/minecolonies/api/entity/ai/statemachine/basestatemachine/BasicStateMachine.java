@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Basic statemachine class, can be used for any Transition typed which extends the transition interface.
- * It contains the current state and a hashmap for events and transitions, which are the minimal requirements to have a working statemachine.
+ * Basic statemachine class, can be used for any Transition typed which extends the transition interface. It contains the current state and a hashmap for events and transitions,
+ * which are the minimal requirements to have a working statemachine.
  */
 public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends IState> implements IStateMachine<T, S>
 {
@@ -47,7 +47,8 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
 
     /**
      * Construct a new StateMachine
-     * @param initialState the initial state.
+     *
+     * @param initialState     the initial state.
      * @param exceptionHandler the exception handler.
      */
     protected BasicStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler)
@@ -134,10 +135,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
     }
 
     /**
-     * Continuation of checkTransition.
-     * applies the transition and changes the state.
-     * if the state is null, execute more transitions
-     * and don't change state.
+     * Continuation of checkTransition. applies the transition and changes the state. if the state is null, execute more transitions and don't change state.
      *
      * @param transition the transitions we're looking at
      * @return true if did transition to a new state

@@ -10,7 +10,6 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-
 public class CompleteBuildRequestTrigger extends AbstractCriterionTrigger<CompleteBuildRequestListeners, CompleteBuildRequestCriterionInstance>
 {
     public CompleteBuildRequestTrigger()

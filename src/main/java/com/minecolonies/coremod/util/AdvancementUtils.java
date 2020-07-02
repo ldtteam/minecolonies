@@ -21,7 +21,8 @@ public class AdvancementUtils
         MinecraftServer minecraftServer = colony.getWorld().getServer();
         if (minecraftServer != null)
         {
-            final List<Rank> ranks = MineColonies.getConfig().getCommon().officersReceiveAdvancements.get() ? Arrays.asList(Rank.OWNER, Rank.OFFICER) : Collections.singletonList(Rank.OWNER);
+            final List<Rank> ranks =
+              MineColonies.getConfig().getCommon().officersReceiveAdvancements.get() ? Arrays.asList(Rank.OWNER, Rank.OFFICER) : Collections.singletonList(Rank.OWNER);
 
             for (final Player player : colony.getPermissions().getPlayersByRank(new HashSet<>(ranks)))
             {
@@ -33,5 +34,4 @@ public class AdvancementUtils
             }
         }
     }
-
 }

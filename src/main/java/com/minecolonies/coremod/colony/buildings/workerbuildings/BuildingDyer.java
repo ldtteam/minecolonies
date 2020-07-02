@@ -68,7 +68,6 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
           new ItemStack(Items.GREEN_DYE, 1),
           Blocks.FURNACE);
         recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
-
     }
 
     @NotNull

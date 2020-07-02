@@ -112,7 +112,7 @@ public class ColonyPermissionEventHandler
      *
      * @param worldIn    the world to check in
      * @param posIn      the block to check
-     * @param entity   the player who tries
+     * @param entity     the player who tries
      * @param blockState the state that block is in
      * @param action     the action that was performed on the position
      * @return true if canceled
@@ -184,7 +184,8 @@ public class ColonyPermissionEventHandler
 
             final long worldTime = entity.world.getGameTime();
             if (!lastPlayerNotificationTick.containsKey(entity.getUniqueID())
-                  || lastPlayerNotificationTick.get(entity.getUniqueID()) + (Constants.TICKS_SECOND * MineColonies.getConfig().getCommon().secondsBetweenPermissionMessages.get()) < worldTime)
+                  || lastPlayerNotificationTick.get(entity.getUniqueID()) + (Constants.TICKS_SECOND * MineColonies.getConfig().getCommon().secondsBetweenPermissionMessages.get())
+                       < worldTime)
             {
                 LanguageHandler.sendPlayerMessage((PlayerEntity) entity, "com.minecolonies.coremod.permission.no");
                 lastPlayerNotificationTick.put(entity.getUniqueID(), worldTime);
@@ -198,7 +199,7 @@ public class ColonyPermissionEventHandler
      * @param event BlockEvent.BreakEvent
      */
     @SubscribeEvent
-    public  void on(final BlockEvent.BreakEvent event)
+    public void on(final BlockEvent.BreakEvent event)
     {
         final IWorld world = event.getWorld();
         if (!MineColonies.getConfig().getCommon().enableColonyProtection.get() || world.isRemote())
@@ -247,7 +248,7 @@ public class ColonyPermissionEventHandler
      * @param event ExplosionEvent.Detonate
      */
     @SubscribeEvent
-    public  void on(final ExplosionEvent.Detonate event)
+    public void on(final ExplosionEvent.Detonate event)
     {
         if (!MineColonies.getConfig().getCommon().turnOffExplosionsInColonies.get())
         {
@@ -276,7 +277,7 @@ public class ColonyPermissionEventHandler
      * @param event ExplosionEvent.Detonate
      */
     @SubscribeEvent
-    public  void on(final ExplosionEvent.Start event)
+    public void on(final ExplosionEvent.Start event)
     {
         if (MineColonies.getConfig().getCommon().enableColonyProtection.get()
               && MineColonies.getConfig().getCommon().turnOffExplosionsInColonies.get()
@@ -289,16 +290,12 @@ public class ColonyPermissionEventHandler
     /**
      * PlayerInteractEvent handler.
      * <p>
-     * Check, if a player right clicked a block.
-     * Deny if:
-     * - If the block is in colony
-     * - block is AbstractBlockHut
-     * - player has not permission
+     * Check, if a player right clicked a block. Deny if: - If the block is in colony - block is AbstractBlockHut - player has not permission
      *
      * @param event PlayerInteractEvent
      */
     @SubscribeEvent
-    public  void on(final PlayerInteractEvent event)
+    public void on(final PlayerInteractEvent event)
     {
         if (colony.isCoordInColony(event.getWorld(), event.getPos())
               && !(event instanceof PlayerInteractEvent.EntityInteract || event instanceof PlayerInteractEvent.EntityInteractSpecific))
@@ -379,15 +376,12 @@ public class ColonyPermissionEventHandler
     /**
      * PlayerInteractEvent.EntityInteract handler.
      * <p>
-     * Check, if a player right clicked an entity.
-     * Deny if:
-     * - If the entity is in colony
-     * - player has not permission
+     * Check, if a player right clicked an entity. Deny if: - If the entity is in colony - player has not permission
      *
      * @param event PlayerInteractEvent
      */
     @SubscribeEvent
-    public  void on(final PlayerInteractEvent.EntityInteract event)
+    public void on(final PlayerInteractEvent.EntityInteract event)
     {
         if (isFreeToInteractWith(null, event.getPos())
               && colony.getPermissions().hasPermission(event.getPlayer(), Action.ACCESS_FREE_BLOCKS))
@@ -401,17 +395,15 @@ public class ColonyPermissionEventHandler
     /**
      * PlayerInteractEvent.EntityInteract handler.
      * <p>
-     * Check, if a player right clicked an entity.
-     * Deny if:
-     * - If the entity is in colony
-     * - player has not permission
+     * Check, if a player right clicked an entity. Deny if: - If the entity is in colony - player has not permission
      *
      * @param event PlayerInteractEvent
      */
     @SubscribeEvent
-    public  void on(final PlayerEvent.BreakSpeed event)
+    public void on(final PlayerEvent.BreakSpeed event)
     {
-        if (colony.isCoordInColony(event.getEntity().world, event.getPos()) && MineColonies.getConfig().getCommon().pvp_mode.get() && event.getState().getBlock() == ModBlocks.blockHutTownHall
+        if (colony.isCoordInColony(event.getEntity().world, event.getPos()) && MineColonies.getConfig().getCommon().pvp_mode.get()
+              && event.getState().getBlock() == ModBlocks.blockHutTownHall
               && event.getPlayer().world instanceof ServerWorld)
         {
             final World world = event.getPlayer().world;
@@ -504,15 +496,12 @@ public class ColonyPermissionEventHandler
     /**
      * PlayerInteractEvent.EntityInteractSpecific handler.
      * <p>
-     * Check, if a player right clicked a entity.
-     * Deny if:
-     * - If the entity is in colony
-     * - player has not permission
+     * Check, if a player right clicked a entity. Deny if: - If the entity is in colony - player has not permission
      *
      * @param event PlayerInteractEvent
      */
     @SubscribeEvent
-    public  void on(final PlayerInteractEvent.EntityInteractSpecific event)
+    public void on(final PlayerInteractEvent.EntityInteractSpecific event)
     {
         if (isFreeToInteractWith(null, event.getPos())
               && colony.getPermissions().hasPermission(event.getPlayer(), Action.ACCESS_FREE_BLOCKS))
@@ -525,15 +514,12 @@ public class ColonyPermissionEventHandler
     /**
      * ItemTossEvent handler.
      * <p>
-     * Check, if a player tossed a block.
-     * Deny if:
-     * - If the tossing happens in the colony
-     * - player is hostile to colony
+     * Check, if a player tossed a block. Deny if: - If the tossing happens in the colony - player is hostile to colony
      *
      * @param event ItemTossEvent
      */
     @SubscribeEvent
-    public  void on(final ItemTossEvent event)
+    public void on(final ItemTossEvent event)
     {
         if (checkEventCancelation(Action.TOSS_ITEM, event.getPlayer(), event.getPlayer().getEntityWorld(), event, event.getPlayer().getPosition()))
         {
@@ -544,15 +530,12 @@ public class ColonyPermissionEventHandler
     /**
      * ItemEntityPickupEvent handler.
      * <p>
-     * Check, if a player tries to pickup a block.
-     * Deny if:
-     * - If the pickUp happens in the colony
-     * - player is neutral or hostile to colony
+     * Check, if a player tries to pickup a block. Deny if: - If the pickUp happens in the colony - player is neutral or hostile to colony
      *
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public  void on(final EntityItemPickupEvent event)
+    public void on(final EntityItemPickupEvent event)
     {
         checkEventCancelation(Action.PICKUP_ITEM, event.getPlayer(), event.getPlayer().getEntityWorld(), event, event.getPlayer().getPosition());
     }
@@ -560,15 +543,12 @@ public class ColonyPermissionEventHandler
     /**
      * FillBucketEvent handler.
      * <p>
-     * Check, if a player tries to fill a bucket.
-     * Deny if:
-     * - If the fill happens in the colony
-     * - player is neutral or hostile to colony
+     * Check, if a player tries to fill a bucket. Deny if: - If the fill happens in the colony - player is neutral or hostile to colony
      *
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public  void on(final FillBucketEvent event)
+    public void on(final FillBucketEvent event)
     {
         @Nullable BlockPos targetBlockPos = null;
         if (event.getTarget() instanceof BlockRayTraceResult)
@@ -585,15 +565,12 @@ public class ColonyPermissionEventHandler
     /**
      * ArrowLooseEvent handler.
      * <p>
-     * Check, if a player tries to shoot an arrow.
-     * Deny if:
-     * - If the shooting happens in the colony
-     * - player is neutral or hostile to colony
+     * Check, if a player tries to shoot an arrow. Deny if: - If the shooting happens in the colony - player is neutral or hostile to colony
      *
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public  void on(final ArrowLooseEvent event)
+    public void on(final ArrowLooseEvent event)
     {
         checkEventCancelation(Action.SHOOT_ARROW, event.getPlayer(), event.getPlayer().getEntityWorld(), event, event.getEntity().getPosition());
     }
@@ -601,15 +578,12 @@ public class ColonyPermissionEventHandler
     /**
      * AttackEntityEvent handler.
      * <p>
-     * Check, if a player tries to attack an entity..
-     * Deny if:
-     * - If the attacking happens in the colony
-     * - Player is less than officer to the colony.
+     * Check, if a player tries to attack an entity.. Deny if: - If the attacking happens in the colony - Player is less than officer to the colony.
      *
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public  void on(final AttackEntityEvent event)
+    public void on(final AttackEntityEvent event)
     {
         if (event.getTarget() instanceof MobEntity)
         {

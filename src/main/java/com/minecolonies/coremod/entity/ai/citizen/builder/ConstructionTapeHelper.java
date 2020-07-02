@@ -47,8 +47,11 @@ public final class ConstructionTapeHelper
     public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-          = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
-          new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true).getBluePrint(), workOrder.getRotation(world), workOrder.isMirrored());
+          = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(),
+          world,
+          new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true).getBluePrint(),
+          workOrder.getRotation(world),
+          workOrder.isMirrored());
         placeConstructionTape(workOrder.getBuildingLocation(), corners, world);
     }
 
@@ -147,11 +150,11 @@ public final class ConstructionTapeHelper
 
     public static int checkIfPlaceable(@NotNull final int x, @NotNull final int y, @NotNull final int z, @NotNull final World world)
     {
-        BlockPos target = new BlockPos(x,y,z);
+        BlockPos target = new BlockPos(x, y, z);
         final Chunk chunk = world.getChunkAt(target);
 
         target = new BlockPos(x, chunk.getTopFilledSegment() + 16, z);
-        while(world.getBlockState(target).getMaterial().isReplaceable())
+        while (world.getBlockState(target).getMaterial().isReplaceable())
         {
             target = target.down();
             if (target.getY() == 0)
@@ -171,7 +174,8 @@ public final class ConstructionTapeHelper
      */
     public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
-        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true);
+        final LoadOnlyStructureHandler structure =
+          new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true);
         if (structure.hasBluePrint())
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,

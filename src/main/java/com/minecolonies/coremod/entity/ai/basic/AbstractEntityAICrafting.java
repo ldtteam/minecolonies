@@ -59,9 +59,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     protected IRecipeStorage currentRecipeStorage;
 
     /**
-     * The number of actions a crafting "success" is worth.
-     * By default, that's 1 action for 1 crafting success.
-     * Override this in your subclass to make crafting recipes worth more actions :-)
+     * The number of actions a crafting "success" is worth. By default, that's 1 action for 1 crafting success. Override this in your subclass to make crafting recipes worth more
+     * actions :-)
      *
      * @return The number of actions a crafting "success" is worth.
      */
@@ -179,6 +178,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
 
     /**
      * Get an extended output count that can be overriden.
+     *
      * @param primaryOutput the type of output.
      * @return the output count that should be added too.
      */
@@ -224,7 +224,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + ((job.getCraftCounter() + progressOpsCount ) * inputStorage.getAmount())
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount())
                   < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))

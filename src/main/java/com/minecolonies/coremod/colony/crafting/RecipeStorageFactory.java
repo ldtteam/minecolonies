@@ -57,7 +57,12 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
     @NotNull
     @Override
-    public RecipeStorage getNewInstance(@NotNull final IToken<?> token, @NotNull final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
+    public RecipeStorage getNewInstance(
+      @NotNull final IToken<?> token,
+      @NotNull final List<ItemStack> input,
+      final int gridSize,
+      @NotNull final ItemStack primaryOutput,
+      final Block intermediate)
     {
         return new RecipeStorage(token, input, gridSize, primaryOutput, intermediate);
     }
@@ -77,7 +82,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         compound.put(INPUT_TAG, inputTagList);
         recipeStorage.getPrimaryOutput().write(compound);
 
-        if(recipeStorage.getIntermediate() != null)
+        if (recipeStorage.getIntermediate() != null)
         {
             compound.put(BLOCK_TAG, NBTUtil.writeBlockState(recipeStorage.getIntermediate().getDefaultState()));
         }
@@ -114,7 +119,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         packetBuffer.writeItemStack(input.getPrimaryOutput());
 
         packetBuffer.writeBoolean(input.getIntermediate() != null);
-        if(input.getIntermediate() != null)
+        if (input.getIntermediate() != null)
         {
             packetBuffer.writeInt(Block.getStateId(input.getIntermediate().getDefaultState()));
         }

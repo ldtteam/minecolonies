@@ -69,7 +69,8 @@ public class ItemStorage
         this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = shouldIgnoreNBTValue;
-        this.creativeTabIndex = stack.isEmpty() ? new ArrayList<>() : stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
+        this.creativeTabIndex =
+          stack.isEmpty() ? new ArrayList<>() : stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
     }
 
     /**
@@ -162,6 +163,7 @@ public class ItemStorage
 
     /**
      * Getter for the creativeTab index of the storage.
+     *
      * @return the index.
      */
     public List<Integer> getCreativeTabIndex()
@@ -183,8 +185,8 @@ public class ItemStorage
     public int hashCode()
     {
         return Objects.hash(stack.getItem())
-                + (this.shouldIgnoreDamageValue ? 0 : (this.stack.getDamage() * 31))
-                + (this.shouldIgnoreNBTValue ? 0 : ((this.stack.getTag() == null) ? 0 : this.stack.getTag().hashCode()));
+                 + (this.shouldIgnoreDamageValue ? 0 : (this.stack.getDamage() * 31))
+                 + (this.shouldIgnoreNBTValue ? 0 : ((this.stack.getTag() == null) ? 0 : this.stack.getTag().hashCode()));
     }
 
     @Override
@@ -203,10 +205,10 @@ public class ItemStorage
 
 
         return stack.isItemEqual(that.getItemStack())
-                && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue())
-                && (this.shouldIgnoreNBTValue
-                      || (that.getItemStack().getTag() == null && this.getItemStack().getTag() == null)
-                      || that.getItemStack().getTag().equals(this.getItemStack().getTag()));
+                 && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue())
+                 && (this.shouldIgnoreNBTValue
+                       || (that.getItemStack().getTag() == null && this.getItemStack().getTag() == null)
+                       || that.getItemStack().getTag().equals(this.getItemStack().getTag()));
     }
 
     /**

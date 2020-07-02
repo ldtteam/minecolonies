@@ -37,8 +37,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 public final class BlockPosUtil
 {
     /**
-     * Max depth of the floor check to avoid endless void searching
-     * (Stackoverflow).
+     * Max depth of the floor check to avoid endless void searching (Stackoverflow).
      */
     private static final int MAX_DEPTH = 50;
 
@@ -157,8 +156,7 @@ public final class BlockPosUtil
      * Reads a Chunk Coordinate from a tag list.
      *
      * @param tagList Tag list to read compound with chunk coordinate from.
-     * @param index   Index in the tag list where the required chunk coordinate
-     *                is.
+     * @param index   Index in the tag list where the required chunk coordinate is.
      * @return Chunk coordinate read from the tag list.
      */
     @NotNull
@@ -214,8 +212,7 @@ public final class BlockPosUtil
     }
 
     /**
-     * this checks that you are not in liquid.  Will check for all liquids, even
-     * those from other mods before TP
+     * this checks that you are not in liquid.  Will check for all liquids, even those from other mods before TP
      *
      * @param sender   uses the player to get the world
      * @param blockPos for the current block LOC
@@ -230,8 +227,7 @@ public final class BlockPosUtil
     }
 
     /**
-     * this checks that you are not in the air or underground.
-     * If so it will look up and down for a good landing spot before TP.
+     * this checks that you are not in the air or underground. If so it will look up and down for a good landing spot before TP.
      *
      * @param blockPos for the current block LOC.
      * @param world    the world to search in.
@@ -387,8 +383,7 @@ public final class BlockPosUtil
     }
 
     /**
-     * Returns a list of drops possible mining a specific block with specific
-     * fortune level.
+     * Returns a list of drops possible mining a specific block with specific fortune level.
      *
      * @param world   World the block is in.
      * @param coords  Coordinates of the block.
@@ -472,8 +467,7 @@ public final class BlockPosUtil
     }
 
     /**
-     * Create a method for using a {@link BlockPos} when using {@link
-     * net.minecraft.util.math.BlockPos.Mutable#setPos(int, int, int)}.
+     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.math.BlockPos.Mutable#setPos(int, int, int)}.
      *
      * @param pos    {@link net.minecraft.util.math.BlockPos.Mutable}.
      * @param newPos The new position to set.

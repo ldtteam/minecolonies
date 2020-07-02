@@ -64,7 +64,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     /**
      * Constructor for a hut rename entry window.
      *
-     * @param b {@link AbstractBuilding}
+     * @param b    {@link AbstractBuilding}
      * @param prev the previous window.
      */
     public WindowHutAllInventory(final IBuildingView b, final Window prev)

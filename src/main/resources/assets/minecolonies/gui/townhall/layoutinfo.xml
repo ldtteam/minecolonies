@@ -4,10 +4,10 @@
     <switch id="switchpageInfo" size="100% 100%">
         <view>
             <label size="148 11" pos="201 30" color="black" textalign="MIDDLE"
-                label="$(com.minecolonies.coremod.gui.townHall.currentHappiness)"/>
+                   label="$(com.minecolonies.coremod.gui.townHall.currentHappiness)"/>
             <label id="happinessLevel" size="148 11" pos="201 41" color="black" textalign="MIDDLE"/>
             <label size="148 11" pos="201 59" color="black" textalign="MIDDLE"
-                label="$(com.minecolonies.coremod.gui.townHall.events):"/>
+                   label="$(com.minecolonies.coremod.gui.townHall.events):"/>
 
             <list id="permeventslist" size="148 160" pos="201 70">
                 <box size="100% 36" linewidth="2">

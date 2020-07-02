@@ -21,8 +21,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Default implementation of a FactoryController
- * Singleton.
+ * Default implementation of a FactoryController Singleton.
  */
 public final class StandardFactoryController implements IFactoryController
 {
@@ -35,7 +34,7 @@ public final class StandardFactoryController implements IFactoryController
     /**
      * Instance variable.
      */
-    private static final StandardFactoryController     INSTANCE              = new StandardFactoryController();
+    private static final StandardFactoryController              INSTANCE              = new StandardFactoryController();
     /**
      * Primary (main) INPUT mappings.
      */
@@ -51,10 +50,10 @@ public final class StandardFactoryController implements IFactoryController
      * Secondary (super) output mappings
      */
     @NotNull
-    private final Map<TypeToken<?>, Set<IFactory<?, ?>>>                secondaryOutputMappings = new HashMap<>();
+    private final Map<TypeToken<?>, Set<IFactory<?, ?>>>                   secondaryOutputMappings = new HashMap<>();
     /**
-     * A cache that holds all Mappers and their search secondary IO types.
-     * Filled during runtime to speed up searches to factories when both INPUT and OUTPUT type are secondary types.
+     * A cache that holds all Mappers and their search secondary IO types. Filled during runtime to speed up searches to factories when both INPUT and OUTPUT type are secondary
+     * types.
      */
     @NotNull
     private final Cache<Tuple<TypeToken<?>, TypeToken<?>>, IFactory<?, ?>> secondaryMappingsCache  = CacheBuilder.newBuilder().build();
@@ -73,10 +72,8 @@ public final class StandardFactoryController implements IFactoryController
 
     /**
      * Private constructor. Throws IllegalStateException if already created.
-     *
-     * We suppress warning squid:S2583 which makes sure that no null checks are executed on notnull fields.
-     * In this case it makes sense since we need to make sure.
-     *
+     * <p>
+     * We suppress warning squid:S2583 which makes sure that no null checks are executed on notnull fields. In this case it makes sense since we need to make sure.
      */
     @SuppressWarnings("squid:S2583")
     private StandardFactoryController()
@@ -88,8 +85,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     /**
-     * Resets the FactoryController to the default values.
-     * Clears all registered Factories.
+     * Resets the FactoryController to the default values. Clears all registered Factories.
      * <p>
      * Only used for testing.
      */
@@ -112,7 +108,8 @@ public final class StandardFactoryController implements IFactoryController
 
     @SuppressWarnings(Suppression.UNCHECKED)
     @Override
-    public <INPUT, OUTPUT> IFactory<INPUT, OUTPUT> getFactoryForIO(@NotNull final TypeToken<? extends INPUT> inputClass, @NotNull final TypeToken<? extends OUTPUT> outputClass) throws IllegalArgumentException
+    public <INPUT, OUTPUT> IFactory<INPUT, OUTPUT> getFactoryForIO(@NotNull final TypeToken<? extends INPUT> inputClass, @NotNull final TypeToken<? extends OUTPUT> outputClass)
+      throws IllegalArgumentException
     {
         final ITypeOverrideHandler<?> inputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(inputClass)).findFirst().orElse(null);
         final ITypeOverrideHandler<?> outputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(outputClass)).findFirst().orElse(null);

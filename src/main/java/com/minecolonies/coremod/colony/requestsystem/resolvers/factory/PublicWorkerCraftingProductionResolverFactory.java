@@ -36,9 +36,9 @@ public class PublicWorkerCraftingProductionResolverFactory implements IRequestRe
     @NotNull
     @Override
     public PublicWorkerCraftingProductionResolver getNewInstance(
-                                                    @NotNull final IFactoryController factoryController,
-                                                    @NotNull final ILocation iLocation,
-                                                    @NotNull final Object... context)
+      @NotNull final IFactoryController factoryController,
+      @NotNull final ILocation iLocation,
+      @NotNull final Object... context)
     {
         return new PublicWorkerCraftingProductionResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
     }

@@ -236,10 +236,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if the worker can hold that much items.
-     * It depends on his building level.
-     * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
-     * That's 2^buildingLevel-1.
+     * Check if the worker can hold that much items. It depends on his building level. Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited. That's 2^buildingLevel-1.
      *
      * @return whether this deliveryman can hold more items
      */
@@ -253,8 +250,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if worker of a certain building requires the item now.
-     * Or the builder for the current task.
+     * Check if worker of a certain building requires the item now. Or the builder for the current task.
      *
      * @param building         the building to check for.
      * @param stack            the stack to stack with.
@@ -306,8 +302,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Deliver the items to the hut.
-     * TODO: Current precondition: The dman's inventory may only consist of the requested itemstack.
+     * Deliver the items to the hut. TODO: Current precondition: The dman's inventory may only consist of the requested itemstack.
      *
      * @return the next state.
      */
@@ -434,8 +429,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Prepare deliveryman for delivery.
-     * Check if the building still needs the item and if the required items are still in the warehouse.
+     * Prepare deliveryman for delivery. Check if the building still needs the item and if the required items are still in the warehouse.
      *
      * @return the next state to go to.
      */
@@ -494,10 +488,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the worker inventory.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the stack.
+     * Finds the first @see ItemStack the type of {@code is}. It will be taken from the chest and placed in the worker inventory. Make sure that the worker stands next the chest to
+     * not break immersion. Also make sure to have inventory space for the stack.
      *
      * @param entity the tileEntity chest or building or rack.
      * @param is     the itemStack.
@@ -564,8 +556,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if the deliveryman code should be executed.
-     * More concretely if he has a warehouse to work at.
+     * Check if the deliveryman code should be executed. More concretely if he has a warehouse to work at.
      *
      * @return false if should continue as planned.
      */

@@ -25,5 +25,4 @@ public enum ColonyProgressType
     TEN_CITIZENS_SPAWNED,
     TWENTY_BUILDING_LEVELS,
     NOT_ENOUGH_JOBS;
-
 }

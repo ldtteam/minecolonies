@@ -13,9 +13,9 @@ import java.util.function.Function;
 
 public abstract class AbstractCriterionTrigger<T extends CriterionListeners<U>, U extends ICriterionInstance> implements ICriterionTrigger<U>
 {
-    private final ResourceLocation id;
+    private final ResourceLocation                id;
     private final Function<PlayerAdvancements, T> createNew;
-    private final Map<PlayerAdvancements, T> listeners = Maps.newHashMap();
+    private final Map<PlayerAdvancements, T>      listeners = Maps.newHashMap();
 
     protected AbstractCriterionTrigger(ResourceLocation id, Function<PlayerAdvancements, T> createNew)
     {

@@ -21,10 +21,10 @@ import javax.annotation.Nullable;
  */
 public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockCompostedDirt>
 {
-    private static final String BLOCK_NAME = "composted_dirt";
-    private static final float BLOCK_HARDNESS = 5f;
-    private static final float RESISTANCE = 1f;
-    private final static VoxelShape SHAPE = VoxelShapes.create(0,0,0,1,1,1);
+    private static final String     BLOCK_NAME = "composted_dirt";
+    private static final float      BLOCK_HARDNESS = 5f;
+    private static final float      RESISTANCE = 1f;
+    private final static VoxelShape SHAPE = VoxelShapes.create(0, 0, 0, 1, 1, 1);
 
     /**
      * The constructor of the block.
@@ -56,7 +56,12 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
     }
 
     @Override
-    public boolean canSustainPlant(@NotNull final BlockState state, @NotNull final IBlockReader world, final BlockPos pos, @NotNull final Direction facing, final IPlantable plantable)
+    public boolean canSustainPlant(
+      @NotNull final BlockState state,
+      @NotNull final IBlockReader world,
+      final BlockPos pos,
+      @NotNull final Direction facing,
+      final IPlantable plantable)
     {
         return true;
     }

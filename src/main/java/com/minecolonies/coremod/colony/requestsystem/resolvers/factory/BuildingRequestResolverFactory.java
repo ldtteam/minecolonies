@@ -39,7 +39,7 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
     @NotNull
     @Override
     public BuildingRequestResolver getNewInstance(
-                                                   @NotNull final IFactoryController factoryController, @NotNull final ILocation iLocation, @NotNull final Object... context)
+      @NotNull final IFactoryController factoryController, @NotNull final ILocation iLocation, @NotNull final Object... context)
       throws IllegalArgumentException
     {
         return new BuildingRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
@@ -48,7 +48,7 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
     @NotNull
     @Override
     public CompoundNBT serialize(
-                                     @NotNull final IFactoryController controller, @NotNull final BuildingRequestResolver buildingRequestResolver)
+      @NotNull final IFactoryController controller, @NotNull final BuildingRequestResolver buildingRequestResolver)
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.put(NBT_TOKEN, controller.serialize(buildingRequestResolver.getId()));

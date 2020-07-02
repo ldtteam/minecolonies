@@ -32,7 +32,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
     /**
      * Id of the position label.
      */
-    private static final String LABEL_POS = "pos";
+    private static final String LABEL_POS      = "pos";
     /**
      * Id of the position label.
      */
@@ -135,7 +135,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
 
             if (view.isRaiding())
             {
-                findPaneOfTypeByID(LABEL_CURRENNT, Label.class).setLabelText(mountDistanceString(spawnPoints.get(spawnPoints.size()-1)));
+                findPaneOfTypeByID(LABEL_CURRENNT, Label.class).setLabelText(mountDistanceString(spawnPoints.get(spawnPoints.size() - 1)));
             }
             positionsList.setDataProvider(new ScrollingList.DataProvider()
             {
@@ -160,6 +160,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
 
     /**
      * Mount the distance string for the barracks and the position.
+     *
      * @param pos the position.
      * @return the nice human readable string.
      */

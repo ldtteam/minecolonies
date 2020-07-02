@@ -186,8 +186,7 @@ public class StaticLocation implements ILocation
         }
 
         /**
-         * Method to get a new instance of a location given the input.
-         * Method not used in this factory.
+         * Method to get a new instance of a location given the input. Method not used in this factory.
          *
          * @param input The input to build a new location for.
          * @return The new output instance for a given input.
@@ -214,7 +213,7 @@ public class StaticLocation implements ILocation
 
     /**
      * Serialize this location to the given {@link PacketBuffer}.
-     * 
+     *
      * @param buffer the buffer to serialize this location to.
      */
     public static void serialize(PacketBuffer buffer, StaticLocation location)
@@ -225,7 +224,7 @@ public class StaticLocation implements ILocation
 
     /**
      * Deserialize the location from the given {@link PacketBuffer}
-     * 
+     *
      * @param buffer the buffer to read.
      * @return the deserialized location.
      */

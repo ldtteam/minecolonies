@@ -132,7 +132,8 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + (job.getCraftCounter() * inputStorage.getAmount()) < inputStorage.getAmount() * job.getMaxCraftingCount())
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + (job.getCraftCounter() * inputStorage.getAmount())
+                  < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {

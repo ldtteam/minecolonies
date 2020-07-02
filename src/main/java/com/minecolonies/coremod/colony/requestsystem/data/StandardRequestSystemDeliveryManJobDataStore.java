@@ -104,8 +104,9 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
         }
 
         @Override
-        public void serialize(IFactoryController controller, StandardRequestSystemDeliveryManJobDataStore input,
-                PacketBuffer packetBuffer)
+        public void serialize(
+          IFactoryController controller, StandardRequestSystemDeliveryManJobDataStore input,
+          PacketBuffer packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.queue.size());
@@ -113,8 +114,9 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
         }
 
         @Override
-        public StandardRequestSystemDeliveryManJobDataStore deserialize(IFactoryController controller,
-                PacketBuffer buffer) throws Throwable
+        public StandardRequestSystemDeliveryManJobDataStore deserialize(
+          IFactoryController controller,
+          PacketBuffer buffer) throws Throwable
         {
             final IToken<?> id = controller.deserialize(buffer);
             final LinkedList<IToken<?>> queue = new LinkedList<>();

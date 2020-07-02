@@ -62,13 +62,13 @@ public class BuildToolPasteMessage implements IMessage
      */
     private BlockState state;
 
-    private boolean  complete;
-    private String   structureName;
-    private String   workOrderName;
-    private int      rotation;
+    private boolean complete;
+    private String structureName;
+    private String workOrderName;
+    private int rotation;
     private BlockPos pos;
-    private boolean  isHut;
-    private boolean  mirror;
+    private boolean isHut;
+    private boolean mirror;
 
     /**
      * Empty constructor used when registering the
@@ -319,7 +319,13 @@ public class BuildToolPasteMessage implements IMessage
      * @param buildPos The location the hut is being placed.
      * @param mirror   Whether or not the strcture is mirrored.
      */
-    private static void setupBuilding(@NotNull final World world, @NotNull final PlayerEntity player, final StructureName sn, final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+    private static void setupBuilding(
+      @NotNull final World world,
+      @NotNull final PlayerEntity player,
+      final StructureName sn,
+      final int rotation,
+      @NotNull final BlockPos buildPos,
+      final boolean mirror)
     {
         @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, buildPos);
 

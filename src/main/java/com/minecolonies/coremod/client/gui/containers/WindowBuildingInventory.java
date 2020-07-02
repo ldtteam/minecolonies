@@ -40,7 +40,8 @@ public class WindowBuildingInventory extends ContainerScreen<ContainerBuildingIn
     /**
      * Draws the background layer of this container (behind the items).
      */
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+    {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
         int i = (this.width - this.xSize) / 2;

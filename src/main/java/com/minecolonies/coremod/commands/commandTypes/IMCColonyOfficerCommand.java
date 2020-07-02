@@ -18,8 +18,7 @@ import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_AR
 public interface IMCColonyOfficerCommand extends IMCCommand
 {
     /**
-     * Executes pre-checks before issuing the command.
-     * Checks for the senders type and OP rights.
+     * Executes pre-checks before issuing the command. Checks for the senders type and OP rights.
      */
     @Override
     default boolean checkPreCondition(final CommandContext<CommandSource> context)

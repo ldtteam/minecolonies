@@ -12,11 +12,10 @@
     "S": {
       "item": "minecraft:iron_ingot"
     },
-    "G":{
+    "G": {
       "item": "minecraft:dirt"
     },
-    "T":
-    {
+    "T": {
       "item": "structurize:sceptergold"
     }
   },
