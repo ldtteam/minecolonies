@@ -33,9 +33,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The structureBuilder building.
@@ -153,8 +153,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 }
 
                 if (checkIfShouldKeepTool(ToolType.PICKAXE, stack, localAlreadyKept)
-                || checkIfShouldKeepTool(ToolType.SHOVEL, stack, localAlreadyKept)
-                || checkIfShouldKeepTool(ToolType.AXE, stack, localAlreadyKept))
+                      || checkIfShouldKeepTool(ToolType.SHOVEL, stack, localAlreadyKept)
+                      || checkIfShouldKeepTool(ToolType.AXE, stack, localAlreadyKept))
                 {
                     return 0;
                 }
@@ -166,8 +166,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
     /**
      * Check if a certain tool should be kept or dumped.
-     * @param type the type of the tool.
-     * @param stack the stack to check.
+     *
+     * @param type             the type of the tool.
+     * @param stack            the stack to check.
      * @param localAlreadyKept the already kept stacks.
      * @return true if should keep.
      */
@@ -623,11 +624,12 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     /**
-     * Check or request if the contents of a specific batch are in the inventory of the building.
-     * This ignores the worker inventory (that is remaining stuff from previous rounds, or already belongs to another bucket)
+     * Check or request if the contents of a specific batch are in the inventory of the building. This ignores the worker inventory (that is remaining stuff from previous rounds,
+     * or already belongs to another bucket)
+     *
      * @param requiredResources the bucket to check and request.
-     * @param worker the worker.
-     * @param workerInv if the worker inv should be checked too.
+     * @param worker            the worker.
+     * @param workerInv         if the worker inv should be checked too.
      */
     public void checkOrRequestBucket(@Nullable final BuilderBucket requiredResources, final ICitizenData worker, final boolean workerInv)
     {
@@ -646,7 +648,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             }
 
             boolean hasOpenRequest = false;
-            int count = InventoryUtils.getItemCountInItemHandler(getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), stack -> stack.isItemEqual(itemStack.getItemStack()));
+            int count = InventoryUtils.getItemCountInItemHandler(getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null),
+              stack -> stack.isItemEqual(itemStack.getItemStack()));
             int workerInvCount = workerInv ? InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> stack.isItemEqual(itemStack.getItemStack())) : 0;
             if ((count + workerInvCount) < entry.getValue())
             {
@@ -671,6 +674,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
     /**
      * Return the next bucket to work on.
+     *
      * @return the next bucket or a tuple with null inside if non available.
      */
     @Nullable

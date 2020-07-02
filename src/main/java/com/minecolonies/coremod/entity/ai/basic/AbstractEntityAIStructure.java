@@ -477,10 +477,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             }
 
             final ImmutableList<IRequest<? extends IDeliverable>> requests = placer.getOwnBuilding()
-                                   .getOpenRequestsOfTypeFiltered(
-                                     placer.getWorker().getCitizenData(),
-                                     TypeConstants.DELIVERABLE,
-                                     (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack.getKey().getItemStack()));
+                                                                               .getOpenRequestsOfTypeFiltered(
+                                                                                 placer.getWorker().getCitizenData(),
+                                                                                 TypeConstants.DELIVERABLE,
+                                                                                 (IRequest<? extends IDeliverable> r) -> r.getRequest()
+                                                                                                                           .matches(placedStack.getKey().getItemStack()));
             if (requests.isEmpty())
             {
                 final com.minecolonies.api.colony.requestsystem.requestable.Stack stackRequest = new Stack(placedStack.getKey().getItemStack(), placedStack.getValue(), 1);

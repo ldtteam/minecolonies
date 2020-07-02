@@ -51,6 +51,7 @@ public interface IWareHouse extends IBuilding
 
     /**
      * Check if a container position belongs to the warehouse.
+     *
      * @param inDimensionLocation the location.
      * @return true if so.
      */

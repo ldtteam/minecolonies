@@ -91,14 +91,15 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                                                                                 .isReachableFromLocation(entityCitizen.getLocation()))
                                                                         .orElse(false))
                                                .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).isActive())
-                                               .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).hasSameDestinationDelivery(request)).thenComparing(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
-                                                      .thenComparing(c -> {
-                                                          BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
-                                                          //We can do an instant get here, since we are already filtering on anything that has no entity.
-                                                          BlockPos entityLocation = c.getCitizenEntity().get().getLocation().getInDimensionLocation();
+                                               .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).hasSameDestinationDelivery(request))
+                                                      .thenComparing(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
+                                                                       .thenComparing(c -> {
+                                                                           BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
+                                                                           //We can do an instant get here, since we are already filtering on anything that has no entity.
+                                                                           BlockPos entityLocation = c.getCitizenEntity().get().getLocation().getInDimensionLocation();
 
-                                                          return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
-                                                      })))
+                                                                           return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
+                                                                       })))
                                                .orElse(null);
 
         if (freeDeliveryMan == null)

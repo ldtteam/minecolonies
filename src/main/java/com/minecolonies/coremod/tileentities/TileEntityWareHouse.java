@@ -65,8 +65,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     }
 
     /**
-     * Dump the inventory of a citizen into the warehouse.
-     * Go through all items and search the right chest to dump it in.
+     * Dump the inventory of a citizen into the warehouse. Go through all items and search the right chest to dump it in.
      *
      * @param inventoryCitizen the inventory of the citizen
      */

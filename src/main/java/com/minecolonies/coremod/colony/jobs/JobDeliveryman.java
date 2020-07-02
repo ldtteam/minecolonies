@@ -359,6 +359,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
 
     /**
      * Check if the dman has the same destination request.
+     *
      * @param request the incoming request.
      * @return 0 if so, and 1 if not.
      */
@@ -383,6 +384,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
 
     /**
      * Check if two deliveries have the same source and destination.
+     *
      * @param requestA the first request.
      * @param requestB the second request.
      * @return true if so.
@@ -408,12 +410,13 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
 
     /**
      * Build a list of all requests that have the same source/dest pair.
+     *
      * @param request the first request.
      * @return a list.
      */
-    public List<IRequest< ? extends Delivery>> getTaskListWithSameDestination(final IRequest<? extends Delivery> request)
+    public List<IRequest<? extends Delivery>> getTaskListWithSameDestination(final IRequest<? extends Delivery> request)
     {
-        final List<IRequest< ? extends Delivery>> deliveryList = new ArrayList<>();
+        final List<IRequest<? extends Delivery>> deliveryList = new ArrayList<>();
         deliveryList.add(request);
         for (final IToken<?> requestToken : getTaskQueue())
         {
@@ -433,6 +436,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
 
     /**
      * Set how many parallel deliveries are ongoing.
+     *
      * @param i the quantity.
      */
     public void setParallelDeliveries(final int i)

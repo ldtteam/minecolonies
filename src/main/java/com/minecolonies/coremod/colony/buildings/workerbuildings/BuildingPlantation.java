@@ -45,15 +45,14 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
- * Class of the plantation building.
- * Worker will grow sugarcane/bamboo/cactus + craft paper and books.
+ * Class of the plantation building. Worker will grow sugarcane/bamboo/cactus + craft paper and books.
  */
 public class BuildingPlantation extends AbstractBuildingCrafter
 {
     /**
      * Description string of the building.
      */
-    private static final String PLANTATION     = "plantation";
+    private static final String PLANTATION = "plantation";
 
     /**
      * List of sand blocks to grow onto.
@@ -153,6 +152,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
     /**
      * Get a list of positions to check for crops for the current phase.
+     *
      * @param world the world.
      * @return the list of positions.
      */
@@ -164,8 +164,8 @@ public class BuildingPlantation extends AbstractBuildingCrafter
             for (final Map.Entry<BlockPos, List<String>> entry : tileEntity.getPositionedTags().entrySet())
             {
                 if ((entry.getValue().contains("bamboo") && currentPhase == Items.BAMBOO)
-                || (entry.getValue().contains("sugarcane") && currentPhase == Items.SUGAR_CANE)
-                || (entry.getValue().contains("cactus") && currentPhase == Items.CACTUS))
+                      || (entry.getValue().contains("sugarcane") && currentPhase == Items.SUGAR_CANE)
+                      || (entry.getValue().contains("cactus") && currentPhase == Items.CACTUS))
                 {
                     filtered.add(getPosition().add(entry.getKey()));
                 }
@@ -288,6 +288,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
     /**
      * Set the current phase.
+     *
      * @param phase the phase to set.
      */
     public void setSetting(final Item phase)
@@ -304,6 +305,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
     /**
      * Get the current phase.
+     *
      * @return the current phase item.
      */
     public Item getCurrentPhase()
@@ -375,6 +377,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
         /**
          * Get the list of all phases.
+         *
          * @return the list.
          */
         public List<Item> getPhases()
@@ -398,6 +401,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
         /**
          * Get the current phase.
+         *
          * @return the phase.
          */
         public Item getCurrentPhase()
@@ -407,6 +411,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
         /**
          * Set a new phase.
+         *
          * @param phase the phase to set.
          */
         public void setPhase(final Item phase)

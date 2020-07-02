@@ -222,6 +222,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 
     /**
      * Mark a request as a synchronous (blocking request).
+     *
      * @param id the id.
      */
     void markRequestSync(IToken<?> id);

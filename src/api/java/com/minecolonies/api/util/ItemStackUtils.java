@@ -673,10 +673,10 @@ public final class ItemStackUtils
     /**
      * Method to compare to stacks, ignoring their stacksize.
      *
-     * @param itemStack1 The left stack to compare.
-     * @param itemStack2 The right stack to compare.
-     * @param matchDamage  Set to true to match damage data.
-     * @param matchNBT   Set to true to match nbt
+     * @param itemStack1  The left stack to compare.
+     * @param itemStack2  The right stack to compare.
+     * @param matchDamage Set to true to match damage data.
+     * @param matchNBT    Set to true to match nbt
      * @return True when they are equal except the stacksize, false when not.
      */
     public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchDamage, final boolean matchNBT)
@@ -687,14 +687,19 @@ public final class ItemStackUtils
     /**
      * Method to compare to stacks, ignoring their stacksize.
      *
-     * @param itemStack1 The left stack to compare.
-     * @param itemStack2 The right stack to compare.
-     * @param matchDamage  Set to true to match damage data.
-     * @param matchNBT   Set to true to match nbt
-     * @param min if the count of stack2 has to be at least the same as stack1.
+     * @param itemStack1  The left stack to compare.
+     * @param itemStack2  The right stack to compare.
+     * @param matchDamage Set to true to match damage data.
+     * @param matchNBT    Set to true to match nbt
+     * @param min         if the count of stack2 has to be at least the same as stack1.
      * @return True when they are equal except the stacksize, false when not.
      */
-    public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchDamage, final boolean matchNBT, final boolean min)
+    public static boolean compareItemStacksIgnoreStackSize(
+      final ItemStack itemStack1,
+      final ItemStack itemStack2,
+      final boolean matchDamage,
+      final boolean matchNBT,
+      final boolean min)
     {
         if (isEmpty(itemStack1) && isEmpty(itemStack2))
         {
@@ -747,10 +752,10 @@ public final class ItemStackUtils
     /**
      * Method to check if a stack is in a list of stacks.
      *
-     * @param stacks    the list of stacks.
-     * @param stack     the stack.
+     * @param stacks      the list of stacks.
+     * @param stack       the stack.
      * @param matchDamage if damage has to match.
-     * @param matchNBT  if nbt has to match.
+     * @param matchNBT    if nbt has to match.
      * @return true if so.
      */
     public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack, final boolean matchDamage, final boolean matchNBT)

@@ -451,7 +451,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         for (final IRequest<? extends Delivery> task : taskList)
         {
             parallelDeliveryCount++;
-            int totalCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(task.getRequest().getStack(), itemStack));
+            int totalCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+              itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(task.getRequest().getStack(), itemStack));
             int hasCount = 0;
             for (final ItemStack stack : alreadyInInv)
             {

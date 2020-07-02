@@ -452,6 +452,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
     /**
      * Add a recipe to the list of recipes.
+     *
      * @param token the token to add.
      */
     public void addRecipeToList(final IToken<?> token)
