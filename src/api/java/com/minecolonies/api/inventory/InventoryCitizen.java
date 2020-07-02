@@ -281,7 +281,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             if (!simulate)
             {
-                inSlot.setCount(inSlot.getCount() + stack.getCount());
+                inSlot.setCount(inSlot.getCount() + avail);
             }
             stack.setCount(stack.getCount() - avail);
             return stack;

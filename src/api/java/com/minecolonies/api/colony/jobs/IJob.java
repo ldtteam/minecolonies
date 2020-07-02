@@ -219,4 +219,10 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * @return true if so.
      */
     boolean ignoresDamage(@NotNull final DamageSource damageSource);
+
+    /**
+     * Mark a request as a synchronous (blocking request).
+     * @param id the id.
+     */
+    void markRequestSync(IToken<?> id);
 }

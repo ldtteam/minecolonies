@@ -2,6 +2,8 @@ package com.minecolonies.api.util;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * Our own tuple implementation with hashcode and equals.
  *
@@ -34,16 +36,22 @@ public class Tuple<A, B>
     @Override
     public int hashCode()
     {
-        return getA().hashCode() * 31 + getB().hashCode() * 31;
+        return Objects.hash(a, b);
     }
 
     @Override
     public boolean equals(final Object o)
     {
-        if (o instanceof Tuple)
+        if (this == o)
         {
-            return ((Tuple<?, ?>) o).getA().equals(this.getA()) && ((Tuple<?, ?>) o).getB().equals(this.getB());
+            return true;
         }
-        return false;
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        final Tuple<?, ?> tuple = (Tuple<?, ?>) o;
+        return Objects.equals(a, tuple.a) &&
+                 Objects.equals(b, tuple.b);
     }
 }

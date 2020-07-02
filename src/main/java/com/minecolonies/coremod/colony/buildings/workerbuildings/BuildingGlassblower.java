@@ -28,6 +28,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -108,7 +109,6 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
-
         Optional<Boolean> isRecipeAllowed;
 
         if (!super.canRecipeBeAdded(token))
@@ -116,41 +116,52 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
             return false;
         }
 
+        checkForWorkerSpecificRecipes();
+
         isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
         if (isRecipeAllowed.isPresent())
         {
             return isRecipeAllowed.get();
         }
-        else
-        {
-            // Additional recipe rules
-
-            if (recipes.isEmpty())
-            {
-                for (final Item item : Tags.Items.SAND.getAllElements())
-                {
-                    final ItemStack stack = new ItemStack(item);
-                    final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
-                    if (Tags.Items.GLASS.contains(output.getItem()))
-                    {
-                        final List<ItemStack> list = new ArrayList<>();
-                        list.add(stack);
-
-                        final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-                          TypeConstants.RECIPE,
-                          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                          list,
-                          1,
-                          output,
-                          Blocks.FURNACE);
-                        recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
-                    }
-                }
-            }
-            // End Additional recipe rules
-        }
 
         return false;
+    }
+
+    @Override
+    public void onColonyTick(@NotNull final IColony colony)
+    {
+        super.onColonyTick(colony);
+    }
+
+    @Override
+    public void checkForWorkerSpecificRecipes()
+    {
+        final List<IToken<?>> tokens = new ArrayList<>();
+        for (final Item item : Tags.Items.SAND.getAllElements())
+        {
+            final ItemStack stack = new ItemStack(item);
+            final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
+            if (Tags.Items.GLASS.contains(output.getItem()))
+            {
+                final List<ItemStack> list = new ArrayList<>();
+                list.add(stack);
+
+                final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
+                  TypeConstants.RECIPE,
+                  StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                  list,
+                  1,
+                  output,
+                  Blocks.FURNACE);
+                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
+                if (recipes.contains(token))
+                {
+                    return;
+                }
+                tokens.add(token);
+            }
+        }
+        recipes.addAll(tokens);
     }
 
     @Override

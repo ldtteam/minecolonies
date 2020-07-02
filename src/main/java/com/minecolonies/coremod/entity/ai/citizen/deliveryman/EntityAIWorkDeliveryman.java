@@ -443,14 +443,42 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        final Delivery delivery = (Delivery) currentTask.getRequest();
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
-          itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(delivery.getStack(), itemStack)))
+        final List<IRequest<? extends Delivery>> taskList = job.getTaskListWithSameDestination((IRequest<? extends Delivery>) currentTask);
+        final List<ItemStack> alreadyInInv = new ArrayList<>();
+        Delivery nextPickUp = null;
+
+        int parallelDeliveryCount = 0;
+        for (final IRequest<? extends Delivery> task : taskList)
         {
+            parallelDeliveryCount++;
+            int totalCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(task.getRequest().getStack(), itemStack));
+            int hasCount = 0;
+            for (final ItemStack stack : alreadyInInv)
+            {
+                if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, task.getRequest().getStack()))
+                {
+                    hasCount += stack.getCount();
+                }
+            }
+
+            if (totalCount < hasCount + task.getRequest().getStack().getCount())
+            {
+                nextPickUp = task.getRequest();
+                break;
+            }
+            else
+            {
+                alreadyInInv.add(task.getRequest().getStack());
+            }
+        }
+
+        if (nextPickUp == null || cannotHoldMoreItems())
+        {
+            job.setParallelDeliveries(parallelDeliveryCount);
             return DELIVERY;
         }
 
-        final ILocation location = delivery.getStart();
+        final ILocation location = nextPickUp.getStart();
 
         if (!location.isReachableFromLocation(worker.getLocation()))
         {
@@ -478,8 +506,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockState().getBlock());
         }
 
-        if (gatherIfInTileEntity(tileEntity, delivery.getStack()))
+        if (gatherIfInTileEntity(tileEntity, nextPickUp.getStack()))
         {
+            return PREPARE_DELIVERY;
+        }
+
+        if (parallelDeliveryCount > 1)
+        {
+            job.setParallelDeliveries(parallelDeliveryCount - 1);
             return DELIVERY;
         }
 
@@ -501,7 +535,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                  && InventoryFunctions
                       .matchFirstInProviderWithAction(
                         entity,
-                        stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
+                        stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true, true),
                         (provider, index) -> InventoryUtils.transferXOfItemStackIntoNextFreeSlotFromProvider(provider,
                           index,
                           is.getCount(),

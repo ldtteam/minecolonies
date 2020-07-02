@@ -70,6 +70,11 @@ public final class BuildingConstants
     /**
      * The NBT Tag to store the active node the miner is working on.
      */
+    public static final String TAG_ONGOING = "ongoingDeliveries";
+
+    /**
+     * The NBT Tag to store the active node the miner is working on.
+     */
     public static final String TAG_OLD = "oldNodeNode";
 
     /**

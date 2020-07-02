@@ -203,6 +203,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
         }
 
         texture = getModelType().getTexture(this);
+        textureDirty = false;
     }
 
     /**
@@ -222,8 +223,9 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     {
         if (texture == null
               || textureDirty
-              || !getTexture().getPath().contains(getDataManager().get(DATA_STYLE))
-              || !getTexture().getPath().contains(getDataManager().get(DATA_TEXTURE_SUFFIX)))
+              || !texture.getPath().contains(getRenderMetadata())
+              || !texture.getPath().contains(getDataManager().get(DATA_STYLE))
+              || !texture.getPath().contains(getDataManager().get(DATA_TEXTURE_SUFFIX)))
         {
             setTexture();
         }

@@ -68,10 +68,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      */
     public WindowHutBuilder(final BuildingBuilder.View building)
     {
-        super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
-        pullResourcesFromHut();
-        registerButton(RESOURCE_ADD, this::transferItems);
-        this.needGuide = true;
+        this(building, true);
     }
 
     /**

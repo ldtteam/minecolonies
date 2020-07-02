@@ -37,10 +37,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANT_2;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
@@ -48,14 +45,15 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
- * Class of the plantation building. Worker will grow sugarcane/bamboo/cactus + craft paper and books.
+ * Class of the plantation building.
+ * Worker will grow sugarcane/bamboo/cactus + craft paper and books.
  */
 public class BuildingPlantation extends AbstractBuildingCrafter
 {
     /**
      * Description string of the building.
      */
-    private static final String PLANTATION = "plantation";
+    private static final String PLANTATION     = "plantation";
 
     /**
      * List of sand blocks to grow onto.
@@ -155,43 +153,59 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
     /**
      * Get a list of positions to check for crops for the current phase.
-     *
      * @param world the world.
      * @return the list of positions.
      */
     public List<BlockPos> getPosForPhase(final World world)
     {
         final List<BlockPos> filtered = new ArrayList<>();
-        for (final BlockPos pos : sand)
+        if (tileEntity != null && !tileEntity.getPositionedTags().isEmpty())
         {
-            if (currentPhase == Items.SUGAR_CANE)
+            for (final Map.Entry<BlockPos, List<String>> entry : tileEntity.getPositionedTags().entrySet())
             {
-                if (world.getBlockState(pos.down()).getBlock() == Blocks.COBBLESTONE
-                      && (world.getBlockState(pos.north()).getBlock() == Blocks.WATER
-                            || world.getBlockState(pos.south()).getBlock() == Blocks.WATER
-                            || world.getBlockState(pos.east()).getBlock() == Blocks.WATER
-                            || world.getBlockState(pos.west()).getBlock() == Blocks.WATER))
+                if ((entry.getValue().contains("bamboo") && currentPhase == Items.BAMBOO)
+                || (entry.getValue().contains("sugarcane") && currentPhase == Items.SUGAR_CANE)
+                || (entry.getValue().contains("cactus") && currentPhase == Items.CACTUS))
                 {
-                    filtered.add(pos);
+                    filtered.add(getPosition().add(entry.getKey()));
                 }
             }
-            else if (currentPhase == Items.CACTUS)
+        }
+
+        //todo remove as soon as all schematics got tag support
+        if (filtered.isEmpty())
+        {
+            for (final BlockPos pos : sand)
             {
-                if (world.getBlockState(pos.down()).getBlock() == Blocks.COBBLESTONE
-                      && world.getBlockState(pos.north()).getBlock() != Blocks.WATER
-                      && world.getBlockState(pos.south()).getBlock() != Blocks.WATER
-                      && world.getBlockState(pos.east()).getBlock() != Blocks.WATER
-                      && world.getBlockState(pos.west()).getBlock() != Blocks.WATER)
+                if (currentPhase == Items.SUGAR_CANE)
                 {
-                    filtered.add(pos);
+                    if (world.getBlockState(pos.down()).getBlock() == Blocks.COBBLESTONE
+                          && (world.getBlockState(pos.north()).getBlock() == Blocks.WATER
+                                || world.getBlockState(pos.south()).getBlock() == Blocks.WATER
+                                || world.getBlockState(pos.east()).getBlock() == Blocks.WATER
+                                || world.getBlockState(pos.west()).getBlock() == Blocks.WATER))
+                    {
+                        filtered.add(pos);
+                    }
                 }
-            }
-            else
-            {
-                //Bamboo
-                if (world.getBlockState(pos.down()).getBlock() == Blocks.STONE_BRICKS)
+                else if (currentPhase == Items.CACTUS)
                 {
-                    filtered.add(pos);
+                    if (world.getBlockState(pos.down()).getBlock() == Blocks.COBBLESTONE
+                          && world.getBlockState(pos.north()).getBlock() != Blocks.WATER
+                          && world.getBlockState(pos.south()).getBlock() != Blocks.WATER
+                          && world.getBlockState(pos.east()).getBlock() != Blocks.WATER
+                          && world.getBlockState(pos.west()).getBlock() != Blocks.WATER)
+                    {
+                        filtered.add(pos);
+                    }
+                }
+                else
+                {
+                    //Bamboo
+                    if (world.getBlockState(pos.down()).getBlock() == Blocks.STONE_BRICKS)
+                    {
+                        filtered.add(pos);
+                    }
                 }
             }
         }
@@ -274,7 +288,6 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
     /**
      * Set the current phase.
-     *
      * @param phase the phase to set.
      */
     public void setSetting(final Item phase)
@@ -291,7 +304,6 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
     /**
      * Get the current phase.
-     *
      * @return the current phase item.
      */
     public Item getCurrentPhase()
@@ -363,7 +375,6 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
         /**
          * Get the list of all phases.
-         *
          * @return the list.
          */
         public List<Item> getPhases()
@@ -387,7 +398,6 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
         /**
          * Get the current phase.
-         *
          * @return the phase.
          */
         public Item getCurrentPhase()
@@ -397,7 +407,6 @@ public class BuildingPlantation extends AbstractBuildingCrafter
 
         /**
          * Set a new phase.
-         *
          * @param phase the phase to set.
          */
         public void setPhase(final Item phase)

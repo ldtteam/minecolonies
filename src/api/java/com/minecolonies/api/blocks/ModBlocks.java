@@ -126,6 +126,7 @@ public final class ModBlocks
           blockHutTavern,
           blockHutRabbitHutch,
           blockHutConcreteMixer,
-          blockHutBeekeeper};
+          blockHutBeekeeper,
+          blockHutFlorist};
     }
 }

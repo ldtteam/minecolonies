@@ -180,6 +180,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                                 if (request.getRequest().getStack().isItemEqual(cure))
                                 {
                                     hasCureRequested = true;
+                                    break;
                                 }
                             }
                             if (!hasCureRequested)
