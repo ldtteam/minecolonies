@@ -650,8 +650,11 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             boolean hasOpenRequest = false;
             int count = InventoryUtils.getItemCountInItemHandler(getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null),
               stack -> stack.isItemEqual(itemStack.getItemStack()));
-            int workerInvCount = workerInv ? InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> stack.isItemEqual(itemStack.getItemStack())) : 0;
-            if ((count + workerInvCount) < entry.getValue())
+
+            int totalAmount = neededResources.containsKey(entry.getKey()) ? neededResources.get(entry.getKey()).getAmount() : 0;
+            int workerInvCount = InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> stack.isItemEqual(itemStack.getItemStack()));
+            if ((workerInv && (count + workerInvCount) < entry.getValue())
+                  || (count < entry.getValue() && (count + workerInvCount) < totalAmount))
             {
                 int requestCount = entry.getValue() - count - workerInvCount;
                 for (final IRequest<? extends Stack> request : list)
