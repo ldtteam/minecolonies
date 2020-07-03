@@ -24,6 +24,9 @@ repositories {
         name 'LDTTeam - Modding'
         url 'https://ldtteam.jfrog.io/ldtteam/modding/'
     }
+    maven {
+        url 'https://www.dogforce-games.com/maven/'
+    }
     flatDir {
         dirs 'libs'
     }
@@ -88,7 +91,7 @@ dependencies {
     additionalMods "com.ldtteam:structurize:${config.structurize_version}"
     compile "com.ldtteam:datagenerators:0.1.38-ALPHA"
     
-    implementation fg.deobf("mezz.jei:jei-1.15.2:${config.jei_version}")
+    //implementation fg.deobf("mezz.jei:jei-1.15.2:${config.jei_version}")
 
     testImplementation  'junit:junit:4.12'
     testImplementation  "org.mockito:mockito-core:1.+"
@@ -116,7 +119,7 @@ minecraft {
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'snapshot', version: "${config.mappings}"
+    mappings channel: 'snapshot', version: '20200703-unofficial-1.16.1'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -263,7 +266,7 @@ curseforge {
 
         project {
             id = '245506'
-            addGameVersion '1.15.2'
+            addGameVersion '1.16.1'
             changelog = file('build/changelog.md')
             changelogType = 'markdown'
             releaseType = System.getenv().CURSERELEASETYPE
