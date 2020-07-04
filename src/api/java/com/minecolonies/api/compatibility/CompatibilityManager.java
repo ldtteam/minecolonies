@@ -268,11 +268,23 @@ public class CompatibilityManager implements ICompatibilityManager
                 return true;
             }
 
-            for (final ResourceLocation tag : itemStack.getItem().getTags())
+            String[] split = string.split(":");
+            if (split.length == 1)
             {
-                if (tag.toString().contains(string))
+                final String[] newSplit = new String[2];
+
+                newSplit[1] = split[0];
+                newSplit[0] = "minecraft";
+                split = newSplit;
+            }
+            if (split.length == 2)
+            {
+                for (final ResourceLocation tag : itemStack.getItem().getTags())
                 {
-                    return true;
+                    if (tag.toString().contains(split[1]) && itemStack.getItem().getRegistryName().getNamespace().equals(split[0]))
+                    {
+                        return true;
+                    }
                 }
             }
         }
