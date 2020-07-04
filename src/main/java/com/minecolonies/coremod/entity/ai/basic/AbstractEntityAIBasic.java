@@ -47,7 +47,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
@@ -1632,11 +1632,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
         else if (percent < WANDER_CHANCE)
         {
-            Vec3d vec3d = RandomPositionGenerator.getLandPos(worker, 10, 7);
-            if (vec3d != null)
+            Vector3d Vector3d = RandomPositionGenerator.getLandPos(worker, 10, 7);
+            if (Vector3d != null)
             {
-                vec3d = new Vec3d(vec3d.x, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorldFromCitizen(worker)), vec3d.z);
-                worker.getNavigator().tryMoveToXYZ(vec3d.x, vec3d.y, vec3d.z, DEFAULT_SPEED);
+                Vector3d = new Vector3d(Vector3d.x, BlockPosUtil.getValidHeight(Vector3d, CompatibilityUtils.getWorldFromCitizen(worker)), Vector3d.z);
+                worker.getNavigator().tryMoveToXYZ(Vector3d.x, Vector3d.y, Vector3d.z, DEFAULT_SPEED);
             }
         }
 

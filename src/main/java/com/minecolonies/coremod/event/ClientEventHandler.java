@@ -38,7 +38,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -386,7 +386,7 @@ public class ClientEventHandler
         RenderSystem.enableDepthTest();
 
         final ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().getRenderManager().info;
-        final Vec3d viewPosition = activeRenderInfo.getProjectedView();
+        final Vector3d viewPosition = activeRenderInfo.getProjectedView();
         final MatrixStack matrix = event.getMatrixStack();
         matrix.push();
         matrix.translate(-viewPosition.x, -viewPosition.y, -viewPosition.z);

@@ -28,7 +28,7 @@ import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.SignTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -282,7 +282,7 @@ public final class WorkerUtil
         final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         //Have to move the entity minimally into the direction to render his new rotation.
-        citizen.move(MoverType.SELF, new Vec3d((float) goToX, 0, (float) goToZ));
+        citizen.move(MoverType.SELF, new Vector3d((float) goToX, 0, (float) goToZ));
     }
 
     /**

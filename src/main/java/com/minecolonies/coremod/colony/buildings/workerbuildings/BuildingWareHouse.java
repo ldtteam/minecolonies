@@ -33,7 +33,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +66,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     /**
      * The list of deliverymen registered to this building.
      */
-    private final Set<Vec3d> registeredDeliverymen = new HashSet<>();
+    private final Set<Vector3d> registeredDeliverymen = new HashSet<>();
 
     /**
      * Max level of the building.
@@ -122,7 +122,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public boolean registerWithWareHouse(final IBuildingDeliveryman buildingWorker)
     {
-        if (registeredDeliverymen.contains(new Vec3d(buildingWorker.getID())))
+        if (registeredDeliverymen.contains(new Vector3d(buildingWorker.getID())))
         {
             return true;
         }
@@ -140,7 +140,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             }
         }
 
-        registeredDeliverymen.add(new Vec3d(buildingWorker.getID()));
+        registeredDeliverymen.add(new Vector3d(buildingWorker.getID()));
         return true;
     }
 
@@ -159,7 +159,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      */
     private void checkForRegisteredDeliverymen()
     {
-        for (final Vec3d pos : new ArrayList<>(registeredDeliverymen))
+        for (final Vector3d pos : new ArrayList<>(registeredDeliverymen))
         {
             final IColony colony = getColony();
             final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(pos));
@@ -179,7 +179,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public boolean canAccessWareHouse(final IBuildingDeliveryman buildingWorker)
     {
-        return registeredDeliverymen.contains(new Vec3d(buildingWorker.getID()));
+        return registeredDeliverymen.contains(new Vector3d(buildingWorker.getID()));
     }
 
     /**
@@ -188,7 +188,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * @return the unmodifiable List of positions of them.
      */
     @Override
-    public Set<Vec3d> getRegisteredDeliverymen()
+    public Set<Vector3d> getRegisteredDeliverymen()
     {
         return new HashSet<>(Collections.unmodifiableSet(registeredDeliverymen));
     }
@@ -206,7 +206,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             final BlockPos pos = NBTUtil.readBlockPos(deliverymanTagList.getCompound(i));
             if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker)
             {
-                registeredDeliverymen.add(new Vec3d(pos));
+                registeredDeliverymen.add(new Vector3d(pos));
             }
         }
         storageUpgrade = compound.getInt(TAG_STORAGE);
@@ -217,7 +217,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     {
         final CompoundNBT compound = super.serializeNBT();
         @NotNull final ListNBT levelTagList = new ListNBT();
-        for (@NotNull final Vec3d deliverymanBuilding : registeredDeliverymen)
+        for (@NotNull final Vector3d deliverymanBuilding : registeredDeliverymen)
         {
             levelTagList.add(NBTUtil.writeBlockPos(new BlockPos(deliverymanBuilding)));
         }

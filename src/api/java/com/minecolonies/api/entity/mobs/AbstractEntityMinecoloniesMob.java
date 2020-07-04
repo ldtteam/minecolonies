@@ -17,7 +17,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -248,8 +248,12 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         super.writeAdditional(compound);
     }
 
+    /**
+     * We override this method and execute no code to avoid citizens travelling to the nether.
+     *
+     */
     @Override
-    public Entity changeDimension(DimensionType dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter)
+    public Entity func_241206_a_(final ServerWorld p_241206_1_)
     {
         return this;
     }

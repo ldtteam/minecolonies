@@ -12,7 +12,7 @@ import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.EnumSet;
 
@@ -78,7 +78,7 @@ public class EntityAIMournCitizen extends Goal
     /**
      * Location of the home location
      */
-    private Vec3d homeLocation;
+    private Vector3d homeLocation;
 
     /**
      * Constant values of mourning
@@ -165,23 +165,23 @@ public class EntityAIMournCitizen extends Goal
     /**
      * Call this function to get the mourn location
      *
-     * @return vec3d of the location to mourn at
+     * @return Vector3d of the location to mourn at
      */
-    protected Vec3d getMournLocation()
+    protected Vector3d getMournLocation()
     {
-        Vec3d vec3d = null;
+        Vector3d Vector3d = null;
         final IColony colony = citizen.getCitizenColonyHandler().getColony();
         if (colony == null || !colony.getBuildingManager().hasTownHall())
         {
-            return new Vec3d(citizen.getHomePosition());
+            return new Vector3d(citizen.getHomePosition());
         }
 
         final BlockPos pos = colony.getBuildingManager().getTownHall().getPosition();
         if (pos != null)
         {
-            vec3d = new Vec3d(pos);
+            Vector3d = new Vector3d(pos);
         }
-        return vec3d;
+        return Vector3d;
     }
 
     @Override
@@ -227,44 +227,44 @@ public class EntityAIMournCitizen extends Goal
         {
             citizen.setMourning(false);
         }
-        Vec3d vec3d = null;
+        Vector3d Vector3d = null;
         if (!reachedFinalDestination)
         {
             goingToMourn = true;
             if (homeLocation == null)
             {
-                vec3d = getMournLocation();
-                homeLocation = vec3d;
+                Vector3d = getMournLocation();
+                homeLocation = Vector3d;
             }
             else
             {
-                vec3d = homeLocation;
+                Vector3d = homeLocation;
             }
         }
         else
         {
             if (citizen.getDistanceSq(homeLocation) < MIN_DESTINATION_TO_LOCATION)
             {
-                vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 10);
-                if (vec3d != null)
+                Vector3d = RandomPositionGenerator.getLandPos(citizen, 10, 10);
+                if (Vector3d != null)
                 {
-                    vec3d = new Vec3d(vec3d.x, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorldFromCitizen(citizen)), vec3d.z);
+                    Vector3d = new Vector3d(Vector3d.x, BlockPosUtil.getValidHeight(Vector3d, CompatibilityUtils.getWorldFromCitizen(citizen)), Vector3d.z);
                 }
             }
             else
             {
-                vec3d = getMournLocation();
+                Vector3d = getMournLocation();
                 reachedFinalDestination = false;
                 goingToMourn = true;
                 continueLooking = false;
             }
         }
 
-        if (vec3d != null)
+        if (Vector3d != null)
         {
-            this.xPosition = vec3d.x;
-            this.yPosition = vec3d.y;
-            this.zPosition = vec3d.z;
+            this.xPosition = Vector3d.x;
+            this.yPosition = Vector3d.y;
+            this.zPosition = Vector3d.z;
         }
 
 

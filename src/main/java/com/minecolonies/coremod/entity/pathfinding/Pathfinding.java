@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.pathfinding.Path;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -89,7 +89,7 @@ public final class Pathfinding
             return;
         }
 
-        final Vec3d vec = Minecraft.getInstance().getRenderManager().info.getProjectedView();
+        final Vector3d vec = Minecraft.getInstance().getRenderManager().info.getProjectedView();
         final double dx = vec.getX();
         final double dy = vec.getY();
         final double dz = vec.getZ();

@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
@@ -211,7 +211,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             return new AxisAlignedBB(corners.getA().getA(), citizen.posY - 1, corners.getB().getA(),
               corners.getA().getB(),
               citizen.posY + 1,
-              corners.getB().getB()).contains(new Vec3d(citizen.getPosition()));
+              corners.getB().getB()).contains(new Vector3d(citizen.getPosition()));
         }
 
         @Nullable final BlockPos homePosition = citizen.getHomePosition();

@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.BasicParticleType;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -70,7 +70,7 @@ public class StreamParticleEffectMessage implements IMessage
      * @param stage    the stage we're at
      * @param maxStage the max stage
      */
-    public StreamParticleEffectMessage(final Vec3d start, final Vec3d end, final BasicParticleType type, final int stage, final int maxStage)
+    public StreamParticleEffectMessage(final Vector3d start, final Vector3d end, final BasicParticleType type, final int stage, final int maxStage)
     {
         super();
         this.sPosX = start.x;
@@ -131,7 +131,7 @@ public class StreamParticleEffectMessage implements IMessage
     {
         final ClientWorld world = Minecraft.getInstance().world;
 
-        final Vec3d end = new Vec3d(ePosX, ePosY, ePosZ);
+        final Vector3d end = new Vector3d(ePosX, ePosY, ePosZ);
 
         double xDif = (sPosX - ePosX) / maxStage;
         double yDif = (sPosY - ePosY) / maxStage;
@@ -145,8 +145,8 @@ public class StreamParticleEffectMessage implements IMessage
 
             for (int i = 0; i < 10; ++i)
             {
-                final Vec3d randomPos = new Vec3d(RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D);
-                final Vec3d randomOffset = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
+                final Vector3d randomPos = new Vector3d(RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D);
+                final Vector3d randomOffset = new Vector3d((RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
                 world.addParticle(type,
                   end.x + randomOffset.x + xDif * step,
                   end.y + randomOffset.y + yDif * step + minDif,

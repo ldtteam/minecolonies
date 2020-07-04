@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 import java.util.Set;
@@ -32,7 +32,7 @@ public interface IWareHouse extends IBuilding
      *
      * @return the unmodifiable List of positions of them.
      */
-    Set<Vec3d> getRegisteredDeliverymen();
+    Set<Vector3d> getRegisteredDeliverymen();
 
     /**
      * Upgrade all containers by 9 slots.

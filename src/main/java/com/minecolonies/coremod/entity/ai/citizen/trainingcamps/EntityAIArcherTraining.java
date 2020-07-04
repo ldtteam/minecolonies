@@ -15,7 +15,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -170,7 +170,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             final double zDiff = currentShootingTarget.getZ() - worker.getPosZ();
             final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
             final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-            worker.move(MoverType.SELF, new Vec3d(goToX, 0, goToZ));
+            worker.move(MoverType.SELF, new Vector3d(goToX, 0, goToZ));
 
             if (worker.getRandom().nextBoolean())
             {
@@ -197,7 +197,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
 
     private IAIState checkShot()
     {
-        if (arrowInProgress.getDistanceSq(new Vec3d(currentShootingTarget)) < MIN_DISTANCE_FOR_SUCCESS)
+        if (arrowInProgress.getDistanceSq(new Vector3d(currentShootingTarget)) < MIN_DISTANCE_FOR_SUCCESS)
         {
             worker.getCitizenExperienceHandler().addExperience(XP_PER_SUCCESSFUL_SHOT);
         }

@@ -17,7 +17,7 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
@@ -274,7 +274,7 @@ public final class BlockPosUtil
      * @param world    the world object.
      * @return Ground level at (position.x, position.z).
      */
-    public static double getValidHeight(@NotNull final Vec3d position, @NotNull final World world)
+    public static double getValidHeight(@NotNull final Vector3d position, @NotNull final World world)
     {
         double returnHeight = position.y;
         if (position.y < 0)

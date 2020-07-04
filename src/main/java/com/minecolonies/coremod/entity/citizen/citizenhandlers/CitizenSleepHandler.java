@@ -11,7 +11,7 @@ import net.minecraft.entity.Pose;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -118,7 +118,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
           ((float) bedLocation.getZ() + HALF_BLOCK));
         citizen.setBedPosition(bedLocation);
 
-        citizen.setMotion(Vec3d.ZERO);
+        citizen.setMotion(Vector3d.ZERO);
         citizen.isAirBorne = true;
 
         //Remove item while citizen is asleep.
@@ -180,7 +180,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         final BlockPos spawn;
         if (!getBedLocation().equals(BlockPos.ZERO) && citizen.world.getBlockState(getBedLocation()).getBlock().isIn(BlockTags.BEDS))
         {
-            final Optional<Vec3d> spawnVec = BedBlock.func_220172_a(ModEntities.CITIZEN, citizen.world, getBedLocation(), 0);
+            final Optional<Vector3d> spawnVec = BedBlock.func_220172_a(ModEntities.CITIZEN, citizen.world, getBedLocation(), 0);
             spawn = spawnVec.map(BlockPos::new).orElseGet(() -> getBedLocation().up());
         }
         else

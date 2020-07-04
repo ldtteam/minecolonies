@@ -17,6 +17,8 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.ai.goal.Goal;
@@ -47,7 +49,7 @@ public final class RaiderMobUtils
     /**
      * Mob attribute, used for custom attack damage
      */
-    public final static IAttribute MOB_ATTACK_DAMAGE = new RangedAttribute(null, "mc_mob_damage", 2.0, 1.0, 20);
+    public final static Attribute MOB_ATTACK_DAMAGE = new RangedAttribute(null, "mc_mob_damage", 2.0, 1.0, 20);
 
     /**
      * Damage increased by 1 for every 200 raid level difficulty
@@ -88,8 +90,8 @@ public final class RaiderMobUtils
     {
         final double difficultyModifier = (mob.world.getDifficulty().getId() / 2d) * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
                                                                                         / (double) DEFAULT_BARBARIAN_DIFFICULTY);
-        mob.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE * 2);
-        mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
+        mob.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE * 2);
+        mob.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
         final int raidLevel = colony.getRaiderManager().getColonyRaidLevel();
 
         // Base damage

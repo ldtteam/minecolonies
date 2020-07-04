@@ -69,7 +69,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -1317,7 +1317,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public void move(final MoverType typeIn, final Vec3d pos)
+    public void move(final MoverType typeIn, final Vector3d pos)
     {
         //todo someaddons: removse this on the minimum AI rework.
         if (pos.x != 0 || pos.z != 0)

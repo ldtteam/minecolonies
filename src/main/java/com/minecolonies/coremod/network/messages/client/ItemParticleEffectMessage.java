@@ -8,7 +8,7 @@ import net.minecraft.item.UseAction;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -130,11 +130,11 @@ public class ItemParticleEffectMessage implements IMessage
         {
             for (int i = 0; i < 5; ++i)
             {
-                Vec3d randomPos = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
+                Vector3d randomPos = new Vector3d((RAND.nextDouble() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
                 randomPos = randomPos.rotatePitch((float) (-rotationPitch * 0.017453292F));
                 randomPos = randomPos.rotateYaw((float) (-rotationYaw * 0.017453292F));
                 final double d0 = -RAND.nextDouble() * 0.6D - 0.3D;
-                Vec3d randomOffset = new Vec3d((RAND.nextDouble() - 0.5D) * 0.3D, d0, 0.6D);
+                Vector3d randomOffset = new Vector3d((RAND.nextDouble() - 0.5D) * 0.3D, d0, 0.6D);
                 randomOffset = randomOffset.rotatePitch((float) (-rotationPitch * 0.017453292F));
                 randomOffset = randomOffset.rotateYaw((float) (-rotationYaw * 0.017453292F));
                 randomOffset = randomOffset.add(posX, posY + eyeHeight, posZ);

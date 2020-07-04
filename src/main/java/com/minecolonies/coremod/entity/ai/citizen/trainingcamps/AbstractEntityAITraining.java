@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -146,7 +146,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
             range = getOwnBuilding().getTargetableArea(world);
         }
 
-        if (range.contains(new Vec3d(pos)))
+        if (range.contains(new Vector3d(pos)))
         {
             return pos;
         }

@@ -28,7 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -193,7 +193,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             range = getOwnBuilding().getTargetableArea(world);
         }
 
-        if (!range.contains(new Vec3d(living.getPosition())))
+        if (!range.contains(new Vector3d(living.getPosition())))
         {
             worker.getNavigator().clearPath();
             removeFromQueue();

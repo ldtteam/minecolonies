@@ -6,7 +6,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.EnumSet;
 
@@ -49,21 +49,21 @@ public class EntityAICitizenWander extends Goal
             return false;
         }
 
-        Vec3d vec3d = null;
-        if (vec3d == null)
+        Vector3d Vector3d = null;
+        if (Vector3d == null)
         {
-            vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 7);
-            if (vec3d == null)
+            Vector3d = RandomPositionGenerator.getLandPos(citizen, 10, 7);
+            if (Vector3d == null)
             {
                 return false;
             }
         }
 
-        vec3d = new Vec3d(vec3d.x, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorldFromCitizen(citizen)), vec3d.z);
+        Vector3d = new Vector3d(Vector3d.x, BlockPosUtil.getValidHeight(Vector3d, CompatibilityUtils.getWorldFromCitizen(citizen)), Vector3d.z);
 
-        this.xPosition = vec3d.x;
-        this.yPosition = vec3d.y;
-        this.zPosition = vec3d.z;
+        this.xPosition = Vector3d.x;
+        this.yPosition = Vector3d.y;
+        this.zPosition = Vector3d.z;
 
         return true;
     }

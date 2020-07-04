@@ -26,7 +26,7 @@ import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -322,8 +322,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         progressTicks++;
         if (progressTicks < MAX_PROGRESS_TICKS)
         {
-            final Vec3d start = worker.getPositionVector().add(0, 2, 0);
-            final Vec3d goal = citizenToGatherFrom.getCitizenEntity().get().getPositionVector().add(0, 2, 0);
+            final Vector3d start = worker.getPositionVector().add(0, 2, 0);
+            final Vector3d goal = citizenToGatherFrom.getCitizenEntity().get().getPositionVector().add(0, 2, 0);
 
             Network.getNetwork().sendToTrackingEntity(
               new StreamParticleEffectMessage(

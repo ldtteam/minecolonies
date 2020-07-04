@@ -13,7 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -85,14 +85,14 @@ public class RenderFishHook extends EntityRenderer<Entity>
             {
                 double d7 = this.renderManager.options.fov;
                 d7 = d7 / 100.0D;
-                Vec3d vec3d = new Vec3d((double) i * -0.36D * d7, -0.045D * d7, 0.4D);
-                vec3d = vec3d.rotatePitch(-MathHelper.lerp(partialTicks, citizen.prevRotationPitch, citizen.rotationPitch) * ((float) Math.PI / 180F));
-                vec3d = vec3d.rotateYaw(-MathHelper.lerp(partialTicks, citizen.prevRotationYaw, citizen.rotationYaw) * ((float) Math.PI / 180F));
-                vec3d = vec3d.rotateYaw(f1 * 0.5F);
-                vec3d = vec3d.rotatePitch(-f1 * 0.7F);
-                d4 = MathHelper.lerp((double) partialTicks, citizen.prevPosX, citizen.posX) + vec3d.x;
-                d5 = MathHelper.lerp((double) partialTicks, citizen.prevPosY, citizen.posY) + vec3d.y;
-                d6 = MathHelper.lerp((double) partialTicks, citizen.prevPosZ, citizen.posZ) + vec3d.z;
+                Vector3d Vector3d = new Vector3d((double) i * -0.36D * d7, -0.045D * d7, 0.4D);
+                Vector3d = Vector3d.rotatePitch(-MathHelper.lerp(partialTicks, citizen.prevRotationPitch, citizen.rotationPitch) * ((float) Math.PI / 180F));
+                Vector3d = Vector3d.rotateYaw(-MathHelper.lerp(partialTicks, citizen.prevRotationYaw, citizen.rotationYaw) * ((float) Math.PI / 180F));
+                Vector3d = Vector3d.rotateYaw(f1 * 0.5F);
+                Vector3d = Vector3d.rotatePitch(-f1 * 0.7F);
+                d4 = MathHelper.lerp((double) partialTicks, citizen.prevPosX, citizen.posX) + Vector3d.x;
+                d5 = MathHelper.lerp((double) partialTicks, citizen.prevPosY, citizen.posY) + Vector3d.y;
+                d6 = MathHelper.lerp((double) partialTicks, citizen.prevPosZ, citizen.posZ) + Vector3d.z;
                 f3 = citizen.getEyeHeight();
             }
             else

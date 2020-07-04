@@ -16,6 +16,8 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -28,10 +30,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.util.ITeleporter;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -102,6 +103,18 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
         super(type, world);
     }
 
+    /**
+     * Get the default attributes with their values.
+     * @return the attribute modifier map.
+     */
+    public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
+    {
+        return LivingEntity.func_233639_cI_()
+                 .func_233815_a_(Attributes.field_233818_a_, BASE_MAX_HEALTH)
+                 .func_233815_a_(Attributes.field_233821_d_, BASE_MOVEMENT_SPEED)
+                 .func_233815_a_(Attributes.field_233819_b_, BASE_PATHFINDING_RANGE);
+    }
+
     public GoalSelector getTasks()
     {
         return goalSelector;
@@ -115,16 +128,14 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     /**
      * We override this method and execute no code to avoid citizens travelling to the nether.
      *
-     * @param dimensionIn dimension to travel to.
      */
     @Override
-    public Entity changeDimension(DimensionType dimensionIn, ITeleporter teleporter)
+    public Entity func_241206_a_(final ServerWorld p_241206_1_)
     {
         return null;
     }
 
     @NotNull
-    @Override
     public BlockPos getPosition()
     {
         return new BlockPos(getPosX(), getPosY(), getPosZ());
@@ -173,7 +184,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
 
     @NotNull
     @Override
-    public ActionResultType applyPlayerInteraction(final PlayerEntity player, final Vec3d vec, final Hand hand)
+    public ActionResultType applyPlayerInteraction(final PlayerEntity player, final Vector3d vec, final Hand hand)
     {
         if (!player.world.isRemote())
         {
@@ -376,21 +387,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public String getRenderMetadata()
     {
         return renderMetadata;
-    }
-
-    /**
-     * Applies attributes like health, charisma etc to the citizens.
-     */
-    @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-
-        getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
-        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED);
-
-        //path finding search range
-        getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(BASE_PATHFINDING_RANGE);
     }
 
     /**

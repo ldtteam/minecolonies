@@ -67,7 +67,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         double x = this.getPosX();
         double y = this.getPosY();
         double z = this.getPosZ();
-        Vec3d posVec = this.getPos(x, y, z);
+        Vector3d posVec = this.getPos(x, y, z);
         y = pos.getY();
         boolean isPowered = false;
         boolean flag = false;
@@ -92,7 +92,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
                 break;
         }
 
-        Vec3d motion = this.getMotion();
+        Vector3d motion = this.getMotion();
         Pair<Vec3i, Vec3i> pair = getShapeMatrix(railshape);
         Vec3i vecIn = pair.getFirst();
         Vec3i vecOut = pair.getSecond();
@@ -107,12 +107,12 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         }
 
         double veloc = Math.min(2.0D, Math.sqrt(horizontalMag(motion)));
-        motion = new Vec3d(veloc * xDif / difSq, motion.y, veloc * zDif / difSq);
+        motion = new Vector3d(veloc * xDif / difSq, motion.y, veloc * zDif / difSq);
         this.setMotion(motion);
         Entity entity = this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
         if (entity instanceof PlayerEntity)
         {
-            Vec3d mot = entity.getMotion();
+            Vector3d mot = entity.getMotion();
             double horMot = horizontalMag(mot);
             double tempMot = horizontalMag(this.getMotion());
             if (horMot > 1.0E-4D && tempMot < 0.01D)
@@ -127,7 +127,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
             double tempMot = Math.sqrt(horizontalMag(this.getMotion()));
             if (tempMot < 0.03D)
             {
-                this.setMotion(Vec3d.ZERO);
+                this.setMotion(Vector3d.ZERO);
             }
             else
             {
@@ -171,11 +171,11 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         }
 
         this.applyDrag();
-        Vec3d newPos = this.getPos(this.getPosX(), this.getPosY(), this.getPosZ());
+        Vector3d newPos = this.getPos(this.getPosX(), this.getPosY(), this.getPosZ());
         if (newPos != null && posVec != null)
         {
             double yMot = (posVec.y - newPos.y) * 0.05D;
-            Vec3d tempMot = this.getMotion();
+            Vector3d tempMot = this.getMotion();
             double tempVeloc = Math.sqrt(horizontalMag(tempMot));
             if (tempVeloc > 0.0D)
             {
@@ -189,7 +189,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         int zFloor = MathHelper.floor(this.getPosZ());
         if (xFloor != pos.getX() || zFloor != pos.getZ())
         {
-            Vec3d tempMot = this.getMotion();
+            Vector3d tempMot = this.getMotion();
             double temoVeloc = Math.sqrt(horizontalMag(tempMot));
             this.setMotion(temoVeloc * (double) (xFloor - pos.getX()), tempMot.y, temoVeloc * (double) (zFloor - pos.getZ()));
         }
@@ -201,7 +201,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
 
         if (isPowered && shouldDoRailFunctions())
         {
-            Vec3d tempMot = this.getMotion();
+            Vector3d tempMot = this.getMotion();
             double tempVeloc = Math.sqrt(horizontalMag(tempMot));
             if (tempVeloc > 0.01D)
             {
@@ -209,7 +209,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
             }
             else
             {
-                Vec3d mot = this.getMotion();
+                Vector3d mot = this.getMotion();
                 double tempX = mot.x;
                 double tempZ = mot.z;
                 if (railshape == RailShape.EAST_WEST)

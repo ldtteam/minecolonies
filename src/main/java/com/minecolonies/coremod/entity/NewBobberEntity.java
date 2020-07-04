@@ -83,14 +83,14 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         final double d1 = this.angler.getPosYEye();
         final double d2 = this.angler.getPosZ() - (double) f2 * 0.3D;
         this.setLocationAndAngles(d0, d1, d2, f1, f);
-        Vec3d vec3d = new Vec3d((double) (-f3), (double) MathHelper.clamp(-(f5 / f4), -5.0F, 5.0F), (double) (-f2));
-        final double d3 = vec3d.length();
-        vec3d = vec3d.mul(0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D,
+        Vector3d Vector3d = new Vector3d((double) (-f3), (double) MathHelper.clamp(-(f5 / f4), -5.0F, 5.0F), (double) (-f2));
+        final double d3 = Vector3d.length();
+        Vector3d = Vector3d.mul(0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D,
           0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D,
           0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D);
-        this.setMotion(vec3d);
-        this.rotationYaw = (float) (MathHelper.atan2(vec3d.x, vec3d.z) * (double) (180F / (float) Math.PI));
-        this.rotationPitch = (float) (MathHelper.atan2(vec3d.y, (double) MathHelper.sqrt(horizontalMag(vec3d))) * (double) (180F / (float) Math.PI));
+        this.setMotion(Vector3d);
+        this.rotationYaw = (float) (MathHelper.atan2(Vector3d.x, Vector3d.z) * (double) (180F / (float) Math.PI));
+        this.rotationPitch = (float) (MathHelper.atan2(Vector3d.y, (double) MathHelper.sqrt(horizontalMag(Vector3d))) * (double) (180F / (float) Math.PI));
         this.prevRotationYaw = this.rotationYaw;
         this.prevRotationPitch = this.rotationPitch;
         this.luck = Math.max(0, luck);
@@ -204,7 +204,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             {
                 if (this.caughtEntity != null)
                 {
-                    this.setMotion(Vec3d.ZERO);
+                    this.setMotion(Vector3d.ZERO);
                     this.currentState = NewBobberEntity.State.HOOKED_IN_ENTITY;
                     return;
                 }
@@ -228,7 +228,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                 else
                 {
                     this.ticksInAir = 0;
-                    this.setMotion(Vec3d.ZERO);
+                    this.setMotion(Vector3d.ZERO);
                 }
             }
             else
@@ -253,14 +253,14 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
                 if (this.currentState == NewBobberEntity.State.BOBBING)
                 {
-                    final Vec3d vec3d = this.getMotion();
-                    double d0 = this.posY + vec3d.y - (double) blockpos.getY() - (double) f;
+                    final Vector3d Vector3d = this.getMotion();
+                    double d0 = this.posY + Vector3d.y - (double) blockpos.getY() - (double) f;
                     if (Math.abs(d0) < 0.01D)
                     {
                         d0 += Math.signum(d0) * 0.1D;
                     }
 
-                    this.setMotion(vec3d.x * 0.9D, vec3d.y - d0 * (double) this.rand.nextFloat() * 0.2D, vec3d.z * 0.9D);
+                    this.setMotion(Vector3d.x * 0.9D, Vector3d.y - d0 * (double) this.rand.nextFloat() * 0.2D, Vector3d.z * 0.9D);
                     if (!this.world.isRemote && f > 0.0F)
                     {
                         this.catchingFish(blockpos);
@@ -299,11 +299,11 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
     private void updateRotation()
     {
-        final Vec3d vec3d = this.getMotion();
-        final float f = MathHelper.sqrt(horizontalMag(vec3d));
-        this.rotationYaw = (float) (MathHelper.atan2(vec3d.x, vec3d.z) * (double) (180F / (float) Math.PI));
+        final Vector3d Vector3d = this.getMotion();
+        final float f = MathHelper.sqrt(horizontalMag(Vector3d));
+        this.rotationYaw = (float) (MathHelper.atan2(Vector3d.x, Vector3d.z) * (double) (180F / (float) Math.PI));
 
-        for (this.rotationPitch = (float) (MathHelper.atan2(vec3d.y, (double) f) * (double) (180F / (float) Math.PI));
+        for (this.rotationPitch = (float) (MathHelper.atan2(Vector3d.y, (double) f) * (double) (180F / (float) Math.PI));
           this.rotationPitch - this.prevRotationPitch < -180.0F;
           this.prevRotationPitch -= 360.0F)
         {
@@ -409,8 +409,8 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             else
             {
                 readyToCatch = true;
-                final Vec3d vec3d = this.getMotion();
-                this.setMotion(vec3d.x, (double) (-0.4F * MathHelper.nextFloat(this.rand, 0.6F, 1.0F)), vec3d.z);
+                final Vector3d Vector3d = this.getMotion();
+                this.setMotion(Vector3d.x, (double) (-0.4F * MathHelper.nextFloat(this.rand, 0.6F, 1.0F)), Vector3d.z);
                 this.playSound(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH, 0.25F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.4F);
                 final double d3 = this.posY + 0.5D;
                 serverworld.spawnParticle(ParticleTypes.BUBBLE,
@@ -550,8 +550,8 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     {
         if (this.angler != null)
         {
-            final Vec3d vec3d = (new Vec3d(this.angler.posX - this.posX, this.angler.posY - this.posY, this.angler.posZ - this.posZ)).scale(0.1D);
-            this.caughtEntity.setMotion(this.caughtEntity.getMotion().add(vec3d));
+            final Vector3d Vector3d = (new Vector3d(this.angler.posX - this.posX, this.angler.posY - this.posY, this.angler.posZ - this.posZ)).scale(0.1D);
+            this.caughtEntity.setMotion(this.caughtEntity.getMotion().add(Vector3d));
         }
     }
 

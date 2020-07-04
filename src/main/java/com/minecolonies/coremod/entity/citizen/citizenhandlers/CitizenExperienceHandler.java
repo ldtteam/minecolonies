@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.GameRules;
 import org.jetbrains.annotations.NotNull;
 
@@ -164,8 +164,8 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
         for (@NotNull final ExperienceOrbEntity orb : citizen.world.getEntitiesWithinAABB(ExperienceOrbEntity.class, citizen.getBoundingBox().grow(2)))
         {
-            Vec3d vec3d = new Vec3d(citizen.posX - orb.getPosX(), citizen.posY + (double) this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
-            double d1 = vec3d.lengthSquared();
+            Vector3d Vector3d = new Vector3d(citizen.posX - orb.getPosX(), citizen.posY + (double) this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
+            double d1 = Vector3d.lengthSquared();
 
             if (d1 < 1.0D)
             {
@@ -174,7 +174,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
                 return;
             }
             double d2 = 1.0D - Math.sqrt(d1) / 8.0D;
-            orb.setMotion(orb.getMotion().add(vec3d.normalize().scale(d2 * d2 * 0.1D)));
+            orb.setMotion(orb.getMotion().add(Vector3d.normalize().scale(d2 * d2 * 0.1D)));
         }
     }
 }

@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -73,7 +73,7 @@ public class DebugRendererChunkBorder
         final IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
         final IVertexBuilder bufferbuilder = buffer.getBuffer(MRenderTypes.customLineRenderer());
 
-        final Vec3d currView = Minecraft.getInstance().getRenderManager().info.getProjectedView();
+        final Vector3d currView = Minecraft.getInstance().getRenderManager().info.getProjectedView();
         final float lowerYLimit = (float) (5 - currView.y);
         final float upperYLimit = (float) (255 - currView.y);
 

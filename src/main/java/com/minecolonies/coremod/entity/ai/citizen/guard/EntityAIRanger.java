@@ -22,7 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -369,7 +369,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                 final double zDiff = target.posZ - worker.getPosZ();
                 final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
                 final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-                worker.move(MoverType.SELF, new Vec3d(goToX, 0, goToZ));
+                worker.move(MoverType.SELF, new Vector3d(goToX, 0, goToZ));
 
                 timeCanSee = 0;
                 target.setRevengeTarget(worker);

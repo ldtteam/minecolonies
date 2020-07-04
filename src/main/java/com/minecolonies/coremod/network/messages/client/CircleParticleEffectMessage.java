@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.BasicParticleType;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -56,7 +56,7 @@ public class CircleParticleEffectMessage implements IMessage
      * @param type  the particle type.
      * @param stage the stage.
      */
-    public CircleParticleEffectMessage(final Vec3d pos, final BasicParticleType type, final int stage)
+    public CircleParticleEffectMessage(final Vector3d pos, final BasicParticleType type, final int stage)
     {
         super();
         this.posX = pos.x;
@@ -103,8 +103,8 @@ public class CircleParticleEffectMessage implements IMessage
 
         for (int i = 0; i < 5; ++i)
         {
-            final Vec3d randomPos = new Vec3d(RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D);
-            final Vec3d randomOffset = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
+            final Vector3d randomPos = new Vector3d(RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D);
+            final Vector3d randomOffset = new Vector3d((RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
             world.addParticle(type,
               x + randomOffset.x,
               posY + randomOffset.y,
