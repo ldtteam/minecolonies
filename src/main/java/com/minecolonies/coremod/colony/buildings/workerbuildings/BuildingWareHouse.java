@@ -278,8 +278,8 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             {
                 ((AbstractTileEntityRack) entity).setInWarehouse(true);
             }
-            addContainerPosition(pos);
         }
+        super.registerBlockPosition(block, pos, world);
     }
 
     /**
