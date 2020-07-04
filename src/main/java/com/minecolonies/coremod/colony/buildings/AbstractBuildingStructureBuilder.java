@@ -656,21 +656,24 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             if ((workerInv && (count + workerInvCount) < entry.getValue())
                   || (count < entry.getValue() && (count + workerInvCount) < totalAmount))
             {
-                int requestCount = entry.getValue() - count - workerInvCount;
-                for (final IRequest<? extends Stack> request : list)
+                int requestCount = entry.getValue() - count - (workerInv ? workerInvCount : 0);
+                if (requestCount > 0)
                 {
-                    if (request.getRequest().getStack().isItemEqual(itemStack.getItemStack()))
+                    for (final IRequest<? extends Stack> request : list)
                     {
-                        hasOpenRequest = true;
+                        if (request.getRequest().getStack().isItemEqual(itemStack.getItemStack()))
+                        {
+                            hasOpenRequest = true;
+                            break;
+                        }
+                    }
+                    if (hasOpenRequest)
+                    {
                         break;
                     }
-                }
-                if (hasOpenRequest)
-                {
-                    break;
-                }
 
-                worker.createRequestAsync(new Stack(itemStack.getItemStack(), requestCount, requestCount));
+                    worker.createRequestAsync(new Stack(itemStack.getItemStack(), requestCount, requestCount));
+                }
             }
         }
     }
