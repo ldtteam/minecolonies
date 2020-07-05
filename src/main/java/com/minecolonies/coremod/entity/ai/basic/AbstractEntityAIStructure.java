@@ -425,7 +425,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         for (final ItemStack stack : itemList)
         {
-            if (!placer.getOwnBuilding().hasResourceInBucket(stack))
+            if (!InventoryUtils.hasItemInItemHandler(placer.getInventory(), stack1 -> stack.isItemEqual(stack1)) && !placer.getOwnBuilding().hasResourceInBucket(stack))
             {
                 placer.requestMaterials();
                 return false;
