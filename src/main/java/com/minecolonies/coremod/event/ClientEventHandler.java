@@ -65,7 +65,7 @@ public class ClientEventHandler
     /**
      * The distance in which previews of nearby buildings are rendered
      */
-    private static double PREVIEW_RANGE = 30.0f;
+    private static final double PREVIEW_RANGE = 30.0f;
 
     /**
      * Cached wayPointBlueprint.
@@ -131,70 +131,72 @@ public class ClientEventHandler
             return;
         }
 
-        if (Settings.instance.getActiveStructure() != null)
+        if (Settings.instance.getActiveStructure() == null)
         {
-            final BlockPos activePosition = Settings.instance.getPosition();
-            final Map<BlockPos, Triple<Blueprint, BlockPos, BlockPos>> newCache = new HashMap<>();
-            for (final IBuildingView buildingView : colony.getBuildings())
+            return;
+        }
+
+        final BlockPos activePosition = Settings.instance.getPosition();
+        final Map<BlockPos, Triple<Blueprint, BlockPos, BlockPos>> newCache = new HashMap<>();
+        for (final IBuildingView buildingView : colony.getBuildings())
+        {
+            final BlockPos currentPosition = buildingView.getPosition();
+            if (activePosition.withinDistance(currentPosition, PREVIEW_RANGE))
             {
-                final BlockPos currentPosition = buildingView.getPosition();
-                if (activePosition.withinDistance(currentPosition, PREVIEW_RANGE))
+                if (blueprintCache.containsKey(currentPosition))
                 {
-                    if (blueprintCache.containsKey(currentPosition))
+                    newCache.put(currentPosition, blueprintCache.get(currentPosition));
+                }
+                else
+                {
+                    final StructureName sn =
+                      new StructureName(Structures.SCHEMATICS_PREFIX,
+                        buildingView.getStyle(),
+                        buildingView.getSchematicName() + buildingView.getBuildingMaxLevel());
+
+                    final String structureName = sn.toString();
+                    final String md5 = Structures.getMD5(structureName);
+
+                    final IStructureHandler wrapper = new LoadOnlyStructureHandler(world, buildingView.getID(), structureName, new PlacementSettings(), true);
+                    if (!wrapper.hasBluePrint() || !wrapper.isCorrectMD5(md5))
                     {
-                        newCache.put(currentPosition, blueprintCache.get(currentPosition));
+                        Log.getLogger().debug("Blueprint error, requesting" + structureName + " from server.");
+                        if (ServerLifecycleHooks.getCurrentServer() == null)
+                        {
+                            Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
+                            continue;
+                        }
                     }
-                    else
+
+                    final Blueprint blueprint = wrapper.getBluePrint();
+
+                    if (blueprint != null)
                     {
-                        final StructureName sn =
-                          new StructureName(Structures.SCHEMATICS_PREFIX,
-                            buildingView.getStyle(),
-                            buildingView.getSchematicName() + buildingView.getBuildingMaxLevel());
-
-                        final String structureName = sn.toString();
-                        final String md5 = Structures.getMD5(structureName);
-
-                        final IStructureHandler wrapper = new LoadOnlyStructureHandler(world, buildingView.getID(), structureName, new PlacementSettings(), true);
-                        if (!wrapper.hasBluePrint() || !wrapper.isCorrectMD5(md5))
-                        {
-                            Log.getLogger().debug("Blueprint error, requesting" + structureName + " from server.");
-                            if (ServerLifecycleHooks.getCurrentServer() == null)
-                            {
-                                Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
-                                continue;
-                            }
-                        }
-
-                        final Blueprint blueprint = wrapper.getBluePrint();
-
-                        if (blueprint != null)
-                        {
-                            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()),
-                              buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE,
-                              world);
-                            final BlockPos primaryOffset = BlueprintUtils.getPrimaryBlockOffset(blueprint);
-                            final BlockPos pos = currentPosition.subtract(primaryOffset);
-                            final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
-                            final BlockPos renderSize = pos.add(size).subtract(new BlockPos(1, 1, 1));
-                            newCache.put(currentPosition, new Triple<>(blueprint, pos, renderSize));
-                        }
+                        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()),
+                          buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE,
+                          world);
+                        final BlockPos primaryOffset = BlueprintUtils.getPrimaryBlockOffset(blueprint);
+                        final BlockPos pos = currentPosition.subtract(primaryOffset);
+                        final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
+                        final BlockPos renderSize = pos.add(size).subtract(new BlockPos(1, 1, 1));
+                        newCache.put(currentPosition, new Triple<>(blueprint, pos, renderSize));
                     }
                 }
             }
+        }
 
-            blueprintCache = newCache;
+        blueprintCache = newCache;
 
-            for (final Map.Entry<BlockPos, Triple<Blueprint, BlockPos, BlockPos>> nearbyBuilding : blueprintCache.entrySet())
-            {
-                final Triple<Blueprint, BlockPos, BlockPos> buildingData = nearbyBuilding.getValue();
-                final BlockPos position = nearbyBuilding.getKey();
-                StructureClientHandler.renderStructure(buildingData.a,
-                  event.getPartialTicks(),
-                  position,
-                  event.getMatrixStack());
+        for (final Map.Entry<BlockPos, Triple<Blueprint, BlockPos, BlockPos>> nearbyBuilding : blueprintCache.entrySet())
+        {
+            final Triple<Blueprint, BlockPos, BlockPos> buildingData = nearbyBuilding.getValue();
+            final BlockPos position = nearbyBuilding.getKey();
+            StructureClientHandler.renderStructure(buildingData.a,
+              event.getPartialTicks(),
+              position,
+              event.getMatrixStack());
 
-                renderBoxEdges(buildingData.b, buildingData.c, event, 0, 0, 1);
-            }
+            renderBoxEdges(buildingData.b, buildingData.c, event, 0, 0, 1);
         }
     }
 
