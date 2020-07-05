@@ -133,7 +133,7 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
             input.assignments.forEach((key, value) -> {
                 controller.serialize(packetBuffer, key);
                 packetBuffer.writeInt(value.size());
-                value.forEach(token -> controller.serialize(token));
+                value.forEach(token -> controller.serialize(packetBuffer, token));
             });
         }
 

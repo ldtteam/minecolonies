@@ -283,15 +283,37 @@ public final class StandardFactoryController implements IFactoryController
     @Override
     public <OUTPUT> void serialize(@NotNull final PacketBuffer buffer, @NotNull final OUTPUT object) throws IllegalArgumentException
     {
-        final CompoundNBT bufferCompound = serialize(object);
-        buffer.writeCompoundTag(bufferCompound);
+        final IFactory<?, OUTPUT> factory = getFactoryForOutput((TypeToken<? extends OUTPUT>) TypeToken.of(object.getClass()));
+        buffer.writeString(object.getClass().getName());
+        factory.serialize(this, object, buffer);
     }
 
     @Override
     public <OUTPUT> OUTPUT deserialize(@NotNull final PacketBuffer buffer) throws IllegalArgumentException
     {
-        final CompoundNBT bufferCompound = buffer.readCompoundTag();
-        return deserialize(bufferCompound);
+        String className = buffer.readString(32767);
+        className = processClassRenaming(className);
+
+        final IFactory<?, OUTPUT> factory;
+
+        try
+        {
+            factory = getFactoryForOutput(className);
+        }
+        catch (final IllegalArgumentException e)
+        {
+            throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller").initCause(e);
+        }
+
+        try
+        {
+            return factory.deserialize(this, buffer);
+        }
+        catch (Throwable throwable)
+        {
+            Log.getLogger().error(throwable);
+            return null;
+        }
     }
 
     @Override
