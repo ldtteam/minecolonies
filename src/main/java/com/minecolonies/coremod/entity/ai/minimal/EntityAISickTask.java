@@ -378,6 +378,19 @@ public class EntityAISickTask extends Goal
             return IDLE;
         }
 
+        if (citizen.getCitizenSleepHandler().isAsleep())
+        {
+            final BlockPos hospital = colony.getBuildingManager().getBestHospital(citizen);
+            if (hospital != null)
+            {
+                final IBuilding building = colony.getBuildingManager().getBuilding(hospital);
+                if (building instanceof BuildingHospital && !((BuildingHospital) building).getBedList().contains(citizen.getCitizenSleepHandler().getBedLocation()))
+                {
+                    citizen.getCitizenSleepHandler().onWakeUp();
+                }
+            }
+        }
+
         if (!citizen.getCitizenSleepHandler().isAsleep() && BlockPosUtil.getDistance2D(placeToPath, citizen.getPosition()) > MINIMUM_DISTANCE_TO_HOSPITAL)
         {
             return GO_TO_HOSPITAL;
