@@ -90,6 +90,11 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
                 }
             }
         }
+
+        if (map == null)
+        {
+            Log.getLogger().error("Raider spawned without matching blueprint data for it: " + structureName);
+        }
     }
 
     @Override
@@ -97,7 +102,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
     {
         super.triggerSuccess(pos, list, placement);
         final BlockPos worldPos = getProgressPosInWorld(pos);
-        if (getWorld().getBlockState(worldPos).getBlock() == Blocks.GOLD_BLOCK)
+        if (getWorld().getBlockState(worldPos).getBlock() == Blocks.GOLD_BLOCK && map != null)
         {
             final List<String> tags = map.getOrDefault(worldPos, Collections.emptyList());
             for (final String tag : tags)
