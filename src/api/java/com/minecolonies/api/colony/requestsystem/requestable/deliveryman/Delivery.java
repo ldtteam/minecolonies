@@ -76,7 +76,7 @@ public class Delivery extends AbstractDeliverymanRequestable
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Delivery input)
     {
-        controller.serialize(buffer, input.getStack());
+        controller.serialize(buffer, input.getStart());
         controller.serialize(buffer, input.getTarget());
         buffer.writeItemStack(input.getStack());
         buffer.writeInt(input.getPriority());
