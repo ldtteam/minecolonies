@@ -109,7 +109,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                         if (currentNode.getStyle() == Node.NodeType.SHAFT)
                         {
                             final Direction facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(currentNode.getX(), 0, currentNode.getZ()));
-                            final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY+1, ladderPos.getZ());
+                            final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY + 1, ladderPos.getZ());
 
                             return new BlockPos(ladderHeight.offset(facing, 7));
                         }
@@ -123,9 +123,9 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
 
                 addToProxyList(
                   new BlockPos(
-                                ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
-                                level.getDepth(),
-                                ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
+                    ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                    level.getDepth(),
+                    ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
                 return getProxy(target, citizen.getPosition(), distanceToPath);
 
                 //If he already is at ladder location, the closest node automatically will be his hut block.
@@ -151,9 +151,9 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                 //Then add the ladder position as the latest node.
                 addToProxyList(
                   new BlockPos(
-                                ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
-                                level.getDepth(),
-                                ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
+                    ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                    level.getDepth(),
+                    ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
 
                 if (building.getActiveNode() != null && building.getActiveNode().getParent() != null)
                 {
@@ -180,7 +180,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                 if (lastNode != null && lastNode.getStyle() == Node.NodeType.SHAFT)
                 {
                     final Direction facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(lastNode.getX(), 0, lastNode.getZ()));
-                    final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY+1, ladderPos.getZ());
+                    final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY + 1, ladderPos.getZ());
                     return new BlockPos(ladderHeight.offset(facing, 7));
                 }
 
@@ -256,5 +256,4 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
         }
         return true;
     }
-
 }

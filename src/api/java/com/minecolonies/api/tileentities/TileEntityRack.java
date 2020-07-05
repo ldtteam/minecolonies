@@ -53,9 +53,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     private final Map<ItemStorage, Integer> content = new HashMap<>();
 
     /**
-     * Size multiplier of the inventory.
-     * 0 = default value.
-     * 1 = 1*9 additional slots, and so on.
+     * Size multiplier of the inventory. 0 = default value. 1 = 1*9 additional slots, and so on.
      */
     private int size = 0;
 
@@ -167,6 +165,7 @@ public class TileEntityRack extends AbstractTileEntityRack
 
     /**
      * Gets the content of the Rack
+     *
      * @return the map of content.
      */
     public Map<ItemStorage, Integer> getAllContent() {return content;}

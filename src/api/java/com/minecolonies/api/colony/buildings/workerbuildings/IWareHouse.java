@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -47,4 +48,12 @@ public interface IWareHouse extends IBuilding
      */
     @Override
     AbstractTileEntityWareHouse getTileEntity();
+
+    /**
+     * Check if a container position belongs to the warehouse.
+     *
+     * @param inDimensionLocation the location.
+     * @return true if so.
+     */
+    boolean hasContainerPosition(BlockPos inDimensionLocation);
 }

@@ -5,10 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.BlockStateStorage;
-import com.minecolonies.api.util.Disease;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.item.*;
@@ -21,7 +18,6 @@ import net.minecraft.state.IntegerProperty;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -47,15 +43,14 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Map<BlockStateStorage, ItemStorage> leavesToSaplingMap = new HashMap<>();
 
     /**
-     * List of saplings.
-     * Works on client and server-side.
+     * List of saplings. Works on client and server-side.
      */
     private final List<ItemStorage> saplings = new ArrayList<>();
 
     /**
      * List of properties we're ignoring when comparing leaves.
      */
-    private final List<IProperty<?>> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO,TREE_DISTANCE);
+    private final List<IProperty<?>> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO, TREE_DISTANCE);
 
     /**
      * Properties for leaves we're ignoring upon comparing.
@@ -63,11 +58,10 @@ public class CompatibilityManager implements ICompatibilityManager
     private static final BooleanProperty checkDecay     = BooleanProperty.create("check_decay");
     private static final BooleanProperty decayable      = BooleanProperty.create("decayable");
     public static final  IntegerProperty DYN_PROP_HYDRO = IntegerProperty.create("hydro", 1, 4);
-    public static final  IntegerProperty TREE_DISTANCE = IntegerProperty.create("distance", 1, 7);
+    public static final  IntegerProperty TREE_DISTANCE  = IntegerProperty.create("distance", 1, 7);
 
     /**
-     * List of all ore-like blocks.
-     * Works on client and server-side.
+     * List of all ore-like blocks. Works on client and server-side.
      */
     private final Set<Block> oreBlocks = new HashSet<>();
 
@@ -235,7 +229,8 @@ public class CompatibilityManager implements ICompatibilityManager
             return false;
         }
 
-        if (itemStack.getItem().isFood() || (itemStack.getItem() instanceof BlockItem && (((BlockItem) itemStack.getItem()).getBlock() instanceof CropsBlock || ((BlockItem) itemStack.getItem()).getBlock() instanceof StemBlock)))
+        if (itemStack.getItem().isFood() || (itemStack.getItem() instanceof BlockItem && (((BlockItem) itemStack.getItem()).getBlock() instanceof CropsBlock
+                                                                                            || ((BlockItem) itemStack.getItem()).getBlock() instanceof StemBlock)))
         {
             return true;
         }
@@ -273,11 +268,24 @@ public class CompatibilityManager implements ICompatibilityManager
                 return true;
             }
 
-            for (final ResourceLocation tag : itemStack.getItem().getTags())
+            String[] split = string.split(":");
+            //todo, this is backwards compatibility, remove in 1.16
+            if (split.length == 1)
             {
-                if (tag.toString().contains(string))
+                final String[] newSplit = new String[2];
+
+                newSplit[1] = split[0];
+                newSplit[0] = "minecraft";
+                split = newSplit;
+            }
+            if (split.length == 2)
+            {
+                for (final ResourceLocation tag : itemStack.getItem().getTags())
                 {
-                    return true;
+                    if (tag.toString().contains(split[1]) && itemStack.getItem().getRegistryName().getNamespace().equals(split[0]))
+                    {
+                        return true;
+                    }
                 }
             }
         }
@@ -506,7 +514,8 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             ench = list.get(random.nextInt(list.size()));
         }
-        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())), ench.getB());
+        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())),
+          ench.getB());
     }
 
     //------------------------------- Private Utility Methods -------------------------------//

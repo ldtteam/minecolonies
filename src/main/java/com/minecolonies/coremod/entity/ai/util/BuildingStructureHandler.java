@@ -15,7 +15,9 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilde
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
@@ -66,34 +68,48 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
 
     /**
      * The minecolonies AI specific creative structure placer.
-     * @param world the world.
-     * @param worldPos the pos it is placed at.
-     * @param structureName the name of the structure.
-     * @param settings the placement settings.
+     *
+     * @param world             the world.
+     * @param worldPos          the pos it is placed at.
+     * @param structureName     the name of the structure.
+     * @param settings          the placement settings.
      * @param entityAIStructure the AI handling this structure.
      */
-    public BuildingStructureHandler(final World world, final BlockPos worldPos, final String structureName, final PlacementSettings settings, final AbstractEntityAIStructure<J, B> entityAIStructure, final Stage[] stages)
+    public BuildingStructureHandler(
+      final World world,
+      final BlockPos worldPos,
+      final String structureName,
+      final PlacementSettings settings,
+      final AbstractEntityAIStructure<J, B> entityAIStructure,
+      final Stage[] stages)
     {
         super(world, worldPos, structureName, settings);
         setupBuilding();
-        this.structureAI= entityAIStructure;
+        this.structureAI = entityAIStructure;
         this.stages = stages;
         this.stage = 0;
     }
 
     /**
      * The minecolonies AI specific creative structure placer.
-     * @param world the world.
-     * @param worldPos the pos it is placed at.
-     * @param blueprint the blueprint.
-     * @param settings the placement settings.
+     *
+     * @param world             the world.
+     * @param worldPos          the pos it is placed at.
+     * @param blueprint         the blueprint.
+     * @param settings          the placement settings.
      * @param entityAIStructure the AI handling this structure.
      */
-    public BuildingStructureHandler(final World world, final BlockPos worldPos, final Blueprint blueprint, final PlacementSettings settings, final AbstractEntityAIStructure<J, B> entityAIStructure, final Stage[] stages)
+    public BuildingStructureHandler(
+      final World world,
+      final BlockPos worldPos,
+      final Blueprint blueprint,
+      final PlacementSettings settings,
+      final AbstractEntityAIStructure<J, B> entityAIStructure,
+      final Stage[] stages)
     {
         super(world, worldPos, blueprint, settings);
         setupBuilding();
-        this.structureAI= entityAIStructure;
+        this.structureAI = entityAIStructure;
         this.stages = stages;
         this.stage = 0;
     }
@@ -135,6 +151,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
 
     /**
      * Set the current stage from memory.
+     *
      * @param stage the stage to set.
      */
     public void setStage(final Stage stage)
@@ -245,7 +262,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     public boolean isStackFree(@Nullable final ItemStack itemStack)
     {
         return itemStack == null
-                 ||itemStack.isEmpty()
+                 || itemStack.isEmpty()
                  || itemStack.getItem().isIn(ItemTags.LEAVES)
                  || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
     }

@@ -100,8 +100,7 @@ public class BakingProduct
     }
 
     /**
-     * Increase the baking progress.
-     * If reached finish line, this will make the product reach the next state.
+     * Increase the baking progress. If reached finish line, this will make the product reach the next state.
      */
     public void increaseBakingProgress()
     {

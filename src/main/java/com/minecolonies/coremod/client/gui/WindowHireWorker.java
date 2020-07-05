@@ -78,6 +78,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
 
     /**
      * Canceled clicked to exit the GUI.
+     *
      * @param button the clicked button.
      */
     private void cancelClicked(@NotNull final Button button)
@@ -90,6 +91,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
 
     /**
      * Hiring mode switch clicked.
+     *
      * @param button the clicked button.
      */
     private void modeClicked(@NotNull final Button button)
@@ -127,6 +129,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
 
     /**
      * Restart citizen clicked to restart its AI.
+     *
      * @param button the clicked button.
      */
     private void restartClicked(@NotNull final Button button)
@@ -140,6 +143,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
 
     /**
      * Pause citizen clicked to pause the citizen.
+     *
      * @param button the clicked button.
      */
     private void pauseClicked(@NotNull final Button button)
@@ -154,6 +158,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
 
     /**
      * Fire citizen clicked to fire a citizen.
+     *
      * @param button the clicked button.
      */
     private void fireClicked(@NotNull final Button button)
@@ -170,6 +175,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
 
     /**
      * Done clicked to persist the changes.
+     *
      * @param button the clicked button.
      */
     private void doneClicked(@NotNull final Button button)
@@ -200,8 +206,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     }
 
     /**
-     * Called when the GUI has been opened.
-     * Will fill the fields and lists.
+     * Called when the GUI has been opened. Will fill the fields and lists.
      */
     @Override
     public void onOpened()
@@ -281,7 +286,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 {
                     final Map.Entry<Skill, Tuple<Integer, Double>> entry = list.get(i);
                     @NotNull final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
-                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US) , entry.getValue().getA()));
+                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US), entry.getValue().getA()));
                     attributes.append(text).append(intermString);
                 }
                 attributes.delete(attributes.length() - intermString.length(), attributes.length());
@@ -291,12 +296,13 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 {
                     final Map.Entry<Skill, Tuple<Integer, Double>> entry = list.get(i);
                     @NotNull final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
-                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US) , entry.getValue().getA()));
+                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US), entry.getValue().getA()));
                     attributes2.append(text).append(intermString);
                 }
                 attributes2.delete(attributes2.length() - intermString.length(), attributes2.length());
 
-                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText((citizen.getJob().isEmpty() ? "" : LanguageHandler.format(citizen.getJob()) + ": ") + citizen.getName());
+                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class)
+                  .setLabelText((citizen.getJob().isEmpty() ? "" : LanguageHandler.format(citizen.getJob()) + ": ") + citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes.toString());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL2, Label.class).setLabelText(attributes2.toString());
             }
@@ -310,9 +316,10 @@ public class WindowHireWorker extends AbstractWindowSkeleton
 
     /**
      * Create the color scheme.
-     * @param primary the primary skill.
+     *
+     * @param primary   the primary skill.
      * @param secondary the secondary skill.
-     * @param current the current skill to compare.
+     * @param current   the current skill to compare.
      * @return the modifier string.
      */
     protected String createColor(final Skill primary, final Skill secondary, final Skill current)

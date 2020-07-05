@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
@@ -13,7 +14,6 @@ import net.minecraft.block.AirBlock;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +32,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     /**
      * Return to chest after this amount of stacks.
      */
-    private static final int    MAX_BLOCKS_MINED    = 64;
+    private static final int MAX_BLOCKS_MINED = 64;
 
     /**
      * The quantity to request.
@@ -61,6 +61,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
     /**
      * Plant something for the current state.
+     *
      * @return the next state to go to.
      */
     private IAIState plant()
@@ -92,6 +93,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
     /**
      * Farm some of the plants.
+     *
      * @return next state to go to.
      */
     private IAIState farm()
@@ -198,6 +200,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
     /**
      * Async request for paper to the colony.
+     *
      * @param current the current plantable.
      */
     private void requestPlantable(final Item current)
@@ -211,13 +214,14 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
     /**
      * Check if the plant at pos it at least three high.
+     *
      * @param pos the pos to check
      * @return true if so.
      */
     private boolean isAtLeastThreeHigh(final BlockPos pos)
     {
         return !(world.getBlockState(pos.up(1)).getBlock() instanceof AirBlock)
-        && !(world.getBlockState(pos.up(2)).getBlock() instanceof AirBlock)
-        && !(world.getBlockState(pos.up(3)).getBlock() instanceof AirBlock);
+                 && !(world.getBlockState(pos.up(2)).getBlock() instanceof AirBlock)
+                 && !(world.getBlockState(pos.up(3)).getBlock() instanceof AirBlock);
     }
 }

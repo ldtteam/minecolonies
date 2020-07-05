@@ -152,7 +152,7 @@ public class EntityAIEatTask extends Goal
 
         final ICitizenData citizenData = citizen.getCitizenData();
         if (citizenData == null || citizen.getCitizenData().getSaturation() >= HIGH_SATURATION || (!citizen.isOkayToEat()
-                                                                                                                      && citizen.getCitizenData().getSaturation() > 0))
+                                                                                                     && citizen.getCitizenData().getSaturation() > 0))
         {
             return false;
         }
@@ -216,8 +216,9 @@ public class EntityAIEatTask extends Goal
 
     /**
      * Check if a citizen can eat something.
+     *
      * @param citizenData the citizen to check.
-     * @param stack the stack to check.
+     * @param stack       the stack to check.
      * @return true if so.
      */
     private boolean canEat(final ICitizenData citizenData, final ItemStack stack)
@@ -249,13 +250,13 @@ public class EntityAIEatTask extends Goal
         citizen.swingArm(Hand.MAIN_HAND);
         citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
         Network.getNetwork()
-              .sendToTrackingEntity(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(),
-                citizen.posX,
-                citizen.posY,
-                citizen.posZ,
-                citizen.rotationPitch,
-                citizen.rotationYaw,
-                citizen.getEyeHeight()), citizen);
+          .sendToTrackingEntity(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(),
+            citizen.posX,
+            citizen.posY,
+            citizen.posZ,
+            citizen.rotationPitch,
+            citizen.rotationYaw,
+            citizen.getEyeHeight()), citizen);
 
         waitingTicks++;
         if (waitingTicks < REQUIRED_TIME_TO_EAT)
@@ -267,7 +268,8 @@ public class EntityAIEatTask extends Goal
         final Food itemFood = stack.getItem().getFood();
 
         double satIncrease = itemFood.getHealing();
-        final AdditionModifierResearchEffect satLimitDecrease = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SATURATION, AdditionModifierResearchEffect.class);
+        final AdditionModifierResearchEffect satLimitDecrease =
+          citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SATURATION, AdditionModifierResearchEffect.class);
         if (satLimitDecrease != null)
         {
             satIncrease *= (1.0 + satLimitDecrease.getEffect());
@@ -277,7 +279,7 @@ public class EntityAIEatTask extends Goal
         citizenData.getInventory().extractItem(foodSlot, 1, false);
 
         IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
-        if (citizenColony != null )
+        if (citizenColony != null)
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, stack));
         }
@@ -357,8 +359,7 @@ public class EntityAIEatTask extends Goal
     }
 
     /**
-     * Wander around the placeToPath a bit while waiting for the cook to deliver food.
-     * After waiting for a certain time, get the food yourself.
+     * Wander around the placeToPath a bit while waiting for the cook to deliver food. After waiting for a certain time, get the food yourself.
      *
      * @param citizenData the citizen to check.
      * @return the next state to go to.

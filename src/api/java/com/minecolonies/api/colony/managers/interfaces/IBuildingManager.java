@@ -76,8 +76,7 @@ public interface IBuildingManager
     IBuilding getBuilding(BlockPos pos);
 
     /**
-     * Returns a map with all buildings within the colony.
-     * Key is ID (Coordinates), value is building object.
+     * Returns a map with all buildings within the colony. Key is ID (Coordinates), value is building object.
      *
      * @return Map with ID (coordinates) as key, and buildings as value.
      */
@@ -106,8 +105,7 @@ public interface IBuildingManager
     boolean hasTownHall();
 
     /**
-     * Get building in Colony by ID. The building will be casted to the provided
-     * type.
+     * Get building in Colony by ID. The building will be casted to the provided type.
      *
      * @param buildingId ID (coordinates) of the building to get.
      * @param type       Type of building.

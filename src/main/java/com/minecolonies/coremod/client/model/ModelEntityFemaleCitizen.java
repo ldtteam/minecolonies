@@ -17,7 +17,7 @@ public class ModelEntityFemaleCitizen extends CitizenModel<AbstractEntityCitizen
         final ModelRenderer dressPart1;
         final ModelRenderer dressPart2;
         final ModelRenderer dressPart3;
-        
+
         bipedHead = new ModelRenderer(this, 0, 0);
         bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8);
         bipedHead.setRotationPoint(0F, 0F, 1F);

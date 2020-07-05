@@ -59,8 +59,7 @@ public interface IBuildingContainer extends ICitizenAssignable, ICapabilityProvi
     List<BlockPos> getAdditionalCountainers();
 
     /**
-     * Register a blockState and position.
-     * We suppress this warning since this parameter will be used in child classes which override this method.
+     * Register a blockState and position. We suppress this warning since this parameter will be used in child classes which override this method.
      *
      * @param blockState to be registered
      * @param pos        of the blockState
@@ -69,8 +68,7 @@ public interface IBuildingContainer extends ICitizenAssignable, ICapabilityProvi
     void registerBlockPosition(@NotNull BlockState blockState, @NotNull BlockPos pos, @NotNull World world);
 
     /**
-     * Register a block and position.
-     * We suppress this warning since this parameter will be used in child classes which override this method.
+     * Register a block and position. We suppress this warning since this parameter will be used in child classes which override this method.
      *
      * @param block to be registered
      * @param pos   of the block

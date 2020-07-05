@@ -185,9 +185,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     }
 
     /**
-     * Action when a hire button is clicked.
-     * If there is no worker (worker.Id == 0) then Contract someone.
-     * Else then Fire the current worker.
+     * Action when a hire button is clicked. If there is no worker (worker.Id == 0) then Contract someone. Else then Fire the current worker.
      *
      * @param button the clicked button.
      */

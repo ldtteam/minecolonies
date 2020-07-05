@@ -118,11 +118,16 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
 
     /**
      * Getter for all allowed fuel from the building.
+     *
      * @return the list of itemStacks.
      */
     public List<ItemStack> getAllowedFuel()
     {
-        return getCopyOfAllowedItems().containsKey(FUEL_LIST) ? getCopyOfAllowedItems().get(FUEL_LIST).stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList()) : Collections.emptyList();
+        return getCopyOfAllowedItems().containsKey(FUEL_LIST) ? getCopyOfAllowedItems().get(FUEL_LIST)
+                                                                  .stream()
+                                                                  .map(ItemStorage::getItemStack)
+                                                                  .peek(stack -> stack.setCount(stack.getMaxStackSize()))
+                                                                  .collect(Collectors.toList()) : Collections.emptyList();
     }
 
     /**

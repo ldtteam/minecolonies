@@ -127,30 +127,25 @@ public interface IColonyView extends IColony
     ITownHallView getTownHall();
 
     /**
-     * Get a AbstractBuilding.View for a given building (by coordinate-id) using
-     * raw x,y,z.
+     * Get a AbstractBuilding.View for a given building (by coordinate-id) using raw x,y,z.
      *
      * @param x x-coordinate.
      * @param y y-coordinate.
      * @param z z-coordinate.
-     * @return {@link IBuildingView} of a AbstractBuilding for the given
-     * Coordinates/ID, or null.
+     * @return {@link IBuildingView} of a AbstractBuilding for the given Coordinates/ID, or null.
      */
     IBuildingView getBuilding(int x, int y, int z);
 
     /**
-     * Get a AbstractBuilding.View for a given building (by coordinate-id) using
-     * ChunkCoordinates.
+     * Get a AbstractBuilding.View for a given building (by coordinate-id) using ChunkCoordinates.
      *
      * @param buildingId Coordinates/ID of the AbstractBuilding.
-     * @return {@link IBuildingView} of a AbstractBuilding for the given
-     * Coordinates/ID, or null.
+     * @return {@link IBuildingView} of a AbstractBuilding for the given Coordinates/ID, or null.
      */
     IBuildingView getBuilding(BlockPos buildingId);
 
     /**
-     * Returns a map of players in the colony. Key is the UUID, value is {@link
-     * Player}
+     * Returns a map of players in the colony. Key is the UUID, value is {@link Player}
      *
      * @return Map of UUID's and {@link Player}
      */
@@ -158,8 +153,7 @@ public interface IColonyView extends IColony
     Map<UUID, Player> getPlayers();
 
     /**
-     * Sets a specific permission to a rank. If the permission wasn't already
-     * set, it sends a message to the server.
+     * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server.
      *
      * @param rank   Rank to get the permission.
      * @param action Permission to get.
@@ -167,8 +161,7 @@ public interface IColonyView extends IColony
     void setPermission(Rank rank, @NotNull Action action);
 
     /**
-     * removes a specific permission to a rank. If the permission was set, it
-     * sends a message to the server.
+     * removes a specific permission to a rank. If the permission was set, it sends a message to the server.
      *
      * @param rank   Rank to remove permission from.
      * @param action Action to remove permission of.
@@ -240,9 +233,7 @@ public interface IColonyView extends IColony
     IMessage handlePermissionsViewMessage(@NotNull PacketBuffer buf);
 
     /**
-     * Update a ColonyView's workOrders given a network data ColonyView update
-     * packet. This uses a full-replacement - workOrders do not get updated and
-     * are instead overwritten.
+     * Update a ColonyView's workOrders given a network data ColonyView update packet. This uses a full-replacement - workOrders do not get updated and are instead overwritten.
      *
      * @param buf Network data.
      * @return null == no response.
@@ -251,9 +242,7 @@ public interface IColonyView extends IColony
     IMessage handleColonyViewWorkOrderMessage(PacketBuffer buf);
 
     /**
-     * Update a ColonyView's citizens given a network data ColonyView update
-     * packet. This uses a full-replacement - citizens do not get updated and
-     * are instead overwritten.
+     * Update a ColonyView's citizens given a network data ColonyView update packet. This uses a full-replacement - citizens do not get updated and are instead overwritten.
      *
      * @param id  ID of the citizen.
      * @param buf Network data.
@@ -290,9 +279,7 @@ public interface IColonyView extends IColony
     IMessage handleColonyViewRemoveWorkOrderMessage(int workOrderId);
 
     /**
-     * Update a ColonyView's buildings given a network data ColonyView update
-     * packet. This uses a full-replacement - buildings do not get updated and
-     * are instead overwritten.
+     * Update a ColonyView's buildings given a network data ColonyView update packet. This uses a full-replacement - buildings do not get updated and are instead overwritten.
      *
      * @param buildingId location of the building.
      * @param buf        buffer containing ColonyBuilding information.

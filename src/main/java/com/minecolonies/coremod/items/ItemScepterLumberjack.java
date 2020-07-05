@@ -27,12 +27,13 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 public class ItemScepterLumberjack extends AbstractItemMinecolonies
 {
     private static final String NBT_START_POS = Constants.MOD_ID + ":" + "start_pos";
-    private static final String NBT_END_POS = Constants.MOD_ID + ":" + "end_pos";
+    private static final String NBT_END_POS   = Constants.MOD_ID + ":" + "end_pos";
 
     private boolean hasSetFirstPosition = false;
 
     /**
      * LumberjackScepter constructor. Sets max stack to 1, like other tools.
+     *
      * @param properties the properties.
      */
     public ItemScepterLumberjack(final Properties properties)
@@ -59,7 +60,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
         if (!hasSetFirstPosition)
         {
             LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterlumberjack.usedstart");
-            setPosition(compound, NBT_START_POS,  useContext.getPos());
+            setPosition(compound, NBT_START_POS, useContext.getPos());
         }
         else
         {

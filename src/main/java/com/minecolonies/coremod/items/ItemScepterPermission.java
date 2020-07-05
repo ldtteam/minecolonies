@@ -43,10 +43,8 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     /**
      * constructor.
      * <p>
-     * - set the name
-     * - set max damage value
-     * - set creative tab
-     * - set max stack size
+     * - set the name - set max damage value - set creative tab - set max stack size
+     *
      * @param properties the properties.
      */
     public ItemScepterPermission(final Item.Properties properties)

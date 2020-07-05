@@ -39,15 +39,15 @@ public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
     /**
      * Id to identify the list of the citizen in the view.
      */
-    private static final String LIST_CITIZEN = "assignedCitizen";
+    private static final String            LIST_CITIZEN = "assignedCitizen";
     /**
      * The building the view is relates to.
      */
-    private final BuildingHome.View home;
+    private final        BuildingHome.View home;
     /**
      * The list of citizen assigned to this hut.
      */
-    private ScrollingList citizen;
+    private              ScrollingList     citizen;
 
     /**
      * Creates the Window object.

@@ -32,8 +32,7 @@ public interface IWorkManager
      * @param id   the id of the work order.
      * @param type the class of the expected type of the work order.
      * @param <W>  the type of work order to return.
-     * @return the work order of the specified id, or null if it was not found
-     * or is of an incompatible type.
+     * @return the work order of the specified id, or null if it was not found or is of an incompatible type.
      */
     @Nullable
     <W extends IWorkOrder> W getWorkOrder(int id, @NotNull Class<W> type);
@@ -51,8 +50,7 @@ public interface IWorkManager
      *
      * @param type the class of the type of work order to find.
      * @param <W>  the type of work order to return.
-     * @return an unclaimed work order of the given type, or null if no
-     * unclaimed work order of the type was found.
+     * @return an unclaimed work order of the given type, or null if no unclaimed work order of the type was found.
      */
     @Nullable
     <W extends IWorkOrder> W getUnassignedWorkOrder(@NotNull Class<W> type);
@@ -75,8 +73,7 @@ public interface IWorkManager
     Map<Integer, IWorkOrder> getWorkOrders();
 
     /**
-     * When a citizen is removed, unclaim any Work Orders that were claimed by
-     * that citizen.
+     * When a citizen is removed, unclaim any Work Orders that were claimed by that citizen.
      *
      * @param citizen Citizen to unclaim work for.
      */
@@ -105,8 +102,7 @@ public interface IWorkManager
     void addWorkOrder(@NotNull IWorkOrder order, boolean readingFromNbt);
 
     /**
-     * Process updates on the Colony Tick.
-     * Currently, does periodic Work Order cleanup.
+     * Process updates on the Colony Tick. Currently, does periodic Work Order cleanup.
      *
      * @param colony colony which ticks.
      */
@@ -115,9 +111,9 @@ public interface IWorkManager
     /**
      * Get an ordered list by priority of the work orders.
      *
-     * @param type the type of workOrder which is required.
+     * @param type    the type of workOrder which is required.
      * @param builder the builder wanting to claim it.
-     * @param <W> the type.
+     * @param <W>     the type.
      * @return the list.
      */
     <W extends IWorkOrder> List<W> getOrderedList(@NotNull Class<W> type, BlockPos builder);

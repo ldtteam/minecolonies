@@ -152,7 +152,6 @@ public class CitizenManager implements ICitizenManager
                 Log.getLogger().error("A citizen spent his life without joining the colony team, and now died.");
             }
             citizens.get(citizen.getCitizenId()).setCitizenEntity(null);
-
         }
     }
 
@@ -451,6 +450,7 @@ public class CitizenManager implements ICitizenManager
 
     /**
      * Get the max citizens based on the research.
+     *
      * @return the max.
      */
     private double maxCitizensFromResearch()

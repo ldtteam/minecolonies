@@ -28,13 +28,8 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_BREAK_SPEED;
 
 /**
- * This is the base class of all worker AIs.
- * Every AI implements this class with it's job type.
- * There are some utilities within the class:
- * - The AI will clear a full inventory at the building chest.
- * - The AI will animate mining a block (with delay)
- * - The AI will request items and tools automatically
- * (and collect them from the building chest)
+ * This is the base class of all worker AIs. Every AI implements this class with it's job type. There are some utilities within the class: - The AI will clear a full inventory at
+ * the building chest. - The AI will animate mining a block (with delay) - The AI will request items and tools automatically (and collect them from the building chest)
  *
  * @param <J> the job type this AI has to do.
  */
@@ -81,8 +76,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     private int stillTicks = 0;
 
     /**
-     * Used to store the path index
-     * to check if the worker is still walking.
+     * Used to store the path index to check if the worker is still walking.
      */
     private int previousIndex = 0;
 
@@ -93,8 +87,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     private List<BlockPos> items;
 
     /**
-     * Creates the abstract part of the AI.
-     * Always use this constructor!
+     * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill
      */
@@ -107,11 +100,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     }
 
     /**
-     * Will simulate mining a block with particles ItemDrop etc.
-     * Attention:
-     * Because it simulates delay, it has to be called 2 times.
-     * So make sure the code path up to this function is reachable a second time.
-     * And make sure to immediately exit the update function when this returns false.
+     * Will simulate mining a block with particles ItemDrop etc. Attention: Because it simulates delay, it has to be called 2 times. So make sure the code path up to this function
+     * is reachable a second time. And make sure to immediately exit the update function when this returns false.
      *
      * @param blockToMine the block that should be mined
      * @return true once we're done
@@ -122,11 +112,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     }
 
     /**
-     * Will simulate mining a block with particles ItemDrop etc.
-     * Attention:
-     * Because it simulates delay, it has to be called 2 times.
-     * So make sure the code path up to this function is reachable a second time.
-     * And make sure to immediately exit the update function when this returns false.
+     * Will simulate mining a block with particles ItemDrop etc. Attention: Because it simulates delay, it has to be called 2 times. So make sure the code path up to this function
+     * is reachable a second time. And make sure to immediately exit the update function when this returns false.
      *
      * @param blockToMine the block that should be mined
      * @param safeStand   the block we want to stand on to do that
@@ -138,11 +125,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     }
 
     /**
-     * Will simulate mining a block with particles ItemDrop etc.
-     * Attention:
-     * Because it simulates delay, it has to be called 2 times.
-     * So make sure the code path up to this function is reachable a second time.
-     * And make sure to immediately exit the update function when this returns false.
+     * Will simulate mining a block with particles ItemDrop etc. Attention: Because it simulates delay, it has to be called 2 times. So make sure the code path up to this function
+     * is reachable a second time. And make sure to immediately exit the update function when this returns false.
      *
      * @param blockToMine      the block that should be mined
      * @param safeStand        the block we want to stand on to do that
@@ -235,8 +219,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     }
 
     /**
-     * Potentially increase the blockdrops.
-     * To be overriden by the worker.
+     * Potentially increase the blockdrops. To be overriden by the worker.
+     *
      * @param drops the drops.
      * @return the list of additional drops.
      */
@@ -247,6 +231,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
 
     /**
      * Trigger for miners if they want to do something specific per mined block.
+     *
      * @param blockToMine the mined block.
      */
     protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
@@ -294,25 +279,33 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
 
-        return MineColonies.getConfig().getCommon().pvp_mode.get() ? MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() / 2 : calculateWorkerMiningDelay(block, pos);
+        return MineColonies.getConfig().getCommon().pvp_mode.get()
+                 ? MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() / 2
+                 : calculateWorkerMiningDelay(block, pos);
     }
 
     /**
      * Calculate the worker mining delay for a block at a pos.
+     *
      * @param block the block.
-     * @param pos the pos.
+     * @param pos   the pos.
      * @return the mining delay of the worker.
      */
     private int calculateWorkerMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         double reduction = 1;
-        final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_BREAK_SPEED, MultiplierModifierResearchEffect.class);
+        final MultiplierModifierResearchEffect effect =
+          worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_BREAK_SPEED, MultiplierModifierResearchEffect.class);
         if (effect != null)
         {
             reduction = 1 - effect.getEffect();
         }
 
-        return (int) (((MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() * Math.pow(LEVEL_MODIFIER, worker.getCitizenData().getJobModifier())) * (double) world.getBlockState(pos).getBlockHardness(world, pos) / (double) (worker.getHeldItemMainhand().getItem().getDestroySpeed(worker.getHeldItemMainhand(), block.getDefaultState()))) * reduction);
+        return (int) (((MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() * Math.pow(LEVEL_MODIFIER, worker.getCitizenData().getJobModifier()))
+                         * (double) world.getBlockState(pos).getBlockHardness(world, pos) / (double) (worker.getHeldItemMainhand()
+                                                                                                        .getItem()
+                                                                                                        .getDestroySpeed(worker.getHeldItemMainhand(), block.getDefaultState())))
+                        * reduction);
     }
 
     /**
@@ -326,8 +319,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     }
 
     /**
-     * Search for all items around the worker.
-     * and store them in the items list.
+     * Search for all items around the worker. and store them in the items list.
      *
      * @param boundingBox the area to search.
      */

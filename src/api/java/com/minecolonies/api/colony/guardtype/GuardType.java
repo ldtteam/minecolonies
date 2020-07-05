@@ -45,12 +45,13 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
 
     /**
      * Constructor to create the type.
-     * @param guardJobProducer the producer.
-     * @param jobTranslationKey job translation key.
+     *
+     * @param guardJobProducer     the producer.
+     * @param jobTranslationKey    job translation key.
      * @param buttonTranslationKey button translation ky.
-     * @param primarySkill primary skill.
-     * @param secondarySkill secondary skill.
-     * @param workerSoundName worker sound name.
+     * @param primarySkill         primary skill.
+     * @param secondarySkill       secondary skill.
+     * @param workerSoundName      worker sound name.
      */
     public GuardType(
       final Function<ICitizenData, IJob<?>> guardJobProducer,
@@ -69,6 +70,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
 
     /**
      * Getter for the job producer.
+     *
      * @return the producer.
      */
     public Function<ICitizenData, IJob<?>> getGuardJobProducer()
@@ -78,6 +80,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
 
     /**
      * Getter for the job translation key.
+     *
      * @return the key.
      */
     public String getJobTranslationKey()
@@ -87,6 +90,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
 
     /**
      * Getter for the button translation key.
+     *
      * @return the key.
      */
     public String getButtonTranslationKey()
@@ -96,6 +100,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
 
     /**
      * Getter for the primary key.
+     *
      * @return the skill.
      */
     public Skill getPrimarySkill()
@@ -105,6 +110,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
 
     /**
      * Getter for the secondary skill.
+     *
      * @return the skill.
      */
     public Skill getSecondarySkill()
@@ -114,6 +120,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
 
     /**
      * Getter for the worker sound name.
+     *
      * @return the sound name.
      */
     public String getWorkerSoundName()

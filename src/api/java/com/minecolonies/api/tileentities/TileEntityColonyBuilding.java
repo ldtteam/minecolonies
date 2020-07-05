@@ -106,6 +106,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
     /**
      * Alternative overriden constructor.
+     *
      * @param type the entity type.
      */
     public TileEntityColonyBuilding(final TileEntityType<? extends AbstractTileEntityColonyBuilding> type)
@@ -457,7 +458,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                                        .map(world::getTileEntity)
                                        .collect(Collectors.toSet()));
                     providers.removeIf(Objects::isNull);
-                    building.getAdditionalCountainers().stream().map(world::getTileEntity).filter(entity -> entity instanceof TileEntityRack).forEach(entity -> ((TileEntityRack) entity).setBuildingPos(this.pos));
+                    building.getAdditionalCountainers()
+                      .stream()
+                      .map(world::getTileEntity)
+                      .filter(entity -> entity instanceof TileEntityRack)
+                      .forEach(entity -> ((TileEntityRack) entity).setBuildingPos(this.pos));
                 }
 
                 final List<IItemHandler> handlers = providers.stream()

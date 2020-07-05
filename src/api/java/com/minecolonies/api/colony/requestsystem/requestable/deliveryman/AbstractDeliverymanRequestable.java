@@ -27,11 +27,9 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
     }
 
     /**
-     * Scales the priority to the desired internal value.
-     * This is used so that the actual priorities are not just 1-10, but i.e. 1-100 (x^2)
-     * This will effectively make the aging-algorithm, which always increments by 1, slower.
-     * The function can be anything - a linear scaler, quadratic, exponential, whatever.
-     * Adapt over time to find the best solution.
+     * Scales the priority to the desired internal value. This is used so that the actual priorities are not just 1-10, but i.e. 1-100 (x^2) This will effectively make the
+     * aging-algorithm, which always increments by 1, slower. The function can be anything - a linear scaler, quadratic, exponential, whatever. Adapt over time to find the best
+     * solution.
      */
     public static int scaledPriority(final int priority)
     {
@@ -42,8 +40,7 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
     }
 
     /**
-     * Gets the maximum priority allowed to be set in the building GUI.
-     * This is the "normal" setting available to players.
+     * Gets the maximum priority allowed to be set in the building GUI. This is the "normal" setting available to players.
      *
      * @param returnScaled true if the value should be returned scaled
      * @return the scaled/unscaled priority
@@ -54,8 +51,7 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
     }
 
     /**
-     * Gets the priority given to deliveries.
-     * This affects follow-up deliveries from crafters, and deliveries from the warehouse.
+     * Gets the priority given to deliveries. This affects follow-up deliveries from crafters, and deliveries from the warehouse.
      *
      * @param returnScaled true if the value should be returned scaled
      * @return the scaled/unscaled priority
@@ -66,8 +62,7 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
     }
 
     /**
-     * Gets the maximum priority the aging mechanism can assign.
-     * After that, priorities can not naturally increase.
+     * Gets the maximum priority the aging mechanism can assign. After that, priorities can not naturally increase.
      *
      * @param returnScaled true if the value should be returned scaled
      * @return the scaled/unscaled priority
@@ -78,8 +73,7 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
     }
 
     /**
-     * Gets the priority given to the Request-Pickup-Now-feature
-     * TODO: Eventually, this should also affect the Postbox.
+     * Gets the priority given to the Request-Pickup-Now-feature TODO: Eventually, this should also affect the Postbox.
      *
      * @param returnScaled true if the value should be returned scaled
      * @return the scaled/unscaled priority

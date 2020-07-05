@@ -22,7 +22,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
 {
     @NotNull
     private final HashMap<String, Consumer<Button>> buttons;
-    
+
     /**
      * Panes used by the generic page handler
      */
@@ -79,8 +79,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
     }
 
     /**
-     * Handle a button clicked event.
-     * Find the registered event and execute that.
+     * Handle a button clicked event. Find the registered event and execute that.
      * <p>
      * todo: make final once migration is complete
      *
@@ -120,7 +119,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
 
     /**
      * Generic page handler, uses common ids
-     * 
+     *
      * @param button Button pressed in a GUI
      */
     public void setPage(@NotNull final String button)

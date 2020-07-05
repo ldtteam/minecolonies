@@ -77,6 +77,7 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
     }
     /**
      * The public constructor for the renderer.
+     *
      * @param dispatcher the render dispatcher.
      */
     public TileEntityScarecrowRenderer(final TileEntityRendererDispatcher dispatcher)
@@ -86,7 +87,13 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
     }
 
     @Override
-    public void render(final AbstractScarescrowTileEntity te, final float partialTicks, final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer iRenderTypeBuffer, final int lightA, final int lightB)
+    public void render(
+      final AbstractScarescrowTileEntity te,
+      final float partialTicks,
+      final MatrixStack matrixStack,
+      @NotNull final IRenderTypeBuffer iRenderTypeBuffer,
+      final int lightA,
+      final int lightB)
     {
         //Store the transformation
         matrixStack.push();

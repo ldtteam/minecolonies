@@ -24,7 +24,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     /**
      * Required avoidDistance.
      */
-    protected final int avoidDistance;
+    protected final int      avoidDistance;
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -34,9 +34,15 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * @param avoid         location to avoid.
      * @param avoidDistance how far to move away.
      * @param range         max range to search.
-     * @param entity the entity.
+     * @param entity        the entity.
      */
-    public PathJobMoveAwayFromLocation(final World world, @NotNull final BlockPos start, @NotNull final BlockPos avoid, final int avoidDistance, final int range, final LivingEntity entity)
+    public PathJobMoveAwayFromLocation(
+      final World world,
+      @NotNull final BlockPos start,
+      @NotNull final BlockPos avoid,
+      final int avoidDistance,
+      final int range,
+      final LivingEntity entity)
     {
         super(world, start, avoid, range, entity);
 
@@ -75,8 +81,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     }
 
     /**
-     * Checks if the destination has been reached.
-     * Meaning that the avoid distance has been reached.
+     * Checks if the destination has been reached. Meaning that the avoid distance has been reached.
      *
      * @param n Node to test.
      * @return true if so.

@@ -19,15 +19,16 @@ public class StandardInteractionResponseHandler extends ServerCitizenInteraction
 {
     @SuppressWarnings("unchecked")
     private static final Tuple<ITextComponent, ITextComponent>[] tuples = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
 
     /**
      * The server interaction response handler with custom validator.
-     * @param inquiry the client inquiry.
+     *
+     * @param inquiry   the client inquiry.
      * @param validator the id of the validator.
-     * @param priority the interaction priority.
+     * @param priority  the interaction priority.
      */
     public StandardInteractionResponseHandler(
       final ITextComponent inquiry,
@@ -39,7 +40,8 @@ public class StandardInteractionResponseHandler extends ServerCitizenInteraction
 
     /**
      * The server interaction response handler.
-     * @param inquiry the client inquiry.
+     *
+     * @param inquiry  the client inquiry.
      * @param priority the interaction priority.
      */
     public StandardInteractionResponseHandler(
@@ -51,6 +53,7 @@ public class StandardInteractionResponseHandler extends ServerCitizenInteraction
 
     /**
      * Way to load the response handler for a citizen.
+     *
      * @param data the citizen owning this handler.
      */
     public StandardInteractionResponseHandler(final ICitizen data)

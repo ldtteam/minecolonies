@@ -85,7 +85,8 @@ public final class ChunkDataHelper
                         for (final int colony : closeCap.getAllCloseColonies())
                         {
                             if (colony != 0 && (cap.getColony(colony) == null
-                                                  ||  BlockPosUtil.getDistance2D(cap.getColony(colony).getCenter(), new BlockPos(chunk.getPos().x * BLOCKS_PER_CHUNK, 0, chunk.getPos().z * BLOCKS_PER_CHUNK)) > DISTANCE_TO_DELETE))
+                                                  || BlockPosUtil.getDistance2D(cap.getColony(colony).getCenter(),
+                              new BlockPos(chunk.getPos().x * BLOCKS_PER_CHUNK, 0, chunk.getPos().z * BLOCKS_PER_CHUNK)) > DISTANCE_TO_DELETE))
                             {
                                 Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.getPos().x * BLOCKS_PER_CHUNK + " 100 " + chunk.getPos().z * BLOCKS_PER_CHUNK);
                                 closeCap.removeColony(colony, chunk);
@@ -117,6 +118,7 @@ public final class ChunkDataHelper
 
     /**
      * Called when a chunk is unloaded
+     *
      * @param world the world it is unloading in.
      * @param chunk the chunk that is unloading.
      */
@@ -195,10 +197,10 @@ public final class ChunkDataHelper
     /**
      * Notify all chunks in the range of the colony about the colony.
      *
-     * @param world the world.
-     * @param add if add or remove.
-     * @param id the colony id.
-     * @param center the center chunk.
+     * @param world     the world.
+     * @param add       if add or remove.
+     * @param id        the colony id.
+     * @param center    the center chunk.
      * @param dimension the dimension.
      */
     public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
@@ -211,13 +213,13 @@ public final class ChunkDataHelper
 
     /**
      * Notify all chunks in the range of the colony about the colony.
-     *
+     * <p>
      * --- This is only for dynamic claiming ---
      *
      * @param colony the colony to claim for
-     * @param add if add or remove.
+     * @param add    if add or remove.
      * @param center the center position of the colony.
-     * @param range the range to claim.
+     * @param range  the range to claim.
      */
     public static void claimColonyChunks(final IColony colony, final boolean add, final BlockPos center, final int range)
     {
@@ -225,13 +227,12 @@ public final class ChunkDataHelper
     }
 
     /**
-     * Check if all chunks within a certain range can be claimed, if range is too big this might require to load chunks.
-     * Use carefully.
-     *
+     * Check if all chunks within a certain range can be claimed, if range is too big this might require to load chunks. Use carefully.
+     * <p>
      * --- This is only for dynamic claiming ---
      *
-     * @param w the world.
-     * @param pos the center position.
+     * @param w     the world.
+     * @param pos   the center position.
      * @param range the range to check.
      * @return true if possible.
      */
@@ -267,19 +268,17 @@ public final class ChunkDataHelper
                 }
             }
         }
-       return true;
+        return true;
     }
 
-
     /**
-     * Claim a number of chunks in a certain range around a position.
-     * Prevents the initial chunkradius from beeing unclaimed, unless forced.
+     * Claim a number of chunks in a certain range around a position. Prevents the initial chunkradius from beeing unclaimed, unless forced.
      *
-     * @param colony    the colony to claim for
-     * @param add       if claim or unclaim.
-     * @param range     the range.
-     * @param center    the center position to be claimed.
-     * @param force     whether to ignore restrictions.
+     * @param colony the colony to claim for
+     * @param add    if claim or unclaim.
+     * @param range  the range.
+     * @param center the center position to be claimed.
+     * @param force  whether to ignore restrictions.
      */
     public static void claimChunksInRange(
       final IColony colony,
@@ -326,7 +325,7 @@ public final class ChunkDataHelper
                     Log.getLogger()
                       .debug(
                         "Tried to claim chunk at pos X:" + pos.getX() + " Z:" + pos.getZ() + " too far away from the colony:" + colony.getID() + " center:" + colony.getCenter()
-                              + " max is config workingRangeTownHall ^2");
+                          + " max is config workingRangeTownHall ^2");
                     continue;
                 }
 
@@ -434,10 +433,10 @@ public final class ChunkDataHelper
     /**
      * Add the data to the chunk directly.
      *
-     * @param world the world.
-     * @param pos   the position.
-     * @param add   if add or delete.
-     * @param id    the id.
+     * @param world        the world.
+     * @param pos          the position.
+     * @param add          if add or delete.
+     * @param id           the id.
      * @param chunkManager the chunk manager capability.
      * @return true if successful.
      */
@@ -490,14 +489,14 @@ public final class ChunkDataHelper
 
     /**
      * Add the data to the chunk directly for dynamic claiming.
-     *
+     * <p>
      * ----- Only for dynamic claiming -----
      *
-     * @param world the world.
-     * @param pos   the position.
-     * @param add   if add or delete.
-     * @param id    the id.
-     * @param buildingPos the building pos.
+     * @param world        the world.
+     * @param pos          the position.
+     * @param add          if add or delete.
+     * @param id           the id.
+     * @param buildingPos  the building pos.
      * @param chunkManager the chunk manager capability.
      * @return true if successful.
      */

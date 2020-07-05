@@ -6,6 +6,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.*;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.management.*;
+import com.minecolonies.api.colony.requestsystem.management.update.UpdateType;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
@@ -20,10 +22,10 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.*;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.UpdateType;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -37,8 +39,7 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.util.constant.Suppression.BIG_CLASS;
 
 /**
- * Main class of the request system.
- * Default implementation of the IRequestManager interface.
+ * Main class of the request system. Default implementation of the IRequestManager interface.
  * <p>
  * Uses
  */
@@ -168,7 +169,6 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param requester The requester.
      * @param object    The Object that is being requested.
      * @return The token representing the request.
-     *
      * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
      */
     @NotNull
@@ -230,7 +230,6 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param requester The requester of the requestable.
      * @param object    The requestable
      * @return The token that represents the request.
-     *
      * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
      */
     @NotNull
@@ -488,6 +487,34 @@ public class StandardRequestManager implements IStandardRequestManager
         }
 
         updateIfRequired();
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, PacketBuffer buffer)
+    {
+        buffer.writeInt(version);
+        controller.serialize(buffer, dataStoreManager);
+        controller.serialize(buffer, requestIdentitiesDataStoreId);
+        controller.serialize(buffer, requestResolverIdentitiesDataStoreId);
+        controller.serialize(buffer, providerRequestResolverAssignmentDataStoreId);
+        controller.serialize(buffer, requestResolverRequestAssignmentDataStoreId);
+        controller.serialize(buffer, requestableTypeRequestResolverAssignmentDataStoreId);
+        controller.serialize(buffer, playerRequestResolverId);
+        controller.serialize(buffer, retryingRequestResolverId);
+    }
+
+    @Override
+    public void deserialize(IFactoryController controller, PacketBuffer buffer)
+    {
+        version = buffer.readInt();
+        dataStoreManager = controller.deserialize(buffer);
+        requestIdentitiesDataStoreId = controller.deserialize(buffer);
+        requestResolverIdentitiesDataStoreId = controller.deserialize(buffer);
+        providerRequestResolverAssignmentDataStoreId = controller.deserialize(buffer);
+        requestResolverRequestAssignmentDataStoreId = controller.deserialize(buffer);
+        requestableTypeRequestResolverAssignmentDataStoreId = controller.deserialize(buffer);
+        playerRequestResolverId = controller.deserialize(buffer);
+        retryingRequestResolverId = controller.deserialize(buffer);
     }
 
     private <T> void executeDeserializationStepOrMarkForUpdate(

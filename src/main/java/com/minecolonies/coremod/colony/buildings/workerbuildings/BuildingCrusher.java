@@ -125,6 +125,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
     /**
      * Get the recipe storage of the current mode.
+     *
      * @return the storage.
      */
     public IRecipeStorage getCurrentRecipe()
@@ -213,6 +214,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
     /**
      * Calculate the max quantity to be crafted per day.
+     *
      * @return the max.
      */
     public int getMaxDailyQuantity()
@@ -323,7 +325,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     @Override
     public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
     {
-        for(final IRecipeStorage storage : crusherRecipes.values())
+        for (final IRecipeStorage storage : crusherRecipes.values())
         {
             if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
             {
@@ -336,12 +338,12 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     @Override
     public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
     {
-        for(final IRecipeStorage storage : crusherRecipes.values())
+        for (final IRecipeStorage storage : crusherRecipes.values())
         {
-            if(storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if(storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
                 {
                     return storage;
                 }
@@ -443,6 +445,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
         /**
          * Get all the possible crusher modes.
+         *
          * @return the modes.
          */
         public List<ItemStorage> getCrusherModes()

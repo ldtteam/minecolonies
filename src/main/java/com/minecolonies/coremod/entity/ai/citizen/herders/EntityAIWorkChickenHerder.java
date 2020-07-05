@@ -18,8 +18,7 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
     private static final int MAX_ANIMALS_PER_LEVEL = 2;
 
     /**
-     * Creates the abstract part of the AI.
-     * Always use this constructor!
+     * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill
      */

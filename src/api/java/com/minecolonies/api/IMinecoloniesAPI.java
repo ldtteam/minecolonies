@@ -22,7 +22,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 public interface IMinecoloniesAPI
 {
 
-    static IMinecoloniesAPI getInstance() {
+    static IMinecoloniesAPI getInstance()
+    {
         return MinecoloniesAPIProxy.getInstance();
     }
 

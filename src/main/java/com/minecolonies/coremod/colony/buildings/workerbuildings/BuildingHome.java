@@ -65,8 +65,7 @@ public class BuildingHome extends AbstractBuilding
     private static final int MIN_TIME_BEFORE_SPAWNTRY = 300;
 
     /**
-     * Interval at which the childen are created, in ticks.
-     * Every 20 min it tries to spawn a child, 20min*60s*20ticks
+     * Interval at which the childen are created, in ticks. Every 20 min it tries to spawn a child, 20min*60s*20ticks
      */
     private int childCreationInterval = 600;
 
@@ -256,11 +255,8 @@ public class BuildingHome extends AbstractBuilding
     }
 
     /**
-     * Try to spawn a new citizen as child.
-     * Mom / dad entities are required and chosen randomly in this hut.
-     * Childs inherit stats from their parents, avergaged +-2
-     * Childs get assigned to a free housing slot in the colony to be raised there,
-     * if the house has an adult living there the child takes its name and gets raised by it.
+     * Try to spawn a new citizen as child. Mom / dad entities are required and chosen randomly in this hut. Childs inherit stats from their parents, avergaged +-2 Childs get
+     * assigned to a free housing slot in the colony to be raised there, if the house has an adult living there the child takes its name and gets raised by it.
      */
     public void trySpawnChild()
     {
@@ -390,8 +386,7 @@ public class BuildingHome extends AbstractBuilding
     }
 
     /**
-     * Looks for a homeless citizen to add to the current building Calls.
-     * {@link #assignCitizen(ICitizenData)}
+     * Looks for a homeless citizen to add to the current building Calls. {@link #assignCitizen(ICitizenData)}
      */
     private void addHomelessCitizens()
     {
@@ -425,7 +420,7 @@ public class BuildingHome extends AbstractBuilding
 
     /**
      * Moves the citizen into his new hut
-     * 
+     *
      * @param citizen the citizen to move
      */
     private void moveCitizenToHut(final ICitizenData citizen)
@@ -514,7 +509,7 @@ public class BuildingHome extends AbstractBuilding
 
     /**
      * Gets a list of all beds in this building.
-     * 
+     *
      * @return a list of all beds in this building.
      */
     @NotNull

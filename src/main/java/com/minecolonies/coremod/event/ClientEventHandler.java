@@ -190,9 +190,8 @@ public class ClientEventHandler
     }
 
     /**
-     * Renders an indicator that a guard building is rallied by the banner in the player's hand.
-     * Note: This current implementation is taken from the Structurize Mod.
-     * In future iterations of the banner, it might be interesting to have a more spectacular effect than just a box.
+     * Renders an indicator that a guard building is rallied by the banner in the player's hand. Note: This current implementation is taken from the Structurize Mod. In future
+     * iterations of the banner, it might be interesting to have a more spectacular effect than just a box.
      *
      * @param posA  First corner of the indicator
      * @param posB  Second corner of the indicator

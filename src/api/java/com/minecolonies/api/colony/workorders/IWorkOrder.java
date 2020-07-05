@@ -14,8 +14,9 @@ public interface IWorkOrder
 {
     /**
      * Read the WorkOrder data from the CompoundNBT.
-     *  @param compound NBT Tag compound
-     * @param manager the workManager calling this method.
+     *
+     * @param compound NBT Tag compound
+     * @param manager  the workManager calling this method.
      */
     void read(@NotNull CompoundNBT compound, IWorkManager manager);
 
@@ -85,6 +86,7 @@ public interface IWorkOrder
 
     /**
      * Set the Work order as claimed by a given building.
+     *
      * @param builder the building position.
      */
     void setClaimedBy(BlockPos builder);
@@ -104,9 +106,7 @@ public interface IWorkOrder
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.
      * <p>
-     * Suppressing Sonar Rule squid:S1172
-     * This rule does " Unused method parameters should be removed"
-     * But in this case extending class may need to use the colony parameter
+     * Suppressing Sonar Rule squid:S1172 This rule does " Unused method parameters should be removed" But in this case extending class may need to use the colony parameter
      *
      * @param colony The colony that owns the Work Order
      * @return True if the WorkOrder is still valid, or False if it should be deleted
@@ -136,7 +136,7 @@ public interface IWorkOrder
      * <p>
      * Override this when something need to be done when the work order is completed
      *
-     * @param colony in which the work order exist
+     * @param colony  in which the work order exist
      * @param citizen citizen that completed the work order
      */
     void onCompleted(IColony colony, ICitizenData citizen);

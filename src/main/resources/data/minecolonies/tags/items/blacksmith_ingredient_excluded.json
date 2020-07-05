@@ -1,4 +1,8 @@
 {
   "replace": false,
-  "values": []
+  "values": [
+    "#minecolonies:mechanic_ingredient",
+    "#forge:crops",
+    "#minecolonies:dyer_ingredient"
+  ]
 }

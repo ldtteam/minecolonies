@@ -88,9 +88,9 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         if (existingColony != null && existingColony != colony)
         {
             Log.getLogger().error(String.format("Already a colony registered to id=%d, colony=%s, not changing to colony=%s",
-                                                  colony.getID(),
-                                                  existingColony.getName(),
-                                                  colony.getName()), new Exception());
+              colony.getID(),
+              existingColony.getName(),
+              colony.getName()), new Exception());
             return;
         }
 
@@ -179,6 +179,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
 
     /**
      * Get the top colony id.
+     *
      * @return the top id.
      */
     public int getTopID()
@@ -207,8 +208,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     }
 
     /**
-     * Copy all of the colonies to a List. Because this does a copy, it should
-     * only be used when really needed.
+     * Copy all of the colonies to a List. Because this does a copy, it should only be used when really needed.
      *
      * @return List of Colonies.
      */

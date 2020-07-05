@@ -123,28 +123,28 @@ public class DebugRendererChunkBorder
                     if (north)
                     {
                         bufferbuilder.pos(matrix, chunkCoordX + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                        bufferbuilder.pos(matrix,chunkCoordX + 16.0f + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                        bufferbuilder.pos(matrix, chunkCoordX + 16.0f + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
                     }
                     if (south)
                     {
-                        bufferbuilder.pos(matrix,chunkCoordX + 16.0f + incX, levels, chunkCoordZ + 16.0f + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                        bufferbuilder.pos(matrix,chunkCoordX + incX, levels, chunkCoordZ + 16.0f + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                        bufferbuilder.pos(matrix, chunkCoordX + 16.0f + incX, levels, chunkCoordZ + 16.0f + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                        bufferbuilder.pos(matrix, chunkCoordX + incX, levels, chunkCoordZ + 16.0f + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
                     }
                     if (east)
                     {
-                        bufferbuilder.pos(matrix,chunkCoordX + 16.0f + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                        bufferbuilder.pos(matrix,chunkCoordX + 16.0f + incX, levels, chunkCoordZ + 16.0f + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                        bufferbuilder.pos(matrix, chunkCoordX + 16.0f + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                        bufferbuilder.pos(matrix, chunkCoordX + 16.0f + incX, levels, chunkCoordZ + 16.0f + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
                     }
                     if (west)
                     {
-                        bufferbuilder.pos(matrix,chunkCoordX + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                        bufferbuilder.pos(matrix,chunkCoordX + incX, levels, chunkCoordZ + 16.0f + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                        bufferbuilder.pos(matrix, chunkCoordX + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                        bufferbuilder.pos(matrix, chunkCoordX + incX, levels, chunkCoordZ + 16.0f + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
                     }
 
                     if (levels > lowerYLimitSmaller)
                     {
-                        final double addition = upperYLimit/currView.y/(upperYLimit/currView.y - levels/currView.y)*10;
-                        levels+= addition > 1 ? addition : 1;
+                        final double addition = upperYLimit / currView.y / (upperYLimit / currView.y - levels / currView.y) * 10;
+                        levels += addition > 1 ? addition : 1;
                     }
                     else
                     {
@@ -154,31 +154,31 @@ public class DebugRendererChunkBorder
 
                 if (north)
                 {
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX, lowerYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX, upperYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX, lowerYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX, upperYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX, lowerYLimit, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX, upperYLimit, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX, lowerYLimit, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX, upperYLimit, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                 }
                 if (south)
                 {
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX + 16.0f, lowerYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX + 16.0f, upperYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX + 16.0f, lowerYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX + 16.0f, upperYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX + 16.0f, lowerYLimit, chunkCoordZ + incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX + 16.0f, upperYLimit, chunkCoordZ + incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX + 16.0f, lowerYLimit, chunkCoordZ + incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX + 16.0f, upperYLimit, chunkCoordZ + incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                 }
                 if (east)
                 {
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX + 16.0f, lowerYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX + 16.0f, upperYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX + 16.0f, lowerYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX + 16.0f, upperYLimit, chunkCoordZ +  incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX + 16.0f, lowerYLimit, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX + 16.0f, upperYLimit, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX + 16.0f, lowerYLimit, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX + 16.0f, upperYLimit, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                 }
                 if (west)
                 {
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX, lowerYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX, upperYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX, lowerYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-                    bufferbuilder.pos(matrix,chunkCoordX +  incX, upperYLimit, chunkCoordZ +  incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX, lowerYLimit, chunkCoordZ + incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX, upperYLimit, chunkCoordZ + incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX, lowerYLimit, chunkCoordZ + incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+                    bufferbuilder.pos(matrix, chunkCoordX + incX, upperYLimit, chunkCoordZ + incZ + 16.0f).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                 }
             }
         }

@@ -56,5 +56,4 @@ public class Stash extends AbstractBuilding implements IRSComponent
     {
         return ModBuildings.stash;
     }
-
 }

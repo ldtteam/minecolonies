@@ -5,31 +5,31 @@ package com.minecolonies.api.util.constant;
  */
 public final class NbtTagConstants
 {
-    public static final String TAG_ID                = "id";
-    public static final String TAG_NAME              = "name";
-    public static final String TAG_SUFFIX            = "suffix";
-    public static final String TAG_DIMENSION         = "dimension";
-    public static final String TAG_CENTER            = "center";
-    public static final String TAG_BUILDINGS         = "buildings";
-    public static final String TAG_BUILDING          = "building";
-    public static final String TAG_BUILDINGS_CLAIM   = "buildingsClaim";
-    public static final String TAG_BUILDINGS_UNCLAIM = "buildingUnclaim";
-    public static final String TAG_CITIZENS          = "citizens";
-    public static final String TAG_VISITORS          = "visitors";
-    public static final String TAG_ACHIEVEMENT       = "achievement";
-    public static final String TAG_ACHIEVEMENT_LIST  = "achievementlist";
-    public static final String TAG_WORK              = "work";
-    public static final String TAG_MANUAL_HIRING     = "manualHiring";
-    public static final String TAG_MANUAL_HOUSING    = "manualHousing";
-    public static final String TAG_MOVE_IN           = "moveIn";
-    public static final String TAG_REQUESTMANAGER    = "requestManager";
-    public static final String TAG_WAYPOINT               = "waypoints";
-    public static final String TAG_FREE_BLOCKS            = "freeBlocks";
-    public static final String TAG_FREE_POSITIONS         = "freePositions";
-    public static final String TAG_HAPPINESS_MODIFIER     = "happinessModifier";
-    public static final String TAG_ABANDONED              = "abandoned";
-    public static final String TAG_BUILDING_PRIO          = "buildingPrio";
-    public static final String TAG_PRIO                   = "prio";
+    public static final String TAG_ID                 = "id";
+    public static final String TAG_NAME               = "name";
+    public static final String TAG_SUFFIX             = "suffix";
+    public static final String TAG_DIMENSION          = "dimension";
+    public static final String TAG_CENTER             = "center";
+    public static final String TAG_BUILDINGS          = "buildings";
+    public static final String TAG_BUILDING           = "building";
+    public static final String TAG_BUILDINGS_CLAIM    = "buildingsClaim";
+    public static final String TAG_BUILDINGS_UNCLAIM  = "buildingUnclaim";
+    public static final String TAG_CITIZENS           = "citizens";
+    public static final String TAG_VISITORS           = "visitors";
+    public static final String TAG_ACHIEVEMENT        = "achievement";
+    public static final String TAG_ACHIEVEMENT_LIST   = "achievementlist";
+    public static final String TAG_WORK               = "work";
+    public static final String TAG_MANUAL_HIRING      = "manualHiring";
+    public static final String TAG_MANUAL_HOUSING     = "manualHousing";
+    public static final String TAG_MOVE_IN            = "moveIn";
+    public static final String TAG_REQUESTMANAGER     = "requestManager";
+    public static final String TAG_WAYPOINT           = "waypoints";
+    public static final String TAG_FREE_BLOCKS        = "freeBlocks";
+    public static final String TAG_FREE_POSITIONS     = "freePositions";
+    public static final String TAG_HAPPINESS_MODIFIER = "happinessModifier";
+    public static final String TAG_ABANDONED          = "abandoned";
+    public static final String TAG_BUILDING_PRIO      = "buildingPrio";
+    public static final String TAG_PRIO               = "prio";
 
     /**
      * @deprecated Superseeded by request-based pickup system.
@@ -82,38 +82,38 @@ public final class NbtTagConstants
     public static final String TAG_BASE                   = "base";
     public static final String TAG_FOOD                   = "foodModifier";
     public static final String TAG_DAMAGE                 = "damageModifier";
-    public static final String TAG_HOUSE                = "houseModifier";
-    public static final String TAG_NUMBER_OF_DAYS_HOUSE = "numberOfDaysWithoutHouse";
-    public static final String TAG_JOB                  = "jobModifier";
-    public static final String TAG_NUMBER_OF_DAYS_JOB   = "numberOfDaysWithoutJob";
-    public static final String TAG_HAS_NO_FIELDS        = "hasNoFields";
-    public static final String TAG_FIELD_DAYS_INACTIVE  = "daysinactive";
-    public static final String TAG_FIELD_CAN_FARM       = "canfarm";
-    public static final String TAG_NO_TOOLS             = "noTools";
-    public static final String TAG_NO_TOOLS_NUMBER_DAYS = "numberOfDaysNoTools";
-    public static final String TAG_NO_TOOLS_TOOL_TYPE   = "toolType";
-    public static final String TAG_IS_BUILT             = "isBuilt";
-    public static final String TAG_CUSTOM_NAME          = "customName";
-    public static final String TAG_OTHER_LEVEL     = "otherLevel";
-    public static final String TAG_PASTEABLE       = "isPasteable";
-    public static final String TAG_STRING_NAME     = "Name";
-    public static final String TAG_DISPLAY         = "display";
-    public static final String TAG_NEED_TO_MOURN   = "needToMourn";
-    public static final String TAG_MOURNING        = "mourning";
-    public static final String TAG_PAUSED          = "paused";
-    public static final String TAG_CHILD           = "child";
-    public static final String TAG_CHILD_TIME      = "childTime";
-    public static final String TAG_BOUGHT_CITIZENS = "bought_citizen";
-    public static final String TAG_JUST_ATE        = "justAte";
-    public static final String TAG_EXPLOSIONS        = "Explosions";
-    public static final String TAG_FIREWORKS         = "Fireworks";
-    public static final String TAG_COLORS            = "Colors";
-    public static final String TAG_FLICKER           = "Flicker";
-    public static final String TAG_TRAIL             = "Trail";
-    public static final String TAG_TYPE              = "Type";
-    public static final String TAG_MERCENARY_TIME    = "mercenaryUseTime";
-    public static final String TAG_IDLE              = "idle";
-    public static final String TAG_CITIZENDATA_TYPE  = "citizenDataType";
+    public static final String TAG_HOUSE                  = "houseModifier";
+    public static final String TAG_NUMBER_OF_DAYS_HOUSE   = "numberOfDaysWithoutHouse";
+    public static final String TAG_JOB                    = "jobModifier";
+    public static final String TAG_NUMBER_OF_DAYS_JOB     = "numberOfDaysWithoutJob";
+    public static final String TAG_HAS_NO_FIELDS          = "hasNoFields";
+    public static final String TAG_FIELD_DAYS_INACTIVE    = "daysinactive";
+    public static final String TAG_FIELD_CAN_FARM         = "canfarm";
+    public static final String TAG_NO_TOOLS               = "noTools";
+    public static final String TAG_NO_TOOLS_NUMBER_DAYS   = "numberOfDaysNoTools";
+    public static final String TAG_NO_TOOLS_TOOL_TYPE     = "toolType";
+    public static final String TAG_IS_BUILT               = "isBuilt";
+    public static final String TAG_CUSTOM_NAME            = "customName";
+    public static final String TAG_OTHER_LEVEL            = "otherLevel";
+    public static final String TAG_PASTEABLE              = "isPasteable";
+    public static final String TAG_STRING_NAME            = "Name";
+    public static final String TAG_DISPLAY                = "display";
+    public static final String TAG_NEED_TO_MOURN          = "needToMourn";
+    public static final String TAG_MOURNING               = "mourning";
+    public static final String TAG_PAUSED                 = "paused";
+    public static final String TAG_CHILD                  = "child";
+    public static final String TAG_CHILD_TIME             = "childTime";
+    public static final String TAG_BOUGHT_CITIZENS        = "bought_citizen";
+    public static final String TAG_JUST_ATE               = "justAte";
+    public static final String TAG_EXPLOSIONS             = "Explosions";
+    public static final String TAG_FIREWORKS              = "Fireworks";
+    public static final String TAG_COLORS                 = "Colors";
+    public static final String TAG_FLICKER                = "Flicker";
+    public static final String TAG_TRAIL                  = "Trail";
+    public static final String TAG_TYPE                   = "Type";
+    public static final String TAG_MERCENARY_TIME         = "mercenaryUseTime";
+    public static final String TAG_IDLE                   = "idle";
+    public static final String TAG_CITIZENDATA_TYPE       = "citizenDataType";
 
     /**
      * Tag used to store the containers to NBT.
@@ -126,8 +126,7 @@ public final class NbtTagConstants
     public static final String TAG_BUILDING_TYPE = "type";
 
     /**
-     * The tag to store the building location.
-     * Location is unique (within a Colony) and so can double as the Id.
+     * The tag to store the building location. Location is unique (within a Colony) and so can double as the Id.
      */
     public static final String TAG_LOCATION = "location";
 
@@ -389,8 +388,6 @@ public final class NbtTagConstants
     public static final String TAG_CHAT_OPTION        = "chatoption";
     public static final String TAG_CHAT_OPTIONS       = "chatoptions";
 
-
-
     /**
      * Tag of the colony.
      */
@@ -471,18 +468,18 @@ public final class NbtTagConstants
     /**
      * Crafter job tags.
      */
-    public static final String TAG_PROGRESS    = "progress";
-    public static final String TAG_MAX_COUNTER = "maxCounter";
-    public static final String TAG_CRAFT_COUNTER  = "craftCounter";
+    public static final String TAG_PROGRESS      = "progress";
+    public static final String TAG_MAX_COUNTER   = "maxCounter";
+    public static final String TAG_CRAFT_COUNTER = "craftCounter";
 
     /**
      * Enchanter tags
      */
-    public static final String TAG_GATHER_LIST = "buildingstogather";
-    public static final String TAG_QUANTITY      = "quantity";
-    public static final String TAG_GATHERED_ALREADY = "gatheredalready";
+    public static final String TAG_GATHER_LIST       = "buildingstogather";
+    public static final String TAG_QUANTITY          = "quantity";
+    public static final String TAG_GATHERED_ALREADY  = "gatheredalready";
     public static final String TAG_BUILDING_TO_DRAIN = "buildingtodrain";
-    public static final String TAG_WAITING_TICKS = "waitingticks";
+    public static final String TAG_WAITING_TICKS     = "waitingticks";
 
     /**
      * Beekeeper tags
@@ -570,10 +567,10 @@ public final class NbtTagConstants
     /**
      * Final strings to save and retrieve the current water location and pond list.
      */
-    public static final String TAG_WATER = "Pond";
-    public static final String TAG_PONDS   = "newPonds";
-    public static final String TAG_WATER_POND = "waterpond";
-    public static final String TAG_PARENT_POND = "parentpond";
+    public static final String TAG_WATER         = "Pond";
+    public static final String TAG_PONDS         = "newPonds";
+    public static final String TAG_WATER_POND    = "waterpond";
+    public static final String TAG_PARENT_POND   = "parentpond";
     public static final String TAG_DECONSTRUCTED = "deconstructed";
 
     /**

@@ -5,10 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Available forge Permission nodes that can be checked for access.
- *
- * See this url until real documentation becomes available.
- * https://github.com/MinecraftForge/MinecraftForge/pull/3155
- *
+ * <p>
+ * See this url until real documentation becomes available. https://github.com/MinecraftForge/MinecraftForge/pull/3155
  */
 public enum ForgePermissionNodes
 {
@@ -49,12 +47,14 @@ public enum ForgePermissionNodes
     SCAN("com.minecolonies.coremod.Scan", DefaultPermissionLevel.OP, "Can scan structures."),
     CLAIM("com.minecolonies.coremod.Claim", DefaultPermissionLevel.OP, "Can claim structures."),
     LOOT_GEN("com.minecolonies.coremod.lootGen", DefaultPermissionLevel.OP, "Can lootGen minecolonies building blocks."),
-    LOAD_BACKUP("com.minecolonies.coremod.loadBackup", DefaultPermissionLevel.OP, "Can load colony backups, should be OP only!")
-    ;
+    LOAD_BACKUP("com.minecolonies.coremod.loadBackup", DefaultPermissionLevel.OP, "Can load colony backups, should be OP only!");
 
-    @NotNull private final String nodeName;
-    @NotNull private final DefaultPermissionLevel defaultPermissionLevel;
-    @NotNull private final String description;
+    @NotNull
+    private final String                 nodeName;
+    @NotNull
+    private final DefaultPermissionLevel defaultPermissionLevel;
+    @NotNull
+    private final String                 description;
 
     ForgePermissionNodes(@NotNull final String nodeName, @NotNull final DefaultPermissionLevel defaultPermissionLevel, @NotNull final String description)
     {

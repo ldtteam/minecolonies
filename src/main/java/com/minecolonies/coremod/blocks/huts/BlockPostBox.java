@@ -13,15 +13,14 @@ import net.minecraft.world.IBlockReader;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Hut for the PostBox.
- * No different from {@link AbstractBlockHut}
+ * Hut for the PostBox. No different from {@link AbstractBlockHut}
  */
 public class BlockPostBox extends AbstractBlockHut<BlockPostBox> implements IRSComponentBlock
 {
     private static final VoxelShape SHAPE_NORTH = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 8.0D);
-    private static final VoxelShape SHAPE_EAST = Block.makeCuboidShape(8.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+    private static final VoxelShape SHAPE_EAST  = Block.makeCuboidShape(8.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     private static final VoxelShape SHAPE_SOUTH = Block.makeCuboidShape(0.0D, 0.0D, 8.0D, 16.0D, 16.0D, 16.0D);
-    private static final VoxelShape SHAPE_WEST = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 8.0D, 16.0D, 16.0D);
+    private static final VoxelShape SHAPE_WEST  = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 8.0D, 16.0D, 16.0D);
 
     @NotNull
     @Override

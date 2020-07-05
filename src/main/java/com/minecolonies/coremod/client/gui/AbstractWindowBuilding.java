@@ -154,7 +154,7 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
 
     /**
      * Update the state and label for the Build button.
-     * 
+     *
      * @param buildingView the view to update from.
      */
     private void updateButtonBuild(final IBuildingView buildingView)

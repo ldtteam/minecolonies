@@ -20,8 +20,8 @@ public final class Pond
     /**
      * Checks if on position "water" really is water, if the water is connected to land and if the pond is big enough (bigger then 20).
      *
-     * @param world The world the player is in.
-     * @param water The coordinate to check.
+     * @param world  The world the player is in.
+     * @param water  The coordinate to check.
      * @param result the water path result.
      * @return true if water.
      */
@@ -63,8 +63,7 @@ public final class Pond
     }
 
     /**
-     * Checks if all blocks in direction X are water and if yes from the middle to both sides in.
-     * direction Z all blocks are also water.
+     * Checks if all blocks in direction X are water and if yes from the middle to both sides in. direction Z all blocks are also water.
      *
      * @param world  World.
      * @param x      posX.
@@ -98,8 +97,7 @@ public final class Pond
     }
 
     /**
-     * Checks if all blocks in direction Z are water and if yes from the middle to both sides in
-     * direction X all blocks are also water.
+     * Checks if all blocks in direction Z are water and if yes from the middle to both sides in direction X all blocks are also water.
      *
      * @param world  World.
      * @param x      posX.

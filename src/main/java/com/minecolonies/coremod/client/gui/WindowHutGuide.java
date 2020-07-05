@@ -15,7 +15,7 @@ public class WindowHutGuide extends AbstractWindowSkeleton
     /**
      * Color constants for builder list.
      */
-    private final       BuildingBuilder.View building;
+    private final BuildingBuilder.View building;
 
     /**
      * Constructor for window builder hut.

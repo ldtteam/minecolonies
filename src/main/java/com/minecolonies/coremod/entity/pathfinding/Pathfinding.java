@@ -33,11 +33,11 @@ import static com.minecolonies.api.util.constant.PathingConstants.debugNodeMonit
 public final class Pathfinding
 {
     private static final BlockingQueue<Runnable> jobQueue = new LinkedBlockingDeque<>();
-    private static ThreadPoolExecutor executor;
-    
-    
+    private static       ThreadPoolExecutor      executor;
+
     /**
      * Creates a new thread pool for pathfinding jobs
+     *
      * @return the threadpool executor.
      */
     public static ThreadPoolExecutor getExecutor()
@@ -48,7 +48,7 @@ public final class Pathfinding
         }
         return executor;
     }
-    
+
     /**
      * Stops all running threads in this thread pool
      */
@@ -58,7 +58,7 @@ public final class Pathfinding
         jobQueue.clear();
         executor = null;
     }
-    
+
     private Pathfinding()
     {
         //Hides default constructor.
@@ -78,7 +78,7 @@ public final class Pathfinding
     /**
      * Render debugging information for the pathfinding system.
      *
-     * @param frame entity movement weight.
+     * @param frame       entity movement weight.
      * @param matrixStack the matrix stack to apply to.
      */
     @OnlyIn(Dist.CLIENT)
@@ -119,7 +119,7 @@ public final class Pathfinding
         {
             for (@NotNull final Node n : debugNodesNotVisited)
             {
-                debugDrawNode(n, 1.0F, 0F, 0F,  matrixStack);
+                debugDrawNode(n, 1.0F, 0F, 0F, matrixStack);
             }
 
             for (@NotNull final Node n : debugNodesVisited)
@@ -168,39 +168,39 @@ public final class Pathfinding
 
         //  X+
         vertexBuffer.pos(matrix4f, 1.0f, 0.0f, 0.0f).endVertex();
-        vertexBuffer.pos(matrix4f,1.0f, 1.0f, 0.0f).endVertex();
-        vertexBuffer.pos(matrix4f,1.0f, 1.0f, 1.0f).endVertex();
-        vertexBuffer.pos(matrix4f,1.0f, 0.0f, 1.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 1.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 1.0f, 1.0f, 1.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 1.0f, 0.0f, 1.0f).endVertex();
 
         //  X-
-        vertexBuffer.pos(matrix4f,0.0f, 0.0f, 1.0f).endVertex();
-        vertexBuffer.pos(matrix4f,0.0f, 1.0f, 1.0f).endVertex();
-        vertexBuffer.pos(matrix4f,0.0f, 1.0f, 0.0f).endVertex();
-        vertexBuffer.pos(matrix4f,0.0f, 0.0f, 0.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 0.0f, 0.0f, 1.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 0.0f, 1.0f, 1.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 0.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 0.0f, 0.0f, 0.0f).endVertex();
 
         //  Z-
-        vertexBuffer.pos(matrix4f,0.0f, 0.0f, 0.0f).endVertex();
-        vertexBuffer.pos(matrix4f,0.0f, 1.0f, 0.0f).endVertex();
-        vertexBuffer.pos(matrix4f,1.0f, 1.0f, 0.0f).endVertex();
-        vertexBuffer.pos(matrix4f,1.0f, 0.0f, 0.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 0.0f, 0.0f, 0.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 0.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 1.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 1.0f, 0.0f, 0.0f).endVertex();
 
         //  Z+
-        vertexBuffer.pos(matrix4f,1.0f, 0.0f, 1.0f).endVertex();
-        vertexBuffer.pos(matrix4f,1.0f, 1.0f, 1.0f).endVertex();
-        vertexBuffer.pos(matrix4f,0.0f, 1.0f, 1.0f).endVertex();
-        vertexBuffer.pos(matrix4f,0.0f, 0.0f, 1.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 1.0f, 0.0f, 1.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 1.0f, 1.0f, 1.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 0.0f, 1.0f, 1.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 0.0f, 0.0f, 1.0f).endVertex();
 
         //  Y+
-        vertexBuffer.pos(matrix4f,1.0f, 1.0f, 1.0f).endVertex();
-        vertexBuffer.pos(matrix4f,1.0f, 1.0f, 0.0f).endVertex();
-        vertexBuffer.pos(matrix4f,0.0f, 1.0f, 0.0f).endVertex();
-        vertexBuffer.pos(matrix4f,0.0f, 1.0f, 1.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 1.0f, 1.0f, 1.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 1.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 0.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 0.0f, 1.0f, 1.0f).endVertex();
 
         //  Y-
-        vertexBuffer.pos(matrix4f,0.0f, 0.0f, 1.0f).endVertex();
-        vertexBuffer.pos(matrix4f,0.0f, 0.0f, 0.0f).endVertex();
-        vertexBuffer.pos(matrix4f,1.0f, 0.0f, 0.0f).endVertex();
-        vertexBuffer.pos(matrix4f,1.0f, 0.0f, 1.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 0.0f, 0.0f, 1.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 0.0f, 0.0f, 0.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 1.0f, 0.0f, 0.0f).endVertex();
+        vertexBuffer.pos(matrix4f, 1.0f, 0.0f, 1.0f).endVertex();
 
         tessellator.draw();
 
@@ -211,7 +211,7 @@ public final class Pathfinding
             final float pdz = n.parent.pos.getZ() - n.pos.getZ() + 0.125f;
             vertexBuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
             vertexBuffer.pos(matrix4f, 0.5f, 0.5f, 0.5f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
-            vertexBuffer.pos(matrix4f,pdx / 0.25f, pdy / 0.25f, pdz / 0.25f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
+            vertexBuffer.pos(matrix4f, pdx / 0.25f, pdy / 0.25f, pdz / 0.25f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
             tessellator.draw();
         }
 
@@ -270,7 +270,7 @@ public final class Pathfinding
         matrixStack.translate(0.0F, 8F, 0.0F);
         fontrenderer.renderString(s2, -fontrenderer.getStringWidth(s2) / 2.0f, 0, 0xFFFFFFFF, false, matrix4f, buffer, false, 0, 15728880);
         buffer.finish();
-        
+
         matrixStack.pop();
     }
 }

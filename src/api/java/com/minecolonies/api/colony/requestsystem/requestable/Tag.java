@@ -5,6 +5,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -201,6 +202,29 @@ public class Tag implements IDeliverable
         compound.putInt(NBT_COUNT, input.getCount());
         compound.putInt(NBT_MINCOUNT, input.getMinimumCount());
         return compound;
+    }
+
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Tag input)
+    {
+        buffer.writeString(input.getTag().getId().toString());
+        buffer.writeBoolean(!ItemStackUtils.isEmpty(input.getResult()));
+
+        if (!ItemStackUtils.isEmpty(input.getResult()))
+        {
+            buffer.writeItemStack(input.getResult());
+        }
+        buffer.writeInt(input.getCount());
+        buffer.writeInt(input.getMinimumCount());
+    }
+
+    public static Tag deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    {
+        final net.minecraft.tags.Tag<Item> theTag = ItemTags.getCollection().getOrCreate(ResourceLocation.tryCreate(buffer.readString()));
+        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
+        final int count = buffer.readInt();
+        final int minCount = buffer.readInt();
+
+        return new Tag(theTag, result, count, minCount);
     }
 
     /**

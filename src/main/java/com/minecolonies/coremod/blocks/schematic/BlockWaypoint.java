@@ -4,9 +4,8 @@ import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import net.minecraft.block.material.Material;
 
 /**
- * This block is used as a substitution block for the Builder.
- * Every solid block can be substituted by this block in schematics.
- * This helps make schematics independent from location and ground.
+ * This block is used as a substitution block for the Builder. Every solid block can be substituted by this block in schematics. This helps make schematics independent from
+ * location and ground.
  */
 public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
 {
@@ -27,8 +26,7 @@ public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
     private static final float RESISTANCE = 1F;
 
     /**
-     * Constructor for the Substitution block.
-     * sets the creative tab, as well as the resistance and the hardness.
+     * Constructor for the Substitution block. sets the creative tab, as well as the resistance and the hardness.
      */
     public BlockWaypoint()
     {

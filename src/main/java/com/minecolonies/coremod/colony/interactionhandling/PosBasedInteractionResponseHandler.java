@@ -27,9 +27,9 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
 
     @SuppressWarnings("unchecked")
     private static final Tuple<ITextComponent, ITextComponent>[] tuples = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
 
     /**
      * The position this is related to.
@@ -43,9 +43,10 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
 
     /**
      * The server interaction response handler.
-     * @param inquiry the client inquiry.
-     * @param priority the interaction priority.
-     * @param pos the pos this is related to.
+     *
+     * @param inquiry   the client inquiry.
+     * @param priority  the interaction priority.
+     * @param pos       the pos this is related to.
      * @param validator the validator id.
      */
     public PosBasedInteractionResponseHandler(
@@ -61,9 +62,10 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
 
     /**
      * The server interaction response handler.
-     * @param inquiry the client inquiry.
+     *
+     * @param inquiry  the client inquiry.
      * @param priority the interaction priority.
-     * @param pos the pos this is related to.
+     * @param pos      the pos this is related to.
      */
     public PosBasedInteractionResponseHandler(
       final ITextComponent inquiry,
@@ -77,6 +79,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
 
     /**
      * Way to load the response handler for a citizen.
+     *
      * @param data the citizen owning this handler.
      */
     public PosBasedInteractionResponseHandler(final ICitizen data)
@@ -93,7 +96,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
     @Override
     public boolean isValid(final ICitizenData citizen)
     {
-        return (validator == null && !this.parents.isEmpty()) || ( validator != null && validator.test(citizen, pos) );
+        return (validator == null && !this.parents.isEmpty()) || (validator != null && validator.test(citizen, pos));
     }
 
     @Override

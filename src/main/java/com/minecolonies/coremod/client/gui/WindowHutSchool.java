@@ -12,8 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class WindowHutSchool extends WindowHutWorkerPlaceholder<BuildingSchool.View>
 {
     /**
-     * Window for worker placeholder.
-     * Used by buildings not listed above this file.
+     * Window for worker placeholder. Used by buildings not listed above this file.
      *
      * @param building AbstractBuilding extending {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}.
      * @param name     Name of the the view (resource).

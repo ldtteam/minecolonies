@@ -42,7 +42,6 @@ public class JobBuilder extends AbstractJobStructure<EntityAIStructureBuilder, J
         return BipedModelType.BUILDER;
     }
 
-
     @NotNull
     @Override
     public EntityAIStructureBuilder generateAI()

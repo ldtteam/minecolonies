@@ -19,7 +19,7 @@ public abstract class AbstractEntityBarbarian extends AbstractEntityMinecolonies
     /**
      * Constructor method for Abstract Barbarians.
      *
-     * @param type the type.
+     * @param type  the type.
      * @param world the world.
      */
     public AbstractEntityBarbarian(final EntityType<? extends AbstractEntityBarbarian> type, final World world)

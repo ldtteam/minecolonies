@@ -49,12 +49,10 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     }
 
     /**
-     * Method to create a new combined {@link CombinedItemHandler} with
-     * a given custom name.
+     * Method to create a new combined {@link CombinedItemHandler} with a given custom name.
      *
      * @param defaultName The name of this {@link CombinedItemHandler}.
-     * @param customName  The preset custom name of this {@link
-     *                    CombinedItemHandler}.
+     * @param customName  The preset custom name of this {@link CombinedItemHandler}.
      * @param handlers    The combinging {@link IItemHandlerModifiable}.
      */
     public CombinedItemHandler(@NotNull final String defaultName, @NotNull final String customName, @NotNull final IItemHandlerModifiable... handlers)
@@ -120,15 +118,12 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     }
 
     /**
-     * Overrides the stack in the given slot. This method is used by the
-     * standard Forge helper methods and classes. It is not intended for
-     * general use by other mods, and the handler may throw an error if it
-     * is called unexpectedly.
+     * Overrides the stack in the given slot. This method is used by the standard Forge helper methods and classes. It is not intended for general use by other mods, and the
+     * handler may throw an error if it is called unexpectedly.
      *
      * @param slot  Slot to modify
      * @param stack ItemStack to set slot to (may be null)
-     * @throws RuntimeException if the handler is called in a way that the
-     *                          handler was not expecting.
+     * @throws RuntimeException if the handler is called in a way that the handler was not expecting.
      **/
     @Override
     public void setStackInSlot(final int slot, final ItemStack stack)
@@ -195,13 +190,11 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      * <p>
      * The result's stack size may be greater than the itemstacks max size.
      * <p>
-     * If the result is null, then the slot is empty.
-     * If the result is not null but the stack size is zero, then it represents
-     * an empty slot that will only accept* a specific itemstack.
+     * If the result is null, then the slot is empty. If the result is not null but the stack size is zero, then it represents an empty slot that will only accept* a specific
+     * itemstack.
      * <p>
-     * IMPORTANT: This ItemStack MUST NOT be modified. This method is not for
-     * altering an inventories contents. Any implementers who are able to detect
-     * modification through this method should throw an exception.
+     * IMPORTANT: This ItemStack MUST NOT be modified. This method is not for altering an inventories contents. Any implementers who are able to detect modification through this
+     * method should throw an exception.
      * <p>
      * SERIOUSLY: DO NOT MODIFY THE RETURNED ITEMSTACK
      *
@@ -227,16 +220,14 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     }
 
     /**
-     * Inserts an ItemStack into the given slot and return the remainder.
-     * The ItemStack should not be modified in this function!
-     * Note: This behaviour is subtly different from IFluidHandlers.fill()
+     * Inserts an ItemStack into the given slot and return the remainder. The ItemStack should not be modified in this function! Note: This behaviour is subtly different from
+     * IFluidHandlers.fill()
      *
      * @param slot     Slot to insert into.
      * @param stack    ItemStack to insert.
      * @param simulate If true, the insertion is only simulated
-     * @return The remaining ItemStack that was not inserted (if the entire
-     * stack is accepted, then return null). May be the same as the input
-     * ItemStack if unchanged, otherwise a new ItemStack.
+     * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return null). May be the same as the input ItemStack if unchanged, otherwise a
+     * new ItemStack.
      **/
     @Override
     public ItemStack insertItem(final int slot, final ItemStack stack, final boolean simulate)
@@ -257,16 +248,13 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     }
 
     /**
-     * Extracts an ItemStack from the given slot. The returned value must be
-     * null if nothing is extracted, otherwise it's stack size must not be
-     * greater than amount or the itemstacks getMaxStackSize().
+     * Extracts an ItemStack from the given slot. The returned value must be null if nothing is extracted, otherwise it's stack size must not be greater than amount or the
+     * itemstacks getMaxStackSize().
      *
      * @param slot     Slot to extract from.
-     * @param amount   Amount to extract (may be greater than the current stacks
-     *                 max limit)
+     * @param amount   Amount to extract (may be greater than the current stacks max limit)
      * @param simulate If true, the extraction is only simulated
-     * @return ItemStack extracted from the slot, must be null, if nothing can
-     * be extracted
+     * @return ItemStack extracted from the slot, must be null, if nothing can be extracted
      **/
     @Override
     public ItemStack extractItem(final int slot, final int amount, final boolean simulate)

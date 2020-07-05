@@ -46,8 +46,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
     }
 
     /**
-     * The AI task for the student to study.
-     * For this he should walk between the different bookcase hit them once and then stand around for a while.
+     * The AI task for the student to study. For this he should walk between the different bookcase hit them once and then stand around for a while.
      *
      * @return the next IAIState.
      */

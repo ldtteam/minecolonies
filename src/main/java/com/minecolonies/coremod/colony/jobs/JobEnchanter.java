@@ -95,6 +95,7 @@ public class JobEnchanter extends AbstractJob<EntityAIWorkEnchanter, JobEnchante
 
     /**
      * Set the building the worker is currently draining.
+     *
      * @param pos the pos of the building to drain.
      */
     public void setBuildingToDrainFrom(final BlockPos pos)
@@ -104,6 +105,7 @@ public class JobEnchanter extends AbstractJob<EntityAIWorkEnchanter, JobEnchante
 
     /**
      * Get the current set pos to drain from.
+     *
      * @return the pos.
      */
     public BlockPos getPosToDrainFrom()
@@ -113,6 +115,7 @@ public class JobEnchanter extends AbstractJob<EntityAIWorkEnchanter, JobEnchante
 
     /**
      * Increment the waiting ticks.
+     *
      * @return false if limit reached.
      */
     public boolean incrementWaitingTicks()

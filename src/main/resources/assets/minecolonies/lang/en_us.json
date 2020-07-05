@@ -1364,7 +1364,7 @@
   "com.minecolonies.coremod.info.miner.1.name": "Restrictions",
   "com.minecolonies.coremod.info.miner.1": "Let's cover restrictions:\n\n 1. Miners unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 4. Diamond Tools\n   lvl 5. Enchanted Tools\n\n ",
   "com.minecolonies.coremod.info.miner.2.name": "FAQ",
-  "com.minecolonies.coremod.info.miner.2": "Now let's cover some frequently asked questions:\n\n Q 1. How far down will my miner dig before making nodes?\n   A 1. Without intervention, at level 1 they will build nodes after they hit y level 50, at level 2 they will make nodes after they hit y level 30, and at level 3 they will make nodes after they hit y level 5. \n\n", 
+  "com.minecolonies.coremod.info.miner.2": "Now let's cover some frequently asked questions:\n\n Q 1. How far down will my miner dig before making nodes?\n   A 1. Without intervention, at level 1 they will build nodes after they hit y level 50, at level 2 they will make nodes after they hit y level 30, and at level 3 they will make nodes after they hit y level 5. \n\n",
   "com.minecolonies.coremod.info.miner.3.name": "FAQ con't",
   "com.minecolonies.coremod.info.miner.3": "Q2. My miner just stops working or wanders around above ground, why?\n  A 2. Either something is blocking their path or they don't have the necessary materials. See page 1 for the materials they need or check the miners request page.",
   "com.minecolonies.coremod.info.miner.4.name": "Leveling",
@@ -1385,7 +1385,7 @@
   "com.minecolonies.coremod.info.warehouse.1": "Let's cover restrictions:\n\n 1. Space is limited to the number of racks in the schematic, you can not add your own, if you do, they will get destroyed when the building is updated and the deliverymen will not see those racks or use them. You can not move the racks in the building, if you break a rack, it is no longer seen by the deliverymen.",
   "com.minecolonies.coremod.info.warehouse.2.name": "FAQ",
   "com.minecolonies.coremod.info.warehouse.2": "3. Now let's cover some frequently asked questions: \n\n Q 1. I need more storage space then is given, how do I get more? \n A 1. Upgrade the building, if the building is level 5, you can increase the space in each rack by upgrading on page 2 using an emerald block. This can be done 3 times. \n\n",
-  "com.minecolonies.coremod.info.warehouse.3.name": "FAQ con't", 
+  "com.minecolonies.coremod.info.warehouse.3.name": "FAQ con't",
   "com.minecolonies.coremod.info.warehouse.3": "Q 2. I want to move my warehouse, can I do that? \n A 2. You can, but if there is anything in the racks, the contents will spill out when the racks are removed by the builder. If you must move the warehouse, remove all the contents from the racks first, and watch to make sure any deliverymen don't deliver items.",
 
   "com.minecolonies.coremod.info.deliveryman.0.name": "Introduction",
@@ -1415,7 +1415,7 @@
   "com.minecolonies.coremod.info.baker.3.name": "Leveling",
   "com.minecolonies.coremod.info.baker.3": "As all workers the baker levels up while working.\n With higher levels the baker's speed increases. The higher the hut level is the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions they will stop leveling until you provide them with better housing.",
 
- "com.minecolonies.coremod.info.farmer.0.name": "Introduction",
+  "com.minecolonies.coremod.info.farmer.0.name": "Introduction",
   "com.minecolonies.coremod.info.farmer.0": "The farmer is part of the food production line of your colony. The farmer grows the food for the colony. The farmer can plant and harvest any food item that is planted in farm land soil, even from other mods.",
   "com.minecolonies.coremod.info.farmer.1.name": "Restrictions",
   "com.minecolonies.coremod.info.farmer.1": "Farmers (and most workers in general) unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 4. Diamond Tools\n   lvl 5. Enchanted Tools\n\n 2. Farmers can not grow plants that do not use farm land, such as sugar cane, cactus, or bamboo. \n Farmers can only mantain one field per hut level.",
@@ -1424,7 +1424,7 @@
   "com.minecolonies.coremod.info.farmer.3.name": "Leveling",
   "com.minecolonies.coremod.info.farmer.3": "As all workers the farmer levels up while working.\n With higher levels the farmer speed increases. The higher the hut level is the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions they will stop leveling until you provide them with better housing.",
 
- "com.minecolonies.coremod.info.fisherman.0.name": "Introduction",
+  "com.minecolonies.coremod.info.fisherman.0.name": "Introduction",
   "com.minecolonies.coremod.info.fisherman.0": "The fisherman is part of the food production line of your colony. Simply put, the fisherman will fish as long as you provide them with a fishing pole.",
   "com.minecolonies.coremod.info.fisherman.1.name": "Restrictions",
   "com.minecolonies.coremod.info.fisherman.1": "Now let's cover restrictions:\n\n 1. The fisherman needs a body of water at least seven blocks by seven blocks and at least one block deep. The hut block must be at ground level with the water and must be <= ten blocks from the water.",
@@ -1433,7 +1433,7 @@
   "com.minecolonies.coremod.info.fisherman.3.name": "Leveling",
   "com.minecolonies.coremod.info.fisherman.3": "As all workers the fisherman levels up while working.\n With higher levels the fisherman's speed increases. The higher the hut level is the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions they will stop leveling until you provide them with better housing.",
 
- "com.minecolonies.coremod.info.chickenherder.0.name": "Introduction",
+  "com.minecolonies.coremod.info.chickenherder.0.name": "Introduction",
   "com.minecolonies.coremod.info.chickenherder.0": "The chickenherder is part of the food production line. The chickenherder breeds, raises, and butchers chickens for your colony. They will also collect eggs and feathers. The chickenherder can have two chickens per level of the hut.",
   "com.minecolonies.coremod.info.chickenherder.1.name": "Restrictions",
   "com.minecolonies.coremod.info.chickenherder.1": "Now let's cover restrictions:\n\n 1. Chickenherders (and most workers in general) unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 4. Diamond Tools\n   lvl 5. Enchanted Tools\n\n 2. At least two chickens must be provided to the chickenherder for them to start breeding and butchering them.",
@@ -1442,7 +1442,7 @@
   "com.minecolonies.coremod.info.chickenherder.3.name": "Leveling",
   "com.minecolonies.coremod.info.chickenherder.3": "As all workers the chickenherder levels up while working.\n With higher levels the chickenherder's speed increases. The higher the hut level is the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions they will stop leveling until you provide them with better housing.",
 
- "com.minecolonies.coremod.info.swineherder.0.name": "Introduction",
+  "com.minecolonies.coremod.info.swineherder.0.name": "Introduction",
   "com.minecolonies.coremod.info.swineherder.0": "The swineherder is part of the food production line. The swineherder breeds, raises, and butchers pigs for your colony. The swineherder can have two pigs per level of the hut.",
   "com.minecolonies.coremod.info.swineherder.1.name": "Restrictions",
   "com.minecolonies.coremod.info.swineherder.1": "Now let's cover restrictions:\n\n 1. Swineherders (and most workers in general) unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 4. Diamond Tools\n   lvl 5. Enchanted Tools\n\n 2. At least two pigs must be provided to the swineherder for them to start breeding and butchering them.",
@@ -1451,7 +1451,7 @@
   "com.minecolonies.coremod.info.swineherder.3.name": "Leveling",
   "com.minecolonies.coremod.info.swineherder.3": "As all workers the swineherder levels up while working.\n With higher levels the swineherder's speed increases. The higher the hut level is the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions they will stop leveling until you provide them with better housing.",
 
- "com.minecolonies.coremod.info.shepherd.0.name": "Introduction",
+  "com.minecolonies.coremod.info.shepherd.0.name": "Introduction",
   "com.minecolonies.coremod.info.shepherd.0": "The shepherd is part of the food production line. The shepherd breeds, raises, and butchers sheep for your colony. The shepherd can have two sheep per level of the hut. The shepherd will also shear sheep for wool. And if you choose, on the second page of the GUI you can also tell the shepher to randomly dye sheep for colored wool.",
   "com.minecolonies.coremod.info.shepherd.1.name": "Restrictions",
   "com.minecolonies.coremod.info.shepherd.1": "Now let's cover restrictions:\n\n 1. Shepherds (and most workers in general) unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 4. Diamond Tools\n   lvl 5. Enchanted Tools\n\n 2. At least two sheep must be provided to the shepherd for them to start breeding and butchering them.",
@@ -1460,7 +1460,7 @@
   "com.minecolonies.coremod.info.shepherd.3.name": "Leveling",
   "com.minecolonies.coremod.info.shepherd.3": "As all workers the shepherd levels up while working.\n With higher levels the shepherd's speed increases. The higher the hut level is the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions they will stop leveling until you provide them with better housing.",
 
- "com.minecolonies.coremod.info.cowboy.0.name": "Introduction",
+  "com.minecolonies.coremod.info.cowboy.0.name": "Introduction",
   "com.minecolonies.coremod.info.cowboy.0": "The cowboy is part of the food production line. The cowboy breeds, raises, and butchers cows for your colony. The cowboy can have two cows per level of the hut.",
   "com.minecolonies.coremod.info.cowboy.1.name": "Restrictions",
   "com.minecolonies.coremod.info.cowboy.1": "Now let's cover restrictions:\n\n 1. Cowboys (and most workers in general) unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 4. Diamond Tools\n   lvl 5. Enchanted Tools\n\n 2. At least two cows must be provided to the cowboy for them to start breeding and butchering them.",
@@ -1469,7 +1469,7 @@
   "com.minecolonies.coremod.info.cowboy.3.name": "Leveling",
   "com.minecolonies.coremod.info.cowboy.3": "As all workers the cowboy levels up while working.\n With higher levels the cowboy's speed increases. The higher the hut level is the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions they will stop leveling until you provide them with better housing.",
 
- "com.minecolonies.coremod.info.composter.0.name": "Introduction",
+  "com.minecolonies.coremod.info.composter.0.name": "Introduction",
   "com.minecolonies.coremod.info.composter.0": "The composter is part of the crafting line of your colony. The composter will take items that you choose for them to use, to make compost for your farmer and florist to use.",
   "com.minecolonies.coremod.info.composter.1.name": "Restrictions",
   "com.minecolonies.coremod.info.composter.1": "Now let's cover composter restrictions:\n\n 1. You must choose which items you want the composter to use to make compost with. This is found on page two of the GUI. \n   Be careful using food items if you have a large colony but not many food production huts.",
@@ -1478,7 +1478,7 @@
   "com.minecolonies.coremod.info.composter.3.name": "Leveling",
   "com.minecolonies.coremod.info.composter.3": "As all workers the composter levels up while working.\n With higher levels the composter's speed increases. The higher the hut level is the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions they will stop leveling until you provide them with better housing.",
 
- "com.minecolonies.coremod.info.guardtower.0.name": "Introduction",
+  "com.minecolonies.coremod.info.guardtower.0.name": "Introduction",
   "com.minecolonies.coremod.info.guardtower.0": "The guard tower is the basic hut for your military defense. Each guard tower houses one guard. However, the guard will also live here so it frees up a bed in the citizen huts for more citizens.",
   "com.minecolonies.coremod.info.guardtower.1.name": "Restrictions",
   "com.minecolonies.coremod.info.guardtower.1": "Now let's cover guard tower restrictions:\n\n 1. Guards (and most workers in general) unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 4. Diamond Tools\n   lvl 5. Enchanted Tools\n\n",
@@ -1489,7 +1489,7 @@
   "com.minecolonies.coremod.info.guardtower.4.name": "Leveling",
   "com.minecolonies.coremod.info.guardtower.4": "As all workers the guards levels up while working.\n With higher levels the guards speed increases. The higher the hut level is the quicker they level up.",
 
- "com.minecolonies.coremod.info.barrackstower.0.name": "Introduction",
+  "com.minecolonies.coremod.info.barrackstower.0.name": "Introduction",
   "com.minecolonies.coremod.info.barrackstower.0": "The barracks tower is the heart of your military defense. Each barracks tower houses five guards, one for every level of the hut. However, the guard will also live here so it frees up a bed in the citizen huts for more citizens.",
   "com.minecolonies.coremod.info.barrackstower.1.name": "Restrictions",
   "com.minecolonies.coremod.info.barrackstower.1": "Now let's cover barracks tower restrictions:\n\n 1. Guards (and most workers in general) unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 4. Diamond Tools\n   lvl 5. Enchanted Tools\n\n ",
@@ -1500,7 +1500,7 @@
   "com.minecolonies.coremod.info.barrackstower.4.name": "Leveling",
   "com.minecolonies.coremod.info.barrackstower.4": "As all workers the guards levels up while working.\n With higher levels the guards speed increases. The higher the hut level is the quicker they level up.",
 
- "com.minecolonies.coremod.info.barracks.0.name": "Introduction",
+  "com.minecolonies.coremod.info.barracks.0.name": "Introduction",
   "com.minecolonies.coremod.info.barracks.0": "The barracks is the heart of your military defense, without it you wouldn't be able to build any barracks towers.\n Each barracks contain four barracks towers, one for each level up to level four.",
   "com.minecolonies.coremod.info.barracks.1.name": "Restrictions",
   "com.minecolonies.coremod.info.barracks.1": "Now let's cover barracks restrictions:\n\n 1. Barracks only hold 1 tower per level, and each tower can only level as high as the barracks. So if you have a level one barracks, it will only allow for one barracks tower and it's max level is one. If you have a level three barracks, it will allow for three barracks towers and their max level is three.",

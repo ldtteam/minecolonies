@@ -43,9 +43,10 @@ public class ContainerRack extends Container
 
     /**
      * The container constructor.
+     *
      * @param windowId the window id.
-     * @param inv the inventory.
-     * @param extra some extra data.
+     * @param inv      the inventory.
+     * @param extra    some extra data.
      */
     public ContainerRack(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
@@ -54,7 +55,7 @@ public class ContainerRack extends Container
         final BlockPos neighbor = extra.readBlockPos();
 
         final AbstractTileEntityRack abstractTileEntityRack = (AbstractTileEntityRack) inv.player.world.getTileEntity(rack);
-        final AbstractTileEntityRack  neighborRack = (AbstractTileEntityRack) inv.player.world.getTileEntity(neighbor);
+        final AbstractTileEntityRack neighborRack = (AbstractTileEntityRack) inv.player.world.getTileEntity(neighbor);
 
         if (neighborRack != null)
         {
@@ -89,8 +90,8 @@ public class ContainerRack extends Container
                 {
                     this.addSlot(
                       new SlotItemHandler(inventory, index,
-                                           INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
-                                           PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH));
+                        INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
+                        PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH));
                     index++;
                 }
             }
@@ -105,10 +106,10 @@ public class ContainerRack extends Container
             {
                 addSlot(new Slot(
                   inv,
-                                             j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
-                                             PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                                             PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
-                                               + i * PLAYER_INVENTORY_OFFSET_EACH
+                  j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
+                  PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                  PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
+                    + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -117,9 +118,9 @@ public class ContainerRack extends Container
         {
             addSlot(new Slot(
               inv, i,
-                                         PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                                         PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
-                                           INVENTORY_BAR_SIZE)
+              PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+              PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
+                INVENTORY_BAR_SIZE)
             ));
         }
     }

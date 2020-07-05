@@ -34,6 +34,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenSleepHandler(final EntityCitizen citizen)
@@ -53,8 +54,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     }
 
     /**
-     * Sets if the citizen is a sleep.
-     * Caution: Use trySleep(BlockPos) for better control
+     * Sets if the citizen is a sleep. Caution: Use trySleep(BlockPos) for better control
      *
      * @param isAsleep True to make the citizen sleep.
      */
@@ -113,7 +113,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         citizen.updatePose(Pose.SLEEPING);
         citizen.getNavigator().clearPath();
-        citizen.setPosition( ((float) bedLocation.getX() + HALF_BLOCK),
+        citizen.setPosition(((float) bedLocation.getX() + HALF_BLOCK),
           (float) bedLocation.getY() + 0.8F,
           ((float) bedLocation.getZ() + HALF_BLOCK));
         citizen.setBedPosition(bedLocation);
@@ -203,6 +203,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
     /**
      * Get the bed location of the citizen.
+     *
      * @return the bed location.
      */
     @Override
@@ -213,6 +214,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
     /**
      * Get the X render offset.
+     *
      * @return the offset.
      */
     @Override
@@ -237,6 +239,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
     /**
      * Get the z render offset.
+     *
      * @return the offset.
      */
     @Override

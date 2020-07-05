@@ -23,7 +23,7 @@ public final class BuildingConstants
     /**
      * Min slots required to be recognized as storage.
      */
-    public static final int  MIN_SLOTS_FOR_RECOGNITION = 5;
+    public static final int MIN_SLOTS_FOR_RECOGNITION = 5;
 
     // --------------- Miner building constants ---------------//
 
@@ -66,6 +66,11 @@ public final class BuildingConstants
      * The NBT Tag to store the active node the miner is working on.
      */
     public static final String TAG_ACTIVE = "activeNodeNode";
+
+    /**
+     * The NBT Tag to store the active node the miner is working on.
+     */
+    public static final String TAG_ONGOING = "ongoingDeliveries";
 
     /**
      * The NBT Tag to store the active node the miner is working on.

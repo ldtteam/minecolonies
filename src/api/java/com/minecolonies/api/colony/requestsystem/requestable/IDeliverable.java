@@ -9,8 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public interface IDeliverable extends IRetryable
 {
     /**
-     * Method called to check if a given stack matches this deliverable.
-     * The first stack that returns true from this method is returned as a Deliverable.
+     * Method called to check if a given stack matches this deliverable. The first stack that returns true from this method is returned as a Deliverable.
      *
      * @param stack The stack to test.
      * @return true when the stack matches. False when not.
@@ -48,6 +47,7 @@ public interface IDeliverable extends IRetryable
 
     /**
      * Creates a new instance of this requestable with the given count.
+     *
      * @param newCount The new requestable, with the requested count.
      * @return the deliverable.
      */

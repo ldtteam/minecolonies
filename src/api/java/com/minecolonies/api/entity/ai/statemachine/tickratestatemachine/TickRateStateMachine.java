@@ -12,8 +12,7 @@ import java.util.function.Consumer;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 
 /**
- * Statemachine with an added tickrate limiting of transitions, allowing transitions to be checked at a lower rate.
- * Default tickrate is 20 tps (Minecraft default).
+ * Statemachine with an added tickrate limiting of transitions, allowing transitions to be checked at a lower rate. Default tickrate is 20 tps (Minecraft default).
  */
 public class TickRateStateMachine<S extends IState> extends BasicStateMachine<ITickingTransition<S>, S> implements ITickRateStateMachine<S>
 {
@@ -34,8 +33,9 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
 
     /**
      * Construct a new StateMachine
+     *
      * @param exceptionHandler the exception handler.
-     * @param initialState the initial state.
+     * @param initialState     the initial state.
      */
     public TickRateStateMachine(@NotNull final S initialState, @NotNull final Consumer<RuntimeException> exceptionHandler)
     {
@@ -94,10 +94,10 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
 
         if (!transitionMap.containsKey(getState()))
         {
-                // Reached Trap/Sink state we cannot leave.
-                onException(new RuntimeException("Missing AI transition for state: " + getState()));
-                reset();
-                return;
+            // Reached Trap/Sink state we cannot leave.
+            onException(new RuntimeException("Missing AI transition for state: " + getState()));
+            reset();
+            return;
         }
 
         for (final ITickingTransition<S> transition : transitionMap.get(getState()))

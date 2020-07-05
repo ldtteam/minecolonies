@@ -25,16 +25,13 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Resolver that handles delivery requests.
- * Delivery requests always have a start, a target and an itemstack to be delivered.
- * These resolvers are supposed to be provided by deliverymen.
+ * Resolver that handles delivery requests. Delivery requests always have a start, a target and an itemstack to be delivered. These resolvers are supposed to be provided by
+ * deliverymen.
  * <p>
- * Currently, this resolver will iterate through all available deliverymen and find
- * the one with the least amount of open requests, followed by the one that is nearest.
+ * Currently, this resolver will iterate through all available deliverymen and find the one with the least amount of open requests, followed by the one that is nearest.
  * <p>
- * There is a tiny bit of (known) code-smell in here, since this resolver should either be global
- * or specific to a hut. Currently, it is a hut-specific resolver that acts as if it were global.
- * The performance impact is negligible though.
+ * There is a tiny bit of (known) code-smell in here, since this resolver should either be global or specific to a hut. Currently, it is a hut-specific resolver that acts as if it
+ * were global. The performance impact is negligible though.
  */
 public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 {
@@ -93,16 +90,16 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                                                                                 .getTarget()
                                                                                                 .isReachableFromLocation(entityCitizen.getLocation()))
                                                                         .orElse(false))
-                                               .filter(c -> c.getJob() instanceof JobDeliveryman)
-                                               .filter(c -> ((JobDeliveryman) c.getJob()).isActive())
-                                               .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
-                                                      .thenComparing(Comparator.comparing(c -> {
-                                                          BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
-                                                          //We can do an instant get here, since we are already filtering on anything that has no entity.
-                                                          BlockPos entityLocation = c.getCitizenEntity().get().getLocation().getInDimensionLocation();
+                                               .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).isActive())
+                                               .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).hasSameDestinationDelivery(request))
+                                                      .thenComparing(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
+                                                                       .thenComparing(c -> {
+                                                                           BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
+                                                                           //We can do an instant get here, since we are already filtering on anything that has no entity.
+                                                                           BlockPos entityLocation = c.getCitizenEntity().get().getLocation().getInDimensionLocation();
 
-                                                          return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
-                                                      })))
+                                                                           return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
+                                                                       })))
                                                .orElse(null);
 
         if (freeDeliveryMan == null)
@@ -129,7 +126,6 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         return null;
     }
 
-    @Nullable
     @Override
     public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
@@ -161,14 +157,12 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
 
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {

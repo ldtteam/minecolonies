@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
+import com.minecolonies.api.colony.requestsystem.management.ITokenHandler;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;

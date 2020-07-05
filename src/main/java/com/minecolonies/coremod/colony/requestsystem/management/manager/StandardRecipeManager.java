@@ -14,8 +14,6 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class StandardRecipeManager implements IRecipeManager
 {
@@ -37,7 +35,7 @@ public class StandardRecipeManager implements IRecipeManager
     @Override
     public ImmutableMap<IToken<?>, IRecipeStorage> getRecipes()
     {
-         if (cache == null)
+        if (cache == null)
         {
             cache = ImmutableMap.copyOf(recipes);
         }
@@ -56,7 +54,7 @@ public class StandardRecipeManager implements IRecipeManager
     public IToken<?> checkOrAddRecipe(final IRecipeStorage storage)
     {
         final IToken<?> token = getRecipeId(storage);
-        if(token == null)
+        if (token == null)
         {
             return addRecipe(storage);
         }
@@ -66,9 +64,9 @@ public class StandardRecipeManager implements IRecipeManager
     @Override
     public IToken<?> getRecipeId(final IRecipeStorage storage)
     {
-        for(final Map.Entry<IToken<?>, IRecipeStorage> tempStorage: recipes.entrySet())
+        for (final Map.Entry<IToken<?>, IRecipeStorage> tempStorage : recipes.entrySet())
         {
-            if(tempStorage.getValue().equals(storage))
+            if (tempStorage.getValue().equals(storage))
             {
                 return tempStorage.getKey();
             }
@@ -80,7 +78,7 @@ public class StandardRecipeManager implements IRecipeManager
     public void write(@NotNull final CompoundNBT compound)
     {
         @NotNull final ListNBT recipesTagList =
-                recipes.entrySet().stream().map(entry ->  StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toListNBT());
+          recipes.entrySet().stream().map(entry -> StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toListNBT());
         compound.put(TAG_RECIPES, recipesTagList);
     }
 

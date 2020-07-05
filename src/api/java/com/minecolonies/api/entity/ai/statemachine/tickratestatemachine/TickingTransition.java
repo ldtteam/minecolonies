@@ -28,8 +28,8 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
     private final int tickOffset;
 
     /**
-     * The variant used upon creation of the AITarget to uniformly distribute the Tick offset
-     * Static variable counter that changes with each AITarget creation and affects the next one.
+     * The variant used upon creation of the AITarget to uniformly distribute the Tick offset Static variable counter that changes with each AITarget creation and affects the next
+     * one.
      */
     @SuppressWarnings("PMD.AssignmentToNonFinalStatic")
     private static int tickOffsetVariant = 0;

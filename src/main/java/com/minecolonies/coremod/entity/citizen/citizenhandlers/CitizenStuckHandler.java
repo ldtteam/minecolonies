@@ -38,6 +38,7 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenStuckHandler(final EntityCitizen citizen)
@@ -64,6 +65,7 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
 
     /**
      * Let worker AIs check if the citizen is stuck to not track it on their own.
+     *
      * @return true if tried to move away already.
      */
     @Override

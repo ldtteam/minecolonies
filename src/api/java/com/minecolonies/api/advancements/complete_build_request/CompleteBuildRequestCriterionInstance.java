@@ -7,9 +7,9 @@ import net.minecraft.util.ResourceLocation;
 
 public class CompleteBuildRequestCriterionInstance extends CriterionInstance
 {
-    private String hutName;
+    private String        hutName;
     private StructureName structureName;
-    private int level = -1;
+    private int           level = -1;
 
     public CompleteBuildRequestCriterionInstance()
     {

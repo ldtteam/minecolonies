@@ -97,7 +97,7 @@ public class ModelEntityCrafterFemale extends CitizenModel<AbstractEntityCitizen
         skirtBo1.setTextureSize(256, 128);
         skirtBo1.mirror = true;
         setRotation(skirtBo1, 0F, 0F, 0F);
-        
+
         skirtT1 = new ModelRenderer(this, 25, 33);
         skirtT1.addBox(-4.5F, 11F, -3F, 9, 2, 6);
         skirtT1.setRotationPoint(0F, 0F, 0F);

@@ -45,7 +45,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
     /**
      * Whether to retrieve the worker on low health.
      */
-    private boolean retrieveOnLowHealth = false;
+    private boolean       retrieveOnLowHealth = false;
 
     /**
      * Whether to patrol manually or not.

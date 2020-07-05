@@ -433,8 +433,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Rally to a location.
-     * This function assumes that the given location is reachable by the worker.
+     * Rally to a location. This function assumes that the given location is reachable by the worker.
      *
      * @return the next state to run into.
      */
@@ -464,8 +463,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Decrease the saturation while rallying.
-     * Rallying is hard work for the guards, so make sure they suffer from it.
+     * Decrease the saturation while rallying. Rallying is hard work for the guards, so make sure they suffer from it.
      *
      * @return The next state
      */

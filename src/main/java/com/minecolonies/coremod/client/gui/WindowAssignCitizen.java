@@ -32,7 +32,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 public class WindowAssignCitizen extends Window implements ButtonHandler
 {
     /**
-     *
      * The view of the current building.
      */
     private final IBuildingView building;
@@ -83,8 +82,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
     }
 
     /**
-     * Called when the GUI has been opened.
-     * Will fill the fields and lists.
+     * Called when the GUI has been opened. Will fill the fields and lists.
      */
     @Override
     public void onOpened()
@@ -134,7 +132,6 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
                         if (work != null)
                         {
                             homeString = LanguageHandler.format("com.minecolonies.coremod.gui.homeHut.currently", BlockPosUtil.getDistance2D(work, home));
-
                         }
                         else
                         {

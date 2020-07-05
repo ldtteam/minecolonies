@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.concrete;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingConcreteMixer;
 import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
@@ -11,7 +12,6 @@ import net.minecraft.block.ConcretePowderBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.START_WORKING;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
@@ -30,11 +29,11 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     /**
      * Predicate to check if concrete powder is in inv.
      */
-    private static final Predicate<ItemStack> CONCRETE =  stack -> !stack.isEmpty() && stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof ConcretePowderBlock;
+    private static final Predicate<ItemStack> CONCRETE =
+      stack -> !stack.isEmpty() && stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof ConcretePowderBlock;
 
     /**
-     * Constructor for the Concrete mason.
-     * Defines the tasks the Concrete mason executes.
+     * Constructor for the Concrete mason. Defines the tasks the Concrete mason executes.
      *
      * @param job a Concrete mason job to use.
      */

@@ -18,15 +18,15 @@ import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_AR
 
 public class CommandColonyInfo implements IMCCommand
 {
-    private static final String ID_TEXT                    = "ID: ";
-    private static final String NAME_TEXT                  = "Name: ";
-    private static final String MAYOR_TEXT                 = "Mayor: ";
-    private static final String COORDINATES_TEXT           = "Coordinates: ";
-    private static final String COORDINATES_XYZ            = "x=%s y=%s z=%s";
-    private static final String CITIZENS                   = "Citizens: ";
-    private static final String LAST_CONTACT_TEXT          = "Last contact with Owner or Officer: %d hours ago!";
-    private static final String IS_DELETABLE               = "If true this colony cannot be deleted: ";
-    private static final String CANNOT_BE_RAIDED           = "This colony is unable to be raided";
+    private static final String ID_TEXT           = "ID: ";
+    private static final String NAME_TEXT         = "Name: ";
+    private static final String MAYOR_TEXT        = "Mayor: ";
+    private static final String COORDINATES_TEXT  = "Coordinates: ";
+    private static final String COORDINATES_XYZ   = "x=%s y=%s z=%s";
+    private static final String CITIZENS          = "Citizens: ";
+    private static final String LAST_CONTACT_TEXT = "Last contact with Owner or Officer: %d hours ago!";
+    private static final String IS_DELETABLE      = "If true this colony cannot be deleted: ";
+    private static final String CANNOT_BE_RAIDED  = "This colony is unable to be raided";
 
     /**
      * What happens when the command is executed after preConditions are successful.

@@ -5,6 +5,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -57,6 +58,7 @@ public class Stack implements IDeliverable
 
     /**
      * Create a Stack deliverable.
+     *
      * @param stack the required stack.
      */
     public Stack(@NotNull final ItemStack stack)
@@ -66,8 +68,9 @@ public class Stack implements IDeliverable
 
     /**
      * Create a Stack deliverable.
-     * @param stack the required stack.
-     * @param count the count.
+     *
+     * @param stack    the required stack.
+     * @param count    the count.
      * @param minCount the min count.
      */
     public Stack(@NotNull final ItemStack stack, final int count, final int minCount)
@@ -77,6 +80,7 @@ public class Stack implements IDeliverable
 
     /**
      * Transform an itemStorage into this predicate.
+     *
      * @param itemStorage the storage to use.
      */
     public Stack(@NotNull final ItemStorage itemStorage)
@@ -86,22 +90,23 @@ public class Stack implements IDeliverable
 
     /**
      * Create a Stack deliverable.
-     * @param stack the required stack.
-     * @param matchMeta if meta has to be matched.
-     * @param matchNBT if NBT has to be matched.
+     *
+     * @param stack       the required stack.
+     * @param matchMeta   if meta has to be matched.
+     * @param matchNBT    if NBT has to be matched.
      * @param matchOreDic if the oredict has to be matched.
-     * @param result the result stack.
-     * @param count the count.
-     * @param minCount the min count.
+     * @param result      the result stack.
+     * @param count       the count.
+     * @param minCount    the min count.
      */
     public Stack(
-            @NotNull final ItemStack stack,
-            final boolean matchMeta,
-            final boolean matchNBT,
-            final boolean matchOreDic,
-            @NotNull final ItemStack result ,
-            final int count,
-            final int minCount)
+      @NotNull final ItemStack stack,
+      final boolean matchMeta,
+      final boolean matchNBT,
+      final boolean matchOreDic,
+      @NotNull final ItemStack result,
+      final int count,
+      final int minCount)
     {
         if (ItemStackUtils.isEmpty(stack))
         {
@@ -119,8 +124,9 @@ public class Stack implements IDeliverable
 
     /**
      * Serialize the deliverable.
+     *
      * @param controller the controller.
-     * @param input the input.
+     * @param input      the input.
      * @return the compound.
      */
     public static CompoundNBT serialize(final IFactoryController controller, final Stack input)
@@ -142,8 +148,9 @@ public class Stack implements IDeliverable
 
     /**
      * Deserialize the deliverable.
+     *
      * @param controller the controller.
-     * @param compound the compound.
+     * @param compound   the compound.
      * @return the deliverable.
      */
     public static Stack deserialize(final IFactoryController controller, final CompoundNBT compound)
@@ -161,6 +168,51 @@ public class Stack implements IDeliverable
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);
         }
+
+        return new Stack(stack, matchMeta, matchNBT, matchOreDic, result, count, minCount);
+    }
+
+    /**
+     * Serialize the deliverable.
+     *
+     * @param controller the controller.
+     * @param buffer     the the buffer to write to.
+     * @param input      the input to serialize.
+     */
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Stack input)
+    {
+        buffer.writeItemStack(input.theStack);
+        buffer.writeBoolean(input.matchMeta);
+        buffer.writeBoolean(input.matchNBT);
+        buffer.writeBoolean(input.matchOreDic);
+
+        buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
+        if (!ItemStackUtils.isEmpty(input.result))
+        {
+            buffer.writeItemStack(input.result);
+        }
+        buffer.writeInt(input.getCount());
+        buffer.writeInt(input.getMinimumCount());
+    }
+
+    /**
+     * Deserialize the deliverable.
+     *
+     * @param controller the controller.
+     * @param buffer     the buffer to read.
+     * @return the deliverable.
+     */
+    public static Stack deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    {
+        final ItemStack stack = buffer.readItemStack();
+        final boolean matchMeta = buffer.readBoolean();
+        final boolean matchNBT = buffer.readBoolean();
+        final boolean matchOreDic = buffer.readBoolean();
+
+        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
+
+        int count = buffer.readInt();
+        int minCount = buffer.readInt();
 
         return new Stack(stack, matchMeta, matchNBT, matchOreDic, result, count, minCount);
     }

@@ -9,9 +9,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.*;
 
 /**
- * Java8 functional interfaces for {@link net.minecraft.inventory.IInventory}
- * Most methods will be remapping of parameters to reduce duplication.
- * Because of erasure clashes, not all combinations are supported.
+ * Java8 functional interfaces for {@link net.minecraft.inventory.IInventory} Most methods will be remapping of parameters to reduce duplication. Because of erasure clashes, not
+ * all combinations are supported.
  */
 public final class InventoryFunctions
 {
@@ -38,19 +37,17 @@ public final class InventoryFunctions
     }
 
     /**
-     * Topmost function to actually loop over the provider.
-     * Will return if it found something.
+     * Topmost function to actually loop over the provider. Will return if it found something.
      *
      * @param provider       the provider to loop over
      * @param tester         the function to use for testing slots
-     * @param stopAfterFirst if it should stop executing after finding one stack
-     *                       that applies
+     * @param stopAfterFirst if it should stop executing after finding one stack that applies
      * @return true if it found a stack
      */
     private static boolean matchInProvider(
-                                            @Nullable final ICapabilityProvider provider,
-                                            @NotNull final Function<ICapabilityProvider, Function<Integer, Predicate<ItemStack>>> tester,
-                                            final boolean stopAfterFirst)
+      @Nullable final ICapabilityProvider provider,
+      @NotNull final Function<ICapabilityProvider, Function<Integer, Predicate<ItemStack>>> tester,
+      final boolean stopAfterFirst)
     {
         if (provider == null)
         {
@@ -105,9 +102,9 @@ public final class InventoryFunctions
      * @return true if it found a stack
      */
     public static boolean matchFirstInProviderWithAction(
-                                                          final ICapabilityProvider provider,
-                                                          @NotNull final Predicate<ItemStack> tester,
-                                                          @NotNull final IMatchActionResult action)
+      final ICapabilityProvider provider,
+      @NotNull final Predicate<ItemStack> tester,
+      @NotNull final IMatchActionResult action)
     {
         return matchInProvider(
           provider,
@@ -132,9 +129,9 @@ public final class InventoryFunctions
      * @return true if it found a stack
      */
     public static boolean matchFirstInHandlerWithAction(
-                                                         @NotNull final IItemHandler itemHandler,
-                                                         @NotNull final Predicate<ItemStack> tester,
-                                                         @NotNull final IMatchActionResultHandler action)
+      @NotNull final IItemHandler itemHandler,
+      @NotNull final Predicate<ItemStack> tester,
+      @NotNull final IMatchActionResultHandler action)
     {
         return matchInHandler(
           itemHandler,
@@ -152,13 +149,13 @@ public final class InventoryFunctions
     /**
      * Will return if it found something in the handler.
      *
-     * @param handler        the handler to check
-     * @param tester         the function to use for testing slots
+     * @param handler the handler to check
+     * @param tester  the function to use for testing slots
      * @return true if it found a stack
      */
     private static boolean matchInHandler(
-                                           @Nullable final IItemHandler handler,
-                                           @NotNull final Function<IItemHandler, Function<Integer, Predicate<ItemStack>>> tester)
+      @Nullable final IItemHandler handler,
+      @NotNull final Function<IItemHandler, Function<Integer, Predicate<ItemStack>>> tester)
     {
         if (handler == null)
         {
@@ -188,9 +185,9 @@ public final class InventoryFunctions
      * @return true if it found a stack
      */
     public static boolean matchFirstInProviderWithSimpleAction(
-                                                                final ICapabilityProvider provider,
-                                                                @NotNull final Predicate<ItemStack> tester,
-                                                                @NotNull final Consumer<Integer> action)
+      final ICapabilityProvider provider,
+      @NotNull final Predicate<ItemStack> tester,
+      @NotNull final Consumer<Integer> action)
     {
         return matchInProvider(
           provider,
@@ -207,8 +204,7 @@ public final class InventoryFunctions
     }
 
     /**
-     * Search for a stack in an Inventory matching the predicate.
-     * (IInventory, Integer) -&gt; Boolean
+     * Search for a stack in an Inventory matching the predicate. (IInventory, Integer) -&gt; Boolean
      *
      * @param inventory the inventory to search in
      * @param tester    the function to use for testing slots
@@ -220,8 +216,7 @@ public final class InventoryFunctions
     }
 
     /**
-     * Functional interface describing a Action that is executed ones a Match
-     * (the given ItemStack) is found in the given slot.
+     * Functional interface describing a Action that is executed ones a Match (the given ItemStack) is found in the given slot.
      */
     @FunctionalInterface
     public interface IMatchActionResult extends ObjIntConsumer<ICapabilityProvider>
@@ -229,8 +224,7 @@ public final class InventoryFunctions
         /**
          * Method executed when a match has been found.
          *
-         * @param provider  The itemstack that matches the predicate for the
-         *                  search.
+         * @param provider  The itemstack that matches the predicate for the search.
          * @param slotIndex The slotindex in which this itemstack was found.
          */
         @Override

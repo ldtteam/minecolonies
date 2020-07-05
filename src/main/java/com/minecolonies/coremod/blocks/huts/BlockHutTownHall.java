@@ -21,8 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Hut for the town hall.
- * Sets the working range for the town hall in the constructor
+ * Hut for the town hall. Sets the working range for the town hall in the constructor
  */
 public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 {
@@ -58,12 +57,12 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     /**
      * Choose a different gui when no colony view, for colony overview and creation/deletion
      *
-     * @param state the blockstate.
+     * @param state   the blockstate.
      * @param worldIn the world.
-     * @param pos the position.
-     * @param player the player.
-     * @param hand the hand.
-     * @param ray the raytraceresult.
+     * @param pos     the position.
+     * @param player  the player.
+     * @param hand    the hand.
+     * @param ray     the raytraceresult.
      * @return the result type.
      */
     @Override

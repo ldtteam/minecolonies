@@ -43,9 +43,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     public final List<ToolType> toolsNeeded = new ArrayList<>();
 
     /**
-     * List of items that are required by the guard based on building level
-     * and guard level.  This array holds a pointer to the building level
-     * and then pointer to GuardGear
+     * List of items that are required by the guard based on building level and guard level.  This array holds a pointer to the building level and then pointer to GuardGear
      */
     public final List<List<GuardGear>> itemsNeeded = new ArrayList<>();
 
@@ -75,8 +73,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     private static final double SPEED_LEVEL_BONUS = 0.01;
 
     /**
-     * Creates the abstract part of the AI.
-     * Always use this constructor!
+     * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill
      */
@@ -129,8 +126,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Prepares the guard.
-     * Fills his required armor and tool lists and transfer from building chest if required.
+     * Prepares the guard. Fills his required armor and tool lists and transfer from building chest if required.
      *
      * @return The next {@link IAIState}.
      */
@@ -282,9 +278,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * This gets the attack speed for the guard
-     * with adjustment for guards level.
-     * Capped at 2
+     * This gets the attack speed for the guard with adjustment for guards level. Capped at 2
      *
      * @return movement speed for guard
      */
@@ -321,9 +315,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Updates the equipment. Take the first item of the required type only.
-     * Skip over the items not requires. Ex.  Required Iron, skip leather and
-     * everything else.
+     * Updates the equipment. Take the first item of the required type only. Skip over the items not requires. Ex.  Required Iron, skip leather and everything else.
      */
     private void updateArmor()
     {

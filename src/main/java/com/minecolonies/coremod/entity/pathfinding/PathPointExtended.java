@@ -13,10 +13,9 @@ public class PathPointExtended extends PathPoint
     /**
      * Is the point on a ladder.
      */
-    private boolean    onLadder     = false;
+    private boolean   onLadder     = false;
     /**
-     * What direction does the ladder face.
-     * Should be instantiated to something he doesn't recognize as climbable.
+     * What direction does the ladder face. Should be instantiated to something he doesn't recognize as climbable.
      */
     private Direction ladderFacing = Direction.DOWN;
 
@@ -79,6 +78,7 @@ public class PathPointExtended extends PathPoint
 
     /**
      * Set if it is on rails.
+     *
      * @param isOnRails if on rails.
      */
     public void setOnRails(final boolean isOnRails)
@@ -104,6 +104,7 @@ public class PathPointExtended extends PathPoint
 
     /**
      * Whether this is on rails.
+     *
      * @return true if so.
      */
     public boolean isOnRails()
@@ -113,6 +114,7 @@ public class PathPointExtended extends PathPoint
 
     /**
      * Whether this is the rails entry.
+     *
      * @return true if so.
      */
     public boolean isRailsEntry()
@@ -122,6 +124,7 @@ public class PathPointExtended extends PathPoint
 
     /**
      * Whether this is the rails exit.
+     *
      * @return true if so.
      */
     public boolean isRailsExit()

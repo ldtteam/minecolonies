@@ -22,8 +22,8 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Hor
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent.NorsemenRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent.NorsemenShipRaidEvent;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -56,7 +56,7 @@ public class RaidManager implements IRaiderManager
      */
     private static final String DESERT_BIOME_ID = "desert";
     private static final String JUNGLE_BIOME_ID = "jungle";
-    private static final String TAIGA_BIOME_ID = "taiga";
+    private static final String TAIGA_BIOME_ID  = "taiga";
 
     /**
      * Whether there will be a raid in this colony tonight.
@@ -527,7 +527,7 @@ public class RaidManager implements IRaiderManager
 
     /**
      * Checks if a raid is possible
-     * 
+     *
      * @return whether a raid is possible
      */
     @Override

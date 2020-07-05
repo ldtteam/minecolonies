@@ -45,10 +45,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     }
 
     /**
-     * Creates a window build tool.
-     * This requires X, Y and Z coordinates.
-     * If a structure is active, recalculates the X Y Z with offset.
-     * Otherwise the given parameters are used.
+     * Creates a window build tool. This requires X, Y and Z coordinates. If a structure is active, recalculates the X Y Z with offset. Otherwise the given parameters are used.
      *
      * @param pos coordinate.
      */
@@ -60,8 +57,9 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void place(final StructureName structureName)
     {
-        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure());;
-        final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
+        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure());
+        ;
+        final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         Network.getNetwork().sendToServer(new BuildToolPlaceMessage(
           structureName.toString(),
           structureName.toString(),
@@ -87,8 +85,9 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void paste(final StructureName name, final boolean complete)
     {
-        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure());;
-        final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
+        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure());
+        ;
+        final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         if (name.isHut() || Settings.instance.getStaticSchematicName() != null && !Settings.instance.getStaticSchematicName().isEmpty())
         {
             Network.getNetwork().sendToServer(new BuildToolPasteMessage(
@@ -188,6 +187,10 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public boolean hasMatchingBlock(@NotNull final PlayerInventory inventory, final String hut)
     {
-        return InventoryUtils.hasItemInProvider(inventory.player, item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock().getRegistryName().getPath().contains(hut));
+        return InventoryUtils.hasItemInProvider(inventory.player,
+          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock()
+                                                                                                                                  .getRegistryName()
+                                                                                                                                  .getPath()
+                                                                                                                                  .contains(hut));
     }
 }

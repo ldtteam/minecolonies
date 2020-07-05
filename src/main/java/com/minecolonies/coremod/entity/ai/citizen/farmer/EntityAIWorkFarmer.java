@@ -14,6 +14,7 @@ import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
@@ -33,7 +34,6 @@ import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
@@ -411,7 +411,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, Buil
 
     /**
      * This (re)initializes a field. Checks the block above to see if it is a plant, if so, breaks it. Then tills.
-     * 
+     *
      * @return the next state to go into.
      */
     private IAIState workAtField()

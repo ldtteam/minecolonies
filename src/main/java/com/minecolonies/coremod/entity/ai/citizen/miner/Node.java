@@ -12,9 +12,8 @@ import java.util.Random;
 /**
  * Miner Node Data StructureIterator.
  * <p>
- * When a node is completed we should add the surrounding nodes to level as AVAILABLE
- * also note that we don't want node (0, -1) because there will be a ladder on the back
- * wall of the initial node, and we cant put the connection through the ladder
+ * When a node is completed we should add the surrounding nodes to level as AVAILABLE also note that we don't want node (0, -1) because there will be a ladder on the back wall of
+ * the initial node, and we cant put the connection through the ladder
  */
 public class Node
 {
@@ -67,8 +66,7 @@ public class Node
     private NodeStatus status;
 
     /**
-     * Initializes the node.
-     * Requires a location in the node as parameters
+     * Initializes the node. Requires a location in the node as parameters
      *
      * @param x      X-coordinate in the node
      * @param z      Z-coordinate in the node
@@ -84,8 +82,7 @@ public class Node
     }
 
     /**
-     * Creates a node from the NBT Tag.
-     * Returns the created node
+     * Creates a node from the NBT Tag. Returns the created node
      *
      * @param compound Compound to read from
      * @return Node created from compound
@@ -119,8 +116,8 @@ public class Node
             if (hasDoubles)
             {
                 parent = new Vec2i(
-                                    MathHelper.floor(compound.getDouble(TAG_PARENTX)),
-                                    MathHelper.floor(compound.getDouble(TAG_PARENTZ)));
+                  MathHelper.floor(compound.getDouble(TAG_PARENTX)),
+                  MathHelper.floor(compound.getDouble(TAG_PARENTZ)));
             }
             else
             {
@@ -282,9 +279,10 @@ public class Node
 
     /**
      * Return a random next node to work at, might be at this node or at a parent.
-     * @return the next node to go to.
+     *
      * @param level the level it is part of.
-     * @param step the step.
+     * @param step  the step.
+     * @return the next node to go to.
      */
     @Nullable
     public Node getRandomNextNode(final Level level, final int step)
@@ -313,7 +311,7 @@ public class Node
         if (nextNode == null || nextNode.style == NodeType.SHAFT)
         {
             final Node parent = level.getOpenNode(getParent());
-            return parent == null ? null : parent.getRandomNextNode(level, step+1);
+            return parent == null ? null : parent.getRandomNextNode(level, step + 1);
         }
         return nextNode;
     }
@@ -342,11 +340,8 @@ public class Node
     }
 
     /**
-     * Sets the status of the node.
-     * AVAILABLE means it can be mined
-     * IN_PROGRESS means it is currently being mined
-     * COMPLETED means it has been mined and all torches/wood structure has been placed
-     * LADDER means this side has the ladder and must not be mined
+     * Sets the status of the node. AVAILABLE means it can be mined IN_PROGRESS means it is currently being mined COMPLETED means it has been mined and all torches/wood structure
+     * has been placed LADDER means this side has the ladder and must not be mined
      */
     public enum NodeStatus
     {

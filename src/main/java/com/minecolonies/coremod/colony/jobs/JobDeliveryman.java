@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.jobs;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -10,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.data.IRequestSystemDeliveryManJ
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -22,12 +24,14 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
+import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ONGOING;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP;
@@ -48,6 +52,11 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * If the dman is currently active.
      */
     private boolean active = false;
+
+    /**
+     * How many deliveries are ongoing in parallel.
+     */
+    private int ongoingDeliveries;
 
     /**
      * Instantiates the job for the deliveryman.
@@ -111,6 +120,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         final CompoundNBT compound = super.serializeNBT();
         compound.put(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
         compound.putBoolean(TAG_ACTIVE, this.active);
+        compound.putInt(TAG_ONGOING, this.ongoingDeliveries);
         return compound;
     }
 
@@ -128,6 +138,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             setupRsDataStore();
         }
         this.active = compound.getBoolean(TAG_ACTIVE);
+        this.ongoingDeliveries = compound.getInt(TAG_ONGOING);
     }
 
     /**
@@ -187,7 +198,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         {
             final IToken theToken = iterator.next();
             final IRequest<? extends IDeliverymanRequestable> request = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(theToken));
-            if (request == null)
+            if (request == null || request.getState() == RequestState.COMPLETED)
             {
                 taskQueue.remove(theToken);
             }
@@ -229,7 +240,9 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
 
         final IToken<?> current = getTaskQueueFromDataStore().getFirst();
 
-        if (getColony().getRequestManager().getRequestForToken(current) == null)
+        final IRequest<?> request = getColony().getRequestManager().getRequestForToken(current);
+
+        if (request == null)
         {
             if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
             {
@@ -237,13 +250,28 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             }
             return;
         }
-
-        getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
-
-        //Just to be sure lets delete them!
-        if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
+        else if (request.getRequest() instanceof Delivery)
         {
-            getTaskQueueFromDataStore().removeFirst();
+            final List<IRequest<? extends Delivery>> taskList = getTaskListWithSameDestination((IRequest<? extends Delivery>) request);
+            for (int i = 0; i < Math.min(ongoingDeliveries, taskList.size()); i++)
+            {
+                final IRequest<? extends Delivery> req = taskList.get(i);
+                if (req.getState() == RequestState.IN_PROGRESS)
+                {
+                    getColony().getRequestManager().updateRequestState(req.getId(), successful ? RequestState.RESOLVED : RequestState.FAILED);
+                }
+                getTaskQueueFromDataStore().remove(req.getId());
+            }
+        }
+        else
+        {
+            getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
+
+            //Just to be sure lets delete them!
+            if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
+            {
+                getTaskQueueFromDataStore().removeFirst();
+            }
         }
 
         getCitizen().getWorkBuilding().markDirty();
@@ -327,5 +355,92 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     public boolean isActive()
     {
         return this.active;
+    }
+
+    /**
+     * Check if the dman has the same destination request.
+     *
+     * @param request the incoming request.
+     * @return 0 if so, and 1 if not.
+     */
+    public int hasSameDestinationDelivery(@NotNull final IRequest<? extends Delivery> request)
+    {
+        for (final IToken<?> requestToken : getTaskQueue())
+        {
+            final IRequest<?> compareRequest = getColony().getRequestManager().getRequestForToken(requestToken);
+            if (compareRequest != null && compareRequest.getRequest() instanceof Delivery)
+            {
+                final Delivery current = (Delivery) compareRequest.getRequest();
+                final Delivery newDev = request.getRequest();
+                if (haveTasksSameSourceAndDest(current, newDev))
+                {
+                    return 0;
+                }
+            }
+        }
+
+        return 1;
+    }
+
+    /**
+     * Check if two deliveries have the same source and destination.
+     *
+     * @param requestA the first request.
+     * @param requestB the second request.
+     * @return true if so.
+     */
+    private boolean haveTasksSameSourceAndDest(@NotNull final Delivery requestA, @NotNull final Delivery requestB)
+    {
+        if (requestA.getTarget().equals(requestB.getTarget()))
+        {
+            if (requestA.getStart().equals(requestB.getStart()))
+            {
+                return true;
+            }
+            for (final IWareHouse wareHouse : getColony().getBuildingManager().getWareHouses())
+            {
+                if (wareHouse.hasContainerPosition(requestA.getStart().getInDimensionLocation()) && wareHouse.hasContainerPosition(requestB.getStart().getInDimensionLocation()))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Build a list of all requests that have the same source/dest pair.
+     *
+     * @param request the first request.
+     * @return a list.
+     */
+    public List<IRequest<? extends Delivery>> getTaskListWithSameDestination(final IRequest<? extends Delivery> request)
+    {
+        final List<IRequest<? extends Delivery>> deliveryList = new ArrayList<>();
+        deliveryList.add(request);
+        for (final IToken<?> requestToken : getTaskQueue())
+        {
+            final IRequest<?> compareRequest = getColony().getRequestManager().getRequestForToken(requestToken);
+            if (compareRequest != null && compareRequest.getRequest() instanceof Delivery)
+            {
+                final Delivery current = (Delivery) compareRequest.getRequest();
+                final Delivery newDev = request.getRequest();
+                if (haveTasksSameSourceAndDest(current, newDev))
+                {
+                    deliveryList.add((IRequest<? extends Delivery>) compareRequest);
+                }
+            }
+        }
+        return deliveryList;
+    }
+
+    /**
+     * Set how many parallel deliveries are ongoing.
+     *
+     * @param i the quantity.
+     */
+    public void setParallelDeliveries(final int i)
+    {
+        this.ongoingDeliveries = i;
     }
 }

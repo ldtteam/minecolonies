@@ -28,10 +28,8 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OFFHAND_HELD_ITEM_SLOT;
 
 /**
- * The CitizenDataView is the client-side representation of a CitizenData. Views
- * contain the CitizenData's data that is relevant to a Client, in a more
- * client-friendly form. Mutable operations on a View result in a message to the
- * server to perform the operation.
+ * The CitizenDataView is the client-side representation of a CitizenData. Views contain the CitizenData's data that is relevant to a Client, in a more client-friendly form.
+ * Mutable operations on a View result in a message to the server to perform the operation.
  */
 public class CitizenDataView implements ICitizenDataView
 {
@@ -117,8 +115,7 @@ public class CitizenDataView implements ICitizenDataView
     /**
      * Set View id.
      *
-     * @param id
-     *            the id to set.
+     * @param id the id to set.
      */
     protected CitizenDataView(final int id)
     {
@@ -256,7 +253,8 @@ public class CitizenDataView implements ICitizenDataView
         saturation = buf.readDouble();
         happiness = buf.readDouble();
 
-        citizenSkillHandler.read(buf.readCompoundTag());;
+        citizenSkillHandler.read(buf.readCompoundTag());
+        ;
 
         job = buf.readString(32767);
 
@@ -281,7 +279,11 @@ public class CitizenDataView implements ICitizenDataView
             citizenChatOptions.put(handler.getInquiry(), handler);
         }
 
-        primaryInteractions = citizenChatOptions.values().stream().filter(IInteractionResponseHandler::isPrimary).sorted(Comparator.comparingInt(e -> e.getPriority().getPriority())).collect(Collectors.toList());
+        primaryInteractions = citizenChatOptions.values()
+                                .stream()
+                                .filter(IInteractionResponseHandler::isPrimary)
+                                .sorted(Comparator.comparingInt(e -> e.getPriority().getPriority()))
+                                .collect(Collectors.toList());
         if (!primaryInteractions.isEmpty())
         {
             hasAnyPrimaryInteraction = true;

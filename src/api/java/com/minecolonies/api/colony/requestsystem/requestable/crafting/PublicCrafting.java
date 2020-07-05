@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 public class PublicCrafting extends AbstractCrafting
@@ -46,6 +47,34 @@ public class PublicCrafting extends AbstractCrafting
     {
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
         final int count = compound.getInt(NBT_COUNT);
+
+        return new PublicCrafting(stack, count);
+    }
+
+    /**
+     * Serialize the deliverable.
+     *
+     * @param controller the controller.
+     * @param buffer     the the buffer to write to.
+     * @param input      the input to serialize.
+     */
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final PublicCrafting input)
+    {
+        buffer.writeItemStack(input.getStack());
+        buffer.writeInt(input.getCount());
+    }
+
+    /**
+     * Deserialize the deliverable.
+     *
+     * @param controller the controller.
+     * @param buffer     the buffer to read.
+     * @return the deliverable.
+     */
+    public static PublicCrafting deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    {
+        final ItemStack stack = buffer.readItemStack();
+        final int count = buffer.readInt();
 
         return new PublicCrafting(stack, count);
     }

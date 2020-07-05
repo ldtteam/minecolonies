@@ -43,7 +43,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
             branchMap = new HashMap<>();
         }
         branchMap.put(research.getId(), research);
-        researchTree.put(branch,branchMap);
+        researchTree.put(branch, branchMap);
     }
 
     @Override
@@ -66,7 +66,11 @@ public class GlobalResearchTree implements IGlobalResearchTree
     public void writeToNBT(final CompoundNBT compound)
     {
         @NotNull final ListNBT
-          citizenTagList = researchTree.values().stream().flatMap(map -> map.values().stream()).map(research -> StandardFactoryController.getInstance().serialize(research)).collect(NBTUtils.toListNBT());
+          citizenTagList = researchTree.values()
+                             .stream()
+                             .flatMap(map -> map.values().stream())
+                             .map(research -> StandardFactoryController.getInstance().serialize(research))
+                             .collect(NBTUtils.toListNBT());
         compound.put(TAG_RESEARCH_TREE, citizenTagList);
     }
 
@@ -75,8 +79,8 @@ public class GlobalResearchTree implements IGlobalResearchTree
     {
         researchTree.clear();
         NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Constants.NBT.TAG_COMPOUND))
-                              .map(researchCompound -> (IGlobalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
-                              .forEach(research -> addResearch(research.getBranch(), research));
+          .map(researchCompound -> (IGlobalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
+          .forEach(research -> addResearch(research.getBranch(), research));
     }
 
     @Override

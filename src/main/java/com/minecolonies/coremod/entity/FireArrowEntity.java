@@ -33,7 +33,7 @@ public class FireArrowEntity extends AbstractArrowEntity
     public void setShooter(@Nullable final Entity shooter)
     {
         super.setShooter(shooter);
-        this.setPosition(shooter.getPosX(), shooter.getPosYEye() - (double)0.1F, shooter.getPosZ());
+        this.setPosition(shooter.getPosX(), shooter.getPosYEye() - (double) 0.1F, shooter.getPosZ());
     }
 
     @NotNull

@@ -151,7 +151,6 @@ public class ModelEntityStudentMale extends CitizenModel<AbstractEntityCitizen>
 
         this.bipedBody.addChild(leftArmC);
         this.bipedBody.addChild(rightArmC);
-
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)

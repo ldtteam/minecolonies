@@ -236,10 +236,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if the worker can hold that much items.
-     * It depends on his building level.
-     * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
-     * That's 2^buildingLevel-1.
+     * Check if the worker can hold that much items. It depends on his building level. Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited. That's 2^buildingLevel-1.
      *
      * @return whether this deliveryman can hold more items
      */
@@ -253,8 +250,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if worker of a certain building requires the item now.
-     * Or the builder for the current task.
+     * Check if worker of a certain building requires the item now. Or the builder for the current task.
      *
      * @param building         the building to check for.
      * @param stack            the stack to stack with.
@@ -306,8 +302,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Deliver the items to the hut.
-     * TODO: Current precondition: The dman's inventory may only consist of the requested itemstack.
+     * Deliver the items to the hut. TODO: Current precondition: The dman's inventory may only consist of the requested itemstack.
      *
      * @return the next state.
      */
@@ -434,8 +429,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Prepare deliveryman for delivery.
-     * Check if the building still needs the item and if the required items are still in the warehouse.
+     * Prepare deliveryman for delivery. Check if the building still needs the item and if the required items are still in the warehouse.
      *
      * @return the next state to go to.
      */
@@ -449,14 +443,43 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        final Delivery delivery = (Delivery) currentTask.getRequest();
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
-          itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(delivery.getStack(), itemStack)))
+        final List<IRequest<? extends Delivery>> taskList = job.getTaskListWithSameDestination((IRequest<? extends Delivery>) currentTask);
+        final List<ItemStack> alreadyInInv = new ArrayList<>();
+        Delivery nextPickUp = null;
+
+        int parallelDeliveryCount = 0;
+        for (final IRequest<? extends Delivery> task : taskList)
         {
+            parallelDeliveryCount++;
+            int totalCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+              itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(task.getRequest().getStack(), itemStack));
+            int hasCount = 0;
+            for (final ItemStack stack : alreadyInInv)
+            {
+                if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, task.getRequest().getStack()))
+                {
+                    hasCount += stack.getCount();
+                }
+            }
+
+            if (totalCount < hasCount + task.getRequest().getStack().getCount())
+            {
+                nextPickUp = task.getRequest();
+                break;
+            }
+            else
+            {
+                alreadyInInv.add(task.getRequest().getStack());
+            }
+        }
+
+        if (nextPickUp == null || cannotHoldMoreItems())
+        {
+            job.setParallelDeliveries(parallelDeliveryCount);
             return DELIVERY;
         }
 
-        final ILocation location = delivery.getStart();
+        final ILocation location = nextPickUp.getStart();
 
         if (!location.isReachableFromLocation(worker.getLocation()))
         {
@@ -484,8 +507,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockState().getBlock());
         }
 
-        if (gatherIfInTileEntity(tileEntity, delivery.getStack()))
+        if (gatherIfInTileEntity(tileEntity, nextPickUp.getStack()))
         {
+            return PREPARE_DELIVERY;
+        }
+
+        if (parallelDeliveryCount > 1)
+        {
+            job.setParallelDeliveries(parallelDeliveryCount - 1);
             return DELIVERY;
         }
 
@@ -494,10 +523,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the worker inventory.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the stack.
+     * Finds the first @see ItemStack the type of {@code is}. It will be taken from the chest and placed in the worker inventory. Make sure that the worker stands next the chest to
+     * not break immersion. Also make sure to have inventory space for the stack.
      *
      * @param entity the tileEntity chest or building or rack.
      * @param is     the itemStack.
@@ -509,7 +536,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                  && InventoryFunctions
                       .matchFirstInProviderWithAction(
                         entity,
-                        stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
+                        stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true, true),
                         (provider, index) -> InventoryUtils.transferXOfItemStackIntoNextFreeSlotFromProvider(provider,
                           index,
                           is.getCount(),
@@ -564,8 +591,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if the deliveryman code should be executed.
-     * More concretely if he has a warehouse to work at.
+     * Check if the deliveryman code should be executed. More concretely if he has a warehouse to work at.
      *
      * @return false if should continue as planned.
      */
