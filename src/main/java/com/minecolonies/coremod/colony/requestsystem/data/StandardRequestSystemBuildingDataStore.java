@@ -232,21 +232,21 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
             input.openRequestsByRequestableType.forEach((key, value) -> {
                 controller.serialize(packetBuffer, key);
                 packetBuffer.writeInt(value.size());
-                value.forEach(token -> controller.serialize(token));
+                value.forEach(token -> controller.serialize(packetBuffer, token));
             });
 
             packetBuffer.writeInt(input.openRequestsByCitizen.size());
             input.openRequestsByCitizen.forEach((key, value) -> {
                 packetBuffer.writeInt(key);
                 packetBuffer.writeInt(value.size());
-                value.forEach(token -> controller.serialize(token));
+                value.forEach(token -> controller.serialize(packetBuffer, token));
             });
 
             packetBuffer.writeInt(input.completedRequestsByCitizen.size());
             input.completedRequestsByCitizen.forEach((key, value) -> {
                 packetBuffer.writeInt(key);
                 packetBuffer.writeInt(value.size());
-                value.forEach(token -> controller.serialize(token));
+                value.forEach(token -> controller.serialize(packetBuffer, token));
             });
 
             packetBuffer.writeInt(input.citizenByOpenRequest.size());
@@ -265,13 +265,14 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
             final int openRequestsByRequestableTypeSize = buffer.readInt();
             for (int i = 0; i < openRequestsByRequestableTypeSize; ++i)
             {
+                final TypeToken<?> key = controller.deserialize(buffer);
                 final List<IToken<?>> tokens = new ArrayList<>();
                 final int tokensSize = buffer.readInt();
                 for (int ii = 0; ii < tokensSize; ++ii)
                 {
                     tokens.add(controller.deserialize(buffer));
                 }
-                openRequestsByRequestableType.put(controller.deserialize(buffer), tokens);
+                openRequestsByRequestableType.put(key, tokens);
             }
 
             final Map<Integer, Collection<IToken<?>>> openRequestsByCitizen = new HashMap<>();
@@ -306,7 +307,7 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
             final int citizenByOpenRequestSize = buffer.readInt();
             for (int i = 0; i < citizenByOpenRequestSize; ++i)
             {
-                citizenByOpenRequest.put(controller.deserialize(buffer), buffer.readInt());
+                citizenByOpenRequest.put(controller.deserialize(buffer), controller.deserialize(buffer));
             }
 
             return new StandardRequestSystemBuildingDataStore(id, openRequestsByRequestableType, openRequestsByCitizen, completedRequestsByCitizen, citizenByOpenRequest);

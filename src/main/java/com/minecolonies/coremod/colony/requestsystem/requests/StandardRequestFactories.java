@@ -1043,7 +1043,8 @@ public final class StandardRequestFactories
         final T requested = typeDeserialization.apply(controller, buffer);
 
         final List<IToken<?>> childTokens = new ArrayList<>();
-        for (int i = 0; i < buffer.readInt(); i++)
+        final int size = buffer.readInt();
+        for (int i = 0; i < size; i++)
         {
             childTokens.add(controller.deserialize(buffer));
         }
@@ -1062,7 +1063,8 @@ public final class StandardRequestFactories
         }
 
         final List<ItemStack> deliveries = new ArrayList<>();
-        for (int i = 0; i < buffer.readInt(); i++)
+        final int size2 = buffer.readInt();
+        for (int i = 0; i < size2; i++)
         {
             deliveries.add(buffer.readItemStack());
         }
