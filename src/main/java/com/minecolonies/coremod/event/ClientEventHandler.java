@@ -18,6 +18,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.MineColonies;
@@ -33,6 +34,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -65,7 +67,7 @@ public class ClientEventHandler
     /**
      * The distance in which previews of nearby buildings are rendered
      */
-    private static final double PREVIEW_RANGE = 30.0f;
+    private static final double PREVIEW_RANGE = 25.0f;
 
     /**
      * Cached wayPointBlueprint.
@@ -141,6 +143,7 @@ public class ClientEventHandler
         for (final IBuildingView buildingView : colony.getBuildings())
         {
             final BlockPos currentPosition = buildingView.getPosition();
+
             if (activePosition.withinDistance(currentPosition, PREVIEW_RANGE))
             {
                 if (blueprintCache.containsKey(currentPosition))
@@ -172,14 +175,31 @@ public class ClientEventHandler
 
                     if (blueprint != null)
                     {
+                        Mirror mirror = buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE;
+
+                        final TileEntity tileEntity = world.getTileEntity(currentPosition);
+                        if (tileEntity instanceof TileEntityColonyBuilding)
+                        {
+                            mirror = ((TileEntityColonyBuilding) tileEntity).isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE;
+                        }
+
                         blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()),
-                          buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE,
+                          mirror,
                           world);
+
                         final BlockPos primaryOffset = BlueprintUtils.getPrimaryBlockOffset(blueprint);
                         final BlockPos pos = currentPosition.subtract(primaryOffset);
                         final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
                         final BlockPos renderSize = pos.add(size).subtract(new BlockPos(1, 1, 1));
-                        newCache.put(currentPosition, new Triple<>(blueprint, pos, renderSize));
+
+                        if (buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel())
+                        {
+                            newCache.put(currentPosition, new Triple<>(blueprint, pos, renderSize));
+                        }
+                        else
+                        {
+                            newCache.put(currentPosition, new Triple<>(null, pos, renderSize));
+                        }
                     }
                 }
             }
@@ -191,10 +211,13 @@ public class ClientEventHandler
         {
             final Triple<Blueprint, BlockPos, BlockPos> buildingData = nearbyBuilding.getValue();
             final BlockPos position = nearbyBuilding.getKey();
-            StructureClientHandler.renderStructure(buildingData.a,
-              event.getPartialTicks(),
-              position,
-              event.getMatrixStack());
+            if (buildingData.a != null)
+            {
+                StructureClientHandler.renderStructure(buildingData.a,
+                  event.getPartialTicks(),
+                  position,
+                  event.getMatrixStack());
+            }
 
             renderBoxEdges(buildingData.b, buildingData.c, event, 0, 0, 1);
         }
