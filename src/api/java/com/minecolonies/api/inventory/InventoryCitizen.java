@@ -249,6 +249,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
     {
+        markDirty();
         final ItemStack inSlot = mainInventory.get(slot);
         if (inSlot.getCount() >= inSlot.getMaxStackSize() || (!inSlot.isEmpty() && !inSlot.isItemEqual(stack)))
         {
@@ -292,6 +293,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
     {
+        markDirty();
         final ItemStack inSlot = mainInventory.get(slot);
 
         if (amount >= inSlot.getCount())
