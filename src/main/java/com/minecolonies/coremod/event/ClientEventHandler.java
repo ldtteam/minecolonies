@@ -127,13 +127,13 @@ public class ClientEventHandler
      */
     private static void handleRenderBuildTool(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
     {
-        final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
-        if (colony == null)
+        if (Settings.instance.getActiveStructure() == null)
         {
             return;
         }
 
-        if (Settings.instance.getActiveStructure() == null)
+        final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
+        if (colony == null)
         {
             return;
         }
@@ -177,6 +177,9 @@ public class ClientEventHandler
                     {
                         Mirror mirror = buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE;
 
+                        // Note: The following TE-lines are only here as a workaround because the buildingView's isMirrored()
+                        // was set wrongly before. This has since been fixed, but existing buildings still have the wrong mirror set in NBT.
+                        // TODO: In short, these lines should be removed eventually. Maybe for 1.16.
                         final TileEntity tileEntity = world.getTileEntity(currentPosition);
                         if (tileEntity instanceof TileEntityColonyBuilding)
                         {
