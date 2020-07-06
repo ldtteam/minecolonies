@@ -137,6 +137,12 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     }
 
     @Override
+    protected int getActionRewardForCraftingSuccess()
+    {
+        return MAX_BLOCKS_MINED;
+    }
+
+    @Override
     public Class<BuildingPlantation> getExpectedBuildingClass()
     {
         return BuildingPlantation.class;
