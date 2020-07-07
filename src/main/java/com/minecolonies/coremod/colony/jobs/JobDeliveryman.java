@@ -420,14 +420,17 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         deliveryList.add(request);
         for (final IToken<?> requestToken : getTaskQueue())
         {
-            final IRequest<?> compareRequest = getColony().getRequestManager().getRequestForToken(requestToken);
-            if (compareRequest != null && compareRequest.getRequest() instanceof Delivery)
+            if (!requestToken.equals(request.getId()))
             {
-                final Delivery current = (Delivery) compareRequest.getRequest();
-                final Delivery newDev = request.getRequest();
-                if (haveTasksSameSourceAndDest(current, newDev))
+                final IRequest<?> compareRequest = getColony().getRequestManager().getRequestForToken(requestToken);
+                if (compareRequest != null && compareRequest.getRequest() instanceof Delivery)
                 {
-                    deliveryList.add((IRequest<? extends Delivery>) compareRequest);
+                    final Delivery current = (Delivery) compareRequest.getRequest();
+                    final Delivery newDev = request.getRequest();
+                    if (haveTasksSameSourceAndDest(current, newDev))
+                    {
+                        deliveryList.add((IRequest<? extends Delivery>) compareRequest);
+                    }
                 }
             }
         }
