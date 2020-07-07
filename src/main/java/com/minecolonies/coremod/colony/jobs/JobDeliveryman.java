@@ -315,7 +315,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             else if (!active && b)
             {
                 this.active = b;
-                getColony().getRequestManager().onColonyUpdate(request -> true);
+                getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof Delivery);
             }
         }
         catch (final Exception ex)
