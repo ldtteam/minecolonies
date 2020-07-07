@@ -313,15 +313,15 @@ public class WorkManager implements IWorkManager
           order.isMirrored());
 
         Set<ChunkPos> chunks = new HashSet<>();
-        final int minX = Math.min(corners.getA().getA(), corners.getA().getB());
+        final int minX = Math.min(corners.getA().getA(), corners.getA().getB()) + 1;
         final int maxX = Math.max(corners.getA().getA(), corners.getA().getB());
 
-        final int minZ = Math.min(corners.getB().getA(), corners.getB().getB());
+        final int minZ = Math.min(corners.getB().getA(), corners.getB().getB()) + 1;
         final int maxZ = Math.max(corners.getB().getA(), corners.getB().getB());
 
-        for (int x = minX; x <= maxX; x++)
+        for (int x = minX; x < maxX; x+=16)
         {
-            for (int z = minZ; z <= maxZ; z++)
+            for (int z = minZ; z < maxZ; z+=16)
             {
                 final int chunkX = x >> 4;
                 final int chunkZ = z >> 4;
