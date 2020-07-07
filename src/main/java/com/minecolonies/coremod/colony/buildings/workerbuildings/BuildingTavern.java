@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutTavern;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
@@ -27,7 +28,6 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -126,8 +126,8 @@ public class BuildingTavern extends BuildingHome
     {
         if (musicCooldown <= 0 && getBuildingLevel() > 0)
         {
-            Tuple<Integer, Integer> corner1 = getCorners().getA();
-            Tuple<Integer, Integer> corner2 = getCorners().getB();
+            net.minecraft.util.Tuple<Integer, Integer> corner1 = getCorners().getA();
+            net.minecraft.util.Tuple<Integer, Integer> corner2 = getCorners().getB();
 
             final int x = (int) ((corner1.getA() + corner1.getB()) * 0.5);
             final int z = (int) ((corner2.getA() + corner2.getB()) * 0.5);
@@ -194,7 +194,7 @@ public class BuildingTavern extends BuildingHome
 
         int recruitLevel = colony.getWorld().rand.nextInt(10 * getBuildingLevel()) + 15;
 
-        List<Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
+        List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
 
         if (newCitizen.getName().contains("Ray"))
         {

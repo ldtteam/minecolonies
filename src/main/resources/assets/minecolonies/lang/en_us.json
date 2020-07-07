@@ -1659,8 +1659,7 @@
   "com.minecolonies.coremod.gui.workerhuts.guide.confirm": "Understood",
   "com.minecolonies.coremod.gui.workerhuts.guide.questionmark": "Some buildings have extra help pages.",
   "com.minecolonies.coremod.gui.workerhuts.guide.arrow": "Make sure to check out all the building's pages!",
-  "com.minecolonies.coremod.gui.workerhuts.guide.chest": "Here you can have an overview of the combined building inventory."
-  "block.minecolonies.blockhutrabbithutch": "Rabbit Hutch",
+  "com.minecolonies.coremod.gui.workerhuts.guide.chest": "Here you can have an overview of the combined building inventory.",
 
   "com.minecolonies.coremod.gui.tavern.visitordeath": "The visitor %s died, word spreads around that your Tavern is a dangerous place. You are likely to see less visitors in the future now!",
   "com.minecolonies.coremod.gui.chat.showstats": "Show citizen stats",
