@@ -319,9 +319,9 @@ public class WorkManager implements IWorkManager
         final int minZ = Math.min(corners.getB().getA(), corners.getB().getB());
         final int maxZ = Math.max(corners.getB().getA(), corners.getB().getB());
 
-        for (int x = minX; x < maxX; x++)
+        for (int x = minX; x <= maxX; x++)
         {
-            for (int z = minZ; z < maxZ; z++)
+            for (int z = minZ; z <= maxZ; z++)
             {
                 final int chunkX = x >> 4;
                 final int chunkZ = z >> 4;
