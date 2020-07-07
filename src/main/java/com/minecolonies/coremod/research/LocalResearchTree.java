@@ -62,7 +62,7 @@ public class LocalResearchTree implements ILocalResearchTree
             branchMap = new HashMap<>();
         }
         branchMap.put(research.getId(), research);
-        researchTree.put(branch,branchMap);
+        researchTree.put(branch, branchMap);
 
         if (research.getState() == ResearchState.IN_PROGRESS)
         {
@@ -101,7 +101,11 @@ public class LocalResearchTree implements ILocalResearchTree
     public void writeToNBT(final CompoundNBT compound)
     {
         @NotNull final ListNBT
-          researchList = researchTree.values().stream().flatMap(map -> map.values().stream()).map(research -> StandardFactoryController.getInstance().serialize(research)).collect(NBTUtils.toListNBT());
+          researchList = researchTree.values()
+                           .stream()
+                           .flatMap(map -> map.values().stream())
+                           .map(research -> StandardFactoryController.getInstance().serialize(research))
+                           .collect(NBTUtils.toListNBT());
         compound.put(TAG_RESEARCH_TREE, researchList);
     }
 
@@ -110,13 +114,13 @@ public class LocalResearchTree implements ILocalResearchTree
     {
         researchTree.clear();
         NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Constants.NBT.TAG_COMPOUND))
-                              .map(researchCompound -> (ILocalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
-                              .forEach(research -> {
-                                  addResearch(research.getBranch(), research);
-                                  if (research.getState() == ResearchState.FINISHED)
-                                  {
-                                      effects.applyEffect(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearch(research.getBranch(), research.getId()).getEffect());
-                                  }
-                              });
+          .map(researchCompound -> (ILocalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
+          .forEach(research -> {
+              addResearch(research.getBranch(), research);
+              if (research.getState() == ResearchState.FINISHED)
+              {
+                  effects.applyEffect(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearch(research.getBranch(), research.getId()).getEffect());
+              }
+          });
     }
 }

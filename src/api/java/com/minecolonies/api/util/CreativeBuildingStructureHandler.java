@@ -28,8 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Minecolonies specific creative structure handler.
- * Main difference related to registering blocks to colonies.
+ * Minecolonies specific creative structure handler. Main difference related to registering blocks to colonies.
  */
 public final class CreativeBuildingStructureHandler extends CreativeStructureHandler
 {
@@ -40,10 +39,11 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
 
     /**
      * The minecolonies specific creative structure placer.
-     * @param world the world.
-     * @param pos the pos it is placed at.
-     * @param structureName the name of the structure.
-     * @param settings the placement settings.
+     *
+     * @param world          the world.
+     * @param pos            the pos it is placed at.
+     * @param structureName  the name of the structure.
+     * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
     public CreativeBuildingStructureHandler(final World world, final BlockPos pos, final String structureName, final PlacementSettings settings, final boolean fancyPlacement)
@@ -99,22 +99,21 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
     public boolean isStackFree(@Nullable final ItemStack itemStack)
     {
         return itemStack == null
-                 ||itemStack.isEmpty()
+                 || itemStack.isEmpty()
                  || itemStack.getItem().isIn(ItemTags.LEAVES)
                  || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
     }
 
     /**
-     * Load a structure into this world
-     * and place it in the right position and rotation.
+     * Load a structure into this world and place it in the right position and rotation.
      *
-     * @param worldObj the world to load it in
-     * @param name     the structures name
-     * @param pos      coordinates
-     * @param rotation the rotation.
-     * @param mirror   the mirror used.
+     * @param worldObj       the world to load it in
+     * @param name           the structures name
+     * @param pos            coordinates
+     * @param rotation       the rotation.
+     * @param mirror         the mirror used.
      * @param fancyPlacement if fancy or complete.
-     * @param player   the placing player.
+     * @param player         the placing player.
      * @return the placed blueprint.
      */
     public static Blueprint loadAndPlaceStructureWithRotation(

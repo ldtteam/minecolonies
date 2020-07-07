@@ -71,8 +71,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
     private ArrowEntity arrowInProgress;
 
     /**
-     * Creates the abstract part of the AI.inte
-     * Always use this constructor!
+     * Creates the abstract part of the AI.inte Always use this constructor!
      *
      * @param job the job to fulfill
      */

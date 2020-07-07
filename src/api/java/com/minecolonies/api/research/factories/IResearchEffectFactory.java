@@ -22,12 +22,12 @@ public interface IResearchEffectFactory<T extends IResearchEffect<?>> extends IF
             throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only 2 are allowed!");
         }
 
-        if(!(context[0] instanceof String))
+        if (!(context[0] instanceof String))
         {
             throw new IllegalArgumentException("First parameter is supposed to be an ItemStack!");
         }
 
-        if(context[1] == null)
+        if (context[1] == null)
         {
             throw new IllegalArgumentException("Second parameter is supposed to be an Object!");
         }
@@ -39,7 +39,8 @@ public interface IResearchEffectFactory<T extends IResearchEffect<?>> extends IF
 
     /**
      * Method to get a new Instance of a ResearchEffect.
-     * @param id the input.
+     *
+     * @param id  the input.
      * @param obj the grid size.
      * @return a new Instance of ResearchEffect.
      */

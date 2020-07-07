@@ -34,20 +34,20 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @NotNull
     private final IToken<?>       token;
     @NotNull
-    private final R            requested;
+    private final R               requested;
     @NotNull
     private final List<IToken<?>> children;
     @NotNull
-    private final IRequester   requester;
+    private final IRequester      requester;
     @NotNull
-    private RequestState state = RequestState.CREATED;
+    private       RequestState    state      = RequestState.CREATED;
     @Nullable
-    private R      result;
+    private       R               result;
     @Nullable
-    private IToken<?> parent;
+    private       IToken<?>       parent;
     @SuppressWarnings("squid:S1170")
 
-    private List<ItemStack> deliveries = Lists.newArrayList();
+    private       List<ItemStack> deliveries = Lists.newArrayList();
 
     private ImmutableList<ItemStack> itemExamples;
 
@@ -70,11 +70,8 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         children = new ArrayList<>();
     }
 
-    
-
     /**
-     * Used to determine which type of request this is.
-     * Only RequestResolvers for this Type are then used to resolve the this.
+     * Used to determine which type of request this is. Only RequestResolvers for this Type are then used to resolve the this.
      *
      * @return The class that represents this Type of Request.
      */
@@ -87,8 +84,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     }
 
     /**
-     * The location of the requester.
-     * Is generally used in getDelivery requests to produce a getDelivery for a result from this request.
+     * The location of the requester. Is generally used in getDelivery requests to produce a getDelivery for a result from this request.
      *
      * @return The location of requester of this request.
      */
@@ -152,11 +148,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     }
 
     /**
-     * Return the object that is actually requested.
-     * A RequestResolver can compare this object however way it sees fit.
+     * Return the object that is actually requested. A RequestResolver can compare this object however way it sees fit.
      * <p>
-     * During the resolving process this object is called multiple times. But at least twice.
-     * A cached implementation is preferred.
+     * During the resolving process this object is called multiple times. But at least twice. A cached implementation is preferred.
      *
      * @return The object that is actually requested.
      */
@@ -202,8 +196,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     }
 
     /**
-     * Returns the parent of this request.
-     * If this is set it means that this request is part of request chain.
+     * Returns the parent of this request. If this is set it means that this request is part of request chain.
      *
      * @return The parent of this request, or null if it has no parent.
      */
@@ -331,8 +324,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     }
 
     /**
-     * Method to get the children of this request.
-     * Immutable.
+     * Method to get the children of this request. Immutable.
      *
      * @return An immutable collection of the children of this request.
      */
@@ -434,7 +426,8 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
 
         if (itemExamples == null)
         {
-            itemExamples = ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(deliverable::matches).collect(Collectors.toList()));
+            itemExamples =
+              ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(deliverable::matches).collect(Collectors.toList()));
         }
 
         return itemExamples;

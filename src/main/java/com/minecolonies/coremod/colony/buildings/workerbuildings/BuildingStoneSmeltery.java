@@ -112,7 +112,9 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
             return false;
         }
 
-        return isBlockForThisSmelter(storage.getPrimaryOutput()) && FurnaceRecipes.getInstance().getSmeltingResult(storage.getInput().get(0)).isItemEqual(storage.getPrimaryOutput());
+        return isBlockForThisSmelter(storage.getPrimaryOutput()) && FurnaceRecipes.getInstance()
+                                                                      .getSmeltingResult(storage.getInput().get(0))
+                                                                      .isItemEqual(storage.getPrimaryOutput());
     }
 
     /**
@@ -128,10 +130,10 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
         {
             final Block block = ((BlockItem) item).getBlock();
             if (block.isIn(BlockTags.STONE_BRICKS) ||
-                    block == Blocks.STONE         ||
-                    block == Blocks.STONE_BRICKS  ||
-                    block == Blocks.SMOOTH_STONE  ||
-                    block instanceof GlazedTerracottaBlock)
+                  block == Blocks.STONE ||
+                  block == Blocks.STONE_BRICKS ||
+                  block == Blocks.SMOOTH_STONE ||
+                  block instanceof GlazedTerracottaBlock)
             {
 
                 return true;

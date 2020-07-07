@@ -20,7 +20,8 @@ public abstract class AbstractEntityEgyptian extends AbstractEntityMinecoloniesM
 {
     /**
      * Constructor method for Abstract egyptian..
-     * @param type the type.
+     *
+     * @param type  the type.
      * @param world the world.
      */
     public AbstractEntityEgyptian(final EntityType<? extends AbstractEntityEgyptian> type, final World world)

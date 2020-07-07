@@ -44,9 +44,10 @@ public class WindowField extends ContainerScreen<ContainerField>
 
     /**
      * Create the field GUI.
-     * @param container the container.
+     *
+     * @param container       the container.
      * @param playerInventory the player inv.
-     * @param iTextComponent the display text component.
+     * @param iTextComponent  the display text component.
      */
     public WindowField(final ContainerField container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {

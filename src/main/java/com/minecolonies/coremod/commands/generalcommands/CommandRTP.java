@@ -22,9 +22,9 @@ import static com.minecolonies.coremod.commands.CommandArgumentNames.PLAYERNAME_
 
 public class CommandRTP implements IMCCommand
 {
-    private static final int    STARTING_Y     = 250;
-    private static final double SAFETY_DROP    = 6;
-    private static final int    FALL_DISTANCE  = 5;
+    private static final int    STARTING_Y    = 250;
+    private static final double SAFETY_DROP   = 6;
+    private static final int    FALL_DISTANCE = 5;
 
     /**
      * What happens when the command is executed
@@ -40,7 +40,7 @@ public class CommandRTP implements IMCCommand
 
     /**
      * Executes rtp for a target
-     * 
+     *
      * @param context the command context
      * @return 1 if the command executed successfully, 0 otherwise
      * @throws CommandSyntaxException if the syntax isn't correct
@@ -146,7 +146,7 @@ public class CommandRTP implements IMCCommand
 
     /**
      * Get a random coordinate to teleport to.
-     * 
+     *
      * @return a random coordinate.
      */
     private static int getRandCoordinate()
@@ -164,7 +164,7 @@ public class CommandRTP implements IMCCommand
 
     /**
      * Name string of the command.
-     * 
+     *
      * @return this commands name.
      */
     @Override

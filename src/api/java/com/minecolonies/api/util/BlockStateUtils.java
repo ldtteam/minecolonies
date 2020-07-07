@@ -15,8 +15,7 @@ public class BlockStateUtils
 {
 
     /**
-     * Hashmap which links a block class + property name to its IProperty object
-     * Used to shorten name searches
+     * Hashmap which links a block class + property name to its IProperty object Used to shorten name searches
      */
     private static final Map<String, IProperty<?>> propertyBlockMap = new HashMap<>();
 
@@ -53,8 +52,7 @@ public class BlockStateUtils
     }
 
     /**
-     * Compares two states by a property matching the given propertyName.
-     * Compared by the name of the Property-value, use when property is an enum without an actual value.
+     * Compares two states by a property matching the given propertyName. Compared by the name of the Property-value, use when property is an enum without an actual value.
      *
      * @param state1       First state to compare
      * @param state2       Second state to compare
@@ -80,8 +78,7 @@ public class BlockStateUtils
     }
 
     /**
-     * Get the property object of a state matching the given name
-     * Caches lookups in the propertyBlockMap hashmap
+     * Get the property object of a state matching the given name Caches lookups in the propertyBlockMap hashmap
      *
      * @param state Blockstate we're checking for a property
      * @param name  name of the property to find
@@ -135,7 +132,10 @@ public class BlockStateUtils
      * @param prop   IProperty to not compare
      * @return true if states are equal without the property
      */
-    public static <T extends Comparable<T>> boolean stateEqualsStateWithoutProp(@NotNull final BlockState state1, @NotNull final BlockState state2, @NotNull final IProperty<T> prop)
+    public static <T extends Comparable<T>> boolean stateEqualsStateWithoutProp(
+      @NotNull final BlockState state1,
+      @NotNull final BlockState state2,
+      @NotNull final IProperty<T> prop)
     {
         if (!state1.getProperties().contains(prop) || !state2.getProperties().contains(prop))
         {

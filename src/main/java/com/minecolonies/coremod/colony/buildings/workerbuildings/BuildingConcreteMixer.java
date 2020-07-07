@@ -43,7 +43,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WATER;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -60,7 +61,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
      * Resource location for concrete tag.
      */
     private static final ResourceLocation CONCRETE_POWDER = new ResourceLocation("minecolonies", "concrete_powder");
-    private static final ResourceLocation CONCRETE_BLOCK = new ResourceLocation("minecolonies", "concrete");
+    private static final ResourceLocation CONCRETE_BLOCK  = new ResourceLocation("minecolonies", "concrete");
 
     /**
      * How deep the water can max be to place concrete in it.
@@ -82,7 +83,11 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     {
         super(c, l);
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+    }
 
+    @Override
+    public void checkForWorkerSpecificRecipes()
+    {
         final List<ItemStack> input = new ArrayList<>();
         input.add(new ItemStack(Items.SAND, 4));
         input.add(new ItemStack(Items.GRAVEL, 4));
@@ -103,11 +108,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
               new ItemStack(item, 8),
               Blocks.AIR);
 
-            final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
-            if (!recipes.contains(token))
-            {
-                recipes.add(token);
-            }
+            addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
 
             final Block block = item instanceof BlockItem ? ((BlockItem) item).getBlock() : null;
             if (block instanceof ConcretePowderBlock)
@@ -120,11 +121,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
                   new ItemStack(((ConcretePowderBlock) block).solidifiedState.getBlock(), 1),
                   Blocks.AIR);
 
-                final IToken<?> token2 = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage2);
-                if (!recipes.contains(token2))
-                {
-                    recipes.add(token2);
-                }
+                addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage2));
             }
         }
     }
@@ -267,6 +264,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
 
     /**
      * Check if there are open positions to mine.
+     *
      * @return the open position if so.
      */
     @Nullable
@@ -288,6 +286,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
 
     /**
      * Check if there are open positions to mine.
+     *
      * @return the open position if so.
      */
     @Nullable
@@ -309,6 +308,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
 
     /**
      * Get how much of an itemStack we already placed in the world.
+     *
      * @param primaryOutput the block to check for.
      * @return the total count.
      */

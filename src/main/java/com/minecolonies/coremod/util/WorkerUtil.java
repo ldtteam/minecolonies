@@ -62,12 +62,12 @@ public final class WorkerUtil
      * List of tools to test blocks against, used for finding right tool.
      */
     public static List<Tuple<ToolType, ItemStack>> tools;
-    
+
     /**
      * A list of all the path blocks on which the citizen walks faster.
      */
     private static final List<Block> pathBlocks = Arrays.asList(Blocks.GRAVEL, Blocks.GRASS_PATH,
-          Blocks.STONE_BRICKS, Blocks.STONE_BRICK_STAIRS, Blocks.STONE_BRICK_SLAB);
+      Blocks.STONE_BRICKS, Blocks.STONE_BRICK_STAIRS, Blocks.STONE_BRICK_SLAB);
 
     private WorkerUtil()
     {
@@ -178,7 +178,7 @@ public final class WorkerUtil
     /**
      * Get a Tooltype for a certain block. We need this because minecraft has a lot of blocks which have strange or no required tool.
      *
-     * @param target the target block.
+     * @param target        the target block.
      * @param blockHardness the hardness.
      * @return the toolType to use.
      */
@@ -258,7 +258,7 @@ public final class WorkerUtil
     /**
      * Change the citizens Rotation to look at said block.
      *
-     * @param block the block he should look at.
+     * @param block   the block he should look at.
      * @param citizen the citizen that shall face the block.
      */
     public static void faceBlock(@Nullable final BlockPos block, final AbstractEntityCitizen citizen)
@@ -353,8 +353,9 @@ public final class WorkerUtil
 
     /**
      * Check if there is any already composted land.
+     *
      * @param buildingFlorist the building to check.
-     * @param world the world to check it for.
+     * @param world           the world to check it for.
      * @return true if there is any.
      */
     public static boolean isThereCompostedLand(final BuildingFlorist buildingFlorist, final World world)

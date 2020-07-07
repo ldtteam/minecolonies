@@ -249,6 +249,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
     {
+        markDirty();
         final ItemStack inSlot = mainInventory.get(slot);
         if (inSlot.getCount() >= inSlot.getMaxStackSize() || (!inSlot.isEmpty() && !inSlot.isItemEqual(stack)))
         {
@@ -281,7 +282,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             if (!simulate)
             {
-                inSlot.setCount(inSlot.getCount() + stack.getCount());
+                inSlot.setCount(inSlot.getCount() + avail);
             }
             stack.setCount(stack.getCount() - avail);
             return stack;
@@ -292,6 +293,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
     {
+        markDirty();
         final ItemStack inSlot = mainInventory.get(slot);
 
         if (amount >= inSlot.getCount())
@@ -344,8 +346,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     }
 
     /**
-     * For tile entities, ensures the chunk containing the tile entity is saved to disk later - the game won't think it
-     * hasn't changed and skip it.
+     * For tile entities, ensures the chunk containing the tile entity is saved to disk later - the game won't think it hasn't changed and skip it.
      */
     public void markDirty()
     {
@@ -366,8 +367,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     }
 
     /**
-     * Writes the inventory out as a list of compound tags. This is where the slot indices are used (+100 for armor, +80
-     * for crafting).
+     * Writes the inventory out as a list of compound tags. This is where the slot indices are used (+100 for armor, +80 for crafting).
      *
      * @param nbtTagList the taglist in.
      * @return the filled list.

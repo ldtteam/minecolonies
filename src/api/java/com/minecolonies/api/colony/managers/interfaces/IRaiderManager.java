@@ -12,42 +12,49 @@ public interface IRaiderManager
 {
     /**
      * Checks if the raider manager can have raider events.
+     *
      * @return true if so.
      */
     boolean canHaveRaiderEvents();
 
     /**
      * Checks if the raider raid has been calculated already.
+     *
      * @return true if so.
      */
     boolean hasRaidBeenCalculated();
 
     /**
      * Checks if raiders will raid tonight.
+     *
      * @return true if so.
      */
     boolean willRaidTonight();
 
     /**
      * Set that the manager can receive raider events.
+     *
      * @param canHave true or false.
      */
     void setCanHaveRaiderEvents(final boolean canHave);
 
     /**
      * Add a spawnPoint to the last raiders spawns.
+     *
      * @param pos the position to set.
      */
     void addRaiderSpawnPoint(final BlockPos pos);
 
     /**
      * Set if the raid has been calculated.
+     *
      * @param hasSet true or false.
      */
     void setHasRaidBeenCalculated(final boolean hasSet);
 
     /**
      * Set if raiders will raid tonight.
+     *
      * @param willRaid true or false.
      */
     void setWillRaidTonight(final boolean willRaid);
@@ -80,6 +87,7 @@ public interface IRaiderManager
 
     /**
      * Getter for the last spawn points.
+     *
      * @return a copy of the list
      */
     List<BlockPos> getLastSpawnPoints();
@@ -93,6 +101,7 @@ public interface IRaiderManager
 
     /**
      * Whether the colony is currently raided.
+     *
      * @return true if so.
      */
     boolean isRaided();
@@ -104,24 +113,28 @@ public interface IRaiderManager
 
     /**
      * Returns the amount of nights since the last raid
+     *
      * @return the number of nights.
      */
     int getNightsSinceLastRaid();
 
     /**
      * Sets the amount of nights since the last raid
+     *
      * @param nightsSinceLastRaid the nights to set.
      */
     void setNightsSinceLastRaid(int nightsSinceLastRaid);
 
     /**
      * Tries to raid the colony, if possible.
+     *
      * @param colony the colony to try.
      */
     void tryToRaidColony(final IColony colony);
 
     /**
      * Whether the colony can be raided.
+     *
      * @return true if possible.
      */
     boolean canRaid();

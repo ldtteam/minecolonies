@@ -15,8 +15,8 @@ public class StaticHappinessModifier extends AbstractHappinessModifier
     /**
      * Create an instance of the happiness modifier.
      *
-     * @param id     its string id.
-     * @param weight its weight.
+     * @param id       its string id.
+     * @param weight   its weight.
      * @param supplier the supplier to get the factor.
      */
     public StaticHappinessModifier(final String id, final double weight, final DoubleSupplier supplier)

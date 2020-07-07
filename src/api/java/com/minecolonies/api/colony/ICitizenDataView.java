@@ -46,6 +46,7 @@ public interface ICitizenDataView extends ICitizen
 
     /**
      * DEPRECATED
+     *
      * @param bp the position.
      */
     void setWorkBuilding(BlockPos bp);
@@ -74,8 +75,7 @@ public interface ICitizenDataView extends ICitizen
     /**
      * Deserialize the attributes and variables from transition.
      *
-     * @param buf
-     *            Byte buffer to deserialize.
+     * @param buf Byte buffer to deserialize.
      */
     void deserialize(@NotNull PacketBuffer buf);
 
@@ -91,12 +91,14 @@ public interface ICitizenDataView extends ICitizen
 
     /**
      * Get the list of ordered interactions.
+     *
      * @return the list.
      */
     List<IInteractionResponseHandler> getOrderedInteractions();
 
     /**
      * Get a specific interaction by key.
+     *
      * @param component the key.
      * @return the interaction or null.
      */
@@ -105,24 +107,28 @@ public interface ICitizenDataView extends ICitizen
 
     /**
      * Check if the citizen has important interactions.
+     *
      * @return true if so.
      */
     boolean hasBlockingInteractions();
 
     /**
      * Check if the citizen has any interactions.
+     *
      * @return true if so.
      */
     boolean hasPendingInteractions();
 
     /**
      * Get an instance of the skill handler.
+     *
      * @return the instance.
      */
     ICitizenSkillHandler getCitizenSkillHandler();
 
     /**
      * The citizen happiness handler.
+     *
      * @return the handler.
      */
     ICitizenHappinessHandler getHappinessHandler();

@@ -57,8 +57,6 @@ public class ModelEntityStudentFemale extends CitizenModel<AbstractEntityCitizen
         setRotation(right, 0F, 0F, 0F);
 
 
-
-
         armCHorizontal = new ModelRenderer(this, 0, 56);
         armCHorizontal.addBox(0F, 0F, 0F, 16, 4, 4);
         armCHorizontal.setRotationPoint(-8F, 3.8F, -3.5F);
@@ -173,7 +171,6 @@ public class ModelEntityStudentFemale extends CitizenModel<AbstractEntityCitizen
 
         this.bipedBody.addChild(leftArmC);
         this.bipedBody.addChild(rightArmC);
-
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)

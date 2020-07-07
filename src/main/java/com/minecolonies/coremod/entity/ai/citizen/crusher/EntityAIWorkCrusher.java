@@ -29,8 +29,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
     private static final int TICK_DELAY = 20;
 
     /**
-     * Constructor for the crusher.
-     * Defines the tasks the crusher executes.
+     * Constructor for the crusher. Defines the tasks the crusher executes.
      *
      * @param job a crusher job to use.
      */
@@ -107,7 +106,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
                 }
 
                 worker.swingArm(Hand.MAIN_HAND);
-                job.setCraftCounter(job.getCraftCounter()+1);
+                job.setCraftCounter(job.getCraftCounter() + 1);
                 currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen());
 
                 worker.decreaseSaturationForContinuousAction();
@@ -140,7 +139,6 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         }
         return getState();
     }
-
 
     /**
      * The actual crafting logic.

@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
@@ -16,7 +17,6 @@ import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectM
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,7 +60,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, SIFT, 1),
+          new AITarget(IDLE, START_WORKING, 10),
           new AITarget(START_WORKING, SIFT, 1),
           new AITarget(SIFT, this::sift, TICK_DELAY)
         );

@@ -27,8 +27,8 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.BUILDING.setRegistryName(Constants.MOD_ID, "colonybuilding");
 
         MinecoloniesTileEntities.DECO_CONTROLLER = TileEntityType.Builder
-            .create(TileEntityDecorationController::new, ModBlocks.blockDecorationPlaceholder)
-            .build(null);
+                                                     .create(TileEntityDecorationController::new, ModBlocks.blockDecorationPlaceholder)
+                                                     .build(null);
         MinecoloniesTileEntities.DECO_CONTROLLER.setRegistryName(Constants.MOD_ID, "decorationcontroller");
 
         MinecoloniesTileEntities.RACK = TileEntityType.Builder.create(TileEntityRack::new, ModBlocks.blockRack).build(null);
@@ -38,7 +38,7 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.WAREHOUSE.setRegistryName(Constants.MOD_ID, "warehouse");
 
         MinecoloniesTileEntities.COMPOSTED_DIRT = TileEntityType.Builder.create(TileEntityCompostedDirt::new, ModBlocks.blockCompostedDirt)
-            .build(null);
+                                                    .build(null);
         MinecoloniesTileEntities.COMPOSTED_DIRT.setRegistryName(Constants.MOD_ID, "composteddirt");
 
         MinecoloniesTileEntities.ENCHANTER = TileEntityType.Builder.create(TileEntityEnchanter::new, ModBlocks.blockHutEnchanter).build(null);

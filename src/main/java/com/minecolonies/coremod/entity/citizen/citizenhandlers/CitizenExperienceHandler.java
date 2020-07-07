@@ -38,6 +38,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenExperienceHandler(final AbstractEntityCitizen citizen)
@@ -73,7 +74,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         double localXp = xp * bonusXp;
         final double saturation = citizen.getCitizenData().getSaturation();
         final int intelligenceLevel = data.getCitizenSkillHandler().getLevel(Skill.Intelligence);
-        localXp += localXp * ( intelligenceLevel / 10.0 );
+        localXp += localXp * (intelligenceLevel / 10.0);
 
         if (saturation <= 0)
         {
@@ -122,7 +123,8 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     {
         int experience;
 
-        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorldFromCitizen(citizen).getGameRules().getBoolean(
+        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorldFromCitizen(
+          citizen).getGameRules().getBoolean(
           GameRules.DO_MOB_LOOT))
         {
             experience = (int) (citizen.getCitizenData().getCitizenSkillHandler().getTotalXP());
@@ -162,10 +164,11 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
         for (@NotNull final ExperienceOrbEntity orb : citizen.world.getEntitiesWithinAABB(ExperienceOrbEntity.class, citizen.getBoundingBox().grow(2)))
         {
-            Vec3d vec3d = new Vec3d(citizen.posX - orb.getPosX(), citizen.posY + (double)this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
+            Vec3d vec3d = new Vec3d(citizen.posX - orb.getPosX(), citizen.posY + (double) this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
             double d1 = vec3d.lengthSquared();
 
-            if (d1 < 1.0D) {
+            if (d1 < 1.0D)
+            {
                 addExperience(orb.getXpValue() / 2.0D);
                 orb.remove();
                 return;

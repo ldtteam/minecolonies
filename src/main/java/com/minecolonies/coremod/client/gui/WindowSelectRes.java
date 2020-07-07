@@ -3,7 +3,10 @@ package com.minecolonies.coremod.client.gui;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ItemIcon;
+import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.api.util.ItemStackUtils;
@@ -65,9 +68,10 @@ public class WindowSelectRes extends AbstractWindowSkeleton
 
     /**
      * Create a selection window with the origin window as input.
-     * @param origin the origin.
+     *
+     * @param origin   the origin.
      * @param building the building.
-     * @param test the testing predicate for the selector.
+     * @param test     the testing predicate for the selector.
      */
     public WindowSelectRes(final Window origin, final IBuildingView building, final Predicate<ItemStack> test)
     {
@@ -86,6 +90,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
 
     /**
      * Select button clicked.
+     *
      * @param button the clicked button.
      */
     private void selectClicked(final Button button)
@@ -142,10 +147,10 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     {
         this.allItems.clear();
         this.allItems.addAll(ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
-                                                                 .map(ItemStack::new)
-                                                                 .filter((stack) -> (test.test(stack) && (this.filter.isEmpty() || stack.getTranslationKey().toLowerCase(Locale.US)
-                                                                                                                .contains(this.filter.toLowerCase(Locale.US)))))
-                                                                 .collect(Collectors.toList())));
+                                                    .map(ItemStack::new)
+                                                    .filter((stack) -> (test.test(stack) && (this.filter.isEmpty() || stack.getTranslationKey().toLowerCase(Locale.US)
+                                                                                                                        .contains(this.filter.toLowerCase(Locale.US)))))
+                                                    .collect(Collectors.toList())));
         this.updateResourceList();
     }
 

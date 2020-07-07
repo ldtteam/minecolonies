@@ -33,6 +33,7 @@ public class BuildingRabbitHutch extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     *
      * @param c the colony.
      * @param l the location.
      */
@@ -111,6 +112,7 @@ public class BuildingRabbitHutch extends AbstractBuildingWorker
     {
         /**
          * Instantiates the view of the building.
+         *
          * @param c the colonyView.
          * @param l the location of the block.
          */

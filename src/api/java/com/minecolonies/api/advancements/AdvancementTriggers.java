@@ -13,15 +13,15 @@ import net.minecraft.advancements.CriteriaTriggers;
 
 public class AdvancementTriggers
 {
-    public static final PlaceSupplyTrigger PLACE_SUPPLY = new PlaceSupplyTrigger();
-    public static final PlaceStructureTrigger PLACE_STRUCTURE = new PlaceStructureTrigger();
-    public static final CreateBuildRequestTrigger CREATE_BUILD_REQUEST = new CreateBuildRequestTrigger();
-    public static final OpenGuiWindowTrigger OPEN_GUI_WINDOW = new OpenGuiWindowTrigger();
-    public static final ClickGuiButtonTrigger CLICK_GUI_BUTTON = new ClickGuiButtonTrigger();
-    public static final CitizenEatFoodTrigger CITIZEN_EAT_FOOD = new CitizenEatFoodTrigger();
-    public static final BuildingAddRecipeTrigger BUILDING_ADD_RECIPE = new BuildingAddRecipeTrigger();
+    public static final PlaceSupplyTrigger          PLACE_SUPPLY           = new PlaceSupplyTrigger();
+    public static final PlaceStructureTrigger       PLACE_STRUCTURE        = new PlaceStructureTrigger();
+    public static final CreateBuildRequestTrigger   CREATE_BUILD_REQUEST   = new CreateBuildRequestTrigger();
+    public static final OpenGuiWindowTrigger        OPEN_GUI_WINDOW        = new OpenGuiWindowTrigger();
+    public static final ClickGuiButtonTrigger       CLICK_GUI_BUTTON       = new ClickGuiButtonTrigger();
+    public static final CitizenEatFoodTrigger       CITIZEN_EAT_FOOD       = new CitizenEatFoodTrigger();
+    public static final BuildingAddRecipeTrigger    BUILDING_ADD_RECIPE    = new BuildingAddRecipeTrigger();
     public static final CompleteBuildRequestTrigger COMPLETE_BUILD_REQUEST = new CompleteBuildRequestTrigger();
-    public static final ColonyPopulationTrigger COLONY_POPULATION = new ColonyPopulationTrigger();
+    public static final ColonyPopulationTrigger     COLONY_POPULATION      = new ColonyPopulationTrigger();
 
     public static void preInit()
     {
@@ -35,5 +35,4 @@ public class AdvancementTriggers
         CriteriaTriggers.register(COMPLETE_BUILD_REQUEST);
         CriteriaTriggers.register(COLONY_POPULATION);
     }
-
 }

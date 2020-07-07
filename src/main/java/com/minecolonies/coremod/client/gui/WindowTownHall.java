@@ -279,8 +279,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     }
 
     /**
-     * Executed when <code>WindowTownHall</code> is opened.
-     * Does tasks like setting buttons.
+     * Executed when <code>WindowTownHall</code> is opened. Does tasks like setting buttons.
      */
     @Override
     public void onOpened()
@@ -330,7 +329,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         }
 
         if (townHall.getColony().getMercenaryUseTime() != 0
-                && townHall.getColony().getWorld().getGameTime() - townHall.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
+              && townHall.getColony().getWorld().getGameTime() - townHall.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
             findPaneOfTypeByID(BUTTON_MERCENARY, Button.class).disable();
         }
@@ -422,8 +421,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     }
 
     /**
-     * Called when the "addBlock" button has been triggered.
-     * Tries to add the content of the input field as block or position to the colony.
+     * Called when the "addBlock" button has been triggered. Tries to add the content of the input field as block or position to the colony.
      */
     private void addBlock()
     {
@@ -489,7 +487,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
     /**
      * Fills the permission list in the GUI.
-     * 
+     *
      * @param category the category to fill.
      */
     private void fillPermissionList(@NotNull final String category)
@@ -582,7 +580,8 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
         final int citizensSize = townHall.getColony().getCitizens().size();
 
-        final String numberOfCitizens = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalcitizens", citizensSize, townHall.getColony().getCitizenCount());
+        final String numberOfCitizens =
+          LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalcitizens", citizensSize, townHall.getColony().getCitizenCount());
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
         int children = 0;
@@ -608,7 +607,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     int maxTeachers = 1;
                     max = max - 1;
                     int teachers = workers = 0;
-                    for(@NotNull final Integer workerId : ((BuildingSchool.View) building).getWorkerId())
+                    for (@NotNull final Integer workerId : ((BuildingSchool.View) building).getWorkerId())
                     {
                         if (townHall.getColony().getCitizen(workerId).isChild())
                         {
@@ -624,7 +623,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     totalWorkers += teachers;
                     final Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new Tuple<>(0, 0));
                     jobMaxCountMap.put(jobName, new Tuple<>(tuple.getA() + workers, tuple.getB() + max));
-
                 }
                 else
                 {
@@ -637,7 +635,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
 
         //calculate number of children
-        for(ICitizenDataView iCitizenDataView : townHall.getColony().getCitizens().values())
+        for (ICitizenDataView iCitizenDataView : townHall.getColony().getCitizens().values())
         {
             if (iCitizenDataView.isChild())
             {
@@ -834,7 +832,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             image.setPosition(25, yPos);
 
             final Label label = new Label();
-            label.setSize(136,11);
+            label.setSize(136, 11);
             label.setPosition(50, yPos);
             label.setColor(BLACK);
             label.setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + entry.getKey()));
@@ -858,7 +856,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             pane.addChild(image);
             pane.addChild(label);
 
-            yPos+=12;
+            yPos += 12;
         }
     }
 
@@ -941,8 +939,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     }
 
     /**
-     * Executed when the recall one button has been clicked.
-     * Recalls one specific citizen.
+     * Executed when the recall one button has been clicked. Recalls one specific citizen.
      *
      * @param button the clicked button.
      */
@@ -1102,7 +1099,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
     /**
      * Toggles printing progress.
-     * 
+     *
      * @param button the button to toggle.
      */
     private void togglePrintProgress(@NotNull final Button button)

@@ -298,7 +298,7 @@ public class ModelEntitySheepFarmerFemale extends CitizenModel<AbstractEntityCit
         this.bipedHead.addChild(hairLeftTop_3);
         this.bipedHead.addChild(hairLeftTop_4);
         this.bipedHead.addChild(hairLeftTop_5);
-        
+
         this.bipedHead.addChild(hairbackbuttom1);
 
         this.bipedHead.addChild(ponytail_1);
@@ -313,10 +313,11 @@ public class ModelEntitySheepFarmerFemale extends CitizenModel<AbstractEntityCit
 
     /**
      * This is a helper function from Tabula to set the rotation of model parts
+     *
      * @param ModelRenderer the model renderer.
-     * @param x the x pos.
-     * @param y the y pos.
-     * @param z the z pos.
+     * @param x             the x pos.
+     * @param y             the y pos.
+     * @param z             the z pos.
      */
     public void setRotation(ModelRenderer ModelRenderer, float x, float y, float z)
     {

@@ -118,7 +118,8 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         LoadOnlyStructureHandler structure = null;
         try
         {
-            structure = new LoadOnlyStructureHandler(world, b, controller.getSchematicName().replace("/structurize/", "") + (controller.getLevel() + 1), new PlacementSettings(), true);
+            structure =
+              new LoadOnlyStructureHandler(world, b, controller.getSchematicName().replace("/structurize/", "") + (controller.getLevel() + 1), new PlacementSettings(), true);
         }
         catch (final Exception e)
         {

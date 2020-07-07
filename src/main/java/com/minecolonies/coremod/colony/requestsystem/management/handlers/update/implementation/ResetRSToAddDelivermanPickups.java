@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation;
 
+import com.minecolonies.api.colony.requestsystem.management.update.UpdateType;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.IUpdateStep;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.UpdateType;
 import org.jetbrains.annotations.NotNull;
 
 /**

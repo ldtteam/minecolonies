@@ -28,10 +28,10 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
     private static final Integer CONST_RETRYING_ID_SCALE = -20000;
 
-    private       IRequestManager manager;
-    private final ILocation       location;
-    private final IToken<?>       id;
-    private       IToken<?>       current;
+    private       IRequestManager             manager;
+    private final ILocation                   location;
+    private final IToken<?>                   id;
+    private       IToken<?>                   current;
     private final HashMap<IToken<?>, Integer> delays           = new HashMap<>();
     private final HashMap<IToken<?>, Integer> assignedRequests = new HashMap<>();
 
@@ -264,17 +264,17 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest<?>> shouldTriggerReassign)
     {
         new ArrayList<>(assignedRequests.keySet()).stream()
-                .map(manager::getRequestForToken)
-                .filter(shouldTriggerReassign)
-                .filter(Objects::nonNull)
-                .forEach(request ->
-                {
-                    final IToken<?> newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(getId()));
+          .map(manager::getRequestForToken)
+          .filter(shouldTriggerReassign)
+          .filter(Objects::nonNull)
+          .forEach(request ->
+          {
+              final IToken<?> newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(getId()));
 
-                    if (newResolverToken != getId())
-                    {
-                        assignedRequests.remove(request.getId());
-                    }
-                });
+              if (newResolverToken != getId())
+              {
+                  assignedRequests.remove(request.getId());
+              }
+          });
     }
 }

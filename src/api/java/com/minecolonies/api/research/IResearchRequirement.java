@@ -10,6 +10,7 @@ public interface IResearchRequirement
 {
     /**
      * Check if this requirement is fulfilled for a certain colony.
+     *
      * @param colony the colony to check.
      * @return true if so.
      */
@@ -17,6 +18,7 @@ public interface IResearchRequirement
 
     /**
      * Get a description of the requirement.
+     *
      * @return translation text component.
      */
     TranslationTextComponent getDesc();

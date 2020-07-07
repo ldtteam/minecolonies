@@ -20,7 +20,8 @@ public interface ICitizenColonyHandler
 
     /**
      * Server-specific update for the EntityCitizen.
-     * @param colonyID the colony id.
+     *
+     * @param colonyID  the colony id.
      * @param citizenID the citizen id.
      */
     void registerWithColony(final int colonyID, final int citizenID);
@@ -32,12 +33,14 @@ public interface ICitizenColonyHandler
 
     /**
      * Get the amount the worker should decrease its saturation by each action done or x blocks traveled.
+     *
      * @return the double describing it.
      */
     double getPerBuildingFoodCost();
 
     /**
      * Getter for the colony.
+     *
      * @return the colony of the citizen or null.
      */
     @Nullable
@@ -45,12 +48,14 @@ public interface ICitizenColonyHandler
 
     /**
      * Getter for the colonz id.
+     *
      * @return the colony id.
      */
     int getColonyId();
 
     /**
      * Setter for the colony id.
+     *
      * @param colonyId the new colonyId.
      */
     void setColonyId(int colonyId);
@@ -62,6 +67,7 @@ public interface ICitizenColonyHandler
 
     /**
      * Check if a citizen is at home.
+     *
      * @return true if so.
      */
     boolean isAtHome();

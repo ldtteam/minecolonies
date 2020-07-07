@@ -14,28 +14,33 @@ import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * Find and return a path to the nearest water.
- * Created: March 25, 2016
+ * Find and return a path to the nearest water. Created: March 25, 2016
  */
 public class PathJobFindWater extends AbstractPathJob
 {
-    private static final int MIN_DISTANCE = 40;
-    private static final int MAX_RANGE    = 250;
-    private final BlockPos            hutLocation;
+    private static final int                                  MIN_DISTANCE = 40;
+    private static final int                                  MAX_RANGE    = 250;
+    private final        BlockPos                             hutLocation;
     @NotNull
-    private final ArrayList<Tuple<BlockPos, BlockPos>> ponds;
+    private final        ArrayList<Tuple<BlockPos, BlockPos>> ponds;
 
     /**
      * AbstractPathJob constructor.
      *
-     * @param world the world within which to path.
-     * @param start the start position from which to path from.
-     * @param home  the position of the worker hut.
-     * @param range maximum path range.
-     * @param ponds already visited fishing places.
+     * @param world  the world within which to path.
+     * @param start  the start position from which to path from.
+     * @param home   the position of the worker hut.
+     * @param range  maximum path range.
+     * @param ponds  already visited fishing places.
      * @param entity the entity.
      */
-    PathJobFindWater(final World world, @NotNull final BlockPos start, final BlockPos home, final int range, @NotNull final List<Tuple<BlockPos, BlockPos>> ponds, final LivingEntity entity)
+    PathJobFindWater(
+      final World world,
+      @NotNull final BlockPos start,
+      final BlockPos home,
+      final int range,
+      @NotNull final List<Tuple<BlockPos, BlockPos>> ponds,
+      final LivingEntity entity)
     {
         super(world, start, start, range, new WaterPathResult(), entity);
         this.ponds = new ArrayList<>(ponds);
@@ -97,17 +102,21 @@ public class PathJobFindWater extends AbstractPathJob
             return false;
         }
 
-        if(world.getBlockState(n.pos).getBlock() != Blocks.WATER && (!world.isAirBlock(n.pos) || world.getBlockState(n.pos).getBlock() != Blocks.WATER))
+        if (world.getBlockState(n.pos).getBlock() != Blocks.WATER && (!world.isAirBlock(n.pos) || world.getBlockState(n.pos).getBlock() != Blocks.WATER))
         {
             if (n.pos.getX() == n.parent.pos.getX())
             {
                 final int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
-                return Pond.checkWater(world, n.pos.add(0, -1, dz), getResult()) || Pond.checkWater(world, n.pos.add(-1, -1, 0), getResult()) || Pond.checkWater(world, n.pos.add(1, -1, 0), getResult());
+                return Pond.checkWater(world, n.pos.add(0, -1, dz), getResult()) || Pond.checkWater(world, n.pos.add(-1, -1, 0), getResult()) || Pond.checkWater(world,
+                  n.pos.add(1, -1, 0),
+                  getResult());
             }
             else
             {
                 final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
-                return Pond.checkWater(world,n.pos.add(dx, -1, 0), getResult()) || Pond.checkWater(world,n.pos.add(0, -1, -1), getResult()) || Pond.checkWater(world,n.pos.add(0, -1, 1), getResult());
+                return Pond.checkWater(world, n.pos.add(dx, -1, 0), getResult()) || Pond.checkWater(world, n.pos.add(0, -1, -1), getResult()) || Pond.checkWater(world,
+                  n.pos.add(0, -1, 1),
+                  getResult());
             }
         }
 

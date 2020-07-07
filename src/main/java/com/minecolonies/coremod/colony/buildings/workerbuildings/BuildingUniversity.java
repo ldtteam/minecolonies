@@ -60,6 +60,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     *
      * @param c the colony.
      * @param l the location.
      */
@@ -196,7 +197,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
     {
         super.onColonyTick(colony);
 
-        final List<ILocalResearch> inProgress= colony.getResearchManager().getResearchTree().getResearchInProgress();
+        final List<ILocalResearch> inProgress = colony.getResearchManager().getResearchTree().getResearchInProgress();
 
         int i = 1;
         for (final ILocalResearch research : inProgress)
@@ -206,9 +207,14 @@ public class BuildingUniversity extends AbstractBuildingWorker
                 return;
             }
 
-            if (colony.getResearchManager().getResearchTree().getResearch(research.getBranch(), research.getId()).research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree()))
+            if (colony.getResearchManager()
+                  .getResearchTree()
+                  .getResearch(research.getBranch(), research.getId())
+                  .research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree()))
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), RESEARCH_CONCLUDED + random.nextInt(3), IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc());
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                  RESEARCH_CONCLUDED + random.nextInt(3),
+                  IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc());
             }
             this.markDirty();
             i++;
@@ -222,6 +228,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
     {
         /**
          * Instantiates the view of the building.
+         *
          * @param c the colonyView.
          * @param l the location of the block.
          */

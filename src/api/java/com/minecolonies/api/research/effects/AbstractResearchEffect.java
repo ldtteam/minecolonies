@@ -12,6 +12,7 @@ public abstract class AbstractResearchEffect<T> implements IResearchEffect<T>
 
     /**
      * The constructor to create a new research effect.
+     *
      * @param id the id to unlock.
      */
     public AbstractResearchEffect(final String id)

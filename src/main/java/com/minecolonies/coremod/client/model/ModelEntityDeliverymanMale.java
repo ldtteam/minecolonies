@@ -16,7 +16,7 @@ public class ModelEntityDeliverymanMale extends CitizenModel<AbstractEntityCitiz
         bipedHead.setRotationPoint(0F, 2F, -4F);
         bipedHead.mirror = true;
         setRotation(bipedHead, 0.3490659F, 0F, 0F);
-        
+
         bipedBody = new ModelRenderer(this, 16, 16);
         bipedBody.addBox(-4F, 0F, -4F, 8, 12, 4);
         bipedBody.setRotationPoint(0F, 1F, -2F);
@@ -47,7 +47,7 @@ public class ModelEntityDeliverymanMale extends CitizenModel<AbstractEntityCitiz
         backpack.rotateAngleX = 0.34907F;
 
         bipedBody.addChild(backpack);
-        bipedHeadwear.showModel=false;
+        bipedHeadwear.showModel = false;
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)

@@ -11,8 +11,7 @@ import java.io.File;
 import java.util.Objects;
 
 /**
- * General purpose utilities class.
- * todo: split up into logically distinct parts
+ * General purpose utilities class. todo: split up into logically distinct parts
  */
 public final class Utils
 {
@@ -75,8 +74,7 @@ public final class Utils
     }
 
     /**
-     * Checks if the blocks above that point are all of the spezified block
-     * types.
+     * Checks if the blocks above that point are all of the spezified block types.
      *
      * @param world  the world we check on.
      * @param x      the x coordinate.
@@ -148,12 +146,7 @@ public final class Utils
     }
 
     /**
-     * Checks if the flag is set in the data.
-     * E.G.
-     * - Flag: 000101.
-     * - Data: 100101.
-     * - All Flags are set in data, so returns true.
-     * Some more flags are set, but not take into account
+     * Checks if the flag is set in the data. E.G. - Flag: 000101. - Data: 100101. - All Flags are set in data, so returns true. Some more flags are set, but not take into account
      *
      * @param data Data to check flag in.
      * @param flag Flag to check whether it is set or not.
@@ -165,11 +158,7 @@ public final class Utils
     }
 
     /**
-     * Returns what flags are set, and given in mask.
-     * E.G.
-     * - Flag: 000101.
-     * - Mask: 100101.
-     * - The 4th and 6th bit are set, so only those will be returned.
+     * Returns what flags are set, and given in mask. E.G. - Flag: 000101. - Mask: 100101. - The 4th and 6th bit are set, so only those will be returned.
      *
      * @param data Data to check.
      * @param mask Mask to check.
@@ -181,11 +170,7 @@ public final class Utils
     }
 
     /**
-     * Sets a flag in in the data.
-     * E.G.
-     * - Flag: 000101
-     * - Mask: 100001
-     * - The 4th bit will now be set, both the 1st and 6th bit are maintained.
+     * Sets a flag in in the data. E.G. - Flag: 000101 - Mask: 100001 - The 4th bit will now be set, both the 1st and 6th bit are maintained.
      *
      * @param data Data to set flag in.
      * @param flag Flag to set.
@@ -197,11 +182,7 @@ public final class Utils
     }
 
     /**
-     * Unsets a flag.
-     * E.G.
-     * - Flag: 000101
-     * - Mask: 100101
-     * - The 4th and 6th bit will be unset, the 1st bit is maintained.
+     * Unsets a flag. E.G. - Flag: 000101 - Mask: 100101 - The 4th and 6th bit will be unset, the 1st bit is maintained.
      *
      * @param data Data to remove flag from.
      * @param flag Flag to remove.
@@ -213,11 +194,7 @@ public final class Utils
     }
 
     /**
-     * Toggles flags.
-     * E.G.
-     * - Flag: 000101
-     * - Mask: 100101
-     * - The 4th and 6th will be toggled, the 1st bit is maintained.
+     * Toggles flags. E.G. - Flag: 000101 - Mask: 100101 - The 4th and 6th will be toggled, the 1st bit is maintained.
      *
      * @param data Data to toggle flag in.
      * @param flag Flag to toggle.

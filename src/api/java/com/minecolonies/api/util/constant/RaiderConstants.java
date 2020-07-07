@@ -16,7 +16,7 @@ public final class RaiderConstants
     /**
      * The range for the barb to move away.
      */
-    public static final int    MOVE_AWAY_RANGE     = 4;
+    public static final int MOVE_AWAY_RANGE = 4;
 
     public static final int BARBARIAN_HORDE_DIFFICULTY_FIVE = 5;
 
@@ -81,8 +81,8 @@ public final class RaiderConstants
     /**
      * Other various values used for AI Tasks.
      */
-    public static final double AI_MOVE_SPEED               = 2.0D;
-    public static final float  MAX_WATCH_DISTANCE          = 8.0F;
+    public static final double AI_MOVE_SPEED      = 2.0D;
+    public static final float  MAX_WATCH_DISTANCE = 8.0F;
 
     /**
      * Values used for mob attributes.
@@ -94,7 +94,6 @@ public final class RaiderConstants
     public static final double BARBARIAN_BASE_HEALTH       = 15;
     public static final double BARBARIAN_HEALTH_MULTIPLIER = 0.1;
     public static final double ATTACK_SPEED_DIVIDER        = 3;
-
 
     /**
      * Private constructor to hide implicit one.

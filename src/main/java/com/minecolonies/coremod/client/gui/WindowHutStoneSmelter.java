@@ -49,13 +49,19 @@ public class WindowHutStoneSmelter extends AbstractHutFilterableLists
 
     /**
      * The classic block list.
+     *
      * @param filterPredicate the predicate filter.
-     * @param id the id of the specific predicate.
+     * @param id              the id of the specific predicate.
      * @return the list of itemStorages.
      */
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getFuel().stream().filter(item -> filterPredicate.test(item.getItemStack())).collect(Collectors.toList()));
+        return ImmutableList.copyOf(IColonyManager.getInstance()
+                                      .getCompatibilityManager()
+                                      .getFuel()
+                                      .stream()
+                                      .filter(item -> filterPredicate.test(item.getItemStack()))
+                                      .collect(Collectors.toList()));
     }
 
     @Override

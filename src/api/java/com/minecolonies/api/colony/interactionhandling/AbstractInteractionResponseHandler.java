@@ -45,16 +45,18 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
 
     /**
      * The inquiry of the citizen.
-     * @param inquiry the inquiry.
-     * @param primary if primary inquiry.
-     * @param priority the priority.
+     *
+     * @param inquiry        the inquiry.
+     * @param primary        if primary inquiry.
+     * @param priority       the priority.
      * @param responseTuples optional response options.
      */
     @SafeVarargs
-    public AbstractInteractionResponseHandler(@NotNull final ITextComponent inquiry,
+    public AbstractInteractionResponseHandler(
+      @NotNull final ITextComponent inquiry,
       final boolean primary,
       final IChatPriority priority,
-      final Tuple<ITextComponent, ITextComponent>...responseTuples)
+      final Tuple<ITextComponent, ITextComponent>... responseTuples)
     {
         this.inquiry = inquiry;
         this.primary = primary;
@@ -94,6 +96,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
 
     /**
      * Serialize the response handler to NBT.
+     *
      * @return the serialized data.
      */
     public CompoundNBT serializeNBT()

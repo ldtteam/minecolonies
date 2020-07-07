@@ -25,8 +25,8 @@ public class EntityAICitizenWander extends Goal
     /**
      * Instantiates this task.
      *
-     * @param citizen the citizen.
-     * @param speed   the speed.
+     * @param citizen        the citizen.
+     * @param speed          the speed.
      * @param randomModifier the random modifier for the movement.
      */
     public EntityAICitizenWander(final AbstractEntityCitizen citizen, final double speed, final double randomModifier)
@@ -39,9 +39,7 @@ public class EntityAICitizenWander extends Goal
     }
 
     /**
-     * {@inheritDoc}
-     * Returns whether the Goal should begin execution.
-     * True when age less than 100, when a random (120) is chosen correctly, and when a citizen is nearby.
+     * {@inheritDoc} Returns whether the Goal should begin execution. True when age less than 100, when a random (120) is chosen correctly, and when a citizen is nearby.
      */
     @Override
     public boolean shouldExecute()
@@ -52,7 +50,7 @@ public class EntityAICitizenWander extends Goal
         }
 
         Vec3d vec3d = null;
-        if(vec3d == null)
+        if (vec3d == null)
         {
             vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 7);
             if (vec3d == null)
@@ -71,8 +69,7 @@ public class EntityAICitizenWander extends Goal
     }
 
     /**
-     * Returns whether or not the citizen is too old to wander.
-     * True when age >= 100.
+     * Returns whether or not the citizen is too old to wander. True when age >= 100.
      *
      * @return True when age => 100, otherwise false.
      */
@@ -87,8 +84,7 @@ public class EntityAICitizenWander extends Goal
     }
 
     /**
-     * {@inheritDoc}
-     * Returns whether an in-progress Goal should continue executing.
+     * {@inheritDoc} Returns whether an in-progress Goal should continue executing.
      */
     @Override
     public boolean shouldContinueExecuting()
@@ -97,8 +93,7 @@ public class EntityAICitizenWander extends Goal
     }
 
     /**
-     * {@inheritDoc}
-     * Execute a one shot task or start executing a continuous task.
+     * {@inheritDoc} Execute a one shot task or start executing a continuous task.
      */
     @Override
     public void startExecuting()

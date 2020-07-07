@@ -6,8 +6,7 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 
 /**
- * ModelPharaohMummy.
- * Created using Tabula 7.0.0
+ * ModelPharaohMummy. Created using Tabula 7.0.0
  */
 public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptian>
 {
@@ -28,7 +27,7 @@ public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptian>
         ModelRenderer headTail;
         ModelRenderer headTop;
         ModelRenderer headCap;
-        
+
         textureWidth = 128;
         textureHeight = 64;
 
@@ -164,16 +163,17 @@ public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptian>
         modelRenderer.rotateAngleZ = z;
     }
 
-    private static float sinPi(float f){
+    private static float sinPi(float f)
+    {
         return MathHelper.sin(f * (float) Math.PI);
     }
 
     @Override
-    public void setRotationAngles(AbstractEntityEgyptian entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setRotationAngles(AbstractEntityEgyptian entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    {
         super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         this.bodyGoldenStrip.rotateAngleX = -Math.max(this.bipedRightLeg.rotateAngleX, this.bipedLeftLeg.rotateAngleX);
-        this.jaw.rotateAngleX = 0.3F - 0.1F * sinPi(ageInTicks/ 20.0F) % 2.0F;
-        this.jaw.rotateAngleY = 0.05F * sinPi((ageInTicks + 10.0F)/ 20.0F) % 2.0F;
+        this.jaw.rotateAngleX = 0.3F - 0.1F * sinPi(ageInTicks / 20.0F) % 2.0F;
+        this.jaw.rotateAngleY = 0.05F * sinPi((ageInTicks + 10.0F) / 20.0F) % 2.0F;
     }
-
 }

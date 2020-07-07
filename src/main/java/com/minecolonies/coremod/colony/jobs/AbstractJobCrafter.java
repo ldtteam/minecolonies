@@ -16,15 +16,17 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.LinkedList;
 import java.util.List;
+
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * Class of the crafter job.
  */
 public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? extends AbstractBuildingWorker>, J extends AbstractJobCrafter<AI, J>>
-    extends AbstractJob<AI, J>
+  extends AbstractJob<AI, J>
 {
     /**
      * The Token of the data store which belongs to this job.
@@ -63,12 +65,12 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
     private void setupRsDataStore()
     {
         rsDataStoreToken = this.getCitizen()
-            .getColony()
-            .getRequestManager()
-            .getDataStoreManager()
-            .get(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                TypeConstants.REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE)
-            .getId();
+                             .getColony()
+                             .getRequestManager()
+                             .getDataStoreManager()
+                             .get(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                               TypeConstants.REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE)
+                             .getId();
     }
 
     @NotNull
@@ -97,7 +99,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
         if (compound.keySet().contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
             rsDataStoreToken = StandardFactoryController.getInstance()
-                .deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
+                                 .deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
         }
         else
         {
@@ -122,20 +124,20 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
 
     /**
      * Getter for the data store which belongs to this job.
-     * 
+     *
      * @return the crafter data store.
      */
     private IRequestSystemCrafterJobDataStore getDataStore()
     {
         return getCitizen().getColony()
-            .getRequestManager()
-            .getDataStoreManager()
-            .get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE);
+                 .getRequestManager()
+                 .getDataStoreManager()
+                 .get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE);
     }
 
     /**
      * Retrieve the task queue from the data store.
-     * 
+     *
      * @return the linked queue.
      */
     private LinkedList<IToken<?>> getTaskQueueFromDataStore()
@@ -160,7 +162,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
 
     /**
      * Returns the {@link IRequest} of the current Task.
-     * 
+     *
      * @param <R> the request type.
      * @return {@link IRequest} of the current Task.
      */
@@ -255,7 +257,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
 
     /**
      * Get the max crafting count for the current recipe.
-     * 
+     *
      * @return the count.
      */
     public int getMaxCraftingCount()
@@ -265,7 +267,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
 
     /**
      * Set the max crafting count for the current recipe.
-     * 
+     *
      * @param maxCraftingCount the count to set.
      */
     public void setMaxCraftingCount(final int maxCraftingCount)
@@ -275,7 +277,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
 
     /**
      * Get the current craft counter.
-     * 
+     *
      * @return the counter.
      */
     public int getCraftCounter()
@@ -285,7 +287,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
 
     /**
      * Set the current craft counter.
-     * 
+     *
      * @param craftCounter the counter to set.
      */
     public void setCraftCounter(final int craftCounter)
@@ -295,7 +297,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
 
     /**
      * Get the crafting progress.
-     * 
+     *
      * @return the current progress.
      */
     public int getProgress()
@@ -305,7 +307,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
 
     /**
      * Set the crafting progress.
-     * 
+     *
      * @param progress the current progress.
      */
     public void setProgress(final int progress)

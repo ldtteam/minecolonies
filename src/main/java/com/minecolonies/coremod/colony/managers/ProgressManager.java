@@ -46,6 +46,7 @@ public class ProgressManager implements IProgressManager
 
     /**
      * Creates the progress for a colony.
+     *
      * @param colony the colony.
      */
     public ProgressManager(final Colony colony)
@@ -192,8 +193,8 @@ public class ProgressManager implements IProgressManager
         final CompoundNBT progressCompound = compound.getCompound(TAG_PROGRESS_MANAGER);
         final ListNBT progressTags = progressCompound.getList(TAG_PROGRESS_LIST, Constants.NBT.TAG_COMPOUND);
         notifiedProgress.addAll(NBTUtils.streamCompound(progressTags)
-                         .map(progressTypeCompound -> values()[progressTypeCompound.getInt(TAG_PROGRESS_TYPE)])
-                         .collect(Collectors.toList()));
+                                  .map(progressTypeCompound -> values()[progressTypeCompound.getInt(TAG_PROGRESS_TYPE)])
+                                  .collect(Collectors.toList()));
         printProgress = progressCompound.getBoolean(TAG_PRINT_PROGRESS);
     }
 
@@ -202,8 +203,8 @@ public class ProgressManager implements IProgressManager
     {
         final CompoundNBT progressCompound = new CompoundNBT();
         @NotNull final ListNBT progressTagList = notifiedProgress.stream()
-                                                     .map(this::writeProgressTypeToNBT)
-                                                     .collect(NBTUtils.toListNBT());
+                                                   .map(this::writeProgressTypeToNBT)
+                                                   .collect(NBTUtils.toListNBT());
 
         progressCompound.put(TAG_PROGRESS_LIST, progressTagList);
         progressCompound.putBoolean(TAG_PRINT_PROGRESS, printProgress);
@@ -212,6 +213,7 @@ public class ProgressManager implements IProgressManager
 
     /**
      * Writes a single colony progress type to NBT.
+     *
      * @param type the type.
      * @return the NBT representation.
      */

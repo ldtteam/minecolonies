@@ -28,6 +28,7 @@ public abstract class AbstractBlockMinecoloniesFalling<B extends AbstractBlockMi
         registry.register(this);
         return (B) this;
     }
+
     /**
      * Registery block at gameregistry.
      *

@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import net.minecraft.block.AbstractChestBlock;
@@ -41,8 +44,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public abstract class AbstractBuildingContainer extends AbstractCitizenAssignable implements IBuildingContainer
 {
     /**
-     * A list which contains the position of all containers which belong to the
-     * worker building.
+     * A list which contains the position of all containers which belong to the worker building.
      */
     protected final List<BlockPos> containerList = new ArrayList<>();
 
@@ -158,7 +160,20 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     @SuppressWarnings("squid:S1172")
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block instanceof AbstractChestBlock || block instanceof BlockMinecoloniesRack)
+        if (block instanceof AbstractBlockHut)
+        {
+            final TileEntity entity = world.getTileEntity(pos);
+            if (entity instanceof TileEntityColonyBuilding)
+            {
+                ((TileEntityColonyBuilding) entity).setStyle(this.getStyle());
+                final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+                if (building != null)
+                {
+                    building.setStyle(this.getStyle());
+                }
+            }
+        }
+        else if (block instanceof AbstractChestBlock || block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
             if (block instanceof BlockMinecoloniesRack)

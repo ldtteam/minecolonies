@@ -30,8 +30,9 @@ public class MobEntryView
 
     /**
      * Public constructor of the WorkOrderView.
-     * @param location the location.
-     * @param priority the mob priority.
+     *
+     * @param location     the location.
+     * @param priority     the mob priority.
      * @param shouldAttack if it should be attacked or not.
      */
     public MobEntryView(final ResourceLocation location, final Boolean shouldAttack, final Integer priority)
@@ -44,7 +45,7 @@ public class MobEntryView
     /**
      * Writes the Location, Attack, and Priority to a {@link PacketBuffer}.
      *
-     * @param buf Buf to write to.
+     * @param buf   Buf to write to.
      * @param entry Entry to write.
      */
     public static void writeToByteBuf(@NotNull final PacketBuffer buf, @NotNull final MobEntryView entry)
@@ -75,7 +76,7 @@ public class MobEntryView
      *
      * @param compound Compound to write to.
      * @param name     Name of the tag.
-     * @param entry      the View to write
+     * @param entry    the View to write
      */
     public static void write(@NotNull final CompoundNBT compound, final String name, @NotNull final MobEntryView entry)
     {

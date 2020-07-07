@@ -7,12 +7,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Mod server configuration.
- * Loaded serverside, synced on connection.
+ * Mod server configuration. Loaded serverside, synced on connection.
  */
 public class ServerConfiguration extends AbstractConfiguration
 {
-    public final ForgeConfigSpec.BooleanValue useMiddleInitial;
+    public final ForgeConfigSpec.BooleanValue                        useMiddleInitial;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> maleFirstNames;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> femaleFirstNames;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> lastNames;

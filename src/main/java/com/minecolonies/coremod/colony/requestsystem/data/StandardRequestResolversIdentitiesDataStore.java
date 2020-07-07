@@ -14,10 +14,12 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -28,12 +30,13 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  */
 public class StandardRequestResolversIdentitiesDataStore implements IRequestResolverIdentitiesDataStore
 {
-    private IToken<?>                                   id;
+    private       IToken<?>                             id;
     private final BiMap<IToken<?>, IRequestResolver<?>> map;
 
     public StandardRequestResolversIdentitiesDataStore(
       final IToken<?> id,
-      final BiMap<IToken<?>, IRequestResolver<?>> map) {
+      final BiMap<IToken<?>, IRequestResolver<?>> map)
+    {
         this.id = id;
         this.map = map;
     }
@@ -122,6 +125,37 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
             }).collect(Collectors.toMap((Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getA(), (Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getB()));
 
             final BiMap<IToken<?>, IRequestResolver<?>> biMap = HashBiMap.create(map);
+
+            return new StandardRequestResolversIdentitiesDataStore(token, biMap);
+        }
+
+        @Override
+        public void serialize(
+          IFactoryController controller, StandardRequestResolversIdentitiesDataStore input,
+          PacketBuffer packetBuffer)
+        {
+            controller.serialize(packetBuffer, input.id);
+            packetBuffer.writeInt(input.getIdentities().size());
+            input.getIdentities().forEach((key, value) -> {
+                controller.serialize(packetBuffer, key);
+                controller.serialize(packetBuffer, value);
+            });
+        }
+
+        @Override
+        public StandardRequestResolversIdentitiesDataStore deserialize(
+          IFactoryController controller,
+          PacketBuffer buffer) throws Throwable
+        {
+            final IToken<?> token = controller.deserialize(buffer);
+            final Map<IToken<?>, IRequestResolver<?>> identities = new HashMap<>();
+            final int assignmentsSize = buffer.readInt();
+            for (int i = 0; i < assignmentsSize; ++i)
+            {
+                identities.put(controller.deserialize(buffer), controller.deserialize(buffer));
+            }
+
+            final BiMap<IToken<?>, IRequestResolver<?>> biMap = HashBiMap.create(identities);
 
             return new StandardRequestResolversIdentitiesDataStore(token, biMap);
         }

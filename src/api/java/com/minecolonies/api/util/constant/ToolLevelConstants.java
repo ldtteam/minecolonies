@@ -78,7 +78,7 @@ public final class ToolLevelConstants
      * Tool level for maximum.
      */
     @NonNls
-    public static final int TOOL_LEVEL_MAXIMUM             = Integer.SIZE;
+    public static final int TOOL_LEVEL_MAXIMUM = Integer.SIZE;
 
     private ToolLevelConstants()
     {

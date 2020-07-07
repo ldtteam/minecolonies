@@ -59,9 +59,10 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
 
     /**
      * Create a crafting gui window.
-     * @param container the container.
+     *
+     * @param container       the container.
      * @param playerInventory the player inv.
-     * @param iTextComponent the display text component.
+     * @param iTextComponent  the display text component.
      */
     public WindowFurnaceCrafting(final ContainerCraftingFurnace container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
@@ -80,7 +81,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
          */
         final Button doneButton = new Button(guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new OnButtonPress());
         this.addButton(doneButton);
-        if(!building.canRecipeBeAdded())
+        if (!building.canRecipeBeAdded())
         {
             doneButton.active = false;
         }
@@ -97,7 +98,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
                 input.add(container.inventorySlots.get(0).getStack());
                 final ItemStack primaryOutput = container.inventorySlots.get(1).getStack().copy();
 
-                if(!ItemStackUtils.isEmpty(primaryOutput))
+                if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
                     Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false));
                 }

@@ -307,7 +307,6 @@ public class BuildingBaker extends AbstractFilterableListBuilding
 
             // End Additional recipe rules
         }
-
     }
 
     /**
@@ -504,6 +503,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
 
     /**
      * Get the recipe for an itemstorage.
+     *
      * @param itemStorage the storage.
      * @return the recipe.
      */

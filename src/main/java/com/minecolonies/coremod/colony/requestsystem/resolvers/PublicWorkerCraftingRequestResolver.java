@@ -28,8 +28,9 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
 {
     /**
      * Initializing constructor.
+     *
      * @param location the location of the resolver.
-     * @param token its id.
+     * @param token    its id.
      */
     public PublicWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {

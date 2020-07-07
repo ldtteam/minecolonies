@@ -14,22 +14,23 @@ import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSIT
 /**
  * Job that handles moving to a location.
  */
-public class PathJobMoveToLocation extends AbstractPathJob {
-    private static final float DESTINATION_SLACK_NONE = 0.1F;
+public class PathJobMoveToLocation extends AbstractPathJob
+{
+    private static final float    DESTINATION_SLACK_NONE     = 0.1F;
     // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
-    private static final float DESTINATION_SLACK_ADJACENT = (float) Math.sqrt(2f);
+    private static final float    DESTINATION_SLACK_ADJACENT = (float) Math.sqrt(2f);
     @NotNull
-    private final BlockPos destination;
+    private final        BlockPos destination;
     // 0 = exact match
-    private float destinationSlack = DESTINATION_SLACK_NONE;
+    private              float    destinationSlack           = DESTINATION_SLACK_NONE;
 
     /**
      * Prepares the PathJob for the path finding system.
      *
-     * @param world world the entity is in.
-     * @param start starting location.
-     * @param end   target location.
-     * @param range max search range.
+     * @param world  world the entity is in.
+     * @param start  starting location.
+     * @param end    target location.
+     * @param range  max search range.
      * @param entity the entity.
      */
     public PathJobMoveToLocation(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final LivingEntity entity)

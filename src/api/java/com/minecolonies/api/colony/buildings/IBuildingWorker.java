@@ -112,9 +112,7 @@ public interface IBuildingWorker extends IBuilding
     void switchIndex(int i, int j);
 
     /**
-     * Check if a recipe can be added.
-     * This is only important for 3x3 crafting.
-     * Workers shall override this if necessary.
+     * Check if a recipe can be added. This is only important for 3x3 crafting. Workers shall override this if necessary.
      *
      * @param ignored the token of the recipe.
      * @return true if so.
@@ -124,10 +122,9 @@ public interface IBuildingWorker extends IBuilding
     /**
      * Check if players can change the building's recipe list.
      * <p>
-     * This is the case for most current buildings, but some buildings might only work on built-in recipes.
-     * It's recommended to turn this off for buildings that make no use of player-thaught recipes, to avoid confusion for new players.
-     * Turning this on will hide the "Teach recipes" button, hide the remove-buttons in the recipe list,
-     * and also hide the recipe list altogether if no recipes are present.
+     * This is the case for most current buildings, but some buildings might only work on built-in recipes. It's recommended to turn this off for buildings that make no use of
+     * player-thaught recipes, to avoid confusion for new players. Turning this on will hide the "Teach recipes" button, hide the remove-buttons in the recipe list, and also hide
+     * the recipe list altogether if no recipes are present.
      * </p>
      *
      * @return true if player is allowed to alter  recipes, false if not
@@ -212,6 +209,7 @@ public interface IBuildingWorker extends IBuilding
 
     /**
      * Check if the worker is allowed to eat the following stack.
+     *
      * @param stack the stack to test.
      * @return true if so.
      */

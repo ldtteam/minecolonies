@@ -17,8 +17,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents one building order to complete.
- * Has his own structure for the building.
+ * Represents one building order to complete. Has his own structure for the building.
  */
 public class WorkOrderBuild extends WorkOrderBuildDecoration
 {
@@ -28,7 +27,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     /**
      * Max distance a builder can have from the building site.
      */
-    private static final double MAX_DISTANCE_SQ = 100*100;
+    private static final double MAX_DISTANCE_SQ = 100 * 100;
 
     private int    upgradeLevel;
     private String upgradeName;
@@ -81,12 +80,11 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         return upgradeName;
     }
 
-
-
     /**
      * Read the WorkOrder data from the CompoundNBT.
+     *
      * @param compound NBT Tag compound.
-     * @param manager the work manager.
+     * @param manager  the work manager.
      */
     @Override
     public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
@@ -151,7 +149,12 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     @Override
     public boolean tooFarFromAnyBuilder(final IColony colony, final int level)
     {
-        return colony.getBuildingManager().getBuildings().values().stream().noneMatch(building -> building instanceof BuildingBuilder && building.getMainCitizen() != null && building.getPosition().distanceSq(this.getBuildingLocation()) <= MAX_DISTANCE_SQ);
+        return colony.getBuildingManager()
+                 .getBuildings()
+                 .values()
+                 .stream()
+                 .noneMatch(building -> building instanceof BuildingBuilder && building.getMainCitizen() != null
+                                          && building.getPosition().distanceSq(this.getBuildingLocation()) <= MAX_DISTANCE_SQ);
     }
 
     /**

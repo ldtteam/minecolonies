@@ -10,7 +10,7 @@ public class BlockHutComposter extends AbstractBlockHut<BlockHutComposter>
 
     @NotNull
     @Override
-    public String getName(){return "blockhutcomposter";}
+    public String getName() {return "blockhutcomposter";}
 
     @Override
     public BuildingEntry getBuildingEntry()

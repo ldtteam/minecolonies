@@ -47,6 +47,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenColonyHandler(final AbstractEntityCitizen citizen)
@@ -75,7 +76,8 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Server-specific update for the EntityCitizen.
-     * @param colonyID the id of the colony.
+     *
+     * @param colonyID  the id of the colony.
      * @param citizenID the id of the citizen.
      */
     @Override
@@ -140,6 +142,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Get the amount the worker should decrease its saturation by each action done or x blocks traveled.
+     *
      * @return the double describing it.
      */
     @Override
@@ -151,6 +154,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Getter for the colony.
+     *
      * @return the colony of the citizen or null.
      */
     @Override
@@ -162,6 +166,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Getter for the colonz id.
+     *
      * @return the colony id.
      */
     @Override
@@ -172,6 +177,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Setter for the colony id.
+     *
      * @param colonyId the new colonyId.
      */
     @Override
@@ -192,6 +198,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Check if a citizen is at home.
+     *
      * @return true if so.
      */
     @Override

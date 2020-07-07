@@ -13,8 +13,9 @@ public class EntityShieldmaiden extends AbstractEntityNorsemen implements IMelee
 
     /**
      * Constructor of the entity.
+     *
      * @param worldIn world to construct it in.
-     * @param type the entity type.
+     * @param type    the entity type.
      */
     public EntityShieldmaiden(final EntityType<? extends EntityShieldmaiden> type, final World worldIn)
     {

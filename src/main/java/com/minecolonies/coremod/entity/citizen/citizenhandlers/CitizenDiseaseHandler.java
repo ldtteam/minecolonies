@@ -42,6 +42,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenDiseaseHandler(final AbstractEntityCitizen citizen)
@@ -55,12 +56,16 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public void tick()
     {
-        if (citizen.getTicksExisted() % TICKS_20 == 0 && !(citizen.getCitizenJobHandler().getColonyJob() instanceof JobHealer)
-              && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > IMinecoloniesAPI.getInstance().getConfig().getCommon().initialCitizenAmount.get())
+        if (citizen.getTicksExisted() % TICKS_20 == 0 && citizen.getCitizenColonyHandler().getColony().isActive() && !(citizen.getCitizenJobHandler()
+                                                                                                                         .getColonyJob() instanceof JobHealer)
+              && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > IMinecoloniesAPI.getInstance()
+                                                                                                                .getConfig()
+                                                                                                                .getCommon().initialCitizenAmount.get())
         {
             final int citizenModifier = citizen.getCitizenJobHandler().getColonyJob() == null ? 1 : citizen.getCitizenJobHandler().getColonyJob().getDiseaseModifier();
             final int configModifier = MineColonies.getConfig().getCommon().diseaseModifier.get();
-            if (citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR / citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount()) < citizenModifier)
+            if (citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR / citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount())
+                  < citizenModifier)
             {
                 this.disease = IColonyManager.getInstance().getCompatibilityManager().getRandomDisease();
             }
@@ -70,7 +75,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public boolean isSick()
     {
-        return !disease.isEmpty() || ( !(citizen.getCitizenJobHandler() instanceof AbstractJobGuard) && citizen.getHealth() <= SEEK_DOCTOR_HEALTH);
+        return !disease.isEmpty() || (!(citizen.getCitizenJobHandler() instanceof AbstractJobGuard) && citizen.getHealth() <= SEEK_DOCTOR_HEALTH);
     }
 
     @Override

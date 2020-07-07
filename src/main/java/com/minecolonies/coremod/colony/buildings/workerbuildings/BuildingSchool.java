@@ -54,7 +54,7 @@ public class BuildingSchool extends AbstractBuildingWorker
     /**
      * NBT value to store the carpet pos.
      */
-    private static final String TAG_CARPET  = "carpet";
+    private static final String TAG_CARPET = "carpet";
 
     /**
      * If the school has a teacher.
@@ -74,6 +74,7 @@ public class BuildingSchool extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     *
      * @param c the colony.
      * @param l the location.
      */
@@ -190,7 +191,6 @@ public class BuildingSchool extends AbstractBuildingWorker
         }
     }
 
-
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
@@ -255,7 +255,7 @@ public class BuildingSchool extends AbstractBuildingWorker
             }
         }
 
-        for (final ICitizenData citizenData: getAssignedCitizen())
+        for (final ICitizenData citizenData : getAssignedCitizen())
         {
             if (citizenData.getJob() instanceof JobPupil && !citizenData.isChild())
             {
@@ -266,6 +266,7 @@ public class BuildingSchool extends AbstractBuildingWorker
 
     /**
      * Get a random place to sit from the school.
+     *
      * @return the place to sit.
      */
     @Nullable
@@ -308,6 +309,7 @@ public class BuildingSchool extends AbstractBuildingWorker
 
         /**
          * Instantiates the view of the building.
+         *
          * @param c the colonyView.
          * @param l the location of the block.
          */

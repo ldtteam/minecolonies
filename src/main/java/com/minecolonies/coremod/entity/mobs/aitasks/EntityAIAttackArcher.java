@@ -27,19 +27,19 @@ public class EntityAIAttackArcher extends Goal
      */
     private static final int MAX_ATTACK_DELAY = 80;
 
-    private static final double    PITCH_MULTIPLIER            = 0.4;
-    private static final double    HALF_ROTATION               = 180;
-    private static final double    ATTACK_SPEED                = 1.3;
-    private static final double                        AIM_HEIGHT                  = 3.0D;
-    private static final double                        ARROW_SPEED                 = 1.6D;
-    private static final double                        HIT_CHANCE                  = 10.0D;
+    private static final double                        PITCH_MULTIPLIER               = 0.4;
+    private static final double                        HALF_ROTATION                  = 180;
+    private static final double                        ATTACK_SPEED                   = 1.3;
+    private static final double                        AIM_HEIGHT                     = 3.0D;
+    private static final double                        ARROW_SPEED                    = 1.6D;
+    private static final double                        HIT_CHANCE                     = 10.0D;
     private static final double                        AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.20000000298023224D;
     private static final double                        BASE_PITCH                     = 0.8D;
     private static final double                        PITCH_DIVIDER                  = 1.0D;
     private static final double                        MAX_ATTACK_DISTANCE            = 20.0D;
     private final        AbstractEntityMinecoloniesMob entity;
     private              LivingEntity                  target;
-    private              int                           lastAttack = 0;
+    private              int                           lastAttack                     = 0;
 
     /**
      * Timer for the update rate of attack logic
@@ -93,6 +93,7 @@ public class EntityAIAttackArcher extends Goal
 
     /**
      * AI for an Entity to attack the target. Called every Tick(20tps)
+     *
      * @param target The target to attack
      */
     private void attack(final LivingEntity target)

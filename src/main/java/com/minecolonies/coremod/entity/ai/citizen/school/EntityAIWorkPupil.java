@@ -83,6 +83,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
 
     /**
      * Decide between recess and studying.
+     *
      * @return next state to go to.
      */
     private IAIState decide()
@@ -107,6 +108,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
 
     /**
      * Run around a bit until it's time for studying again.
+     *
      * @return next state to go to.
      */
     private IAIState recess()
@@ -126,6 +128,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
 
     /**
      * Sit down a bit and study. If has paper consume it.
+     *
      * @return next state to go to.
      */
     private IAIState study()
@@ -140,7 +143,8 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
             return getState();
         }
 
-        if (!world.getEntitiesWithinAABB(EntityCitizen.class, new AxisAlignedBB(studyPos.getX(), studyPos.getY(), studyPos.getZ(), studyPos.getX(), studyPos.getY(), studyPos.getZ())).isEmpty())
+        if (!world.getEntitiesWithinAABB(EntityCitizen.class,
+          new AxisAlignedBB(studyPos.getX(), studyPos.getY(), studyPos.getZ(), studyPos.getX(), studyPos.getY(), studyPos.getZ())).isEmpty())
         {
             studyPos = null;
             return DECIDE;
@@ -150,10 +154,10 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         {
             // Sit for 60-120 seconds.
             final int jobModifier = 120;
-            maxSittingTicks = worker.getRandom().nextInt(jobModifier/2) + jobModifier/2;
+            maxSittingTicks = worker.getRandom().nextInt(jobModifier / 2) + jobModifier / 2;
 
             final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(world);
-            entity.setPosition(studyPos.getX(), studyPos.getY() -0.6, studyPos.getZ());
+            entity.setPosition(studyPos.getX(), studyPos.getY() - 0.6, studyPos.getZ());
             entity.setMaxLifeTime(maxSittingTicks * 20);
             world.addEntity(entity);
             worker.startRiding(entity);
@@ -187,7 +191,8 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         {
             InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.PAPER), 1);
             double bonus = 25.0;
-            final MultiplierModifierResearchEffect effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TEACHING, MultiplierModifierResearchEffect.class);
+            final MultiplierModifierResearchEffect effect =
+              worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TEACHING, MultiplierModifierResearchEffect.class);
             if (effect != null)
             {
                 bonus *= (1 + effect.getEffect());

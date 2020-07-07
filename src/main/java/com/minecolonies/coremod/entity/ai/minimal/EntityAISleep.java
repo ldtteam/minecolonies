@@ -86,8 +86,7 @@ public class EntityAISleep extends Goal
     }
 
     /**
-     * Tests if the sleeping should be executed.
-     * Only execute if he should sleep and he is at home.
+     * Tests if the sleeping should be executed. Only execute if he should sleep and he is at home.
      *
      * @return true if so.
      */
@@ -98,9 +97,7 @@ public class EntityAISleep extends Goal
     }
 
     /**
-     * Continue executing if he should sleep.
-     * Call the wake up method as soon as this isn't the case anymore.
-     * Might search a bed while he is trying to sleep.
+     * Continue executing if he should sleep. Call the wake up method as soon as this isn't the case anymore. Might search a bed while he is trying to sleep.
      *
      * @return true while he should sleep.
      */
@@ -145,8 +142,7 @@ public class EntityAISleep extends Goal
     }
 
     /**
-     * Called while he is trying to sleep.
-     * Might add sleeping sounds here.
+     * Called while he is trying to sleep. Might add sleeping sounds here.
      */
     @Override
     public void tick()
@@ -302,7 +298,7 @@ public class EntityAISleep extends Goal
      */
     private boolean isBedOccupied(BuildingHome hut, BlockPos bed)
     {
-        for (ICitizenData citizen: hut.getAssignedCitizen())
+        for (ICitizenData citizen : hut.getAssignedCitizen())
         {
             if (this.citizen.getCitizenId() != citizen.getId())
             {

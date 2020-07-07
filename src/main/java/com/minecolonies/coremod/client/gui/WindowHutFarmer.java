@@ -204,7 +204,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                 {
                     @NotNull final String owner =
                       ((ScarecrowTileEntity) entity).getOwner().isEmpty()
-                                    ? ("<" + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED) + ">")
+                        ? ("<" + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED) + ">")
                         : ((ScarecrowTileEntity) entity).getOwner();
 
                     rowPane.findPaneOfTypeByID(TAG_WORKER, Label.class).setLabelText(owner);

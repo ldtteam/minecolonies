@@ -36,6 +36,7 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends BipedModel<Ab
 
     /**
      * Override to change body rotation.
+     *
      * @return the rotation.
      */
     public float getActualRotation()

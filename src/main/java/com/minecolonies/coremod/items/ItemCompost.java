@@ -44,7 +44,6 @@ public class ItemCompost extends AbstractItemMinecolonies
         return ActionResultType.FAIL;
     }
 
-
     public static boolean applyBonemeal(final ItemStack stack, final World worldIn, final BlockPos target, final PlayerEntity player)
     {
         final BlockState BlockState = worldIn.getBlockState(target);
@@ -57,7 +56,7 @@ public class ItemCompost extends AbstractItemMinecolonies
         {
             if (BlockState.getBlock() instanceof IGrowable)
             {
-                final IGrowable igrowable = (IGrowable)BlockState.getBlock();
+                final IGrowable igrowable = (IGrowable) BlockState.getBlock();
                 if (igrowable.canGrow(worldIn, target, BlockState, worldIn.isRemote))
                 {
                     if (!worldIn.isRemote)
@@ -74,7 +73,6 @@ public class ItemCompost extends AbstractItemMinecolonies
             return false;
         }
     }
-
 }
 
 

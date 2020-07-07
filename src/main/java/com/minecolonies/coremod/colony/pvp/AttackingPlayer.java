@@ -28,6 +28,7 @@ public class AttackingPlayer
 
     /**
      * Creates a new Attacking player.
+     *
      * @param player the attacking player.
      */
     public AttackingPlayer(final PlayerEntity player)
@@ -37,6 +38,7 @@ public class AttackingPlayer
 
     /**
      * Get the attacking player.
+     *
      * @return the PlayerEntity.
      */
     public PlayerEntity getPlayer()
@@ -70,6 +72,7 @@ public class AttackingPlayer
 
     /**
      * Getter for a copy of the guard list.
+     *
      * @return an immutable copy the list.
      */
     public List<AbstractEntityCitizen> getGuards()
@@ -79,6 +82,7 @@ public class AttackingPlayer
 
     /**
      * Adds a new guard to the list.
+     *
      * @param guard the guard to add.
      * @return true if successful
      */
@@ -94,6 +98,7 @@ public class AttackingPlayer
 
     /**
      * Check if the attack is valid.
+     *
      * @param colony the colony to check for.
      * @return true if so.
      */
@@ -109,6 +114,7 @@ public class AttackingPlayer
 
     /**
      * Removes a guard to the list.
+     *
      * @param guard the guard to remove.
      */
     public void removeGuard(final AbstractEntityCitizen guard)
@@ -118,6 +124,7 @@ public class AttackingPlayer
 
     /**
      * Refreshes the list and checks if all are still alive.
+     *
      * @param colony the colony to refresh it for.
      */
     public void refreshList(final Colony colony)

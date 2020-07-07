@@ -6,6 +6,7 @@ public interface ITypeOverrideHandler<O>
 {
     /**
      * Method used if this typeoverride handler is used to override a given type.
+     *
      * @param inputType The type to check
      * @return true when this handler overrides the given type, false when not.
      */

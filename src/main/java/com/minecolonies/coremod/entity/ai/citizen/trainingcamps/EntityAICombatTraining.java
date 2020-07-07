@@ -65,8 +65,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     private int targetCounter;
 
     /**
-     * Creates the abstract part of the AI.inte
-     * Always use this constructor!
+     * Creates the abstract part of the AI.inte Always use this constructor!
      *
      * @param job the job to fulfill
      */
@@ -137,6 +136,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
     /**
      * Train with a partner. Find the partner and path to him.
+     *
      * @return the next state to go to.
      */
     private IAIState trainWithPartner()
@@ -157,6 +157,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
     /**
      * Attack the training partner or block.
+     *
      * @return the next state to go to.
      */
     private IAIState attack()
@@ -223,6 +224,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
     /**
      * Find a dummy partner.
+     *
      * @return the next state to go to.
      */
     private IAIState findDummyPartner()
@@ -259,6 +261,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
     /**
      * Attack the dummy.
+     *
      * @return the next state to go to.
      */
     private IAIState attackDummy()

@@ -11,6 +11,7 @@ public class AmazonModel<T extends AbstractEntityAmazon> extends BipedModel<Abst
 {
     /**
      * Create a model of a specific size.
+     *
      * @param size the size.
      */
     public AmazonModel(final float size)

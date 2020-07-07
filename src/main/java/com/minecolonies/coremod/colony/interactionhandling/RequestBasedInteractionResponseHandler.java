@@ -31,16 +31,16 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
 
     @SuppressWarnings("unchecked")
     private static final Tuple<ITextComponent, ITextComponent>[] tuples = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null),
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel"), null),
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill"), null)};
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill"), null)};
 
     @SuppressWarnings("unchecked")
     private static final Tuple<ITextComponent, ITextComponent>[] tuplesAsync = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
 
     /**
      * The request this is related to.
@@ -54,9 +54,10 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
 
     /**
      * The server interaction response handler.
-     * @param inquiry the client inquiry.
-     * @param priority the interaction priority.
-     * @param token the token this is related to.
+     *
+     * @param inquiry   the client inquiry.
+     * @param priority  the interaction priority.
+     * @param token     the token this is related to.
      * @param validator the validator id.
      */
     public RequestBasedInteractionResponseHandler(
@@ -72,9 +73,10 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
 
     /**
      * The server interaction response handler.
-     * @param inquiry the client inquiry.
+     *
+     * @param inquiry  the client inquiry.
      * @param priority the interaction priority.
-     * @param token the token this is related to.
+     * @param token    the token this is related to.
      */
     public RequestBasedInteractionResponseHandler(
       final ITextComponent inquiry,
@@ -88,6 +90,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
 
     /**
      * Way to load the response handler for a citizen.
+     *
      * @param data the citizen owning this handler.
      */
     public RequestBasedInteractionResponseHandler(final ICitizen data)
@@ -104,7 +107,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     @Override
     public boolean isValid(final ICitizenData citizen)
     {
-        return (validator == null && !this.parents.isEmpty()) || ( validator != null && validator.test(citizen, token) );
+        return (validator == null && !this.parents.isEmpty()) || (validator != null && validator.test(citizen, token));
     }
 
     @Override
@@ -139,7 +142,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
                     windowCitizen.open();
                     windowCitizen.goToRequestList();
 
-                    final WindowRequestDetail windowRequestDetail = new WindowRequestDetail(windowCitizen, request, data.getColonyId() );
+                    final WindowRequestDetail windowRequestDetail = new WindowRequestDetail(windowCitizen, request, data.getColonyId());
                     windowRequestDetail.open();
 
 
@@ -175,5 +178,4 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     {
         return ModInteractionResponseHandlers.REQUEST.getPath();
     }
-
 }

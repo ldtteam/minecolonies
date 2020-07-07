@@ -10,6 +10,7 @@ public interface ILocatable
 
     /**
      * Getter to get the location of this locatable.
+     *
      * @return The location of the locatable.
      */
     @NotNull

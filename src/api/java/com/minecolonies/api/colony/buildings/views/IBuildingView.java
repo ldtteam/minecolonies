@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 
 public interface IBuildingView extends IRequester
 {
@@ -144,8 +144,7 @@ public interface IBuildingView extends IRequester
     int getClaimRadius();
 
     /**
-     * Open the associated BlockOut window for this building.
-     * If the player is sneaking open the inventory else open the GUI directly.
+     * Open the associated BlockOut window for this building. If the player is sneaking open the inventory else open the GUI directly.
      *
      * @param shouldOpenInv if the player is sneaking.
      */
@@ -198,8 +197,7 @@ public interface IBuildingView extends IRequester
     ImmutableCollection<IToken<?>> getResolverIds();
 
     /**
-     * Setter for the custom name.
-     * Sets the name on the client side and sends it to the server.
+     * Setter for the custom name. Sets the name on the client side and sends it to the server.
      *
      * @param name the new name.
      */
@@ -207,6 +205,7 @@ public interface IBuildingView extends IRequester
 
     /**
      * Check if the building was deconstructed.
+     *
      * @return true if so.
      */
     boolean isDeconstructed();

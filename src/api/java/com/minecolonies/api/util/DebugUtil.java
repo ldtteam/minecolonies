@@ -17,6 +17,7 @@ public final class DebugUtil
 
     /**
      * Called either in watchlist or debug condition to release the mouse automatically.
+     *
      * @return true always on call.
      */
     public static boolean hasReleaseMouse()

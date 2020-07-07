@@ -29,7 +29,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     /**
      * The schematic name of the placerholder block.
      */
-    private String schematicName        = "";
+    private String schematicName = "";
 
     /**
      * The current level.
@@ -59,6 +59,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     /**
      * Geter for the name stored in this.
+     *
      * @return String name.
      */
     public String getSchematicName()
@@ -68,6 +69,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     /**
      * Setter for the schematic name connected to this.
+     *
      * @param schematicName the name to set.
      */
     public void setSchematicName(final String schematicName)
@@ -78,6 +80,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     /**
      * Getter for the deco level associated.
+     *
      * @return the level.
      */
     public int getLevel()
@@ -87,6 +90,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     /**
      * Set the deco level.
+     *
      * @param level the max.
      */
     public void setLevel(final int level)
@@ -97,6 +101,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     /**
      * Set the basic facing of this block.
+     *
      * @param basicFacing the basic facing.
      */
     public void setBasicFacing(final Direction basicFacing)
@@ -106,6 +111,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     /**
      * Get the basic facing of the block.
+     *
      * @return the basic facing.
      */
     public Direction getBasicFacing()

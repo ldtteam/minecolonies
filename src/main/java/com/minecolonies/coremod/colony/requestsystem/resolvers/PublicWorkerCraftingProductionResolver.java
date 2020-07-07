@@ -154,9 +154,10 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         final ICitizenData freeCrafter = building.getAssignedCitizen()
                                            .stream()
                                            .filter(c -> c.getJob() instanceof AbstractJobCrafter)
-                                           .min(Comparator.comparing((ICitizenData c) -> ((AbstractJobCrafter<?, ?>) c.getJob()).getTaskQueue().size() + ((AbstractJobCrafter<?, ?>) c.getJob())
-                                                                                                                                                     .getAssignedTasks()
-                                                                                                                                                     .size()))
+                                           .min(Comparator.comparing((ICitizenData c) -> ((AbstractJobCrafter<?, ?>) c.getJob()).getTaskQueue().size()
+                                                                                           + ((AbstractJobCrafter<?, ?>) c.getJob())
+                                                                                               .getAssignedTasks()
+                                                                                               .size()))
                                            .orElse(null);
 
         if (freeCrafter == null)
@@ -179,7 +180,8 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
         final ICitizenData freeCrafter = building.getAssignedCitizen()
                                            .stream()
-                                           .filter(c -> c.getJob() instanceof AbstractJobCrafter && ((AbstractJobCrafter<?, ?>) c.getJob()).getAssignedTasks().contains(request.getId()))
+                                           .filter(c -> c.getJob() instanceof AbstractJobCrafter && ((AbstractJobCrafter<?, ?>) c.getJob()).getAssignedTasks()
+                                                                                                      .contains(request.getId()))
                                            .findFirst()
                                            .orElse(null);
 

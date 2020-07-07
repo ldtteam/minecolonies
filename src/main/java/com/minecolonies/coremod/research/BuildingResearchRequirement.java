@@ -22,8 +22,9 @@ public class BuildingResearchRequirement implements IResearchRequirement
 
     /**
      * Create a building based research requirement.
+     *
      * @param buildingLevel the required building level.
-     * @param building the required building class.
+     * @param building      the required building class.
      */
     public BuildingResearchRequirement(final int buildingLevel, final String building)
     {

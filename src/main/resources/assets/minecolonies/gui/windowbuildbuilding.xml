@@ -2,22 +2,34 @@
         lightbox="true"
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
 
-    <buttonimage id="previousStyle" size="14 15"  pos="40 0" label="&lt;"
+    <buttonimage id="previousStyle" size="14 15" pos="40 0" label="&lt;"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
-    <dropdown id="style" size="129 17" pos="55 0" maxContentHeight="75" dropDownSize="140 75" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black">
+    <dropdown id="style"
+              size="129 17"
+              pos="55 0"
+              maxContentHeight="75"
+              dropDownSize="140 75"
+              source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+              textcolor="black">
         <view size="100% 15">
             <label id="id" size="100% 100%" label="" pos="0 0"/>
-            <buttonimage id="button" size="129 17"  pos="0 0"
+            <buttonimage id="button" size="129 17" pos="0 0"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
         </view>
     </dropdown>
     <buttonimage id="nextStyle" size="14 15" pos="185 0" label="&gt;"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
 
-    <dropdown id="worker" size="129 17" pos="225 0" maxContentHeight="75" dropDownSize="140 75" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black">
+    <dropdown id="worker"
+              size="129 17"
+              pos="225 0"
+              maxContentHeight="75"
+              dropDownSize="140 75"
+              source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+              textcolor="black">
         <view size="100% 15">
             <label id="id" size="100% 100%" label="" pos="0 0"/>
-            <buttonimage id="button" size="129 17"  pos="0 0"
+            <buttonimage id="button" size="129 17" pos="0 0"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
         </view>
     </dropdown>
