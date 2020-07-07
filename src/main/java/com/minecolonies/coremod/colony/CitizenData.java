@@ -25,6 +25,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -34,7 +35,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,7 +87,7 @@ public class CitizenData implements ICitizenData
     /**
      * Inventory of the citizen.
      */
-    private final InventoryCitizen inventory;
+    protected InventoryCitizen inventory;
 
     /**
      * The name of the citizen.
@@ -190,7 +190,7 @@ public class CitizenData implements ICitizenData
     /**
      * The citizen chat options on the server side.
      */
-    private final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
+    protected final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
 
     /**
      * If idle at job.
@@ -218,11 +218,11 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response, final World world)
+    public void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response, final PlayerEntity player)
     {
         if (citizenChatOptions.containsKey(key))
         {
-            citizenChatOptions.get(key).onServerResponseTriggered(response, world, this);
+            citizenChatOptions.get(key).onServerResponseTriggered(response, player, this);
             markDirty();
         }
     }
@@ -256,6 +256,7 @@ public class CitizenData implements ICitizenData
         if (citizen != null)
         {
             entity = new WeakReference<>(citizen);
+            citizen.setCitizenData(this);
         }
     }
 
@@ -584,7 +585,6 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-
         colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), lastPosition, true);
     }
 
@@ -720,6 +720,12 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
+    public void setSaturation(final double saturation)
+    {
+        this.saturation = saturation;
+    }
+
+    @Override
     public InventoryCitizen getInventory()
     {
         return inventory;
@@ -825,11 +831,9 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putBoolean(TAG_CHILD, isChild);
         nbtTagCompound.putInt(TAG_TEXTURE, textureId);
 
-        BlockPosUtil.write(nbtTagCompound, TAG_POS, lastPosition);
-
         nbtTagCompound.put(TAG_NEW_SKILLS, citizenSkillHandler.write());
 
-        BlockPosUtil.write(nbtTagCompound, TAG_POS, lastPosition);
+        BlockPosUtil.write(nbtTagCompound, TAG_POS, getCitizenEntity().isPresent() ? getCitizenEntity().get().getPosition() : lastPosition);
         nbtTagCompound.putDouble(TAG_SATURATION, saturation);
 
         if (job != null)
@@ -844,7 +848,7 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putInt(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(Hand.MAIN_HAND));
         nbtTagCompound.putInt(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(Hand.OFF_HAND));
 
-        BlockPosUtil.write(nbtTagCompound, TAG_POS, bedPos);
+        BlockPosUtil.write(nbtTagCompound, TAG_BEDS, bedPos);
         nbtTagCompound.putBoolean(TAG_ASLEEP, isAsleep);
         nbtTagCompound.putBoolean(TAG_JUST_ATE, justAte);
 
@@ -906,7 +910,7 @@ public class CitizenData implements ICitizenData
 
         if (nbtTagCompound.keySet().contains(TAG_ASLEEP))
         {
-            bedPos = BlockPosUtil.read(nbtTagCompound, TAG_POS);
+            bedPos = BlockPosUtil.read(nbtTagCompound, TAG_BEDS);
             isAsleep = nbtTagCompound.getBoolean(TAG_ASLEEP);
         }
 

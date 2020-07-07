@@ -16,8 +16,10 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
@@ -27,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -37,8 +40,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 public final class BlockPosUtil
 {
     /**
-     * Max depth of the floor check to avoid endless void searching
-     * (Stackoverflow).
+     * Max depth of the floor check to avoid endless void searching (Stackoverflow).
      */
     private static final int MAX_DEPTH = 50;
 
@@ -93,11 +95,12 @@ public final class BlockPosUtil
      */
     public static BlockPos getRandomPosition(final World world, final BlockPos currentPosition, final BlockPos def, final int minDist, final int maxDist)
     {
-        final Random random = new Random();
+        final Random random = world.rand;
 
         int tries = 0;
         BlockPos pos = null;
         while (pos == null
+                 || !world.getChunkProvider().isChunkLoaded(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4))
                  || world.getBlockState(pos).getMaterial().isLiquid()
                  || !world.getBlockState(pos.down()).getMaterial().isSolid()
                  || (!world.isAirBlock(pos) && !world.isAirBlock(pos.up())))
@@ -157,8 +160,7 @@ public final class BlockPosUtil
      * Reads a Chunk Coordinate from a tag list.
      *
      * @param tagList Tag list to read compound with chunk coordinate from.
-     * @param index   Index in the tag list where the required chunk coordinate
-     *                is.
+     * @param index   Index in the tag list where the required chunk coordinate is.
      * @return Chunk coordinate read from the tag list.
      */
     @NotNull
@@ -214,8 +216,7 @@ public final class BlockPosUtil
     }
 
     /**
-     * this checks that you are not in liquid.  Will check for all liquids, even
-     * those from other mods before TP
+     * this checks that you are not in liquid.  Will check for all liquids, even those from other mods before TP
      *
      * @param sender   uses the player to get the world
      * @param blockPos for the current block LOC
@@ -230,8 +231,7 @@ public final class BlockPosUtil
     }
 
     /**
-     * this checks that you are not in the air or underground.
-     * If so it will look up and down for a good landing spot before TP.
+     * this checks that you are not in the air or underground. If so it will look up and down for a good landing spot before TP.
      *
      * @param blockPos for the current block LOC.
      * @param world    the world to search in.
@@ -387,8 +387,7 @@ public final class BlockPosUtil
     }
 
     /**
-     * Returns a list of drops possible mining a specific block with specific
-     * fortune level.
+     * Returns a list of drops possible mining a specific block with specific fortune level.
      *
      * @param world   World the block is in.
      * @param coords  Coordinates of the block.
@@ -472,8 +471,7 @@ public final class BlockPosUtil
     }
 
     /**
-     * Create a method for using a {@link BlockPos} when using {@link
-     * net.minecraft.util.math.BlockPos.Mutable#setPos(int, int, int)}.
+     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.math.BlockPos.Mutable#setPos(int, int, int)}.
      *
      * @param pos    {@link net.minecraft.util.math.BlockPos.Mutable}.
      * @param newPos The new position to set.
@@ -641,5 +639,85 @@ public final class BlockPosUtil
             default:
                 return Rotation.NONE;
         }
+    }
+
+    /**
+     * Returns the first air position near the given start. Advances vertically first then horizontally
+     *
+     * @param start     start position
+     * @param vRange    vertical search range
+     * @param hRange    horizontal search range
+     * @param predicate check predicate for the right block
+     * @return position or null
+     */
+    public static BlockPos findAround(final IBlockReader world, final BlockPos start, final int vRange, final int hRange, final Predicate<BlockState> predicate)
+    {
+        if (vRange < 1 && hRange < 1)
+        {
+            return null;
+        }
+
+        BlockPos temp;
+        int y = 0;
+        int y_offset = 1;
+
+        for (int i = 0; i < hRange + 2; i++)
+        {
+            for (int steps = 1; steps <= vRange; steps++)
+            {
+                // Start topleft of middle point
+                temp = start.add(-steps, y, -steps);
+
+                // X ->
+                for (int x = 0; x <= steps; x++)
+                {
+                    temp = temp.add(1, 0, 0);
+                    if (predicate.test(world.getBlockState(temp)))
+                    {
+                        return temp;
+                    }
+                }
+
+                // X
+                // |
+                // v
+                for (int z = 0; z <= steps; z++)
+                {
+                    temp = temp.add(0, 0, 1);
+                    if (predicate.test(world.getBlockState(temp)))
+                    {
+                        return temp;
+                    }
+                }
+
+                // < - X
+                for (int x = 0; x <= steps; x++)
+                {
+                    temp = temp.add(-1, 0, 0);
+                    if (predicate.test(world.getBlockState(temp)))
+                    {
+                        return temp;
+                    }
+                }
+
+                // ^
+                // |
+                // X
+                for (int z = 0; z <= steps; z++)
+                {
+                    temp = temp.add(0, 0, -1);
+                    if (predicate.test(world.getBlockState(temp)))
+                    {
+                        return temp;
+                    }
+                }
+            }
+
+            y += y_offset;
+            y_offset++;
+            y_offset *= -1;
+        }
+
+        return null;
     }
 }

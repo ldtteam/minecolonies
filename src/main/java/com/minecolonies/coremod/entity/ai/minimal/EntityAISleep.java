@@ -275,7 +275,7 @@ public class EntityAISleep extends Goal
 
     /**
      * Sets the used beds occupied state.
-     * 
+     *
      * @param hut      the hut in which the citizen is sleeping.
      * @param occupied whether the bed should be occupied.
      */
@@ -292,10 +292,10 @@ public class EntityAISleep extends Goal
             citizen.world.setBlockState(feetPos, feetState.with(BedBlock.OCCUPIED, occupied), 0x03);
         }
     }
-    
+
     /**
      * Checks whether any of the citizens living in this hut are sleeping in the given bed.
-     * 
+     *
      * @param hut the hut this citizen is living in.
      * @param bed the bed to check.
      * @return whether any of the citizens living in this hut are sleeping in the given bed.

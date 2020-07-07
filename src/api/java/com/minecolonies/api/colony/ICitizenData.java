@@ -9,12 +9,12 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -202,6 +202,8 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      */
     BlockPos getLastPosition();
 
+    void setSaturation(double saturation);
+
     /**
      * Check if citizen is asleep.
      *
@@ -316,9 +318,9 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * Trigger the response on the server side.
      * @param key the key of the component.
      * @param response the triggered response.
-     * @param world the world it was triggered in.
+     * @param player the world it was triggered in.
      */
-    void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response, final World world);
+    void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response, final PlayerEntity player);
 
     /**
      * Tick the citizen data to update values.

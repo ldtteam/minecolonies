@@ -26,7 +26,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
     private static final String POS_TAG = "pos";
 
     @SuppressWarnings("unchecked")
-    private static final Tuple<ITextComponent, ITextComponent>[] tuples = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
+    private static final Tuple<ITextComponent, ITextComponent>[] responses = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
         new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
         new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
         new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
@@ -54,7 +54,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
       final ITextComponent validator,
       final BlockPos pos)
     {
-        super(inquiry, true, priority, null, validator, tuples);
+        super(inquiry, true, priority, null, validator, responses);
         this.validator = InteractionValidatorRegistry.getPosBasedInteractionValidatorPredicate(validator);
         this.pos = pos;
     }
@@ -70,7 +70,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
       final IChatPriority priority,
       final BlockPos pos)
     {
-        super(inquiry, true, priority, null, inquiry, tuples);
+        super(inquiry, true, priority, null, inquiry, responses);
         this.validator = InteractionValidatorRegistry.getPosBasedInteractionValidatorPredicate(inquiry);
         this.pos = pos;
     }

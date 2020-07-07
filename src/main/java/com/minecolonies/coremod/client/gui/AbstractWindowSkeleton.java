@@ -9,6 +9,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.ClickGuiButtonTriggerMessage;
 import com.minecolonies.coremod.network.messages.server.OpenGuiWindowTriggerMessage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -37,14 +38,30 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
     private String resource;
 
     /**
-     * Constructor for the skeleton class of the windows.
-     *
+     * This window's parent
+     */
+    @Nullable
+    private Window parent;
+
+    /**
+     * Constructor with no parent window
      * @param resource Resource location string.
      */
     public AbstractWindowSkeleton(final String resource)
     {
+        this(resource, null);
+    }
+
+    /**
+     * Constructor for the skeleton class of the windows.
+     *
+     * @param resource Resource location string.
+     */
+    public AbstractWindowSkeleton(final String resource, @Nullable final Window parent)
+    {
         super(resource);
         this.resource = resource;
+        this.parent = parent;
 
         buttons = new HashMap<>();
 
@@ -160,5 +177,15 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
             buttonNextPage.off();
         }
         pageNum.setLabelText(curPage + "/" + switchPagesSize);
+    }
+
+    @Override
+    public void close()
+    {
+        super.close();
+        if (parent != null)
+        {
+            parent.open();
+        }
     }
 }

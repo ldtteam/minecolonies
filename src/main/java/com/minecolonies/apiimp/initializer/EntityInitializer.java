@@ -7,6 +7,7 @@ import com.minecolonies.coremod.entity.FireArrowEntity;
 import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
@@ -29,6 +30,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
+
 import static com.minecolonies.api.util.constant.CitizenConstants.CITIZEN_HEIGHT;
 import static com.minecolonies.api.util.constant.CitizenConstants.CITIZEN_WIDTH;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -53,6 +55,12 @@ public class EntityInitializer
                 .size(0.25F, 0.25F)
                 .setShouldReceiveVelocityUpdates(true)
                 .setCustomClientFactory(NewBobberEntity::new));
+
+        ModEntities.VISITOR = build("visitor", EntityType.Builder.create(VisitorCitizen::new, EntityClassification.CREATURE)
+                                                 .setTrackingRange(ENTITY_TRACKING_RANGE)
+                                                 .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                                                 .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                                                 .setShouldReceiveVelocityUpdates(true));
 
         ModEntities.MERCENARY = build("mercenary",
             EntityType.Builder.create(EntityMercenary::new, EntityClassification.CREATURE)
@@ -144,7 +152,7 @@ public class EntityInitializer
                 .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
                 .size(0.5F, 0.5F)
                 .setShouldReceiveVelocityUpdates(true));
-            
+
         ModEntities.SHIELDMAIDEN = build("shieldmaiden",
             EntityType.Builder.create(EntityShieldmaiden::new, EntityClassification.MONSTER)
                 .setTrackingRange(ENTITY_TRACKING_RANGE)
@@ -177,6 +185,7 @@ public class EntityInitializer
     {
         event.getRegistry()
           .registerAll(ModEntities.CITIZEN,
+            ModEntities.VISITOR,
             ModEntities.PIRATE,
             ModEntities.ARCHERPIRATE,
             ModEntities.CHIEFPIRATE,

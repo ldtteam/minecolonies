@@ -1,136 +1,145 @@
 package com.minecolonies.coremod.entity.citizen;
 
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.ICitizenDataView;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.DesiredActivity;
+import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTavern;
+import com.minecolonies.coremod.entity.ai.minimal.EntityAIOpenFenceGate;
+import com.minecolonies.coremod.entity.ai.minimal.EntityAIVisitor;
+import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.EntityType;
+import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
+import io.netty.buffer.Unpooled;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
+import net.minecraft.entity.ai.goal.OpenDoorGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.item.NameTagItem;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
+import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+
 public class VisitorCitizen extends AbstractEntityCitizen
 {
     /**
      * Cooldown for calling help, in ticks.
      */
-    private static final int                       CALL_HELP_CD        = 100;
+    private static final int CALL_HELP_CD = 100;
+
     /**
-     * The amount of damage a guard takes on blocking.
+     * The citizen experience handler
      */
-    private static final float                     GUARD_BLOCK_DAMAGE  = 0.5f;
+    private ICitizenExperienceHandler citizenExperienceHandler;
+
     /**
      * The citizen status handler.
      */
-    private final        ICitizenStatusHandler     citizenStatusHandler;
+    private ICitizenStatusHandler citizenStatusHandler;
     /**
      * It's citizen Id.
      */
-    private              int                       citizenId           = 0;
+    private int                   citizenId = 0;
     /**
      * The Walk to proxy (Shortest path through intermediate blocks).
      */
-    private              IWalkToProxy              proxy;
+    private IWalkToProxy          proxy;
     /**
      * Reference to the data representation inside the colony.
      */
     @Nullable
-    private              ICitizenData              citizenData;
-    /**
-     * The entities current Position.
-     */
-    private              BlockPos                  currentPosition     = null;
+    private ICitizenData          citizenData;
+
     /**
      * Variable to check what time it is for the citizen.
      */
-    private              boolean                   isDay               = true;
-    /**
-     * Backup of the citizen.
-     */
-    private              CompoundNBT               dataBackup          = null;
-    /**
-     * The citizen experience handler.
-     */
-    private              ICitizenExperienceHandler citizenExperienceHandler;
+    private boolean isDay = true;
+
     /**
      * The citizen chat handler.
      */
-    private              ICitizenChatHandler       citizenChatHandler;
+    private ICitizenChatHandler      citizenChatHandler;
     /**
      * The citizen item handler.
      */
-    private              ICitizenItemHandler       citizenItemHandler;
+    private ICitizenItemHandler      citizenItemHandler;
     /**
      * The citizen inv handler.
      */
-    private              ICitizenInventoryHandler  citizenInventoryHandler;
-    /**
-     * The citizen stuck handler.
-     */
-    private              ICitizenStuckHandler      citizenStuckHandler;
+    private ICitizenInventoryHandler citizenInventoryHandler;
+
     /**
      * The citizen colony handler.
      */
-    private              ICitizenColonyHandler     citizenColonyHandler;
+    private ICitizenColonyHandler citizenColonyHandler;
     /**
      * The citizen job handler.
      */
-    private              ICitizenJobHandler        citizenJobHandler;
+    private ICitizenJobHandler    citizenJobHandler;
+
     /**
      * The citizen sleep handler.
      */
-    private              ICitizenSleepHandler      citizenSleepHandler;
-    /**
-     * The citizen sleep handler.
-     */
-    private              ICitizenDiseaseHandler    citizenDiseaseHandler;
+    private ICitizenSleepHandler citizenSleepHandler;
     /**
      * The path-result of trying to move away
      */
-    private              PathResult                moveAwayPath;
-    /**
-     * Indicate if the citizen is mourning or not.
-     */
-    private              boolean                   mourning            = false;
+    private PathResult           moveAwayPath;
+
     /**
      * Indicates if the citizen is hiding from the rain or not.
      */
-    private              boolean                   hidingFromRain      = false;
-    /**
-     * IsChild flag
-     */
-    private              boolean                   child               = false;
+    private boolean hidingFromRain = false;
+
     /**
      * Whether the citizen is currently running away
      */
-    private              boolean                   currentlyFleeing    = false;
+    private boolean currentlyFleeing    = false;
     /**
      * Timer for the call for help cd.
      */
-    private              int                       callForHelpCooldown = 0;
+    private int     callForHelpCooldown = 0;
+
     /**
      * Citizen data view.
      */
-    private              ICitizenDataView          citizenDataView;
+    private ICitizenDataView citizenDataView;
 
     /**
      * The location used for requests
      */
-    private ILocation location = null;
+    private ILocation              location = null;
+    private ICitizenDiseaseHandler citizenDiseaseHandler;
 
     /**
      * Constructor for a new citizen typed entity.
@@ -141,12 +150,69 @@ public class VisitorCitizen extends AbstractEntityCitizen
     public VisitorCitizen(final EntityType<? extends AgeableEntity> type, final World world)
     {
         super(type, world);
+        this.goalSelector = new CustomGoalSelector(this.goalSelector);
+        this.targetSelector = new CustomGoalSelector(this.targetSelector);
+        this.citizenChatHandler = new CitizenChatHandler(this);
+        this.citizenStatusHandler = new CitizenStatusHandler(this);
+        this.citizenItemHandler = new CitizenItemHandler(this);
+        this.citizenInventoryHandler = new CitizenInventoryHandler(this);
+        this.citizenColonyHandler = new VisitorColonyHandler(this);
+        this.citizenJobHandler = new CitizenJobHandler(this);
+        this.citizenSleepHandler = new CitizenSleepHandler(this);
+        this.citizenExperienceHandler = new CitizenExperienceHandler(this);
+        this.citizenDiseaseHandler = new CitizenDiseaseHandler(this);
+
+        this.moveController = new MovementHandler(this);
+        this.enablePersistence();
+        this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
+        initTasks();
+    }
+
+    private void initTasks()
+    {
+        int priority = 0;
+        this.goalSelector.addGoal(priority, new SwimGoal(this));
+        this.goalSelector.addGoal(++priority, new OpenDoorGoal(this, true));
+        this.goalSelector.addGoal(priority, new EntityAIOpenFenceGate(this, true));
+        this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, PlayerEntity.class, WATCH_CLOSEST2, 1.0F));
+        this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
+        this.goalSelector.addGoal(++priority, new LookAtGoal(this, LivingEntity.class, WATCH_CLOSEST));
+        this.goalSelector.addGoal(++priority, new EntityAIVisitor(this));
     }
 
     @Override
     public ILocation getLocation()
     {
-        return null;
+        if (location == null)
+        {
+            location = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ILOCATION, this);
+        }
+        return location;
+    }
+
+    @Override
+    public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
+    {
+        if (super.attackEntityFrom(damageSource, damage))
+        {
+            if (damageSource.getTrueSource() instanceof LivingEntity && damage > 1.01f)
+            {
+                final IBuilding home = getCitizenData().getHomeBuilding();
+                if (home instanceof BuildingTavern)
+                {
+                    for (final Integer id : ((BuildingTavern) home).getExternalCitizens())
+                    {
+                        ICitizenData data = citizenColonyHandler.getColony().getVisitorManager().getCitizen(id);
+                        if (data != null && data.getCitizenEntity().isPresent() && data.getCitizenEntity().get().getRevengeTarget() == null)
+                        {
+                            data.getCitizenEntity().get().setRevengeTarget((LivingEntity) damageSource.getTrueSource());
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -176,7 +242,11 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public void setCitizenData(@Nullable final ICitizenData data)
     {
-        this.citizenData = data;
+        if (data != null)
+        {
+            this.citizenData = data;
+            data.initEntityValues();
+        }
     }
 
     /**
@@ -214,7 +284,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public DesiredActivity getDesiredActivity()
     {
-        return null;
+        return DesiredActivity.IDLE;
     }
 
     @Override
@@ -294,7 +364,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public BlockPos getCurrentPosition()
     {
-        return currentPosition;
+        return getPosition();
     }
 
     /**
@@ -305,7 +375,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public void setCurrentPosition(final BlockPos currentPosition)
     {
-        this.currentPosition = currentPosition;
     }
 
     @Override
@@ -317,61 +386,61 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public ICitizenExperienceHandler getCitizenExperienceHandler()
     {
-        return null;
+        return citizenExperienceHandler;
     }
 
     @Override
     public ICitizenChatHandler getCitizenChatHandler()
     {
-        return null;
+        return citizenChatHandler;
     }
 
     @Override
     public ICitizenStatusHandler getCitizenStatusHandler()
     {
-        return null;
+        return citizenStatusHandler;
     }
 
     @Override
     public ICitizenItemHandler getCitizenItemHandler()
     {
-        return null;
+        return citizenItemHandler;
     }
 
     @Override
     public ICitizenInventoryHandler getCitizenInventoryHandler()
     {
-        return null;
+        return citizenInventoryHandler;
     }
 
     @Override
     public void setCitizenInventoryHandler(final ICitizenInventoryHandler citizenInventoryHandler)
     {
-
+        this.citizenInventoryHandler = citizenInventoryHandler;
     }
 
     @Override
     public ICitizenColonyHandler getCitizenColonyHandler()
     {
-        return null;
+        return citizenColonyHandler;
     }
 
     @Override
     public void setCitizenColonyHandler(final ICitizenColonyHandler citizenColonyHandler)
     {
-
+        this.citizenColonyHandler = citizenColonyHandler;
     }
 
     @Override
     public ICitizenJobHandler getCitizenJobHandler()
     {
-        return null;
+        return citizenJobHandler;
     }
 
     @Override
     public ICitizenSleepHandler getCitizenSleepHandler()
     {
-        return null;
+        return citizenSleepHandler;
     }
 
     @Override
@@ -383,13 +452,13 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public ICitizenDiseaseHandler getCitizenDiseaseHandler()
     {
-        return null;
+        return citizenDiseaseHandler;
     }
 
     @Override
     public void setCitizenDiseaseHandler(final ICitizenDiseaseHandler citizenDiseaseHandler)
     {
-
+        this.citizenDiseaseHandler = citizenDiseaseHandler;
     }
 
     @Override
@@ -425,19 +494,19 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public float getRotationYaw()
     {
-        return 0;
+        return rotationYaw;
     }
 
     @Override
     public float getRotationPitch()
     {
-        return 0;
+        return rotationPitch;
     }
 
     @Override
     public boolean isDead()
     {
-        return false;
+        return !isAlive();
     }
 
     @Override
@@ -455,32 +524,206 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public void setCitizenJobHandler(final ICitizenJobHandler citizenJobHandler)
     {
-
+        this.citizenJobHandler = citizenJobHandler;
     }
 
     @Override
     public void setCitizenItemHandler(final ICitizenItemHandler citizenItemHandler)
     {
-
+        this.citizenItemHandler = citizenItemHandler;
     }
 
     @Override
     public void setCitizenChatHandler(final ICitizenChatHandler citizenChatHandler)
     {
-
+        this.citizenChatHandler = citizenChatHandler;
     }
 
     @Override
     public void setCitizenExperienceHandler(final ICitizenExperienceHandler citizenExperienceHandler)
     {
+        this.citizenExperienceHandler = citizenExperienceHandler;
+    }
 
+    @Override
+    public boolean isCurrentlyFleeing()
+    {
+        return currentlyFleeing;
+    }
+
+    @Override
+    public void callForHelp(final Entity attacker, final int guardHelpRange)
+    {
+
+    }
+
+    @Override
+    public void setFleeingState(final boolean fleeing)
+    {
+        currentlyFleeing = fleeing;
     }
 
     @javax.annotation.Nullable
     @Override
     public Container createMenu(
-      final int i, final PlayerInventory playerInventory, final PlayerEntity playerEntity)
+      final int id, final PlayerInventory playerInventory, final PlayerEntity playerEntity)
     {
+        final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+        buffer.writeVarInt(citizenColonyHandler.getColonyId());
+        buffer.writeVarInt(citizenId);
+        return new ContainerCitizenInventory(id, playerInventory, buffer);
+    }
+
+    /**
+     * Called when a player tries to interact with a citizen.
+     *
+     * @param player which interacts with the citizen.
+     * @return If citizen should interact or not.
+     */
+    @Override
+    public boolean processInteract(final PlayerEntity player, @NotNull final Hand hand)
+    {
+        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(getDataManager().get(DATA_COLONY_ID), player.world.getDimension().getType().getId());
+        if (iColonyView != null && !iColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+        {
+            return false;
+        }
+
+        if (!ItemStackUtils.isEmpty(player.getHeldItem(hand)) && player.getHeldItem(hand).getItem() instanceof NameTagItem)
+        {
+            return super.processInteract(player, hand);
+        }
+
+        if (CompatibilityUtils.getWorldFromCitizen(this).isRemote)
+        {
+            if (player.isSneaking())
+            {
+                Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getFormattedText(), this.getEntityId()));
+            }
+            else
+            {
+                final ICitizenDataView citizenDataView = getCitizenDataView();
+                if (citizenDataView != null)
+                {
+                    MineColonies.proxy.showCitizenWindow(citizenDataView);
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public ICitizenDataView getCitizenDataView()
+    {
+        if (this.citizenDataView == null)
+        {
+            citizenColonyHandler.updateColonyClient();
+            if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
+            {
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+                if (colonyView != null)
+                {
+                    this.citizenDataView = colonyView.getVisitor(citizenId);
+                    return this.citizenDataView;
+                }
+            }
+        }
+        else
+        {
+            return this.citizenDataView;
+        }
+
         return null;
+    }
+
+    @Override
+    protected void registerData()
+    {
+        super.registerData();
+        dataManager.register(DATA_COLONY_ID, citizenColonyHandler == null ? 0 : citizenColonyHandler.getColonyId());
+        dataManager.register(DATA_CITIZEN_ID, citizenId);
+    }
+
+    /**
+     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons. use this to react to sunlight and start to burn.
+     */
+    @Override
+    public void livingTick()
+    {
+        super.livingTick();
+
+        if (recentlyHit > 0)
+        {
+            markDirty();
+        }
+
+        if (CompatibilityUtils.getWorldFromCitizen(this).isRemote)
+        {
+            citizenColonyHandler.updateColonyClient();
+            if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0 && getOffsetTicks() % TICKS_20 == 0)
+            {
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+                if (colonyView != null)
+                {
+                    this.citizenDataView = colonyView.getVisitor(citizenId);
+                }
+            }
+        }
+        else
+        {
+            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+        }
+    }
+
+    @Override
+    public void writeAdditional(final CompoundNBT compound)
+    {
+        super.writeAdditional(compound);
+        compound.putInt(TAG_STATUS, citizenStatusHandler.getStatus().ordinal());
+        if (citizenColonyHandler.getColony() != null && citizenData != null)
+        {
+            compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColony().getID());
+            compound.putInt(TAG_CITIZEN, citizenData.getId());
+        }
+
+        citizenDiseaseHandler.write(compound);
+    }
+
+    @Override
+    public void readAdditional(final CompoundNBT compound)
+    {
+        super.readAdditional(compound);
+
+        citizenStatusHandler.setStatus(Status.values()[compound.getInt(TAG_STATUS)]);
+        citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
+        citizenId = compound.getInt(TAG_CITIZEN);
+
+        if (isServerWorld())
+        {
+            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+        }
+
+        citizenDiseaseHandler.read(compound);
+    }
+
+    @Override
+    public void onDeath(DamageSource cause)
+    {
+        super.onDeath(cause);
+        if (!world.isRemote())
+        {
+            IColony colony = getCitizenColonyHandler().getColony();
+            if (colony != null && getCitizenData() != null)
+            {
+                colony.getVisitorManager().removeCitizen(getCitizenData());
+                if (getCitizenData().getHomeBuilding() instanceof BuildingTavern)
+                {
+                    BuildingTavern tavern = (BuildingTavern) getCitizenData().getHomeBuilding();
+                    tavern.setNoVisitorTime(world.getRandom().nextInt(5000) + 30000);
+                }
+
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gui.tavern.visitordeath", getName());
+            }
+        }
     }
 }

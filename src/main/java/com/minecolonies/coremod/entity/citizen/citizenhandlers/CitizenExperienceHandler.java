@@ -2,11 +2,11 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.Vec3d;
@@ -34,13 +34,13 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     /**
      * The citizen assigned to this manager.
      */
-    private final EntityCitizen citizen;
+    private final AbstractEntityCitizen citizen;
 
     /**
      * Constructor for the experience handler.
      * @param citizen the citizen owning the handler.
      */
-    public CitizenExperienceHandler(final EntityCitizen citizen)
+    public CitizenExperienceHandler(final AbstractEntityCitizen citizen)
     {
         this.citizen = citizen;
     }

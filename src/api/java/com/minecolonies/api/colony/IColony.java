@@ -118,6 +118,8 @@ public interface IColony
         return TEAM_COLONY_NAME + "_" + getDimension() + "_" + getID();
     }
 
+    boolean isDay();
+
     /**
      * Retrieves the team of the colony
      *
@@ -226,6 +228,8 @@ public interface IColony
 
     ICitizenManager getCitizenManager();
 
+    IVisitorManager getVisitorManager();
+
     IRaiderManager getRaiderManager();
 
     IEventManager getEventManager();
@@ -313,10 +317,6 @@ public interface IColony
     void read(CompoundNBT compound);
 
     void setMoveIn(boolean newMoveIn);
-
-    int getBoughtCitizenCost();
-
-    void increaseBoughtCitizenCost();
 
     /**
      * Returns a set of players receiving important messages for the colony.

@@ -1437,12 +1437,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         moveAwayPath = this.getNavigator().moveAwayFromLivingEntity(attacker, 15, INITIAL_RUN_SPEED_AVOID);
     }
 
-    /**
-     * Calls a guard for help against an attacker.
-     *
-     * @param attacker       the attacking entity
-     * @param guardHelpRange the squaredistance in which we search for nearby guards
-     */
+    @Override
     public void callForHelp(final Entity attacker, final int guardHelpRange)
     {
         if (!(attacker instanceof LivingEntity) || !MineColonies.getConfig().getCommon().citizenCallForHelp.get() || callForHelpCooldown != 0)
@@ -1755,21 +1750,13 @@ public class EntityCitizen extends AbstractEntityCitizen
         return false;
     }
 
-    /**
-     * Get if the citizen is fleeing from an attacker.
-     *
-     * @return true if so.
-     */
+    @Override
     public boolean isCurrentlyFleeing()
     {
         return currentlyFleeing;
     }
 
-    /**
-     * Sets the fleeing state
-     *
-     * @param fleeing true if fleeing.
-     */
+    @Override
     public void setFleeingState(final boolean fleeing)
     {
         currentlyFleeing = fleeing;

@@ -10,10 +10,10 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.client.gui.WindowCitizen;
 import com.minecolonies.coremod.client.gui.WindowRequestDetail;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -124,11 +124,11 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window)
+    public boolean onClientResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenDataView data, final Window window)
     {
         if (response.equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill")))
         {
-            final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), world.getDimension().getType().getId());
+            final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), player.world.getDimension().getType().getId());
 
             if (colony != null)
             {
@@ -149,15 +149,15 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
         }
         else
         {
-            return super.onClientResponseTriggered(response, world, data, window);
+            return super.onClientResponseTriggered(response, player, data, window);
         }
         return true;
     }
 
     @Override
-    public void onServerResponseTriggered(final ITextComponent response, final World world, final ICitizenData data)
+    public void onServerResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenData data)
     {
-        super.onServerResponseTriggered(response, world, data);
+        super.onServerResponseTriggered(response, player, data);
         if (response.equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
         {
             data.getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);

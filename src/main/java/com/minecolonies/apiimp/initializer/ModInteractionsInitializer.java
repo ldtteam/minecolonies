@@ -3,6 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteractionResponseHandler;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import net.minecraftforge.event.RegistryEvent;
@@ -35,8 +36,14 @@ public final class ModInteractionsInitializer
                                                .setRegistryName(ModInteractionResponseHandlers.REQUEST)
                                                .createEntry();
 
+        ModInteractionResponseHandlers.recruitment = new InteractionResponseHandlerEntry.Builder()
+                                                       .setResponseHandlerProducer(RecruitmentInteraction::new)
+                                                       .setRegistryName(ModInteractionResponseHandlers.RECRUITMENT)
+                                                       .createEntry();
+
         reg.register(ModInteractionResponseHandlers.standard);
         reg.register(ModInteractionResponseHandlers.pos);
         reg.register(ModInteractionResponseHandlers.request);
+        reg.register(ModInteractionResponseHandlers.recruitment);
     }
 }

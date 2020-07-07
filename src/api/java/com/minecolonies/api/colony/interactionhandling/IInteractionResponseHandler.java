@@ -3,7 +3,9 @@ package com.minecolonies.api.colony.interactionhandling;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -68,21 +70,21 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
     /**
      * Server side action triggered on a possible response.
      * @param response the clicked string response of the player.
-     * @param world the world it was triggered in.
+     * @param player the world it was triggered in.
      * @param data the citizen related to it.
      */
-    void onServerResponseTriggered(final ITextComponent response, final World world, final ICitizenData data);
+    void onServerResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenData data);
 
     /**
      * Client side action triggered on a possible response.
      * @param response the clicked string response of the player.
-     * @param world the client side world.
+     * @param player the client side world.
      * @param data the citizen data assigned to it.
      * @param window the window it was triggered in.
      * @return if wishing to continue interacting.
      */
     @OnlyIn(Dist.CLIENT)
-    boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window);
+    boolean onClientResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenDataView data, final Window window);
 
     /**
      * Remove a certain parent.
@@ -101,4 +103,23 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundNB
      * @return the string type.
      */
     String getType();
+
+    /**
+     * Callback for showing the interaction, to set interaction specific stuff
+     */
+    default void onWindowOpened(final Window window, final ICitizenDataView dataView) {}
+
+    ;
+
+    /**
+     * Gets the icon to render for this interaction
+     *
+     * @return resourcelocation for icon
+     */
+    default ResourceLocation getInteractionIcon()
+    {
+        return null;
+    }
+
+    ;
 }

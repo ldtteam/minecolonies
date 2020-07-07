@@ -50,6 +50,7 @@ import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
@@ -426,8 +427,8 @@ public class EventHandler
         if (MineColonies.getConfig().getCommon().pvp_mode.get() && event.getEntity() instanceof EntityCitizen)
         {
             if (event.getEntity().world == null
-                  || !event.getEntity().world.chunkExists(event.getNewChunkX(), event.getNewChunkZ())
-                  || !event.getEntity().world.chunkExists(event.getOldChunkX(), event.getOldChunkZ()))
+                  || !event.getEntity().world.getChunkProvider().isChunkLoaded(new ChunkPos(event.getNewChunkX(), event.getNewChunkZ()))
+                  || !event.getEntity().world.getChunkProvider().isChunkLoaded(new ChunkPos(event.getOldChunkX(), event.getOldChunkZ())))
             {
                 return;
             }

@@ -344,6 +344,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 optCitizen.get().setItemStackToSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
             }
         }
+        citizen.setHomeBuilding(null);
         super.removeCitizen(citizen);
     }
 

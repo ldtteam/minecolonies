@@ -74,7 +74,16 @@ public class ContainerCitizenInventory extends Container
         }
         else
         {
-            final ICitizenData data = colony.getCitizenManager().getCitizen(citizenId);
+            final ICitizenData data;
+            if (citizenId > 0)
+            {
+                data = colony.getCitizenManager().getCitizen(citizenId);
+            }
+            else
+            {
+                data = colony.getVisitorManager().getCitizen(citizenId);
+            }
+
             inventory = data.getInventory();
             this.displayName = data.getName();
             workBuilding = data.getWorkBuilding() == null ? null : data.getWorkBuilding().getID();

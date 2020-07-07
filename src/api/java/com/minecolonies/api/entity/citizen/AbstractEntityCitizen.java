@@ -713,4 +713,36 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public abstract void setCitizenChatHandler(ICitizenChatHandler citizenChatHandler);
 
     public abstract void setCitizenExperienceHandler(ICitizenExperienceHandler citizenExperienceHandler);
+
+    /**
+     * Get if the citizen is fleeing from an attacker.
+     *
+     * @return true if so.
+     */
+    public abstract boolean isCurrentlyFleeing();
+
+    /**
+     * Calls a guard for help against an attacker.
+     *
+     * @param attacker       the attacking entity
+     * @param guardHelpRange the squaredistance in which we search for nearby guards
+     */
+    public abstract void callForHelp(final Entity attacker, final int guardHelpRange);
+
+    /**
+     * Sets the fleeing state
+     *
+     * @param fleeing true if fleeing.
+     */
+    public abstract void setFleeingState(final boolean fleeing);
+
+    /**
+     * Setter for the citizen pose.
+     *
+     * @param pose the pose to set.
+     */
+    public void updatePose(final Pose pose)
+    {
+        setPose(pose);
+    }
 }

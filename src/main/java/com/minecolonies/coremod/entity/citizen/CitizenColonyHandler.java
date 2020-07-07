@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
@@ -26,29 +27,29 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     /**
      * The citizen assigned to this manager.
      */
-    private final EntityCitizen citizen;
+    protected final AbstractEntityCitizen citizen;
 
     /**
      * It's colony id.
      */
-    private int colonyId;
+    protected int colonyId;
 
     /**
      * The colony reference.
      */
     @Nullable
-    private IColony colony;
+    protected IColony colony;
 
     /**
      * Whether the entity is registered to the colony yet.
      */
-    private boolean registered = false;
+    protected boolean registered = false;
 
     /**
      * Constructor for the experience handler.
      * @param citizen the citizen owning the handler.
      */
-    public CitizenColonyHandler(final EntityCitizen citizen)
+    public CitizenColonyHandler(final AbstractEntityCitizen citizen)
     {
         this.citizen = citizen;
     }

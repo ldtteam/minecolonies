@@ -3,6 +3,7 @@ package com.minecolonies.api.compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Disease;
 import net.minecraft.block.BlockState;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
@@ -113,6 +114,8 @@ public interface ICompatibilityManager
      * @return a copy of the list.
      */
     List<Disease> getDiseases();
+
+    List<Tuple<Item, Integer>> getRecruitmentCostsWeights();
 
     /**
      * Checks if a certain Block is an ore.

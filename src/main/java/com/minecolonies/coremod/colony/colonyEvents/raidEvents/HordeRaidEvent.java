@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.ColonyState;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
@@ -34,7 +35,7 @@ import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEven
 import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_KILLED;
 
 /**
- *  Horde raid event for the colony, triggers a horde that spawn and attack the colony.
+ * Horde raid event for the colony, triggers a horde that spawn and attack the colony.
  */
 public abstract class HordeRaidEvent implements IColonyRaidEvent
 {
@@ -46,7 +47,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
     /**
      * The max distance to search for a loaded blockpos on a respawn try
      */
-    public static int MAX_RESPAWN_DEVIATION = 5 * 16;
+    public static int MAX_RESPAWN_DEVIATION = 10 * 16;
 
     /**
      * The minimum distance to the colony center where mobs are allowed to spawn
@@ -315,6 +316,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
 
     /**
      * Get the assigned colony.
+     *
      * @return the colony.
      */
     public IColony getColony()
@@ -356,13 +358,20 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
             final BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_RESPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
             if (spawnPos != null)
             {
-                spawnHorde(spawnPos, colony, id, horde.numberOfBosses - boss.size(), horde.numberOfArchers - archers.size(), horde.numberOfRaiders- normal.size());
+                spawnHorde(spawnPos, colony, id, horde.numberOfBosses - boss.size(), horde.numberOfArchers - archers.size(), horde.numberOfRaiders - normal.size());
             }
         }
 
-        if (colony.getRaiderManager().areSpiesEnabled())
+        for (final Entity entity : getEntities())
         {
-            for (final Entity entity : getEntities())
+            if (!entity.isAlive() || !WorldUtil.isEntityBlockLoaded(colony.getWorld(), entity.getPosition()))
+            {
+                entity.remove();
+                respawns.add(new Tuple<>(entity.getType(), entity.getPosition()));
+                continue;
+            }
+
+            if (colony.getRaiderManager().areSpiesEnabled())
             {
                 ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.GLOWING, 550));
             }
@@ -410,7 +419,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
             campFiresNBT.add(BlockPosUtil.write(new CompoundNBT(), NbtTagConstants.TAG_POS, pos));
         }
 
-        compound.put(TAG_CAMPFIRE_LIST,campFiresNBT);
+        compound.put(TAG_CAMPFIRE_LIST, campFiresNBT);
         compound.putInt(TAG_EVENT_STATUS, status.ordinal());
         compound.putInt(TAG_DAYS_LEFT, daysToGo);
         horde.writeToNbt(compound);

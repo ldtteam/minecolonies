@@ -1652,5 +1652,16 @@
   "com.minecolonies.coremod.gui.workerhuts.rabbithutch": "Rabbit Hutch",
   "com.minecolonies.coremod.job.rabbitherder": "Rabbit Herder",
   "block.minecolonies.blockhutrabbithutch.name": "Rabbit hutch",
-  "block.minecolonies.blockhutrabbithutch": "Rabbit Hutch"
+  "block.minecolonies.blockhutrabbithutch": "Rabbit Hutch",
+
+  "com.minecolonies.coremod.gui.tavern.visitordeath": "The visitor %s died, word spreads around that your Tavern is a dangerous place. You are likely to see less visitors in the future now!",
+  "com.minecolonies.coremod.gui.chat.showstats": "Show citizen stats",
+  "com.minecolonies.coremod.gui.chat.recruit": "Recruit for ",
+  "com.minecolonies.coremod.recruit.message": "%s has decided to stay in your colony as a citizen",
+  "com.minecolonies.coremod.gui.chat.notnow": "Maybe later",
+  "com.minecolonies.coremod.gui.chat.notenoughitems": "You do not have the fitting items in your inventory to offer to this Visitor!",
+  "com.minecolonies.coremod.gui.chat.nospace": "Your colony does not have enough space to house another citizen",
+  "com.minecolonies.coremod.gui.chat.nospacerecruit": "%s would be willing to join your colony for %s, but it seems you lack living space in your colony.",
+  "com.minecolonies.coremod.gui.chat.recruitcost": "%s would be willing to join your colony for %s.",
+  "com.minecolonies.coremod.gui.chat.recruitstory1": "likes to wander around the world. Wandering makes hungry and thirsty, so %s stopped by your tavern."
 }
