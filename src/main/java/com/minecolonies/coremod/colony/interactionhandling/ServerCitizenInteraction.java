@@ -30,17 +30,17 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 /**
  * The server side interaction response handler.
  */
-public abstract class ServerCitizenInteractionResponseHandler extends AbstractInteractionResponseHandler
+public abstract class ServerCitizenInteraction extends AbstractInteractionResponseHandler
 {
-    private static final String TAG_DELAY     = "delay";
-    private static final String TAG_PARENT    = "parent";
-    private static final String TAG_PARENTS   = "parents";
+    private static final String TAG_DELAY        = "delay";
+    private static final String TAG_PARENT       = "parent";
+    private static final String TAG_PARENTS      = "parents";
     private static final String TAG_VALIDATOR_ID = "validator";
 
     /**
      * At which world tick this should be displayed again.
      */
-    private int displayAtWorldTick     = 0;
+    private int displayAtWorldTick = 0;
 
     /**
      * Validator to test for this.
@@ -59,21 +59,22 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
 
     /**
      * The server interaction response handler.
-     * @param inquiry the client inquiry.
-     * @param primary if primary interaction.
-     * @param priority the interaction priority.
-     * @param validator validation predicate to check if this interaction is still valid.
-     * @param validatorId the id of the validator.
+     *
+     * @param inquiry        the client inquiry.
+     * @param primary        if primary interaction.
+     * @param priority       the interaction priority.
+     * @param validator      validation predicate to check if this interaction is still valid.
+     * @param validatorId    the id of the validator.
      * @param responseTuples the tuples mapping player responses to further interactions.
      */
     @SafeVarargs
-    public ServerCitizenInteractionResponseHandler(
+    public ServerCitizenInteraction(
       final ITextComponent inquiry,
       final boolean primary,
       final IChatPriority priority,
       final Predicate<ICitizenData> validator,
       final ITextComponent validatorId,
-      final Tuple<ITextComponent, ITextComponent>...responseTuples)
+      final Tuple<ITextComponent, ITextComponent>... responseTuples)
     {
         super(inquiry, primary, priority, responseTuples);
         this.validator = validator;
@@ -82,9 +83,10 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
 
     /**
      * Way to load the response handler for a citizen.
+     *
      * @param data the citizen owning this handler.
      */
-    public ServerCitizenInteractionResponseHandler(final ICitizen data)
+    public ServerCitizenInteraction(final ICitizen data)
     {
         super();
     }
@@ -98,11 +100,12 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     @Override
     public boolean isValid(final ICitizenData citizen)
     {
-        return (validator == null && !this.parents.isEmpty()) || ( validator != null && validator.test(citizen) );
+        return (validator == null && !this.parents.isEmpty()) || (validator != null && validator.test(citizen));
     }
 
     /**
      * Add a parent to the list.
+     *
      * @param parent the parent to add.
      */
     public void addParent(final ITextComponent parent)
@@ -112,6 +115,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
 
     /**
      * Remove an old parent and return true if no parent is left.
+     *
      * @param oldParent the parent to remove.
      */
     public void removeParent(final ITextComponent oldParent)

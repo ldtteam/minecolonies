@@ -5,6 +5,9 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 
+/**
+ * Colony handler for visitors
+ */
 public class VisitorColonyHandler extends CitizenColonyHandler
 {
     /**

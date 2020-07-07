@@ -17,8 +17,14 @@ import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MAX_HEALT
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 
+/**
+ * Data for visitors
+ */
 public class VisitorData extends CitizenData implements IVisitorData
 {
+    /**
+     * Recruit nbt tag
+     */
     private static final String TAG_RECRUIT_COST = "rcost";
 
     /**

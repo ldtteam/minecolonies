@@ -4,7 +4,6 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
@@ -422,17 +421,6 @@ public class CitizenManager implements ICitizenManager
     public ICitizenData getCitizen(final int citizenId)
     {
         return citizens.get(citizenId);
-    }
-
-    @Override
-    public IVisitorData getVisitor(final int visitorId)
-    {
-        ICitizenData data = citizens.get(visitorId);
-        if (data instanceof IVisitorData)
-        {
-            return (IVisitorData) data;
-        }
-        return null;
     }
 
     @Override

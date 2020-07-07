@@ -12,7 +12,6 @@ import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
-import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.util.CompatibilityUtils;
@@ -50,13 +49,11 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
+/**
+ * Visitor citizen entity
+ */
 public class VisitorCitizen extends AbstractEntityCitizen
 {
-    /**
-     * Cooldown for calling help, in ticks.
-     */
-    private static final int CALL_HELP_CD = 100;
-
     /**
      * The citizen experience handler
      */
@@ -79,11 +76,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
      */
     @Nullable
     private ICitizenData          citizenData;
-
-    /**
-     * Variable to check what time it is for the citizen.
-     */
-    private boolean isDay = true;
 
     /**
      * The citizen chat handler.
@@ -111,24 +103,11 @@ public class VisitorCitizen extends AbstractEntityCitizen
      * The citizen sleep handler.
      */
     private ICitizenSleepHandler citizenSleepHandler;
-    /**
-     * The path-result of trying to move away
-     */
-    private PathResult           moveAwayPath;
-
-    /**
-     * Indicates if the citizen is hiding from the rain or not.
-     */
-    private boolean hidingFromRain = false;
 
     /**
      * Whether the citizen is currently running away
      */
-    private boolean currentlyFleeing    = false;
-    /**
-     * Timer for the call for help cd.
-     */
-    private int     callForHelpCooldown = 0;
+    private boolean currentlyFleeing = false;
 
     /**
      * Citizen data view.
@@ -722,7 +701,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
                     tavern.setNoVisitorTime(world.getRandom().nextInt(5000) + 30000);
                 }
 
-                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gui.tavern.visitordeath", getName());
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gui.tavern.visitordeath", getCitizenData().getName());
             }
         }
     }

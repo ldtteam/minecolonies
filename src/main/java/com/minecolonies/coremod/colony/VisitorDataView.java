@@ -2,23 +2,23 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.IVisitorViewData;
-import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
+/**
+ * View data for visitors
+ */
 public class VisitorDataView extends CitizenDataView implements IVisitorViewData
 {
-    private final IColonyView                       colony;
-    private       int                               entityId;
-    private       double                            happiness;
-    private       String                            job = "";
-    private       int                               colonyId;
-    private       List<IInteractionResponseHandler> primaryInteractions;
-    private       boolean                           hasAnyPrimaryInteraction;
-    private       boolean                           hasPrimaryBlockingInteractions;
+    /**
+     * The related colony view
+     */
+    private final IColonyView colony;
+
+    /**
+     * The recruitment costs
+     */
     private       ItemStack                         recruitmentCosts;
 
     /**

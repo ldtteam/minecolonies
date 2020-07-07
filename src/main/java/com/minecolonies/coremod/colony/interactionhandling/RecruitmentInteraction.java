@@ -28,11 +28,24 @@ import static com.minecolonies.api.util.constant.WindowConstants.CHAT_LABEL_ID;
 import static com.minecolonies.api.util.constant.WindowConstants.RESPONSE_BOX_ID;
 import static com.minecolonies.coremod.client.gui.WindowInteraction.BUTTON_RESPONSE_ID;
 
-public class RecruitmentInteraction extends ServerCitizenInteractionResponseHandler
+/**
+ * Interaction for recruiting visitors
+ */
+public class RecruitmentInteraction extends ServerCitizenInteraction
 {
+    /**
+     * The icon NBT tag
+     */
     private static final String RECRUITMENT_ICON = "recruitIcon";
 
-    private static final ResourceLocation                      icon          = new ResourceLocation(Constants.MOD_ID, "textures/icons/recruiticon.png");
+    /**
+     * The icon's res location which is displayed for this interaction
+     */
+    private static final ResourceLocation icon = new ResourceLocation(Constants.MOD_ID, "textures/icons/recruiticon.png");
+
+    /**
+     * The recruit answer
+     */
     private static final Tuple<ITextComponent, ITextComponent> recruitAnswer = new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.recruit"), null);
 
     @SuppressWarnings("unchecked")

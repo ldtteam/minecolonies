@@ -248,7 +248,12 @@ public interface IColonyView extends IColony
     @Nullable
     IMessage handleColonyViewCitizensMessage(int id, PacketBuffer buf);
 
-    @Nullable
+    /**
+     * Handles visitor view messages
+     *
+     * @param refresh         whether to override old data
+     * @param visitorViewData the new data to set
+     */
     void handleColonyViewVisitorMessage(boolean refresh, Set<IVisitorViewData> visitorViewData);
 
     /**
@@ -439,8 +444,8 @@ public interface IColonyView extends IColony
     /**
      * Gets the data view for a visitor
      *
-     * @param citizenId
-     * @return
+     * @param citizenId id to query
+     * @return citizen data for visitor
      */
     ICitizenDataView getVisitor(int citizenId);
 }

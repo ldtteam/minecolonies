@@ -684,14 +684,14 @@ public class CommonConfiguration extends AbstractConfiguration
         listOfPlantables = defineList(builder, "listofplantables",
           Arrays.asList
                    ("minecraft:sunflower",
-                    "minecraft:lilac",
-                    "minecraft:rose_bush",
-                    "minecraft:peony",
-                    "minecraft:tall_grass",
-                    "minecraft:large_fern",
-                    "minecraft:fern",
-                    "biomesoplenty:small_flowers",
-                    "minecraft:small_flowers"
+                     "minecraft:lilac",
+                     "minecraft:rose_bush",
+                     "minecraft:peony",
+                     "minecraft:tall_grass",
+                     "minecraft:large_fern",
+                     "minecraft:fern",
+                     "biomesoplenty:small_flowers",
+                     "minecraft:small_flowers"
                    ),
           s -> s instanceof String);
 

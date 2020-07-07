@@ -21,15 +21,15 @@ import java.util.function.BiPredicate;
 /**
  * The position based interaction response handler.
  */
-public class PosBasedInteractionResponseHandler extends ServerCitizenInteractionResponseHandler
+public class PosBasedInteraction extends ServerCitizenInteraction
 {
     private static final String POS_TAG = "pos";
 
     @SuppressWarnings("unchecked")
     private static final Tuple<ITextComponent, ITextComponent>[] responses = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
-        new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
 
     /**
      * The position this is related to.
@@ -43,12 +43,13 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
 
     /**
      * The server interaction response handler.
-     * @param inquiry the client inquiry.
-     * @param priority the interaction priority.
-     * @param pos the pos this is related to.
+     *
+     * @param inquiry   the client inquiry.
+     * @param priority  the interaction priority.
+     * @param pos       the pos this is related to.
      * @param validator the validator id.
      */
-    public PosBasedInteractionResponseHandler(
+    public PosBasedInteraction(
       final ITextComponent inquiry,
       final IChatPriority priority,
       final ITextComponent validator,
@@ -61,11 +62,12 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
 
     /**
      * The server interaction response handler.
-     * @param inquiry the client inquiry.
+     *
+     * @param inquiry  the client inquiry.
      * @param priority the interaction priority.
-     * @param pos the pos this is related to.
+     * @param pos      the pos this is related to.
      */
-    public PosBasedInteractionResponseHandler(
+    public PosBasedInteraction(
       final ITextComponent inquiry,
       final IChatPriority priority,
       final BlockPos pos)
@@ -77,9 +79,10 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
 
     /**
      * Way to load the response handler for a citizen.
+     *
      * @param data the citizen owning this handler.
      */
-    public PosBasedInteractionResponseHandler(final ICitizen data)
+    public PosBasedInteraction(final ICitizen data)
     {
         super(data);
     }
@@ -93,7 +96,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
     @Override
     public boolean isValid(final ICitizenData citizen)
     {
-        return (validator == null && !this.parents.isEmpty()) || ( validator != null && validator.test(citizen, pos) );
+        return (validator == null && !this.parents.isEmpty()) || (validator != null && validator.test(citizen, pos));
     }
 
     @Override

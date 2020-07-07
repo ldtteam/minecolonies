@@ -18,6 +18,9 @@ import java.util.Set;
  */
 public class ColonyVisitorViewDataMessage implements IMessage
 {
+    /**
+     * The colony id
+     */
     private int colonyId;
 
     /**

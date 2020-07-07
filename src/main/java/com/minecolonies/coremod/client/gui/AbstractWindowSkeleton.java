@@ -45,6 +45,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
 
     /**
      * Constructor with no parent window
+     *
      * @param resource Resource location string.
      */
     public AbstractWindowSkeleton(final String resource)

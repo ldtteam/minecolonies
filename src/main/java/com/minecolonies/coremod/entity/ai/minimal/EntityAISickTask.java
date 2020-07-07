@@ -14,7 +14,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
 import net.minecraft.block.BedBlock;
@@ -463,7 +463,7 @@ public class EntityAISickTask extends Goal
                 return IDLE;
             }
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(id);
-            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_HOSPITAL, disease.getName(), disease.getCureString()),
+            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_HOSPITAL, disease.getName(), disease.getCureString()),
               new TranslationTextComponent(NO_HOSPITAL),
               ChatPriority.BLOCKING));
             return IDLE;
@@ -471,7 +471,7 @@ public class EntityAISickTask extends Goal
         else if (!citizen.getCitizenDiseaseHandler().getDisease().isEmpty())
         {
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease());
-            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(WAITING_FOR_CURE, disease.getName(), disease.getCureString()),
+            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(WAITING_FOR_CURE, disease.getName(), disease.getCureString()),
               new TranslationTextComponent(WAITING_FOR_CURE),
               ChatPriority.BLOCKING));
         }

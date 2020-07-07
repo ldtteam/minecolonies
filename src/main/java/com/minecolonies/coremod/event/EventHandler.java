@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -427,8 +428,8 @@ public class EventHandler
         if (MineColonies.getConfig().getCommon().pvp_mode.get() && event.getEntity() instanceof EntityCitizen)
         {
             if (event.getEntity().world == null
-                  || !event.getEntity().world.getChunkProvider().isChunkLoaded(new ChunkPos(event.getNewChunkX(), event.getNewChunkZ()))
-                  || !event.getEntity().world.getChunkProvider().isChunkLoaded(new ChunkPos(event.getOldChunkX(), event.getOldChunkZ())))
+                  || !WorldUtil.isEntityChunkLoaded(event.getEntity().world, new ChunkPos(event.getNewChunkX(), event.getNewChunkZ()))
+                  || !WorldUtil.isEntityChunkLoaded(event.getEntity().world, new ChunkPos(event.getOldChunkX(), event.getOldChunkZ())))
             {
                 return;
             }

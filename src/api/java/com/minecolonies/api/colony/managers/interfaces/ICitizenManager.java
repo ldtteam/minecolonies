@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.IVisitorData;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,7 @@ public interface ICitizenManager extends IEntityManager
     /**
      * Spawn a citizen with specific citizen data.
      *
-     * @param data Data to use to spawn citizen.
+     * @param data  Data to use to spawn citizen.
      * @param world the world to spawn it in.
      * @return the citizen data of the spawned citizen.
      */
@@ -38,7 +37,6 @@ public interface ICitizenManager extends IEntityManager
      * @param data     Data to use to spawn citizen.
      * @param world    the world to spawn it in.
      * @param spawnPos the Blockposition to spawn at
-     *
      * @return the new citizen.
      */
     default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final World world, final BlockPos spawnPos)
@@ -59,42 +57,44 @@ public interface ICitizenManager extends IEntityManager
      */
     void calculateMaxCitizens();
 
-    IVisitorData getVisitor(int visitorId);
-
     /**
      * Get all citizens.
+     *
      * @return a copy of the list of citizens.
      */
     List<ICitizenData> getCitizens();
 
     /**
      * Get max citizens of the colony.
+     *
      * @return the amount.
      */
     int getMaxCitizens();
 
     /**
-     * Get potential max citizens of the colony.
-     * The potential considers all available beds including not assigned guard towers.
+     * Get potential max citizens of the colony. The potential considers all available beds including not assigned guard towers.
+     *
      * @return the amount.
      */
     int getPotentialMaxCitizens();
 
     /**
      * Get the current amount of citizens, might be bigger then {@link #getMaxCitizens()}
+     *
      * @return The current amount of citizens in the colony.
      */
     int getCurrentCitizenCount();
 
     /**
      * Set the new max citizens.
+     *
      * @param newMaxCitizens the amount to set.
      */
     void setMaxCitizens(final int newMaxCitizens);
 
     /**
-     * Set the new potential max citizens.
-     * The potential considers all available beds including not assigned guard towers.
+     * Set the new potential max citizens. The potential considers all available beds including not assigned guard towers.
+     *
      * @param newMaxCitizens the potential amount to set.
      */
     void setPotentialMaxCitizens(final int newMaxCitizens);
@@ -125,19 +125,20 @@ public interface ICitizenManager extends IEntityManager
 
     /**
      * Get a random citizen.
+     *
      * @return the random citizen.
      */
     ICitizenData getRandomCitizen();
 
     /**
      * Update a modifier for all citizens.
+     *
      * @param id the name of it.
      */
     void updateModifier(final String id);
 
     /**
-     *  Call this when citizens sleep
+     * Call this when citizens sleep
      */
     void onCitizenSleep();
-
 }

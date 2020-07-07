@@ -16,7 +16,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockReader;
@@ -100,7 +99,7 @@ public final class BlockPosUtil
         int tries = 0;
         BlockPos pos = null;
         while (pos == null
-                 || !world.getChunkProvider().isChunkLoaded(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4))
+                 || !WorldUtil.isEntityBlockLoaded(world, pos)
                  || world.getBlockState(pos).getMaterial().isLiquid()
                  || !world.getBlockState(pos.down()).getMaterial().isSolid()
                  || (!world.isAirBlock(pos) && !world.isAirBlock(pos.up())))

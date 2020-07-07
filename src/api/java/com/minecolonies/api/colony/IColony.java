@@ -115,6 +115,11 @@ public interface IColony
         return TEAM_COLONY_NAME + "_" + getDimension() + "_" + getID();
     }
 
+    /**
+     * Whether it is day for the colony
+     *
+     * @return true if it is day
+     */
     boolean isDay();
 
     /**
@@ -224,6 +229,11 @@ public interface IColony
 
     ICitizenManager getCitizenManager();
 
+    /**
+     * Gets the visitor manager
+     *
+     * @return manager
+     */
     IVisitorManager getVisitorManager();
 
     IRaiderManager getRaiderManager();

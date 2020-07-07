@@ -20,6 +20,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+/**
+ * Manages all visiting entities to the colony
+ */
 public class VisitorManager implements IVisitorManager
 {
     /**
@@ -114,6 +117,7 @@ public class VisitorManager implements IVisitorManager
 
             nextVisitorID = visitorManagerNBT.getInt(TAG_NEXTID);
         }
+        markCitizensDirty();
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHand
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import net.minecraft.nbt.CompoundNBT;
@@ -30,10 +30,8 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OFFHAND_HELD_ITEM_SLOT;
 
 /**
- * The CitizenDataView is the client-side representation of a CitizenData. Views
- * contain the CitizenData's data that is relevant to a Client, in a more
- * client-friendly form. Mutable operations on a View result in a message to the
- * server to perform the operation.
+ * The CitizenDataView is the client-side representation of a CitizenData. Views contain the CitizenData's data that is relevant to a Client, in a more client-friendly form.
+ * Mutable operations on a View result in a message to the server to perform the operation.
  */
 public class CitizenDataView implements ICitizenDataView
 {
@@ -48,7 +46,6 @@ public class CitizenDataView implements ICitizenDataView
      * The resource location for the pending overlay.
      */
     private static final ResourceLocation PENDING_RESOURCE = new ResourceLocation(Constants.MOD_ID, "textures/icons/warning.png");
-
 
     /**
      * Attributes.
@@ -120,8 +117,7 @@ public class CitizenDataView implements ICitizenDataView
     /**
      * Set View id.
      *
-     * @param id
-     *            the id to set.
+     * @param id the id to set.
      */
     protected CitizenDataView(final int id)
     {
@@ -259,7 +255,7 @@ public class CitizenDataView implements ICitizenDataView
         saturation = buf.readDouble();
         happiness = buf.readDouble();
 
-        citizenSkillHandler.read(buf.readCompoundTag());;
+        citizenSkillHandler.read(buf.readCompoundTag());
 
         job = buf.readString(32767);
 
@@ -279,8 +275,8 @@ public class CitizenDataView implements ICitizenDataView
         for (int i = 0; i < size; i++)
         {
             final CompoundNBT compoundNBT = buf.readCompoundTag();
-            final ServerCitizenInteractionResponseHandler handler =
-              (ServerCitizenInteractionResponseHandler) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, compoundNBT);
+            final ServerCitizenInteraction handler =
+              (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, compoundNBT);
             citizenChatOptions.put(handler.getInquiry(), handler);
         }
 
@@ -316,7 +312,7 @@ public class CitizenDataView implements ICitizenDataView
             return false;
         }
 
-        IInteractionResponseHandler interaction = sortedInteractions.get(0);
+        final IInteractionResponseHandler interaction = sortedInteractions.get(0);
         if (interaction != null)
         {
             return interaction.getPriority().getPriority() >= ChatPriority.IMPORTANT.getPriority();
@@ -333,7 +329,7 @@ public class CitizenDataView implements ICitizenDataView
             return false;
         }
 
-        IInteractionResponseHandler interaction = sortedInteractions.get(0);
+        final IInteractionResponseHandler interaction = sortedInteractions.get(0);
         if (interaction != null)
         {
             return interaction.isPrimary();

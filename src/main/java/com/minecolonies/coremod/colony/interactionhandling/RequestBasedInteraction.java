@@ -25,7 +25,7 @@ import java.util.function.BiPredicate;
 /**
  * The request based interaction response handler.
  */
-public class RequestBasedInteractionResponseHandler extends ServerCitizenInteractionResponseHandler
+public class RequestBasedInteraction extends ServerCitizenInteraction
 {
     private static final String TOKEN_TAG = "token";
 
@@ -60,7 +60,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
      * @param token     the token this is related to.
      * @param validator the validator id.
      */
-    public RequestBasedInteractionResponseHandler(
+    public RequestBasedInteraction(
       final ITextComponent inquiry,
       final IChatPriority priority,
       final ITextComponent validator,
@@ -78,7 +78,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
      * @param priority the interaction priority.
      * @param token    the token this is related to.
      */
-    public RequestBasedInteractionResponseHandler(
+    public RequestBasedInteraction(
       final ITextComponent inquiry,
       final IChatPriority priority,
       final IToken<?> token)
@@ -93,7 +93,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
      *
      * @param data the citizen owning this handler.
      */
-    public RequestBasedInteractionResponseHandler(final ICitizen data)
+    public RequestBasedInteraction(final ICitizen data)
     {
         super(data);
     }

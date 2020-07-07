@@ -105,7 +105,7 @@ dependencies {
 }
 
 group = "com.minecolonies"
-version = config.minecraft_version.toString() + "-" + "0.11.950-universal"
+version = config.minecraft_version.toString() + "-" + System.getenv().containsKey("Version") ? System.getenv("Version") : 'null'
 archivesBaseName = "minecolonies"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.

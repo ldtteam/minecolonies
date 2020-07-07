@@ -54,6 +54,8 @@ public class BuildingTavern extends BuildingHome
     public static final String TARVERN_SCHEMATIC = "tavern";
     public static final String TAG_VISITOR_ID    = "visitor";
 
+    private static final int MAX_STORY = 16;
+
     /**
      * Music interval
      */
@@ -70,7 +72,14 @@ public class BuildingTavern extends BuildingHome
      */
     private final List<Integer> externalCitizens = new ArrayList<>();
 
-    private final List<BlockPos> sitPositions  = new ArrayList<>();
+    /**
+     * List of sitting positions for this building
+     */
+    private final List<BlockPos> sitPositions = new ArrayList<>();
+
+    /**
+     * List of work positions for this building
+     */
     private final List<BlockPos> workPositions = new ArrayList<>();
 
     private boolean initTags = false;
@@ -239,7 +248,8 @@ public class BuildingTavern extends BuildingHome
 
         newCitizen.setRecruitCosts(new ItemStack(cost.getA(), recruitLevel * 3 / cost.getB()));
 
-        newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.recruitstory1"), ChatPriority.IMPORTANT));
+        newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
+          "com.minecolonies.coremod.gui.chat.recruitstory" + colony.getWorld().rand.nextInt(MAX_STORY) + 1, newCitizen.getName()), ChatPriority.IMPORTANT));
 
         colony.getWorld().addEntity(citizenEntity);
 
@@ -309,7 +319,7 @@ public class BuildingTavern extends BuildingHome
         {
             return positions.get(colony.getWorld().rand.nextInt(positions.size()));
         }
-// TODO :, recruitment GUI & texts
+
         return null;
     }
 
@@ -398,6 +408,11 @@ public class BuildingTavern extends BuildingHome
         }
     }
 
+    /**
+     * Sets the delay time before a new visitor spawns
+     *
+     * @param noVisitorTime time in ticks
+     */
     public void setNoVisitorTime(final int noVisitorTime)
     {
         this.noVisitorTime = noVisitorTime;

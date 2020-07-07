@@ -27,8 +27,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, CitizenModel<AbstractEntityCitizen>>
 {
-    private static final double  SHADOW_SIZE    = 0.5F;
-    public static        boolean isItGhostTime  = false;
+    private static final double  SHADOW_SIZE   = 0.5F;
+    public static        boolean isItGhostTime = false;
 
     /**
      * Renders model, see {@link BipedRenderer}.
@@ -95,7 +95,12 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     }
 
     @Override
-    protected void renderName(@NotNull final AbstractEntityCitizen entityIn, @NotNull final String str, @NotNull final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer buffer, final int maxDistance)
+    protected void renderName(
+      @NotNull final AbstractEntityCitizen entityIn,
+      @NotNull final String str,
+      @NotNull final MatrixStack matrixStack,
+      @NotNull final IRenderTypeBuffer buffer,
+      final int maxDistance)
     {
         super.renderName(entityIn, str, matrixStack, buffer, maxDistance);
 
@@ -121,10 +126,10 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
                 final Matrix4f matrix = matrixStack.getLast().getMatrix();
                 final IVertexBuilder r = buffer.getBuffer(MRenderTypes.customTextRenderer(texture));
 
-                r.pos(matrix,0, 0, 0).tex(0, 0).lightmap(250).endVertex();
-                r.pos(matrix,0, 10, 0).tex(1, 0).lightmap(250).endVertex();
-                r.pos(matrix,10, 10, 0).tex(1, 1).lightmap(250).endVertex();
-                r.pos(matrix,10, 0, 0).tex(0, 1).lightmap(250).endVertex();
+                r.pos(matrix, 0, 0, 0).tex(0, 0).lightmap(250).endVertex();
+                r.pos(matrix, 0, 10, 0).tex(1, 0).lightmap(250).endVertex();
+                r.pos(matrix, 10, 10, 0).tex(1, 1).lightmap(250).endVertex();
+                r.pos(matrix, 10, 0, 0).tex(0, 1).lightmap(250).endVertex();
                 matrixStack.pop();
             }
         }
@@ -153,7 +158,11 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         return pose;
     }
 
-    private void updateArmPose(@NotNull final AbstractEntityCitizen citizen, final BipedModel<AbstractEntityCitizen> citizenModel, final BipedModel.ArmPose armPoseMainHand, final BipedModel.ArmPose armPoseOffHand)
+    private void updateArmPose(
+      @NotNull final AbstractEntityCitizen citizen,
+      final BipedModel<AbstractEntityCitizen> citizenModel,
+      final BipedModel.ArmPose armPoseMainHand,
+      final BipedModel.ArmPose armPoseOffHand)
     {
         if (citizen.getPrimaryHand() == HandSide.RIGHT)
         {
