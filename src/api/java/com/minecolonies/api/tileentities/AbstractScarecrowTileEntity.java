@@ -4,18 +4,20 @@ import com.minecolonies.api.colony.IColonyView;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractScarescrowTileEntity extends TileEntity implements INamedContainerProvider
+public abstract class AbstractScarecrowTileEntity extends TileEntity implements INamedContainerProvider
 {
+
     /**
      * Default constructor.
      */
-    public AbstractScarescrowTileEntity()
+    public AbstractScarecrowTileEntity()
     {
         super(MinecoloniesTileEntities.SCARECROW);
     }
@@ -190,4 +192,8 @@ public abstract class AbstractScarescrowTileEntity extends TileEntity implements
      * @return the enum type.
      */
     public abstract ScareCrowType getScarecrowType();
+
+    public abstract int setRadiusInDirection(Direction direction);
+
+    public abstract int getRadiusInDirection(Direction direction);
 }

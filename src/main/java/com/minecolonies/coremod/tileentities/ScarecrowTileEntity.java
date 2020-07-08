@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.inventory.container.ContainerField;
-import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -34,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -43,7 +44,7 @@ import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
  * The scarecrow tile entity to store extra data.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
+public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
 {
     /**
      * The max width/length of a field.
@@ -171,9 +172,32 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
      *
      * @return the max range.
      */
-    private static int getMaxRange()
+    public static int getMaxRange()
     {
         return MAX_RANGE;
+    }
+
+    /**
+     * The size of the field in all four directions
+     * in the same order as {@link Direction#getHorizontalIndex()}
+     * S, W, N, E
+     */
+    protected int[] radii = {MAX_RANGE, MAX_RANGE, MAX_RANGE, MAX_RANGE};
+
+    public int setRadiusInDirection(Direction direction)
+    {
+        radii[direction.getHorizontalIndex()] = (radii[direction.getHorizontalIndex()] + 1) % (getMaxRange() + 1);
+        markDirty();
+        return radii[direction.getHorizontalIndex()];
+    }
+
+    /**
+     * @param direction the direction to get the range for
+     * @return the radius in the given direction
+     */
+    public int getRadiusInDirection(Direction direction)
+    {
+        return radii[direction.getHorizontalIndex()];
     }
 
     /**
@@ -533,10 +557,10 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
 
         taken = compound.getBoolean(TAG_TAKEN);
         fieldStage = ScarecrowFieldStage.values()[compound.getInt(TAG_STAGE)];
-        lengthPlusX = compound.getInt(TAG_LENGTH_PLUS);
-        widthPlusZ = compound.getInt(TAG_WIDTH_PLUS);
-        lengthMinusX = compound.getInt(TAG_LENGTH_MINUS);
-        widthMinusZ = compound.getInt(TAG_WIDTH_MINUS);
+        radii[3] = compound.getInt(TAG_LENGTH_PLUS);
+        radii[2] = compound.getInt(TAG_WIDTH_PLUS);
+        radii[1] = compound.getInt(TAG_LENGTH_MINUS);
+        radii[0] = compound.getInt(TAG_WIDTH_MINUS);
         ownerId = compound.getInt(TAG_OWNER);
         name = compound.getString(TAG_NAME);
         setOwner(ownerId);
@@ -566,10 +590,10 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
 
         compound.putBoolean(TAG_TAKEN, taken);
         compound.putInt(TAG_STAGE, fieldStage.ordinal());
-        compound.putInt(TAG_LENGTH_PLUS, lengthPlusX);
-        compound.putInt(TAG_WIDTH_PLUS, widthPlusZ);
-        compound.putInt(TAG_LENGTH_MINUS, lengthMinusX);
-        compound.putInt(TAG_WIDTH_MINUS, widthMinusZ);
+        compound.putInt(TAG_LENGTH_PLUS, radii[3]);
+        compound.putInt(TAG_WIDTH_PLUS, radii[2]);
+        compound.putInt(TAG_LENGTH_MINUS, radii[1]);
+        compound.putInt(TAG_WIDTH_MINUS, radii[0]);
         compound.putInt(TAG_OWNER, ownerId);
         compound.putString(TAG_NAME, name);
         if (colony != null)
