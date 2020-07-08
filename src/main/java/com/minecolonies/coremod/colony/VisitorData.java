@@ -106,4 +106,16 @@ public class VisitorData extends CitizenData implements IVisitorData
     {
         this.sittingPosition = pos;
     }
+
+    @Override
+    public void updateCitizenEntityIfNecessary()
+    {
+        if (getCitizenEntity().isPresent())
+        {
+            return;
+        }
+
+        getColony().getVisitorManager().spawnOrCreateCitizen(this, getColony().getWorld(), getLastPosition(), true);
+    }
+
 }

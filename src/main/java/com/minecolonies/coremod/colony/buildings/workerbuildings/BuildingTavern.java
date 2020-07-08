@@ -6,14 +6,13 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutTavern;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
-import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.PlayMusicAtPosMessage;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
@@ -191,15 +190,12 @@ public class BuildingTavern extends BuildingHome
     private void spawnVisitor()
     {
         IVisitorData newCitizen = (IVisitorData) colony.getVisitorManager().createAndRegisterNewCitizenData();
-        newCitizen.initForNewCitizen();
-
         externalCitizens.add(newCitizen.getId());
 
         newCitizen.setBedPos(getPosition());
         newCitizen.setHomeBuilding(this);
 
         int recruitLevel = colony.getWorld().rand.nextInt(10 * getBuildingLevel()) + 15;
-
         List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
 
         if (newCitizen.getName().contains("Ray"))
@@ -209,9 +205,15 @@ public class BuildingTavern extends BuildingHome
 
         newCitizen.getCitizenSkillHandler().init(recruitLevel);
 
-        VisitorCitizen citizenEntity = (VisitorCitizen) ModEntities.VISITOR.create(colony.getWorld());
-        newCitizen.setCitizenEntity(citizenEntity);
-        newCitizen.initEntityValues();
+        BlockPos spawnPos = BlockPosUtil.findAround(colony.getWorld(), getPosition(), 1, 1, bs -> bs.getMaterial() == Material.AIR);
+        if (spawnPos == null)
+        {
+            spawnPos = getPosition();
+        }
+
+        colony.getVisitorManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), spawnPos, true);
+
+        final AbstractEntityCitizen citizenEntity = newCitizen.getCitizenEntity().get();
 
         Tuple<Item, Integer> cost = recruitCosts.get(colony.getWorld().rand.nextInt(recruitCosts.size()));
         if (recruitLevel > 20)
@@ -244,19 +246,8 @@ public class BuildingTavern extends BuildingHome
         }
 
         newCitizen.setRecruitCosts(new ItemStack(cost.getA(), recruitLevel * 3 / cost.getB()));
-
         newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
           "com.minecolonies.coremod.gui.chat.recruitstory" + (colony.getWorld().rand.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]), ChatPriority.IMPORTANT));
-
-        colony.getWorld().addEntity(citizenEntity);
-
-        BlockPos spawnPos = BlockPosUtil.findAround(colony.getWorld(), getPosition(), 1, 1, bs -> bs.getMaterial() == Material.AIR);
-        if (spawnPos == null)
-        {
-            spawnPos = getPosition();
-        }
-
-        citizenEntity.setPositionAndUpdate(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
     }
 
     @Override

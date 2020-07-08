@@ -197,14 +197,14 @@ public class EntityAIVisitor extends Goal
             {
                 ((VisitorData) citizen.getCitizenData()).setSittingPosition(pos);
                 citizen.isWorkerAtSiteWithMove(pos, 1);
-                actionTimeoutCounter = citizen.getRandom().nextInt(5000) + 6000;
+                actionTimeoutCounter = citizen.getRandom().nextInt(2500) + 3000;
                 return VisitorState.SITTING;
             }
         }
         else if (random == 2)
         {
             generateWanderPos();
-            actionTimeoutCounter = citizen.getCitizenColonyHandler().getColony().isDay() ? citizen.getRandom().nextInt(3000) + 1000 : 300;
+            actionTimeoutCounter = citizen.getCitizenColonyHandler().getColony().isDay() ? citizen.getRandom().nextInt(1000) + 1000 : 300;
             return VisitorState.WANDERING;
         }
 

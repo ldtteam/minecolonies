@@ -4,10 +4,12 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.managers.interfaces.IVisitorManager;
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.VisitorData;
+import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyVisitorViewDataMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -199,9 +201,31 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public ICitizenData spawnOrCreateCitizen(final ICitizenData data, final World world, final BlockPos spawnPos, final boolean force)
+    public ICitizenData spawnOrCreateCitizen(ICitizenData data, final World world, final BlockPos spawnPos, final boolean force)
     {
-        return null;
+        if (!WorldUtil.isEntityBlockLoaded(world, spawnPos))
+        {
+            return data;
+        }
+
+        if (data == null)
+        {
+            data = createAndRegisterNewCitizenData();
+        }
+
+        VisitorCitizen citizenEntity = (VisitorCitizen) ModEntities.VISITOR.create(colony.getWorld());
+
+        if (citizenEntity == null)
+        {
+            return data;
+        }
+
+        data.setCitizenEntity(citizenEntity);
+        data.initEntityValues();
+
+        citizenEntity.setPosition(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
+        world.addEntity(citizenEntity);
+        return data;
     }
 
     @Override
@@ -209,6 +233,7 @@ public class VisitorManager implements IVisitorManager
     {
         markCitizensDirty();
         final IVisitorData data = new VisitorData(nextVisitorID--, colony);
+        data.initForNewCitizen();
         visitorMap.put(data.getId(), data);
         return data;
     }
@@ -238,6 +263,12 @@ public class VisitorManager implements IVisitorManager
     @Override
     public void onColonyTick(final IColony colony)
     {
-
+        if (colony.hasTownHall())
+        {
+            for (final IVisitorData data : visitorMap.values())
+            {
+                data.updateCitizenEntityIfNecessary();
+            }
+        }
     }
 }
