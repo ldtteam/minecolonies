@@ -168,7 +168,7 @@ public class BuildingTavern extends BuildingHome
 
         if (noVisitorTime > 0)
         {
-            noVisitorTime -= 25;
+            noVisitorTime -= 500;
         }
 
         if (getBuildingLevel() > 0 && externalCitizens.size() < 3 * getBuildingLevel() && noVisitorTime <= 0)
