@@ -1579,15 +1579,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
         do
         {
-            if (amount > STACKSIZE)
-            {
-                transferamount = STACKSIZE;
-            }
-            else
-            {
-                transferamount = amount;
-            }
-
+            transferamount = Math.min(amount, STACKSIZE);
             amount -= transferamount;
 
             if (!InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(entity, predicate.getA(), transferamount, worker.getInventoryCitizen()))

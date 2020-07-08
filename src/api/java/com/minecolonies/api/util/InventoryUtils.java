@@ -1776,21 +1776,16 @@ public class InventoryUtils
                 break;
             }
 
-
             final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, currentAmount, false);
 
             if (!ItemStackUtils.isEmpty(returnStack))
             {
                 if (!InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack))
                 {
-                    sourceHandler.insertItem(desiredItemSlot, returnStack, false);
                     break;
                 }
                 // Only reduce if successfully inserted.
-                else
-                {
-                    currentAmount -= returnStack.getCount();
-                }
+                currentAmount -= returnStack.getCount();
             }
         }
 
