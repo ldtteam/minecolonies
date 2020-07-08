@@ -481,7 +481,7 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         configListRecruitmentItems = defineList(builder, "configliststudyitems",
           Arrays.asList
-                   ("minecraft:hay_block;1",
+                   ("minecraft:hay_block;2",
                      "minecraft:book;2",
                      "minecraft:diamond;7",
                      "minecraft:emerald;10",
