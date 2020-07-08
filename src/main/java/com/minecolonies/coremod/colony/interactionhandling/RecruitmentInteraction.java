@@ -19,6 +19,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import java.util.Collections;
@@ -79,6 +81,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void onWindowOpened(final Window window, final ICitizenDataView dataView)
     {
         final ButtonImage recruitButton = window.findPaneOfTypeByID(BUTTON_RESPONSE_ID + 2, ButtonImage.class);
@@ -110,6 +113,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public boolean onClientResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenDataView data, final Window window)
     {
         // Validate recruitment before returning true
