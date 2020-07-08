@@ -1509,11 +1509,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         if (citizenThatRequested >= 0)
         {
-            if (!getCompletedRequestsByCitizen().containsKey(citizenThatRequested))
-            {
-                getCompletedRequestsByCitizen().put(citizenThatRequested, new ArrayList<>());
-            }
-            getCompletedRequestsByCitizen().get(citizenThatRequested).add(request.getId());
+            getCompletedRequestsByCitizen().computeIfAbsent(citizenThatRequested, ArrayList::new).add(request.getId());
         }
 
         markDirty();
