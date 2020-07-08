@@ -204,7 +204,7 @@ public class EntityAIVisitor extends Goal
         else if (random == 2)
         {
             generateWanderPos();
-            actionTimeoutCounter = citizen.getCitizenColonyHandler().getColony().isDay() ? citizen.getRandom().nextInt(5000) + 3000 : 300;
+            actionTimeoutCounter = citizen.getCitizenColonyHandler().getColony().isDay() ? citizen.getRandom().nextInt(3000) + 1000 : 300;
             return VisitorState.WANDERING;
         }
 
