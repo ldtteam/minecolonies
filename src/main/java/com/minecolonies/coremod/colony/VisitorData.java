@@ -2,18 +2,13 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
-import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MAX_HEALTH;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 
@@ -98,47 +93,6 @@ public class VisitorData extends CitizenData implements IVisitorData
     {
         super.serializeViewNetworkData(buf);
         buf.writeCompoundTag(recruitCost.write(new CompoundNBT()));
-    }
-
-    /**
-     * Initializes the entities values from citizen data.
-     */
-    @Override
-    public void initEntityValues()
-    {
-        if (!getCitizenEntity().isPresent())
-        {
-            return;
-        }
-
-        final AbstractEntityCitizen citizen = getCitizenEntity().get();
-
-        citizen.setCitizenId(getId());
-        citizen.getCitizenColonyHandler().setColonyId(getColony().getID());
-
-        citizen.setIsChild(isChild());
-        citizen.setCustomName(new StringTextComponent(getName()));
-
-        citizen.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
-
-        citizen.setFemale(isFemale());
-        citizen.setTextureId(getTextureId());
-
-        citizen.getDataManager().set(DATA_COLONY_ID, getColony().getID());
-        citizen.getDataManager().set(DATA_CITIZEN_ID, getId());
-        citizen.getDataManager().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
-        citizen.getDataManager().set(DATA_TEXTURE, citizen.getTextureId());
-        citizen.getDataManager().set(DATA_IS_ASLEEP, isAsleep());
-        citizen.getDataManager().set(DATA_IS_CHILD, isChild());
-        citizen.getDataManager().set(DATA_BED_POS, getBedPos());
-
-        citizen.getCitizenExperienceHandler().updateLevel();
-
-        setLastPosition(citizen.getPosition());
-
-        citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
-
-        markDirty();
     }
 
     @Override
