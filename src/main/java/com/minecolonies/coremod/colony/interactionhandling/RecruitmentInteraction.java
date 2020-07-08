@@ -93,7 +93,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
               colony.getCitizens().size() < colony.getCitizenCountLimit() ? "com.minecolonies.coremod.gui.chat.recruitcost" : "com.minecolonies.coremod.gui.chat.nospacerecruit";
             window.findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setTextContent(dataView.getName() + ": " + this.getInquiry().getFormattedText()
                                                                                   + "\n\n" + new TranslationTextComponent(message,
-              dataView.getName(),
+              dataView.getName().split(" ")[0],
               recruitCost.getCount()
                 + " " + recruitCost.getDisplayName().getFormattedText()).getFormattedText());
 

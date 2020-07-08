@@ -2,10 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.IVisitorData;
+import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -54,7 +51,7 @@ public class BuildingTavern extends BuildingHome
     public static final String TARVERN_SCHEMATIC = "tavern";
     public static final String TAG_VISITOR_ID    = "visitor";
 
-    private static final int MAX_STORY = 16;
+    private static final int MAX_STORY = 20;
 
     /**
      * Music interval
@@ -174,7 +171,7 @@ public class BuildingTavern extends BuildingHome
             noVisitorTime -= 25;
         }
 
-        if (getBuildingLevel() > 0 && externalCitizens.size() < 3 * getBuildingLevel() && noVisitorTime <= 0)
+        if (true || getBuildingLevel() > 0 && externalCitizens.size() < 3 * getBuildingLevel() && noVisitorTime <= 0)
         {
             spawnVisitor();
             noVisitorTime = colony.getWorld().getRandom().nextInt(3000) + 6000;
@@ -249,7 +246,7 @@ public class BuildingTavern extends BuildingHome
         newCitizen.setRecruitCosts(new ItemStack(cost.getA(), recruitLevel * 3 / cost.getB()));
 
         newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
-          "com.minecolonies.coremod.gui.chat.recruitstory" + colony.getWorld().rand.nextInt(MAX_STORY) + 1, newCitizen.getName()), ChatPriority.IMPORTANT));
+          "com.minecolonies.coremod.gui.chat.recruitstory" + (colony.getWorld().rand.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]), ChatPriority.IMPORTANT));
 
         colony.getWorld().addEntity(citizenEntity);
 
@@ -288,9 +285,11 @@ public class BuildingTavern extends BuildingHome
         for (final INBT data : visitorlist)
         {
             final int id = ((CompoundNBT) data).getInt(TAG_VISITOR_ID);
-            if (colony.getVisitorManager().getCitizen(id) != null)
+            final ICitizenData citizenData = colony.getVisitorManager().getCitizen(id);
+            if (citizenData != null)
             {
                 externalCitizens.add(id);
+                citizenData.setHomeBuilding(this);
             }
         }
         noVisitorTime = nbt.getInt(TAG_NOVISITTIME);
@@ -312,7 +311,11 @@ public class BuildingTavern extends BuildingHome
 
         for (final Integer id : externalCitizens)
         {
-            positions.remove(colony.getVisitorManager().getVisitor(id).getSittingPosition());
+            final IVisitorData data = colony.getVisitorManager().getVisitor(id);
+            if (data != null)
+            {
+                positions.remove(data.getSittingPosition());
+            }
         }
 
         if (!positions.isEmpty())
@@ -406,6 +409,16 @@ public class BuildingTavern extends BuildingHome
                 }
             }
         }
+    }
+
+    /**
+     * Removes the given citizen id
+     *
+     * @param id to remove
+     */
+    public void removeCitizen(final Integer id)
+    {
+        externalCitizens.remove(id);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
@@ -114,7 +115,10 @@ public class EntityAIVisitor extends Goal
         if (citizen.getCitizenData().getSaturation() <= 0)
         {
             citizen.getCitizenColonyHandler().getColony().getVisitorManager().removeCitizen(citizen.getCitizenData());
-            tavern.getExternalCitizens().remove(citizen.getCitizenId());
+            if (tavern != null)
+            {
+                tavern.removeCitizen(citizen.getCitizenId());
+            }
             return true;
         }
         return false;
@@ -186,7 +190,7 @@ public class EntityAIVisitor extends Goal
         }
 
         final int random = citizen.getRandom().nextInt(5);
-        if (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColony().isDay())
+        if (tavern != null && (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColony().isDay()))
         {
             final BlockPos pos = tavern.getFreeSitPosition();
             if (pos != null)
@@ -214,7 +218,7 @@ public class EntityAIVisitor extends Goal
     {
         final Vec3d vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 7);
 
-        if (vec3d != null)
+        if (vec3d != null && WorldUtil.isEntityBlockLoaded(citizen.world, new BlockPos(vec3d.x, vec3d.y, vec3d.z)))
         {
             wanderPos = new BlockPos(vec3d.x, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorldFromCitizen(citizen)), vec3d.z);
         }
@@ -261,7 +265,12 @@ public class EntityAIVisitor extends Goal
             return false;
         }
 
-        tavern = (BuildingTavern) citizen.getCitizenData().getHomeBuilding();
+        IBuilding building = citizen.getCitizenData().getHomeBuilding();
+        if (building != null)
+        {
+            tavern = (BuildingTavern) building;
+        }
+
         ((VisitorData) citizen.getCitizenData()).setSittingPosition(BlockPos.ZERO);
 
         return WorldUtil.isEntityBlockLoaded(citizen.world, citizen.getPosition());
