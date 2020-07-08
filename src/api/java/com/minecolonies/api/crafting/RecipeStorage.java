@@ -260,7 +260,7 @@ public class RecipeStorage implements IRecipeStorage
 
                     //This prevents the AI and for that matter the server from getting stuck in case of an emergency.
                     //Deletes some items, but hey.
-                    if (ItemStackUtils.isEmpty(extractedStack) || extractedStack.getCount() < amountNeeded)
+                    if (ItemStackUtils.isEmpty(extractedStack))
                     {
                         handler.insertItem(slotOfStack, extractedStack, false);
                         return false;
@@ -279,6 +279,11 @@ public class RecipeStorage implements IRecipeStorage
                 {
                     break;
                 }
+            }
+
+            if (amountNeeded > 0)
+            {
+                return false;
             }
         }
 
