@@ -475,10 +475,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             {
                 buckets.add(last);
             }
-            else
-            {
-                last = new BuilderBucket();
-            }
+            last = new BuilderBucket();
 
             last.setTotalStacks(stacks);
             last.addOrAdjustResource(key, amount);
