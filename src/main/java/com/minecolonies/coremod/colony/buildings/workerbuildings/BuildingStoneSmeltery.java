@@ -133,6 +133,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
                   block == Blocks.STONE ||
                   block == Blocks.STONE_BRICKS ||
                   block == Blocks.SMOOTH_STONE ||
+                  block == Blocks.TERRACOTTA ||
                   block instanceof GlazedTerracottaBlock)
             {
 
