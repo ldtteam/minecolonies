@@ -115,6 +115,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
             remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
             if (!remainingItemStack.isEmpty())
             {
+                tempAmount += remainingItemStack.getCount();
                 break;
             }
         }
@@ -129,7 +130,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         {
             if (!isCreative)
             {
-                int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
+                int amountToRemoveFromPlayer = amountToTake - tempAmount;
                 while (amountToRemoveFromPlayer > 0)
                 {
                     final int slot =
