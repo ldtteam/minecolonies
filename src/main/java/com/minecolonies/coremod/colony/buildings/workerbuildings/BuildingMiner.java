@@ -169,6 +169,15 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     }
 
     /**
+     * The Miner wants to get multiple nodes/levels worth of stuff when requesting.
+     */
+    @Override
+    public int getResourceBatchMultiplier() {
+        //Ask for 10x the resources if possible
+        return 10;
+    }
+
+    /**
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override

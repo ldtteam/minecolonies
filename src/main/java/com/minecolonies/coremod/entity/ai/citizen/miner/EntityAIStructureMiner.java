@@ -133,9 +133,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
           new AITarget(MINER_MINING_NODE, this::executeNodeMining, STANDARD_DELAY)
         );
         worker.setCanPickUpLoot(true);
-
-        //As we expect to be doing multiple blueprints/jobs using the same basic resources, pull a batch of them. 
-        getOwnBuilding().resourceBatchSize = 32;
     }
 
     @Override
