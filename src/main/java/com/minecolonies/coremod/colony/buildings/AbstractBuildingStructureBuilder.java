@@ -83,6 +83,11 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     private Map<Integer, List<BlockPos>> fluidsToRemove = new LinkedHashMap<>();
 
     /**
+     * Batch size to request for resources, used by the Miner to get multiple nodes of supplies
+     */
+    public int resourceBatchSize = 0;
+
+    /**
      * Public constructor of the building, creates an object of the building.
      *
      * @param c the colony.
@@ -669,7 +674,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                         break;
                     }
 
-                    worker.createRequestAsync(new Stack(itemStack.getItemStack(), requestCount, requestCount));
+                    worker.createRequestAsync(new Stack(itemStack.getItemStack(), Math.max(requestCount, resourceBatchSize), requestCount));
                 }
             }
         }
