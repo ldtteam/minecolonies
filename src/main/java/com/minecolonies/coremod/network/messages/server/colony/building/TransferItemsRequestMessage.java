@@ -103,17 +103,29 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
               stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true)));
         }
 
-        final ItemStack itemStackToTake = itemStack.copy();
-        itemStackToTake.setCount(amountToTake);
+        ItemStack remainingItemStack = ItemStack.EMPTY;
+        int tempAmount = amountToTake;
+        for (int i = 0; i < Math.max(1, Math.ceil((double) amountToTake/itemStack.getMaxStackSize())); i++)
+        {
+            final ItemStack itemStackToTake = itemStack.copy();
+            int insertAmount = Math.max(itemStack.getMaxStackSize(), tempAmount);
+            itemStackToTake.setCount(insertAmount);
+            tempAmount -= insertAmount;
 
-        ItemStack remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
-        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != ItemStackUtils.getSize(itemStackToTake))
+            remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
+            if (!remainingItemStack.isEmpty())
+            {
+                break;
+            }
+        }
+
+        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != amountToTake)
         {
             //Only doing this at the moment as the additional chest do not detect new content
             building.getTileEntity().markDirty();
         }
 
-        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != ItemStackUtils.getSize(itemStackToTake))
+        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != amountToTake)
         {
             if (!isCreative)
             {
