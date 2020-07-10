@@ -865,13 +865,16 @@ public class InventoryUtils
      */
     public static boolean addItemStackToItemHandler(@NotNull final IItemHandler itemHandler, @Nullable final ItemStack itemStack)
     {
+        if (itemHandler.getSlots() == 0)
+        {
+            return false;
+        }
+
         if (!ItemStackUtils.isEmpty(itemStack))
         {
-            int slot;
-
             if (itemStack.isDamaged())
             {
-                slot = getFirstOpenSlotFromItemHandler(itemHandler);
+                int slot = getFirstOpenSlotFromItemHandler(itemHandler);
 
                 if (slot >= 0)
                 {
@@ -885,32 +888,40 @@ public class InventoryUtils
             }
             else
             {
-                ItemStack resultStack = itemStack;
-                slot = itemHandler.getSlots() == 0 ? -1 : 0;
-                while (!ItemStackUtils.isEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
+                ItemStack resultStack = itemStack.copy();
+                int slot = 0;
+                boolean placed = false;
+
+                while (!ItemStackUtils.isEmpty(resultStack) && slot < itemHandler.getSlots())
                 {
                     resultStack = itemHandler.insertItem(slot, resultStack, true);
-                    if (!ItemStackUtils.isEmpty(resultStack))
+                    if (ItemStackUtils.isEmpty(resultStack))
                     {
-                        slot++;
+                        placed = true;
+                        break;
                     }
-                    // result empty, we can insert the whole stack
-                    else
-                    {
-                        resultStack = itemStack;
-                        slot = itemHandler.getSlots() == 0 ? -1 : 0;
-                        while (!ItemStackUtils.isEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
-                        {
-                            resultStack = itemHandler.insertItem(slot, resultStack, false);
-                            if (!ItemStackUtils.isEmpty(resultStack))
-                            {
-                                slot++;
-                            }
-                        }
-                    }
+                    slot++;
                 }
 
-                return ItemStackUtils.isEmpty(resultStack);
+                if (!placed)
+                {
+                    return false;
+                }
+
+                slot = 0;
+                resultStack = itemStack;
+                while (!ItemStackUtils.isEmpty(resultStack) && slot < itemHandler.getSlots())
+                {
+                    resultStack = itemHandler.insertItem(slot, resultStack, false);
+                    if (ItemStackUtils.isEmpty(resultStack))
+                    {
+                        return true;
+                    }
+                    slot++;
+                }
+
+                // This can never happen! We checked if it is possible. This is not possible.
+                return false;
             }
         }
         else
@@ -1748,7 +1759,7 @@ public class InventoryUtils
     public static boolean transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
       @NotNull final IItemHandler sourceHandler,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-      @NotNull final int amount, @NotNull final IItemHandler targetHandler)
+      final int amount, @NotNull final IItemHandler targetHandler)
     {
         return transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandlerWithResult(sourceHandler, itemStackSelectionPredicate, amount, targetHandler) == 0;
     }
@@ -1756,26 +1767,19 @@ public class InventoryUtils
     public static int transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandlerWithResult(
       @NotNull final IItemHandler sourceHandler,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-      @NotNull final int amount, @NotNull final IItemHandler targetHandler)
+      final int amount, @NotNull final IItemHandler targetHandler)
     {
         int currentAmount = amount;
-        int tries = 0;
-        while (currentAmount > 0)
+        int slot = 0;
+        while (currentAmount > 0 && slot < sourceHandler.getSlots())
         {
-            tries++;
-            if (tries > sourceHandler.getSlots())
-            {
-                break;
-            }
-
             final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
               itemStackSelectionPredicate::test);
 
             if (desiredItemSlot == -1)
             {
-                break;
+                return currentAmount;
             }
-
 
             final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, currentAmount, false);
 
@@ -1787,11 +1791,10 @@ public class InventoryUtils
                     break;
                 }
                 // Only reduce if successfully inserted.
-                else
-                {
-                    currentAmount -= returnStack.getCount();
-                }
+                currentAmount -= returnStack.getCount();
             }
+
+            slot++;
         }
 
         return currentAmount;

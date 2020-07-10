@@ -112,7 +112,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return START_WORKING;
         }
 
-        if (job.getActionsDone() > 0)
+        if (job.getActionsDone() >= getActionsDoneUntilDumping())
         {
             // Wait to dump before continuing.
             return getState();
