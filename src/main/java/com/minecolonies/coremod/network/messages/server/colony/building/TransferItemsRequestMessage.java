@@ -108,7 +108,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         for (int i = 0; i < Math.max(1, Math.ceil((double) amountToTake/itemStack.getMaxStackSize())); i++)
         {
             final ItemStack itemStackToTake = itemStack.copy();
-            int insertAmount = Math.max(itemStack.getMaxStackSize(), tempAmount);
+            int insertAmount = Math.min(itemStack.getMaxStackSize(), tempAmount);
             itemStackToTake.setCount(insertAmount);
             tempAmount -= insertAmount;
 
