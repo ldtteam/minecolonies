@@ -441,6 +441,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         combinedInv = null;
     }
 
+    @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @Nullable final Direction side)
     {
