@@ -238,6 +238,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             return Optional.of(false);
         }
 
+        // Check against allowed products
+        if (ItemTags.getCollection().getOrCreate(products).contains(storage.getPrimaryOutput().getItem()))
+        {
+            return Optional.of(true);
+        }
+
         // Check against excluded ingredients
         for (final ItemStack stack : storage.getInput())
         {
@@ -245,12 +251,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             {
                 return Optional.of(false);
             }
-        }
-
-        // Check against allowed products
-        if (ItemTags.getCollection().getOrCreate(products).contains(storage.getPrimaryOutput().getItem()))
-        {
-            return Optional.of(true);
         }
 
         // Check against allowed ingredients

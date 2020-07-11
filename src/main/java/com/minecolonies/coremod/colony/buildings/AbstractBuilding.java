@@ -1507,11 +1507,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             getOpenRequestsByRequestableType().remove(TypeToken.of(request.getRequest().getClass()));
         }
 
-        if (!getCompletedRequestsByCitizen().containsKey(citizenThatRequested))
+        if (citizenThatRequested >= 0)
         {
-            getCompletedRequestsByCitizen().put(citizenThatRequested, new ArrayList<>());
+            getCompletedRequestsByCitizen().computeIfAbsent(citizenThatRequested, ArrayList::new).add(request.getId());
         }
-        getCompletedRequestsByCitizen().get(citizenThatRequested).add(request.getId());
 
         markDirty();
     }

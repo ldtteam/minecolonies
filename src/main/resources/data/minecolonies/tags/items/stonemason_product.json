@@ -11,6 +11,7 @@
     "minecraft:furnace",
     "minecraft:nether_bricks",
     "minecraft:flower_pot",
-    "#forge:sandstone"
+    "#forge:sandstone",
+    "minecraft:chiseled_quartz_block"
   ]
 }

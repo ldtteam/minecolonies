@@ -1,8 +1,10 @@
 {
   "replace": false,
   "values": [
-    "#minecolonies:mechanic_ingredient",
     "#forge:crops",
-    "#minecolonies:dyer_ingredient"
+    "#minecolonies:dyer_ingredient",
+    "#minecolonies:mechanic_ingredient",
+    "#minecolonies:stonemason_ingredient",
+    "minecraft:brick"
   ]
 }
