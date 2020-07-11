@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Job class of the farmer, handles his fields.
  */
-public class JobFarmer extends AbstractJob<EntityAIWorkFarmer, JobFarmer>
+public class JobFarmer extends AbstractJobCrafter<EntityAIWorkFarmer, JobFarmer>
 {
     /**
      * Public constructor of the farmer job.
