@@ -104,6 +104,15 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         return MAX_BUILDING_LEVEL;
     }
 
+     /**
+     * Batch size to request for resources, used by the Miner to get multiple nodes of supplies
+     */
+    public int getResourceBatchMultiplier()
+    {
+        return 1;
+    } 
+
+
     @Override
     public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory)
     {
@@ -669,7 +678,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                         break;
                     }
 
-                    worker.createRequestAsync(new Stack(itemStack.getItemStack(), requestCount, requestCount));
+                    worker.createRequestAsync(new Stack(itemStack.getItemStack(), requestCount * getResourceBatchMultiplier(), requestCount));
                 }
             }
         }
