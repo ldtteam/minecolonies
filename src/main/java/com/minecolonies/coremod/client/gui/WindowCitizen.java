@@ -124,6 +124,17 @@ public class WindowCitizen extends AbstractWindowRequestTree
           IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimension().getType().getId()));
         this.citizen = citizen;
 
+        if (citizen.getVisibleStatus() == null)
+        {
+            findPaneOfTypeByID(STATUS_ICON, Image.class).setVisible(false);
+        }
+        else
+        {
+            findPaneOfTypeByID(STATUS_ICON, Image.class).setImage(citizen.getVisibleStatus().getIcon());
+            // TODO: uncomment once structurize is updated
+            // findPaneOfTypeByID(STATUS_ICON, Image.class).setToolTip(citizen.getVisibleStatus().getTranslatedText());
+        }
+
         updateJobPage(citizen, this, colony);
     }
 

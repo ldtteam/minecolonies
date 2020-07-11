@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -369,4 +370,18 @@ public interface ICitizenData extends ICitizen, INBTSerializable<CompoundNBT>
      * @param suffix the suffix to set.
      */
     void setSuffix(String suffix);
+
+    /**
+     * Gets the citizen's status
+     *
+     * @return status
+     */
+    VisibleCitizenStatus getStatus();
+
+    /**
+     * Sets the citizens status
+     *
+     * @param status status to set
+     */
+    void setVisibleStatus(VisibleCitizenStatus status);
 }

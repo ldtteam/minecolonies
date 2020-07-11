@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -201,6 +202,11 @@ public class CitizenData implements ICitizenData
      * The texture suffix.
      */
     private String textureSuffix;
+
+    /**
+     * The status icon to display
+     */
+    private VisibleCitizenStatus status;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -680,6 +686,8 @@ public class CitizenData implements ICitizenData
         final CompoundNBT happinessCompound = new CompoundNBT();
         citizenHappinessHandler.write(happinessCompound);
         buf.writeCompoundTag(happinessCompound);
+
+        buf.writeInt(status != null ? status.ordinal() : -1);
     }
 
     @Override
@@ -1080,6 +1088,22 @@ public class CitizenData implements ICitizenData
             return job.getAsyncRequests().contains(token);
         }
         return false;
+    }
+
+    @Override
+    public VisibleCitizenStatus getStatus()
+    {
+        return status;
+    }
+
+    @Override
+    public void setVisibleStatus(final VisibleCitizenStatus status)
+    {
+        if (this.status != status)
+        {
+            markDirty();
+        }
+        this.status = status;
     }
 
     /**

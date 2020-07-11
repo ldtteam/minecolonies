@@ -4,6 +4,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
@@ -111,6 +112,11 @@ public class CitizenDataView implements ICitizenDataView
      * The citizen happiness handler.
      */
     private final CitizenHappinessHandler citizenHappinessHandler;
+
+    /**
+     * The citizens status icon
+     */
+    private VisibleCitizenStatus statusIcon;
 
     /**
      * Set View id.
@@ -296,6 +302,9 @@ public class CitizenDataView implements ICitizenDataView
         }
 
         citizenHappinessHandler.read(buf.readCompoundTag());
+
+        int statusindex = buf.readInt();
+        statusIcon = statusindex >= 0 ? VisibleCitizenStatus.values()[statusindex] : null;
     }
 
     @Override
@@ -339,5 +348,11 @@ public class CitizenDataView implements ICitizenDataView
     public ICitizenHappinessHandler getHappinessHandler()
     {
         return citizenHappinessHandler;
+    }
+
+    @Override
+    public VisibleCitizenStatus getVisibleStatus()
+    {
+        return statusIcon;
     }
 }

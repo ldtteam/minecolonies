@@ -116,6 +116,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     public final void resetTask()
     {
         resetAI();
+        worker.getCitizenData().setVisibleStatus(null);
     }
 
     /**
