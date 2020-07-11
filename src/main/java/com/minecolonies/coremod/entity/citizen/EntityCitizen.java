@@ -279,7 +279,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return super.processInteract(player, hand);
         }
 
-        if (CompatibilityUtils.getWorldFromCitizen(this).isRemote)
+        if (CompatibilityUtils.getWorldFromCitizen(this).isRemote && iColonyView != null)
         {
             if (player.isSneaking())
             {

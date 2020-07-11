@@ -29,6 +29,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
@@ -112,35 +114,11 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
             return false;
         }
 
-        return isBlockForThisSmelter(storage.getPrimaryOutput()) && FurnaceRecipes.getInstance()
-                                                                      .getSmeltingResult(storage.getInput().get(0))
-                                                                      .isItemEqual(storage.getPrimaryOutput());
-    }
+        Optional<Boolean> isRecipeAllowed;
 
-    /**
-     * Method to check if the stack is craftable for the smeltery.
-     *
-     * @param stack the stack to craft.
-     * @return true if so.
-     */
-    public boolean isBlockForThisSmelter(final ItemStack stack)
-    {
-        final Item item = stack.getItem();
-        if (item instanceof BlockItem)
-        {
-            final Block block = ((BlockItem) item).getBlock();
-            if (block.isIn(BlockTags.STONE_BRICKS) ||
-                  block == Blocks.STONE ||
-                  block == Blocks.STONE_BRICKS ||
-                  block == Blocks.SMOOTH_STONE ||
-                  block instanceof GlazedTerracottaBlock)
-            {
-
-                return true;
-            }
-        }
-
-        return item == Items.BRICK || item == Items.COAL || item == Items.CHARCOAL || item == Items.NETHER_BRICK;
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        
+        return isRecipeAllowed.orElse(false);
     }
 
     @Override
