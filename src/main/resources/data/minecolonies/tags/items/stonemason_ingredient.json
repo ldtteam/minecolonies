@@ -4,6 +4,9 @@
     "#forge:stone",
     "#forge:cobblestone",
     "#forge:end_stones",
-    "minecraft:nether_brick"
+    "minecraft:nether_brick",
+    "minecraft:popped_chorus_fruit",
+    "minecraft:purpur_block",
+    "minecraft:purpur_slab"
   ]
 }
