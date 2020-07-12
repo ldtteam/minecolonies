@@ -124,7 +124,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
 
         if (items == AbstractTileEntityBarrel.MAX_ITEMS)
         {
-            playerIn.sendMessage(new TranslationTextComponent("entity.barrel.working"));
+            playerIn.sendMessage(new TranslationTextComponent("entity.barrel.working"), playerIn.getUniqueID());
             return false;
         }
         else
@@ -183,9 +183,9 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     }
 
     @Override
-    public void read(final CompoundNBT compound)
+    public void read(final BlockState state, final CompoundNBT compound)
     {
-        super.read(compound);
+        super.read(state, compound);
         this.items = compound.getInt("items");
         this.timer = compound.getInt("timer");
         this.done = compound.getBoolean("done");
@@ -210,12 +210,12 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
         final CompoundNBT compound = packet.getNbtCompound();
-        this.read(compound);
+        this.read(getBlockState(), compound);
         world.markChunkDirty(pos, this);
     }
 
     @Override
-    public final void handleUpdateTag(final CompoundNBT tag)
+    public final void handleUpdateTag(final BlockState state, final CompoundNBT tag)
     {
         this.items = tag.getInt("items");
         this.timer = tag.getInt("timer");

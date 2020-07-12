@@ -67,9 +67,9 @@ public class MovementHandler extends MovementController
         else if (this.action == net.minecraft.entity.ai.controller.MovementController.Action.MOVE_TO)
         {
             this.action = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
-            final double xDif = this.serverPosX - this.mob.serverPosX;
-            final double zDif = this.serverPosZ - this.mob.serverPosZ;
-            final double yDif = this.serverPosY - this.mob.serverPosY;
+            final double xDif = this.posX - this.mob.serverPosX;
+            final double zDif = this.posZ - this.mob.serverPosZ;
+            final double yDif = this.posY - this.mob.serverPosY;
             final double dist = xDif * xDif + yDif * yDif + zDif * zDif;
             if (dist < (double) 2.5000003E-7F)
             {

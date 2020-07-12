@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -626,7 +627,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      * @param blockPositions block positions
      * @param tag            tag to check
      */
-    private boolean mineIfEqualsBlockTag(List<BlockPos> blockPositions, Tag<Block> tag)
+    private boolean mineIfEqualsBlockTag(List<BlockPos> blockPositions, ITag<Block> tag)
     {
         for (BlockPos currentPos : blockPositions)
         {

@@ -83,4 +83,11 @@ public class MineColoniesArmorMaterial implements IArmorMaterial
     {
         return toughness;
     }
+
+    @Override
+    public float func_230304_f_()
+    {
+        //Knockback Resistance
+        return 0;
+    }
 }

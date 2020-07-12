@@ -504,7 +504,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
         final CompoundNBT compound = packet.getNbtCompound();
-        this.read(compound);
+        this.read(getBlockState(), compound);
         if (compound.keySet().contains(TAG_COLONY_ID))
         {
             setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), world.func_234923_W_().func_240901_a_()));
@@ -514,7 +514,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     /////////////--------------------------- End Synchronization-area ---------------------------- /////////////
 
     @Override
-    public void read(final CompoundNBT compound)
+    public void read(final BlockState state, final CompoundNBT compound)
     {
         final ListNBT inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.size(); ++i)
@@ -541,9 +541,10 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
         name = compound.getString(TAG_NAME);
         setOwner(ownerId);
 
-        super.read(compound);
+        super.read(state, compound);
     }
 
+    @NotNull
     @Override
     public CompoundNBT write(final CompoundNBT compound)
     {

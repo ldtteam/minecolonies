@@ -189,19 +189,19 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         {
             Network.getNetwork().sendToTrackingEntity(
               new CircleParticleEffectMessage(
-                worker.getPositionVector().add(0, 2, 0),
+                worker.getPositionVec().add(0, 2, 0),
                 ParticleTypes.ENCHANT,
                 progressTicks), worker);
 
             Network.getNetwork().sendToTrackingEntity(
               new CircleParticleEffectMessage(
-                worker.getPositionVector().add(0, 1.5, 0),
+                worker.getPositionVec().add(0, 1.5, 0),
                 ParticleTypes.ENCHANT,
                 progressTicks), worker);
 
             Network.getNetwork().sendToTrackingEntity(
               new CircleParticleEffectMessage(
-                worker.getPositionVector().add(0, 1, 0),
+                worker.getPositionVec().add(0, 1, 0),
                 ParticleTypes.ENCHANT,
                 progressTicks), worker);
 
@@ -322,8 +322,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         progressTicks++;
         if (progressTicks < MAX_PROGRESS_TICKS)
         {
-            final Vector3d start = worker.getPositionVector().add(0, 2, 0);
-            final Vector3d goal = citizenToGatherFrom.getCitizenEntity().get().getPositionVector().add(0, 2, 0);
+            final Vector3d start = worker.getPositionVec().add(0, 2, 0);
+            final Vector3d goal = citizenToGatherFrom.getCitizenEntity().get().getPositionVec().add(0, 2, 0);
 
             Network.getNetwork().sendToTrackingEntity(
               new StreamParticleEffectMessage(

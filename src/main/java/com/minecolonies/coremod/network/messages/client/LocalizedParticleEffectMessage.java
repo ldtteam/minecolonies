@@ -56,9 +56,9 @@ public class LocalizedParticleEffectMessage implements IMessage
     {
         super();
         this.stack = stack;
-        this.serverPosX = pos.getX() + 0.5;
-        this.serverPosY = pos.getY() + 0.5;
-        this.serverPosZ = pos.getZ() + 0.5;
+        this.posX = pos.getX() + 0.5;
+        this.posY = pos.getY() + 0.5;
+        this.posZ = pos.getZ() + 0.5;
     }
 
     @Override

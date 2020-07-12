@@ -5,7 +5,10 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 public class CommandKillCow implements IMCOPCommand
 {
@@ -19,11 +22,9 @@ public class CommandKillCow implements IMCOPCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        final Entity sender = context.getSource().getEntity();
-
         entitiesKilled = 0;
 
-        context.getSource().getServer().getWorld(sender.dimension).getEntities(EntityType.COW, entity -> true).forEach(entity ->
+        context.getSource().getWorld().getEntities(EntityType.COW, entity -> true).forEach(entity ->
         {
             entity.remove();
             entitiesKilled++;

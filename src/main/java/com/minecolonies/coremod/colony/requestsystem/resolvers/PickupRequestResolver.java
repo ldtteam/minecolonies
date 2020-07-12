@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -173,7 +174,7 @@ public class PickupRequestResolver extends AbstractRequestResolver<Pickup>
 
     @NotNull
     @Override
-    public ITextComponent getRequesterDisplayName(
+    public IFormattableTextComponent getRequesterDisplayName(
       @NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         return new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN);

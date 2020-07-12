@@ -264,7 +264,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
      * Get the blockpos pos.
      * @return a blockpos.
      */
-    private BlockPos getPosition()
+    public BlockPos getPosition()
     {
         return new BlockPos(this.getPositionVec());
     }

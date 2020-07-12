@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Log;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -39,7 +40,7 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
      * @param colonyId    the ID of the colony we're executing on.
      * @param dimensionId the ID of the dimension we're executing on.
      */
-    public AbstractBuildingServerMessage(final int dimensionId, final int colonyId, final BlockPos buildingId)
+    public AbstractBuildingServerMessage(final ResourceLocation dimensionId, final int colonyId, final BlockPos buildingId)
     {
         super(dimensionId, colonyId);
         this.buildingId = buildingId;

@@ -197,7 +197,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
 
     private IAIState checkShot()
     {
-        if (arrowInProgress.getDistanceSq(new Vector3d(currentShootingTarget)) < MIN_DISTANCE_FOR_SUCCESS)
+        if (arrowInProgress.getDistanceSq(new Vector3d(currentShootingTarget.getX(), currentShootingTarget.getY(), currentShootingTarget.getZ())) < MIN_DISTANCE_FOR_SUCCESS)
         {
             worker.getCitizenExperienceHandler().addExperience(XP_PER_SUCCESSFUL_SHOT);
         }

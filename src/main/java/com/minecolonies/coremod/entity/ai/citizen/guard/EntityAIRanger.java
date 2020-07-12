@@ -21,6 +21,7 @@ import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.NotNull;
@@ -186,7 +187,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
             return START_WORKING;
         }
 
-        final double sqDistanceToEntity = BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target.getPosition());
+        final double sqDistanceToEntity = BlockPosUtil.getDistanceSquared2D(worker.getPosition(), new BlockPos(target.getPositionVec()));
         final boolean canSee = worker.getEntitySenses().canSee(target);
         final double sqAttackRange = getRealAttackRange() * getRealAttackRange();
 
@@ -459,7 +460,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     public void moveInAttackPosition()
     {
         worker.getNavigator()
-          .tryMoveToBlockPos(worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 8), getCombatMovementSpeed());
+          .tryMoveToBlockPos(worker.getPosition().offset(BlockPosUtil.getXZFacing(new BlockPos(target.getPositionVec()), worker.getPosition()).getOpposite(), 8), getCombatMovementSpeed());
     }
 
     @Override

@@ -234,7 +234,7 @@ public class EntityMercenaryAI extends Goal
             entity.getLookController().setLookPositionWithEntity(entity.getAttackTarget(), 180f, 180f);
         }
 
-        final int distance = BlockPosUtil.getMaxDistance2D(entity.getPosition(), entity.getAttackTarget().getPosition());
+        final int distance = BlockPosUtil.getMaxDistance2D(entity.getPosition(), new BlockPos(entity.getAttackTarget().getPositionVec()));
 
         // Check if we can attack
         if (distance < MELEE_ATTACK_DIST && attacktimer == 0)

@@ -6,6 +6,8 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.ForgeHooks;
 
 public class CommandHelp implements IMCCommand
@@ -29,7 +31,7 @@ public class CommandHelp implements IMCCommand
         }
 
         context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.help.wiki"), true);
-        context.getSource().sendFeedback(ForgeHooks.newChatWithLinks(wikiUrl).appendText("\n"), true);
+        context.getSource().sendFeedback(((IFormattableTextComponent) ForgeHooks.newChatWithLinks(wikiUrl)).func_230529_a_(new StringTextComponent("\n")), true);
         context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.help.discord"), true);
         context.getSource().sendFeedback(ForgeHooks.newChatWithLinks(discordUrl), true);
 

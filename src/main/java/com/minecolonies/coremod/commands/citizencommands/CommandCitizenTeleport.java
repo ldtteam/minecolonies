@@ -15,6 +15,7 @@ import net.minecraft.command.arguments.ILocationArgument;
 import net.minecraft.command.arguments.Vec3Argument;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.Optional;
 
@@ -38,7 +39,7 @@ public class CommandCitizenTeleport implements IMCColonyOfficerCommand
         final Entity sender = context.getSource().getEntity();
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender == null ? 0 : context.getSource().getWorld().dimension.getType().getId());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender == null ? World.field_234918_g_.func_240901_a_() : context.getSource().getWorld().func_234923_W_().func_240901_a_());
         if (colony == null)
         {
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);

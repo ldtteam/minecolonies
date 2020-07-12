@@ -15,6 +15,7 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeBook;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -74,7 +75,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public World getWorld(final int dimension)
+    public World getWorld(final ResourceLocation dimension)
     {
         return Minecraft.getInstance().world;
     }

@@ -235,7 +235,6 @@ public class EntityAISickTask extends Goal
                 {
                     final World world = citizen.world;
                     BlockState state = world.getBlockState(pos);
-                    state = state.getBlock().getExtendedState(state, world, pos);
                     if (state.getBlock().isIn(BlockTags.BEDS)
                           && !state.get(BedBlock.OCCUPIED)
                           && state.get(BedBlock.PART).equals(BedPart.HEAD)

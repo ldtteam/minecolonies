@@ -20,10 +20,9 @@ public class CommandKillChicken implements IMCOPCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        final Entity sender = context.getSource().getEntity();
         entitiesKilled = 0;
 
-        context.getSource().getServer().getWorld(sender.dimension).getEntities(EntityType.CHICKEN, entity -> true).forEach(entity ->
+        context.getSource().getWorld().getEntities(EntityType.CHICKEN, entity -> true).forEach(entity ->
         {
             entity.remove();
             entitiesKilled++;

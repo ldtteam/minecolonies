@@ -115,7 +115,7 @@ public class BuildingBarracks extends AbstractBuilding
         final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Barracks", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
             return;
         }
         super.requestUpgrade(player, builder);

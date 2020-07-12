@@ -62,6 +62,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -721,7 +722,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
         else
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.noUpgrade"));
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.noUpgrade"), player.getUniqueID());
         }
     }
 
@@ -1545,7 +1546,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     @NotNull
     @Override
-    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         if (!getCitizensByRequest().containsKey(request.getId()))
         {

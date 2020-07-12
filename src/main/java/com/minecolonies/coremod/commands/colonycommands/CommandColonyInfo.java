@@ -38,7 +38,7 @@ public class CommandColonyInfo implements IMCCommand
     {
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().func_234923_W_().func_240901_a_());
         if (colony == null)
         {
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
@@ -58,7 +58,7 @@ public class CommandColonyInfo implements IMCCommand
         context.getSource()
           .sendFeedback(new StringTextComponent(CITIZENS + colony.getCitizenManager().getCitizens().size() + "/" + colony.getCitizenManager().getMaxCitizens()), true);
         context.getSource()
-          .sendFeedback(new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).setStyle(new Style().setColor(
+          .sendFeedback(new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).func_230530_a_(Style.EMPTY.setFormatting(
             TextFormatting.GREEN)), true);
         context.getSource().sendFeedback(new StringTextComponent(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())), true);
         context.getSource().sendFeedback(new StringTextComponent(IS_DELETABLE + !colony.canBeAutoDeleted()), true);

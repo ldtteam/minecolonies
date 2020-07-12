@@ -6,6 +6,7 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,7 @@ public class ColonyViewCitizenViewMessage implements IMessage
     /**
      * The dimension the citizen is in.
      */
-    private int dimension;
+    private ResourceLocation dimension;
 
     /**
      * Empty constructor used when registering the
@@ -54,7 +55,7 @@ public class ColonyViewCitizenViewMessage implements IMessage
     {
         colonyId = buf.readInt();
         citizenId = buf.readInt();
-        dimension = buf.readInt();
+        dimension = new ResourceLocation(buf.readString(32767));
         this.citizenBuffer = new PacketBuffer(buf.retain());
     }
 
@@ -63,7 +64,7 @@ public class ColonyViewCitizenViewMessage implements IMessage
     {
         buf.writeInt(colonyId);
         buf.writeInt(citizenId);
-        buf.writeInt(dimension);
+        buf.writeString(dimension.toString());
         buf.writeBytes(citizenBuffer);
     }
 

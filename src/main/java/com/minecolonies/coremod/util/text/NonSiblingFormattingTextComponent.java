@@ -3,6 +3,7 @@ package com.minecolonies.coremod.util.text;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import org.jetbrains.annotations.NotNull;
 
 public class NonSiblingFormattingTextComponent extends StringTextComponent
 {
@@ -11,14 +12,14 @@ public class NonSiblingFormattingTextComponent extends StringTextComponent
         super("");
     }
 
+    @NotNull
     @Override
     public String getString()
     {
         StringBuilder stringbuilder = new StringBuilder();
+        stringbuilder.append(this.getStyle());
 
-        stringbuilder.append(this.getStyle().getFormattingCode());
-
-        for (ITextComponent itextcomponent : this)
+        for (ITextComponent itextcomponent : this.siblings)
         {
             String s = itextcomponent.getUnformattedComponentText();
 

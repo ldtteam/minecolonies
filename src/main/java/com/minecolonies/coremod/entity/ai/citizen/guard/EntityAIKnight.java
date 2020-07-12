@@ -25,6 +25,7 @@ import net.minecraft.item.SwordItem;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -158,7 +159,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
             return GUARD_ATTACK_PROTECT;
         }
 
-        if (!isInAttackDistance(target.getPosition()))
+        if (!isInAttackDistance(new BlockPos(target.getPositionVec())))
         {
             return getState();
         }

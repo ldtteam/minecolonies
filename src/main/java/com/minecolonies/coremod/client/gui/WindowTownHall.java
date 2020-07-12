@@ -270,12 +270,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final int row = alliesList.getListElementIndexByPane(button);
         final CompactColonyReference ally = building.getColony().getAllies().get(row);
         final ITextComponent teleport = new StringTextComponent(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.name))
-                                          .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+                                          .func_230530_a_(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD).setClickEvent(
                                             new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND, "",
-                                              () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(ally.id,
-                                                ally.dimension)))));
+                                              () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(
+                                                ally.dimension, ally.id)))));
 
-        Minecraft.getInstance().player.sendMessage(teleport);
+        Minecraft.getInstance().player.sendMessage(teleport, Minecraft.getInstance().player.getUniqueID());
         this.close();
     }
 

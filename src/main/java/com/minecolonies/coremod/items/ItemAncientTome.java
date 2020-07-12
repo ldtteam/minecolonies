@@ -5,8 +5,10 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.BlazeEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -32,7 +34,7 @@ public class ItemAncientTome extends AbstractItemMinecolonies
         super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
         if (!worldIn.isRemote)
         {
-            final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, entityIn.getPosition());
+            final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, new BlockPos(entityIn.getPositionVec()));
             final CompoundNBT tag = new CompoundNBT();
 
             if (colony != null)

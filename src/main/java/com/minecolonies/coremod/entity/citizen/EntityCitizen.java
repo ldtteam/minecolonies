@@ -262,8 +262,9 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @param player which interacts with the citizen.
      * @return If citizen should interact or not.
      */
+    @NotNull
     @Override
-    public ActionResultType func_233661_c_(PlayerEntity player, Hand hand)
+    public ActionResultType func_233661_c_(final PlayerEntity player, @NotNull final Hand hand)
     {
         final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.world.func_234923_W_().func_240901_a_());
         if (iColonyView != null && !iColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))

@@ -59,9 +59,9 @@ public class CircleParticleEffectMessage implements IMessage
     public CircleParticleEffectMessage(final Vector3d pos, final BasicParticleType type, final int stage)
     {
         super();
-        this.serverPosX = pos.x;
-        this.serverPosY = pos.y - 0.5;
-        this.serverPosZ = pos.z;
+        this.posX = pos.x;
+        this.posY = pos.y - 0.5;
+        this.posZ = pos.z;
         this.stage = stage;
         this.type = type;
     }
@@ -69,9 +69,9 @@ public class CircleParticleEffectMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        this.serverPosX = buf.readDouble();
-        this.serverPosY = buf.readDouble();
-        this.serverPosZ = buf.readDouble();
+        this.posX = buf.readDouble();
+        this.posY = buf.readDouble();
+        this.posZ = buf.readDouble();
         this.stage = buf.readInt();
         this.type = (BasicParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(buf.readResourceLocation());
     }
@@ -79,9 +79,9 @@ public class CircleParticleEffectMessage implements IMessage
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeDouble(this.serverPosX);
-        buf.writeDouble(this.serverPosY);
-        buf.writeDouble(this.serverPosZ);
+        buf.writeDouble(this.posX);
+        buf.writeDouble(this.posY);
+        buf.writeDouble(this.posZ);
         buf.writeInt(this.stage);
         buf.writeResourceLocation(this.type.getRegistryName());
     }

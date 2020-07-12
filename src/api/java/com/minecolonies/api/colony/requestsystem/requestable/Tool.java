@@ -120,7 +120,7 @@ public class Tool implements IDeliverable
      */
     public static Tool deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
-        final IToolType type = ToolType.getToolType(buffer.readString());
+        final IToolType type = ToolType.getToolType(buffer.readString(32767));
         final int minLevel = buffer.readInt();
         final int maxLevel = buffer.readInt();
         final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;

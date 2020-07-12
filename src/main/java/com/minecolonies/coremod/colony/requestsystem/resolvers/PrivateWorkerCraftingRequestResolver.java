@@ -13,7 +13,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +62,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
 
     @NotNull
     @Override
-    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull IRequest<?> request)
+    public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull IRequest<?> request)
     {
         if (request.hasParent())
         {
@@ -79,9 +79,9 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
         }
 
         return request.getRequester().getRequesterDisplayName(manager, request)
-                 .appendSibling(new StringTextComponent(" ("))
-                 .appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME))
-                 .appendSibling(new StringTextComponent(")"));
+                 .func_230529_a_(new StringTextComponent(" ("))
+                 .func_230529_a_(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME))
+                 .func_230529_a_(new StringTextComponent(")"));
     }
 
     @Override

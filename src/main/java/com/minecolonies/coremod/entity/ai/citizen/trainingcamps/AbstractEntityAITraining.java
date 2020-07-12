@@ -146,7 +146,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
             range = getOwnBuilding().getTargetableArea(world);
         }
 
-        if (range.contains(new Vector3d(pos)))
+        if (range.contains(new Vector3d(pos.getX(), pos.getY(), pos.getZ())))
         {
             return pos;
         }

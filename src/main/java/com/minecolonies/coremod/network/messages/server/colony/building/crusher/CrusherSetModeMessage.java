@@ -78,7 +78,7 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
         if (qty > building.getMaxDailyQuantity())
         {
             qty = building.getMaxDailyQuantity();
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.crusher.toomuch", qty));
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.crusher.toomuch", qty), player.getUniqueID());
         }
         building.setCrusherMode(new ItemStorage(crusherMode), qty);
     }

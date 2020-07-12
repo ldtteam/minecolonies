@@ -6,7 +6,9 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,9 +22,9 @@ public class StaticLocation implements ILocation
     @NotNull
     private final BlockPos pos;
 
-    private final int dimension;
+    private final ResourceLocation dimension;
 
-    public StaticLocation(@NotNull final BlockPos pos, final int dimension)
+    public StaticLocation(@NotNull final BlockPos pos, final ResourceLocation dimension)
     {
         this.pos = pos;
         this.dimension = dimension;
@@ -46,7 +48,7 @@ public class StaticLocation implements ILocation
      * @return The dimension of the location.
      */
     @Override
-    public int getDimension()
+    public ResourceLocation getDimension()
     {
         return dimension;
     }
@@ -88,7 +90,7 @@ public class StaticLocation implements ILocation
     public int hashCode()
     {
         int result = pos.hashCode();
-        result = 31 * result + getDimension();
+        result = 31 * result + getDimension().toString().hashCode();
         return result;
     }
 
@@ -148,7 +150,7 @@ public class StaticLocation implements ILocation
         {
             final CompoundNBT compound = new CompoundNBT();
             compound.putLong(NBT_POS, request.getInDimensionLocation().toLong());
-            compound.putInt(NBT_DIM, request.getDimension());
+            compound.putString(NBT_DIM, request.getDimension().toString());
             return compound;
         }
 
@@ -164,8 +166,8 @@ public class StaticLocation implements ILocation
         public StaticLocation deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
             final BlockPos pos = BlockPos.fromLong(nbt.getLong(NBT_POS));
-            final Integer dim = nbt.getInt(NBT_DIM);
-            return new StaticLocation(pos, dim);
+            final String dim = nbt.getString(NBT_DIM);
+            return new StaticLocation(pos, new ResourceLocation(dim));
         }
 
         @NotNull
@@ -182,7 +184,7 @@ public class StaticLocation implements ILocation
                 throw new IllegalArgumentException("Unsupported context - First context object is not a Integer. Provide an Integer as Dimension.");
             }
 
-            return new StaticLocation(blockPos, (Integer) context[0]);
+            return new StaticLocation(blockPos, World.field_234918_g_.func_240901_a_());
         }
 
         /**
@@ -195,7 +197,7 @@ public class StaticLocation implements ILocation
         @Override
         public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final BlockPos input)
         {
-            return new StaticLocation(input, 0);
+            return new StaticLocation(input, World.field_234918_g_.func_240901_a_());
         }
 
         @Override
@@ -219,7 +221,7 @@ public class StaticLocation implements ILocation
     public static void serialize(PacketBuffer buffer, StaticLocation location)
     {
         buffer.writeBlockPos(location.pos);
-        buffer.writeInt(location.dimension);
+        buffer.writeString(location.dimension.toString());
     }
 
     /**
@@ -231,7 +233,7 @@ public class StaticLocation implements ILocation
     public static StaticLocation deserialize(PacketBuffer buffer)
     {
         final BlockPos pos = buffer.readBlockPos();
-        final int dimension = buffer.readInt();
+        final ResourceLocation dimension = new ResourceLocation(buffer.readString(32767));
 
         return new StaticLocation(pos, dimension);
     }

@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +49,7 @@ public class TriggerServerResponseHandlerMessage extends AbstractColonyServerMes
     public TriggerServerResponseHandlerMessage(
       final int colonyId,
       final int citizenId,
-      final int dimension,
+      final ResourceLocation dimension,
       @NotNull final ITextComponent key,
       @NotNull final ITextComponent response)
     {

@@ -316,7 +316,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             ticksToComplain = TICKS_UNTIL_COMPLAIN;
             for (final PlayerEntity player : getOwnBuilding().getColony().getMessagePlayerEntities())
             {
-                player.sendMessage(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST));
+                player.sendMessage(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST), player.getUniqueID());
             }
         }
         else

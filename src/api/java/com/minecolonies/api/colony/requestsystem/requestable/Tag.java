@@ -220,7 +220,7 @@ public class Tag implements IDeliverable
 
     public static Tag deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
-        final ITag<Item> theTag = ItemTags.getCollection().getOrCreate(ResourceLocation.tryCreate(buffer.readString()));
+        final ITag<Item> theTag = ItemTags.getCollection().getOrCreate(ResourceLocation.tryCreate(buffer.readString(32767)));
         final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
         final int count = buffer.readInt();
         final int minCount = buffer.readInt();

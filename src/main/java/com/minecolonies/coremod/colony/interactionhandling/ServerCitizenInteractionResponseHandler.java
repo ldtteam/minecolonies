@@ -173,9 +173,9 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
         final ListNBT list = compoundNBT.getList(TAG_PARENTS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
-            this.parents.add(ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_PARENT)));
+            this.parents.add(ITextComponent.Serializer.func_240643_a_(compoundNBT.getString(TAG_PARENT)));
         }
-        this.validatorId = ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_VALIDATOR_ID));
+        this.validatorId = ITextComponent.Serializer.func_240643_a_(compoundNBT.getString(TAG_VALIDATOR_ID));
         loadValidator();
     }
 

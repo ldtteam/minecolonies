@@ -16,6 +16,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.BlockPos;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.UNABLE_TO_FIND_WORLD_CAP_TEXT;
 import static com.minecolonies.api.util.constant.CommandConstants.CHUNKS_TO_CLAM_THRESHOLD;
@@ -41,7 +42,7 @@ public class CommandClaimChunks implements IMCOPCommand
 
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().dimension.getType().getId());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().func_234923_W_().func_240901_a_());
         if (colony == null)
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
@@ -72,7 +73,7 @@ public class CommandClaimChunks implements IMCOPCommand
             return 0;
         }
 
-        ChunkDataHelper.claimChunksInRange(colonyID, context.getSource().getWorld().dimension.getType().getId(), add, sender.getPosition(), range, 0, sender.world);
+        ChunkDataHelper.claimChunksInRange(colonyID, context.getSource().getWorld().func_234923_W_().func_240901_a_(), add, new BlockPos(sender.getPositionVec()), range, 0, sender.world);
         LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.success");
         return 1;
     }

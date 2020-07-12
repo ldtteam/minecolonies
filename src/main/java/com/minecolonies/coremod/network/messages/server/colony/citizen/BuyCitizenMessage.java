@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -72,7 +73,7 @@ public class BuyCitizenMessage extends AbstractColonyServerMessage
      */
     public BuyCitizenMessage() {super();}
 
-    public BuyCitizenMessage(@NotNull final BuyCitizenType buyCitizenType, final int colonyId, final int dimension)
+    public BuyCitizenMessage(@NotNull final BuyCitizenType buyCitizenType, final int colonyId, final ResourceLocation dimension)
     {
         super(dimension, colonyId);
         this.buyItemIndex = buyCitizenType.getIndex();

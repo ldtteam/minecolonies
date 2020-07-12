@@ -319,7 +319,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
         raiders.remove(entity);
         // Respawn as a new entity in a loaded chunk, if not too close.
-        respawns.add(new Tuple<>(entity.getType(), entity.getPosition()));
+        respawns.add(new Tuple<>(entity.getType(), new BlockPos(entity.getPositionVec())));
     }
 
     /**

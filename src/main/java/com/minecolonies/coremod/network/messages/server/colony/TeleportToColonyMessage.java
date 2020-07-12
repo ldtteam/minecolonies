@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +20,7 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
         super();
     }
 
-    public TeleportToColonyMessage(final int dimensionId, final int colonyId)
+    public TeleportToColonyMessage(final ResourceLocation dimensionId, final int colonyId)
     {
         super(dimensionId, colonyId);
     }

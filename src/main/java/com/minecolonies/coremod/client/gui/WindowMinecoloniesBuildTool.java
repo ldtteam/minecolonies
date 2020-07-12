@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.structures.helpers.Settings;
-import com.ldtteam.structures.lib.BlueprintUtils;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
@@ -57,7 +56,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void place(final StructureName structureName)
     {
-        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure());
+        final BlockPos offset = Settings.instance.getActiveStructure().getPrimaryBlockOffset();
         ;
         final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         Network.getNetwork().sendToServer(new BuildToolPlaceMessage(
@@ -85,7 +84,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void paste(final StructureName name, final boolean complete)
     {
-        final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure());
+        final BlockPos offset = Settings.instance.getActiveStructure().getPrimaryBlockOffset();
         ;
         final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         if (name.isHut() || Settings.instance.getStaticSchematicName() != null && !Settings.instance.getStaticSchematicName().isEmpty())

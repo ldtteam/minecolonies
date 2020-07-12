@@ -18,6 +18,7 @@ import com.minecolonies.coremod.client.gui.WindowPostBox;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +111,7 @@ public class PostBox extends AbstractBuilding implements IRSComponent
 
         @NotNull
         @Override
-        public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+        public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
             return new TranslationTextComponent("block.minecolonies.blockpostbox.name");
         }

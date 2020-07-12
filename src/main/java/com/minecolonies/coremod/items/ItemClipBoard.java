@@ -65,7 +65,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
         {
             if (ctx.getWorld().isRemote)
             {
-                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), ctx.getWorld().dimension.getType().getId());
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), ctx.getWorld().func_234923_W_().func_240901_a_());
                 MineColonies.proxy.openClipBoardWindow(colonyView);
             }
         }
@@ -99,7 +99,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
 
         if (compound.keySet().contains(TAG_COLONY))
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), worldIn.dimension.getType().getId());
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), worldIn.func_234923_W_().func_240901_a_());
             MineColonies.proxy.openClipBoardWindow(colonyView);
         }
         else

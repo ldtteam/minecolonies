@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.network.IMessage;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -23,7 +24,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
     /**
      * Dimension of the colony.
      */
-    private int dimension;
+    private ResourceLocation dimension;
 
     /**
      * Empty constructor used when registering the
@@ -53,7 +54,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
     {
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
-        dimension = buf.readInt();
+        dimension = new ResourceLocation(buf.readString(32767));
         buildingData = new PacketBuffer(Unpooled.buffer(buf.readableBytes()));
         buf.readBytes(buildingData, buf.readableBytes());
     }
@@ -63,7 +64,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
     {
         buf.writeInt(colonyId);
         buf.writeBlockPos(buildingId);
-        buf.writeInt(dimension);
+        buf.writeString(dimension.toString());
         buf.writeBytes(buildingData);
     }
 

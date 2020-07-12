@@ -38,7 +38,7 @@ public class ColonyViewRemoveMessage implements IMessage
     public void fromBytes(final PacketBuffer buf)
     {
         id = buf.readInt();
-        dimension = new ResourceLocation(buf.readString());
+        dimension = new ResourceLocation(buf.readString(32767));
     }
 
     @Nullable

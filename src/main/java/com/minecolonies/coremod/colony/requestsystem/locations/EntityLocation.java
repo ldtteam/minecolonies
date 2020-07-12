@@ -11,6 +11,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -93,7 +94,7 @@ public class EntityLocation implements ILocation
         checkEntity();
         if (entity == null || entity.get() == null)
         {
-            return Registry.WORLD_KEY.func_240901_a_();
+            return World.field_234918_g_.func_240901_a_();
         }
         else
         {

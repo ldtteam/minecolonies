@@ -28,6 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
@@ -193,14 +194,14 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             range = getOwnBuilding().getTargetableArea(world);
         }
 
-        if (!range.contains(new Vector3d(living.getPosition())))
+        if (!range.contains(living.getPositionVec()))
         {
             worker.getNavigator().clearPath();
             removeFromQueue();
             return START_WORKING;
         }
 
-        if (walkToBlock(living.getPosition()))
+        if (walkToBlock(new BlockPos(living.getPositionVec())))
         {
             if (worker.getCitizenStuckHandler().isStuck())
             {

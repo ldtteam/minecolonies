@@ -280,7 +280,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
         final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Plantation", UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
             return;
         }
         super.requestUpgrade(player, builder);

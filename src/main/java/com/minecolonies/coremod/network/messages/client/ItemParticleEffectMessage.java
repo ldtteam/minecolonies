@@ -82,9 +82,9 @@ public class ItemParticleEffectMessage implements IMessage
       final double eyeHeight)
     {
         this.stack = stack;
-        this.serverPosX = posX;
-        this.serverPosY = posY;
-        this.serverPosZ = posZ;
+        this.posX = posX;
+        this.posY = posY;
+        this.posZ = posZ;
         this.rotationPitch = rotationPitch;
         this.rotationYaw = rotationYaw;
         this.eyeHeight = eyeHeight;

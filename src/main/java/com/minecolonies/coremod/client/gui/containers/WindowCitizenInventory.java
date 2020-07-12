@@ -2,11 +2,13 @@ package com.minecolonies.coremod.client.gui.containers;
 
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.util.constant.Constants;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * ------------ Class not Documented ------------
@@ -61,26 +63,26 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
     }
 
     @Override
-    public void render(int x, int y, float z)
+    public void render(@NotNull final MatrixStack stack, int x, int y, float z)
     {
-        this.renderBackground();
-        super.render(x, y, z);
-        this.renderHoveredToolTip(x, y);
+        this.renderBackground(stack);
+        super.render(stack, x, y, z);
+        this.func_230459_a_(stack, x, y);
     }
 
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
-    protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
+    protected void func_230451_b_(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
     {
-        this.font.drawString(this.container.getDisplayName(), 8, 6, 4210752);
-        this.font.drawString(this.playerInventory.getDisplayName().getString(), 8, 20 + this.inventoryRows * SLOT_OFFSET, 4210752);
+        this.font.drawString(stack, this.container.getDisplayName(), 8, 6, 4210752);
+        this.font.drawString(stack, this.playerInventory.getDisplayName().getString(), 8, 20 + this.inventoryRows * SLOT_OFFSET, 4210752);
     }
 
     /**
      * Draws the background layer of this container (behind the items).
      */
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+    protected void func_230450_a_(@NotNull final MatrixStack stack, float partialTicks, int mouseX, int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -88,8 +90,8 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
 
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
-        blit(i, j, 0, 0, this.xSize, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
-        blit(i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
+        blit(stack, i, j, 0, 0, this.xSize, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
+        blit(stack, i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
           TEXTURE_OFFSET, this.xSize, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
     }
 }

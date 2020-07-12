@@ -41,6 +41,7 @@ import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -1521,7 +1522,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param tag the requested tag.
      * @return true if in the inventory, else false.
      */
-    public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final Tag<Item> tag, final int count)
+    public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final ITag<Item> tag, final int count)
     {
         if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> stack.getItem().isIn(tag) && stack.getCount() >= count))
         {
@@ -1539,7 +1540,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
 
         if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TAG_REQUEST,
-          (IRequest<? extends com.minecolonies.api.colony.requestsystem.requestable.Tag> r) -> r.getRequest().getTag().getId().equals(tag.getId())).isEmpty())
+          (IRequest<? extends com.minecolonies.api.colony.requestsystem.requestable.Tag> r) -> r.getRequest().getTag().equals(tag)).isEmpty())
         {
             final IDeliverable tagRequest = new com.minecolonies.api.colony.requestsystem.requestable.Tag(tag, count);
             worker.getCitizenData().createRequestAsync(tagRequest);

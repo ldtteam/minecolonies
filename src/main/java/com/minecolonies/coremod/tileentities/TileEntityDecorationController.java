@@ -2,6 +2,7 @@ package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -158,9 +159,9 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     }
 
     @Override
-    public void read(final CompoundNBT compound)
+    public void read(final BlockState state, final CompoundNBT compound)
     {
-        super.read(compound);
+        super.read(state, compound);
         readSchematicDataFromNBT(compound);
         this.schematicName = compound.getString(TAG_NAME);
         this.level = compound.getInt(TAG_LEVEL);
@@ -197,7 +198,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
         final CompoundNBT compound = packet.getNbtCompound();
-        this.read(compound);
+        this.read(getBlockState(), compound);
     }
 
     @Override

@@ -99,7 +99,7 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
                 return;
             }
 
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.toomuch", qty));
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.toomuch", qty), player.getUniqueID());
         }
 
         if (buy)

@@ -5,6 +5,7 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
@@ -35,7 +36,7 @@ public class ColonyViewMessage implements IMessage
     /**
      * The dimension of the colony.
      */
-    private int dim;
+    private ResourceLocation dim;
 
     /**
      * Empty constructor used when registering the
@@ -66,7 +67,7 @@ public class ColonyViewMessage implements IMessage
         final PacketBuffer newBuf = new PacketBuffer(buf.retain());
         colonyId = newBuf.readInt();
         isNewSubscription = newBuf.readBoolean();
-        dim = newBuf.readInt();
+        dim = new ResourceLocation(newBuf.readString(32767));
         colonyBuffer = newBuf;
     }
 
@@ -75,7 +76,7 @@ public class ColonyViewMessage implements IMessage
     {
         buf.writeInt(colonyId);
         buf.writeBoolean(isNewSubscription);
-        buf.writeInt(dim);
+        buf.writeString(dim.toString());
         buf.writeBytes(colonyBuffer);
     }
 

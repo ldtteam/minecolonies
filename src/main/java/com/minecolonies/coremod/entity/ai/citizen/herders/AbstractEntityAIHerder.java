@@ -16,6 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -313,7 +314,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         if (!items.isEmpty())
         {
-            if (walkToBlock(items.get(0).getPosition()))
+            if (walkToBlock(new BlockPos(items.get(0).getPositionVec())))
             {
                 setDelay(WALK_DELAY);
                 return getState();
@@ -403,7 +404,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         if (animal != null)
         {
             worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL));
-            return walkToBlock(animal.getPosition());
+            return walkToBlock(new BlockPos(animal.getPositionVec()));
         }
         else
         {

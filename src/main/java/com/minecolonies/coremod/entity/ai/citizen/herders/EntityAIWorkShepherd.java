@@ -138,7 +138,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
                 return getState();
             }
             worker.swingArm(Hand.MAIN_HAND);
-            final List<ItemStack> items = sheep.onSheared(worker.getHeldItemMainhand(),
+            final List<ItemStack> items = sheep.onSheared(null, worker.getHeldItemMainhand(),
               worker.getEntityWorld(),
               worker.getPosition(),
               net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, worker.getHeldItemMainhand()));

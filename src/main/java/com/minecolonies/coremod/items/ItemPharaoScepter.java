@@ -74,8 +74,8 @@ public class ItemPharaoScepter extends BowItem
                 {
                     ArrowItem arrowitem = (ArrowItem) Items.ARROW;
                     AbstractArrowEntity abstractarrowentity = arrowitem.createArrow(worldIn, new ItemStack(arrowitem, 1), playerentity);
-                    abstractarrowentity = customeArrow(abstractarrowentity);
-                    abstractarrowentity.shoot(playerentity, playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, speed * 3.0F, 1.0F);
+                    abstractarrowentity = customArrow(abstractarrowentity);
+                    abstractarrowentity.shoot(playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, speed * 3.0F, 1.0F);
                     if (speed == 1.0F)
                     {
                         abstractarrowentity.setIsCritical(true);
@@ -128,9 +128,9 @@ public class ItemPharaoScepter extends BowItem
 
     @NotNull
     @Override
-    public AbstractArrowEntity customeArrow(@NotNull AbstractArrowEntity arrow)
+    public AbstractArrowEntity customArrow(@NotNull AbstractArrowEntity arrow)
     {
-        AbstractArrowEntity entity = ((ArrowItem) ModItems.firearrow).createArrow(arrow.world, new ItemStack(ModItems.firearrow, 1), (LivingEntity) arrow.getShooter());
+        AbstractArrowEntity entity = ((ArrowItem) ModItems.firearrow).createArrow(arrow.world, new ItemStack(ModItems.firearrow, 1), (LivingEntity) arrow.func_234616_v_());
         entity.pickupStatus = AbstractArrowEntity.PickupStatus.DISALLOWED;
         entity.setFire(3);
 

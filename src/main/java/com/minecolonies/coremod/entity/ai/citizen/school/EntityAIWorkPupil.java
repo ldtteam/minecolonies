@@ -168,11 +168,11 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
 
         if (slot != -1)
         {
-            Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.getPositionVector().add(0, 1, 0), ParticleTypes.ENCHANT, sittingTicks), worker);
+            Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.getPositionVec().add(0, 1, 0), ParticleTypes.ENCHANT, sittingTicks), worker);
         }
         else
         {
-            Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.getPositionVector().add(0, 1, 0), ParticleTypes.HAPPY_VILLAGER, sittingTicks), worker);
+            Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.getPositionVec().add(0, 1, 0), ParticleTypes.HAPPY_VILLAGER, sittingTicks), worker);
         }
 
         sittingTicks++;

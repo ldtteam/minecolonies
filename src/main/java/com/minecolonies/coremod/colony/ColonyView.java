@@ -72,7 +72,7 @@ public final class ColonyView implements IColonyView
     @NotNull
     private final Map<Integer, ICitizenDataView> citizens    = new HashMap<>();
     private       String                         name        = "Unknown";
-    private       int                            dimensionId;
+    private       ResourceLocation                            dimensionId;
 
     /**
      * Colony team color.
@@ -232,7 +232,7 @@ public final class ColonyView implements IColonyView
     {
         //  General Attributes
         buf.writeString(colony.getName());
-        buf.writeInt(colony.getDimension());
+        buf.writeString(colony.getDimension().toString());
         buf.writeBlockPos(colony.getCenter());
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
@@ -324,7 +324,7 @@ public final class ColonyView implements IColonyView
             buf.writeBlockPos(col.getCenter());
             buf.writeInt(col.getID());
             buf.writeBoolean(col.hasTownHall());
-            buf.writeInt(col.getDimension());
+            buf.writeString(col.getDimension().toString());
         }
 
         final List<IColony> feuds = new ArrayList<>();
@@ -349,7 +349,7 @@ public final class ColonyView implements IColonyView
             buf.writeString(col.getName());
             buf.writeBlockPos(col.getCenter());
             buf.writeInt(col.getID());
-            buf.writeInt(col.getDimension());
+            buf.writeString(col.getDimension().toString());
         }
 
         final CompoundNBT treeTag = new CompoundNBT();
@@ -435,7 +435,7 @@ public final class ColonyView implements IColonyView
      * @return dimension ID of the view.
      */
     @Override
-    public int getDimension()
+    public ResourceLocation getDimension()
     {
         return dimensionId;
     }
@@ -732,7 +732,7 @@ public final class ColonyView implements IColonyView
         this.world = world;
         //  General Attributes
         name = buf.readString(32767);
-        dimensionId = buf.readInt();
+        dimensionId = new ResourceLocation(buf.readString(32767));
         center = buf.readBlockPos();
         manualHiring = buf.readBoolean();
         //  Citizenry
@@ -806,13 +806,13 @@ public final class ColonyView implements IColonyView
         final int noOfAllies = buf.readInt();
         for (int i = 0; i < noOfAllies; i++)
         {
-            allies.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), buf.readBoolean(), buf.readInt()));
+            allies.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), buf.readBoolean(), new ResourceLocation(buf.readString(32767))));
         }
 
         final int noOfFeuds = buf.readInt();
         for (int i = 0; i < noOfFeuds; i++)
         {
-            feuds.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), false, buf.readInt()));
+            feuds.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), false, new ResourceLocation(buf.readString(32767))));
         }
 
         this.manager.readFromNBT(buf.readCompoundTag());

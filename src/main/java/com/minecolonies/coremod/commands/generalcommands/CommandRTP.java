@@ -15,6 +15,8 @@ import net.minecraft.command.arguments.GameProfileArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 import java.util.Random;
 
@@ -81,7 +83,7 @@ public class CommandRTP implements IMCCommand
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.notallowed");
             return false;
         }
-        else if (context.getSource().getWorld().dimension.getType().getId() != 0)
+        else if (!context.getSource().getWorld().func_234923_W_().func_240901_a_().equals(World.field_234918_g_.func_240901_a_()))
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.wrongdim");
             return false;
@@ -102,9 +104,9 @@ public class CommandRTP implements IMCCommand
             /* this math is to get negative numbers */
             final int x = getRandCoordinate();
             final int z = getRandCoordinate();
-
+            final BlockPos spawnPoint = ((ServerWorld) player.getEntityWorld()).func_241135_u_();
             if (player.getEntityWorld().getWorldBorder().getSize()
-                  < BlockPosUtil.getDistance2D(player.getEntityWorld().getSpawnPoint(), player.getEntityWorld().getSpawnPoint().add(x, 0, z)))
+                  < BlockPosUtil.getDistance2D(spawnPoint, spawnPoint.add(x, 0, z)))
             {
                 continue;
             }

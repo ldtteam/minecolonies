@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -45,7 +46,7 @@ public class DecorationBuildRequestMessage implements IMessage
     /**
      * The dimension.
      */
-    private int dimension;
+    private ResourceLocation dimension;
 
     /**
      * Empty constructor used when registering the
@@ -63,7 +64,7 @@ public class DecorationBuildRequestMessage implements IMessage
      * @param level     the level.
      * @param dimension the dimension we're executing on.
      */
-    public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String name, final int level, final int dimension)
+    public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String name, final int level, final ResourceLocation dimension)
     {
         super();
         this.pos = pos;
@@ -78,7 +79,7 @@ public class DecorationBuildRequestMessage implements IMessage
         this.pos = buf.readBlockPos();
         this.name = buf.readString(32767);
         this.level = buf.readInt();
-        this.dimension = buf.readInt();
+        this.dimension = new ResourceLocation(buf.readString(32767));
     }
 
     @Override
@@ -87,7 +88,7 @@ public class DecorationBuildRequestMessage implements IMessage
         buf.writeBlockPos(this.pos);
         buf.writeString(this.name);
         buf.writeInt(this.level);
-        buf.writeInt(this.dimension);
+        buf.writeString(this.dimension.toString());
     }
 
     @Nullable

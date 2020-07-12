@@ -2,6 +2,11 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.Color;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
 
 /**
@@ -11,7 +16,6 @@ import net.minecraft.world.World;
  */
 public final class CompatibilityUtils
 {
-
     private CompatibilityUtils()
     {
         //hide the constructor
@@ -48,3 +52,4 @@ public final class CompatibilityUtils
         world.addEntity(entityToSpawn);
     }
 }
+

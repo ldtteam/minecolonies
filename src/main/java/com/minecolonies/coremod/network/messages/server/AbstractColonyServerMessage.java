@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +17,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     /**
      * The dimensionId this message originates from
      */
-    private int dimensionId;
+    private ResourceLocation dimensionId;
 
     /**
      * The colonyId this message originates from
@@ -46,7 +47,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
      * @param dimensionId The dimension of the colony
      * @param colonyId    The colony ID
      */
-    public AbstractColonyServerMessage(final int dimensionId, final int colonyId)
+    public AbstractColonyServerMessage(final ResourceLocation dimensionId, final int colonyId)
     {
         this.dimensionId = dimensionId;
         this.colonyId = colonyId;
@@ -77,7 +78,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     @Override
     public final void toBytes(final PacketBuffer buf)
     {
-        buf.writeInt(dimensionId);
+        buf.writeString(dimensionId.toString());
         buf.writeInt(colonyId);
         toBytesAbstractOverride(buf);
         toBytesOverride(buf);
@@ -95,7 +96,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     @Override
     public final void fromBytes(final PacketBuffer buf)
     {
-        this.dimensionId = buf.readInt();
+        this.dimensionId = new ResourceLocation(buf.readString(32767));
         this.colonyId = buf.readInt();
         fromBytesAbstractOverride(buf);
         fromBytesOverride(buf);

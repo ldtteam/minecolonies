@@ -102,7 +102,7 @@ public class EventStructureManager implements IEventStructureManager
             final CompoundNBT teData = structure.getTileEntityData(targetSpawnPoint, structure.getPrimaryBlockOffset());
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
-                final TileEntity entity = TileEntity.create(info.getTileEntityData());
+                final TileEntity entity = TileEntity.readTileEntity(info.getState(), info.getTileEntityData());
                 if (entity instanceof IBlueprintDataProvider)
                 {
                     for (final Map.Entry<BlockPos, List<String>> entry : ((IBlueprintDataProvider) entity).getPositionedTags().entrySet())

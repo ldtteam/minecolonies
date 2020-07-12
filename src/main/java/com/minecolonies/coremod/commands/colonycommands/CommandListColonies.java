@@ -8,10 +8,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 
 import java.util.ArrayList;
@@ -97,28 +94,28 @@ public class CommandListColonies implements IMCCommand
         for (final IColony colony : coloniesPage)
         {
             context.getSource().sendFeedback(new StringTextComponent(String.format(
-              ID_AND_NAME_TEXT, colony.getID(), colony.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+              ID_AND_NAME_TEXT, colony.getID(), colony.getName())).func_230530_a_(Style.EMPTY.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
               String.format(COMMAND_COLONY_INFO, colony.getID())))), true);
             final BlockPos center = colony.getCenter();
 
-            final ITextComponent teleport = new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()));
-            teleport.setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+            final IFormattableTextComponent teleport = new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()));
+            teleport.func_230530_a_(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD).setClickEvent(
               new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID())));
 
             context.getSource().sendFeedback(teleport, true);
         }
 
-        final ITextComponent prevButton = new StringTextComponent(PREV_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+        final ITextComponent prevButton = new StringTextComponent(PREV_PAGE).func_230530_a_(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD).setClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + prevPage)));
 
-        final ITextComponent nextButton = new StringTextComponent(NEXT_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+        final ITextComponent nextButton = new StringTextComponent(NEXT_PAGE).func_230530_a_(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD).setClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + nextPage)
         ));
 
-        final ITextComponent beginLine = new StringTextComponent(PAGE_LINE);
-        final ITextComponent endLine = new StringTextComponent(PAGE_LINE);
+        final StringTextComponent beginLine = new StringTextComponent(PAGE_LINE);
+        final StringTextComponent endLine = new StringTextComponent(PAGE_LINE);
         context.getSource()
-          .sendFeedback(beginLine.appendSibling(prevButton).appendSibling(new StringTextComponent(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine), true);
+          .sendFeedback(beginLine.func_230529_a_(prevButton).func_230529_a_(new StringTextComponent(PAGE_LINE_DIVIDER)).func_230529_a_(nextButton).func_230529_a_(endLine), true);
         return 1;
     }
 

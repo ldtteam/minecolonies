@@ -125,7 +125,7 @@ public class EntityAIGateInteract extends Goal
             }
         }
 
-        this.gatePosition = (new BlockPos(this.theEntity)).up();
+        this.gatePosition = (new BlockPos(this.theEntity.getPositionVec())).up();
         this.gateBlock = this.getBlockFence(this.gatePosition);
         return this.gateBlock != null;
     }
@@ -142,8 +142,8 @@ public class EntityAIGateInteract extends Goal
         Block block = blockState.getBlock();
         if (!(block instanceof FenceGateBlock && blockState.getMaterial() == Material.WOOD))
         {
-            block = CompatibilityUtils.getWorldFromEntity(this.theEntity).getBlockState(this.theEntity.getPosition()).getBlock();
-            gatePosition = this.theEntity.getPosition();
+            block = CompatibilityUtils.getWorldFromEntity(this.theEntity).getBlockState(new BlockPos(this.theEntity.getPositionVec())).getBlock();
+            gatePosition = new BlockPos(this.theEntity.getPositionVec());
         }
         return block instanceof FenceGateBlock && blockState.getMaterial() == Material.WOOD ? (FenceGateBlock) block : null;
     }

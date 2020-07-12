@@ -82,7 +82,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
             final CompoundNBT teData = getBluePrint().getTileEntityData(pos, getBluePrint().getPrimaryBlockOffset());
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
-                final TileEntity entity = TileEntity.create(info.getTileEntityData());
+                final TileEntity entity = TileEntity.readTileEntity(info.getState(), info.getTileEntityData());
                 if (entity instanceof IBlueprintDataProvider)
                 {
                     entity.setPos(pos);

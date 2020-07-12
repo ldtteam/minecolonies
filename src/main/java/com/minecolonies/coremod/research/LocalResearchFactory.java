@@ -83,8 +83,8 @@ public class LocalResearchFactory implements ILocalResearchFactory
     public ILocalResearch deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
     {
         final int state = buffer.readInt();
-        final String id = buffer.readString();
-        final String branch = buffer.readString();
+        final String id = buffer.readString(32767);
+        final String branch = buffer.readString(32767);
         final int progress = buffer.readInt();
         final int depth = buffer.readInt();
 

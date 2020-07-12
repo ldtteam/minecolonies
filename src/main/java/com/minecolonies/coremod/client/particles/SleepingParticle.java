@@ -2,9 +2,9 @@ package com.minecolonies.coremod.client.particles;
 
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.particle.*;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 
 /**
  * Custom particle for sleeping.
@@ -29,7 +29,7 @@ public class SleepingParticle extends SpriteTexturedParticle
      */
     public static final ResourceLocation SLEEPING_TEXTURE = new ResourceLocation(Constants.MOD_ID, "particle/sleeping");
 
-    public SleepingParticle(IAnimatedSprite spriteSet, World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
+    public SleepingParticle(IAnimatedSprite spriteSet, ClientWorld worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
 
@@ -44,9 +44,9 @@ public class SleepingParticle extends SpriteTexturedParticle
         this.prevPosX = xCoordIn;
         this.prevPosY = yCoordIn;
         this.prevPosZ = zCoordIn;
-        this.serverPosX = this.prevPosX;
-        this.serverPosY = this.prevPosY;
-        this.serverPosZ = this.prevPosZ;
+        this.posX = this.prevPosX;
+        this.posY = this.prevPosY;
+        this.posZ = this.prevPosZ;
         // Slight color variance
         float f = this.rand.nextFloat() * 0.6F + 0.4F;
         this.particleRed = 0.9F * f;
@@ -64,9 +64,9 @@ public class SleepingParticle extends SpriteTexturedParticle
 
     public void tick()
     {
-        this.prevPosX = this.serverPosX;
-        this.prevPosY = this.serverPosY;
-        this.prevPosZ = this.serverPosZ;
+        this.prevPosX = this.posX;
+        this.prevPosY = this.posY;
+        this.prevPosZ = this.posZ;
 
         float f = (float) this.age / (float) this.maxAge;
 
@@ -74,9 +74,9 @@ public class SleepingParticle extends SpriteTexturedParticle
         particleScale = (float) ((0.8 * Math.sin(f * 4) + 1.3) * 0.1);
 
         // Moves the particle in relation to movespeed and age
-        this.serverPosX = this.coordX + this.motionX * f;
-        this.serverPosY = this.coordY + this.motionY * f;
-        this.serverPosZ = this.coordZ + this.motionZ * f;
+        this.posX = this.coordX + this.motionX * f;
+        this.posY = this.coordY + this.motionY * f;
+        this.posZ = this.coordZ + this.motionZ * f;
 
         if (this.age++ >= this.maxAge)
         {
@@ -106,7 +106,7 @@ public class SleepingParticle extends SpriteTexturedParticle
         }
 
         @Override
-        public Particle makeParticle(BasicParticleType particleType, World world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
+        public Particle makeParticle(BasicParticleType particleType, ClientWorld world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
         {
             return new SleepingParticle(spriteSet, world, x, y, z, xSpeed, ySpeed, zSpeed);
         }

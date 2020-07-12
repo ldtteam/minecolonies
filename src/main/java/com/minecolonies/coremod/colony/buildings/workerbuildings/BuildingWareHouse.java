@@ -122,7 +122,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public boolean registerWithWareHouse(final IBuildingDeliveryman buildingWorker)
     {
-        if (registeredDeliverymen.contains(new Vector3d(buildingWorker.getID())))
+        if (registeredDeliverymen.contains(new Vector3d(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ())))
         {
             return true;
         }
@@ -140,7 +140,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             }
         }
 
-        registeredDeliverymen.add(new Vector3d(buildingWorker.getID()));
+        registeredDeliverymen.add(new Vector3d(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ()));
         return true;
     }
 
@@ -179,7 +179,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public boolean canAccessWareHouse(final IBuildingDeliveryman buildingWorker)
     {
-        return registeredDeliverymen.contains(new Vector3d(buildingWorker.getID()));
+        return registeredDeliverymen.contains(new Vector3d(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ()));
     }
 
     /**
@@ -206,7 +206,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             final BlockPos pos = NBTUtil.readBlockPos(deliverymanTagList.getCompound(i));
             if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker)
             {
-                registeredDeliverymen.add(new Vector3d(pos));
+                registeredDeliverymen.add(new Vector3d(pos.getX(), pos.getY(), pos.getZ()));
             }
         }
         storageUpgrade = compound.getInt(TAG_STORAGE);

@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstruct
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
@@ -221,13 +222,11 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     }
 
     @Override
-    public void onEndFalling(World worldIn, BlockPos pos, BlockState fallingState, BlockState hitState)
+    public void onEndFalling(final World worldIn, final BlockPos pos, final BlockState fallingState, final BlockState hitState, final FallingBlockEntity blockEntity)
     {
         worldIn.setBlockState(pos, BlockConstructionTape.getPlacementState(
           fallingState, worldIn, pos, fallingState.get(FACING)
         ));
-
-        updateNeighbors(fallingState, worldIn, pos, 3);
     }
 
     @Override

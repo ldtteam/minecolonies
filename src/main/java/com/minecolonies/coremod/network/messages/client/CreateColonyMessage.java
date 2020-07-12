@@ -11,6 +11,8 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import net.minecraft.command.Commands;
+import net.minecraft.command.impl.LocateCommand;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -18,7 +20,12 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.server.ServerChunkProvider;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -99,20 +106,18 @@ public class CreateColonyMessage implements IMessage
             style = ((AbstractTileEntityColonyBuilding) tileEntity).getStyle();
         }
 
-        if (MineColonies.getConfig().getCommon().protectVillages.get()
-              && ((ServerChunkProvider) world.getChunkProvider())
-                   .getChunkGenerator()
-                   .findNearestStructure(world, "Village", townHall, MineColonies.getConfig().getCommon().minColonyDistance.get() * BLOCKS_PER_CHUNK, false) != null)
+
+        BlockPos blockpos = ((ServerWorld) world).func_241117_a_(Structure.field_236381_q_, townHall, MineColonies.getConfig().getCommon().minColonyDistance.get() * BLOCKS_PER_CHUNK, false);
+        if (blockpos != null)
         {
             Log.getLogger().warn("Village close by!");
-            LanguageHandler.sendPlayerMessage(sender,
-              "block.blockhuttownhall.messagetooclosetovillage");
+            LanguageHandler.sendPlayerMessage(sender, "block.blockhuttownhall.messagetooclosetovillage");
             return;
         }
 
         if (MineColonies.getConfig().getCommon().restrictColonyPlacement.get())
         {
-            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, world.getSpawnPoint()));
+            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, ((ServerWorld) world).func_241135_u_()));
             if (spawnDistance < MineColonies.getConfig().getCommon().minDistanceFromWorldSpawn.get())
             {
                 if (!world.isRemote)

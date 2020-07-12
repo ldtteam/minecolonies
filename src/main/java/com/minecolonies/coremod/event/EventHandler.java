@@ -30,10 +30,7 @@ import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMes
 import com.minecolonies.coremod.network.messages.client.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkClientDataHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.SilverfishBlock;
-import net.minecraft.block.SpawnerBlock;
+import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -46,6 +43,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.properties.BedPart;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -130,15 +128,16 @@ public class EventHandler
         {
             final ClientWorld world = mc.world;
             final ClientPlayerEntity player = mc.player;
-            IColony colony = IColonyManager.getInstance().getIColony(world, player.getPosition());
+            final BlockPos pos = new BlockPos(player.getPositionVec());
+            IColony colony = IColonyManager.getInstance().getIColony(world, pos);
             if (colony == null)
             {
-                if (!IColonyManager.getInstance().isTooCloseToColony(world, player.getPosition()))
+                if (!IColonyManager.getInstance().isTooCloseToColony(world, pos))
                 {
                     event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.noCloseColony"));
                     return;
                 }
-                colony = IColonyManager.getInstance().getClosestIColony(world, player.getPosition());
+                colony = IColonyManager.getInstance().getClosestIColony(world, pos);
 
                 if (colony == null)
                 {
@@ -146,13 +145,13 @@ public class EventHandler
                 }
 
                 event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.nextColony",
-                  (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()));
+                  (int) Math.sqrt(colony.getDistanceSquared(pos)), IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()));
                 return;
             }
 
             event.getLeft().add(colony.getName() + " : "
                                   + LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.blocksFromCenter",
-              (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
+              (int) Math.sqrt(colony.getDistanceSquared(pos))));
         }
     }
 
@@ -281,7 +280,7 @@ public class EventHandler
     public static void onEnteringChunk(@NotNull final PlayerEvent.EnteringChunk event)
     {
         final Entity entity = event.getEntity();
-        final BlockPos pos = entity.getPosition();
+        final BlockPos pos = new BlockPos(entity.getPositionVec());
 
         if (event.getOldChunkX() == 0 && event.getOldChunkZ() == 0 && pos.distanceSq(BlockPos.ZERO) > 100 * 100)
         {
@@ -378,11 +377,11 @@ public class EventHandler
                 8, true), (ServerPlayerEntity) event.getEntity());
 
             // Add visiting/subscriber to colony we're logging into
-            final Chunk chunk = (Chunk) player.world.getChunk(player.getPosition());
+            final Chunk chunk = (Chunk) player.world.getChunk(new BlockPos(player.getPositionVec()));
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
             if (cap != null && cap.getOwningColony() != 0)
             {
-                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), player.dimension.getId());
+                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), player.world.func_234923_W_().func_240901_a_());
                 if (colony != null)
                 {
                     colony.addVisitingPlayer(player);
@@ -472,7 +471,7 @@ public class EventHandler
 
             final IColony colony = IColonyManager.getInstance()
                                      .getColonyByDimension(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_COLONY_ID),
-                                       event.getWorld().func_234923_W_().func_240901_a_());
+                                       event.getWorld().getWorld().func_234923_W_().func_240901_a_());
             if (colony != null)
             {
                 colony.getEventManager().onTileEntityBreak(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_EVENT_ID), spawner);
@@ -520,7 +519,8 @@ public class EventHandler
             if (colony != null && world.getBlockState(event.getPos()).func_235901_b_(BedBlock.PART))
             {
                 final List<ICitizenData> citizenList = colony.getCitizenManager().getCitizens();
-                if (world.getBlockState(event.getPos()).isBedFoot(world, event.getPos()))
+                final BlockState potentialBed = world.getBlockState(event.getPos());
+                if (potentialBed.getBlock() instanceof BedBlock && potentialBed.get(BedBlock.PART) == BedPart.FOOT)
                 {
                     bedBlockPos = bedBlockPos.offset(world.getBlockState(event.getPos()).get(BedBlock.HORIZONTAL_FACING));
                 }
@@ -646,7 +646,7 @@ public class EventHandler
      */
     public static boolean onBlockHutPlaced(@NotNull final World world, @NotNull final PlayerEntity player, final Block block, final BlockPos pos)
     {
-        if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && world.func_234923_W_().func_240901_a_() != 0)
+        if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && !world.func_234923_W_().func_240901_a_().equals(World.field_234918_g_.func_240901_a_()))
         {
             LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_IN_OTHER_DIM);
             return false;

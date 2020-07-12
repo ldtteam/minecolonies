@@ -83,7 +83,7 @@ public class PermissionsMessage
         {
             final PacketBuffer newBuf = new PacketBuffer(buf.retain());
             colonyID = newBuf.readInt();
-            dimension = new ResourceLocation(newBuf.readString());
+            dimension = new ResourceLocation(newBuf.readString(32767));
             data = newBuf;
         }
 
@@ -208,7 +208,7 @@ public class PermissionsMessage
             type = MessageType.valueOf(buf.readString(32767));
             rank = Rank.valueOf(buf.readString(32767));
             action = Action.valueOf(buf.readString(32767));
-            dimension = new ResourceLocation(buf.readString());
+            dimension = new ResourceLocation(buf.readString(32767));
         }
     }
 
@@ -260,7 +260,7 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerName = buf.readString(32767);
-            dimension = new ResourceLocation(buf.readString());
+            dimension = new ResourceLocation(buf.readString(32767));
         }
 
         @Nullable
@@ -339,7 +339,7 @@ public class PermissionsMessage
             colonyID = buf.readInt();
             playerName = buf.readString(32767);
             id = PacketUtils.readUUID(buf);
-            dimension = new ResourceLocation(buf.readString());
+            dimension = new ResourceLocation(buf.readString(32767));
         }
 
         @Nullable
@@ -427,7 +427,7 @@ public class PermissionsMessage
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
             type = Type.valueOf(buf.readString(32767));
-            dimension = new ResourceLocation(buf.readString());
+            dimension = new ResourceLocation(buf.readString(32767));
         }
 
         @Nullable
@@ -512,7 +512,7 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
-            dimension = new ResourceLocation(buf.readString());
+            dimension = new ResourceLocation(buf.readString(32767));
         }
 
         @Nullable

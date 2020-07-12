@@ -19,6 +19,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.server.ServerWorld;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN;
@@ -101,7 +102,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 
         if (MineColonies.getConfig().getCommon().restrictColonyPlacement.get())
         {
-            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, world.getSpawnPoint()));
+            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, new BlockPos(world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnY(), world.getWorldInfo().getSpawnZ())));
             if (spawnDistance < MineColonies.getConfig().getCommon().minDistanceFromWorldSpawn.get())
             {
                 findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN,
@@ -131,7 +132,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
     public void onCreate()
     {
         new VanillaParticleMessage(pos.getX(), pos.getY(), pos.getZ(), ParticleTypes.DRAGON_BREATH).onExecute(null, false);
-        Minecraft.getInstance().world.playSound(Minecraft.getInstance().player, Minecraft.getInstance().player.getPosition(),
+        Minecraft.getInstance().world.playSound(Minecraft.getInstance().player, new BlockPos(Minecraft.getInstance().player.getPositionVec()),
           SoundEvents.BLOCK_CAMPFIRE_CRACKLE, SoundCategory.AMBIENT, 2.5f, 0.8f);
         Network.getNetwork().sendToServer(new CreateColonyMessage(pos));
         close();

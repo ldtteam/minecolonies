@@ -250,7 +250,7 @@ public class StackList implements IDeliverable
         final boolean matchNBT = buffer.readBoolean();
         final boolean matchOreDic = buffer.readBoolean();
         final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
-        final String desc = buffer.readString();
+        final String desc = buffer.readString(32767);
         int count = buffer.readInt();
         int minCount = buffer.readInt();
 

@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -30,7 +31,7 @@ public class CompactColonyReference
     /**
      * The dimension the colony is in.
      */
-    public final int dimension;
+    public final ResourceLocation dimension;
 
     /**
      * Create a new compact colony object.
@@ -41,7 +42,7 @@ public class CompactColonyReference
      * @param hasTownHall if it has a town hall.
      * @param dimension   the dimension it is in.
      */
-    public CompactColonyReference(final String name, final BlockPos center, final int id, final boolean hasTownHall, final int dimension)
+    public CompactColonyReference(final String name, final BlockPos center, final int id, final boolean hasTownHall, final ResourceLocation dimension)
     {
         this.name = name;
         this.center = center;

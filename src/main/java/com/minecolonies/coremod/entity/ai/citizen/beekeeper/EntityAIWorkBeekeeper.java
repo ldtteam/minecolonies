@@ -362,7 +362,10 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
               .filter(entity -> entity instanceof BeeEntity)
               .map(entity -> (BeeEntity) entity)
               .filter(bee -> worker.getPositionVec().squareDistanceTo(bee.getPositionVec()) <= 16.0D)
-              .forEach(bee -> bee.setBeeAttacker(worker));
+              .forEach(bee -> {
+                  bee.func_230260_a__(400 + worker.getRandom().nextInt(400));
+                  bee.setRevengeTarget(worker);
+              });
         }
         worker.getCitizenExperienceHandler().addExperience(1.0);
         incrementActionsDoneAndDecSaturation();
@@ -381,7 +384,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         if (animal != null)
         {
             worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL));
-            return walkToBlock(animal.getPosition());
+            return walkToBlock(new BlockPos(animal.getPositionVec()));
         }
         else
         {

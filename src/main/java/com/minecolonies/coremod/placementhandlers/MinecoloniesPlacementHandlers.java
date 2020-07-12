@@ -179,7 +179,7 @@ public final class MinecoloniesPlacementHandlers
             final List<ItemStack> itemList = new ArrayList<>();
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
 
-            for (final ItemStack stack : PlacementHandlers.getItemsFromTileEntity(tileEntityData, world))
+            for (final ItemStack stack : PlacementHandlers.getItemsFromTileEntity(tileEntityData, world, pos))
             {
                 if (!ItemStackUtils.isEmpty(stack))
                 {
@@ -240,7 +240,7 @@ public final class MinecoloniesPlacementHandlers
         {
             final List<ItemStack> itemList = new ArrayList<>();
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-            itemList.addAll(PlacementHandlers.getItemsFromTileEntity(tileEntityData, world));
+            itemList.addAll(PlacementHandlers.getItemsFromTileEntity(tileEntityData, world, pos));
 
             itemList.removeIf(ItemStackUtils::isEmpty);
 
@@ -267,7 +267,7 @@ public final class MinecoloniesPlacementHandlers
         {
             if (tileEntityData != null)
             {
-                TileEntity tileEntity = TileEntity.create(tileEntityData);
+                TileEntity tileEntity = TileEntity.readTileEntity(blockState, tileEntityData);
                 if (tileEntity instanceof TileEntityPlaceholder)
                 {
                     final ItemStack stack = ((TileEntityPlaceholder) tileEntity).getStack();
@@ -312,7 +312,7 @@ public final class MinecoloniesPlacementHandlers
         {
             if (tileEntityData != null)
             {
-                TileEntity tileEntity = TileEntity.create(tileEntityData);
+                TileEntity tileEntity = TileEntity.readTileEntity(blockState, tileEntityData);
                 if (tileEntity instanceof TileEntityPlaceholder)
                 {
                     final ItemStack stack = ((TileEntityPlaceholder) tileEntity).getStack();
@@ -450,7 +450,7 @@ public final class MinecoloniesPlacementHandlers
             }
             if (tileEntityData != null)
             {
-                itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, world));
+                itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, world, pos));
             }
             itemList.removeIf(ItemStackUtils::isEmpty);
 

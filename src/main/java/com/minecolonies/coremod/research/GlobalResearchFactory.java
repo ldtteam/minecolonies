@@ -106,10 +106,10 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
     @Override
     public IGlobalResearch deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
     {
-        final String parent = buffer.readString();
-        final String id = buffer.readString();
-        final String branch = buffer.readString();
-        final String desc = buffer.readString();
+        final String parent = buffer.readString(32767);
+        final String id = buffer.readString(32767);
+        final String branch = buffer.readString(32767);
+        final String desc = buffer.readString(32767);
         // This is a IGlobalResearch before serialization
         final IResearchEffect<?> effect = controller.deserialize(buffer);
         final int depth = buffer.readInt();
@@ -122,7 +122,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final int childsSize = buffer.readInt();
         for (int i = 0; i < childsSize; ++i)
         {
-            IGlobalResearchTree.getInstance().getResearch(branch, buffer.readString());
+            IGlobalResearchTree.getInstance().getResearch(branch, buffer.readString(32767));
         }
 
         return research;

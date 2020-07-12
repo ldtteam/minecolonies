@@ -171,7 +171,7 @@ public class BuildToolPasteMessage implements IMessage
         final ServerPlayerEntity player = ctxIn.getSender();
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"));
+            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"), player.getUniqueID());
             return;
         }
 

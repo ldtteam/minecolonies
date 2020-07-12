@@ -36,6 +36,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -164,7 +165,7 @@ public class BuildToolPlaceMessage implements IMessage
         final StructureName sn = new StructureName(structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"));
+            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"), player.getUniqueID());
             return;
         }
         if (isHut)
@@ -253,7 +254,8 @@ public class BuildToolPlaceMessage implements IMessage
                         complete = true;
                     }
                 }
-                player.inventory.clearMatchingItems(itemStack -> itemStack.isItemEqual(new ItemStack(block, 1)), 1);
+
+                InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), new ItemStack(block, 1), 1);
                 setupBuilding(world, player, sn, rotation, buildPos, mirror, level, complete);
             }
         }

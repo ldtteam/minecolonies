@@ -899,7 +899,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     {
         if (task.equals(GuardTask.FOLLOW) && followPlayer != null)
         {
-            return followPlayer.getPosition();
+            return new BlockPos(followPlayer.getPositionVec());
         }
 
         return this.getPosition();

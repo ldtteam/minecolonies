@@ -87,7 +87,7 @@ public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
     {
         try
         {
-            return TypeToken.of(Class.forName(buffer.readString()));
+            return TypeToken.of(Class.forName(buffer.readString(32767)));
         }
         catch (ClassNotFoundException e)
         {

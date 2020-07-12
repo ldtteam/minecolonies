@@ -587,7 +587,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         currentPatrolPoint = null;
         // Check if we're ready to attack the target
-        if (worker.getEntitySenses().canSee(target) && isWithinPersecutionDistance(target.getPosition()))
+        if (worker.getEntitySenses().canSee(target) && isWithinPersecutionDistance(new BlockPos(target.getPositionVec())))
         {
             target.setRevengeTarget(worker);
             return getAttackState();
@@ -670,7 +670,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             }
 
             // Move into range
-            if (!isInAttackDistance(target.getPosition()))
+            if (!isInAttackDistance(new BlockPos(target.getPositionVec())))
             {
                 if (worker.getNavigator().noPath())
                 {
@@ -714,7 +714,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public boolean isEntityValidTarget(final LivingEntity entity)
     {
-        if (entity == null || !entity.isAlive() || !isWithinPersecutionDistance(entity.getPosition()))
+        if (entity == null || !entity.isAlive() || !isWithinPersecutionDistance(new BlockPos(entity.getPositionVec())))
         {
             return false;
         }
@@ -866,7 +866,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             if (isEntityValidTarget(entity))
             {
                 // Find closest
-                final int tempDistance = (int) BlockPosUtil.getDistanceSquared(worker.getPosition(), entity.getPosition());
+                final int tempDistance = (int) BlockPosUtil.getDistanceSquared(worker.getPosition(), new BlockPos(entity.getPositionVec()));
                 if (tempDistance < closest)
                 {
                     closest = tempDistance;
