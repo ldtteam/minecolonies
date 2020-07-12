@@ -99,26 +99,30 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
             return false;
         }
 
+        // Additional recipe rules
+
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+        final ItemStack output = storage.getPrimaryOutput();
+
+        boolean matchOverride;
+        matchOverride= output.getItem() instanceof ToolItem ||
+                    output.getItem() instanceof SwordItem ||
+                    output.getItem() instanceof ArmorItem ||
+                    output.getItem() instanceof HoeItem ||
+                    output.getItem() instanceof ShieldItem ||
+                    Compatibility.isTinkersWeapon(output);
+
+        // End Additional recipe rules
+
         isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
         if (isRecipeAllowed.isPresent())
         {
-            return isRecipeAllowed.get();
-        }
+            return matchOverride || isRecipeAllowed.get();
+        } 
         else
         {
-            // Additional recipe rules
-
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-
-            final ItemStack output = storage.getPrimaryOutput();
-            return output.getItem() instanceof ToolItem ||
-                     output.getItem() instanceof SwordItem ||
-                     output.getItem() instanceof ArmorItem ||
-                     output.getItem() instanceof HoeItem ||
-                     output.getItem() instanceof ShieldItem ||
-                     Compatibility.isTinkersWeapon(output);
-
-            // End Additional recipe rules
+            return matchOverride;
         }
     }
 
