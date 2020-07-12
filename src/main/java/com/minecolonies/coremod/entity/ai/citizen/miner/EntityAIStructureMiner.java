@@ -294,6 +294,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 return IDLE;
             }
             buildingMiner.setClearedShaft(true);
+            //Make sure we have a little bit of cobblestone
+            if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE, COBBLE_REQUEST_BATCHES), new ItemStack(Blocks.LADDER, LADDER_REQUEST_BATCHES)))
+            {
+                return IDLE;
+            }
             return MINER_MINING_NODE;
         }
         buildingMiner.setClearedShaft(false);
