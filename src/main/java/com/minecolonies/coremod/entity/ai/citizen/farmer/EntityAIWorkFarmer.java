@@ -22,7 +22,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteractionResponseHandler;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.client.CompostParticleMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -60,8 +60,13 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Farmer AI class. Created: December 20, 2014
  */
-public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, BuildingFarmer>
+public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, BuildingFarmer>
 {
+    /**
+     * Return to chest after this amount of stacks.
+     */
+    private static final int MAX_BLOCKS_MINED = 64;
+
     /**
      * The standard delay the farmer should have.
      */
@@ -116,7 +121,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, Buil
         super(job);
         super.registerTargets(
           new AITarget(IDLE, () -> START_WORKING, 10),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
           new AITarget(PREPARING, this::prepareForFarming, TICKS_SECOND),
           new AITarget(FARMER_HOE, this::workAtField, 5),
           new AITarget(FARMER_PLANT, this::workAtField, 5),
@@ -129,6 +133,46 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, Buil
     public Class<BuildingFarmer> getExpectedBuildingClass()
     {
         return BuildingFarmer.class;
+    }
+
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return MAX_BLOCKS_MINED;
+    }
+
+    @Override
+    protected int getActionRewardForCraftingSuccess()
+    {
+        return MAX_BLOCKS_MINED;
+    }
+
+    @Override
+    protected IAIState decide()
+    {
+        final IAIState nextState = super.decide();
+        if (nextState != START_WORKING)
+        {
+            return nextState;
+        }
+
+        if (job.getTaskQueue().isEmpty())
+        {
+            return PREPARING;
+        }
+
+        if (job.getCurrentTask() == null)
+        {
+            return PREPARING;
+        }
+
+
+        if (currentRequest != null && currentRecipeStorage != null)
+        {
+            return QUERY_ITEMS;
+        }
+
+        return GET_RECIPE;
     }
 
     /**
@@ -159,6 +203,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, Buil
             return PREPARING;
         }
 
+        if (!job.getTaskQueue().isEmpty())
+        {
+            return START_WORKING;
+        }
+        
         building.syncWithColony(world);
         if (building.getFarmerFields().size() < getOwnBuilding().getBuildingLevel() && !building.assignManually())
         {
