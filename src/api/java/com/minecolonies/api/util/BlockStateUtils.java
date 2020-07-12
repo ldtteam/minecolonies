@@ -1,7 +1,7 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -15,9 +15,9 @@ public class BlockStateUtils
 {
 
     /**
-     * Hashmap which links a block class + property name to its IProperty object Used to shorten name searches
+     * Hashmap which links a block class + property name to its Property object Used to shorten name searches
      */
-    private static final Map<String, IProperty<?>> propertyBlockMap = new HashMap<>();
+    private static final Map<String, Property<?>> propertyBlockMap = new HashMap<>();
 
     /**
      * Private constructor to hide the public one.
@@ -61,16 +61,16 @@ public class BlockStateUtils
      */
     public static boolean stateEqualsStateInPropertyByName(@NotNull final BlockState state1, @NotNull final BlockState state2, @NotNull final String propertyName)
     {
-        final IProperty<?> propertyOne = getPropertyByNameFromState(state1, propertyName);
+        final Property<?> propertyOne = getPropertyByNameFromState(state1, propertyName);
 
-        if (propertyOne != null && state2.getProperties().contains(propertyOne))
+        if (propertyOne != null && state2.func_235901_b_(propertyOne))
         {
             return state1.get(propertyOne) == state2.get(propertyOne);
         }
 
-        final IProperty<?> propertyTwo = getPropertyByNameFromState(state2, propertyName);
+        final Property<?> propertyTwo = getPropertyByNameFromState(state2, propertyName);
 
-        if (propertyOne != null && propertyTwo != null && state1.getProperties().contains(propertyOne) && state2.getProperties().contains(propertyTwo))
+        if (propertyOne != null && propertyTwo != null && state1.func_235901_b_(propertyOne) && state2.func_235901_b_(propertyTwo))
         {
             return state1.get(propertyOne).toString().equals((state2.get(propertyTwo)).toString());
         }
@@ -84,18 +84,18 @@ public class BlockStateUtils
      * @param name  name of the property to find
      * @return the property.
      */
-    public static IProperty<?> getPropertyByNameFromState(@NotNull final BlockState state, @NotNull final String name)
+    public static Property<?> getPropertyByNameFromState(@NotNull final BlockState state, @NotNull final String name)
     {
-        IProperty<?> property = propertyBlockMap.get(state.getBlock().getRegistryName().toString() + ":" + name);
+        Property<?> property = propertyBlockMap.get(state.getBlock().getRegistryName().toString() + ":" + name);
 
-        if (property != null && state.getProperties().contains(property))
+        if (property != null && state.func_235901_b_(property))
         {
             return property;
         }
         else
         {
             // Cached map entry nonexistant or wrong, calculate new
-            property = getPropertyByName(state.getProperties(), name);
+            property = getPropertyByName(state.func_235904_r_(), name);
 
             if (property != null)
             {
@@ -110,11 +110,11 @@ public class BlockStateUtils
      *
      * @param properties the properties to check
      * @param name       the property name we're looking for
-     * @return IProperty object found
+     * @return Property object found
      */
-    public static IProperty<?> getPropertyByName(@NotNull final Collection<IProperty<?>> properties, @NotNull final String name)
+    public static Property<?> getPropertyByName(@NotNull final Collection<Property<?>> properties, @NotNull final String name)
     {
-        for (final IProperty<?> tProperty : properties)
+        for (final Property<?> tProperty : properties)
         {
             if (tProperty.getName().equals(name))
             {
@@ -129,15 +129,15 @@ public class BlockStateUtils
      *
      * @param state1 First state to compare
      * @param state2 Second state to compare
-     * @param prop   IProperty to not compare
+     * @param prop   Property to not compare
      * @return true if states are equal without the property
      */
     public static <T extends Comparable<T>> boolean stateEqualsStateWithoutProp(
       @NotNull final BlockState state1,
       @NotNull final BlockState state2,
-      @NotNull final IProperty<T> prop)
+      @NotNull final Property<T> prop)
     {
-        if (!state1.getProperties().contains(prop) || !state2.getProperties().contains(prop))
+        if (!state1.func_235901_b_(prop) || !state2.func_235901_b_(prop))
         {
             return state1 == state2;
         }
@@ -164,14 +164,14 @@ public class BlockStateUtils
             return false;
         }
 
-        if (state1.getProperties().size() != state2.getProperties().size())
+        if (state1.func_235904_r_().size() != state2.func_235904_r_().size())
         {
             return false;
         }
 
-        for (final IProperty<?> prop : state1.getProperties())
+        for (final Property<?> prop : state1.func_235904_r_())
         {
-            if (!state2.getProperties().contains(prop))
+            if (!state2.func_235901_b_(prop))
             {
                 return false;
             }

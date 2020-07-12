@@ -7,6 +7,7 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.loot.ConditionArrayParser;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ public class BuildingAddRecipeTrigger extends AbstractCriterionTrigger<BuildingA
 
     @NotNull
     @Override
-    public BuildingAddRecipeCriterionInstance deserializeInstance(@NotNull final JsonObject jsonObject, @NotNull final JsonDeserializationContext jsonDeserializationContext)
+    public BuildingAddRecipeCriterionInstance func_230307_a_(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser jsonDeserializationContext)
     {
         if (jsonObject.has("items"))
         {

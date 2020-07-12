@@ -127,13 +127,13 @@ public class EntityAIAttackArcher extends Goal
                 final ItemStack bow = entity.getHeldItem(Hand.MAIN_HAND);
                 if (bow.getItem() instanceof BowItem)
                 {
-                    arrowEntity = ((BowItem) bow.getItem()).customeArrow(arrowEntity);
+                    arrowEntity = ((BowItem) bow.getItem()).customArrow(arrowEntity);
                 }
 
-                arrowEntity.setPosition(entity.posX, entity.posY + 1, entity.posZ);
-                final double xVector = target.posX - entity.posX;
-                final double yVector = target.getBoundingBox().minY + target.getHeight() / AIM_HEIGHT - arrowEntity.posY;
-                final double zVector = target.posZ - entity.posZ;
+                arrowEntity.setPosition(entity.serverPosX, entity.serverPosY + 1, entity.serverPosY);
+                final double xVector = target.serverPosX - entity.serverPosX;
+                final double yVector = target.getBoundingBox().minY + target.getHeight() / AIM_HEIGHT - arrowEntity.serverPosY;
+                final double zVector = target.serverPosZ - entity.serverPosZ;
                 final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
                 //Lower the variable higher the chance that the arrows hits the target.
                 arrowEntity.setDamage(entity.getAttribute(MOB_ATTACK_DAMAGE).getValue());

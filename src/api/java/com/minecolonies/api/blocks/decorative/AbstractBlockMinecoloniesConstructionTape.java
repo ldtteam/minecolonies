@@ -4,8 +4,8 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesFalling;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.*;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -15,6 +15,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
+import net.minecraftforge.common.extensions.IForgeFluidState;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B>
@@ -85,9 +86,8 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
         });
     }
 
-    @NotNull
     @Override
-    public IFluidState getFluidState(BlockState state)
+    public FluidState getFluidState(final BlockState state)
     {
         return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
     }

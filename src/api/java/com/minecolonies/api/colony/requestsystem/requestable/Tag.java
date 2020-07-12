@@ -6,6 +6,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ public class Tag implements IDeliverable
      * The tag.
      */
     @NotNull
-    private final net.minecraft.tags.Tag<Item> theTag;
+    private final ITag<Item> theTag;
 
     /**
      * The result of the request.
@@ -50,7 +51,7 @@ public class Tag implements IDeliverable
      * @param tag   the required containing tag.
      * @param count the count.
      */
-    public Tag(@NotNull final net.minecraft.tags.Tag<Item> tag, final int count)
+    public Tag(@NotNull final ITag<Item> tag, final int count)
     {
         this(tag, count, count);
     }
@@ -62,7 +63,7 @@ public class Tag implements IDeliverable
      * @param count    the count.
      * @param minCount the min count.
      */
-    public Tag(@NotNull final net.minecraft.tags.Tag<Item> tag, final int count, final int minCount)
+    public Tag(@NotNull final ITag<Item> tag, final int count, final int minCount)
     {
         this(tag, ItemStackUtils.EMPTY, count, minCount);
     }
@@ -75,7 +76,7 @@ public class Tag implements IDeliverable
      * @param count    the count.
      * @param minCount the min count.
      */
-    public Tag(@NotNull final net.minecraft.tags.Tag<Item> tag, @NotNull final ItemStack result, final int count, final int minCount)
+    public Tag(@NotNull final ITag<Item> tag, @NotNull final ItemStack result, final int count, final int minCount)
     {
         this.theTag = tag;
         this.result = result;
@@ -130,7 +131,7 @@ public class Tag implements IDeliverable
     }
 
     @NotNull
-    public net.minecraft.tags.Tag<Item> getTag()
+    public ITag<Item> getTag()
     {
         return theTag;
     }
@@ -179,7 +180,7 @@ public class Tag implements IDeliverable
     @Override
     public int hashCode()
     {
-        int result1 = getTag().getId().hashCode();
+        int result1 = getTag();
         result1 = 31 * result1 + getResult().hashCode();
         return result1;
     }
@@ -219,7 +220,7 @@ public class Tag implements IDeliverable
 
     public static Tag deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
-        final net.minecraft.tags.Tag<Item> theTag = ItemTags.getCollection().getOrCreate(ResourceLocation.tryCreate(buffer.readString()));
+        final ITag<Item> theTag = ItemTags.getCollection().getOrCreate(ResourceLocation.tryCreate(buffer.readString()));
         final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
         final int count = buffer.readInt();
         final int minCount = buffer.readInt();
@@ -236,7 +237,7 @@ public class Tag implements IDeliverable
      */
     public static Tag deserialize(final IFactoryController controller, final CompoundNBT compound)
     {
-        final net.minecraft.tags.Tag<Item> theTag = ItemTags.getCollection().getOrCreate(ResourceLocation.tryCreate(compound.getString(NBT_TAG)));
+        final ITag<Item> theTag = ItemTags.getCollection().getOrCreate(ResourceLocation.tryCreate(compound.getString(NBT_TAG)));
         final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         int count = compound.getInt("size");

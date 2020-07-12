@@ -15,6 +15,8 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -140,7 +142,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     @Override
     public void onOpened()
     {
-        final String[] labels = new String[] {request.getLongDisplayString().getFormattedText()};
+        final String[] labels = new String[] {request.getLongDisplayString().getString()};
         final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
         int y = Y_OFFSET_EACH_TEXTFIELD;
         final int availableLabelWidth = box.getInteriorWidth() - 1 - box.getX();
@@ -149,12 +151,12 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         {
             final String labelText = "§r§0" + s;
             // Temporary workaround until Labels support multi-line rendering
-            final List<String> multilineLabelStrings = mc.fontRenderer.listFormattedStringToWidth(labelText, availableLabelWidth);
-            for (final String splitLabelText : multilineLabelStrings)
+            final List<ITextProperties> multilineLabelStrings = mc.fontRenderer.func_238425_b_(new StringTextComponent(labelText), availableLabelWidth);
+            for (final ITextProperties splitLabelText : multilineLabelStrings)
             {
                 final Label descriptionLabel = new Label();
                 descriptionLabel.setColor(BLACK, BLACK);
-                descriptionLabel.setLabelText(splitLabelText);
+                descriptionLabel.setLabelText(new StringTextComponent(splitLabelText.getString()));
                 box.addChild(descriptionLabel);
                 descriptionLabel.setPosition(1, y);
                 y += Y_OFFSET_EACH_TEXTFIELD;
@@ -175,13 +177,13 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             logo.setImage(request.getDisplayIcon());
         }
 
-        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
-        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getRequesterDisplayName(view.getRequestManager(), request).getFormattedText());
+        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.func_234923_W_().func_240901_a_());
+        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getRequesterDisplayName(view.getRequestManager(), request).getString());
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getLocation().toString());
 
 
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.func_234923_W_().func_240901_a_());
         if (colony == null)
         {
             Log.getLogger().warn("---Colony Null in WindowRequestDetail---");
@@ -197,7 +199,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
                 return;
             }
 
-            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getRequesterDisplayName(view.getRequestManager(), request).getFormattedText());
+            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getRequesterDisplayName(view.getRequestManager(), request).getString());
         }
         catch (@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {

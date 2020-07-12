@@ -3,6 +3,7 @@ package com.minecolonies.api.advancements.create_build_request;
 import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.util.ResourceLocation;
 
 public class CreateBuildRequestCriterionInstance extends CriterionInstance
@@ -13,26 +14,26 @@ public class CreateBuildRequestCriterionInstance extends CriterionInstance
 
     public CreateBuildRequestCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.field_234582_a_);
     }
 
     public CreateBuildRequestCriterionInstance(final StructureName structureName)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.field_234582_a_);
 
         this.structureName = structureName;
     }
 
     public CreateBuildRequestCriterionInstance(final String hutName)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.field_234582_a_);
 
         this.hutName = hutName;
     }
 
     public CreateBuildRequestCriterionInstance(final StructureName structureName, final int level)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.field_234582_a_);
 
         this.structureName = structureName;
         this.level = level;
@@ -40,7 +41,7 @@ public class CreateBuildRequestCriterionInstance extends CriterionInstance
 
     public CreateBuildRequestCriterionInstance(final String hutName, final int level)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.field_234582_a_);
 
         this.hutName = hutName;
         this.level = level;

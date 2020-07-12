@@ -88,8 +88,9 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
             this.target = target;
         }
 
+        final BlockPos pos = new BlockPos(entity.serverPosX, entity.serverPosY, entity.serverPosZ);
         final double distanceToPath = careAboutY()
-                                        ? BlockPosUtil.getDistanceSquared(entity.getPosition(), target) : BlockPosUtil.getDistanceSquared2D(entity.getPosition(), target);
+                                        ? BlockPosUtil.getDistanceSquared(pos, target) : BlockPosUtil.getDistanceSquared2D(pos, target);
 
         if (distanceToPath <= MIN_RANGE_FOR_DIRECT_PATH)
         {
@@ -111,9 +112,9 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
             currentProxy = fillProxyList(target, distanceToPath);
         }
 
-        final double distanceToProxy = BlockPosUtil.getDistanceSquared(entity.getPosition(), currentProxy);
-        final double distanceToNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared(entity.getPosition(), target)
-                                             : BlockPosUtil.getDistanceSquared(entity.getPosition(), proxyList.get(0));
+        final double distanceToProxy = BlockPosUtil.getDistanceSquared(pos, currentProxy);
+        final double distanceToNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared(pos, target)
+                                             : BlockPosUtil.getDistanceSquared(pos, proxyList.get(0));
         final double distanceProxyNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared(currentProxy, target)
                                                 : BlockPosUtil.getDistanceSquared(currentProxy, proxyList.get(0));
         if (distanceToProxy < MIN_DISTANCE || distanceToNextProxy < distanceProxyNextProxy)
@@ -199,9 +200,11 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
     private boolean takeTheDirectPath(@NotNull final BlockPos target, final int range, final boolean onMove)
     {
         final boolean arrived;
+        final BlockPos pos = new BlockPos(entity.serverPosX, entity.serverPosY, entity.serverPosZ);
+
         if (onMove)
         {
-            final int targetY = careAboutY() ? entity.getPosition().getY() : target.getY();
+            final int targetY = careAboutY() ? pos.getY() : target.getY();
             arrived = isLivingAtSiteWithMove(entity, target.getX(), target.getY(), target.getZ(), range)
                         || EntityUtils.isLivingAtSite(entity, target.getX(), targetY, target.getZ(), range + 1);
         }
@@ -228,10 +231,11 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
     private BlockPos fillProxyList(@NotNull final BlockPos target, final double distanceToPath)
     {
         @Nullable BlockPos proxyPoint = getSpecializedProxy(target, distanceToPath);
+        final BlockPos pos = new BlockPos(entity.serverPosX, entity.serverPosY, entity.serverPosZ);
 
         if (proxyPoint == null)
         {
-            proxyPoint = getProxy(target, entity.getPosition(), distanceToPath);
+            proxyPoint = getProxy(target, pos, distanceToPath);
         }
 
         if (!proxyList.isEmpty())

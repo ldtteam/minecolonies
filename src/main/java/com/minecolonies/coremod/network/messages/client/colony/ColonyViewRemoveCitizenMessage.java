@@ -64,7 +64,7 @@ public class ColonyViewRemoveCitizenMessage implements IMessage
     {
         if (Minecraft.getInstance().world != null)
         {
-            IColonyManager.getInstance().handleColonyViewRemoveCitizenMessage(colonyId, citizenId, Minecraft.getInstance().world.getDimension().getType().getId());
+            IColonyManager.getInstance().handleColonyViewRemoveCitizenMessage(colonyId, citizenId, Minecraft.getInstance().world.func_234923_W_().func_240901_a_());
         }
     }
 }

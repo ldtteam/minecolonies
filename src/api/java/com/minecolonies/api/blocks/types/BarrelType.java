@@ -119,4 +119,11 @@ public enum BarrelType implements IStringSerializable
     {
         return this.unlocalizedName;
     }
+
+    @NotNull
+    @Override
+    public String getString()
+    {
+        return this.name;
+    }
 }

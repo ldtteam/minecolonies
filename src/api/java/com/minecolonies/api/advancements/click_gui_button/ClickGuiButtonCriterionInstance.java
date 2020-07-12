@@ -2,6 +2,7 @@ package com.minecolonies.api.advancements.click_gui_button;
 
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.util.ResourceLocation;
 
 public class ClickGuiButtonCriterionInstance extends CriterionInstance
@@ -11,19 +12,19 @@ public class ClickGuiButtonCriterionInstance extends CriterionInstance
 
     public ClickGuiButtonCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.field_234582_a_);
     }
 
     public ClickGuiButtonCriterionInstance(final String buttonId)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.field_234582_a_);
 
         this.buttonId = buttonId;
     }
 
     public ClickGuiButtonCriterionInstance(final String buttonId, final String windowResource)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.field_234582_a_);
 
         this.windowResource = windowResource;
         this.buttonId = buttonId;

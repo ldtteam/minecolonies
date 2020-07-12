@@ -3,12 +3,14 @@ package com.minecolonies.coremod.entity.pathfinding;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -18,7 +20,6 @@ import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.IChunk;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,6 +27,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class ChunkCache implements IWorldReader
 {
@@ -117,7 +120,7 @@ public class ChunkCache implements IWorldReader
     }
 
     @Override
-    public IFluidState getFluidState(final BlockPos pos)
+    public FluidState getFluidState(final BlockPos pos)
     {
         return null;
     }
@@ -196,6 +199,13 @@ public class ChunkCache implements IWorldReader
     }
 
     @Override
+    public Stream<VoxelShape> func_230318_c_(
+      @Nullable final Entity entity, final AxisAlignedBB axisAlignedBB, final Predicate<Entity> predicate)
+    {
+        return null;
+    }
+
+    @Override
     public int getStrongPower(BlockPos pos, Direction direction)
     {
         return this.getBlockState(pos).getStrongPower(this, pos, direction);
@@ -214,7 +224,7 @@ public class ChunkCache implements IWorldReader
     }
 
     @Override
-    public Dimension getDimension()
+    public DimensionType func_230315_m_()
     {
         return null;
     }
@@ -222,6 +232,12 @@ public class ChunkCache implements IWorldReader
     private boolean withinBounds(int x, int z)
     {
         return x >= 0 && x < chunkArray.length && z >= 0 && z < chunkArray[x].length && chunkArray[x][z] != null;
+    }
+
+    @Override
+    public float func_230487_a_(final Direction direction, final boolean b)
+    {
+        return 0;
     }
 
     @Override

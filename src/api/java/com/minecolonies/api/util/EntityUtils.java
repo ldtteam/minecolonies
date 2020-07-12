@@ -12,7 +12,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -281,9 +281,10 @@ public final class EntityUtils
     public static boolean isEntityAtPosition(final Entity entity, final World world, final Entity placer)
     {
         final List<ItemStorage> existingReq = ItemStackUtils.getListOfStackForEntity(entity, placer);
-        return world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(entity.getPosition().add(1, 1, 1), entity.getPosition().add(-1, -1, -1)))
+        final BlockPos pos = new BlockPos(entity.getPosX(), entity.getPosY(), entity.getPosZ());
+        return world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.add(1, 1, 1), pos.add(-1, -1, -1)))
                  .stream()
-                 .anyMatch(ent -> ent.posX == entity.posX && ent.posY == entity.posY && ent.posZ == entity.posZ && ItemStackUtils.getListOfStackForEntity(entity, placer)
+                 .anyMatch(ent -> ent.serverPosX == entity.serverPosX && ent.serverPosY == entity.serverPosY && ent.serverPosZ == entity.serverPosZ && ItemStackUtils.getListOfStackForEntity(entity, placer)
                                                                                                                      .equals(existingReq));
     }
 
@@ -309,6 +310,7 @@ public final class EntityUtils
      */
     public static boolean isLivingAtSite(@NotNull final LivingEntity entityLiving, final int x, final int y, final int z, final int range)
     {
-        return entityLiving.getPosition().distanceSq(new Vec3i(x, y, z)) < MathUtils.square(range);
+        final BlockPos pos = new BlockPos(entityLiving.getPosX(), entityLiving.getPosY(), entityLiving.getPosZ());
+        return pos.distanceSq(new Vector3i(x, y, z)) < MathUtils.square(range);
     }
 }

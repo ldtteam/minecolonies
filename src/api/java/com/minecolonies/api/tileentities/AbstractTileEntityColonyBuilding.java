@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryFunctions;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -206,9 +207,9 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     }
 
     @Override
-    public void read(@NotNull final CompoundNBT compound)
+    public void read(final BlockState state, @NotNull final CompoundNBT compound)
     {
-        super.read(compound);
+        super.read(state, compound);
         readSchematicDataFromNBT(compound);
     }
 

@@ -9,11 +9,14 @@ import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.BarbarianSounds;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -25,6 +28,7 @@ import java.util.Random;
 
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
+import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
@@ -120,7 +124,6 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         RaiderMobUtils.setupMobAi(this);
         this.setInvulnerable(true);
         RaiderMobUtils.setEquipment(this);
-        getAttributes().registerAttribute(MOB_ATTACK_DAMAGE);
     }
 
     @Override
@@ -417,11 +420,15 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         return super.attackEntityFrom(damageSource, damage);
     }
 
-    @Override
-    protected void registerAttributes()
+    /**
+     * Get the default attributes with their values.
+     * @return the attribute modifier map.
+     */
+    public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
     {
-        super.registerAttributes();
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+        return LivingEntity.registerAttributes()
+                 .func_233815_a_(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue())
+                 .func_233815_a_(MOB_ATTACK_DAMAGE, MOB_ATTACK_DAMAGE.getDefaultValue());
     }
 
     /**
@@ -435,6 +442,15 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         {
             this.colony = colony;
         }
+    }
+
+    /**
+     * Get the position (blckpos)
+     * @return the pos.
+     */
+    public BlockPos getPosition()
+    {
+        return new BlockPos(serverPosX, serverPosY, serverPosZ);
     }
 
     public int getEventID()
@@ -479,7 +495,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage);
 
         final double armor = difficulty * ARMOR;
-        this.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
+        this.getAttribute(Attributes.ARMOR).setBaseValue(armor);
         this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * difficulty));
 
         if (difficulty >= 1.4d)
@@ -487,7 +503,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
             this.setEnvDamageImmunity(true);
         }
 
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(baseHealth);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth);
         this.setHealth(this.getMaxHealth());
     }
 }

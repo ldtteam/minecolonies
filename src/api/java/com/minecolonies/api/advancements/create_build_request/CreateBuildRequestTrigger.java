@@ -1,14 +1,13 @@
 package com.minecolonies.api.advancements.create_build_request;
 
-import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.loot.ConditionArrayParser;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 public class CreateBuildRequestTrigger extends AbstractCriterionTrigger<CreateBuildRequestListeners, CreateBuildRequestCriterionInstance>
 {
@@ -29,9 +28,8 @@ public class CreateBuildRequestTrigger extends AbstractCriterionTrigger<CreateBu
         }
     }
 
-    @NotNull
     @Override
-    public CreateBuildRequestCriterionInstance deserializeInstance(@NotNull final JsonObject jsonObject, @NotNull final JsonDeserializationContext jsonDeserializationContext)
+    public CreateBuildRequestCriterionInstance func_230307_a_(final JsonObject jsonObject, final ConditionArrayParser conditionArrayParser)
     {
         if (jsonObject.has("hut_name"))
         {

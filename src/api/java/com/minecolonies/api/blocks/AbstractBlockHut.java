@@ -85,7 +85,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
-    public float getBlockHardness(final BlockState blockState, final IBlockReader worldIn, final BlockPos pos)
+    public float getPlayerRelativeBlockHardness(final BlockState state, final PlayerEntity player, final IBlockReader world, final BlockPos pos)
     {
         return MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pvp_mode.get() ? HARDNESS * HARDNESS_PVP_FACTOR : HARDNESS;
     }
@@ -154,7 +154,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
          */
         if (worldIn.isRemote)
         {
-            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimension().getType().getId(), pos);
+            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.func_234923_W_().func_240901_a_(), pos);
 
             if (building == null)
             {

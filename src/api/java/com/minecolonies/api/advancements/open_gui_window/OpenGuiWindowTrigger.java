@@ -1,10 +1,10 @@
 package com.minecolonies.api.advancements.open_gui_window;
 
-import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.loot.ConditionArrayParser;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public class OpenGuiWindowTrigger extends AbstractCriterionTrigger<OpenGuiWindow
 
     @NotNull
     @Override
-    public OpenGuiWindowCriterionInstance deserializeInstance(@NotNull final JsonObject jsonObject, @NotNull final JsonDeserializationContext jsonDeserializationContext)
+    public OpenGuiWindowCriterionInstance func_230307_a_(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
     {
         if (jsonObject.has("window_resource_location"))
         {

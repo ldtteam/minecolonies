@@ -8,6 +8,7 @@ import net.minecraft.profiler.IProfiler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -45,7 +46,7 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * Profiler used for debug information /debug
      */
-    private IProfiler profiler;
+    private Supplier<IProfiler> profiler;
 
     /**
      * Array of flags, true if currently disabled
@@ -80,7 +81,7 @@ public class CustomGoalSelector extends GoalSelector
      *
      * @param profiler the profiler to use, usually attached to a world object
      */
-    public CustomGoalSelector(@NotNull final IProfiler profiler)
+    public CustomGoalSelector(@NotNull final Supplier<IProfiler> profiler)
     {
         super(profiler);
         this.profiler = profiler;
@@ -190,7 +191,7 @@ public class CustomGoalSelector extends GoalSelector
      */
     public void tick()
     {
-        this.profiler.startSection("goalUpdate");
+        this.profiler.get().startSection("goalUpdate");
 
         boolean hasFlags;
         counter++;
@@ -227,7 +228,7 @@ public class CustomGoalSelector extends GoalSelector
         {
             counter = 0;
         }
-        this.profiler.endSection();
+        this.profiler.get().endSection();
     }
 
     /**

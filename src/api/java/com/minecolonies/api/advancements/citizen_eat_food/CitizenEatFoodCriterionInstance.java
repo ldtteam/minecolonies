@@ -2,6 +2,7 @@ package com.minecolonies.api.advancements.citizen_eat_food;
 
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -12,12 +13,12 @@ public class CitizenEatFoodCriterionInstance extends CriterionInstance
 
     public CitizenEatFoodCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.AndPredicate.field_234582_a_);
     }
 
     public CitizenEatFoodCriterionInstance(final ItemPredicate[] itemPredicates)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.AndPredicate.field_234582_a_);
 
         this.itemPredicates = itemPredicates;
     }

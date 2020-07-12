@@ -64,4 +64,10 @@ public enum RackType implements IStringSerializable
     {
         return this.unlocalizedName;
     }
+
+    @Override
+    public String getString()
+    {
+        return getName();
+    }
 }

@@ -1,7 +1,7 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class BlockStateStorage
     /**
      * List of properties used to compare
      */
-    private final List<IProperty<?>> propertyList;
+    private final List<Property<?>> propertyList;
 
     /**
      * Hashcode of the storage.
@@ -38,7 +38,7 @@ public class BlockStateStorage
      * @param compareProperties the list of properties to compare
      * @param exclude           True: states are compared ignoring the properties in the given list. False: states are only compared within the properties on the list.
      */
-    public BlockStateStorage(@NotNull final BlockState state, @NotNull final List<IProperty<?>> compareProperties, final boolean exclude)
+    public BlockStateStorage(@NotNull final BlockState state, @NotNull final List<Property<?>> compareProperties, final boolean exclude)
     {
         this.state = state;
         this.propertyList = compareProperties;
@@ -50,9 +50,9 @@ public class BlockStateStorage
         if (!exclude)
         {
             // hashcode only for included properties
-            for (final IProperty<?> prop : compareProperties)
+            for (final Property<?> prop : compareProperties)
             {
-                if (state.getProperties().contains(prop))
+                if (state.func_235901_b_(prop))
                 {
                     hashCode += prop.hashCode();
                     hashCode += state.get(prop).hashCode();
@@ -62,7 +62,7 @@ public class BlockStateStorage
         else
         {
             // hashcode for all except the excluded properties
-            for (final IProperty<?> prop : state.getProperties())
+            for (final Property<?> prop : state.func_235904_r_())
             {
                 if (!compareProperties.contains(prop))
                 {
@@ -88,7 +88,7 @@ public class BlockStateStorage
      *
      * @return property list
      */
-    public List<IProperty<?>> getCompareProperties()
+    public List<Property<?>> getCompareProperties()
     {
         return propertyList;
     }
@@ -120,7 +120,7 @@ public class BlockStateStorage
 
         if (exclude)
         {
-            for (final IProperty<?> prop : state.getProperties())
+            for (final Property<?> prop : state.func_235904_r_())
             {
                 // skip excluded properties upon comparing
                 if (getCompareProperties().contains(prop))
@@ -128,7 +128,7 @@ public class BlockStateStorage
                     continue;
                 }
 
-                if (!comparingToStorage.getState().getProperties().contains(prop))
+                if (!comparingToStorage.getState().func_235901_b_(prop))
                 {
                     return false;
                 }
@@ -141,9 +141,9 @@ public class BlockStateStorage
         }
         else
         {
-            for (final IProperty<?> prop : propertyList)
+            for (final Property<?> prop : propertyList)
             {
-                if (!comparingToStorage.getState().getProperties().contains(prop))
+                if (!comparingToStorage.getState().func_235901_b_(prop))
                 {
                     return false;
                 }

@@ -12,15 +12,19 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMessage;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.FolderName;
+import net.minecraft.world.storage.SaveFormat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
@@ -107,7 +111,7 @@ public final class ChunkDataHelper
         {
             if (closeCap.getOwningColony() != 0)
             {
-                final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeCap.getOwningColony(), world.getDimension().getType().getId());
+                final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeCap.getOwningColony(), world.func_234923_W_().func_240901_a_());
                 if (colony != null)
                 {
                     colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));
@@ -129,7 +133,7 @@ public final class ChunkDataHelper
         {
             if (closeCap.getOwningColony() != 0)
             {
-                final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeCap.getOwningColony(), world.getDimension().getType().getId());
+                final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeCap.getOwningColony(), world.func_234923_W_().func_240901_a_());
                 if (colony != null)
                 {
                     colony.removeLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));
@@ -162,7 +166,7 @@ public final class ChunkDataHelper
      */
     public static void loadChunkStorageToWorldCapability(final World world)
     {
-        @NotNull final File chunkDir = new File(((ServerWorld) world).getSaveHandler().getWorldDirectory(), CHUNK_INFO_PATH);
+        @NotNull final File chunkDir = new File(world.getServer().func_240776_a_(FolderName.field_237245_a_).toFile(), CHUNK_INFO_PATH);
         if (!chunkDir.exists())
         {
             return;
@@ -203,7 +207,7 @@ public final class ChunkDataHelper
      * @param center    the center chunk.
      * @param dimension the dimension.
      */
-    public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
+    public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final ResourceLocation dimension)
     {
         final int range = getConfig().getCommon().initialColonySize.get();
         final int buffer = getConfig().getCommon().minColonyDistance.get();
@@ -289,7 +293,7 @@ public final class ChunkDataHelper
     {
         final World world = colony.getWorld();
         final int colonyId = colony.getID();
-        final int dimension = colony.getDimension();
+        final ResourceLocation dimension = colony.getDimension();
 
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (chunkManager == null)
@@ -353,7 +357,7 @@ public final class ChunkDataHelper
      */
     public static void claimChunksInRange(
       final int colonyId,
-      final int dimension,
+      final ResourceLocation dimension,
       final boolean add,
       final BlockPos center,
       final int range,
@@ -470,7 +474,7 @@ public final class ChunkDataHelper
 
         if (add)
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, world.getDimension().getType().getId());
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, world.func_234923_W_().func_240901_a_());
             if (colony != null)
             {
                 colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));

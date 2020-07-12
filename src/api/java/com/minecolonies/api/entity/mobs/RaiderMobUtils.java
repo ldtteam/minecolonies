@@ -16,10 +16,8 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -49,7 +47,7 @@ public final class RaiderMobUtils
     /**
      * Mob attribute, used for custom attack damage
      */
-    public final static Attribute MOB_ATTACK_DAMAGE = new RangedAttribute(null, "mc_mob_damage", 2.0, 1.0, 20);
+    public final static Attribute MOB_ATTACK_DAMAGE = new RangedAttribute( "mc_mob_damage", 2.0, 1.0, 20);
 
     /**
      * Damage increased by 1 for every 200 raid level difficulty

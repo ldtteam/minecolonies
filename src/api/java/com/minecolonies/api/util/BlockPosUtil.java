@@ -9,6 +9,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameters;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -20,8 +22,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootParameters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,7 +77,7 @@ public final class BlockPosUtil
      */
     private static Tuple<Direction, Direction> getRandomDirectionTuple(final Random random)
     {
-        return new Tuple<>(Direction.random(random), Direction.random(random));
+        return new Tuple<>(Direction.func_239631_a_(random), Direction.func_239631_a_(random));
     }
 
     /**
@@ -500,7 +500,7 @@ public final class BlockPosUtil
     @NotNull
     public static BlockPos fromEntity(@NotNull final Entity entity)
     {
-        return new BlockPos(MathHelper.floor(entity.posX), MathHelper.floor(entity.posY), MathHelper.floor(entity.posZ));
+        return new BlockPos(MathHelper.floor(entity.serverPosX), MathHelper.floor(entity.serverPosY), MathHelper.floor(entity.serverPosZ));
     }
 
     /**
@@ -513,7 +513,7 @@ public final class BlockPosUtil
     @NotNull
     public static BlockPos getFloor(@NotNull final BlockPos position, @NotNull final World world)
     {
-        final BlockPos floor = getFloor(new BlockPos.Mutable(position), 0, world);
+        final BlockPos floor = getFloor(new BlockPos.Mutable(position.getX(), position.getY(), position.getZ()), 0, world);
         if (floor == null)
         {
             return position;

@@ -472,7 +472,7 @@ public class EventHandler
 
             final IColony colony = IColonyManager.getInstance()
                                      .getColonyByDimension(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_COLONY_ID),
-                                       event.getWorld().getDimension().getType().getId());
+                                       event.getWorld().func_234923_W_().func_240901_a_());
             if (colony != null)
             {
                 colony.getEventManager().onTileEntityBreak(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_EVENT_ID), spawner);
@@ -517,7 +517,7 @@ public class EventHandler
         {
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, bedBlockPos);
             //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
-            if (colony != null && world.getBlockState(event.getPos()).getProperties().contains(BedBlock.PART))
+            if (colony != null && world.getBlockState(event.getPos()).func_235901_b_(BedBlock.PART))
             {
                 final List<ICitizenData> citizenList = colony.getCitizenManager().getCitizens();
                 if (world.getBlockState(event.getPos()).isBedFoot(world, event.getPos()))
@@ -646,7 +646,7 @@ public class EventHandler
      */
     public static boolean onBlockHutPlaced(@NotNull final World world, @NotNull final PlayerEntity player, final Block block, final BlockPos pos)
     {
-        if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && world.getDimension().getType().getId() != 0)
+        if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && world.func_234923_W_().func_240901_a_() != 0)
         {
             LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_IN_OTHER_DIM);
             return false;

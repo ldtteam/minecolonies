@@ -66,7 +66,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     {
         if (ctx.getWorld().isRemote)
         {
-            if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && ctx.getWorld().getDimension().getType().getId() != 0)
+            if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && ctx.getWorld().func_234923_W_().func_240901_a_() != 0)
             {
                 LanguageHandler.sendPlayerMessage(ctx.getPlayer(), CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return ActionResultType.FAIL;
@@ -84,7 +84,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         final ItemStack stack = playerIn.getHeldItem(hand);
         if (worldIn.isRemote)
         {
-            if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && worldIn.getDimension().getType().getId() != 0)
+            if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && worldIn.func_234923_W_().func_240901_a_() != 0)
             {
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return new ActionResult<>(ActionResultType.FAIL, stack);

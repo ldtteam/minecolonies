@@ -143,7 +143,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     public boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window)
     {
         Network.getNetwork()
-          .sendToServer(new TriggerServerResponseHandlerMessage(data.getColonyId(), data.getId(), world.getDimension().getType().getId(), this.getInquiry(), response));
+          .sendToServer(new TriggerServerResponseHandlerMessage(data.getColonyId(), data.getId(), world.func_234923_W_().func_240901_a_(), this.getInquiry(), response));
         return true;
     }
 

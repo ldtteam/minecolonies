@@ -295,7 +295,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     {
         if (worldIn.isRemote())
         {
-            return IColonyManager.getInstance().getBuildingView(worldIn.getDimension().getType().getId(), position) instanceof AbstractBuildingGuards.View;
+            return IColonyManager.getInstance().getBuildingView(worldIn.func_234923_W_().func_240901_a_(), position) instanceof AbstractBuildingGuards.View;
         }
         else
         {
@@ -320,7 +320,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         }
 
         return isGuardBuilding(worldIn, position)
-                 ? (AbstractBuildingGuards.View) IColonyManager.getInstance().getBuildingView(worldIn.getDimension().getType().getId(), position)
+                 ? (AbstractBuildingGuards.View) IColonyManager.getInstance().getBuildingView(worldIn.func_234923_W_().func_240901_a_(), position)
                  : null;
     }
 

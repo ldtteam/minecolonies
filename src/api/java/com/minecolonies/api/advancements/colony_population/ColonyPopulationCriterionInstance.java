@@ -2,6 +2,8 @@ package com.minecolonies.api.advancements.colony_population;
 
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
+import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.util.ResourceLocation;
 
 public class ColonyPopulationCriterionInstance extends CriterionInstance
@@ -10,7 +12,7 @@ public class ColonyPopulationCriterionInstance extends CriterionInstance
 
     public ColonyPopulationCriterionInstance(final int populationCount)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COLONY_POPULATION));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COLONY_POPULATION), EntityPredicate.AndPredicate.field_234582_a_);
 
         this.populationCount = populationCount;
     }

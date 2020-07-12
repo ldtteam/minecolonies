@@ -55,12 +55,12 @@ public final class ColonyManagerConstants
     /**
      * Colony filename.
      */
-    public static final String FILENAME_COLONY = "colony%d_%d.dat";
+    public static final String FILENAME_COLONY = "colony%d_%s.dat";
 
     /**
      * Colony filename deleted.
      */
-    public static final String FILENAME_COLONY_DELETED = "colony%d_%d.dat.deleted";
+    public static final String FILENAME_COLONY_DELETED = "colony%d_%s.dat.deleted";
 
     /**
      * Colony filename.

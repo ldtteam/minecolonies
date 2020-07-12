@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.Constants;
@@ -61,7 +62,7 @@ public class ChunkLoadStorage
     /**
      * The dimension of the chunk.
      */
-    private final int dimension;
+    private final ResourceLocation dimension;
 
     /**
      * The building claiming this.
@@ -86,7 +87,7 @@ public class ChunkLoadStorage
         }
 
         this.xz = compound.getLong(TAG_POS);
-        this.dimension = compound.getInt(TAG_DIMENSION);
+        this.dimension = new ResourceLocation(compound.getString(TAG_DIMENSION));
 
         colonyId.addAll(NBTUtils.streamCompound(compound.getList(TAG_CLAIM_LIST, Constants.NBT.TAG_COMPOUND))
                           .map(tempCompound -> tempCompound.getShort(TAG_COLONY_ID)).collect(Collectors.toList()));
@@ -110,7 +111,7 @@ public class ChunkLoadStorage
      * @param dimension the dimension.
      * @param owning    if the colony should own the chunk.
      */
-    public ChunkLoadStorage(final int colonyId, final long xz, final boolean add, final int dimension, final boolean owning)
+    public ChunkLoadStorage(final int colonyId, final long xz, final boolean add, final ResourceLocation dimension, final boolean owning)
     {
         this.colonyId.add((short) (owning && add ? colonyId : 0));
         this.xz = xz;
@@ -136,7 +137,7 @@ public class ChunkLoadStorage
      * @param dimension the dimension.
      * @param building  the building claiming this chunk.
      */
-    public ChunkLoadStorage(final int colonyId, final long xz, final int dimension, final BlockPos building)
+    public ChunkLoadStorage(final int colonyId, final long xz, final ResourceLocation dimension, final BlockPos building)
     {
         this.xz = xz;
         this.dimension = dimension;
@@ -152,7 +153,7 @@ public class ChunkLoadStorage
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.putLong(TAG_POS, xz);
-        compound.putShort(TAG_DIMENSION, (short) dimension);
+        compound.putString(TAG_DIMENSION, dimension.toString());
 
         compound.put(TAG_CLAIM_LIST, colonyId.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toListNBT()));
         compound.put(TAG_COLONIES_TO_ADD, coloniesToAdd.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toListNBT()));
@@ -175,7 +176,7 @@ public class ChunkLoadStorage
      *
      * @return the dimension id.
      */
-    public int getDimension()
+    public ResourceLocation getDimension()
     {
         return dimension;
     }

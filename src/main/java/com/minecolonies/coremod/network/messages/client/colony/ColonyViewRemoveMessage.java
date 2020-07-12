@@ -3,6 +3,7 @@ package com.minecolonies.coremod.network.messages.client.colony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -13,14 +14,14 @@ import org.jetbrains.annotations.Nullable;
 public class ColonyViewRemoveMessage implements IMessage
 {
     private int id;
-    private int dimension;
+    private ResourceLocation dimension;
 
     public ColonyViewRemoveMessage()
     {
         super();
     }
 
-    public ColonyViewRemoveMessage(final int id, final int dimension)
+    public ColonyViewRemoveMessage(final int id, final ResourceLocation dimension)
     {
         this.id = id;
         this.dimension = dimension;
@@ -30,14 +31,14 @@ public class ColonyViewRemoveMessage implements IMessage
     public void toBytes(final PacketBuffer buf)
     {
         buf.writeInt(id);
-        buf.writeInt(dimension);
+        buf.writeString(dimension.toString());
     }
 
     @Override
     public void fromBytes(final PacketBuffer buf)
     {
         id = buf.readInt();
-        dimension = buf.readInt();
+        dimension = new ResourceLocation(buf.readString());
     }
 
     @Nullable

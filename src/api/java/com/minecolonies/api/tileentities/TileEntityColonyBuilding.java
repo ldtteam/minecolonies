@@ -12,6 +12,7 @@ import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import io.netty.buffer.Unpooled;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -258,9 +259,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     }
 
     @Override
-    public void handleUpdateTag(final CompoundNBT tag)
+    public void handleUpdateTag(final BlockState state, final CompoundNBT tag)
     {
-        this.read(tag);
+        this.read(state, tag);
     }
 
     @Override
@@ -324,14 +325,14 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public IBuildingView getBuildingView()
     {
-        final IColonyView c = IColonyManager.getInstance().getColonyView(colonyId, world.getDimension().getType().getId());
+        final IColonyView c = IColonyManager.getInstance().getColonyView(colonyId, world.func_234923_W_().func_240901_a_());
         return c == null ? null : c.getBuilding(getPosition());
     }
 
     @Override
-    public void read(@NotNull final CompoundNBT compound)
+    public void read(final BlockState state, @NotNull final CompoundNBT compound)
     {
-        super.read(compound);
+        super.read(state, compound);
         if (compound.keySet().contains(TAG_COLONY))
         {
             colonyId = compound.getInt(TAG_COLONY);

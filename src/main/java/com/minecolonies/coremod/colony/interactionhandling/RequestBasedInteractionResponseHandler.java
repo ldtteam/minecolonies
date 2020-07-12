@@ -131,7 +131,7 @@ public class RequestBasedInteractionResponseHandler extends ServerCitizenInterac
     {
         if (response.equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill")))
         {
-            final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), world.getDimension().getType().getId());
+            final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), world.func_234923_W_().func_240901_a_());
 
             if (colony != null)
             {

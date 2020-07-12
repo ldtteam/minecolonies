@@ -11,10 +11,13 @@ import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.IPacket;
 import net.minecraft.state.properties.RailShape;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
@@ -30,12 +33,12 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
     /**
      * Railshape matrix.
      */
-    private static final Map<RailShape, Pair<Vec3i, Vec3i>> MATRIX = Util.make(Maps.newEnumMap(RailShape.class), (entry) ->
+    private static final Map<RailShape, Pair<Vector3i, Vector3i>> MATRIX = Util.make(Maps.newEnumMap(RailShape.class), (entry) ->
     {
-        Vec3i westVec = Direction.WEST.getDirectionVec();
-        Vec3i eastVec = Direction.EAST.getDirectionVec();
-        Vec3i northVec = Direction.NORTH.getDirectionVec();
-        Vec3i southVec = Direction.SOUTH.getDirectionVec();
+        Vector3i westVec = Direction.WEST.getDirectionVec();
+        Vector3i eastVec = Direction.EAST.getDirectionVec();
+        Vector3i northVec = Direction.NORTH.getDirectionVec();
+        Vector3i southVec = Direction.SOUTH.getDirectionVec();
 
         entry.put(RailShape.NORTH_SOUTH, Pair.of(northVec, southVec));
         entry.put(RailShape.EAST_WEST, Pair.of(westVec, eastVec));
@@ -93,9 +96,9 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         }
 
         Vector3d motion = this.getMotion();
-        Pair<Vec3i, Vec3i> pair = getShapeMatrix(railshape);
-        Vec3i vecIn = pair.getFirst();
-        Vec3i vecOut = pair.getSecond();
+        Pair<Vector3i, Vector3i> pair = getShapeMatrix(railshape);
+        Vector3i vecIn = pair.getFirst();
+        Vector3i vecOut = pair.getSecond();
         double xDif = (vecOut.getX() - vecIn.getX());
         double zDif = (vecOut.getZ() - vecIn.getZ());
         double difSq = Math.sqrt(xDif * xDif + zDif * zDif);
@@ -250,15 +253,15 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         return this.world.getBlockState(pos).isNormalCube(this.world, pos);
     }
 
-    private static Pair<Vec3i, Vec3i> getShapeMatrix(RailShape p_226573_0_)
+    private static Pair<Vector3i, Vector3i> getShapeMatrix(RailShape p_226573_0_)
     {
         return MATRIX.get(p_226573_0_);
     }
 
     @Override
-    public boolean processInitialInteract(PlayerEntity player, Hand hand)
+    public ActionResultType processInitialInteract(final PlayerEntity p_184230_1_, final Hand p_184230_2_)
     {
-        return false;
+        return ActionResultType.FAIL;
     }
 
     @Nullable

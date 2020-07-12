@@ -267,7 +267,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean processInteract(final PlayerEntity player, @NotNull final Hand hand)
     {
-        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.world.getDimension().getType().getId());
+        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.world.func_234923_W_().func_240901_a_());
         if (iColonyView != null && !iColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return false;
@@ -314,7 +314,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
             {
-                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.func_234923_W_().func_240901_a_());
                 if (colonyView != null)
                 {
                     this.citizenDataView = colonyView.getCitizen(citizenId);
@@ -396,7 +396,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenColonyHandler.updateColonyClient();
             if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0 && getOffsetTicks() % TICKS_20 == 0)
             {
-                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.func_234923_W_().func_240901_a_());
                 if (colonyView != null)
                 {
                     this.citizenDataView = colonyView.getCitizen(citizenId);
@@ -436,7 +436,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (world.isRemote)
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimension().getType().getId());
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.func_234923_W_().func_240901_a_());
             if (colonyView != null)
             {
                 final UnlockAbilityResearchEffect effect = colonyView.getResearchManager().getResearchEffects().getEffect(RAILS, UnlockAbilityResearchEffect.class);

@@ -3,6 +3,7 @@ package com.minecolonies.api.advancements.building_add_recipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.util.ResourceLocation;
 
@@ -13,19 +14,19 @@ public class BuildingAddRecipeCriterionInstance extends CriterionInstance
 
     public BuildingAddRecipeCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.field_234582_a_);
     }
 
     public BuildingAddRecipeCriterionInstance(final ItemPredicate[] outputItemPredicates)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.field_234582_a_);
 
         this.outputItemPredicates = outputItemPredicates;
     }
 
     public BuildingAddRecipeCriterionInstance(final ItemPredicate[] outputItemPredicates, final int craftingSize)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE));
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.field_234582_a_);
 
         this.outputItemPredicates = outputItemPredicates;
         this.craftingSize = craftingSize;

@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.NonNullList;
@@ -107,7 +107,7 @@ public class Tree
     /**
      * The wood variant of the Tree. Can change depending on Mod
      */
-    private IProperty<?> variant;
+    private Property<?> variant;
 
     /**
      * If the Tree is a Slime Tree.
@@ -156,7 +156,7 @@ public class Tree
             slimeTree = Compatibility.isSlimeBlock(bottomBlock);
             sapling = calcSapling(world);
 
-            // Calculate the Tree's variant IProperty, add mod compat for other property names later when needed
+            // Calculate the Tree's variant Property, add mod compat for other property names later when needed
             variant = BlockStateUtils.getPropertyByNameFromState(world.getBlockState(location), "variant");
         }
         else
@@ -801,7 +801,7 @@ public class Tree
      *
      * @return the EnumType variant.
      */
-    public IProperty<?> getVariant()
+    public Property<?> getVariant()
     {
         return variant;
     }

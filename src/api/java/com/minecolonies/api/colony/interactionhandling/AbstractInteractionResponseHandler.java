@@ -124,12 +124,12 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
      */
     public void deserializeNBT(@NotNull final CompoundNBT compoundNBT)
     {
-        this.inquiry = ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_INQUIRY));
+        this.inquiry = ITextComponent.Serializer.func_240643_a_(compoundNBT.getString(TAG_INQUIRY));
         final ListNBT list = compoundNBT.getList(TAG_RESPONSES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
             final CompoundNBT nbt = list.getCompound(i);
-            this.responses.put(ITextComponent.Serializer.fromJson(nbt.getString(TAG_RESPONSE)), ITextComponent.Serializer.fromJson(nbt.getString(TAG_NEXT_INQUIRY)));
+            this.responses.put(ITextComponent.Serializer.func_240643_a_(nbt.getString(TAG_RESPONSE)), ITextComponent.Serializer.func_240643_a_(nbt.getString(TAG_NEXT_INQUIRY)));
         }
         this.primary = compoundNBT.getBoolean(TAG_PRIMARY);
         this.priority = ChatPriority.values()[compoundNBT.getInt(TAG_PRIORITY)];

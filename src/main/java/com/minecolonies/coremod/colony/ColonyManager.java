@@ -24,11 +24,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.server.ServerMultiWorld;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -55,7 +56,7 @@ public final class ColonyManager implements IColonyManager
      * The list of colony views.
      */
     @NotNull
-    private final Map<Integer, ColonyList<IColonyView>> colonyViews = new HashMap<>();
+    private final Map<ResourceLocation, ColonyList<IColonyView>> colonyViews = new HashMap<>();
 
     /**
      * Recipemanager of this server.
@@ -103,14 +104,14 @@ public final class ColonyManager implements IColonyManager
         final IColony colony = cap.createColony(w, pos);
         colony.setStyle(style);
 
-        final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getName().getFormattedText());
+        final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getName().getString());
         colony.setName(colonyName);
         colony.getPermissions().setOwner(player);
 
         colony.getPackageManager().addImportantColonyPlayer((ServerPlayerEntity) player);
         colony.getPackageManager().addCloseSubscriber((ServerPlayerEntity) player);
 
-        Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName().getFormattedText()));
+        Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName().getString()));
 
         if (colony.getWorld() == null)
         {
@@ -142,7 +143,7 @@ public final class ColonyManager implements IColonyManager
      * @param dimension  the dimension.
      */
     @Override
-    public void deleteColonyByDimension(final int id, final boolean canDestroy, final int dimension)
+    public void deleteColonyByDimension(final int id, final boolean canDestroy, final ResourceLocation dimension)
     {
         deleteColony(getColonyByDimension(id, dimension), canDestroy);
     }
@@ -223,7 +224,7 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void removeColonyView(final int id, final int dimension)
+    public void removeColonyView(final int id, final ResourceLocation dimension)
     {
         if (colonyViews.containsKey(dimension))
         {
@@ -258,9 +259,9 @@ public final class ColonyManager implements IColonyManager
      */
     @Override
     @Nullable
-    public IColony getColonyByDimension(final int id, final int dimension)
+    public IColony getColonyByDimension(final int id, final ResourceLocation dimension)
     {
-        final World world = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(dimension));
+        final World world = ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.func_240903_a_(Registry.WORLD_KEY, dimension));
         final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
         if (cap == null)
         {
@@ -330,9 +331,9 @@ public final class ColonyManager implements IColonyManager
      * @return Colony at the given location.
      */
     @Override
-    public IColony getColonyByPosFromDim(final int dim, @NotNull final BlockPos pos)
+    public IColony getColonyByPosFromDim(final ResourceLocation dim, @NotNull final BlockPos pos)
     {
-        final World w = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(dim));
+        final World w = ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.func_240903_a_(Registry.WORLD_KEY, dim));
         return getColonyByPosFromWorld(w, pos);
     }
 
@@ -420,7 +421,7 @@ public final class ColonyManager implements IColonyManager
      * @return Returns the view belonging to the building at (x, y, z).
      */
     @Override
-    public IBuildingView getBuildingView(final int dimension, final BlockPos pos)
+    public IBuildingView getBuildingView(final ResourceLocation dimension, final BlockPos pos)
     {
         if (colonyViews.containsKey(dimension))
         {
@@ -467,7 +468,7 @@ public final class ColonyManager implements IColonyManager
         {
             return null;
         }
-        return getColonyView(id, w.getDimension().getType().getId());
+        return getColonyView(id, w.func_234923_W_().func_240901_a_());
     }
 
     /**
@@ -504,7 +505,7 @@ public final class ColonyManager implements IColonyManager
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
         if (cap.getOwningColony() != 0)
         {
-            return getColonyView(cap.getOwningColony(), w.getDimension().getType().getId());
+            return getColonyView(cap.getOwningColony(), w.func_234923_W_().func_240901_a_());
         }
         else if (!cap.getAllCloseColonies().isEmpty())
         {
@@ -513,8 +514,8 @@ public final class ColonyManager implements IColonyManager
 
             for (final int cId : cap.getAllCloseColonies())
             {
-                final IColonyView c = getColonyView(cId, w.getDimension().getType().getId());
-                if (c != null && c.getDimension() == w.getDimension().getType().getId())
+                final IColonyView c = getColonyView(cId, w.func_234923_W_().func_240901_a_());
+                if (c != null && c.getDimension().equals(w.func_234923_W_().func_240901_a_()))
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -530,11 +531,11 @@ public final class ColonyManager implements IColonyManager
         @Nullable IColonyView closestColony = null;
         long closestDist = Long.MAX_VALUE;
 
-        if (colonyViews.containsKey(w.getDimension().getType().getId()))
+        if (colonyViews.containsKey(w.func_234923_W_().func_240901_a_()))
         {
-            for (@NotNull final IColonyView c : colonyViews.get(w.getDimension().getType().getId()))
+            for (@NotNull final IColonyView c : colonyViews.get(w.func_234923_W_().func_240901_a_()))
             {
-                if (c.getDimension() == w.getDimension().getType().getId() && c.getCenter() != null)
+                if (c.getDimension() == w.func_234923_W_().func_240901_a_() && c.getCenter() != null)
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -573,7 +574,7 @@ public final class ColonyManager implements IColonyManager
             for (final int cId : cap.getAllCloseColonies())
             {
                 final IColony c = getColonyByWorld(cId, w);
-                if (c != null && c.getDimension() == w.getDimension().getType().getId())
+                if (c != null && c.getDimension() == w.func_234923_W_().func_240901_a_())
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -591,7 +592,7 @@ public final class ColonyManager implements IColonyManager
 
         for (@NotNull final IColony c : getColonies(w))
         {
-            if (c.getDimension() == w.getDimension().getType().getId())
+            if (c.getDimension() == w.func_234923_W_().func_240901_a_())
             {
                 final long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
@@ -634,7 +635,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getIColonyByOwner(@NotNull final World w, final UUID owner)
     {
-        return w.isRemote ? getColonyViewByOwner(owner, w.getDimension().getType().getId()) : getColonyByOwner(owner);
+        return w.isRemote ? getColonyViewByOwner(owner, w.func_234923_W_().func_240901_a_()) : getColonyByOwner(owner);
     }
 
     /**
@@ -644,7 +645,7 @@ public final class ColonyManager implements IColonyManager
      * @param dimension the dimension id.
      * @return ColonyView.
      */
-    private IColony getColonyViewByOwner(final UUID owner, final int dimension)
+    private IColony getColonyViewByOwner(final UUID owner, final ResourceLocation dimension)
     {
         if (colonyViews.containsKey(dimension))
         {
@@ -849,7 +850,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void onWorldUnload(@NotNull final World world)
     {
-        if (!world.isRemote && !(world instanceof ServerMultiWorld))
+        if (!world.isRemote)
         {
             for (@NotNull final IColony c : getColonies(world))
             {
@@ -872,7 +873,7 @@ public final class ColonyManager implements IColonyManager
      * @param dim               the dimension.
      */
     @Override
-    public void handleColonyViewMessage(final int colonyId, @NotNull final PacketBuffer colonyData, @NotNull final World world, final boolean isNewSubscription, final int dim)
+    public void handleColonyViewMessage(final int colonyId, @NotNull final PacketBuffer colonyData, @NotNull final World world, final boolean isNewSubscription, final ResourceLocation dim)
     {
         IColonyView view = getColonyView(colonyId, dim);
         if (view == null)
@@ -900,7 +901,7 @@ public final class ColonyManager implements IColonyManager
      * @return The ColonyView belonging to the colony.
      */
     @Override
-    public IColonyView getColonyView(final int id, final int dimension)
+    public IColonyView getColonyView(final int id, final ResourceLocation dimension)
     {
         if (colonyViews.containsKey(dimension))
         {
@@ -910,15 +911,15 @@ public final class ColonyManager implements IColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handlePermissionsViewMessage(PacketBuffer)} if {@link #getColonyView(int, int)}. gives a not-null result. If {@link #getColonyView(int,
-     * int)} is null, returns null.
+     * Returns result of {@link ColonyView#handlePermissionsViewMessage(PacketBuffer)} if {@link #getColonyView(int, ResourceLocation)}. gives a not-null result. If {@link #getColonyView(int,
+     * ResourceLocation)} is null, returns null.
      *
      * @param colonyID ID of the colony.
      * @param data     {@link PacketBuffer} with colony data.
      * @param dim      the dimension.
      */
     @Override
-    public void handlePermissionsViewMessage(final int colonyID, @NotNull final PacketBuffer data, final int dim)
+    public void handlePermissionsViewMessage(final int colonyID, @NotNull final PacketBuffer data, final ResourceLocation dim)
     {
         final IColonyView view = getColonyView(colonyID, dim);
         if (view == null)
@@ -932,8 +933,8 @@ public final class ColonyManager implements IColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handleColonyViewCitizensMessage(int, PacketBuffer)} if {@link #getColonyView(int, int)} gives a not-null result. If {@link
-     * #getColonyView(int, int)} is null, returns null.
+     * Returns result of {@link ColonyView#handleColonyViewCitizensMessage(int, PacketBuffer)} if {@link #getColonyView(int, ResourceLocation)} gives a not-null result. If {@link
+     * #getColonyView(int, ResourceLocation)} is null, returns null.
      *
      * @param colonyId  ID of the colony.
      * @param citizenId ID of the citizen.
@@ -941,7 +942,7 @@ public final class ColonyManager implements IColonyManager
      * @param dim       the dimension.
      */
     @Override
-    public void handleColonyViewCitizensMessage(final int colonyId, final int citizenId, final PacketBuffer buf, final int dim)
+    public void handleColonyViewCitizensMessage(final int colonyId, final int citizenId, final PacketBuffer buf, final ResourceLocation dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view == null)
@@ -952,15 +953,15 @@ public final class ColonyManager implements IColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handleColonyViewWorkOrderMessage(PacketBuffer)} (int, ByteBuf)} if {@link #getColonyView(int, int)} gives a not-null result. If {@link
-     * #getColonyView(int, int)} is null, returns null.
+     * Returns result of {@link ColonyView#handleColonyViewWorkOrderMessage(PacketBuffer)} (int, ByteBuf)} if {@link #getColonyView(int, ResourceLocation)} gives a not-null result. If {@link
+     * #getColonyView(int, ResourceLocation)} is null, returns null.
      *
      * @param colonyId ID of the colony.
      * @param buf      {@link PacketBuffer} with colony data.
      * @param dim      the dimension.
      */
     @Override
-    public void handleColonyViewWorkOrderMessage(final int colonyId, final PacketBuffer buf, final int dim)
+    public void handleColonyViewWorkOrderMessage(final int colonyId, final PacketBuffer buf, final ResourceLocation dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view == null)
@@ -971,15 +972,15 @@ public final class ColonyManager implements IColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handleColonyViewRemoveCitizenMessage(int)} if {@link #getColonyView(int, int)} gives a not-null result. If {@link #getColonyView(int,
-     * int)} is null, returns null.
+     * Returns result of {@link ColonyView#handleColonyViewRemoveCitizenMessage(int)} if {@link #getColonyView(int, ResourceLocation)} gives a not-null result. If {@link #getColonyView(int,
+     * ResourceLocation)} is null, returns null.
      *
      * @param colonyId  ID of the colony.
      * @param citizenId ID of the citizen.
      * @param dim       the dimension.
      */
     @Override
-    public void handleColonyViewRemoveCitizenMessage(final int colonyId, final int citizenId, final int dim)
+    public void handleColonyViewRemoveCitizenMessage(final int colonyId, final int citizenId, final ResourceLocation dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view != null)
@@ -991,8 +992,8 @@ public final class ColonyManager implements IColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos, PacketBuffer)} if {@link #getColonyView(int, int)} gives a not-null result. If {@link
-     * #getColonyView(int, int)} is null, returns null.
+     * Returns result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos, PacketBuffer)} if {@link #getColonyView(int, ResourceLocation)} gives a not-null result. If {@link
+     * #getColonyView(int, ResourceLocation)} is null, returns null.
      *
      * @param colonyId   ID of the colony.
      * @param buildingId ID of the building.
@@ -1000,7 +1001,7 @@ public final class ColonyManager implements IColonyManager
      * @param dim        the dimension.
      */
     @Override
-    public void handleColonyBuildingViewMessage(final int colonyId, final BlockPos buildingId, @NotNull final PacketBuffer buf, final int dim)
+    public void handleColonyBuildingViewMessage(final int colonyId, final BlockPos buildingId, @NotNull final PacketBuffer buf, final ResourceLocation dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view != null)
@@ -1014,15 +1015,15 @@ public final class ColonyManager implements IColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)} if {@link #getColonyView(int, int)} gives a not-null result. If {@link
-     * #getColonyView(int, int)} is null, returns null.
+     * Returns result of {@link ColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)} if {@link #getColonyView(int, ResourceLocation)} gives a not-null result. If {@link
+     * #getColonyView(int, ResourceLocation)} is null, returns null.
      *
      * @param colonyId   ID of the colony.
      * @param buildingId ID of the building.
      * @param dim        the dimension.
      */
     @Override
-    public void handleColonyViewRemoveBuildingMessage(final int colonyId, final BlockPos buildingId, final int dim)
+    public void handleColonyViewRemoveBuildingMessage(final int colonyId, final BlockPos buildingId, final ResourceLocation dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view != null)
@@ -1034,15 +1035,15 @@ public final class ColonyManager implements IColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handleColonyViewRemoveWorkOrderMessage(int)} if {@link #getColonyView(int, int)} gives a not-null result. If {@link #getColonyView(int,
-     * int)} is null, returns null.
+     * Returns result of {@link ColonyView#handleColonyViewRemoveWorkOrderMessage(int)} if {@link #getColonyView(int, ResourceLocation)} gives a not-null result. If {@link #getColonyView(int,
+     * ResourceLocation)} is null, returns null.
      *
      * @param colonyId    ID of the colony.
      * @param workOrderId ID of the workOrder.
      * @param dim         the dimension.
      */
     @Override
-    public void handleColonyViewRemoveWorkOrderMessage(final int colonyId, final int workOrderId, final int dim)
+    public void handleColonyViewRemoveWorkOrderMessage(final int colonyId, final int workOrderId, final ResourceLocation dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view != null)

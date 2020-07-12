@@ -84,7 +84,7 @@ public class Colony implements IColony
     /**
      * Dimension of the colony.
      */
-    private int dimensionId;
+    private ResourceLocation dimensionId;
 
     /**
      * List of loaded chunks for the colony.
@@ -287,7 +287,7 @@ public class Colony implements IColony
         this.id = id;
         if (world != null)
         {
-            this.dimensionId = world.getDimension().getType().getId();
+            this.dimensionId = world.func_234923_W_().func_240901_a_();
             onWorldLoad(world);
             checkOrCreateTeam();
         }
@@ -584,7 +584,7 @@ public class Colony implements IColony
     public void read(@NotNull final CompoundNBT compound)
     {
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
-        dimensionId = compound.getInt(TAG_DIMENSION);
+        dimensionId = new ResourceLocation(compound.getString(TAG_DIMENSION));
 
         if (compound.keySet().contains(TAG_NEED_TO_MOURN))
         {
@@ -718,7 +718,7 @@ public class Colony implements IColony
     {
         //  Core attributes
         compound.putInt(TAG_ID, id);
-        compound.putInt(TAG_DIMENSION, dimensionId);
+        compound.putString(TAG_DIMENSION, dimensionId.toString());
 
         //  Basic data
         compound.putString(TAG_NAME, name);
@@ -806,7 +806,7 @@ public class Colony implements IColony
      *
      * @return Dimension ID.
      */
-    public int getDimension()
+    public ResourceLocation getDimension()
     {
         return dimensionId;
     }
@@ -831,7 +831,7 @@ public class Colony implements IColony
     @Override
     public void onWorldLoad(@NotNull final World w)
     {
-        if (w.getDimension().getType().getId() == dimensionId)
+        if (w.func_234923_W_().func_240901_a_() == dimensionId)
         {
             this.world = w;
             // Register a new event handler
@@ -1054,7 +1054,7 @@ public class Colony implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        if (w.getDimension().getType().getId() != this.dimensionId)
+        if (w.func_234923_W_().func_240901_a_() != this.dimensionId)
         {
             return false;
         }
@@ -1429,7 +1429,7 @@ public class Colony implements IColony
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName().getFormattedText(), this.getName());
+            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName().getString(), this.getName());
         }
     }
 
@@ -1440,7 +1440,7 @@ public class Colony implements IColony
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName().getFormattedText(), this.getName());
+            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName().getString(), this.getName());
         }
     }
 

@@ -50,7 +50,7 @@ public class ContainerCitizenInventory extends Container
         final IColony colony;
         if (inv.player.world.isRemote)
         {
-            colony = IColonyManager.getInstance().getColonyView(colonyId, inv.player.dimension.getId());
+            colony = IColonyManager.getInstance().getColonyView(colonyId, inv.player.world.func_234923_W_().func_240901_a_());
         }
         else
         {

@@ -121,7 +121,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     {
         super(citizen.getWorkBuilding(),
           Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX,
-          IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimension().getType().getId()));
+          IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.func_234923_W_().func_240901_a_()));
         this.citizen = citizen;
 
         updateJobPage(citizen, this, colony);

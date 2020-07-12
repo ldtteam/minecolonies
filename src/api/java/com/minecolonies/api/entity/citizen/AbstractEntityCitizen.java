@@ -109,10 +109,10 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
      */
     public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
     {
-        return LivingEntity.func_233639_cI_()
-                 .func_233815_a_(Attributes.field_233818_a_, BASE_MAX_HEALTH)
-                 .func_233815_a_(Attributes.field_233821_d_, BASE_MOVEMENT_SPEED)
-                 .func_233815_a_(Attributes.field_233819_b_, BASE_PATHFINDING_RANGE);
+        return LivingEntity.registerAttributes()
+                 .func_233815_a_(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
+                 .func_233815_a_(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED)
+                 .func_233815_a_(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
     }
 
     public GoalSelector getTasks()

@@ -374,9 +374,9 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public void read(final CompoundNBT compound)
+    public void read(final BlockState state, final CompoundNBT compound)
     {
-        super.read(compound);
+        super.read(state, compound);
         if (compound.keySet().contains(TAG_SIZE))
         {
             size = compound.getInt(TAG_SIZE);
@@ -485,7 +485,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
-        this.read(packet.getNbtCompound());
+        this.read(getBlockState(), packet.getNbtCompound());
     }
 
     @Override

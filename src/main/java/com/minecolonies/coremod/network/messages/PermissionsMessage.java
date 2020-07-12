@@ -14,6 +14,7 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
@@ -53,7 +54,7 @@ public class PermissionsMessage
         /**
          * The dimension of the
          */
-        private int dimension;
+        private ResourceLocation dimension;
 
         /**
          * Empty constructor used when registering the
@@ -82,7 +83,7 @@ public class PermissionsMessage
         {
             final PacketBuffer newBuf = new PacketBuffer(buf.retain());
             colonyID = newBuf.readInt();
-            dimension = newBuf.readInt();
+            dimension = new ResourceLocation(newBuf.readString());
             data = newBuf;
         }
 
@@ -105,7 +106,7 @@ public class PermissionsMessage
         public void toBytes(@NotNull final PacketBuffer buf)
         {
             buf.writeInt(colonyID);
-            buf.writeInt(dimension);
+            buf.writeString(dimension.toString());
             buf.writeBytes(data);
         }
     }
@@ -123,7 +124,7 @@ public class PermissionsMessage
         /**
          * The dimension of the
          */
-        private int dimension;
+        private ResourceLocation dimension;
 
         /**
          * Empty public constructor.
@@ -197,7 +198,7 @@ public class PermissionsMessage
             buf.writeString(type.name());
             buf.writeString(rank.name());
             buf.writeString(action.name());
-            buf.writeInt(dimension);
+            buf.writeString(dimension.toString());
         }
 
         @Override
@@ -207,7 +208,7 @@ public class PermissionsMessage
             type = MessageType.valueOf(buf.readString(32767));
             rank = Rank.valueOf(buf.readString(32767));
             action = Action.valueOf(buf.readString(32767));
-            dimension = buf.readInt();
+            dimension = new ResourceLocation(buf.readString());
         }
     }
 
@@ -222,7 +223,7 @@ public class PermissionsMessage
         /**
          * The dimension of the
          */
-        private int dimension;
+        private ResourceLocation dimension;
 
         /**
          * Empty public constructor.
@@ -251,7 +252,7 @@ public class PermissionsMessage
         {
             buf.writeInt(colonyID);
             buf.writeString(playerName);
-            buf.writeInt(dimension);
+            buf.writeString(dimension.toString());
         }
 
         @Override
@@ -259,7 +260,7 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerName = buf.readString(32767);
-            dimension = buf.readInt();
+            dimension = new ResourceLocation(buf.readString());
         }
 
         @Nullable
@@ -297,7 +298,7 @@ public class PermissionsMessage
         /**
          * The dimension of the
          */
-        private int dimension;
+        private ResourceLocation dimension;
 
         /**
          * Empty public constructor.
@@ -329,7 +330,7 @@ public class PermissionsMessage
             buf.writeInt(colonyID);
             buf.writeString(playerName);
             PacketUtils.writeUUID(buf, id);
-            buf.writeInt(dimension);
+            buf.writeString(dimension.toString());
         }
 
         @Override
@@ -338,7 +339,7 @@ public class PermissionsMessage
             colonyID = buf.readInt();
             playerName = buf.readString(32767);
             id = PacketUtils.readUUID(buf);
-            dimension = buf.readInt();
+            dimension = new ResourceLocation(buf.readString());
         }
 
         @Nullable
@@ -376,7 +377,7 @@ public class PermissionsMessage
         /**
          * The dimension of the
          */
-        private int dimension;
+        private ResourceLocation dimension;
 
         /**
          * Empty public constructor.
@@ -417,7 +418,7 @@ public class PermissionsMessage
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
             buf.writeString(type.name());
-            buf.writeInt(dimension);
+            buf.writeString(dimension.toString());
         }
 
         @Override
@@ -426,7 +427,7 @@ public class PermissionsMessage
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
             type = Type.valueOf(buf.readString(32767));
-            dimension = buf.readInt();
+            dimension = new ResourceLocation(buf.readString());
         }
 
         @Nullable
@@ -474,7 +475,7 @@ public class PermissionsMessage
         /**
          * The dimension of the
          */
-        private int dimension;
+        private ResourceLocation dimension;
 
         /**
          * Empty public constructor.
@@ -503,7 +504,7 @@ public class PermissionsMessage
         {
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
-            buf.writeInt(dimension);
+            buf.writeString(dimension.toString());
         }
 
         @Override
@@ -511,7 +512,7 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
-            dimension = buf.readInt();
+            dimension = new ResourceLocation(buf.readString());
         }
 
         @Nullable
