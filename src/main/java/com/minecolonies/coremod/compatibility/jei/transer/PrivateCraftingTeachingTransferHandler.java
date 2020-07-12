@@ -8,12 +8,12 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.TransferRecipeCrafingTeachingMessage;
 import io.netty.buffer.Unpooled;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.gui.ingredient.IGuiIngredient;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
-import mezz.jei.api.recipe.transfer.IRecipeTransferError;
-import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
+//import mezz.jei.api.gui.IRecipeLayout;
+//import mezz.jei.api.gui.ingredient.IGuiIngredient;
+//import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
+//import mezz.jei.api.recipe.transfer.IRecipeTransferError;
+//import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
+//import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
@@ -25,9 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCrafting>
+//todo wait for JEI
+public class PrivateCraftingTeachingTransferHandler //implements IRecipeTransferHandler<ContainerCrafting>
 {
-    private final IRecipeTransferHandlerHelper handlerHelper;
+   /* private final IRecipeTransferHandlerHelper handlerHelper;
 
     public PrivateCraftingTeachingTransferHandler(final IRecipeTransferHandlerHelper handlerHelper)
     {
@@ -129,5 +130,5 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
         }
 
         return null;
-    }
+    }*/
 }

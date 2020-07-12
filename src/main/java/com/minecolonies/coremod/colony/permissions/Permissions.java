@@ -414,10 +414,10 @@ public class Permissions implements IPermissions
     {
         players.remove(getOwner());
 
-        ownerName = player.getName().getFormattedText();
+        ownerName = player.getName().getString();
         ownerUUID = player.getUniqueID();
 
-        players.put(ownerUUID, new Player(ownerUUID, player.getName().getFormattedText(), Rank.OWNER));
+        players.put(ownerUUID, new Player(ownerUUID, player.getName().getString(), Rank.OWNER));
 
         markDirty();
         return true;

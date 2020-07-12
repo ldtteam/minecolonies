@@ -322,7 +322,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             exceptionTimer *= 2;
             if (worker != null)
             {
-                final String name = this.worker.getName().getFormattedText();
+                final String name = this.worker.getName().getString();
                 final BlockPos workerPosition = worker.getPosition();
                 final IJob<?> colonyJob = worker.getCitizenJobHandler().getColonyJob();
                 final String jobName = colonyJob == null ? "null" : colonyJob.getName();

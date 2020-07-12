@@ -176,7 +176,7 @@ public class ColonyPermissionEventHandler
             }
             if (colony.hasTownHall())
             {
-                colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(entity.getUniqueID(), entity.getName().getFormattedText(), action, pos));
+                colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(entity.getUniqueID(), entity.getName().getString(), action, pos));
             }
 
 

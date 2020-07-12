@@ -198,7 +198,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             {
                 worker.swingArm(Hand.MAIN_HAND);
                 worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                trainingPartner.attackEntityFrom(new NamedDamageSource(worker.getName().getFormattedText(), worker), 0.0F);
+                trainingPartner.attackEntityFrom(new NamedDamageSource(worker.getName().getString(), worker), 0.0F);
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
             }
             worker.getNavigator().moveAwayFromXYZ(trainingPartner.getPosition(), 4.0, worker.getAIMoveSpeed());

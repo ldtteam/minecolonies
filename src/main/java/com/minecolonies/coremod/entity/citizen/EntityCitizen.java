@@ -45,6 +45,7 @@ import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
 import net.minecraft.entity.ai.goal.OpenDoorGoal;
@@ -64,10 +65,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.scoreboard.Team;
-import net.minecraft.util.CombatRules;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
@@ -265,24 +263,24 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @return If citizen should interact or not.
      */
     @Override
-    public boolean processInteract(final PlayerEntity player, @NotNull final Hand hand)
+    public ActionResultType func_233661_c_(PlayerEntity player, Hand hand)
     {
         final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.world.func_234923_W_().func_240901_a_());
         if (iColonyView != null && !iColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
-            return false;
+            return ActionResultType.FAIL;
         }
 
         if (!ItemStackUtils.isEmpty(player.getHeldItem(hand)) && player.getHeldItem(hand).getItem() instanceof NameTagItem)
         {
-            return super.processInteract(player, hand);
+            return super.func_233661_c_(player, hand);
         }
 
         if (CompatibilityUtils.getWorldFromCitizen(this).isRemote && iColonyView != null)
         {
             if (player.isSneaking())
             {
-                Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getFormattedText(), this.getEntityId()));
+                Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getString(), this.getEntityId()));
             }
             else
             {
@@ -293,13 +291,13 @@ public class EntityCitizen extends AbstractEntityCitizen
                 }
             }
         }
-        return true;
+        return ActionResultType.SUCCESS;
     }
 
     @Override
     public String getScoreboardName()
     {
-        return getName().getFormattedText() + " (" + getCitizenId() + ")";
+        return getName().getString() + " (" + getCitizenId() + ")";
     }
 
     /**
@@ -599,7 +597,7 @@ public class EntityCitizen extends AbstractEntityCitizen
           getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(WALKING, MultiplierModifierResearchEffect.class);
         if (speedEffect != null)
         {
-            this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED + (BASE_MOVEMENT_SPEED * speedEffect.getEffect()));
+            this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED + (BASE_MOVEMENT_SPEED * speedEffect.getEffect()));
         }
 
         final AdditionModifierResearchEffect healthEffect =
@@ -1511,7 +1509,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 citizenData.getJob().onRemoval();
             }
             citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
-            InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) posX, (int) posY, (int) posZ);
+            InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) serverPosX, (int) serverPosY, (int) serverPosZ);
         }
         super.onDeath(damageSource);
     }
@@ -1578,7 +1576,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 final float blockDamage = CombatRules.getDamageAfterAbsorb(damage * GUARD_BLOCK_DAMAGE,
                   (float) this.getTotalArmorValue(),
-                  (float) this.getAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getValue());
+                  (float) this.getAttribute(Attributes.ARMOR_TOUGHNESS).getValue());
                 setHealth(getHealth() - Math.max(GUARD_BLOCK_DAMAGE, blockDamage));
             }
             citizenItemHandler.damageItemInHand(this.getActiveHand(), (int) (damage * GUARD_BLOCK_DAMAGE));
@@ -1655,7 +1653,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (citizenData != null && citizenColonyHandler.getColony() != null && name != null)
         {
-            if (!name.getFormattedText().contains(citizenData.getName()) && MineColonies.getConfig().getCommon().allowGlobalNameChanges.get() >= 0)
+            if (!name.getString().contains(citizenData.getName()) && MineColonies.getConfig().getCommon().allowGlobalNameChanges.get() >= 0)
             {
                 if (MineColonies.getConfig().getCommon().allowGlobalNameChanges.get() == 0 &&
                       MineColonies.getConfig().getCommon().specialPermGroup.get()
@@ -1671,13 +1669,13 @@ public class EntityCitizen extends AbstractEntityCitizen
                 {
                     for (final ICitizenData citizen : citizenColonyHandler.getColony().getCitizenManager().getCitizens())
                     {
-                        if (citizen.getName().equals(name.getFormattedText()))
+                        if (citizen.getName().equals(name.getString()))
                         {
                             LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntities(), CITIZEN_RENAME_SAME);
                             return;
                         }
                     }
-                    this.citizenData.setName(name.getFormattedText());
+                    this.citizenData.setName(name.getString());
                     this.citizenData.markDirty();
                     super.setCustomName(name);
                 }

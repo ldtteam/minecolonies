@@ -24,7 +24,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -368,7 +368,7 @@ public class CitizenData implements ICitizenData
         citizen.setIsChild(isChild());
         citizen.setCustomName(new StringTextComponent(getName()));
 
-        citizen.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
+        citizen.getAttribute(Attributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
 
         citizen.setFemale(isFemale());
         citizen.setTextureId(getTextureId());

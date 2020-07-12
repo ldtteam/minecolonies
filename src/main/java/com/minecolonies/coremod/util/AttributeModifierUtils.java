@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.util;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
 
 /**
  * Utility class for handling add/removal of attribute modifiers.
@@ -21,9 +21,9 @@ public abstract class AttributeModifierUtils
             return;
         }
 
-        for (final AttributeModifier mod : entity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).func_225505_c_())
+        for (final AttributeModifier mod : entity.getAttribute(Attributes.MAX_HEALTH).func_225505_c_())
         {
-            entity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
+            entity.getAttribute(Attributes.MAX_HEALTH).removeModifier(mod);
         }
 
         if (entity.getHealth() > entity.getMaxHealth())
@@ -45,11 +45,11 @@ public abstract class AttributeModifierUtils
             return;
         }
 
-        for (final AttributeModifier mod : entity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).func_225505_c_())
+        for (final AttributeModifier mod : entity.getAttribute(Attributes.MAX_HEALTH).func_225505_c_())
         {
             if (mod.getName().equals(modifierName))
             {
-                entity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
+                entity.getAttribute(Attributes.MAX_HEALTH).removeModifier(mod);
             }
         }
         if (entity.getHealth() > entity.getMaxHealth())
@@ -74,7 +74,7 @@ public abstract class AttributeModifierUtils
         final float prevHealthPct = entity.getHealth() / entity.getMaxHealth();
 
         removeHealthModifier(entity, modifier.getName());
-        entity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(modifier);
+        entity.getAttribute(Attributes.MAX_HEALTH).func_233767_b_(modifier);
 
         entity.setHealth(entity.getMaxHealth() * prevHealthPct);
     }

@@ -149,7 +149,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
     {
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
                                                                 || stack.getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || stack.getDisplayName().getFormattedText().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
+                                                                || stack.getDisplayName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
         allItems.clear();
         allItems.addAll(getBlockList(filterPredicate));
         updateResourceList();
@@ -202,7 +202,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
             {
                 final ItemStack resource = tempRes.get(index);
                 final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-                resourceLabel.setLabelText(resource.getDisplayName().getFormattedText());
+                resourceLabel.setLabelText(resource.getDisplayName().getString());
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }
         });

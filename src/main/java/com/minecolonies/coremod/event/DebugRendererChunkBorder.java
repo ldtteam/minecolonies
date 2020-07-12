@@ -11,9 +11,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -44,7 +45,7 @@ public class DebugRendererChunkBorder
         }
 
         final World world = Minecraft.getInstance().world;
-        final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
+        final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, new BlockPos(player.getPositionVec()));
 
         if (view == null)
         {

@@ -175,7 +175,7 @@ public class MobEntryView
         {
             return String.format("%s:%d", ForgeRegistries.ENTITIES.getValue(this.location).getTranslationKey(), this.priority);
         }
-        return ForgeRegistries.ENTITIES.getValue(this.location).getName().getFormattedText();
+        return ForgeRegistries.ENTITIES.getValue(this.location).getName().getString();
     }
 
     public EntityType<?> getEntityEntry()

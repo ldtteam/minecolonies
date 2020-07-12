@@ -82,7 +82,7 @@ public class BuildingBuilderResource extends ItemStorage
     public String getName()
     {
         //It is the bet way ?
-        return getItemStack().getDisplayName().getFormattedText();
+        return getItemStack().getDisplayName().getString();
     }
 
     public RessourceAvailability getAvailabilityStatus()

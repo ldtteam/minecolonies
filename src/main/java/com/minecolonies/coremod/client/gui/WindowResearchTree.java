@@ -218,7 +218,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             else if (research.getResearchRequirement() != null && state != ResearchState.FINISHED)
             {
                 final Label requirementLabel = new Label();
-                requirementLabel.setLabelText(research.getResearchRequirement().getDesc().getFormattedText());
+                requirementLabel.setLabelText(research.getResearchRequirement().getDesc().getString());
                 requirementLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() + INITIAL_Y_OFFSET);
                 requirementLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
 
@@ -226,7 +226,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
 
             final Label effectLabel = new Label();
-            effectLabel.setLabelText(research.getEffect().getDesc().getFormattedText());
+            effectLabel.setLabelText(research.getEffect().getDesc().getString());
             effectLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() * 2 + INITIAL_Y_OFFSET + INITIAL_Y_OFFSET);
             effectLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
 

@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.mobs.norsemen;
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
 import com.minecolonies.api.entity.mobs.vikings.INorsemenChiefEntity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.world.World;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
@@ -31,10 +31,10 @@ public class EntityNorsemenChief extends AbstractEntityNorsemen implements INors
     {
         super.initStatsFor(baseHealth, difficulty, baseDamage);
         final double chiefArmor = difficulty * CHIEF_BONUS_ARMOR;
-        this.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(chiefArmor);
+        this.getAttribute(Attributes.ARMOR).setBaseValue(chiefArmor);
         this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage + 1.0);
         this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * 2 * difficulty));
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(baseHealth * 1.5);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth * 1.5);
         this.setHealth(this.getMaxHealth());
     }
 }

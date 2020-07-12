@@ -134,7 +134,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
                 final int j = ExperienceOrbEntity.getXPSplit(experience);
                 experience -= j;
                 CompatibilityUtils.getWorldFromCitizen(citizen)
-                  .addEntity(new ExperienceOrbEntity(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.posX, citizen.posY, citizen.posZ, j));
+                  .addEntity(new ExperienceOrbEntity(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.serverPosX, citizen.serverPosY, citizen.serverPosZ, j));
             }
         }
 
@@ -145,9 +145,9 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             final double d0 = citizen.getRandom().nextGaussian() * 0.02D;
             final double d1 = citizen.getRandom().nextGaussian() * 0.02D;
             CompatibilityUtils.getWorldFromCitizen(citizen).addParticle(ParticleTypes.EXPLOSION,
-              citizen.posX + (citizen.getRandom().nextDouble() * citizen.getWidth() * 2.0F) - (double) citizen.getWidth(),
-              citizen.posY + (citizen.getRandom().nextDouble() * citizen.getHeight()),
-              citizen.posZ + (citizen.getRandom().nextDouble() * citizen.getWidth() * 2.0F) - (double) citizen.getWidth(),
+              citizen.serverPosX + (citizen.getRandom().nextDouble() * citizen.getWidth() * 2.0F) - (double) citizen.getWidth(),
+              citizen.serverPosY + (citizen.getRandom().nextDouble() * citizen.getHeight()),
+              citizen.serverPosZ + (citizen.getRandom().nextDouble() * citizen.getWidth() * 2.0F) - (double) citizen.getWidth(),
               d2,
               d0,
               d1);
@@ -164,7 +164,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
         for (@NotNull final ExperienceOrbEntity orb : citizen.world.getEntitiesWithinAABB(ExperienceOrbEntity.class, citizen.getBoundingBox().grow(2)))
         {
-            Vector3d Vector3d = new Vector3d(citizen.posX - orb.getPosX(), citizen.posY + (double) this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
+            Vector3d Vector3d = new Vector3d(citizen.serverPosX - orb.getPosX(), citizen.serverPosY + (double) this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
             double d1 = Vector3d.lengthSquared();
 
             if (d1 < 1.0D)

@@ -9,12 +9,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.pathfinding.Path;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -149,9 +149,9 @@ public final class Pathfinding
         matrixStack.translate((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
 
         final Entity entity = Minecraft.getInstance().getRenderViewEntity();
-        final double dx = n.pos.getX() - entity.posX;
-        final double dy = n.pos.getY() - entity.posY;
-        final double dz = n.pos.getZ() - entity.posZ;
+        final double dx = n.pos.getX() - entity.serverPosX;
+        final double dy = n.pos.getY() - entity.serverPosY;
+        final double dz = n.pos.getZ() - entity.serverPosZ;
         if (Math.sqrt(dx * dx + dy * dy + dz * dz) <= 5D)
         {
             renderDebugText(n, matrixStack);

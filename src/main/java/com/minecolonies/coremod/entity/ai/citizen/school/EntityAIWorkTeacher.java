@@ -126,7 +126,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
             maxSittingTicks = worker.getRandom().nextInt(jobModifier / 2) + jobModifier / 2;
 
             final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(world);
-            entity.setPosition(worker.posX, worker.posY - 1f, worker.posZ);
+            entity.setPosition(worker.serverPosX, worker.serverPosY - 1f, worker.serverPosZ);
             entity.setMaxLifeTime(maxSittingTicks * 20);
             world.addEntity(entity);
             worker.startRiding(entity);
@@ -142,7 +142,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
         if (worker.ridingEntity != null)
         {
             worker.stopRiding();
-            worker.setPosition(worker.posX, worker.posY + 1, worker.posZ);
+            worker.setPosition(worker.serverPosX, worker.serverPosY + 1, worker.serverPosZ);
         }
 
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), PAPER);

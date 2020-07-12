@@ -143,7 +143,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
 
         if (target != null)
         {
-            attackDist += worker.posY - target.posY;
+            attackDist += worker.serverPosY - target.serverPosY;
         }
 
         return attackDist > MAX_DISTANCE_FOR_RANGED_ATTACK ? MAX_DISTANCE_FOR_RANGED_ATTACK : attackDist;
@@ -330,9 +330,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                     final ArrowEntity arrow = EntityType.ARROW.create(world);
                     arrow.setShooter(worker);
                     arrow.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
-                    final double xVector = target.posX - worker.getPosX();
-                    final double yVector = target.getBoundingBox().minY + target.getHeight() / getAimHeight() - arrow.posY;
-                    final double zVector = target.posZ - worker.getPosZ();
+                    final double xVector = target.serverPosX - worker.getPosX();
+                    final double yVector = target.getBoundingBox().minY + target.getHeight() / getAimHeight() - arrow.serverPosY;
+                    final double zVector = target.serverPosZ - worker.getPosZ();
 
                     final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
                     double damage = getRangedAttackDamage() + extraDamage;
@@ -365,8 +365,8 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                     worker.world.addEntity(arrow);
                 }
 
-                final double xDiff = target.posX - worker.getPosX();
-                final double zDiff = target.posZ - worker.getPosZ();
+                final double xDiff = target.serverPosX - worker.getPosX();
+                final double zDiff = target.serverPosZ - worker.getPosZ();
                 final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
                 final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
                 worker.move(MoverType.SELF, new Vector3d(goToX, 0, goToZ));
@@ -384,7 +384,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                  * It is possible the object is higher than guard and guard can't get there.
                  * Guard will try to back up to get some distance to be able to shoot target.
                  */
-                if (target.posY > worker.getPosY() + Y_VISION + Y_VISION)
+                if (target.serverPosY > worker.getPosY() + Y_VISION + Y_VISION)
                 {
                     fleePath = worker.getNavigator().moveAwayFromLivingEntity(target, 10, getCombatMovementSpeed());
                     fleeing = true;

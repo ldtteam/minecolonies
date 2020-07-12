@@ -506,7 +506,7 @@ public class EventHandler
 
             return;
         }
-        else if ("pmardle".equalsIgnoreCase(event.getPlayer().getName().getFormattedText())
+        else if ("pmardle".equalsIgnoreCase(event.getPlayer().getName().getString())
                    && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof SilverfishBlock)
         {
             LanguageHandler.sendPlayerMessage(event.getPlayer(), "Stop that you twat!!!");

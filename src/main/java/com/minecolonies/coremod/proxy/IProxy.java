@@ -7,6 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeBook;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -115,5 +116,5 @@ public interface IProxy
      * @param dimension the dimension.
      * @return the world.
      */
-    World getWorld(int dimension);
+    World getWorld(ResourceLocation dimension);
 }

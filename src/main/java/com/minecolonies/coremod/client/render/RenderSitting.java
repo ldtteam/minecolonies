@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.render;
 
-import net.minecraft.client.renderer.culling.ClippingHelperImpl;
+import net.minecraft.client.renderer.culling.ClippingHelper;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.Entity;
@@ -25,7 +25,7 @@ public class RenderSitting<T extends Entity> extends EntityRenderer<T>
     }
 
     @Override
-    public boolean shouldRender(T p_225626_1_, ClippingHelperImpl p_225626_2_, double p_225626_3_, double p_225626_5_, double p_225626_7_)
+    public boolean shouldRender(T entity, ClippingHelper clippingHelper, double x, double y, double z)
     {
         return false;
     }

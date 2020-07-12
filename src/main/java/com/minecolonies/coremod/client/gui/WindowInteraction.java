@@ -74,12 +74,12 @@ public class WindowInteraction extends AbstractWindowSkeleton
         final Box group = findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
         int y = 0;
         int x = 0;
-        findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setTextContent(citizen.getName() + ": " + handler.getInquiry().getFormattedText());
+        findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setTextContent(citizen.getName() + ": " + handler.getInquiry().getString());
         for (final ITextComponent component : handler.getPossibleResponses())
         {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-            button.setLabel(component.getFormattedText());
+            button.setLabel(component.getString());
             button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
             button.setTextColor(SLIGHTLY_BLUE);
             button.setPosition(x, y);
@@ -107,7 +107,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
             final IInteractionResponseHandler handler = interactions.get(currentInteraction);
             for (final ITextComponent component : handler.getPossibleResponses())
             {
-                if (component.getFormattedText().equals(button.getLabel()))
+                if (component.getString().equals(button.getLabel()))
                 {
                     if (handler.onClientResponseTriggered(component, Minecraft.getInstance().world, citizen, this))
                     {

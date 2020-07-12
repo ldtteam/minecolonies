@@ -16,7 +16,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.state.properties.Half;
@@ -197,9 +197,9 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public static BlockPos prepareStart(@NotNull final LivingEntity entity)
     {
-        @NotNull final BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.posX),
-          MathHelper.floor(entity.posY),
-          MathHelper.floor(entity.posZ));
+        @NotNull final BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.serverPosX),
+          MathHelper.floor(entity.serverPosY),
+          MathHelper.floor(entity.serverPosZ));
         BlockState bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
         final Block b = bs.getBlock();
 
@@ -220,8 +220,8 @@ public abstract class AbstractPathJob implements Callable<Path>
         else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault || bs.getMaterial().isSolid())
         {
             //Push away from fence
-            final double dX = entity.posX - Math.floor(entity.posX);
-            final double dZ = entity.posZ - Math.floor(entity.posZ);
+            final double dX = entity.serverPosX - Math.floor(entity.serverPosX);
+            final double dZ = entity.serverPosZ - Math.floor(entity.serverPosZ);
 
             if (dX < ONE_SIDE)
             {
@@ -1080,7 +1080,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.NOT_PASSABLE;
         }
 
-        final IFluidState fluid = world.getFluidState(pos);
+        final FluidState fluid = world.getFluidState(pos);
         if (fluid != null && !fluid.isEmpty() && (fluid.getFluid() == Fluids.LAVA || fluid.getFluid() == Fluids.FLOWING_LAVA))
         {
             return SurfaceType.NOT_PASSABLE;

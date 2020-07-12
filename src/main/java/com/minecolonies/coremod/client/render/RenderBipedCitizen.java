@@ -10,8 +10,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -22,6 +20,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -109,17 +110,17 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     @Override
     protected void renderName(
       @NotNull final AbstractEntityCitizen entityIn,
-      @NotNull final String str,
+      @NotNull final ITextComponent str,
       @NotNull final MatrixStack matrixStack,
       @NotNull final IRenderTypeBuffer buffer,
       final int maxDistance)
     {
         super.renderName(entityIn, str, matrixStack, buffer, maxDistance);
 
-        if (entityIn instanceof EntityCitizen && ((EntityCitizen) entityIn).getCitizenDataView() != null && ((EntityCitizen) entityIn).getCitizenDataView()
+        if (entityIn instanceof EntityCitizen && entityIn.getCitizenDataView() != null && entityIn.getCitizenDataView()
                                                                                                               .hasPendingInteractions())
         {
-            double distance = this.renderManager.getDistanceToCamera(entityIn.posX, entityIn.posY, entityIn.posZ);
+            double distance = this.renderManager.getDistanceToCamera(entityIn.serverPosX, entityIn.serverPosY, entityIn.serverPosZ);
             if (distance <= 4096.0D)
             {
                 double yOffset = entityModel.isChild ? -0.8 : 0;

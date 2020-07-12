@@ -178,7 +178,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
                 damageToBeDealt *= 2;
             }
 
-            final DamageSource source = new NamedDamageSource(worker.getName().getFormattedText(), worker);
+            final DamageSource source = new NamedDamageSource(worker.getName().getString(), worker);
             if (MineColonies.getConfig().getCommon().pvp_mode.get() && target instanceof PlayerEntity)
             {
                 source.setDamageBypassesArmor();

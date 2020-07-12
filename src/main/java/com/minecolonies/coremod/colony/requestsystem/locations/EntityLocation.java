@@ -8,7 +8,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +78,7 @@ public class EntityLocation implements ILocation
         }
         else
         {
-            return entity.get().getPosition();
+            return new BlockPos(entity.get().getPositionVec());
         }
     }
 
@@ -86,16 +88,16 @@ public class EntityLocation implements ILocation
      * @return The dimension of the location.
      */
     @Override
-    public int getDimension()
+    public ResourceLocation getDimension()
     {
         checkEntity();
         if (entity == null || entity.get() == null)
         {
-            return 0;
+            return Registry.WORLD_KEY.func_240901_a_();
         }
         else
         {
-            return entity.get().dimension.getId();
+            return entity.get().world.func_234923_W_().func_240901_a_();
         }
     }
 

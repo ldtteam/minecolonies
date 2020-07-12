@@ -12,7 +12,7 @@ public class NonSiblingFormattingTextComponent extends StringTextComponent
     }
 
     @Override
-    public String getFormattedText()
+    public String getString()
     {
         StringBuilder stringbuilder = new StringBuilder();
 

@@ -2,20 +2,21 @@ package com.minecolonies.coremod.compatibility.jei;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.compatibility.jei.transer.PrivateCraftingTeachingTransferHandler;
-import mezz.jei.api.IModPlugin;
-import mezz.jei.api.constants.VanillaRecipeCategoryUid;
-import mezz.jei.api.registration.IModIngredientRegistration;
-import mezz.jei.api.registration.IRecipeCategoryRegistration;
-import mezz.jei.api.registration.IRecipeTransferRegistration;
-import mezz.jei.api.registration.ISubtypeRegistration;
-import mezz.jei.api.runtime.IJeiRuntime;
+//import mezz.jei.api.IModPlugin;
+//import mezz.jei.api.constants.VanillaRecipeCategoryUid;
+//import mezz.jei.api.registration.IModIngredientRegistration;
+//import mezz.jei.api.registration.IRecipeCategoryRegistration;
+//import mezz.jei.api.registration.IRecipeTransferRegistration;
+//import mezz.jei.api.registration.ISubtypeRegistration;
+//import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-@mezz.jei.api.JeiPlugin
-public class JEIPlugin implements IModPlugin
+//todo wait for JEI
+//@mezz.jei.api.JeiPlugin
+public class JEIPlugin //implements IModPlugin
 {
-    @NotNull
+    /*@NotNull
     @Override
     public ResourceLocation getPluginUid()
     {
@@ -50,5 +51,5 @@ public class JEIPlugin implements IModPlugin
     public void onRuntimeAvailable(final IJeiRuntime iJeiRuntime)
     {
 
-    }
+    }*/
 }

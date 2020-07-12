@@ -20,7 +20,7 @@ import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
@@ -88,7 +88,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         if (getCitizen().getCitizenEntity().isPresent())
         {
             final AbstractEntityCitizen worker = getCitizen().getCitizenEntity().get();
-            worker.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+            worker.getAttribute(Attributes.MOVEMENT_SPEED)
               .setBaseValue(
                 BASE_MOVEMENT_SPEED + (getCitizen().getJobModifier()) * BONUS_SPEED_PER_LEVEL);
         }

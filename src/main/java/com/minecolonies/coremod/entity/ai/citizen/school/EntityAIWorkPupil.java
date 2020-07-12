@@ -184,7 +184,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         if (worker.ridingEntity != null)
         {
             worker.stopRiding();
-            worker.setPosition(worker.posX, worker.posY + 1, worker.posZ);
+            worker.setPosition(worker.serverPosX, worker.serverPosY + 1, worker.serverPosZ);
         }
 
         if (slot != -1)

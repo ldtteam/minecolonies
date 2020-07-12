@@ -182,7 +182,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                                                                   || stack.getItemStack().getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                                                                   || stack.getItemStack()
                                                                        .getDisplayName()
-                                                                       .getFormattedText()
+                                                                       .getString()
                                                                        .toLowerCase(Locale.US)
                                                                        .contains(filter.toLowerCase(Locale.US));
 
@@ -196,7 +196,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             allItems.addAll(filterItems.stream().filter(filterPredicate).collect(Collectors.toList()));
         }
 
-        final Comparator<ItemStorage> compareByName = Comparator.comparing((ItemStorage o) -> o.getItemStack().getDisplayName().getFormattedText());
+        final Comparator<ItemStorage> compareByName = Comparator.comparing((ItemStorage o) -> o.getItemStack().getDisplayName().getString());
         final Comparator<ItemStorage> compareByCount = Comparator.comparingInt(ItemStorage::getAmount);
         switch (sortDescriptor)
         {
@@ -251,7 +251,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             {
                 final ItemStorage resource = allItems.get(index);
                 final Label resourceLabel = rowPane.findPaneOfTypeByID("ressourceStackName", Label.class);
-                final String name = resource.getItemStack().getDisplayName().getFormattedText();
+                final String name = resource.getItemStack().getDisplayName().getString();
                 resourceLabel.setLabelText(name.substring(0, Math.min(17, name.length())));
                 final Label qtys = rowPane.findPaneOfTypeByID("quantities", Label.class);
                 qtys.setLabelText(Integer.toString(resource.getAmount()));

@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.io.File;
@@ -21,8 +23,8 @@ public class ServerProxy extends CommonProxy
     }
 
     @Override
-    public World getWorld(final int dimension)
+    public World getWorld(final ResourceLocation dimension)
     {
-        return ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(dimension));
+        return ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.func_240903_a_(Registry.WORLD_KEY, dimension));
     }
 }

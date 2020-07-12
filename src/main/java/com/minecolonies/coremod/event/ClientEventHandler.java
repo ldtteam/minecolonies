@@ -5,7 +5,6 @@ import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structures.client.BlueprintHandler;
 import com.ldtteam.structures.client.StructureClientHandler;
 import com.ldtteam.structures.helpers.Settings;
-import com.ldtteam.structures.lib.BlueprintUtils;
 import com.ldtteam.structurize.Network;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
@@ -18,7 +17,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.MineColonies;
@@ -29,15 +27,14 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -132,7 +129,7 @@ public class ClientEventHandler
             return;
         }
 
-        final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
+        final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(world, new BlockPos(player.getPositionVec()));
         if (colony == null)
         {
             return;
@@ -175,22 +172,12 @@ public class ClientEventHandler
 
                     if (blueprint != null)
                     {
-                        Mirror mirror = buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE;
-
-                        // Note: The following TE-lines are only here as a workaround because the buildingView's isMirrored()
-                        // was set wrongly before. This has since been fixed, but existing buildings still have the wrong mirror set in NBT.
-                        // TODO: In short, these lines should be removed eventually. Maybe for 1.16.
-                        final TileEntity tileEntity = world.getTileEntity(currentPosition);
-                        if (tileEntity instanceof TileEntityColonyBuilding)
-                        {
-                            mirror = ((TileEntityColonyBuilding) tileEntity).isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE;
-                        }
-
+                        final Mirror mirror = buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE;
                         blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()),
                           mirror,
                           world);
 
-                        final BlockPos primaryOffset = BlueprintUtils.getPrimaryBlockOffset(blueprint);
+                        final BlockPos primaryOffset = blueprint.getPrimaryBlockOffset();
                         final BlockPos pos = currentPosition.subtract(primaryOffset);
                         final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
                         final BlockPos renderSize = pos.add(size).subtract(new BlockPos(1, 1, 1));
@@ -238,7 +225,7 @@ public class ClientEventHandler
         final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
         if (Settings.instance.getStructureName() != null && Settings.instance.getStructureName().contains(WAYPOINT_STRING))
         {
-            final IColonyView tempView = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
+            final IColonyView tempView = IColonyManager.getInstance().getClosestColonyView(world, new BlockPos(player.getPositionVec()));
             if (tempView != null)
             {
                 if (wayPointTemplate == null)

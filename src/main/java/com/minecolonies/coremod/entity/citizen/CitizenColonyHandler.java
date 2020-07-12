@@ -208,13 +208,13 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         if (homeBuilding instanceof BuildingHome)
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = homeBuilding.getCorners();
-            return new AxisAlignedBB(corners.getA().getA(), citizen.posY - 1, corners.getB().getA(),
+            return new AxisAlignedBB(corners.getA().getA(), citizen.serverPosY - 1, corners.getB().getA(),
               corners.getA().getB(),
-              citizen.posY + 1,
+              citizen.serverPosY + 1,
               corners.getB().getB()).contains(new Vector3d(citizen.getPosition()));
         }
 
         @Nullable final BlockPos homePosition = citizen.getHomePosition();
-        return homePosition.distanceSq(Math.floor(citizen.posX), citizen.posY, Math.floor(citizen.posZ), false) <= RANGE_TO_BE_HOME;
+        return homePosition.distanceSq(Math.floor(citizen.serverPosX), citizen.serverPosY, Math.floor(citizen.serverPosZ), false) <= RANGE_TO_BE_HOME;
     }
 }

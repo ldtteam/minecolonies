@@ -231,7 +231,7 @@ public class EntityAISleep extends Goal
      */
     private void sleep()
     {
-        Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(citizen.posX, citizen.posY + 1.0d, citizen.posZ), citizen);
+        Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(citizen.serverPosX, citizen.serverPosY + 1.0d, citizen.serverPosZ), citizen);
         //TODO make sleeping noises here.
     }
 

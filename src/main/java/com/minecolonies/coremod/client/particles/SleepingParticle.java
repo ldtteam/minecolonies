@@ -44,9 +44,9 @@ public class SleepingParticle extends SpriteTexturedParticle
         this.prevPosX = xCoordIn;
         this.prevPosY = yCoordIn;
         this.prevPosZ = zCoordIn;
-        this.posX = this.prevPosX;
-        this.posY = this.prevPosY;
-        this.posZ = this.prevPosZ;
+        this.serverPosX = this.prevPosX;
+        this.serverPosY = this.prevPosY;
+        this.serverPosZ = this.prevPosZ;
         // Slight color variance
         float f = this.rand.nextFloat() * 0.6F + 0.4F;
         this.particleRed = 0.9F * f;
@@ -64,9 +64,9 @@ public class SleepingParticle extends SpriteTexturedParticle
 
     public void tick()
     {
-        this.prevPosX = this.posX;
-        this.prevPosY = this.posY;
-        this.prevPosZ = this.posZ;
+        this.prevPosX = this.serverPosX;
+        this.prevPosY = this.serverPosY;
+        this.prevPosZ = this.serverPosZ;
 
         float f = (float) this.age / (float) this.maxAge;
 
@@ -74,9 +74,9 @@ public class SleepingParticle extends SpriteTexturedParticle
         particleScale = (float) ((0.8 * Math.sin(f * 4) + 1.3) * 0.1);
 
         // Moves the particle in relation to movespeed and age
-        this.posX = this.coordX + this.motionX * f;
-        this.posY = this.coordY + this.motionY * f;
-        this.posZ = this.coordZ + this.motionZ * f;
+        this.serverPosX = this.coordX + this.motionX * f;
+        this.serverPosY = this.coordY + this.motionY * f;
+        this.serverPosZ = this.coordZ + this.motionZ * f;
 
         if (this.age++ >= this.maxAge)
         {

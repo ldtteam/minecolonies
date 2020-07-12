@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.mobs.pirates;
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.mobs.pirates.ICaptainPirateEntity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.world.World;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
@@ -30,10 +30,10 @@ public class EntityCaptainPirate extends AbstractEntityPirate implements ICaptai
     public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
     {
         super.initStatsFor(baseHealth, difficulty, baseDamage);
-        this.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(-1);
+        this.getAttribute(Attributes.ARMOR).setBaseValue(-1);
         this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage + 2.0);
         this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * 2 * difficulty));
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(baseHealth * 1.3);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth * 1.3);
         this.setHealth(this.getMaxHealth());
     }
 }

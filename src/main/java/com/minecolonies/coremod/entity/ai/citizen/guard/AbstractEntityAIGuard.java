@@ -268,7 +268,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             sleepTimer = worker.getRandom().nextInt(500) + 2500;
 
             final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(world);
-            entity.setPosition(worker.posX, worker.posY - 1f, worker.posZ);
+            entity.setPosition(worker.serverPosX, worker.serverPosY - 1f, worker.serverPosZ);
             entity.setMaxLifeTime(sleepTimer);
             world.addEntity(entity);
             worker.startRiding(entity);
@@ -287,7 +287,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState sleepParticles()
     {
-        Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(worker.posX, worker.posY + 2.0d, worker.posZ), worker);
+        Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(worker.serverPosX, worker.serverPosY + 2.0d, worker.serverPosZ), worker);
 
         if (worker.getHealth() < worker.getMaxHealth())
         {
@@ -309,15 +309,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             resetTarget();
             worker.setRevengeTarget(null);
             worker.stopRiding();
-            worker.setPosition(worker.posX, worker.posY + 1, worker.posZ);
+            worker.setPosition(worker.serverPosX, worker.serverPosY + 1, worker.serverPosZ);
             worker.getCitizenExperienceHandler().addExperience(1);
             return GUARD_DECIDE;
         }
 
         worker.getLookController()
-          .setLookPosition(worker.posX + worker.getHorizontalFacing().getXOffset(),
-            worker.posY + worker.getHorizontalFacing().getYOffset(),
-            worker.posZ + worker.getHorizontalFacing().getZOffset(),
+          .setLookPosition(worker.serverPosX + worker.getHorizontalFacing().getXOffset(),
+            worker.serverPosY + worker.getHorizontalFacing().getYOffset(),
+            worker.serverPosZ + worker.getHorizontalFacing().getZOffset(),
             0f,
             30f);
         return null;

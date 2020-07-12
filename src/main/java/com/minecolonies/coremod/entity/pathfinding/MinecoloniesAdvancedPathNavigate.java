@@ -18,7 +18,7 @@ import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
@@ -29,6 +29,7 @@ import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -113,7 +114,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           start,
           avoid,
           (int) range,
-          (int) ourEntity.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getValue(),
+          (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
           ourEntity), null, speed);
     }
 
@@ -221,7 +222,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           new PathJobMoveToLocation(CompatibilityUtils.getWorldFromEntity(ourEntity),
             start,
             dest,
-            (int) ourEntity.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getValue(),
+            (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
             ourEntity),
           dest, speed);
     }
@@ -264,7 +265,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     ourEntity.stopRiding();
                 }
             }
-            else if ((Math.abs(pEx.x - entity.posX) > 7 || Math.abs(pEx.z - entity.posZ) > 7) && ourEntity.ridingEntity != null)
+            else if ((Math.abs(pEx.x - entity.serverPosX) > 7 || Math.abs(pEx.z - entity.serverPosZ) > 7) && ourEntity.ridingEntity != null)
             {
                 final Entity entity = ourEntity.ridingEntity;
                 ourEntity.stopRiding();
@@ -278,7 +279,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     protected Vector3d getEntityPosition()
     {
-        return this.ourEntity.getPositionVector();
+        return this.ourEntity.getPositionVec();
     }
 
     @Override
@@ -347,7 +348,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     public boolean tryMoveToEntityLiving(final Entity entityIn, final double speedIn)
     {
-        return tryMoveToBlockPos(entityIn.getPosition(), speedIn);
+        return tryMoveToBlockPos(new BlockPos(entityIn.getPositionVec()), speedIn);
     }
 
     // Removes stupid vanilla stuff, causing our pathpoints to occasionally be replaced by vanilla ones.
@@ -453,7 +454,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
             }
 
-            if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || entity.posY > pEx.y))
+            if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || entity.serverPosY > pEx.y))
             {
                 return handlePathPointOnLadder(pEx);
             }
@@ -463,7 +464,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
             else
             {
-                if (WorkerUtil.isPathBlock(world.getBlockState(ourEntity.getPosition().down()).getBlock()))
+                if (WorkerUtil.isPathBlock(world.getBlockState(new BlockPos(ourEntity.getPositionVec()).down()).getBlock()))
                 {
                     speed = ON_PATH_SPEED_MULTIPLIER * getSpeed();
                 }
@@ -590,8 +591,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private boolean handlePathPointOnLadder(final PathPointExtended pEx)
     {
         Vector3d vec3 = this.getPath().getPosition(this.ourEntity);
-
-        if (vec3.squareDistanceTo(ourEntity.posX, vec3.y, ourEntity.posZ) < Math.random() * 0.1)
+        final BlockPos entityPos = new BlockPos(this.ourEntity.getPositionVec());
+        if (vec3.squareDistanceTo(ourEntity.serverPosX, vec3.y, ourEntity.serverPosZ) < Math.random() * 0.1)
         {
             //This way he is less nervous and gets up the ladder
             double newSpeed = 0.05;
@@ -626,7 +627,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
             else
             {
-                if (world.getBlockState(ourEntity.getPosition().down()).isLadder(world, ourEntity.getPosition().down(), ourEntity))
+                if (world.getBlockState(entityPos.down()).isLadder(world, entityPos.down(), ourEntity))
                 {
                     this.ourEntity.setMoveVertical(-0.5f);
                 }
@@ -656,8 +657,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         Vector3d Vector3d = this.getPath().getPosition(this.ourEntity);
 
-        if (Vector3d.squareDistanceTo(new Vector3d(ourEntity.posX, Vector3d.y, ourEntity.posZ)) < 0.1
-              && Math.abs(ourEntity.posY - Vector3d.y) < 0.5)
+        if (Vector3d.squareDistanceTo(new Vector3d(ourEntity.serverPosX, Vector3d.y, ourEntity.serverPosZ)) < 0.1
+              && Math.abs(ourEntity.serverPosY - Vector3d.y) < 0.5)
         {
             this.getPath().incrementPathIndex();
             if (this.noPath())
@@ -760,21 +761,21 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         if (this.currentPath != null && !this.currentPath.isFinished())
         {
-            Vector3d Vector3d = this.currentPath.getCurrentPos();
-            if (Vector3d.equals(this.timeoutCachedNode))
+            Vector3i vec = this.currentPath.getCurrentPos();
+            if (vec.equals(this.timeoutCachedNode))
             {
                 this.timeoutTimer += Util.milliTime() - this.lastTimeoutCheck;
             }
             else
             {
-                this.timeoutCachedNode = Vector3d;
-                double d0 = positionVec3.distanceTo(this.timeoutCachedNode);
+                this.timeoutCachedNode = vec;
+                double d0 = positionVec3.distanceTo(new Vector3d(this.timeoutCachedNode.getX(), this.timeoutCachedNode.getY(), this.timeoutCachedNode.getZ()));
                 this.timeoutLimit = (this.entity.getAIMoveSpeed() > 0.0F ? d0 / (double) this.entity.getAIMoveSpeed() * 1000.0D : 0.0D) * 25;
             }
 
             if (this.timeoutLimit > 0.0D && (double) this.timeoutTimer > this.timeoutLimit * 3.0D)
             {
-                this.timeoutCachedNode = Vector3d.ZERO;
+                this.timeoutCachedNode = Vector3i.NULL_VECTOR;
                 this.timeoutTimer = 0L;
                 this.timeoutLimit = 0.0D;
                 this.clearPath();
@@ -866,7 +867,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         @NotNull BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         final BlockPos buildingPos = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getPosition();
 
-        if (BlockPosUtil.getDistance2D(buildingPos, entity.getPosition()) > range * 4)
+        if (BlockPosUtil.getDistance2D(buildingPos, ((AbstractEntityCitizen) entity).getPosition()) > range * 4)
         {
             start = buildingPos;
         }
@@ -885,7 +886,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Nullable
     public PathResult moveToLivingEntity(@NotNull final Entity e, final double speed)
     {
-        return moveToXYZ(e.posX, e.posY, e.posZ, speed);
+        return moveToXYZ(e.serverPosX, e.serverPosY, e.serverPosZ, speed);
     }
 
     /**
@@ -899,7 +900,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Nullable
     public PathResult moveAwayFromLivingEntity(@NotNull final Entity e, final double distance, final double speed)
     {
-        return moveAwayFromXYZ(e.getPosition(), distance, speed);
+        return moveAwayFromXYZ(new BlockPos(e.getPositionVec()), distance, speed);
     }
 
     @Override

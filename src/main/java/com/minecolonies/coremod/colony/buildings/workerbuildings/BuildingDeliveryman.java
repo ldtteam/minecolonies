@@ -24,7 +24,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PickupRequestResolver;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -142,7 +142,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         if (citizen != null)
         {
             final Optional<AbstractEntityCitizen> optCitizen = citizen.getCitizenEntity();
-            optCitizen.ifPresent(entityCitizen -> entityCitizen.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+            optCitizen.ifPresent(entityCitizen -> entityCitizen.getAttribute(Attributes.MOVEMENT_SPEED)
                                                     .setBaseValue(BASE_MOVEMENT_SPEED));
         }
         super.removeCitizen(citizen);

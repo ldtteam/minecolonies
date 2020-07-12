@@ -66,7 +66,7 @@ public class WindowHutPlantation extends AbstractWindowWorkerBuilding<BuildingPl
     {
         if (building.getCurrentPhase() != null)
         {
-            plantSettingsButton.setLabel(new ItemStack(building.getCurrentPhase()).getDisplayName().getFormattedText());
+            plantSettingsButton.setLabel(new ItemStack(building.getCurrentPhase()).getDisplayName().getString());
         }
     }
 

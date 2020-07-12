@@ -53,8 +53,8 @@ public class CitizenChatHandler implements ICitizenChatHandler
                   "block.blockhuttownhall.messageworkerdead",
                   new TranslationTextComponent(job.getName().toLowerCase()),
                   citizen.getCitizenData().getName(),
-                  (int) citizen.posX, (int) citizen.posY,
-                  (int) citizen.posZ, new TranslationTextComponent(damageSource.damageType));
+                  (int) citizen.serverPosX, (int) citizen.serverPosY,
+                  (int) citizen.serverPosZ, new TranslationTextComponent(damageSource.damageType));
                 LanguageHandler.sendPlayersMessage(citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "", component);
             }
             else
@@ -62,8 +62,8 @@ public class CitizenChatHandler implements ICitizenChatHandler
                 LanguageHandler.sendPlayersMessage(
                   citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "",
                   new TranslationTextComponent("block.blockhuttownhall.messagecolonistdead",
-                    citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY,
-                    (int) citizen.posZ, new TranslationTextComponent(damageSource.damageType)));
+                    citizen.getCitizenData().getName(), (int) citizen.serverPosX, (int) citizen.serverPosY,
+                    (int) citizen.serverPosZ, new TranslationTextComponent(damageSource.damageType)));
             }
         }
     }
@@ -88,7 +88,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
             requiredItem = new TranslationTextComponent(key, msg);
         }
 
-        final ITextComponent citizenDescription = new StringTextComponent(citizen.getCustomName().getFormattedText());
+        final ITextComponent citizenDescription = new StringTextComponent(citizen.getCustomName().getString());
         if (citizen.getCitizenColonyHandler().getColony() != null)
         {
             final StringTextComponent colonyDescription = new StringTextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ": ");

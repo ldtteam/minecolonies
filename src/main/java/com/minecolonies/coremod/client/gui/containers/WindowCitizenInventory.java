@@ -74,7 +74,7 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
     protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
     {
         this.font.drawString(this.container.getDisplayName(), 8, 6, 4210752);
-        this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8, 20 + this.inventoryRows * SLOT_OFFSET, 4210752);
+        this.font.drawString(this.playerInventory.getDisplayName().getString(), 8, 20 + this.inventoryRows * SLOT_OFFSET, 4210752);
     }
 
     /**

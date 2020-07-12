@@ -180,7 +180,7 @@ public class Tag implements IDeliverable
     @Override
     public int hashCode()
     {
-        int result1 = getTag();
+        int result1 = ItemTags.getCollection().func_232975_b_(getTag()).toString().hashCode();
         result1 = 31 * result1 + getResult().hashCode();
         return result1;
     }
@@ -195,7 +195,7 @@ public class Tag implements IDeliverable
     public static CompoundNBT serialize(final IFactoryController controller, final Tag input)
     {
         final CompoundNBT compound = new CompoundNBT();
-        compound.putString(NBT_TAG, input.getTag().getId().toString());
+        compound.putString(NBT_TAG, ItemTags.getCollection().func_232975_b_(input.getTag()).toString());
         if (!ItemStackUtils.isEmpty(input.getResult()))
         {
             compound.put(NBT_RESULT, input.getResult().serializeNBT());
@@ -207,7 +207,7 @@ public class Tag implements IDeliverable
 
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Tag input)
     {
-        buffer.writeString(input.getTag().getId().toString());
+        buffer.writeString(ItemTags.getCollection().func_232975_b_(input.getTag()).toString());
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.getResult()));
 
         if (!ItemStackUtils.isEmpty(input.getResult()))

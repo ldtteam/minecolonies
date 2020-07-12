@@ -40,9 +40,10 @@ import com.minecolonies.coremod.network.messages.server.colony.building.worker.R
 import com.minecolonies.coremod.network.messages.server.colony.citizen.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -276,9 +277,9 @@ public class NetworkChannel
      * @param msg message to send
      * @param dim target dimension
      */
-    public void sendToDimension(final IMessage msg, final DimensionType dim)
+    public void sendToDimension(final IMessage msg, final ResourceLocation dim)
     {
-        rawChannel.send(PacketDistributor.DIMENSION.with(() -> dim), msg);
+        rawChannel.send(PacketDistributor.DIMENSION.with(() -> RegistryKey.func_240903_a_(Registry.WORLD_KEY, dim)), msg);
     }
 
     /**

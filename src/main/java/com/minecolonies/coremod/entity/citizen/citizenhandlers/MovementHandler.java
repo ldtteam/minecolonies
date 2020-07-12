@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.pathfinding.NodeProcessor;
 import net.minecraft.pathfinding.PathNavigator;
@@ -29,7 +29,7 @@ public class MovementHandler extends MovementController
     {
         if (this.action == net.minecraft.entity.ai.controller.MovementController.Action.STRAFE)
         {
-            final float speedAtt = (float) this.mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue();
+            final float speedAtt = (float) this.mob.getAttribute(Attributes.MOVEMENT_SPEED).getValue();
             float speed = (float) this.speed * speedAtt;
             float forward = this.moveForward;
             float strafe = this.moveStrafe;
@@ -50,9 +50,9 @@ public class MovementHandler extends MovementController
 
             final NodeProcessor nodeprocessor = pathnavigator.getNodeProcessor();
             if (nodeprocessor.getPathNodeType(this.mob.world,
-              MathHelper.floor(this.mob.posX + (double) rot1),
-              MathHelper.floor(this.mob.posY),
-              MathHelper.floor(this.mob.posZ + (double) rot2)) != PathNodeType.WALKABLE)
+              MathHelper.floor(this.mob.serverPosX + (double) rot1),
+              MathHelper.floor(this.mob.serverPosY),
+              MathHelper.floor(this.mob.serverPosZ + (double) rot2)) != PathNodeType.WALKABLE)
             {
                 this.moveForward = 1.0F;
                 this.moveStrafe = 0.0F;
@@ -67,9 +67,9 @@ public class MovementHandler extends MovementController
         else if (this.action == net.minecraft.entity.ai.controller.MovementController.Action.MOVE_TO)
         {
             this.action = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
-            final double xDif = this.posX - this.mob.posX;
-            final double zDif = this.posZ - this.mob.posZ;
-            final double yDif = this.posY - this.mob.posY;
+            final double xDif = this.serverPosX - this.mob.serverPosX;
+            final double zDif = this.serverPosZ - this.mob.serverPosZ;
+            final double yDif = this.serverPosY - this.mob.serverPosY;
             final double dist = xDif * xDif + yDif * yDif + zDif * zDif;
             if (dist < (double) 2.5000003E-7F)
             {
@@ -79,13 +79,13 @@ public class MovementHandler extends MovementController
 
             final float range = (float) (MathHelper.atan2(zDif, xDif) * (double) (180F / (float) Math.PI)) - 90.0F;
             this.mob.rotationYaw = this.limitAngle(this.mob.rotationYaw, range, 90.0F);
-            this.mob.setAIMoveSpeed((float) (this.speed * this.mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue()));
-            final BlockPos blockpos = new BlockPos(this.mob);
+            this.mob.setAIMoveSpeed((float) (this.speed * this.mob.getAttribute(Attributes.MOVEMENT_SPEED).getValue()));
+            final BlockPos blockpos = new BlockPos(this.mob.getPositionVec());
             final BlockState blockstate = this.mob.world.getBlockState(blockpos);
             final Block block = blockstate.getBlock();
             final VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.world, blockpos);
             if ((yDif > (double) this.mob.stepHeight && xDif * xDif + zDif * zDif < (double) Math.max(1.0F, this.mob.getWidth()))
-                  || (!voxelshape.isEmpty() && this.mob.posY < voxelshape.getEnd(Direction.Axis.Y) + (double) blockpos.getY() && !block.isIn(BlockTags.DOORS) && !block.isIn(
+                  || (!voxelshape.isEmpty() && this.mob.serverPosY < voxelshape.getEnd(Direction.Axis.Y) + (double) blockpos.getY() && !block.isIn(BlockTags.DOORS) && !block.isIn(
               BlockTags.FENCES))
                        && !block.isLadder(blockstate, this.mob.world, blockpos, this.mob))
             {
@@ -96,12 +96,12 @@ public class MovementHandler extends MovementController
         else if (this.action == net.minecraft.entity.ai.controller.MovementController.Action.JUMPING)
         {
             //TODO we're using setAIMoveSpeed manually which gets overridden here and above
-            this.mob.setAIMoveSpeed((float) (this.speed * this.mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue()));
+            this.mob.setAIMoveSpeed((float) (this.speed * this.mob.getAttribute(Attributes.MOVEMENT_SPEED).getValue()));
 
             // Avoid beeing stuck in jumping while in liquids
-            final BlockPos blockpos = new BlockPos(this.mob);
+            final BlockPos blockpos = new BlockPos(this.mob.getPositionVec());
             final BlockState blockstate = this.mob.world.getBlockState(blockpos);
-            if (this.mob.onGround || blockstate.getMaterial().isLiquid())
+            if (this.mob.func_233570_aj_() || blockstate.getMaterial().isLiquid())
             {
                 this.action = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
             }

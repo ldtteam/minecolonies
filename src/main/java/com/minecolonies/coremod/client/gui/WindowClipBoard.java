@@ -21,7 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -137,10 +137,10 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             }
 
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-              .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText());
+              .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getString());
 
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-              .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
+              .setLabelText(request.getShortDisplayString().getString().replace("§f", ""));
         });
     }
 
@@ -174,9 +174,9 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         requests.addAll(requestTokens.stream().map(requestManager::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
 
-        final BlockPos playerPos = Minecraft.getInstance().player.getPosition();
+        final BlockPos playerPos = new BlockPos(Minecraft.getInstance().player.getPositionVec());
         requests.sort(Comparator.comparing((IRequest<?> request) -> request.getRequester().getLocation().getInDimensionLocation()
-                                                                      .distanceSq(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
+                                                                      .distanceSq(new Vector3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
                         .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));
 
         return ImmutableList.copyOf(requests);

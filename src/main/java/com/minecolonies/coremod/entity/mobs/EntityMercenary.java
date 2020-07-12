@@ -20,6 +20,8 @@ import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavig
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -161,10 +163,10 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
         final ItemStack boots = new ItemStack(Items.CHAINMAIL_BOOTS, 1);
         this.setItemStackToSlot(EquipmentSlotType.FEET, boots);
 
-        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3);
+        this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3);
 
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(60);
         this.setHealth(this.getMaxHealth());
 
         stateMachine = new TickRateStateMachine<>(EntityMercenaryAI.State.INIT, this::handleStateException);
@@ -259,6 +261,15 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     }
 
     /**
+     * Get the blockpos pos.
+     * @return a blockpos.
+     */
+    private BlockPos getPosition()
+    {
+        return new BlockPos(this.getPositionVec());
+    }
+
+    /**
      * Toggles the spawn event on after initializing
      */
     public void setDoSpawnEvent()
@@ -331,11 +342,14 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
         //Does not need to register.
     }
 
-    @Override
-    protected void registerAttributes()
+    /**
+     * Get the default attributes with their values.
+     * @return the attribute modifier map.
+     */
+    public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
     {
-        super.registerAttributes();
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+        return LivingEntity.registerAttributes()
+                 .func_233815_a_(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue());
     }
 
     @Override

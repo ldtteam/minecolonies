@@ -36,7 +36,7 @@ public class CommandWhoAmI implements IMCCommand
 
         final BlockPos pos = colony.getCenter();
         final String colonyName = colony.getName();
-        final String playerName = sender.getDisplayName().getFormattedText();
+        final String playerName = sender.getDisplayName().getString();
         final String posString = "x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ();
         LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.whoami.hascolony", playerName, colonyName, colony.getID(), posString);
         return 1;

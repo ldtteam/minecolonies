@@ -24,12 +24,14 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -246,7 +248,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             // Note: getCurrentServer().getWorld() must be used here because MineColonies.proxy.getWorld() fails on single player worlds
             // We are sure we are on the server-side in this function though, so it's fine.
             final IGuardBuilding building =
-              getGuardBuilding(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(guardTowerLocation.getDimension())),
+              getGuardBuilding(ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.func_240903_a_(Registry.WORLD_KEY, guardTowerLocation.getDimension())),
                 guardTowerLocation.getInDimensionLocation());
 
             // If the building is null, it means that guardtower has been moved/destroyed since being added.
@@ -458,26 +460,26 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     public void addInformation(
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
-        final ITextComponent guiHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_GUI);
-        guiHint.setStyle(new Style().setColor(TextFormatting.GRAY));
+        final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_GUI);
+        guiHint.func_230530_a_(Style.EMPTY.setFormatting(TextFormatting.GRAY));
         tooltip.add(guiHint);
 
-        final ITextComponent rallyHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_RALLY);
-        rallyHint.setStyle(new Style().setColor(TextFormatting.GRAY));
+        final IFormattableTextComponent rallyHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_RALLY);
+        rallyHint.func_230530_a_(Style.EMPTY.setFormatting(TextFormatting.GRAY));
         tooltip.add(rallyHint);
 
         final List<ILocation> guardTowerPositions = getGuardTowerLocations(stack);
 
         if (guardTowerPositions.isEmpty())
         {
-            final ITextComponent emptyTooltip = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
-            emptyTooltip.setStyle(new Style().setColor(TextFormatting.GRAY));
+            final IFormattableTextComponent emptyTooltip = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
+            emptyTooltip.func_230530_a_(Style.EMPTY.setFormatting(TextFormatting.GRAY));
             tooltip.add(emptyTooltip);
         }
         else
         {
-            final ITextComponent numGuardTowers = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP, guardTowerPositions.size());
-            numGuardTowers.setStyle(new Style().setItalic(true).setColor(TextFormatting.DARK_AQUA));
+            final IFormattableTextComponent numGuardTowers = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP, guardTowerPositions.size());
+            numGuardTowers.func_230530_a_(Style.EMPTY.setFormatting(TextFormatting.DARK_AQUA));
             tooltip.add(numGuardTowers);
         }
 

@@ -325,9 +325,9 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 }
 
                 rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                  .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText());
+                  .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getString());
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-                  .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
+                  .setLabelText(request.getShortDisplayString().getString().replace("§f", ""));
 
                 if (!cancellable(request))
                 {
