@@ -231,7 +231,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
      */
     public int getMaximumHives()
     {
-        return (int) Math.floor(Math.pow(2, getBuildingLevel()));
+        return (int) Math.floor(Math.pow(2, getBuildingLevel() - 1));
     }
 
     public static class View extends AbstractBuildingWorker.View
