@@ -119,7 +119,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
         if (isRecipeAllowed.isPresent())
         {
             return matchOverride || isRecipeAllowed.get();
-        } 
+        }
         else
         {
             return matchOverride;
