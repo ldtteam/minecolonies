@@ -120,7 +120,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         if (entityIn instanceof EntityCitizen && entityIn.getCitizenDataView() != null && entityIn.getCitizenDataView()
                                                                                                               .hasPendingInteractions())
         {
-            double distance = this.renderManager.getDistanceToCamera(entityIn.serverPosX, entityIn.serverPosY, entityIn.serverPosZ);
+            double distance = this.renderManager.getDistanceToCamera(entityIn.getPosX(), entityIn.getPosY(), entityIn.getPosZ());
             if (distance <= 4096.0D)
             {
                 double yOffset = entityModel.isChild ? -0.8 : 0;

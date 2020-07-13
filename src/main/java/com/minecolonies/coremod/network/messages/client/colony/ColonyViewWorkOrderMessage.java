@@ -42,6 +42,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     {
         this.colonyId = colony.getID();
         this.workOrderBuffer = new PacketBuffer(Unpooled.buffer());
+        this.dimension = colony.getDimension();
 
         workOrderBuffer.writeInt(workOrderList.size());
         for (final IWorkOrder workOrder : workOrderList)

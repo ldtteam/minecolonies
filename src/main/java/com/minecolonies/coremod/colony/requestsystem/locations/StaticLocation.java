@@ -179,9 +179,9 @@ public class StaticLocation implements ILocation
                 throw new IllegalArgumentException("Unsupported context - Not the correct amount available. Needed is 1!");
             }
 
-            if (!(context[0] instanceof Integer))
+            if (!(context[0] instanceof ResourceLocation))
             {
-                throw new IllegalArgumentException("Unsupported context - First context object is not a Integer. Provide an Integer as Dimension.");
+                throw new IllegalArgumentException("Unsupported context - First context object is not a ResourceLocation. Provide an ResourceLocation as Dimension.");
             }
 
             return new StaticLocation(blockPos, World.field_234918_g_.func_240901_a_());

@@ -113,7 +113,7 @@ public interface IColony
      */
     default String getTeamName()
     {
-        return TEAM_COLONY_NAME + "_" + getDimension() + "_" + getID();
+        return TEAM_COLONY_NAME + "_" + getDimension().getPath() + "_" + getID();
     }
 
     /**

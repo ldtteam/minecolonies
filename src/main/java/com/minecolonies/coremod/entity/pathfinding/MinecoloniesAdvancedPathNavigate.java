@@ -265,7 +265,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     ourEntity.stopRiding();
                 }
             }
-            else if ((Math.abs(pEx.x - entity.serverPosX) > 7 || Math.abs(pEx.z - entity.serverPosZ) > 7) && ourEntity.ridingEntity != null)
+            else if ((Math.abs(pEx.x - entity.getPosX()) > 7 || Math.abs(pEx.z - entity.getPosZ()) > 7) && ourEntity.ridingEntity != null)
             {
                 final Entity entity = ourEntity.ridingEntity;
                 ourEntity.stopRiding();
@@ -454,7 +454,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
             }
 
-            if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || entity.serverPosY > pEx.y))
+            if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || entity.getPosY() > pEx.y))
             {
                 return handlePathPointOnLadder(pEx);
             }
@@ -592,7 +592,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         Vector3d vec3 = this.getPath().getPosition(this.ourEntity);
         final BlockPos entityPos = new BlockPos(this.ourEntity.getPositionVec());
-        if (vec3.squareDistanceTo(ourEntity.serverPosX, vec3.y, ourEntity.serverPosZ) < Math.random() * 0.1)
+        if (vec3.squareDistanceTo(ourEntity.getPosX(), vec3.y, ourEntity.getPosZ()) < Math.random() * 0.1)
         {
             //This way he is less nervous and gets up the ladder
             double newSpeed = 0.05;
@@ -657,8 +657,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         Vector3d Vector3d = this.getPath().getPosition(this.ourEntity);
 
-        if (Vector3d.squareDistanceTo(new Vector3d(ourEntity.serverPosX, Vector3d.y, ourEntity.serverPosZ)) < 0.1
-              && Math.abs(ourEntity.serverPosY - Vector3d.y) < 0.5)
+        if (Vector3d.squareDistanceTo(new Vector3d(ourEntity.getPosX(), Vector3d.y, ourEntity.getPosZ())) < 0.1
+              && Math.abs(ourEntity.getPosY() - Vector3d.y) < 0.5)
         {
             this.getPath().incrementPathIndex();
             if (this.noPath())
@@ -886,7 +886,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Nullable
     public PathResult moveToLivingEntity(@NotNull final Entity e, final double speed)
     {
-        return moveToXYZ(e.serverPosX, e.serverPosY, e.serverPosZ, speed);
+        return moveToXYZ(e.getPosX(), e.getPosY(), e.getPosZ(), speed);
     }
 
     /**

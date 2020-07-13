@@ -100,9 +100,9 @@ public class CreateColonyMessage implements IMessage
             style = ((AbstractTileEntityColonyBuilding) tileEntity).getStyle();
         }
 
-
-        BlockPos blockpos = ((ServerWorld) world).func_241117_a_(Structure.field_236381_q_, townHall, MineColonies.getConfig().getCommon().minColonyDistance.get() * BLOCKS_PER_CHUNK, false);
-        if (blockpos != null)
+        final int distance = MineColonies.getConfig().getCommon().minColonyDistance.get() * BLOCKS_PER_CHUNK;
+        BlockPos blockpos = ((ServerWorld) world).func_241117_a_(Structure.field_236381_q_, townHall, distance, false);
+        if (MineColonies.getConfig().getCommon().protectVillages.get() && blockpos != null && blockpos.withinDistance(townHall, distance))
         {
             Log.getLogger().warn("Village close by!");
             LanguageHandler.sendPlayerMessage(sender, "block.blockhuttownhall.messagetooclosetovillage");

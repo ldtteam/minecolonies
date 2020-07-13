@@ -121,9 +121,9 @@ public class EntityAIMournCitizen extends Goal
             closestEntity = this.citizen.world.getClosestEntityWithinAABB(EntityCitizen.class,
               EntityPredicate.DEFAULT,
               citizen,
-              citizen.serverPosX,
-              citizen.serverPosY,
-              citizen.serverPosZ,
+              citizen.getPosX(),
+              citizen.getPosY(),
+              citizen.getPosZ(),
               citizen.getBoundingBox().grow(maxDistanceForPlayer, 3.0D, maxDistanceForPlayer));
             if (closestEntity == null)
             {
@@ -270,12 +270,12 @@ public class EntityAIMournCitizen extends Goal
 
         if (continueLooking && closestEntity != null)
         {
-            citizen.getLookController().setLookPosition(closestEntity.serverPosX, closestEntity.serverPosY + (double) closestEntity.getEyeHeight(),
-              closestEntity.serverPosZ, (float) citizen.getHorizontalFaceSpeed(), (float) citizen.getVerticalFaceSpeed());
+            citizen.getLookController().setLookPosition(closestEntity.getPosX(), closestEntity.getPosY() + (double) closestEntity.getEyeHeight(),
+              closestEntity.getPosZ(), (float) citizen.getHorizontalFaceSpeed(), (float) citizen.getVerticalFaceSpeed());
         }
         else
         {
-            citizen.getLookController().setLookPosition(citizen.serverPosX, citizen.serverPosY - 10, citizen.serverPosZ, (float) citizen.getHorizontalFaceSpeed(),
+            citizen.getLookController().setLookPosition(citizen.getPosX(), citizen.getPosY() - 10, citizen.getPosZ(), (float) citizen.getHorizontalFaceSpeed(),
               (float) citizen.getVerticalFaceSpeed());
         }
         super.tick();

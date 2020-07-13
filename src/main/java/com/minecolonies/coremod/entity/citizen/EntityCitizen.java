@@ -1510,7 +1510,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 citizenData.getJob().onRemoval();
             }
             citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
-            InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) serverPosX, (int) serverPosY, (int) serverPosZ);
+            InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
         }
         super.onDeath(damageSource);
     }

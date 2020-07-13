@@ -114,7 +114,7 @@ public class EntityAIGateInteract extends Goal
             for (int level = 0; level < HEIGHT_TO_CHECK; level++)
             {
                 this.gatePosition = new BlockPos(pathpoint.x, pathpoint.y + level, pathpoint.z);
-                if (this.theEntity.getDistanceSq((double) this.gatePosition.getX(), this.theEntity.serverPosY, (double) this.gatePosition.getZ()) <= MIN_DISTANCE)
+                if (this.theEntity.getDistanceSq((double) this.gatePosition.getX(), this.theEntity.getPosY(), (double) this.gatePosition.getZ()) <= MIN_DISTANCE)
                 {
                     this.gateBlock = this.getBlockFence(this.gatePosition);
                     if (this.gateBlock != null)
@@ -166,8 +166,8 @@ public class EntityAIGateInteract extends Goal
     public void startExecuting()
     {
         this.hasStoppedFenceInteraction = false;
-        this.entityPositionX = this.gatePosition.getX() + HALF_BLOCK - this.theEntity.serverPosX;
-        this.entityPositionZ = this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.serverPosZ;
+        this.entityPositionX = this.gatePosition.getX() + HALF_BLOCK - this.theEntity.getPosX();
+        this.entityPositionZ = this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.getPosZ();
     }
 
     /**
@@ -176,8 +176,8 @@ public class EntityAIGateInteract extends Goal
     @Override
     public void tick()
     {
-        final double entityDistX = this.gatePosition.getX() + HALF_BLOCK - this.theEntity.serverPosX;
-        final double entityDistZ = this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.serverPosZ;
+        final double entityDistX = this.gatePosition.getX() + HALF_BLOCK - this.theEntity.getPosX();
+        final double entityDistZ = this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.getPosZ();
         final double totalDist = this.entityPositionX * entityDistX + this.entityPositionZ * entityDistZ;
         if (totalDist < 0.0D)
         {

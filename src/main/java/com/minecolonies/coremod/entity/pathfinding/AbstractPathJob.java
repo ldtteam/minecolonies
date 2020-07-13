@@ -197,9 +197,9 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public static BlockPos prepareStart(@NotNull final LivingEntity entity)
     {
-        @NotNull final BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.serverPosX),
-          MathHelper.floor(entity.serverPosY),
-          MathHelper.floor(entity.serverPosZ));
+        @NotNull final BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.getPosX()),
+          MathHelper.floor(entity.getPosY()),
+          MathHelper.floor(entity.getPosZ()));
         BlockState bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
         final Block b = bs.getBlock();
 
@@ -220,8 +220,8 @@ public abstract class AbstractPathJob implements Callable<Path>
         else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault || bs.getMaterial().isSolid())
         {
             //Push away from fence
-            final double dX = entity.serverPosX - Math.floor(entity.serverPosX);
-            final double dZ = entity.serverPosZ - Math.floor(entity.serverPosZ);
+            final double dX = entity.getPosX() - Math.floor(entity.getPosX());
+            final double dZ = entity.getPosZ() - Math.floor(entity.getPosZ());
 
             if (dX < ONE_SIDE)
             {

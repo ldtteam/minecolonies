@@ -450,7 +450,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
      */
     public BlockPos getPosition()
     {
-        return new BlockPos(serverPosX, serverPosY, serverPosZ);
+        return new BlockPos(getPosX(), getPosY(), getPosZ());
     }
 
     public int getEventID()

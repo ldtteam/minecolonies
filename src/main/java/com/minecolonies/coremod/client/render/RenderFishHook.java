@@ -93,22 +93,22 @@ public class RenderFishHook extends EntityRenderer<Entity>
                 Vector3d = Vector3d.rotateYaw(-MathHelper.lerp(partialTicks, citizen.prevRotationYaw, citizen.rotationYaw) * ((float) Math.PI / 180F));
                 Vector3d = Vector3d.rotateYaw(f1 * 0.5F);
                 Vector3d = Vector3d.rotatePitch(-f1 * 0.7F);
-                d4 = MathHelper.lerp((double) partialTicks, citizen.prevPosX, citizen.serverPosX) + Vector3d.x;
-                d5 = MathHelper.lerp((double) partialTicks, citizen.prevPosY, citizen.serverPosY) + Vector3d.y;
-                d6 = MathHelper.lerp((double) partialTicks, citizen.prevPosZ, citizen.serverPosZ) + Vector3d.z;
+                d4 = MathHelper.lerp((double) partialTicks, citizen.prevPosX, citizen.getPosX()) + Vector3d.x;
+                d5 = MathHelper.lerp((double) partialTicks, citizen.prevPosY, citizen.getPosY()) + Vector3d.y;
+                d6 = MathHelper.lerp((double) partialTicks, citizen.prevPosZ, citizen.getPosZ()) + Vector3d.z;
                 f3 = citizen.getEyeHeight();
             }
             else
             {
-                d4 = MathHelper.lerp((double) partialTicks, citizen.prevPosX, citizen.serverPosX) - d1 * d2 - d0 * 0.8D;
-                d5 = citizen.prevPosY + (double) citizen.getEyeHeight() + (citizen.serverPosY - citizen.prevPosY) * (double) partialTicks - 0.45D;
-                d6 = MathHelper.lerp((double) partialTicks, citizen.prevPosZ, citizen.serverPosZ) - d0 * d2 + d1 * 0.8D;
+                d4 = MathHelper.lerp((double) partialTicks, citizen.prevPosX, citizen.getPosX()) - d1 * d2 - d0 * 0.8D;
+                d5 = citizen.prevPosY + (double) citizen.getEyeHeight() + (citizen.getPosY() - citizen.prevPosY) * (double) partialTicks - 0.45D;
+                d6 = MathHelper.lerp((double) partialTicks, citizen.prevPosZ, citizen.getPosZ()) - d0 * d2 + d1 * 0.8D;
                 f3 = citizen.isCrouching() ? -0.1875F : 0.0F;
             }
 
-            double d9 = MathHelper.lerp((double) partialTicks, entity.prevPosX, entity.serverPosX);
-            double d10 = MathHelper.lerp((double) partialTicks, entity.prevPosY, entity.serverPosY) + 0.25D;
-            double d8 = MathHelper.lerp((double) partialTicks, entity.prevPosZ, entity.serverPosZ);
+            double d9 = MathHelper.lerp((double) partialTicks, entity.prevPosX, entity.getPosX());
+            double d10 = MathHelper.lerp((double) partialTicks, entity.prevPosY, entity.getPosY()) + 0.25D;
+            double d8 = MathHelper.lerp((double) partialTicks, entity.prevPosZ, entity.getPosZ());
             float f4 = (float) (d4 - d9);
             float f5 = (float) (d5 - d10) + f3;
             float f6 = (float) (d6 - d8);

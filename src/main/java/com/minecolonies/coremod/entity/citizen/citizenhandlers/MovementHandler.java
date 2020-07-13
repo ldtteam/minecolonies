@@ -50,9 +50,9 @@ public class MovementHandler extends MovementController
 
             final NodeProcessor nodeprocessor = pathnavigator.getNodeProcessor();
             if (nodeprocessor.getPathNodeType(this.mob.world,
-              MathHelper.floor(this.mob.serverPosX + (double) rot1),
-              MathHelper.floor(this.mob.serverPosY),
-              MathHelper.floor(this.mob.serverPosZ + (double) rot2)) != PathNodeType.WALKABLE)
+              MathHelper.floor(this.mob.getPosX() + (double) rot1),
+              MathHelper.floor(this.mob.getPosY()),
+              MathHelper.floor(this.mob.getPosZ() + (double) rot2)) != PathNodeType.WALKABLE)
             {
                 this.moveForward = 1.0F;
                 this.moveStrafe = 0.0F;
@@ -67,9 +67,9 @@ public class MovementHandler extends MovementController
         else if (this.action == net.minecraft.entity.ai.controller.MovementController.Action.MOVE_TO)
         {
             this.action = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
-            final double xDif = this.posX - this.mob.serverPosX;
-            final double zDif = this.posZ - this.mob.serverPosZ;
-            final double yDif = this.posY - this.mob.serverPosY;
+            final double xDif = this.posX - this.mob.getPosX();
+            final double zDif = this.posZ - this.mob.getPosZ();
+            final double yDif = this.posY - this.mob.getPosY();
             final double dist = xDif * xDif + yDif * yDif + zDif * zDif;
             if (dist < (double) 2.5000003E-7F)
             {
@@ -85,7 +85,7 @@ public class MovementHandler extends MovementController
             final Block block = blockstate.getBlock();
             final VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.world, blockpos);
             if ((yDif > (double) this.mob.stepHeight && xDif * xDif + zDif * zDif < (double) Math.max(1.0F, this.mob.getWidth()))
-                  || (!voxelshape.isEmpty() && this.mob.serverPosY < voxelshape.getEnd(Direction.Axis.Y) + (double) blockpos.getY() && !block.isIn(BlockTags.DOORS) && !block.isIn(
+                  || (!voxelshape.isEmpty() && this.mob.getPosY() < voxelshape.getEnd(Direction.Axis.Y) + (double) blockpos.getY() && !block.isIn(BlockTags.DOORS) && !block.isIn(
               BlockTags.FENCES))
                        && !block.isLadder(blockstate, this.mob.world, blockpos, this.mob))
             {

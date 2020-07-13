@@ -53,8 +53,8 @@ public class CitizenChatHandler implements ICitizenChatHandler
                   "block.blockhuttownhall.messageworkerdead",
                   new TranslationTextComponent(job.getName().toLowerCase()),
                   citizen.getCitizenData().getName(),
-                  (int) citizen.serverPosX, (int) citizen.serverPosY,
-                  (int) citizen.serverPosZ, new TranslationTextComponent(damageSource.damageType));
+                  (int) citizen.getPosX(), (int) citizen.getPosY(),
+                  (int) citizen.getPosZ(), new TranslationTextComponent(damageSource.damageType));
                 LanguageHandler.sendPlayersMessage(citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "", component);
             }
             else
@@ -62,8 +62,8 @@ public class CitizenChatHandler implements ICitizenChatHandler
                 LanguageHandler.sendPlayersMessage(
                   citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "",
                   new TranslationTextComponent("block.blockhuttownhall.messagecolonistdead",
-                    citizen.getCitizenData().getName(), (int) citizen.serverPosX, (int) citizen.serverPosY,
-                    (int) citizen.serverPosZ, new TranslationTextComponent(damageSource.damageType)));
+                    citizen.getCitizenData().getName(), (int) citizen.getPosX(), (int) citizen.getPosY(),
+                    (int) citizen.getPosZ(), new TranslationTextComponent(damageSource.damageType)));
             }
         }
     }

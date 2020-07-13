@@ -149,9 +149,9 @@ public final class Pathfinding
         matrixStack.translate((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
 
         final Entity entity = Minecraft.getInstance().getRenderViewEntity();
-        final double dx = n.pos.getX() - entity.serverPosX;
-        final double dy = n.pos.getY() - entity.serverPosY;
-        final double dz = n.pos.getZ() - entity.serverPosZ;
+        final double dx = n.pos.getX() - entity.getPosX();
+        final double dy = n.pos.getY() - entity.getPosY();
+        final double dz = n.pos.getZ() - entity.getPosZ();
         if (Math.sqrt(dx * dx + dy * dy + dz * dz) <= 5D)
         {
             renderDebugText(n, matrixStack);

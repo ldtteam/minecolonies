@@ -500,7 +500,7 @@ public final class BlockPosUtil
     @NotNull
     public static BlockPos fromEntity(@NotNull final Entity entity)
     {
-        return new BlockPos(MathHelper.floor(entity.serverPosX), MathHelper.floor(entity.serverPosY), MathHelper.floor(entity.serverPosZ));
+        return new BlockPos(MathHelper.floor(entity.getPosX()), MathHelper.floor(entity.getPosY()), MathHelper.floor(entity.getPosZ()));
     }
 
     /**
