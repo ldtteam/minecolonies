@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
 import com.minecolonies.coremod.colony.jobs.JobRabbitHerder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates a new building for the rabbit hutch.
  */
-public class BuildingRabbitHutch extends AbstractBuildingWorker
+public class BuildingRabbitHutch extends AbstractBuildingHerder
 {
     /**
      * Description of the job executed in the hut.
@@ -108,7 +108,7 @@ public class BuildingRabbitHutch extends AbstractBuildingWorker
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingHerder.View
     {
         /**
          * Instantiates the view of the building.
@@ -125,7 +125,7 @@ public class BuildingRabbitHutch extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, RABBIT_HUTCH);
+            return new WindowHutWorkerPlaceholder<AbstractBuildingHerder.View>(this, RABBIT_HUTCH);
         }
     }
 }
