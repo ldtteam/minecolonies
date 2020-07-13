@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -29,8 +30,14 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraf
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.util.FurnaceRecipes;
+
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -175,6 +182,34 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         return toKeep;
     }
 
+    // Adding request system aware versions of the furnace recipes, to make keeping stock easier, and allow crafting chains. 
+    // To find what to add, we'll run through the predefined ingredients, and if any of them are smeltable, we'll add the recipe
+    // Something to consider in the future is adding the concept of 'free' recipes that don't count against the building limit. 
+    @Override
+    public void checkForWorkerSpecificRecipes()
+    {
+
+        ResourceLocation ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
+
+        for (final Item item : ItemTags.getCollection().getOrCreate(ingredients).getAllElements())
+        {
+            final ItemStack smeltingResult = FurnaceRecipes.getInstance().getSmeltingResult(new ItemStack(item, 1));
+            if (ItemStackUtils.CAN_EAT.test(smeltingResult))
+            {
+
+                final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    ImmutableList.of(new ItemStack(item, 1)),
+                    1,
+                    smeltingResult,
+                    Blocks.FURNACE);
+          
+                addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+            }
+        }
+    }
+    
     @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
@@ -201,6 +236,32 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
                                                       .getSmeltingResult(storage.getPrimaryOutput()));
 
             // End Additional recipe rules
+        }
+    }
+
+    // Overriding this so that if the new recipe produces a smeltable, we add that furnace recipe also
+    // This allows deep crafting chains of foods with many of the food expansion mods. 
+    @Override
+    public void addRecipeToList(final IToken<?> token)
+    {
+        super.addRecipeToList(token);
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+        final ItemStack input = storage.getPrimaryOutput();
+        input.setCount(1);
+
+        // Check and see if the new recipe produces a cookable food, and add the smelting recipe if so
+        if(storage.getIntermediate() != Blocks.FURNACE && ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance()
+                                                        .getSmeltingResult(input)) )
+        {
+            final IRecipeStorage cookedStorage = StandardFactoryController.getInstance().getNewInstance(
+                TypeConstants.RECIPE,
+                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                ImmutableList.of(input),
+                1,
+                FurnaceRecipes.getInstance().getSmeltingResult(storage.getPrimaryOutput()),
+                Blocks.FURNACE);
+      
+            super.addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(cookedStorage));            
         }
     }
 
