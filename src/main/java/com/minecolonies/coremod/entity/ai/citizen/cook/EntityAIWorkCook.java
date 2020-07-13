@@ -149,7 +149,12 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected boolean isSmeltable(final ItemStack stack)
     {
-        return ItemStackUtils.ISCOOKABLE.test(stack);
+        //Only return true if the item isn't queued for a recipe. 
+        if(job.getTaskQueue().isEmpty())
+        {
+            return ItemStackUtils.ISCOOKABLE.test(stack);
+        }
+        return false;
     }
 
     @Override
