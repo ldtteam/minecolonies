@@ -21,7 +21,7 @@ public class NonSiblingFormattingTextComponent extends StringTextComponent
 
         for (ITextComponent itextcomponent : this.siblings)
         {
-            String s = itextcomponent.getUnformattedComponentText();
+            String s = itextcomponent.getString();
 
             if (!s.isEmpty())
             {

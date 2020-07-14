@@ -65,7 +65,7 @@ public final class StandardRequests
         {
             final IFormattableTextComponent combined = new NonSiblingFormattingTextComponent();
             combined.func_230529_a_(new StringTextComponent(getRequest().getCount() + " "));
-            combined.func_230529_a_(getRequest().getStack().getTextComponent());
+            combined.func_230529_a_(getRequest().getStack().getDisplayName());
             return combined;
         }
     }
