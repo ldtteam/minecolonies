@@ -184,7 +184,7 @@ public class StaticLocation implements ILocation
                 throw new IllegalArgumentException("Unsupported context - First context object is not a ResourceLocation. Provide an ResourceLocation as Dimension.");
             }
 
-            return new StaticLocation(blockPos, World.field_234918_g_.func_240901_a_());
+            return new StaticLocation(blockPos, (ResourceLocation) context[0]);
         }
 
         /**

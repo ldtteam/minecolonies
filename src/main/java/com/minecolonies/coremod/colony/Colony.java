@@ -551,6 +551,8 @@ public class Colony implements IColony
             @NotNull final Colony c = new Colony(id, world);
             c.name = compound.getString(TAG_NAME);
             c.center = BlockPosUtil.read(compound, TAG_CENTER);
+            c.dimensionId = new ResourceLocation(compound.getString(TAG_DIMENSION));
+
             c.setRequestManager();
             c.read(compound);
 
@@ -831,7 +833,7 @@ public class Colony implements IColony
     @Override
     public void onWorldLoad(@NotNull final World w)
     {
-        if (w.func_234923_W_().func_240901_a_() == dimensionId)
+        if (w.func_234923_W_().func_240901_a_().equals(dimensionId))
         {
             this.world = w;
             // Register a new event handler
