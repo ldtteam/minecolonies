@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.BarbarianSounds;
@@ -180,6 +181,12 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
             this.newNavigator.setCanSwim(true);
             this.newNavigator.getNodeProcessor().setCanEnterDoors(true);
             newNavigator.getPathingOptions().withJumpDropCost(1.1D);
+            newNavigator.setStuckHandler(PathingStuckHandler.createStuckHandler()
+                                           .withTakeDamageOnStuck(0.4f)
+                                           .withBlockBreaks()
+                                           .withCompleteStuckBlockBreak(6)
+                                           .withBuildLeafBridges()
+                                           .withPlaceLadders());
         }
         return newNavigator;
     }
