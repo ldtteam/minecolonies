@@ -32,6 +32,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -41,6 +42,7 @@ import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.PacketDistributor;
+import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -273,18 +275,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, Buil
     private boolean checkIfShouldExecute(@NotNull final ScarecrowTileEntity field, @NotNull final Predicate<BlockPos> predicate)
     {
         if (workingOffset == null)
-        {
-            handleOffset(field);
-        }
+            workingOffset = nextValidCell(field);
 
         BlockPos position = field.getPos().down().south(workingOffset.getZ()).east(workingOffset.getX());
 
         while (!predicate.test(position))
         {
-            if (!handleOffset(field))
-            {
+            workingOffset = nextValidCell(field);
+            if (workingOffset == null)
                 return false;
-            }
+
             position = field.getPos().down().south(workingOffset.getZ()).east(workingOffset.getX());
         }
         return true;
@@ -347,50 +347,55 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, Buil
     }
 
     /**
-     * Handles the offset of the field for the farmer.
-     *
-     * @param field the field object.
-     * @return true if successful.
+     * The current index within the current field
      */
-    private boolean handleOffset(@NotNull final ScarecrowTileEntity field)
-    {
+    private int cell = -1;
+
+    /**
+     * Fetch the next available block within the field.
+     * Uses mathemajical quadratic equations to determine
+     * the coordinates by an index.
+     * Considers max radii set in the field gui.
+     * @return the new offset position
+     */
+    protected BlockPos nextValidCell (AbstractScarecrowTileEntity field) {
+        int ring, ringCell, x, z;
+        Direction facing;
+
         if (workingOffset == null)
+            cell = -1;
+
+        do
         {
-            workingOffset = new BlockPos(0, 0, 0);
-            totalDis = 1;
-            dist = 0;
-            horizontal = true;
-        }
-        else
-        {
-            if (workingOffset.getZ() >= field.getWidthPlusZ() && workingOffset.getX() <= -field.getLengthMinusX())
-            {
-                workingOffset = null;
-                return false;
+            if (++cell == getLargestCell()) return null;
+            ring = (int) Math.floor((Math.sqrt(cell+1) + 1) / 2.0);
+            ringCell = cell - (int) (4*Math.pow(ring-1,2) + 4*(ring-1));
+            facing = Direction.byHorizontalIndex(Math.floorDiv(ringCell, 2*ring));
+
+
+            if (facing.getAxis() == Direction.Axis.Z) {
+                x = (facing == Direction.NORTH ? -1: 1) * (ring - (ringCell % (2*ring)));
+                z = (facing == Direction.NORTH ? -1: 1) * ring;
             }
             else
             {
-                if (totalDis == dist)
-                {
-                    horizontal = !horizontal;
-                    dist = 0;
-                    if (horizontal)
-                    {
-                        totalDis++;
-                    }
-                }
-                if (horizontal)
-                {
-                    workingOffset = new BlockPos(workingOffset.getX(), 0, workingOffset.getZ() - Math.pow(-1, totalDis));
-                }
-                else
-                {
-                    workingOffset = new BlockPos(workingOffset.getX() - Math.pow(-1, totalDis), 0, workingOffset.getZ());
-                }
-                dist++;
+                x = (facing == Direction.WEST ? -1: 1) * ring;
+                z = (facing == Direction.EAST ? -1: 1) * (ring - (ringCell % (2*ring)));
             }
         }
-        return true;
+        while (
+                -z > field.getRadius(Direction.NORTH)
+             ||  x > field.getRadius(Direction.EAST)
+             ||  z > field.getRadius(Direction.SOUTH)
+             || -x > field.getRadius(Direction.WEST)
+        );
+
+        return new BlockPos(x, 0, z);
+    }
+
+    protected int getLargestCell()
+    {
+        return (int) Math.pow(ScarecrowTileEntity.getMaxRange()*2+1, 2);
     }
 
     /**
@@ -438,50 +443,45 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, Buil
 
                 final BlockPos position = field.down().south(workingOffset.getZ()).east(workingOffset.getX());
 
-                if (workingOffset.getX() <= scarecrow.getLengthPlusX()
-                      && workingOffset.getZ() <= scarecrow.getWidthPlusZ()
-                      && workingOffset.getX() >= -scarecrow.getLengthMinusX()
-                      && workingOffset.getZ() >= -scarecrow.getWidthMinusZ())
+                // Still moving to the block
+                if (walkToBlock(position.up()))
                 {
-                    // Still moving to the block
-                    if (walkToBlock(position.up()))
-                    {
-                        return getState();
-                    }
-
-                    switch ((AIWorkerState) getState())
-                    {
-                        case FARMER_HOE:
-                            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.hoeing"));
-
-                            if (!hoeIfAble(position, scarecrow))
-                            {
-                                return getState();
-                            }
-                            break;
-                        case FARMER_PLANT:
-                            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.planting"));
-                            if (!tryToPlant(scarecrow, position))
-                            {
-                                return PREPARING;
-                            }
-                            break;
-                        case FARMER_HARVEST:
-                            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.harvesting"));
-                            if (!harvestIfAble(position))
-                            {
-                                return getState();
-                            }
-                            break;
-                        default:
-                            return PREPARING;
-                    }
-                    prevPos = position;
+                    return getState();
                 }
+
+                switch ((AIWorkerState) getState())
+                {
+                    case FARMER_HOE:
+                        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.hoeing"));
+
+                        if (!hoeIfAble(position, scarecrow))
+                        {
+                            return getState();
+                        }
+                        break;
+                    case FARMER_PLANT:
+                        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.planting"));
+                        if (!tryToPlant(scarecrow, position))
+                        {
+                            return PREPARING;
+                        }
+                        break;
+                    case FARMER_HARVEST:
+                        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.harvesting"));
+                        if (!harvestIfAble(position))
+                        {
+                            return getState();
+                        }
+                        break;
+                    default:
+                        return PREPARING;
+                }
+                prevPos = position;
                 setDelay(getLevelDelay());
             }
 
-            if (!handleOffset(scarecrow))
+            workingOffset = nextValidCell(scarecrow);
+            if (workingOffset == null)
             {
                 shouldDumpInventory = true;
                 scarecrow.nextState();

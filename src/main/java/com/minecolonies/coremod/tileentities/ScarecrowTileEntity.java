@@ -14,6 +14,7 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -34,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -65,26 +65,6 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
      * Has the field been planted?
      */
     private ScarecrowFieldStage fieldStage = ScarecrowFieldStage.EMPTY;
-
-    /**
-     * The length to plus x of the field.
-     */
-    private int lengthPlusX;
-
-    /**
-     * The width to plus z of the seed.
-     */
-    private int widthPlusZ;
-
-    /**
-     * The length to minus xof the field.
-     */
-    private int lengthMinusX;
-
-    /**
-     * The width to minus z of the seed.
-     */
-    private int widthMinusZ;
 
     /**
      * Citizen Id of the citizen owning the field.
@@ -179,62 +159,28 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
 
     /**
      * The size of the field in all four directions
-     * in the same order as {@link Direction#getHorizontalIndex()}
+     * in the same order as {@link Direction#getHorizontalIndex()}:
      * S, W, N, E
      */
     protected int[] radii = {MAX_RANGE, MAX_RANGE, MAX_RANGE, MAX_RANGE};
 
-    public int setRadiusInDirection(Direction direction)
-    {
-        radii[direction.getHorizontalIndex()] = (radii[direction.getHorizontalIndex()] + 1) % (getMaxRange() + 1);
+    /**
+     * @param direction the direction for the radius
+     * @param radius    the number of blocks from the scarecrow that the farmer will work with
+     */
+    public void setRadius(Direction direction, int radius) {
+        this.radii[direction.getHorizontalIndex()] = radius;
         markDirty();
-        return radii[direction.getHorizontalIndex()];
+        world.notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
     }
 
     /**
      * @param direction the direction to get the range for
-     * @return the radius in the given direction
+     * @return the radius
      */
-    public int getRadiusInDirection(Direction direction)
+    public int getRadius(Direction direction)
     {
         return radii[direction.getHorizontalIndex()];
-    }
-
-    /**
-     * Calculates recursively the length of the field until a certain point.
-     * <p>
-     * This mutates the field!
-     *
-     * @param position the start position.
-     * @param world    the world the field is in.
-     */
-    @Override
-    public final void calculateSize(@NotNull final World world, @NotNull final BlockPos position)
-    {
-        //Calculate in all 4 directions
-        this.lengthPlusX = searchNextBlock(0, position.east(), Direction.EAST, world);
-        this.lengthMinusX = searchNextBlock(0, position.west(), Direction.WEST, world);
-        this.widthPlusZ = searchNextBlock(0, position.south(), Direction.SOUTH, world);
-        this.widthMinusZ = searchNextBlock(0, position.north(), Direction.NORTH, world);
-        markDirty();
-    }
-
-    /**
-     * Calculates the field size into a specific direction.
-     *
-     * @param blocksChecked how many blocks have been checked.
-     * @param position      the start position.
-     * @param direction     the direction to search.
-     * @param world         the world object.
-     * @return the distance.
-     */
-    private int searchNextBlock(final int blocksChecked, @NotNull final BlockPos position, final Direction direction, @NotNull final World world)
-    {
-        if (blocksChecked >= getMaxRange() || isNoPartOfField(world, position))
-        {
-            return blocksChecked;
-        }
-        return searchNextBlock(blocksChecked + 1, position.offset(direction), direction, world);
     }
 
     /**
@@ -371,50 +317,6 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
         return null;
     }
 
-    /**
-     * Getter of the length in plus x direction.
-     *
-     * @return field length.
-     */
-    @Override
-    public int getLengthPlusX()
-    {
-        return lengthPlusX;
-    }
-
-    /**
-     * Getter of the with in plus z direction.
-     *
-     * @return field width.
-     */
-    @Override
-    public int getWidthPlusZ()
-    {
-        return widthPlusZ;
-    }
-
-    /**
-     * Getter of the length in minus x direction.
-     *
-     * @return field length.
-     */
-    @Override
-    public int getLengthMinusX()
-    {
-        return lengthMinusX;
-    }
-
-    /**
-     * Getter of the with in minus z direction.
-     *
-     * @return field width.
-     */
-    @Override
-    public int getWidthMinusZ()
-    {
-        return widthMinusZ;
-    }
-
     @Override
     public BlockPos getPosition()
     {
@@ -509,6 +411,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
+
         this.write(compound);
         if (colony != null)
         {

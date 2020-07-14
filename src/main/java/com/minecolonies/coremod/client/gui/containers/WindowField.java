@@ -4,6 +4,8 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.inventory.container.ContainerField;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.network.messages.server.FieldPlotResizeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -11,7 +13,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -51,6 +55,8 @@ public class WindowField extends ContainerScreen<ContainerField>
      */
     private final AbstractScarecrowTileEntity tileEntity;
 
+    private final int[] radii = new int[4];
+
     /**
      * Create the field GUI.
      *
@@ -76,13 +82,14 @@ public class WindowField extends ContainerScreen<ContainerField>
         for (Direction dir : Direction.Plane.HORIZONTAL) {
             int xFromPolar = (int) Math.sin(Math.PI*(4-dir.getHorizontalIndex())/2) * (offset);
             int yFromPolar = (int) Math.cos(Math.PI*(4-dir.getHorizontalIndex())/2) * (offset);
+            this.radii[dir.getHorizontalIndex()] = tileEntity.getRadius(dir);
 
             DirectionalButton db = new DirectionalButton(
                     centerX + xFromPolar - 12,
                     centerY - 40 + yFromPolar - 12,
                     24,
                     24,
-                    String.valueOf(tileEntity.getRadiusInDirection(dir)),
+                    String.valueOf(this.radii[dir.getHorizontalIndex()]),
                     new DirectionalButtonPress(),
                     dir
             );
@@ -146,8 +153,6 @@ public class WindowField extends ContainerScreen<ContainerField>
             super(widthIn, heightIn, width, height, text, onPress);
             this.direction = direction;
             this.onPressDirectional = new DirectionalButtonPress();
-            LogManager.getLogger().info(this.getTextureYOffset());
-
         }
 
         @Override
@@ -205,7 +210,12 @@ public class WindowField extends ContainerScreen<ContainerField>
 
         public void onPress(DirectionalButton pressed)
         {
-            pressed.setMessage(String.valueOf(tileEntity.setRadiusInDirection(pressed.direction)));
+            int index = pressed.direction.getHorizontalIndex();
+
+            // increment or reset the radius based on max range
+            radii[index] = (radii[index] + 1) % (ScarecrowTileEntity.getMaxRange() + 1);
+            pressed.setMessage(String.valueOf(radii[index]));
+            Network.getNetwork().sendToServer(new FieldPlotResizeMessage(radii[index], pressed.direction, tileEntity.getPos()));
         }
     }
 }

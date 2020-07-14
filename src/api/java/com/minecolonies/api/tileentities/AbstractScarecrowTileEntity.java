@@ -37,16 +37,6 @@ public abstract class AbstractScarecrowTileEntity extends TileEntity implements 
     public abstract void setName(String name);
 
     /**
-     * Calculates recursively the length of the field until a certain point.
-     * <p>
-     * This mutates the field!
-     *
-     * @param position the start position.
-     * @param world    the world the field is in.
-     */
-    public abstract void calculateSize(@NotNull World world, @NotNull BlockPos position);
-
-    /**
      * Checks if a certain position is part of the field. Complies with the definition of field block.
      *
      * @param world    the world object.
@@ -115,34 +105,6 @@ public abstract class AbstractScarecrowTileEntity extends TileEntity implements 
     public abstract ItemStack getSeed();
 
     /**
-     * Getter of the length in plus x direction.
-     *
-     * @return field length.
-     */
-    public abstract int getLengthPlusX();
-
-    /**
-     * Getter of the with in plus z direction.
-     *
-     * @return field width.
-     */
-    public abstract int getWidthPlusZ();
-
-    /**
-     * Getter of the length in minus x direction.
-     *
-     * @return field length.
-     */
-    public abstract int getLengthMinusX();
-
-    /**
-     * Getter of the with in minus z direction.
-     *
-     * @return field width.
-     */
-    public abstract int getWidthMinusZ();
-
-    /**
      * Location getter.
      *
      * @return the location of the scarecrow of the field.
@@ -193,7 +155,16 @@ public abstract class AbstractScarecrowTileEntity extends TileEntity implements 
      */
     public abstract ScareCrowType getScarecrowType();
 
-    public abstract int setRadiusInDirection(Direction direction);
+    /**
+     * @param direction the direction to get the range for
+     * @return the number of blocks away from the scarecrow the farmer will work with in that direction
+     */
+    public abstract int getRadius(Direction direction);
 
-    public abstract int getRadiusInDirection(Direction direction);
+    /**
+     * Sets the radius of the field plot the farmer works with
+     * @param direction the direction for the radius
+     * @param radius the number of blocks from the scarecrow that the farmer will work with
+     */
+    public abstract void setRadius(Direction direction, int radius);
 }

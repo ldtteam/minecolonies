@@ -160,7 +160,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
         if (scareCrow instanceof ScarecrowTileEntity)
         {
-            ((ScarecrowTileEntity) scareCrow).calculateSize(getColony().getWorld(), field.down());
             farmerFields.add(field);
             this.markDirty();
         }
@@ -444,7 +443,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
             if (scareCrow instanceof ScarecrowTileEntity)
             {
                 ((ScarecrowTileEntity) scareCrow).setNeedsWork(true);
-                ((ScarecrowTileEntity) scareCrow).calculateSize(getColony().getWorld(), field.down());
             }
         }
     }
