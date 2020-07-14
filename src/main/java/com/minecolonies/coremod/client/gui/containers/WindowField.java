@@ -78,13 +78,15 @@ public class WindowField extends ContainerScreen<ContainerField>
     }
 
     @Override
-    protected void init () {
+    protected void init ()
+    {
         super.init();
 
         final int offset = 24;
         final int centerX = this.guiLeft + this.xSize / 2 + 1;
         final int centerY = this.guiTop  + this.ySize / 2;
-        for (Direction dir : Direction.Plane.HORIZONTAL) {
+        for (Direction dir : Direction.Plane.HORIZONTAL)
+        {
             int xFromPolar = (int) Math.sin(Math.PI*(4-dir.getHorizontalIndex())/2) * (offset);
             int yFromPolar = (int) Math.cos(Math.PI*(4-dir.getHorizontalIndex())/2) * (offset);
             this.radii[dir.getHorizontalIndex()] = tileEntity.getRadius(dir);
@@ -95,7 +97,6 @@ public class WindowField extends ContainerScreen<ContainerField>
                     24,
                     24,
                     String.valueOf(this.radii[dir.getHorizontalIndex()]),
-                    new DirectionalButtonPress(),
                     dir
             );
             this.addButton(db);
@@ -111,15 +112,23 @@ public class WindowField extends ContainerScreen<ContainerField>
     @Override
     protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
     {
-        this.font.drawString(tileEntity.getDesc(), X_OFFSET, -Y_OFFSET*2, 16777215 /* WHITE */);
+        if (!tileEntity.getOwner().isEmpty())
+        {
+            this.font.drawString(
+                    LanguageHandler.format("gui.field.worker", tileEntity.getOwner()),
+                    X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */
+            );
+        }
+
         this.font.drawString(
                 LanguageHandler.format("block.minecolonies.blockhutfield"),
-                X_OFFSET, Y_OFFSET,
-                TEXT_COLOR
+                X_OFFSET, Y_OFFSET, TEXT_COLOR
         );
 
-        for(Widget widget : this.buttons) {
-            if (widget.isHovered()) {
+        for(Widget widget : this.buttons)
+        {
+            if (widget.isHovered())
+            {
                 widget.renderToolTip(mouseX - this.guiLeft, mouseY - this.guiTop);
                 break;
             }
@@ -154,39 +163,58 @@ public class WindowField extends ContainerScreen<ContainerField>
     protected class DirectionalButton extends Button
     {
         public Direction direction;
-        public DirectionalButtonPress onPressDirectional;
         public int textureX = 176;
         public int textureY = 0;
         public int columns = 2;
 
-        public DirectionalButton(int widthIn, int heightIn, int width, int height, String text, IPressable onPress, Direction direction)
+        public DirectionalButton(int widthIn, int heightIn, int width, int height, String text, Direction direction)
         {
-            super(widthIn, heightIn, width, height, text, onPress);
+            super(widthIn, heightIn, width, height, text, button -> {});
             this.direction = direction;
-            this.onPressDirectional = new DirectionalButtonPress();
         }
 
         @Override
-        public void onPress () { this.onPressDirectional.onPress(this); }
+        public void onPress ()
+        {
+            int index = this.direction.getHorizontalIndex();
 
+            // increment or reset the radius based on max range
+            radii[index] = (radii[index] + 1) % (ScarecrowTileEntity.getMaxRange() + 1);
+            this.setMessage(String.valueOf(radii[index]));
+            Network.getNetwork().sendToServer(new FieldPlotResizeMessage(radii[index], this.direction, tileEntity.getPos()));
+        }
+
+        /**
+         * Retrieves the texture offset depending on the direction of the button
+         * @return the X offset for the image texture
+         */
         public int getTextureXOffset()
         {
             return this.textureX + 24*Math.floorDiv(this.direction.getHorizontalIndex(), this.columns);
         }
 
+        /**
+         * Retrieves the texture offset depending on the direction of the button
+         * @return the Y offset for the image texture
+         */
         public int getTextureYOffset()
         {
             return this.textureY + 72*(this.direction.getHorizontalIndex() % this.columns);
         }
 
+        /**
+         * Neatens the buttons by offsetting the text towards the main area of the texture
+         * @param axis the Axis of the direction that the button represents
+         * @return the render offset
+         */
         public int getTextOffset (Direction.Axis axis)
         {
             switch (this.direction)
             {
-                case NORTH: return axis == Direction.Axis.X? 0 : +2;
-                case EAST:  return axis == Direction.Axis.X? -2 : 0;
-                case SOUTH: return axis == Direction.Axis.X? 0 : -2;
-                case WEST:  return axis == Direction.Axis.X? +2 : 0;
+                case NORTH: return axis == Direction.Axis.X ? 0 : +2;
+                case EAST:  return axis == Direction.Axis.X ? -2 : 0;
+                case SOUTH: return axis == Direction.Axis.X ? 0 : -2;
+                case WEST:  return axis == Direction.Axis.X ? +2 : 0;
             }
             return 0;
         }
@@ -221,38 +249,28 @@ public class WindowField extends ContainerScreen<ContainerField>
 
             List<String> lines = Lists.newArrayList(
                     LanguageHandler.format("gui.field."+this.direction.getName()),
-                     LanguageHandler.format(getDirectionalTranslationKey(), TextFormatting.GRAY, TextFormatting.ITALIC)
+                    TextFormatting.GRAY + "" + TextFormatting.ITALIC + LanguageHandler.format(getDirectionalTranslationKey())
             );
 
             WindowField.this.renderTooltip(lines, mouseX, mouseY);
         }
 
-        public String getDirectionalTranslationKey() {
+        /**
+         * Calculates where the player is and the appropriate relative direction
+         * @return the translation key
+         */
+        public String getDirectionalTranslationKey()
+        {
             Direction[] looks = Direction.getFacingDirections(playerInventory.player);
-            Direction facing = looks[0].getAxis() == Direction.Axis.Y? looks[1] : looks[0];
+            Direction facing = looks[0].getAxis() == Direction.Axis.Y ? looks[1] : looks[0];
 
-            switch (this.direction.getHorizontalIndex() - facing.getOpposite().getHorizontalIndex()) {
+            switch (this.direction.getHorizontalIndex() - facing.getOpposite().getHorizontalIndex())
+            {
                 case 1: case -3: return "gui.field.to_right";
                 case 2: case -2: return "gui.field.opposite";
                 case 3: case -1: return "gui.field.to_left";
                 default:         return "gui.field.near";
             }
-        }
-    }
-
-    protected class DirectionalButtonPress implements Button.IPressable
-    {
-        @Override
-        public void onPress(Button pressed) {}
-
-        public void onPress(DirectionalButton pressed)
-        {
-            int index = pressed.direction.getHorizontalIndex();
-
-            // increment or reset the radius based on max range
-            radii[index] = (radii[index] + 1) % (ScarecrowTileEntity.getMaxRange() + 1);
-            pressed.setMessage(String.valueOf(radii[index]));
-            Network.getNetwork().sendToServer(new FieldPlotResizeMessage(radii[index], pressed.direction, tileEntity.getPos()));
         }
     }
 }

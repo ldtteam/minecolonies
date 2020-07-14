@@ -23,20 +23,6 @@ public abstract class AbstractScarecrowTileEntity extends TileEntity implements 
     }
 
     /**
-     * Getter of the name of the tileEntity.
-     *
-     * @return the string.
-     */
-    public abstract String getDesc();
-
-    /**
-     * Setter for the name.
-     *
-     * @param name string to set.
-     */
-    public abstract void setName(String name);
-
-    /**
      * Checks if a certain position is part of the field. Complies with the definition of field block.
      *
      * @param world    the world object.

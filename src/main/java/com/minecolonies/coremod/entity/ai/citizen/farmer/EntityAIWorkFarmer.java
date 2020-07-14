@@ -358,7 +358,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, Buil
      * Considers max radii set in the field gui.
      * @return the new offset position
      */
-    protected BlockPos nextValidCell (AbstractScarecrowTileEntity field) {
+    protected BlockPos nextValidCell (AbstractScarecrowTileEntity field)
+    {
         int ring, ringCell, x, z;
         Direction facing;
 
@@ -373,7 +374,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, Buil
             facing = Direction.byHorizontalIndex(Math.floorDiv(ringCell, 2*ring));
 
 
-            if (facing.getAxis() == Direction.Axis.Z) {
+            if (facing.getAxis() == Direction.Axis.Z)
+            {
                 x = (facing == Direction.NORTH ? -1: 1) * (ring - (ringCell % (2*ring)));
                 z = (facing == Direction.NORTH ? -1: 1) * ring;
             }

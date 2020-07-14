@@ -94,11 +94,6 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     private IColony colony;
 
     /**
-     * Name of the scarecrow, string set in the GUI.
-     */
-    private String name;
-
-    /**
      * Inventory of the field.
      */
     private final ItemStackHandler inventory;
@@ -109,7 +104,6 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     public ScarecrowTileEntity()
     {
         super();
-        this.name = LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner));
         this.inventory = new ItemStackHandler()
         {
             @Override
@@ -122,29 +116,6 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
                          || (stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof CropsBlock);
             }
         };
-    }
-
-    /**
-     * Getter of the name of the tileEntity.
-     *
-     * @return the string.
-     */
-    @Override
-    public String getDesc()
-    {
-        return name;
-    }
-
-    /**
-     * Setter for the name.
-     *
-     * @param name string to set.
-     */
-    @Override
-    public void setName(final String name)
-    {
-        this.name = name;
-        markDirty();
     }
 
     /**
@@ -168,7 +139,8 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
      * @param direction the direction for the radius
      * @param radius    the number of blocks from the scarecrow that the farmer will work with
      */
-    public void setRadius(Direction direction, int radius) {
+    public void setRadius(Direction direction, int radius)
+    {
         this.radii[direction.getHorizontalIndex()] = radius;
         markDirty();
         world.notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
@@ -366,7 +338,6 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
                 owner = colony.getCitizenManager().getCitizen(ownerId).getName();
             }
         }
-        setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner)));
         markDirty();
     }
 
@@ -465,7 +436,6 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
         radii[1] = compound.getInt(TAG_LENGTH_MINUS);
         radii[0] = compound.getInt(TAG_WIDTH_MINUS);
         ownerId = compound.getInt(TAG_OWNER);
-        name = compound.getString(TAG_NAME);
         setOwner(ownerId);
 
         super.read(compound);
@@ -498,7 +468,6 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
         compound.putInt(TAG_LENGTH_MINUS, radii[1]);
         compound.putInt(TAG_WIDTH_MINUS, radii[0]);
         compound.putInt(TAG_OWNER, ownerId);
-        compound.putString(TAG_NAME, name);
         if (colony != null)
         {
             compound.putInt(TAG_COLONY_ID, colony.getID());
@@ -547,6 +516,6 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     @Override
     public ITextComponent getDisplayName()
     {
-        return new StringTextComponent(name);
+        return new StringTextComponent(owner);
     }
 }
