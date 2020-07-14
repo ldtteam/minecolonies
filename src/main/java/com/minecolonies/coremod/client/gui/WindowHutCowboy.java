@@ -8,12 +8,12 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Window for the fisherman hut.
+ * Window for the cowboy hut.
  */
-public class WindowHutCowboy extends AbstractWindowWorkerBuilding<BuildingCowboy.View>
+public class WindowHutCowboy extends AbstractWindowHerderBuilding<BuildingCowboy.View>
 {
     /**
-     * Button leading the player to the previous page.
+     * Button for toggling milk collection.
      */
     private static final String BUTTON_MILK_COWS = "milkCows";
 
@@ -23,7 +23,7 @@ public class WindowHutCowboy extends AbstractWindowWorkerBuilding<BuildingCowboy
     private Button buttonMilkCows;
 
     /**
-     * Constructor for the window of the fisherman.
+     * Constructor for the window of the cowboy.
      *
      * @param building {@link BuildingCowboy.View}.
      */

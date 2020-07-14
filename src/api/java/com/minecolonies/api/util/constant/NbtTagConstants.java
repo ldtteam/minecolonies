@@ -482,6 +482,16 @@ public final class NbtTagConstants
     public static final String TAG_WAITING_TICKS     = "waitingticks";
 
     /**
+     * Herder breeding tag
+     */
+    public static final String TAG_BREEDING = "breeding";
+
+    /**
+     * Cowboy milking tag
+     */
+    public static final String TAG_MILK_COWS = "MILK_COWS";
+
+    /**
      * Beekeeper tags
      */
     public static final String TAG_HIVES              = "hives";
