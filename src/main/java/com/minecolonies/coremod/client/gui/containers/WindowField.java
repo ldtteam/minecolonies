@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui.containers;
 
+import com.google.common.collect.Lists;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.inventory.container.ContainerField;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
@@ -12,6 +13,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
@@ -20,9 +22,12 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.LogManager;
+
+import java.util.List;
 
 /**
  * Class which creates the GUI of our field inventory.
@@ -100,19 +105,25 @@ public class WindowField extends ContainerScreen<ContainerField>
     /**
      * Method called to draw the foreground of the GUI.
      *
-     * @param layer1 the first layer.
-     * @param layer2 the second layer.
+     * @param mouseX the X position of the mouse
+     * @param mouseY the Y position of the mouse
      */
     @Override
-    protected void drawGuiContainerForegroundLayer(final int layer1, final int layer2)
+    protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
     {
         this.font.drawString(tileEntity.getDesc(), X_OFFSET, -Y_OFFSET*2, 16777215 /* WHITE */);
         this.font.drawString(
                 LanguageHandler.format("block.minecolonies.blockhutfield"),
                 X_OFFSET, Y_OFFSET,
                 TEXT_COLOR
-
         );
+
+        for(Widget widget : this.buttons) {
+            if (widget.isHovered()) {
+                widget.renderToolTip(mouseX - this.guiLeft, mouseY - this.guiTop);
+                break;
+            }
+        }
     }
 
     /**
@@ -200,6 +211,32 @@ public class WindowField extends ContainerScreen<ContainerField>
                     this.y + (this.height - 8) / 2 + getTextOffset(Direction.Axis.Y),
                     j | MathHelper.ceil(this.alpha * 255.0F) << 24
             );
+        }
+
+        @Override
+        public void renderToolTip(int mouseX, int mouseY)
+        {
+            // Don't render while they are dragging a stack around
+            if (!playerInventory.getItemStack().isEmpty()) return;
+
+            List<String> lines = Lists.newArrayList(
+                    LanguageHandler.format("gui.field."+this.direction.getName()),
+                     LanguageHandler.format(getDirectionalTranslationKey(), TextFormatting.GRAY, TextFormatting.ITALIC)
+            );
+
+            WindowField.this.renderTooltip(lines, mouseX, mouseY);
+        }
+
+        public String getDirectionalTranslationKey() {
+            Direction[] looks = Direction.getFacingDirections(playerInventory.player);
+            Direction facing = looks[0].getAxis() == Direction.Axis.Y? looks[1] : looks[0];
+
+            switch (this.direction.getHorizontalIndex() - facing.getOpposite().getHorizontalIndex()) {
+                case 1: case -3: return "gui.field.to_right";
+                case 2: case -2: return "gui.field.opposite";
+                case 3: case -1: return "gui.field.to_left";
+                default:         return "gui.field.near";
+            }
         }
     }
 
