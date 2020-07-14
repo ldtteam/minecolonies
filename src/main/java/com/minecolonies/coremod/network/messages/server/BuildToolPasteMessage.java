@@ -378,10 +378,7 @@ public class BuildToolPasteMessage implements IMessage
                 building.setHeight(wrapper.getBluePrint().getSizeY());
             }
 
-            if (mirror)
-            {
-                building.invertMirror();
-            }
+            building.setIsMirrored(mirror);
         }
     }
 }

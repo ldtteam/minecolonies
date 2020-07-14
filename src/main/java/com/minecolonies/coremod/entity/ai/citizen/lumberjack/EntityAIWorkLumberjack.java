@@ -188,10 +188,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     @Override
     protected IAIState decide()
     {
+        if (checkIfStuck())
+        {
+            tryUnstuck();
+        }
 
         if (walkToBuilding())
         {
-            return LUMBERJACK_START_WORKING;
+            return START_WORKING;
         }
 
         if (job.getActionsDone() >= getActionsDoneUntilDumping())
@@ -257,7 +261,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (checkForToolOrWeapon(ToolType.AXE))
         {
             // Reset everything, maybe there are new crafting requests
-            return LUMBERJACK_START_WORKING;
+            return START_WORKING;
         }
         return LUMBERJACK_SEARCHING_TREE;
     }
@@ -275,7 +279,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
 
         // Reset everything, maybe there are new crafting requests
-        return LUMBERJACK_START_WORKING;
+        return START_WORKING;
     }
 
     /**
@@ -551,7 +555,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         if (!worker.getNavigator().noPath())
         {
-            Path path = worker.getNavigator().getPath();
+            final Path path = worker.getNavigator().getPath();
             if (path != null)
             {
                 if (path.getCurrentPathLength() > path.getCurrentPathIndex())
@@ -576,14 +580,19 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private void tryUnstuck()
     {
+        if (worker.getCurrentPosition() == null)
+        {
+            return;
+        }
+
         if (!worker.getNavigator().noPath())
         {
             Path path = worker.getNavigator().getPath();
             if (path != null)
             {
                 // Unstuck with path
-                ArrayList<BlockPos> checkPositions = new ArrayList<>();
-                PathPoint next = path.getPathPointFromIndex(path.getCurrentPathIndex());
+                final List<BlockPos> checkPositions = new ArrayList<>();
+                final PathPoint next = path.getPathPointFromIndex(path.getCurrentPathIndex());
 
                 // Blocks in front of the worker
                 for (int i = 0; i <= 2; i++)

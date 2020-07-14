@@ -64,7 +64,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     @Override
     public void checkForWorkerSpecificRecipes()
     {
-        final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
+        final IRecipeStorage cactusStorage = StandardFactoryController.getInstance().getNewInstance(
           TypeConstants.RECIPE,
           StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
           ImmutableList.of(new ItemStack(Blocks.CACTUS, 1)),
@@ -72,7 +72,17 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
           new ItemStack(Items.GREEN_DYE, 1),
           Blocks.FURNACE);
 
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+          final IRecipeStorage redsandStorage = StandardFactoryController.getInstance().getNewInstance(
+            TypeConstants.RECIPE,
+            StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+            ImmutableList.of(new ItemStack(Blocks.SAND, 4), new ItemStack(Items.RED_DYE)),
+            1,
+            new ItemStack(Blocks.RED_SAND, 4),
+            Blocks.AIR);
+  
+        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(cactusStorage));
+        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(redsandStorage));
+
     }
 
     @NotNull
