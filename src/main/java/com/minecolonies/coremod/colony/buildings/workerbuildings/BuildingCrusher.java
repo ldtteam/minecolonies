@@ -127,6 +127,9 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         }
     }
 
+    /**
+     * Reload all of the current crusher recipes
+     */
     private void loadCurrentRecipes()
     {
         if(!super.recipes.isEmpty())
