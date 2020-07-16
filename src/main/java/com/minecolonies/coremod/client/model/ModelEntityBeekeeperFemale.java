@@ -87,6 +87,7 @@ public class ModelEntityBeekeeperFemale extends CitizenModel<AbstractEntityCitiz
         bipedHead.addChild(hatM);
         setRotationAngle(hatM, -0.0349F, 0.0F, 0.0F);
         hatM.setTextureOffset(58, 13).addBox(-4.75F, -8.3358F, -4.6983F, 9.5F, 3.0F, 8.5F, 0.0F, true);
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

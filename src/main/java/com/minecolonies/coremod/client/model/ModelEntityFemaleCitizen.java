@@ -76,6 +76,7 @@ public class ModelEntityFemaleCitizen extends CitizenModel<AbstractEntityCitizen
         bipedLeftLeg = new ModelRenderer(this);
         bipedLeftLeg.setRotationPoint(2.0F, 12.0F, 1.0F);
         bipedLeftLeg.setTextureOffset(0, 17).addBox(-2.0F, 0.0F, -2.0F, 3.0F, 12.0F, 3.0F, 0.0F, true);
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
