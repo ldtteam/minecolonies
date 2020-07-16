@@ -133,7 +133,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public boolean hasItemStack(final ItemStack stack, final boolean ignoreDamageValue)
     {
-        return content.get(new ItemStorage(stack, ignoreDamageValue)) != null;
+        return content.containsKey(new ItemStorage(stack, ignoreDamageValue));
     }
 
     /**
