@@ -135,19 +135,6 @@ public class FurnaceRecipes implements IFurnaceRecipes
     }
 
     /**
-     * Get the smelting recipe by result for a certain itemStack.
-     *
-     * @param itemStack the itemStack to test.
-     * @return the result or null if not existent.
-     */
-    public RecipeStorage getSmeltingRecipeByResult(final ItemStack itemStack)
-    {
-        final ItemStack index = itemStack;
-        index.setCount(1);
-        return reverseRecipes.getOrDefault(new ItemStorage(index), null);
-    }
-
-    /**
      * Get the first smelting recipe by result for a certain itemStack predicate.
      *
      * @param stackPredicate the predicate to test.

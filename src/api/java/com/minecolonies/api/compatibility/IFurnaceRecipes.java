@@ -28,14 +28,6 @@ public interface IFurnaceRecipes
     ItemStack getSmeltingResult(final ItemStack itemStack);
 
     /**
-     * Get the smelting recipe by result for a certain itemStack.
-     *
-     * @param itemStack the itemStack to test.
-     * @return the result or null if not existent.
-     */
-    public RecipeStorage getSmeltingRecipeByResult(final ItemStack itemStack);
-
-    /**
      * Get the first smelting recipe by result for a certain itemStack predicate.
      *
      * @param stackPredicate the predicate to test.
