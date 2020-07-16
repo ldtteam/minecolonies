@@ -344,6 +344,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     @Override
     public void livingTick()
     {
+        super.livingTick();
         if (collisionCounter > 0)
         {
             collisionCounter--;
