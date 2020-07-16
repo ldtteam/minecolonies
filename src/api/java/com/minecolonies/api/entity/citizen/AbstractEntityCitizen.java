@@ -44,7 +44,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
  * The abstract citizen entity.
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
-public abstract class AbstractEntityCitizen extends AgeableEntity implements INamedContainerProvider, INPC
+public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements INamedContainerProvider
 {
     public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
     public static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
@@ -487,13 +487,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public abstract ICitizenData getCitizenData();
 
     /**
-     * Setter for the citizen data.
-     *
-     * @param data the data to set.
-     */
-    public abstract void setCitizenData(@Nullable ICitizenData data);
-
-    /**
      * Return this citizens inventory.
      *
      * @return the inventory this citizen has.
@@ -503,11 +496,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
 
     @NotNull
     public abstract IItemHandler getItemHandlerCitizen();
-
-    /**
-     * Mark the citizen dirty to synch the data with the client.
-     */
-    public abstract void markDirty();
 
     @NotNull
     public abstract DesiredActivity getDesiredActivity();
@@ -548,20 +536,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
      * Decrease the saturation of the citizen for 1 action.
      */
     public abstract void decreaseSaturationForContinuousAction();
-
-    /**
-     * Getter for the citizen id.
-     *
-     * @return the id.
-     */
-    public abstract int getCitizenId();
-
-    /**
-     * Setter for the citizen id.
-     *
-     * @param id the id to set.
-     */
-    public abstract void setCitizenId(int id);
 
     /**
      * Getter for the current position. Only approximated position, used for stuck checking.

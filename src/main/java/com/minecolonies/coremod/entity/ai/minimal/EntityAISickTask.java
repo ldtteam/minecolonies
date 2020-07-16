@@ -242,7 +242,7 @@ public class EntityAISickTask extends Goal
                           && world.isAirBlock(pos.up()))
                     {
                         usedBed = pos;
-                        ((BuildingHospital) hospital).registerPatient(usedBed, citizen.getCitizenId());
+                        ((BuildingHospital) hospital).registerPatient(usedBed, citizen.getCivilianID());
                         return FIND_EMPTY_BED;
                     }
                 }

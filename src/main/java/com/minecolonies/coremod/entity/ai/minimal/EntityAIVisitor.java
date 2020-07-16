@@ -114,10 +114,10 @@ public class EntityAIVisitor extends Goal
         citizen.getCitizenData().markDirty();
         if (citizen.getCitizenData().getSaturation() <= 0)
         {
-            citizen.getCitizenColonyHandler().getColony().getVisitorManager().removeCitizen(citizen.getCitizenData());
+            citizen.getCitizenColonyHandler().getColony().getVisitorManager().removeCivilian(citizen.getCitizenData());
             if (tavern != null)
             {
-                tavern.removeCitizen(citizen.getCitizenId());
+                tavern.removeCitizen(citizen.getCivilianID());
             }
             return true;
         }

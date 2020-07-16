@@ -1323,7 +1323,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         final Set<Integer> citizenIdsWithRequests = getOpenRequestsByCitizen().keySet();
         for (final int citizenId : citizenIdsWithRequests)
         {
-            final ICitizenData data = getColony().getCitizenManager().getCitizen(citizenId);
+            final ICitizenData data = getColony().getCitizenManager().getCivilian(citizenId);
 
             if (data == null)
             {
@@ -1538,9 +1538,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
 
         //Check if the citizen did not die.
-        if (getColony().getCitizenManager().getCitizen(citizenThatRequested) != null)
+        if (getColony().getCitizenManager().getCivilian(citizenThatRequested) != null)
         {
-            getColony().getCitizenManager().getCitizen(citizenThatRequested).onRequestCancelled(request.getId());
+            getColony().getCitizenManager().getCivilian(citizenThatRequested).onRequestCancelled(request.getId());
         }
         markDirty();
     }
@@ -1555,7 +1555,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
 
         final Integer citizenData = getCitizensByRequest().get(request.getId());
-        return new StringTextComponent(this.getSchematicName() + " " + getColony().getCitizenManager().getCitizen(citizenData).getName());
+        return new StringTextComponent(this.getSchematicName() + " " + getColony().getCitizenManager().getCivilian(citizenData).getName());
     }
 
     @Override
@@ -1567,12 +1567,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
 
         final int citizenID = getCitizensByRequest().get(token);
-        if (getColony().getCitizenManager().getCitizen(citizenID) == null)
+        if (getColony().getCitizenManager().getCivilian(citizenID) == null)
         {
             return Optional.empty();
         }
 
-        return Optional.of(getColony().getCitizenManager().getCitizen(citizenID));
+        return Optional.of(getColony().getCitizenManager().getCivilian(citizenID));
     }
 
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//

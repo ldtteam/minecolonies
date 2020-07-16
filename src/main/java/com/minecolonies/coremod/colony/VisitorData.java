@@ -108,14 +108,14 @@ public class VisitorData extends CitizenData implements IVisitorData
     }
 
     @Override
-    public void updateCitizenEntityIfNecessary()
+    public void updateEntityIfNecessary()
     {
-        if (getCitizenEntity().isPresent())
+        if (getEntity().isPresent())
         {
             return;
         }
 
-        getColony().getVisitorManager().spawnOrCreateCitizen(this, getColony().getWorld(), getLastPosition(), true);
+        getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), getLastPosition(), true);
     }
 
 }

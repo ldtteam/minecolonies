@@ -87,7 +87,7 @@ public class InteractionResponse extends AbstractColonyServerMessage
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
+        ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
         if (citizenData == null)
         {
             citizenData = colony.getVisitorManager().getVisitor(citizenId);

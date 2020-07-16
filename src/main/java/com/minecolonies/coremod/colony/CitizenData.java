@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
@@ -21,7 +22,6 @@ import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -230,23 +230,18 @@ public class CitizenData implements ICitizenData
     /**
      * Return the entity instance of the citizen data. Respawn the citizen if needed.
      *
-     * @return {@link EntityCitizen} of the citizen data.
+     * @return {@link AbstractEntityCitizen} of the citizen data.
      */
     @Override
     @NotNull
-    public Optional<AbstractEntityCitizen> getCitizenEntity()
+    public Optional<AbstractEntityCitizen> getEntity()
     {
-        if (entity == null)
-        {
-            return Optional.empty();
-        }
-
         final AbstractEntityCitizen citizen = entity.get();
         return Optional.ofNullable(citizen);
     }
 
     @Override
-    public void setCitizenEntity(@Nullable final AbstractEntityCitizen citizen)
+    public void setEntity(@Nullable final AbstractCivilianEntity citizen)
     {
         if (entity.get() != null)
         {
@@ -255,8 +250,8 @@ public class CitizenData implements ICitizenData
 
         if (citizen != null)
         {
-            entity = new WeakReference<>(citizen);
-            citizen.setCitizenData(this);
+            entity = new WeakReference<>((AbstractEntityCitizen) citizen);
+            citizen.setCivilianData(this);
         }
     }
 
@@ -264,7 +259,7 @@ public class CitizenData implements ICitizenData
     public void markDirty()
     {
         dirty = true;
-        colony.getCitizenManager().markCitizensDirty();
+        colony.getCitizenManager().markDirty();
     }
 
     /**
@@ -332,7 +327,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void initForNewCitizen()
+    public void initForNewCivilian()
     {
         final Random rand = new Random();
         //Assign the gender before name
@@ -356,12 +351,12 @@ public class CitizenData implements ICitizenData
     @Override
     public void initEntityValues()
     {
-        if (!getCitizenEntity().isPresent())
+        if (!getEntity().isPresent())
         {
             return;
         }
 
-        final AbstractEntityCitizen citizen = getCitizenEntity().get();
+        final AbstractEntityCitizen citizen = getEntity().get();
 
         citizen.setCitizenId(getId());
         citizen.getCitizenColonyHandler().setColonyId(getColony().getID());
@@ -375,7 +370,7 @@ public class CitizenData implements ICitizenData
         citizen.setTextureId(getTextureId());
 
         citizen.getDataManager().set(DATA_COLONY_ID, colony.getID());
-        citizen.getDataManager().set(DATA_CITIZEN_ID, citizen.getCitizenId());
+        citizen.getDataManager().set(DATA_CITIZEN_ID, citizen.getCivilianID());
         citizen.getDataManager().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
         citizen.getDataManager().set(DATA_TEXTURE, citizen.getTextureId());
         citizen.getDataManager().set(DATA_TEXTURE_SUFFIX, getTextureSuffix());
@@ -524,9 +519,9 @@ public class CitizenData implements ICitizenData
         homeBuilding = building;
         markDirty();
 
-        if (getCitizenEntity().isPresent() && getCitizenEntity().get().getCitizenJobHandler().getColonyJob() == null)
+        if (getEntity().isPresent() && getEntity().get().getCitizenJobHandler().getColonyJob() == null)
         {
-            getCitizenEntity().get().getCitizenJobHandler().setModelDependingOnJob(null);
+            getEntity().get().getCitizenJobHandler().setModelDependingOnJob(null);
         }
     }
 
@@ -560,7 +555,7 @@ public class CitizenData implements ICitizenData
             }
             else if (job != null)
             {
-                getCitizenEntity().ifPresent(entityCitizen -> {
+                getEntity().ifPresent(entityCitizen -> {
                     entityCitizen.getTasks()
                       .goals.stream()
                       .filter(task -> task.getGoal() instanceof AbstractAISkeleton)
@@ -578,14 +573,14 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void updateCitizenEntityIfNecessary()
+    public void updateEntityIfNecessary()
     {
-        if (getCitizenEntity().isPresent())
+        if (getEntity().isPresent())
         {
             return;
         }
 
-        colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), lastPosition, true);
+        colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), lastPosition, true);
     }
 
     @Override
@@ -603,7 +598,7 @@ public class CitizenData implements ICitizenData
         }
         this.job = job;
 
-        getCitizenEntity().ifPresent(entityCitizen -> entityCitizen.getCitizenJobHandler().onJobChanged(job));
+        getEntity().ifPresent(entityCitizen -> entityCitizen.getCitizenJobHandler().onJobChanged(job));
 
         markDirty();
     }
@@ -626,7 +621,7 @@ public class CitizenData implements ICitizenData
         buf.writeString(name);
         buf.writeBoolean(female);
 
-        buf.writeInt(getCitizenEntity().map(AbstractEntityCitizen::getEntityId).orElse(-1));
+        buf.writeInt(getEntity().map(AbstractEntityCitizen::getEntityId).orElse(-1));
 
         buf.writeBoolean(paused);
 
@@ -645,8 +640,8 @@ public class CitizenData implements ICitizenData
         }
 
         // If the entity is not present we assumes standard values.
-        buf.writeFloat(getCitizenEntity().map(AbstractEntityCitizen::getHealth).orElse(MAX_HEALTH));
-        buf.writeFloat(getCitizenEntity().map(AbstractEntityCitizen::getMaxHealth).orElse(MAX_HEALTH));
+        buf.writeFloat(getEntity().map(AbstractEntityCitizen::getHealth).orElse(MAX_HEALTH));
+        buf.writeFloat(getEntity().map(AbstractEntityCitizen::getMaxHealth).orElse(MAX_HEALTH));
 
         buf.writeDouble(getSaturation());
         buf.writeDouble(citizenHappinessHandler.getHappiness());
@@ -836,7 +831,7 @@ public class CitizenData implements ICitizenData
 
         nbtTagCompound.put(TAG_NEW_SKILLS, citizenSkillHandler.write());
 
-        BlockPosUtil.write(nbtTagCompound, TAG_POS, getCitizenEntity().isPresent() ? getCitizenEntity().get().getPosition() : lastPosition);
+        BlockPosUtil.write(nbtTagCompound, TAG_POS, getEntity().isPresent() ? getEntity().get().getPosition() : lastPosition);
         nbtTagCompound.putDouble(TAG_SATURATION, saturation);
 
         if (job != null)
@@ -968,7 +963,7 @@ public class CitizenData implements ICitizenData
     @Override
     public void tick()
     {
-        if (!getCitizenEntity().isPresent() || !getCitizenEntity().get().isAlive())
+        if (!getEntity().isPresent() || !getEntity().get().isAlive())
         {
             return;
         }

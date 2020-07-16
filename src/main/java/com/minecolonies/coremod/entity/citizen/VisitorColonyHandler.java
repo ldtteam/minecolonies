@@ -31,7 +31,7 @@ public class VisitorColonyHandler extends CitizenColonyHandler
         this.colonyId = colonyID;
         citizen.setCitizenId(citizenID);
 
-        if (colonyId == 0 || citizen.getCitizenId() == 0)
+        if (colonyId == 0 || citizen.getCivilianID() == 0)
         {
             citizen.remove();
             return;
@@ -47,7 +47,7 @@ public class VisitorColonyHandler extends CitizenColonyHandler
         }
 
         this.colony = colony;
-        colony.getVisitorManager().registerCitizen(citizen);
+        colony.getVisitorManager().registerCivilian(citizen);
         registered = true;
     }
 }

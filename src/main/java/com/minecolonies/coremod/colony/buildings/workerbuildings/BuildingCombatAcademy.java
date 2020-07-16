@@ -220,7 +220,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
             if (partner != null)
             {
                 trainingPartners.put(citizenData.getId(), partner.getId());
-                return partner.getCitizenEntity().orElse(null);
+                return partner.getEntity().orElse(null);
             }
             return null;
         }
@@ -267,7 +267,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
               getAssignedCitizen().stream().filter(cit -> cit.getId() != data.getId()).filter(cit -> cit.getId() == citizenId).findFirst().orElse(null);
             if (citizenData != null)
             {
-                return citizenData.getCitizenEntity().orElse(null);
+                return citizenData.getEntity().orElse(null);
             }
         }
         return null;

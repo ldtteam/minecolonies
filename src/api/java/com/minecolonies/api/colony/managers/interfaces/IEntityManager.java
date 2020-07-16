@@ -1,8 +1,8 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
-import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -18,35 +18,35 @@ import java.util.Set;
 public interface IEntityManager
 {
     /**
-     * Register a citizen entity with the colony
+     * Register a civilian entity with the colony
      *
-     * @param citizen citizen to register
+     * @param entity civilian to register
      */
-    void registerCitizen(AbstractEntityCitizen citizen);
+    void registerCivilian(AbstractCivilianEntity entity);
 
     /**
-     * Unregiters a citizen with the colony
+     * Unregiters a civilian with the colony
      *
-     * @param citizen citizen to unregister
+     * @param entity civilian to unregister
      */
-    void unregisterCitizen(AbstractEntityCitizen citizen);
+    void unregisterCivilian(AbstractCivilianEntity entity);
 
     /**
-     * Read the citizens from nbt.
+     * Read the civilian from nbt.
      *
      * @param compound the compound to read it from.
      */
     void read(@NotNull CompoundNBT compound);
 
     /**
-     * Write the citizens to nbt.
+     * Write the civilian to nbt.
      *
-     * @param citizenCompound the compound to write it to.
+     * @param compoundNBT the compound to write it to.
      */
-    void write(@NotNull CompoundNBT citizenCompound);
+    void write(@NotNull CompoundNBT compoundNBT);
 
     /**
-     * Sends packages to update the citizens.
+     * Sends packages to update the civilian.
      *
      * @param closeSubscribers the existing subscribers.
      * @param newSubscribers   new subscribers
@@ -56,50 +56,50 @@ public interface IEntityManager
       @NotNull Set<ServerPlayerEntity> newSubscribers);
 
     /**
-     * Returns a map of citizens in the colony. The map has ID as key, and citizen data as value.
+     * Returns a map of civilian in the colony. The map has ID as key, and civilian data as value.
      *
-     * @return Map of citizens in the colony, with as key the citizen ID, and as value the citizen data.
+     * @return Map of civilian in the colony, with as key the civilian ID, and as value the civilian data.
      */
     @NotNull
-    Map<Integer, ICitizenData> getCitizenMap();
+    Map<Integer, ICivilianData> getCivilianDataMap();
 
     /**
-     * Get citizen by ID.
+     * Get civilian by ID.
      *
-     * @param citizenId ID of the Citizen.
-     * @return ICitizenData associated with the ID, or null if it was not found.
+     * @param civilianId ID of the civilian.
+     * @return ICivilianData associated with the ID, or null if it was not found.
      */
-    ICitizenData getCitizen(int citizenId);
+    <T extends ICivilianData> T getCivilian(int civilianId);
 
     /**
-     * Spawns a citizen with the specific citizen data.
+     * Spawns a civilian with the specific civilian data.
      *
      * @param data     Data to use when spawn, null when new generation.
      * @param world    THe world.
-     * @param force    True to skip max citizen test, false when not.
      * @param spawnPos the pos to spawn it at.
-     * @return the new citizen.
+     * @param force    True to skip max civilian test, false when not.
+     * @return the new civilian.
      */
-    ICitizenData spawnOrCreateCitizen(ICitizenData data, World world, BlockPos spawnPos, boolean force);
+    <T extends ICivilianData> T spawnOrCreateCivilian(ICivilianData data, World world, BlockPos spawnPos, boolean force);
 
     /**
-     * Creates Citizen Data for a new citizen
+     * Creates Civilian Data for a new civilian
      *
-     * @return new ICitizenData
+     * @return new ICivilianData
      */
-    ICitizenData createAndRegisterNewCitizenData();
+    ICivilianData createAndRegisterCivilianData();
 
     /**
-     * Removes a citizen from the colony.
+     * Removes a civilian from the colony.
      *
-     * @param citizen Citizen data to remove.
+     * @param civilian data to remove.
      */
-    void removeCitizen(@NotNull ICitizenData citizen);
+    void removeCivilian(@NotNull ICivilianData civilian);
 
     /**
-     * Marks citizen data dirty.
+     * Marks civilian data dirty.
      */
-    void markCitizensDirty();
+    void markDirty();
 
     /**
      * Clear dirty from all buildings.

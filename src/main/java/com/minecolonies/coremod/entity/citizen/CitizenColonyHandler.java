@@ -91,7 +91,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         this.colonyId = colonyID;
         citizen.setCitizenId(citizenID);
 
-        if (colonyId == 0 || citizen.getCitizenId() == 0)
+        if (colonyId == 0 || citizen.getCivilianID() == 0)
         {
             citizen.remove();
             return;
@@ -107,7 +107,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         }
 
         this.colony = colony;
-        colony.getCitizenManager().registerCitizen(citizen);
+        colony.getCitizenManager().registerCivilian(citizen);
         registered = true;
     }
 
@@ -124,7 +124,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
                 colonyId = citizen.getDataManager().get(DATA_COLONY_ID);
             }
 
-            if (citizen.getCitizenId() == 0)
+            if (citizen.getCivilianID() == 0)
             {
                 citizen.setCitizenId(citizen.getDataManager().get(DATA_CITIZEN_ID));
             }
@@ -191,7 +191,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     {
         if (citizen.getCitizenData() != null && registered && colony != null)
         {
-            colony.getCitizenManager().unregisterCitizen(citizen);
+            colony.getCitizenManager().unregisterCivilian(citizen);
             citizen.getCitizenData().setLastPosition(citizen.getPosition());
         }
     }

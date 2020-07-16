@@ -145,18 +145,18 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                   ((IVisitorData) data).getRecruitCost().getCount()))
                 {
                     // Recruits visitor as new citizen and respawns entity
-                    colony.getVisitorManager().removeCitizen(data);
+                    colony.getVisitorManager().removeCivilian(data);
                     data.setWorkBuilding(null);
                     data.setHomeBuilding(null);
                     data.setJob(null);
 
                     // Create and read new citizen
-                    ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterNewCitizenData();
+                    ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCivilianData();
                     newCitizen.deserializeNBT(data.serializeNBT());
 
                     // Exchange entities
-                    newCitizen.updateCitizenEntityIfNecessary();
-                    data.getCitizenEntity().ifPresent(Entity::remove);
+                    newCitizen.updateEntityIfNecessary();
+                    data.getEntity().ifPresent(Entity::remove);
 
                     LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.recruit.message", data.getName());
                 }

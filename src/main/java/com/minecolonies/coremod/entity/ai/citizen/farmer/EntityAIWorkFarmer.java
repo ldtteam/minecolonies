@@ -429,7 +429,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer, Buil
             final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) entity;
             if (workingOffset != null)
             {
-                if (scarecrow.getOwnerId() != worker.getCitizenId())
+                if (scarecrow.getOwnerId() != worker.getCivilianID())
                 {
                     buildingFarmer.freeField(buildingFarmer.getCurrentField());
                     buildingFarmer.setCurrentField(null);

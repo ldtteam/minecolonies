@@ -28,7 +28,7 @@ public interface ICitizenManager extends IEntityManager
      */
     default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final World world)
     {
-        return this.spawnOrCreateCitizen(data, world, null, false);
+        return this.spawnOrCreateCivilian(data, world, null, false);
     }
 
     /**
@@ -41,7 +41,7 @@ public interface ICitizenManager extends IEntityManager
      */
     default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final World world, final BlockPos spawnPos)
     {
-        return this.spawnOrCreateCitizen(data, world, spawnPos, false);
+        return this.spawnOrCreateCivilian(data, world, spawnPos, false);
     }
 
     /**
@@ -56,6 +56,9 @@ public interface ICitizenManager extends IEntityManager
      * Recalculates how many citizen can be in the colony.
      */
     void calculateMaxCitizens();
+
+    @Override
+    ICitizenData createAndRegisterCivilianData();
 
     /**
      * Get all citizens.

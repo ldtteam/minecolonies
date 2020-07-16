@@ -34,6 +34,7 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.NameTagItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -181,10 +182,10 @@ public class VisitorCitizen extends AbstractEntityCitizen
                 {
                     for (final Integer id : ((BuildingTavern) home).getExternalCitizens())
                     {
-                        ICitizenData data = citizenColonyHandler.getColony().getVisitorManager().getCitizen(id);
-                        if (data != null && data.getCitizenEntity().isPresent() && data.getCitizenEntity().get().getRevengeTarget() == null)
+                        ICitizenData data = citizenColonyHandler.getColony().getVisitorManager().getCivilian(id);
+                        if (data != null && data.getEntity().isPresent() && data.getEntity().get().getRevengeTarget() == null)
                         {
-                            data.getCitizenEntity().get().setRevengeTarget((LivingEntity) damageSource.getTrueSource());
+                            data.getEntity().get().setRevengeTarget((LivingEntity) damageSource.getTrueSource());
                         }
                     }
                 }
@@ -219,11 +220,11 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public void setCitizenData(@Nullable final ICitizenData data)
+    public void setCivilianData(@Nullable final ICivilianData data)
     {
-        if (data != null)
+        if (data != null && data instanceof IVisitorData)
         {
-            this.citizenData = data;
+            this.citizenData = (IVisitorData) data;
             data.initEntityValues();
         }
     }
@@ -319,7 +320,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
      * @return the id.
      */
     @Override
-    public int getCitizenId()
+    public int getCivilianID()
     {
         return citizenId;
     }
@@ -694,7 +695,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
             IColony colony = getCitizenColonyHandler().getColony();
             if (colony != null && getCitizenData() != null)
             {
-                colony.getVisitorManager().removeCitizen(getCitizenData());
+                colony.getVisitorManager().removeCivilian(getCitizenData());
                 if (getCitizenData().getHomeBuilding() instanceof BuildingTavern)
                 {
                     BuildingTavern tavern = (BuildingTavern) getCitizenData().getHomeBuilding();
@@ -702,6 +703,20 @@ public class VisitorCitizen extends AbstractEntityCitizen
                 }
 
                 LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gui.tavern.visitordeath", getCitizenData().getName());
+            }
+        }
+    }
+
+    @Override
+    protected void dropInventory()
+    {
+        //Drop actual inventory
+        for (int i = 0; i < getInventoryCitizen().getSlots(); i++)
+        {
+            final ItemStack itemstack = getCitizenData().getInventory().getStackInSlot(i);
+            if (ItemStackUtils.getSize(itemstack) > 0)
+            {
+                citizenItemHandler.entityDropItem(itemstack);
             }
         }
     }

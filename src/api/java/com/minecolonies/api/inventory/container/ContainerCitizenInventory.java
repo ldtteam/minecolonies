@@ -78,11 +78,11 @@ public class ContainerCitizenInventory extends Container
             final ICitizenData data;
             if (citizenId > 0)
             {
-                data = colony.getCitizenManager().getCitizen(citizenId);
+                data = (ICitizenData) colony.getCitizenManager().getCivilian(citizenId);
             }
             else
             {
-                data = colony.getVisitorManager().getCitizen(citizenId);
+                data = (ICitizenData) colony.getVisitorManager().getCivilian(citizenId);
             }
 
             inventory = data.getInventory();
@@ -115,7 +115,7 @@ public class ContainerCitizenInventory extends Container
                               {
                                   final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.world);
                                   final IBuilding building = colony.getBuildingManager().getBuilding(workBuilding);
-                                  final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
+                                  final ICitizenData citizenData = (ICitizenData) colony.getCitizenManager().getCivilian(citizenId);
 
                                   building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
                               }

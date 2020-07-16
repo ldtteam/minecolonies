@@ -50,6 +50,14 @@ public class BuildingTavern extends BuildingHome
     public static final String TARVERN_SCHEMATIC = "tavern";
     public static final String TAG_VISITOR_ID    = "visitor";
 
+    /**
+     * Skill levels
+     */
+    private static final int LEATHER_SKILL_LEVEL = 20;
+    private static final int GOLD_SKILL_LEVEL    = 25;
+    private static final int IRON_SKILL_LEVEL    = 30;
+    private static final int DIAMOND_SKILL_LEVEL = 35;
+
     private static final int MAX_STORY = 20;
 
     /**
@@ -189,7 +197,7 @@ public class BuildingTavern extends BuildingHome
      */
     private void spawnVisitor()
     {
-        IVisitorData newCitizen = (IVisitorData) colony.getVisitorManager().createAndRegisterNewCitizenData();
+        IVisitorData newCitizen = (IVisitorData) colony.getVisitorManager().createAndRegisterCivilianData();
         externalCitizens.add(newCitizen.getId());
 
         newCitizen.setBedPos(getPosition());
@@ -211,31 +219,31 @@ public class BuildingTavern extends BuildingHome
             spawnPos = getPosition();
         }
 
-        colony.getVisitorManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), spawnPos, true);
+        colony.getVisitorManager().spawnOrCreateCivilian(newCitizen, colony.getWorld(), spawnPos, true);
 
-        final AbstractEntityCitizen citizenEntity = newCitizen.getCitizenEntity().get();
+        final AbstractEntityCitizen citizenEntity = newCitizen.getEntity().get();
 
         Tuple<Item, Integer> cost = recruitCosts.get(colony.getWorld().rand.nextInt(recruitCosts.size()));
-        if (recruitLevel > 20)
+        if (recruitLevel > LEATHER_SKILL_LEVEL)
         {
             // Leather
             citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.LEATHER_BOOTS));
         }
-        if (recruitLevel > 25)
+        if (recruitLevel > GOLD_SKILL_LEVEL)
         {
             // Gold
             citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.GOLDEN_BOOTS));
         }
-        if (recruitLevel > 30)
+        if (recruitLevel > IRON_SKILL_LEVEL)
         {
-            if (cost.getB() <= 3)
+            if (cost.getB() <= 2)
             {
                 cost = recruitCosts.get(colony.getWorld().rand.nextInt(recruitCosts.size()));
             }
             // Iron
             citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.IRON_BOOTS));
         }
-        if (recruitLevel > 35)
+        if (recruitLevel > DIAMOND_SKILL_LEVEL)
         {
             if (cost.getB() <= 3)
             {
@@ -276,7 +284,7 @@ public class BuildingTavern extends BuildingHome
         for (final INBT data : visitorlist)
         {
             final int id = ((CompoundNBT) data).getInt(TAG_VISITOR_ID);
-            final ICitizenData citizenData = colony.getVisitorManager().getCitizen(id);
+            final ICitizenData citizenData = colony.getVisitorManager().getCivilian(id);
             if (citizenData != null)
             {
                 externalCitizens.add(id);
@@ -323,7 +331,7 @@ public class BuildingTavern extends BuildingHome
         super.onDestroyed();
         for (final Integer id : externalCitizens)
         {
-            colony.getVisitorManager().removeCitizen(colony.getVisitorManager().getVisitor(id));
+            colony.getVisitorManager().removeCivilian(colony.getVisitorManager().getVisitor(id));
         }
     }
 

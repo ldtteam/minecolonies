@@ -1,10 +1,12 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.managers.interfaces.IVisitorManager;
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
@@ -60,21 +62,21 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public void registerCitizen(final AbstractEntityCitizen visitor)
+    public void registerCivilian(final AbstractCivilianEntity visitor)
     {
-        if (visitor.getCitizenId() == 0 || visitorMap.get(visitor.getCitizenId()) == null)
+        if (visitor.getCivilianID() == 0 || visitorMap.get(visitor.getCivilianID()) == null)
         {
             visitor.remove();
             return;
         }
 
-        final ICitizenData data = visitorMap.get(visitor.getCitizenId());
-        final Optional<AbstractEntityCitizen> existingCitizen = data.getCitizenEntity();
+        final ICitizenData data = visitorMap.get(visitor.getCivilianID());
+        final Optional<AbstractEntityCitizen> existingCitizen = data.getEntity();
 
         if (!existingCitizen.isPresent())
         {
-            data.setCitizenEntity(visitor);
-            visitor.setCitizenData(data);
+            data.setEntity(visitor);
+            visitor.setCivilianData(data);
             return;
         }
 
@@ -86,8 +88,8 @@ public class VisitorManager implements IVisitorManager
         if (!existingCitizen.get().isAlive() || !WorldUtil.isEntityBlockLoaded(colony.getWorld(), existingCitizen.get().getPosition()))
         {
             existingCitizen.get().remove();
-            data.setCitizenEntity(visitor);
-            visitor.setCitizenData(data);
+            data.setEntity(visitor);
+            visitor.setCivilianData(data);
             return;
         }
 
@@ -95,12 +97,12 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public void unregisterCitizen(final AbstractEntityCitizen citizen)
+    public void unregisterCivilian(final AbstractCivilianEntity entity)
     {
-        final ICitizenData data = visitorMap.get(citizen.getCitizenId());
-        if (data != null && data.getCitizenEntity().isPresent() && data.getCitizenEntity().get() == citizen)
+        final ICitizenData data = visitorMap.get(entity.getCivilianID());
+        if (data != null && data.getEntity().isPresent() && data.getEntity().get() == entity)
         {
-            visitorMap.get(citizen.getCitizenId()).setCitizenEntity(null);
+            visitorMap.get(entity.getCivilianID()).setEntity(null);
         }
     }
 
@@ -119,11 +121,11 @@ public class VisitorManager implements IVisitorManager
 
             nextVisitorID = visitorManagerNBT.getInt(TAG_NEXTID);
         }
-        markCitizensDirty();
+        markDirty();
     }
 
     @Override
-    public void write(@NotNull final CompoundNBT citizenCompound)
+    public void write(@NotNull final CompoundNBT compoundNBT)
     {
         final CompoundNBT visitorManagerNBT = new CompoundNBT();
 
@@ -135,7 +137,7 @@ public class VisitorManager implements IVisitorManager
 
         visitorManagerNBT.put(TAG_VISITORS, citizenList);
         visitorManagerNBT.putInt(TAG_NEXTID, nextVisitorID);
-        citizenCompound.put(TAG_VISIT_MANAGER, visitorManagerNBT);
+        compoundNBT.put(TAG_VISIT_MANAGER, visitorManagerNBT);
     }
 
     @Override
@@ -183,13 +185,13 @@ public class VisitorManager implements IVisitorManager
 
     @NotNull
     @Override
-    public Map<Integer, ICitizenData> getCitizenMap()
+    public Map<Integer, ICivilianData> getCivilianDataMap()
     {
         return Collections.unmodifiableMap(visitorMap);
     }
 
     @Override
-    public ICitizenData getCitizen(final int citizenId)
+    public IVisitorData getCivilian(final int citizenId)
     {
         return visitorMap.get(citizenId);
     }
@@ -201,55 +203,55 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public ICitizenData spawnOrCreateCitizen(ICitizenData data, final World world, final BlockPos spawnPos, final boolean force)
+    public IVisitorData spawnOrCreateCivilian(ICivilianData data, final World world, final BlockPos spawnPos, final boolean force)
     {
         if (!WorldUtil.isEntityBlockLoaded(world, spawnPos))
         {
-            return data;
+            return (IVisitorData) data;
         }
 
         if (data == null)
         {
-            data = createAndRegisterNewCitizenData();
+            data = createAndRegisterCivilianData();
         }
 
         VisitorCitizen citizenEntity = (VisitorCitizen) ModEntities.VISITOR.create(colony.getWorld());
 
         if (citizenEntity == null)
         {
-            return data;
+            return (IVisitorData) data;
         }
 
-        data.setCitizenEntity(citizenEntity);
+        data.setEntity(citizenEntity);
         data.initEntityValues();
 
         citizenEntity.setPosition(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
         world.addEntity(citizenEntity);
-        return data;
+        return (IVisitorData) data;
     }
 
     @Override
-    public ICitizenData createAndRegisterNewCitizenData()
+    public IVisitorData createAndRegisterCivilianData()
     {
-        markCitizensDirty();
+        markDirty();
         final IVisitorData data = new VisitorData(nextVisitorID--, colony);
-        data.initForNewCitizen();
+        data.initForNewCivilian();
         visitorMap.put(data.getId(), data);
         return data;
     }
 
     @Override
-    public void removeCitizen(@NotNull final ICitizenData citizen)
+    public void removeCivilian(@NotNull final ICivilianData citizen)
     {
         final IVisitorData data = visitorMap.remove(citizen.getId());
-        if (data != null && data.getCitizenEntity().isPresent())
+        if (data != null && data.getEntity().isPresent())
         {
-            data.getCitizenEntity().get().remove();
+            data.getEntity().get().remove();
         }
     }
 
     @Override
-    public void markCitizensDirty()
+    public void markDirty()
     {
         this.isDirty = true;
     }
@@ -267,7 +269,7 @@ public class VisitorManager implements IVisitorManager
         {
             for (final IVisitorData data : visitorMap.values())
             {
-                data.updateCitizenEntityIfNecessary();
+                data.updateEntityIfNecessary();
             }
         }
     }
