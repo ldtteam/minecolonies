@@ -539,6 +539,8 @@
   "com.minecolonies.coremod.gui.cowboy.collect": "Collecting Milk",
   "com.minecolonies.coremod.gui.workerhuts.settings": "Settings",
   "com.minecolonies.coremod.gui.workerhuts.farmer": "Farmer",
+  "com.minecolonies.coremod.gui.herder.breeding": "Breeding",
+  "com.minecolonies.coremod.gui.herder.notbreeding": "Not Breeding",
 
   "com.minecolonies.coremod.gui.townhall.build": "Build Town Hall",
   "com.minecolonies.coremod.gui.workerhuts.workorder": "Work Orders",
@@ -693,6 +695,10 @@
   "com.minecolonies.coremod.saturation.3": "I'm quite hungry, I feel very unproductive",
   "com.minecolonies.coremod.saturation.5": "I'm hungry, I'm not that productive anymore",
   "com.minecolonies.coremod.saturation.7": "I'm quite saturated, but I'll have to eat again soon",
+
+  "item.minecolonies.scepterbeekeeper.removehive": "Hive removed successfully",
+  "item.minecolonies.scepterbeekeeper.addhive": "Hive added successfully",
+  "item.minecolonies.scepterbeekeeper.maxhives": "You have reached the maximum number of hives. Upgrade the beekeeper to increase the number they can work",
 
   "com.minecolonies.coremod.item.permissionscepter.setmode": "Set to mode '%s'",
   "com.minecolonies.coremod.item.permissionscepter.permission.deny": "You do not have permission to edit blocks with this tool.",
@@ -1670,5 +1676,11 @@
   "com.minecolonies.coremod.gui.workerhuts.guide.confirm": "Understood",
   "com.minecolonies.coremod.gui.workerhuts.guide.questionmark": "Some buildings have extra help pages.",
   "com.minecolonies.coremod.gui.workerhuts.guide.arrow": "Make sure to check out all the building's pages!",
-  "com.minecolonies.coremod.gui.workerhuts.guide.chest": "Here you can have an overview of the combined building inventory."
+  "com.minecolonies.coremod.gui.workerhuts.guide.chest": "Here you can have an overview of the combined building inventory.",
+
+  "com.minecolonies.coremod.gui.beekeeper.notcollect": "Collect honey",
+  "com.minecolonies.coremod.gui.beekeeper.collect": "Collect honeycomb",
+  "com.minecolonies.coremod.gui.beekeeper.addhives": "Get hive tool",
+  "entity.beekeeper.messagenohives": "There are no hives for me to work",
+  "entity.beekeeper.messagenobees": "I can find no bees"
 }

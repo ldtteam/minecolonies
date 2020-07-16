@@ -20,7 +20,8 @@ public class UpdateHandler implements IUpdateHandler
       new CraftingUpdate(),
       new ResetRSToFixBuildingId(),
       new ResetRSToAddDelivermanPickups(),
-      new ResetRSToCleanCompletedRequests()
+      new ResetRSToCleanCompletedRequests(),
+      new ResetRSToAddFarmerCrafter()
     );
 
     private final IStandardRequestManager manager;

@@ -369,10 +369,8 @@ public class BuildToolPlaceMessage implements IMessage
                 ConstructionTapeHelper.placeConstructionTape(building.getPosition(), corners, world);
             }
 
-            if (mirror)
-            {
-                building.invertMirror();
-            }
+            building.setIsMirrored(mirror);
+
             if (complete)
             {
                 building.onUpgradeComplete(building.getBuildingLevel());
