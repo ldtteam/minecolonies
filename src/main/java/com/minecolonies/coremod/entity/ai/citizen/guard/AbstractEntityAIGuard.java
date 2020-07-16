@@ -491,7 +491,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             currentPatrolPoint = buildingGuards.getNextPatrolTarget(false);
         }
 
-        if (currentPatrolPoint != null && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 3) || worker.getCitizenStuckHandler().isStuck()))
+        if (currentPatrolPoint != null && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 3)))
         {
             buildingGuards.arrivedAtPatrolPoint(worker);
         }

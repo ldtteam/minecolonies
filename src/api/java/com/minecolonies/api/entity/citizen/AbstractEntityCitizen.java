@@ -93,6 +93,16 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     private AbstractAdvancedPathNavigate pathNavigate;
 
     /**
+     * Counts entity collisions
+     */
+    private int collisionCounter = 0;
+
+    /**
+     * The collision threshold
+     */
+    private final static int COLL_THRESHOLD = 30;
+
+    /**
      * Constructor for a new citizen typed entity.
      *
      * @param type  the Entity type.
@@ -314,6 +324,30 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
             this.pathNavigate.setStuckHandler(PathingStuckHandler.createStuckHandler().withTeleportOnFullStuck().withTeleportSteps(5));
         }
         return pathNavigate;
+    }
+
+    /**
+     * Ignores entity collisions are colliding for a while, solves stuck e.g. for many trying to take the same door
+     *
+     * @param entityIn entity to collide with
+     */
+    @Override
+    public void applyEntityCollision(@NotNull final Entity entityIn)
+    {
+        if ((collisionCounter += 3) > COLL_THRESHOLD)
+        {
+            return;
+        }
+        super.applyEntityCollision(entityIn);
+    }
+
+    @Override
+    public void livingTick()
+    {
+        if (collisionCounter > 0)
+        {
+            collisionCounter--;
+        }
     }
 
     /**
@@ -644,13 +678,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public abstract ICitizenSleepHandler getCitizenSleepHandler();
 
     /**
-     * The Handler to check if a citizen is stuck.
-     *
-     * @return the instance of the handler.
-     */
-    public abstract ICitizenStuckHandler getCitizenStuckHandler();
-
-    /**
      * The Handler to check if the citizen is sick.
      *
      * @return the instance of the handler.
@@ -699,8 +726,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public abstract float getRotationPitch();
 
     public abstract boolean isDead();
-
-    public abstract void setCitizenStuckHandler(ICitizenStuckHandler citizenStuckHandler);
 
     public abstract void setCitizenSleepHandler(ICitizenSleepHandler citizenSleepHandler);
 

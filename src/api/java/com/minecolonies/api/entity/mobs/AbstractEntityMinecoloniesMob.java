@@ -105,6 +105,16 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     private boolean envDamageImmunity = false;
 
     /**
+     * Counts entity collisions
+     */
+    private int collisionCounter = 0;
+
+    /**
+     * The collision threshold
+     */
+    private final static int COLL_THRESHOLD = 50;
+
+    /**
      * Constructor method for Abstract Barbarians.
      *
      * @param world the world.
@@ -127,9 +137,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     @Override
     public void applyEntityCollision(@NotNull final Entity entityIn)
     {
-        if (invulTime < 0 && entityIn instanceof AbstractEntityMinecoloniesMob
-              && ((stuckCounter > 0 || ladderCounter > 0 || ((AbstractEntityMinecoloniesMob) entityIn).stuckCounter > 0
-                     || ((AbstractEntityMinecoloniesMob) entityIn).ladderCounter > 0)))
+        if (invulTime > 0 || (collisionCounter += 3) > COLL_THRESHOLD)
         {
             return;
         }
@@ -295,6 +303,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         else
         {
             this.setInvulnerable(false);
+        }
+
+        if (collisionCounter > 0)
+        {
+            collisionCounter--;
         }
 
         if (world.isRemote)
