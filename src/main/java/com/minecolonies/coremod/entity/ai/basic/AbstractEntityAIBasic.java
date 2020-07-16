@@ -1564,8 +1564,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return false;
         }
 
-        final int existingAmount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate.getA());
-        int amount = 0;
+        final int existingAmount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate.getA()) ;
+        int amount;
         if (predicate.getB() > existingAmount)
         {
             amount = predicate.getB() - existingAmount;
@@ -1579,15 +1579,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
         do
         {
-            if (amount > STACKSIZE)
-            {
-                transferamount = STACKSIZE;
-            }
-            else
-            {
-                transferamount = amount;
-            }
-
+            transferamount = Math.min(amount, STACKSIZE);
             amount -= transferamount;
 
             if (!InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(entity, predicate.getA(), transferamount, worker.getInventoryCitizen()))

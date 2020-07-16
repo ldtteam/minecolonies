@@ -15,7 +15,7 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
+import com.minecolonies.coremod.client.gui.WindowHutDyer;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobDyer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
@@ -64,7 +64,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     @Override
     public void checkForWorkerSpecificRecipes()
     {
-        final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
+        final IRecipeStorage cactusStorage = StandardFactoryController.getInstance().getNewInstance(
           TypeConstants.RECIPE,
           StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
           ImmutableList.of(new ItemStack(Blocks.CACTUS, 1)),
@@ -72,7 +72,17 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
           new ItemStack(Items.GREEN_DYE, 1),
           Blocks.FURNACE);
 
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+          final IRecipeStorage redsandStorage = StandardFactoryController.getInstance().getNewInstance(
+            TypeConstants.RECIPE,
+            StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+            ImmutableList.of(new ItemStack(Blocks.SAND, 4), new ItemStack(Items.RED_DYE)),
+            1,
+            new ItemStack(Blocks.RED_SAND, 4),
+            Blocks.AIR);
+  
+        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(cactusStorage));
+        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(redsandStorage));
+
     }
 
     @NotNull
@@ -199,7 +209,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, DYER);
+            return new WindowHutDyer(this);
         }
     }
 }

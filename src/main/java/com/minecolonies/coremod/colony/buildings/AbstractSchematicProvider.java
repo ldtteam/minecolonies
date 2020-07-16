@@ -433,13 +433,10 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         dirty = true;
     }
 
-    /**
-     * Sets the mirror of the current building.
-     */
     @Override
-    public void invertMirror()
+    public void setIsMirrored(final boolean isMirrored)
     {
-        this.isBuildingMirrored = !isBuildingMirrored;
+        this.isBuildingMirrored = isMirrored;
     }
 
     /**

@@ -4,6 +4,7 @@
     "#minecraft:logs",
     "#minecraft:planks",
     "minecraft:stick",
-    "#minecolonies:mechanic_ingredient"
+    "#minecolonies:mechanic_ingredient",
+    "#minecolonies:dyer_ingredient"
   ]
 }
