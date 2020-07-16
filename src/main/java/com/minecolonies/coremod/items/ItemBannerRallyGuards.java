@@ -461,11 +461,11 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
         final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_GUI);
-        guiHint.func_230530_a_(Style.EMPTY.setFormatting(TextFormatting.GRAY));
+        guiHint.setStyle(Style.EMPTY.setFormatting(TextFormatting.GRAY));
         tooltip.add(guiHint);
 
         final IFormattableTextComponent rallyHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_RALLY);
-        rallyHint.func_230530_a_(Style.EMPTY.setFormatting(TextFormatting.GRAY));
+        rallyHint.setStyle(Style.EMPTY.setFormatting(TextFormatting.GRAY));
         tooltip.add(rallyHint);
 
         final List<ILocation> guardTowerPositions = getGuardTowerLocations(stack);
@@ -473,13 +473,13 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         if (guardTowerPositions.isEmpty())
         {
             final IFormattableTextComponent emptyTooltip = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
-            emptyTooltip.func_230530_a_(Style.EMPTY.setFormatting(TextFormatting.GRAY));
+            emptyTooltip.setStyle(Style.EMPTY.setFormatting(TextFormatting.GRAY));
             tooltip.add(emptyTooltip);
         }
         else
         {
             final IFormattableTextComponent numGuardTowers = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP, guardTowerPositions.size());
-            numGuardTowers.func_230530_a_(Style.EMPTY.setFormatting(TextFormatting.DARK_AQUA));
+            numGuardTowers.setStyle(Style.EMPTY.setFormatting(TextFormatting.DARK_AQUA));
             tooltip.add(numGuardTowers);
         }
 

@@ -14,26 +14,26 @@ public class CompleteBuildRequestCriterionInstance extends CriterionInstance
 
     public CompleteBuildRequestCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.AndPredicate.field_234582_a_);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY_AND);
     }
 
     public CompleteBuildRequestCriterionInstance(final StructureName structureName)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.AndPredicate.field_234582_a_);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY_AND);
 
         this.structureName = structureName;
     }
 
     public CompleteBuildRequestCriterionInstance(final String hutName)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.AndPredicate.field_234582_a_);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY_AND);
 
         this.hutName = hutName;
     }
 
     public CompleteBuildRequestCriterionInstance(final StructureName structureName, final int level)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.AndPredicate.field_234582_a_);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY_AND);
 
         this.structureName = structureName;
         this.level = level;
@@ -41,7 +41,7 @@ public class CompleteBuildRequestCriterionInstance extends CriterionInstance
 
     public CompleteBuildRequestCriterionInstance(final String hutName, final int level)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.AndPredicate.field_234582_a_);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY_AND);
 
         this.hutName = hutName;
         this.level = level;

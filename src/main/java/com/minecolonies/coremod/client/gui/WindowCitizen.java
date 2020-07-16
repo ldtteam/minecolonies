@@ -422,7 +422,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
             {
                 final ITextComponent chatMessage = new StringTextComponent("<" + citizen.getName() + "> " +
                                                                              LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
-                                                     .func_230530_a_(Style.EMPTY.setBold(false).setFormatting(TextFormatting.WHITE)
+                                                     .setStyle(Style.EMPTY.setBold(false).setFormatting(TextFormatting.WHITE)
                                                      );
                 Minecraft.getInstance().player.sendMessage(chatMessage, Minecraft.getInstance().player.getUniqueID());
 

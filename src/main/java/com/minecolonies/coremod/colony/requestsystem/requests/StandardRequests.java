@@ -64,8 +64,8 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final IFormattableTextComponent combined = new NonSiblingFormattingTextComponent();
-            combined.func_230529_a_(new StringTextComponent(getRequest().getCount() + " "));
-            combined.func_230529_a_(getRequest().getStack().getDisplayName());
+            combined.append(new StringTextComponent(getRequest().getCount() + " "));
+            combined.append(getRequest().getStack().getDisplayName());
             return combined;
         }
     }
@@ -119,7 +119,7 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final IFormattableTextComponent result = new NonSiblingFormattingTextComponent();
-            result.func_230529_a_(new TranslationTextComponent(stackList.getDescription()));
+            result.append(new TranslationTextComponent(stackList.getDescription()));
             return result;
         }
 
@@ -168,8 +168,8 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final IFormattableTextComponent combined = new NonSiblingFormattingTextComponent();
-            combined.func_230529_a_(new StringTextComponent(getRequest().getCount() + " "));
-            combined.func_230529_a_(new StringTextComponent("#" + getRequest().getTag().toString()));
+            combined.append(new StringTextComponent(getRequest().getCount() + " "));
+            combined.append(new StringTextComponent("#" + getRequest().getTag().toString()));
             return combined;
         }
 
@@ -204,8 +204,8 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final IFormattableTextComponent result = new NonSiblingFormattingTextComponent();
-            result.func_230529_a_(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).func_230529_a_(new StringTextComponent(
-              getRequest().getStack().getCount() + " ")).func_230529_a_(getRequest().getStack().getTextComponent()));
+            result.append(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).append(new StringTextComponent(
+              getRequest().getStack().getCount() + " ")).append(getRequest().getStack().getTextComponent()));
             return result;
         }
 
@@ -248,7 +248,7 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final IFormattableTextComponent result = new NonSiblingFormattingTextComponent();
-            result.func_230529_a_(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_PICKUP));
+            result.append(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_PICKUP));
             return result;
         }
 
@@ -295,9 +295,9 @@ public final class StandardRequests
             final IFormattableTextComponent result = new NonSiblingFormattingTextComponent();
             final IFormattableTextComponent preType = new TranslationTextComponent(getTranslationKey());
 
-            result.func_230529_a_(preType);
+            result.append(preType);
 
-            preType.func_230529_a_(getRequest().getStack().getTextComponent());
+            preType.append(getRequest().getStack().getTextComponent());
 
             return result;
         }
@@ -413,28 +413,28 @@ public final class StandardRequests
             final IFormattableTextComponent result = new NonSiblingFormattingTextComponent();
             final IFormattableTextComponent preType = new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE);
 
-            result.func_230529_a_(preType);
+            result.append(preType);
 
-            result.func_230529_a_(getRequest().getToolClass().getDisplayName());
+            result.append(getRequest().getToolClass().getDisplayName());
 
             if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
             {
-                result.func_230529_a_(new StringTextComponent(" "));
-                result.func_230529_a_(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL));
-                result.func_230529_a_(new StringTextComponent(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel())));
+                result.append(new StringTextComponent(" "));
+                result.append(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL));
+                result.append(new StringTextComponent(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel())));
             }
 
             if (getRequest().getMaxLevel() < ToolLevelConstants.TOOL_LEVEL_MAXIMUM)
             {
                 if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
                 {
-                    result.func_230529_a_(new StringTextComponent(" "));
-                    result.func_230529_a_(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
+                    result.append(new StringTextComponent(" "));
+                    result.append(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
                 }
 
-                result.func_230529_a_(new StringTextComponent(" "));
-                result.func_230529_a_(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL));
-                result.func_230529_a_(new StringTextComponent(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel())));
+                result.append(new StringTextComponent(" "));
+                result.append(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL));
+                result.append(new StringTextComponent(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel())));
             }
 
             return result;
@@ -445,7 +445,7 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final IFormattableTextComponent result = new NonSiblingFormattingTextComponent();
-            result.func_230529_a_(getRequest().getToolClass().getDisplayName());
+            result.append(getRequest().getToolClass().getDisplayName());
             return result;
         }
     }
@@ -479,7 +479,7 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final IFormattableTextComponent result = new NonSiblingFormattingTextComponent();
-            result.func_230529_a_(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD));
+            result.append(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD));
             return result;
         }
 
@@ -578,7 +578,7 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final IFormattableTextComponent result = new NonSiblingFormattingTextComponent();
-            result.func_230529_a_(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE));
+            result.append(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE));
             return result;
         }
 

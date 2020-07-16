@@ -516,7 +516,7 @@ public class EventHandler
         {
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, bedBlockPos);
             //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
-            if (colony != null && world.getBlockState(event.getPos()).func_235901_b_(BedBlock.PART))
+            if (colony != null && world.getBlockState(event.getPos()).hasProperty(BedBlock.PART))
             {
                 final List<ICitizenData> citizenList = colony.getCitizenManager().getCitizens();
                 final BlockState potentialBed = world.getBlockState(event.getPos());

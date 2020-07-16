@@ -5,7 +5,6 @@ import com.minecolonies.api.tileentities.TileEntityEnchanter;
 import com.minecolonies.api.util.constant.Constants;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.BookModel;
@@ -71,9 +70,9 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityCo
             float flipA = MathHelper.frac(pageFlip + 0.25F) * 1.6F - 0.3F;
             float flipB = MathHelper.frac(pageFlip + 0.75F) * 1.6F - 0.3F;
             float bookSpread = MathHelper.lerp(partialTicks, entity.bookSpreadPrev, entity.bookSpread);
-            this.modelBook.func_228247_a_(tick, MathHelper.clamp(flipA, 0.0F, 1.0F), MathHelper.clamp(flipB, 0.0F, 1.0F), bookSpread);
+            this.modelBook.setBookState(tick, MathHelper.clamp(flipA, 0.0F, 1.0F), MathHelper.clamp(flipB, 0.0F, 1.0F), bookSpread);
             IVertexBuilder vertexConsumer = TEXTURE_BOOK.getBuffer(renderTypeBuffer, RenderType::getEntitySolid);
-            this.modelBook.func_228249_b_(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
+            this.modelBook.render(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
             matrixStack.pop();
         }
     }

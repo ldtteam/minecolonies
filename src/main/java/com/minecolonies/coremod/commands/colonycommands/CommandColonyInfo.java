@@ -58,7 +58,7 @@ public class CommandColonyInfo implements IMCCommand
         context.getSource()
           .sendFeedback(new StringTextComponent(CITIZENS + colony.getCitizenManager().getCitizens().size() + "/" + colony.getCitizenManager().getMaxCitizens()), true);
         context.getSource()
-          .sendFeedback(new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).func_230530_a_(Style.EMPTY.setFormatting(
+          .sendFeedback(new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).setStyle(Style.EMPTY.setFormatting(
             TextFormatting.GREEN)), true);
         context.getSource().sendFeedback(new StringTextComponent(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())), true);
         context.getSource().sendFeedback(new StringTextComponent(IS_DELETABLE + !colony.canBeAutoDeleted()), true);

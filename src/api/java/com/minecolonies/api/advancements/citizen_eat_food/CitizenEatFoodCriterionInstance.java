@@ -13,12 +13,12 @@ public class CitizenEatFoodCriterionInstance extends CriterionInstance
 
     public CitizenEatFoodCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.AndPredicate.field_234582_a_);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.AndPredicate.ANY_AND);
     }
 
     public CitizenEatFoodCriterionInstance(final ItemPredicate[] itemPredicates)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.AndPredicate.field_234582_a_);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.AndPredicate.ANY_AND);
 
         this.itemPredicates = itemPredicates;
     }

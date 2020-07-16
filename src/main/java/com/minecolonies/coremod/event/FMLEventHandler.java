@@ -7,6 +7,7 @@ import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.client.ServerUUIDMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -52,9 +53,9 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
-    public static void onServerStarting(final FMLServerStartingEvent event)
+    public void onCommandsRegister(RegisterCommandsEvent event)
     {
-        EntryPoint.register(event.getCommandDispatcher());
+        EntryPoint.register(event.getDispatcher());
     }
 
     @SubscribeEvent

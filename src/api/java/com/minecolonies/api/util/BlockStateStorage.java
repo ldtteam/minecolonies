@@ -52,7 +52,7 @@ public class BlockStateStorage
             // hashcode only for included properties
             for (final Property<?> prop : compareProperties)
             {
-                if (state.func_235901_b_(prop))
+                if (state.hasProperty(prop))
                 {
                     hashCode += prop.hashCode();
                     hashCode += state.get(prop).hashCode();
@@ -62,7 +62,7 @@ public class BlockStateStorage
         else
         {
             // hashcode for all except the excluded properties
-            for (final Property<?> prop : state.func_235904_r_())
+            for (final Property<?> prop : state.getProperties())
             {
                 if (!compareProperties.contains(prop))
                 {
@@ -120,7 +120,7 @@ public class BlockStateStorage
 
         if (exclude)
         {
-            for (final Property<?> prop : state.func_235904_r_())
+            for (final Property<?> prop : state.getProperties())
             {
                 // skip excluded properties upon comparing
                 if (getCompareProperties().contains(prop))
@@ -128,7 +128,7 @@ public class BlockStateStorage
                     continue;
                 }
 
-                if (!comparingToStorage.getState().func_235901_b_(prop))
+                if (!comparingToStorage.getState().hasProperty(prop))
                 {
                     return false;
                 }
@@ -143,7 +143,7 @@ public class BlockStateStorage
         {
             for (final Property<?> prop : propertyList)
             {
-                if (!comparingToStorage.getState().func_235901_b_(prop))
+                if (!comparingToStorage.getState().hasProperty(prop))
                 {
                     return false;
                 }

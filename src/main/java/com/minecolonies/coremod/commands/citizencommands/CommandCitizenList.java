@@ -108,7 +108,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         for (final ICitizenData citizen : citizensPage)
         {
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.desc", citizen.getId(), citizen.getName())
-                                               .func_230530_a_(Style.EMPTY.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                               .setStyle(Style.EMPTY.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                 String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId())))), true);
 
             citizen.getCitizenEntity().ifPresent(entityCitizen ->
@@ -135,21 +135,21 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         final int nextPage = Math.min(page + 1, (count / CITIZENS_ON_PAGE) + halfPage);
 
         final ITextComponent prevButton =
-          LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.prev").func_230530_a_(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD).setClickEvent(
+          LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.prev").setStyle(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD).setClickEvent(
             new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format(LIST_COMMAND_SUGGESTED, colonyId, prevPage))
           ));
         final ITextComponent nextButton =
-          LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.next").func_230530_a_(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD).setClickEvent(
+          LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.next").setStyle(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD).setClickEvent(
             new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format(LIST_COMMAND_SUGGESTED, colonyId, nextPage))
           ));
 
         final IFormattableTextComponent beginLine = LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pageline");
         final IFormattableTextComponent endLine = LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pageline");
 
-        context.getSource().sendFeedback(beginLine.func_230529_a_(prevButton)
-                                           .func_230529_a_(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pagestyle"))
-                                           .func_230529_a_(nextButton)
-                                           .func_230529_a_(endLine), true);
+        context.getSource().sendFeedback(beginLine.append(prevButton)
+                                           .append(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pagestyle"))
+                                           .append(nextButton)
+                                           .append(endLine), true);
     }
 
     /**

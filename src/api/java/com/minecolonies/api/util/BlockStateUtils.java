@@ -63,14 +63,14 @@ public class BlockStateUtils
     {
         final Property<?> propertyOne = getPropertyByNameFromState(state1, propertyName);
 
-        if (propertyOne != null && state2.func_235901_b_(propertyOne))
+        if (propertyOne != null && state2.hasProperty(propertyOne))
         {
             return state1.get(propertyOne) == state2.get(propertyOne);
         }
 
         final Property<?> propertyTwo = getPropertyByNameFromState(state2, propertyName);
 
-        if (propertyOne != null && propertyTwo != null && state1.func_235901_b_(propertyOne) && state2.func_235901_b_(propertyTwo))
+        if (propertyOne != null && propertyTwo != null && state1.hasProperty(propertyOne) && state2.hasProperty(propertyTwo))
         {
             return state1.get(propertyOne).toString().equals((state2.get(propertyTwo)).toString());
         }
@@ -88,14 +88,14 @@ public class BlockStateUtils
     {
         Property<?> property = propertyBlockMap.get(state.getBlock().getRegistryName().toString() + ":" + name);
 
-        if (property != null && state.func_235901_b_(property))
+        if (property != null && state.hasProperty(property))
         {
             return property;
         }
         else
         {
             // Cached map entry nonexistant or wrong, calculate new
-            property = getPropertyByName(state.func_235904_r_(), name);
+            property = getPropertyByName(state.getProperties(), name);
 
             if (property != null)
             {
@@ -137,7 +137,7 @@ public class BlockStateUtils
       @NotNull final BlockState state2,
       @NotNull final Property<T> prop)
     {
-        if (!state1.func_235901_b_(prop) || !state2.func_235901_b_(prop))
+        if (!state1.hasProperty(prop) || !state2.hasProperty(prop))
         {
             return state1 == state2;
         }
@@ -164,14 +164,14 @@ public class BlockStateUtils
             return false;
         }
 
-        if (state1.func_235904_r_().size() != state2.func_235904_r_().size())
+        if (state1.getProperties().size() != state2.getProperties().size())
         {
             return false;
         }
 
-        for (final Property<?> prop : state1.func_235904_r_())
+        for (final Property<?> prop : state1.getProperties())
         {
-            if (!state2.func_235901_b_(prop))
+            if (!state2.hasProperty(prop))
             {
                 return false;
             }

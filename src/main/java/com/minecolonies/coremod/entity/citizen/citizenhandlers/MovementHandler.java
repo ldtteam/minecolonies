@@ -101,7 +101,7 @@ public class MovementHandler extends MovementController
             // Avoid beeing stuck in jumping while in liquids
             final BlockPos blockpos = new BlockPos(this.mob.getPositionVec());
             final BlockState blockstate = this.mob.world.getBlockState(blockpos);
-            if (this.mob.func_233570_aj_() || blockstate.getMaterial().isLiquid())
+            if (this.mob.isOnGround() || blockstate.getMaterial().isLiquid())
             {
                 this.action = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
             }

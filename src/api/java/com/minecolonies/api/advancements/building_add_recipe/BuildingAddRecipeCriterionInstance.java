@@ -14,19 +14,19 @@ public class BuildingAddRecipeCriterionInstance extends CriterionInstance
 
     public BuildingAddRecipeCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.field_234582_a_);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.ANY_AND);
     }
 
     public BuildingAddRecipeCriterionInstance(final ItemPredicate[] outputItemPredicates)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.field_234582_a_);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.ANY_AND);
 
         this.outputItemPredicates = outputItemPredicates;
     }
 
     public BuildingAddRecipeCriterionInstance(final ItemPredicate[] outputItemPredicates, final int craftingSize)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.field_234582_a_);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.ANY_AND);
 
         this.outputItemPredicates = outputItemPredicates;
         this.craftingSize = craftingSize;
