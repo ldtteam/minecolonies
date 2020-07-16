@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -17,6 +18,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.ItemStackRequest;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
@@ -79,9 +81,19 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
             try
             {
-                return wareHouses.stream()
+                if(requestToCheck instanceof ItemStackRequest)
+                {
+                    final Stack req = (Stack) requestToCheck.getRequest();
+                    final ItemStack stack = req.getStack().copy();
+                    stack.setCount(requestToCheck.getRequest().getMinimumCount());
+                    return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(stack));
+                }
+                else
+                {
+                    return wareHouses.stream()
                          .anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack),
                            requestToCheck.getRequest().getMinimumCount()));
+                }
             }
             catch (Exception e)
             {
