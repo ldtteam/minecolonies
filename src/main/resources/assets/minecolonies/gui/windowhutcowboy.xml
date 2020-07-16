@@ -7,7 +7,8 @@
         </view>
         <view id="pageActions" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
-            <button id="milkCows" size="129 17" pos="30 114" label="$(com.minecolonies.coremod.gui.cowboy.collect)"/>
+            <buttonimage id="breedAnimals" size="129 17" pos="30 92" textcolor="black" label="$(com.minecolonies.coremod.gui.herder.breeding)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
+            <buttonimage id="milkCows" size="129 17" pos="30 114" textcolor="black" label="$(com.minecolonies.coremod.gui.cowboy.collect)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>

@@ -1,25 +1,33 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutFarmer;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -43,7 +51,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Class which handles the farmer building.
  */
-public class BuildingFarmer extends AbstractBuildingWorker
+public class BuildingFarmer extends AbstractBuildingCrafter
 {
     /**
      * Descriptive string of the profession.
@@ -323,6 +331,49 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return Skill.Athletics;
     }
 
+    @Override
+    public void checkForWorkerSpecificRecipes()
+    {
+        final IRecipeStorage carvedPumpkinStorage = StandardFactoryController.getInstance().getNewInstance(
+          TypeConstants.RECIPE,
+          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+          ImmutableList.of(new ItemStack(Blocks.PUMPKIN, 1)),
+          1,
+          new ItemStack(Blocks.CARVED_PUMPKIN, 1),
+          Blocks.AIR);
+
+         addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(carvedPumpkinStorage));
+    }
+    
+    @Override
+    public boolean canRecipeBeAdded(final IToken<?> token)
+    {
+
+        Optional<Boolean> isRecipeAllowed;
+
+        if (!super.canRecipeBeAdded(token))
+        {
+            return false;
+        }
+
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        return isRecipeAllowed.orElse(false);
+    }    
+    
+    @Override
+    public boolean canCraftComplexRecipes()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean canBeGathered()
+    {
+        // Normal crafters are only gatherable when they have a task, i.e. while producing stuff.
+        // BUT, the farmer both gathers and crafts things now, like the lumberjack
+        return true;
+    }
+
     /**
      * Override this method if you want to keep an amount of items in inventory. When the inventory is full, everything get's dumped into the building chest. But you can use this
      * method to hold some stacks back.
@@ -566,7 +617,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     /**
      * Provides a view of the miner building class.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingCrafter.View
     {
         /**
          * Checks if fields should be assigned manually.
