@@ -539,6 +539,8 @@
   "com.minecolonies.coremod.gui.cowboy.collect": "Collecting Milk",
   "com.minecolonies.coremod.gui.workerhuts.settings": "Settings",
   "com.minecolonies.coremod.gui.workerhuts.farmer": "Farmer",
+  "com.minecolonies.coremod.gui.herder.breeding": "Breeding",
+  "com.minecolonies.coremod.gui.herder.notbreeding": "Not Breeding",
 
   "com.minecolonies.coremod.gui.townhall.build": "Build Town Hall",
   "com.minecolonies.coremod.gui.workerhuts.workorder": "Work Orders",
