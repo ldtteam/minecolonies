@@ -53,6 +53,20 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     @Override
     protected IAIState decide()
     {
+        // This needs to only run on concrete powder that isn't earmarked for delivery. 
+        // We need an 'output' inventory to protect those from processing here. 
+        /*
+        if (job.getTaskQueue().isEmpty())
+        {
+            final IAIState state = mixConcrete();
+            if (state != CRAFT)
+            {
+                return state;
+            }
+            return START_WORKING;
+        }
+        */
+
         if (job.getCurrentTask() == null)
         {
             return START_WORKING;
