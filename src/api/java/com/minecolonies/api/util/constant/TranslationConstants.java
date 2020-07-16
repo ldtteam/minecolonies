@@ -274,6 +274,10 @@ public final class TranslationConstants
     @NonNls
     public static final String REALLY_FAR_DESC                                                     = "com.minecolonies.coremod.max.schematic.reallyfar";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HERDER_BREEDING                        = "com.minecolonies.coremod.gui.herder.breeding";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HERDER_NOTBREEDING                     = "com.minecolonies.coremod.gui.herder.notbreeding";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT                         = "com.minecolonies.coremod.gui.cowboy.collect";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT                      = "com.minecolonies.coremod.gui.cowboy.notcollect";

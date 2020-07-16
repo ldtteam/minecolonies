@@ -208,7 +208,7 @@ public class ItemStorage
                  && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue())
                  && (this.shouldIgnoreNBTValue
                        || (that.getItemStack().getTag() == null && this.getItemStack().getTag() == null)
-                       || that.getItemStack().getTag().equals(this.getItemStack().getTag()));
+                       || (that.getItemStack().getTag() != null && that.getItemStack().getTag().equals(this.getItemStack().getTag())));
     }
 
     /**

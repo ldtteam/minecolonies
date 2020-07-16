@@ -425,21 +425,6 @@ public class TileEntityRack extends AbstractTileEntityRack
             }
         }
 
-        if (compound.keySet().contains("Items"))
-        {
-            ListNBT nbttaglist = compound.getList("Items", 10);
-
-            for (int i = 0; i < nbttaglist.size(); ++i)
-            {
-                CompoundNBT nbttagcompound = nbttaglist.getCompound(i);
-                int j = nbttagcompound.getByte("Slot") & 255;
-                if (j >= 0 && j < inventory.getSlots())
-                {
-                    inventory.setStackInSlot(j, ItemStack.read(nbttagcompound));
-                }
-            }
-        }
-
         main = compound.getBoolean(TAG_MAIN);
         updateItemStorage();
 

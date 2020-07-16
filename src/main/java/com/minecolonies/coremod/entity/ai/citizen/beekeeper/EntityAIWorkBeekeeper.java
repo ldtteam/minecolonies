@@ -318,9 +318,10 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             }
         }
         final BlockPos hive = hives.get(0);
-        if (world.getBlockState(hive).isIn(BlockTags.BEEHIVES))
+        if (!world.getBlockState(hive).isIn(BlockTags.BEEHIVES))
         {
             getOwnBuilding().removeHive(hive);
+            return PREPARING;
         }
         if (walkToBlock(hive))
         {

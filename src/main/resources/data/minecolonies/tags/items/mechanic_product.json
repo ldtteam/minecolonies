@@ -9,6 +9,7 @@
     "minecraft:packed_ice",
     "minecraft:tripwire_hook",
     "#minecraft:rails",
-    "#forge:storage_blocks"
+    "#forge:storage_blocks",
+    "minecraft:sea_lantern"
   ]
 }
