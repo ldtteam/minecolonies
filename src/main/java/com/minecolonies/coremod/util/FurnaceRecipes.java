@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.util;
 
+import com.ldtteam.blockout.Log;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -25,6 +26,8 @@ import net.minecraftforge.registries.ObjectHolder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 @ObjectHolder(Constants.MOD_ID)
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -34,6 +37,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
      * Furnace recipes.
      */
     private Map<ItemStorage, RecipeStorage> recipes = new HashMap<>();
+    private Map<ItemStorage, RecipeStorage> reverseRecipes = new HashMap<>();
 
     /**
      * Instance of the furnace recipes.
@@ -53,7 +57,13 @@ public class FurnaceRecipes implements IFurnaceRecipes
             {
                 for (final ItemStack stack : list.get(0).getMatchingStacks())
                 {
-                    recipes.put(new ItemStorage(stack), new RecipeStorage(new StandardToken(), Collections.singletonList(stack), 1, recipe.getRecipeOutput(), Blocks.FURNACE));
+                    final RecipeStorage storage = new RecipeStorage(new StandardToken(), Collections.singletonList(stack), 1, recipe.getRecipeOutput(), Blocks.FURNACE);
+
+                    recipes.put(new ItemStorage(stack), storage);
+
+                    final ItemStack output = recipe.getRecipeOutput();
+                    output.setCount(1);
+                    reverseRecipes.put(new ItemStorage(output), storage);
                 }
             }
         });
@@ -122,6 +132,34 @@ public class FurnaceRecipes implements IFurnaceRecipes
             return storage.getPrimaryOutput();
         }
         return ItemStack.EMPTY;
+    }
+
+    /**
+     * Get the smelting recipe by result for a certain itemStack.
+     *
+     * @param itemStack the itemStack to test.
+     * @return the result or null if not existent.
+     */
+    public RecipeStorage getSmeltingRecipeByResult(final ItemStack itemStack)
+    {
+        final ItemStack index = itemStack;
+        index.setCount(1);
+        return reverseRecipes.getOrDefault(new ItemStorage(index), null);
+    }
+
+    /**
+     * Get the first smelting recipe by result for a certain itemStack predicate.
+     *
+     * @param stackPredicate the predicate to test.
+     * @return the result or null if not existent.
+     */
+    public RecipeStorage getFirstSmeltingRecipeByResult(final Predicate<ItemStack> stackPredicate)
+    {
+        Optional<ItemStorage> index = reverseRecipes.keySet().stream().filter(item -> stackPredicate.test(item.getItemStack())).findFirst();
+        if(index.isPresent()) {
+            return reverseRecipes.getOrDefault(index.get(), null);
+        }
+        return null;
     }
 
     /**
