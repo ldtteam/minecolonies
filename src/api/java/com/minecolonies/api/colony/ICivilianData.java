@@ -15,6 +15,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+/**
+ * Data for all civilians of a colony, can be citizen/trader/visitor etc
+ */
 public interface ICivilianData extends ICitizen, INBTSerializable<CompoundNBT>
 {
     /**

@@ -425,7 +425,7 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public ICivilianData getCivilian(final int citizenId)
+    public ICitizenData getCivilian(final int citizenId)
     {
         return citizens.get(citizenId);
     }

@@ -80,7 +80,7 @@ public interface IEntityManager
      * @param force    True to skip max civilian test, false when not.
      * @return the new civilian.
      */
-    <T extends ICivilianData> T spawnOrCreateCivilian(ICivilianData data, World world, BlockPos spawnPos, boolean force);
+    <T extends ICivilianData> T spawnOrCreateCivilian(T data, World world, BlockPos spawnPos, boolean force);
 
     /**
      * Creates Civilian Data for a new civilian

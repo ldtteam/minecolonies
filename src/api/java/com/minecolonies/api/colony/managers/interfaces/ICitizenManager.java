@@ -144,4 +144,7 @@ public interface ICitizenManager extends IEntityManager
      * Call this when citizens sleep
      */
     void onCitizenSleep();
+
+    @Override
+    ICitizenData getCivilian(final int citizenId);
 }
