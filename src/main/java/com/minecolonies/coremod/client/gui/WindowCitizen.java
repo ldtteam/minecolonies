@@ -40,10 +40,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_CANT_TAKE_EQUIPPED;
@@ -131,8 +128,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         else
         {
             findPaneOfTypeByID(STATUS_ICON, Image.class).setImage(citizen.getVisibleStatus().getIcon());
-            // TODO: uncomment once structurize is updated
-            // findPaneOfTypeByID(STATUS_ICON, Image.class).setToolTip(citizen.getVisibleStatus().getTranslatedText());
+            findPaneOfTypeByID(STATUS_ICON, Image.class).setHoverToolTip(Collections.singletonList(citizen.getVisibleStatus().getTranslatedText()));
         }
 
         updateJobPage(citizen, this, colony);

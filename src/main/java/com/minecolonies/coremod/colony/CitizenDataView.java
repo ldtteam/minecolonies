@@ -304,7 +304,7 @@ public class CitizenDataView implements ICitizenDataView
         citizenHappinessHandler.read(buf.readCompoundTag());
 
         int statusindex = buf.readInt();
-        statusIcon = statusindex >= 0 ? VisibleCitizenStatus.values()[statusindex] : null;
+        statusIcon = statusindex >= 0 ? VisibleCitizenStatus.getForId(statusindex) : null;
     }
 
     @Override

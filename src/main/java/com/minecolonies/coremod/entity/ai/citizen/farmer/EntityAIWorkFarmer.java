@@ -9,12 +9,14 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
@@ -34,6 +36,7 @@ import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
@@ -86,6 +89,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      * The EXP Earned per harvest.
      */
     private static final double XP_PER_HARVEST = 0.5;
+
+    /**
+     * Farming icon
+     */
+    private final static VisibleCitizenStatus FARMING_ICON =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/farmer.png"), "com.minecolonies.gui.visiblestatus.farmer");
 
     /**
      * Changed after finished harvesting in order to dump the inventory.
@@ -207,6 +216,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         {
             return START_WORKING;
         }
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         
         building.syncWithColony(world);
         if (building.getFarmerFields().size() < getOwnBuilding().getBuildingLevel() && !building.assignManually())
@@ -471,6 +481,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         {
             return PREPARING;
         }
+
+        worker.getCitizenData().setVisibleStatus(FARMING_ICON);
         @Nullable final BlockPos field = buildingFarmer.getCurrentField();
         final TileEntity entity = world.getTileEntity(field);
         if (entity instanceof ScarecrowTileEntity)

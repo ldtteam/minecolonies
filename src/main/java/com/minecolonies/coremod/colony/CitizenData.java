@@ -687,7 +687,7 @@ public class CitizenData implements ICitizenData
         citizenHappinessHandler.write(happinessCompound);
         buf.writeCompoundTag(happinessCompound);
 
-        buf.writeInt(status != null ? status.ordinal() : -1);
+        buf.writeInt(status != null ? status.getId() : -1);
     }
 
     @Override
