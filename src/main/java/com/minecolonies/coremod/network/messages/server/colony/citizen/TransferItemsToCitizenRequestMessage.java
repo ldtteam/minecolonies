@@ -17,6 +17,8 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -119,11 +121,22 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
         }
         else
         {
-            amountToTake = Math.min(quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), stack -> stack.isItemEqual(itemStack)));
+            amountToTake = Math.min(quantity,
+              InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack)));
         }
 
-        final ItemStack itemStackToTake = itemStack.copy();
-        ItemStackUtils.setSize(itemStackToTake, quantity);
+        final List<ItemStack> itemsToPut = new ArrayList<>();
+        int tempAmount = amountToTake;
+
+        while (tempAmount > 0)
+        {
+            int count = Math.min(itemStack.getMaxStackSize(), tempAmount);
+            ItemStack stack = itemStack.copy();
+            stack.setCount(count);
+            itemsToPut.add(stack);
+            tempAmount -= count;
+        }
+
         final AbstractEntityCitizen citizen = optionalEntityCitizen.get();
 
         if (!isCreative && MineColonies.getConfig().getCommon().debugInventories.get())
@@ -131,10 +144,22 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
             previousContent = InventoryUtils.getAllItemsForProviders(citizen.getInventoryCitizen(), new InvWrapper(player.inventory));
         }
 
-        final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(citizen.getInventoryCitizen(), itemStackToTake);
+        tempAmount = 0;
+        for (final ItemStack insertStack : itemsToPut)
+        {
+            final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(citizen.getInventoryCitizen(), insertStack);
+            if (!ItemStackUtils.isEmpty(remainingItemStack))
+            {
+                insertStack.setCount(remainingItemStack.getCount());
+                tempAmount += (insertStack.getCount() - remainingItemStack.getCount());
+                break;
+            }
+            tempAmount += insertStack.getCount();
+        }
+
         if (!isCreative)
         {
-            int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
+            int amountToRemoveFromPlayer = tempAmount;
             while (amountToRemoveFromPlayer > 0)
             {
                 final int slot =
