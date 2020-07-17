@@ -29,6 +29,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeBuffers;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
@@ -218,7 +219,14 @@ public class ClientEventHandler
                   event.getMatrixStack());
             }
 
-            renderBoxEdges(buildingData.b, buildingData.c, event, 0, 0, 1);
+            final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.getBufferSource();
+            final Supplier<IVertexBuilder> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.getLines());
+
+            RenderUtils.renderBox(buildingData.b, buildingData.c, 0, 0, 1, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
+
+            renderBuffer.finish(RenderType.getLines());
+            renderBuffer.finish(RenderUtils.LINES_GLINT);
+            renderBuffer.finish();
         }
     }
 
@@ -315,86 +323,15 @@ public class ClientEventHandler
             {
                 continue;
             }
-            RenderSystem.disableDepthTest();
-            RenderSystem.disableCull();
 
-            renderBoxEdges(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), event, 0, 0, 1);
-            RenderSystem.enableDepthTest();
-            RenderSystem.enableCull();
+            final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.getBufferSource();
+            final Supplier<IVertexBuilder> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.getLines());
+
+            RenderUtils.renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), 0, 0, 0, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
+
+            renderBuffer.finish(RenderType.getLines());
+            renderBuffer.finish(RenderUtils.LINES_GLINT);
+            renderBuffer.finish();
         }
-    }
-
-    /**
-     * Renders edges of a box specified by posA and posB.
-     * Note: This current implementation is taken from the Structurize Mod.
-     * In future iterations, it might be interesting to have a more spectacular effect than just a box.
-     *
-     * @param posA  First corner of the indicator
-     * @param posB  Second corner of the indicator
-     * @param event The caught event
-     * @param red   Red component
-     * @param green Green component
-     * @param blue  Blue component
-     */
-    private static void renderBoxEdges(
-      final BlockPos posA,
-      final BlockPos posB,
-      final RenderWorldLastEvent event,
-      final float red,
-      final float green,
-      final float blue)
-    {
-        int x1 = posA.getX();
-        int y1 = posA.getY();
-        int z1 = posA.getZ();
-
-        int x2 = posB.getX();
-        int y2 = posB.getY();
-        int z2 = posB.getZ();
-
-        if (x1 > x2)
-        {
-            x1++;
-        }
-        else
-        {
-            x2++;
-        }
-
-        if (y1 > y2)
-        {
-            y1++;
-        }
-        else
-        {
-            y2++;
-        }
-
-        if (z1 > z2)
-        {
-            z1++;
-        }
-        else
-        {
-            z2++;
-        }
-
-        RenderSystem.enableDepthTest();
-
-        final ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().getRenderManager().info;
-        final Vector3d viewPosition = activeRenderInfo.getProjectedView();
-        final MatrixStack matrix = event.getMatrixStack();
-        matrix.push();
-        matrix.translate(-viewPosition.x, -viewPosition.y, -viewPosition.z);
-
-        final AxisAlignedBB axisalignedbb = new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
-        final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.getBufferSource();
-        final Supplier<IVertexBuilder> linesWithoutCullAndDepth = () -> renderBuffer.getBuffer(RenderUtils.LINES_GLINT);
-
-        RenderUtils.renderBox(new BlockPos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ),
-          new BlockPos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.maxZ), red, green, blue, 1.0F, 0.002D, matrix, linesWithoutCullAndDepth.get());
-        matrix.pop();
-
-        RenderSystem.disableDepthTest();
     }
 }
