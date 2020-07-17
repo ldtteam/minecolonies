@@ -10,8 +10,8 @@ import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
-import com.ldtteam.structurize.util.BoxRenderer;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.RenderUtils;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -25,8 +25,11 @@ import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderTypeBuffers;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -48,6 +51,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.WAYPOINT_STRING;
@@ -80,6 +84,11 @@ public class ClientEventHandler
      * The cached map of blueprints of nearby buildings that are rendered.
      */
     private static Map<BlockPos, Triple<Blueprint, BlockPos, BlockPos>> blueprintCache = new HashMap<>();
+
+    /**
+     * Render buffers.
+     */
+    public static final RenderTypeBuffers renderBuffers = new RenderTypeBuffers();
 
     /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
@@ -378,9 +387,12 @@ public class ClientEventHandler
         matrix.push();
         matrix.translate(-viewPosition.x, -viewPosition.y, -viewPosition.z);
 
-        final Matrix4f matrix4f = matrix.getLast().getMatrix();
         final AxisAlignedBB axisalignedbb = new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
-        BoxRenderer.drawSelectionBoundingBox(matrix4f, axisalignedbb.grow(0.002D), red, green, blue, 1.0F);
+        final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.getBufferSource();
+        final Supplier<IVertexBuilder> linesWithoutCullAndDepth = () -> renderBuffer.getBuffer(RenderUtils.LINES_GLINT);
+
+        RenderUtils.renderBox(new BlockPos(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ),
+          new BlockPos(axisalignedbb.maxX, axisalignedbb.maxY, axisalignedbb.maxZ), red, green, blue, 1.0F, 0.002D, matrix, linesWithoutCullAndDepth.get());
         matrix.pop();
 
         RenderSystem.disableDepthTest();
