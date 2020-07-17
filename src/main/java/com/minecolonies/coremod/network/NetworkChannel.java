@@ -21,6 +21,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.farmer.A
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardTaskMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.MobEntryChangeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.herder.HerderSetBreedingMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackReplantSaplingToggleMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackRestrictionToggleMessage;
@@ -147,6 +148,7 @@ public class NetworkChannel
         registerMessage(++idx, UpdateRequestStateMessage.class, UpdateRequestStateMessage::new);
         registerMessage(++idx, BuildingSetStyleMessage.class, BuildingSetStyleMessage::new);
         registerMessage(++idx, CowboySetMilkCowsMessage.class, CowboySetMilkCowsMessage::new);
+        registerMessage(++idx, HerderSetBreedingMessage.class, HerderSetBreedingMessage::new);
         registerMessage(++idx, RecallSingleCitizenMessage.class, RecallSingleCitizenMessage::new);
         registerMessage(++idx, AssignFilterableItemMessage.class, AssignFilterableItemMessage::new);
         registerMessage(++idx, TeamColonyColorChangeMessage.class, TeamColonyColorChangeMessage::new);

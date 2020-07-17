@@ -212,6 +212,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
         readSchematicDataFromNBT(compound);
     }
 
+    @NotNull
     @Override
     public CompoundNBT write(@NotNull final CompoundNBT compound)
     {

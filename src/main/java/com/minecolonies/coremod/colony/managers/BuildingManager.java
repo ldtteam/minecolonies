@@ -333,10 +333,8 @@ public class BuildingManager implements IBuildingManager
                   colony.getID(),
                   tileEntity.getBlockState().getClass(),
                   tileEntity.getPosition()));
-                if (tileEntity.isMirrored())
-                {
-                    building.invertMirror();
-                }
+
+                building.setIsMirrored(tileEntity.isMirrored());
                 if (!tileEntity.getStyle().isEmpty())
                 {
                     building.setStyle(tileEntity.getStyle());
