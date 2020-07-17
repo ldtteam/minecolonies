@@ -53,10 +53,19 @@ public class WindowField extends ContainerScreen<ContainerField>
     private static final int TEXT_COLOR = 0x404040;
 
     /**
+     * The width and height of the DirectionalButtons (they're square)
+     */
+    private static final int BUTTON_SIDE_LENGTH = 24;
+
+    /**
      * Tile entity of the scarecrow.
      */
     private final AbstractScarecrowTileEntity tileEntity;
 
+    /**
+     * The values to render on each directional button, indicating the size of the field
+     * S, W, N, E.
+     */
     private final int[] radii = new int[4];
 
     /**
@@ -70,8 +79,6 @@ public class WindowField extends ContainerScreen<ContainerField>
     {
         super(container, playerInventory, iTextComponent);
         this.tileEntity = container.getTileEntity();
-
-
     }
 
     @Override
@@ -79,20 +86,20 @@ public class WindowField extends ContainerScreen<ContainerField>
     {
         super.init();
 
-        final int offset = 24;
         final int centerX = this.guiLeft + this.xSize / 2 + 1;
         final int centerY = this.guiTop  + this.ySize / 2;
         for (Direction dir : Direction.Plane.HORIZONTAL)
         {
-            int xFromPolar = (int) Math.sin(Math.PI*(4-dir.getHorizontalIndex())/2) * (offset);
-            int yFromPolar = (int) Math.cos(Math.PI*(4-dir.getHorizontalIndex())/2) * (offset);
+            int xFromPolar = (int) Math.sin(Math.PI*(4-dir.getHorizontalIndex())/2) * (BUTTON_SIDE_LENGTH);
+            int yFromPolar = (int) Math.cos(Math.PI*(4-dir.getHorizontalIndex())/2) * (BUTTON_SIDE_LENGTH);
             this.radii[dir.getHorizontalIndex()] = tileEntity.getRadius(dir);
 
+            // Some magic numbering to get the offsets right
             DirectionalButton db = new DirectionalButton(
                     centerX + xFromPolar - 12,
                     centerY - 40 + yFromPolar - 12,
-                    24,
-                    24,
+                    BUTTON_SIDE_LENGTH,
+                    BUTTON_SIDE_LENGTH,
                     String.valueOf(this.radii[dir.getHorizontalIndex()]),
                     dir
             );
@@ -157,16 +164,32 @@ public class WindowField extends ContainerScreen<ContainerField>
         this.renderHoveredToolTip(x, y);
     }
 
+    /**
+     * Buttons with a direction. Textures are assigned based on direction specified.
+     */
     protected class DirectionalButton extends Button
     {
         public Direction direction;
         public int textureX = 176;
         public int textureY = 0;
+
+        /**
+         * The arrangement of the button's direction textures in the image.
+         */
         public int columns = 2;
 
-        public DirectionalButton(int widthIn, int heightIn, int width, int height, String text, Direction direction)
+        /**
+         * Construct a directional button. Arguments based on a basic Button widget
+         * @param x the x position from screen top left
+         * @param y the y position from screen top left
+         * @param width the width of the button in the gui
+         * @param height the height of the button in the gui
+         * @param text the label on the button
+         * @param direction the direction this button faces. Adjusts texture coordinates.
+         */
+        public DirectionalButton(int x, int y, int width, int height, String text, Direction direction)
         {
-            super(widthIn, heightIn, width, height, text, button -> {});
+            super(x, y, width, height, text, button -> {});
             this.direction = direction;
         }
 

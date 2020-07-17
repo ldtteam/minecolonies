@@ -432,15 +432,6 @@
   "com.minecolonies.coremod.gui.buildtool.hut.level": "Level %s",
   "com.minecolonies.coremod.gui.buildtool.decorations": "Decorations",
   "com.minecolonies.coremod.gui.buildtool.scans": "My schematics",
-  "gui.minecolonies.field.north": "Northward field size",
-  "gui.minecolonies.field.east": "Eastward field size",
-  "gui.minecolonies.field.south": "Southward field size",
-  "gui.minecolonies.field.west": "Westward field size",
-  "gui.minecolonies.field.opposite": "Opposite you",
-  "gui.minecolonies.field.to_left": "To your left",
-  "gui.minecolonies.field.to_right": "To your right",
-  "gui.minecolonies.field.near": "Nearest to you",
-  "gui.minecolonies.field.worker": "Farmer: %s",
 
   "com.minecolonies.coremod.job.lumberjack": "Lumberjack",
   "com.minecolonies.coremod.job.swineherder": "SwineHerder",
@@ -1668,5 +1659,15 @@
   "com.minecolonies.coremod.gui.workerhuts.guide.confirm": "Understood",
   "com.minecolonies.coremod.gui.workerhuts.guide.questionmark": "Some buildings have extra help pages.",
   "com.minecolonies.coremod.gui.workerhuts.guide.arrow": "Make sure to check out all the building's pages!",
-  "com.minecolonies.coremod.gui.workerhuts.guide.chest": "Here you can have an overview of the combined building inventory."
+  "com.minecolonies.coremod.gui.workerhuts.guide.chest": "Here you can have an overview of the combined building inventory.",
+
+  "gui.minecolonies.field.north": "Northward field size",
+  "gui.minecolonies.field.east": "Eastward field size",
+  "gui.minecolonies.field.south": "Southward field size",
+  "gui.minecolonies.field.west": "Westward field size",
+  "gui.minecolonies.field.opposite": "Opposite you",
+  "gui.minecolonies.field.to_left": "To your left",
+  "gui.minecolonies.field.to_right": "To your right",
+  "gui.minecolonies.field.near": "Nearest to you",
+  "gui.minecolonies.field.worker": "Farmer: %s"
 }
