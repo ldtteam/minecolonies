@@ -284,7 +284,7 @@ public class WindowField extends ContainerScreen<ContainerField>
             Direction[] looks = Direction.getFacingDirections(playerInventory.player);
             Direction facing = looks[0].getAxis() == Direction.Axis.Y ? looks[1] : looks[0];
 
-            switch (this.direction.getHorizontalIndex() - facing.getOpposite().getHorizontalIndex())
+            switch (facing.getOpposite().getHorizontalIndex() - this.direction.getHorizontalIndex())
             {
                 case 1: case -3: return "com.minecolonies.coremod.gui.field.to_right";
                 case 2: case -2: return "com.minecolonies.coremod.gui.field.opposite";
