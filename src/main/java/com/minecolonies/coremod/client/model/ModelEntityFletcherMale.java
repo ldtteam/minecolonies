@@ -79,6 +79,7 @@ public class ModelEntityFletcherMale extends CitizenModel<AbstractEntityCitizen>
         bipedHead.setTextureOffset(52, 52).addBox(1.0F, -6.0F, -4.5F, 1.25F, 0.25F, 0.5F, 0.0F, false);
         bipedHead.setTextureOffset(0, 45).addBox(-4.0F, -8.25F, -4.0F, 8.0F, 0.25F, 8.0F, 0.0F, false);
         bipedHead.setTextureOffset(101, 47).addBox(-4.0F, -8.0F, 3.0F, 8.0F, 9.5F, 1.25F, 0.0F, false);
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

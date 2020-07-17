@@ -190,6 +190,7 @@ public class ModelEntityFishermanFemale extends CitizenModel<AbstractEntityCitiz
         bipedBody.addChild(chest);
         setRotationAngle(chest, -0.632F, 0.0F, 0.0F);
         chest.setTextureOffset(25, 32).addBox(-3.5F, 3.5F, 0.0F, 7.0F, 3.0F, 3.0F, 0.0F, true);
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

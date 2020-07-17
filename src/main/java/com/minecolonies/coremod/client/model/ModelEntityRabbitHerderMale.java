@@ -281,6 +281,7 @@ public class ModelEntityRabbitHerderMale extends CitizenModel<AbstractEntityCiti
         carrot2.setTextureOffset(69, 12).addBox(-12.8267F, 5.1066F, -32.5412F, 0.1698F, 0.1698F, 0.1698F, 0.0F, true);
         carrot2.setTextureOffset(68, 12).addBox(-12.8267F, 5.1066F, -32.711F, 0.1698F, 0.1698F, 0.1698F, 0.0F, true);
         carrot2.setTextureOffset(67, 12).addBox(-12.8267F, 5.1066F, -32.8808F, 0.1698F, 0.1698F, 0.1698F, 0.0F, true);
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
