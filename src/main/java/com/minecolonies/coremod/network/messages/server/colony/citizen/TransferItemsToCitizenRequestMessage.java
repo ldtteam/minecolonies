@@ -3,10 +3,12 @@ package com.minecolonies.coremod.network.messages.server.colony.citizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -15,6 +17,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -107,6 +110,8 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
             return;
         }
 
+        // Inventory content before
+        Map<ItemStorage, ItemStorage> previousContent = null;
         final int amountToTake;
         if (isCreative)
         {
@@ -120,6 +125,12 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
         final ItemStack itemStackToTake = itemStack.copy();
         ItemStackUtils.setSize(itemStackToTake, quantity);
         final AbstractEntityCitizen citizen = optionalEntityCitizen.get();
+
+        if (!isCreative && MineColonies.getConfig().getCommon().debugInventories.get())
+        {
+            previousContent = InventoryUtils.getAllItemsForProviders(citizen.getInventoryCitizen(), new InvWrapper(player.inventory));
+        }
+
         final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(citizen.getInventoryCitizen(), itemStackToTake);
         if (!isCreative)
         {
@@ -131,6 +142,11 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
                 final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
                 amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
             }
+        }
+
+        if (!isCreative && previousContent != null && MineColonies.getConfig().getCommon().debugInventories.get())
+        {
+            InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(citizen.getInventoryCitizen(), new InvWrapper(player.inventory)), true);
         }
     }
 }
