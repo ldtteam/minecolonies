@@ -119,7 +119,7 @@ public class WindowField extends ContainerScreen<ContainerField>
         if (!tileEntity.getOwner().isEmpty())
         {
             this.font.drawString(
-                    LanguageHandler.format("gui.minecolonies.field.worker", tileEntity.getOwner()),
+                    LanguageHandler.format("com.minecolonies.coremod.gui.field.worker", tileEntity.getOwner()),
                     X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */
             );
         }
@@ -268,7 +268,7 @@ public class WindowField extends ContainerScreen<ContainerField>
             if (!playerInventory.getItemStack().isEmpty()) return;
 
             List<String> lines = Lists.newArrayList(
-                    LanguageHandler.format("gui.minecolonies.field."+this.direction.getName()),
+                    LanguageHandler.format("com.minecolonies.coremod.gui.field."+this.direction.getName()),
                     TextFormatting.GRAY + "" + TextFormatting.ITALIC + LanguageHandler.format(getDirectionalTranslationKey())
             );
 
@@ -286,10 +286,10 @@ public class WindowField extends ContainerScreen<ContainerField>
 
             switch (this.direction.getHorizontalIndex() - facing.getOpposite().getHorizontalIndex())
             {
-                case 1: case -3: return "gui.minecolonies.field.to_right";
-                case 2: case -2: return "gui.minecolonies.field.opposite";
-                case 3: case -1: return "gui.minecolonies.field.to_left";
-                default:         return "gui.minecolonies.field.near";
+                case 1: case -3: return "com.minecolonies.coremod.gui.field.to_right";
+                case 2: case -2: return "com.minecolonies.coremod.gui.field.opposite";
+                case 3: case -1: return "com.minecolonies.coremod.gui.field.to_left";
+                default:         return "com.minecolonies.coremod.gui.field.near";
             }
         }
     }
