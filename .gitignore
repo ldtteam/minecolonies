@@ -1,6 +1,7 @@
 .idea/
 .gradle/
 .vscode/
+.vs/
 classes/
 build/
 eclipse/
