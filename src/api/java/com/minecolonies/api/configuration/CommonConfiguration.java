@@ -135,6 +135,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.DoubleValue                         enchanterExperienceMultiplier;
     public final ForgeConfigSpec.IntValue                            dynamicTreeHarvestSize;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> diseases;
+    public final ForgeConfigSpec.BooleanValue                        debugInventories;
 
 
     /*  ------------------------------------------------------------------------------ *
@@ -803,6 +804,8 @@ public class CommonConfiguration extends AbstractConfiguration
             "Measles,10,minecraft:dandelion,minecraft:kelp,minecraft:poppy",
             "Smallpox,1,minecraft:honeycomb,minecraft:golden_apple"),
           s -> s instanceof String);
+
+        debugInventories = defineBoolean(builder, "debuginventories", false);
 
         swapToCategory(builder, "pathfinding");
 
