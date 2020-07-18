@@ -141,7 +141,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
     {
         if (citizen != null)
         {
-            final Optional<AbstractEntityCitizen> optCitizen = citizen.getCitizenEntity();
+            final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
             optCitizen.ifPresent(entityCitizen -> entityCitizen.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
                                                     .setBaseValue(BASE_MOVEMENT_SPEED));
         }

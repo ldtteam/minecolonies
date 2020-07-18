@@ -15,13 +15,14 @@ import java.util.List;
 /**
  * The server side interaction response handler.
  */
-public class StandardInteractionResponseHandler extends ServerCitizenInteractionResponseHandler
+public class StandardInteraction extends ServerCitizenInteraction
 {
     @SuppressWarnings("unchecked")
     private static final Tuple<ITextComponent, ITextComponent>[] tuples = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.skipchitchat"), null)};
 
     /**
      * The server interaction response handler with custom validator.
@@ -30,7 +31,7 @@ public class StandardInteractionResponseHandler extends ServerCitizenInteraction
      * @param validator the id of the validator.
      * @param priority  the interaction priority.
      */
-    public StandardInteractionResponseHandler(
+    public StandardInteraction(
       final ITextComponent inquiry,
       final ITextComponent validator,
       final IChatPriority priority)
@@ -44,7 +45,7 @@ public class StandardInteractionResponseHandler extends ServerCitizenInteraction
      * @param inquiry  the client inquiry.
      * @param priority the interaction priority.
      */
-    public StandardInteractionResponseHandler(
+    public StandardInteraction(
       final ITextComponent inquiry,
       final IChatPriority priority)
     {
@@ -56,7 +57,7 @@ public class StandardInteractionResponseHandler extends ServerCitizenInteraction
      *
      * @param data the citizen owning this handler.
      */
-    public StandardInteractionResponseHandler(final ICitizen data)
+    public StandardInteraction(final ICitizen data)
     {
         super(data);
     }
