@@ -1704,5 +1704,15 @@
   "com.minecolonies.coremod.gui.beekeeper.collect": "Collect honeycomb",
   "com.minecolonies.coremod.gui.beekeeper.addhives": "Get hive tool",
   "entity.beekeeper.messagenohives": "There are no hives for me to work",
-  "entity.beekeeper.messagenobees": "I can find no bees"
+  "entity.beekeeper.messagenobees": "I can find no bees",
+
+  "com.minecolonies.coremod.gui.field.north": "Northward field size",
+  "com.minecolonies.coremod.gui.field.east": "Eastward field size",
+  "com.minecolonies.coremod.gui.field.south": "Southward field size",
+  "com.minecolonies.coremod.gui.field.west": "Westward field size",
+  "com.minecolonies.coremod.gui.field.opposite": "Opposite you",
+  "com.minecolonies.coremod.gui.field.to_left": "To your left",
+  "com.minecolonies.coremod.gui.field.to_right": "To your right",
+  "com.minecolonies.coremod.gui.field.near": "Nearest to you",
+  "com.minecolonies.coremod.gui.field.worker": "Farmer: %s"
 }

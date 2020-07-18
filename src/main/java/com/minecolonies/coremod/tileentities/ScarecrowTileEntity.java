@@ -1,12 +1,11 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.blocks.ModBlocks;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.inventory.container.ContainerField;
-import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -43,7 +42,7 @@ import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
  * The scarecrow tile entity to store extra data.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
+public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
 {
     /**
      * The max width/length of a field.
@@ -64,26 +63,6 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
      * Has the field been planted?
      */
     private ScarecrowFieldStage fieldStage = ScarecrowFieldStage.EMPTY;
-
-    /**
-     * The length to plus x of the field.
-     */
-    private int lengthPlusX;
-
-    /**
-     * The width to plus z of the seed.
-     */
-    private int widthPlusZ;
-
-    /**
-     * The length to minus xof the field.
-     */
-    private int lengthMinusX;
-
-    /**
-     * The width to minus z of the seed.
-     */
-    private int widthMinusZ;
 
     /**
      * Citizen Id of the citizen owning the field.
@@ -113,11 +92,6 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     private IColony colony;
 
     /**
-     * Name of the scarecrow, string set in the GUI.
-     */
-    private String name;
-
-    /**
      * Inventory of the field.
      */
     private final ItemStackHandler inventory;
@@ -128,7 +102,6 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     public ScarecrowTileEntity()
     {
         super();
-        this.name = LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner));
         this.inventory = new ItemStackHandler()
         {
             @Override
@@ -144,73 +117,40 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     }
 
     /**
-     * Getter of the name of the tileEntity.
-     *
-     * @return the string.
-     */
-    @Override
-    public String getDesc()
-    {
-        return name;
-    }
-
-    /**
-     * Setter for the name.
-     *
-     * @param name string to set.
-     */
-    @Override
-    public void setName(final String name)
-    {
-        this.name = name;
-        markDirty();
-    }
-
-    /**
      * Getter for MAX_RANGE.
      *
      * @return the max range.
      */
-    private static int getMaxRange()
+    public static int getMaxRange()
     {
         return MAX_RANGE;
     }
 
     /**
-     * Calculates recursively the length of the field until a certain point.
-     * <p>
-     * This mutates the field!
-     *
-     * @param position the start position.
-     * @param world    the world the field is in.
+     * The size of the field in all four directions
+     * in the same order as {@link Direction#getHorizontalIndex()}:
+     * S, W, N, E
      */
-    @Override
-    public final void calculateSize(@NotNull final World world, @NotNull final BlockPos position)
+    protected int[] radii = {MAX_RANGE, MAX_RANGE, MAX_RANGE, MAX_RANGE};
+
+    /**
+     * @param direction the direction for the radius
+     * @param radius    the number of blocks from the scarecrow that the farmer will work with
+     */
+    public void setRadius(Direction direction, int radius)
     {
-        //Calculate in all 4 directions
-        this.lengthPlusX = searchNextBlock(0, position.east(), Direction.EAST, world);
-        this.lengthMinusX = searchNextBlock(0, position.west(), Direction.WEST, world);
-        this.widthPlusZ = searchNextBlock(0, position.south(), Direction.SOUTH, world);
-        this.widthMinusZ = searchNextBlock(0, position.north(), Direction.NORTH, world);
+        this.radii[direction.getHorizontalIndex()] = radius;
         markDirty();
+        world.notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
     }
 
     /**
-     * Calculates the field size into a specific direction.
-     *
-     * @param blocksChecked how many blocks have been checked.
-     * @param position      the start position.
-     * @param direction     the direction to search.
-     * @param world         the world object.
-     * @return the distance.
+     * @param direction the direction to get the range for
+     * @return the radius
      */
-    private int searchNextBlock(final int blocksChecked, @NotNull final BlockPos position, final Direction direction, @NotNull final World world)
+    public int getRadius(Direction direction)
     {
-        if (blocksChecked >= getMaxRange() || isNoPartOfField(world, position))
-        {
-            return blocksChecked;
-        }
-        return searchNextBlock(blocksChecked + 1, position.offset(direction), direction, world);
+        return radii[direction.getHorizontalIndex()];
     }
 
     /**
@@ -347,50 +287,6 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
         return null;
     }
 
-    /**
-     * Getter of the length in plus x direction.
-     *
-     * @return field length.
-     */
-    @Override
-    public int getLengthPlusX()
-    {
-        return lengthPlusX;
-    }
-
-    /**
-     * Getter of the with in plus z direction.
-     *
-     * @return field width.
-     */
-    @Override
-    public int getWidthPlusZ()
-    {
-        return widthPlusZ;
-    }
-
-    /**
-     * Getter of the length in minus x direction.
-     *
-     * @return field length.
-     */
-    @Override
-    public int getLengthMinusX()
-    {
-        return lengthMinusX;
-    }
-
-    /**
-     * Getter of the with in minus z direction.
-     *
-     * @return field width.
-     */
-    @Override
-    public int getWidthMinusZ()
-    {
-        return widthMinusZ;
-    }
-
     @Override
     public BlockPos getPosition()
     {
@@ -440,7 +336,6 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
                 owner = colony.getCitizenManager().getCivilian(ownerId).getName();
             }
         }
-        setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner)));
         markDirty();
     }
 
@@ -485,6 +380,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
+
         this.write(compound);
         if (colony != null)
         {
@@ -533,12 +429,11 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
 
         taken = compound.getBoolean(TAG_TAKEN);
         fieldStage = ScarecrowFieldStage.values()[compound.getInt(TAG_STAGE)];
-        lengthPlusX = compound.getInt(TAG_LENGTH_PLUS);
-        widthPlusZ = compound.getInt(TAG_WIDTH_PLUS);
-        lengthMinusX = compound.getInt(TAG_LENGTH_MINUS);
-        widthMinusZ = compound.getInt(TAG_WIDTH_MINUS);
+        radii[3] = compound.getInt(TAG_LENGTH_PLUS);
+        radii[2] = compound.getInt(TAG_WIDTH_PLUS);
+        radii[1] = compound.getInt(TAG_LENGTH_MINUS);
+        radii[0] = compound.getInt(TAG_WIDTH_MINUS);
         ownerId = compound.getInt(TAG_OWNER);
-        name = compound.getString(TAG_NAME);
         setOwner(ownerId);
 
         super.read(compound);
@@ -566,12 +461,11 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
 
         compound.putBoolean(TAG_TAKEN, taken);
         compound.putInt(TAG_STAGE, fieldStage.ordinal());
-        compound.putInt(TAG_LENGTH_PLUS, lengthPlusX);
-        compound.putInt(TAG_WIDTH_PLUS, widthPlusZ);
-        compound.putInt(TAG_LENGTH_MINUS, lengthMinusX);
-        compound.putInt(TAG_WIDTH_MINUS, widthMinusZ);
+        compound.putInt(TAG_LENGTH_PLUS, radii[3]);
+        compound.putInt(TAG_WIDTH_PLUS, radii[2]);
+        compound.putInt(TAG_LENGTH_MINUS, radii[1]);
+        compound.putInt(TAG_WIDTH_MINUS, radii[0]);
         compound.putInt(TAG_OWNER, ownerId);
-        compound.putString(TAG_NAME, name);
         if (colony != null)
         {
             compound.putInt(TAG_COLONY_ID, colony.getID());
@@ -620,6 +514,6 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     @Override
     public ITextComponent getDisplayName()
     {
-        return new StringTextComponent(name);
+        return new StringTextComponent(owner);
     }
 }
