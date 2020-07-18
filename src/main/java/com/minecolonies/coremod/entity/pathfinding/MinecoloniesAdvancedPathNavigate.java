@@ -293,7 +293,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     protected boolean isDirectPathBetweenPoints(final Vec3d start, final Vec3d end, final int sizeX, final int sizeY, final int sizeZ)
     {
         // TODO improve road walking. This is better in some situations, but still not great.
-        return !WorkerUtil.isPathBlock(world.getBlockState(new BlockPos(start.x, start.y - 1, start.z)) .getBlock() )
+        return !WorkerUtil.isPathBlock(world.getBlockState(new BlockPos(start.x, start.y - 1, start.z)).getBlock())
                  && super.isDirectPathBetweenPoints(start, end, sizeX, sizeY, sizeZ);
     }
 
@@ -325,12 +325,18 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 		}
     }
 
-	public Block findBlockTypeUnderEntity(Entity parEntity)
+	/**
+     * Determine what block the entity stands on
+	 *
+     * @param parEntity	the entity that stands on the block
+     * @return the Blockstate.
+     */
+	private Block findBlockTypeUnderEntity(Entity parEntity)
 {
-    int blockX = MathHelper.floor(parEntity.posX);
+    int blockX = MathHelper.round(parEntity.posX);
     int blockY = MathHelper.floor(parEntity.posY-0.2D);
-    int blockZ = MathHelper.floor(parEntity.posZ);
-    return world.getBlockState(new BlockPos(blockX, blockY, blockZ)).getBlock() ;
+    int blockZ = MathHelper.round(parEntity.posZ);
+    return world.getBlockState(new BlockPos(blockX, blockY, blockZ)).getBlock();
 }
     @Override
     public void setSpeed(final double d)
