@@ -52,7 +52,7 @@ import static com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceU
 /**
  * Class of the crafter building.
  */
-public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableListBuilding
+public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFurnaceUser
 {
     /**
      * Tag to store the furnace position.

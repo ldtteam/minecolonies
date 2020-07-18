@@ -2,9 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.cook;
 
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
@@ -26,7 +24,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -94,11 +91,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     protected static final int MAX_LEVEL = 50;
 
     /**
-     * Times the product needs to be hit.
-     */
-    private static final int HITTING_TIME = 3;
-
-    /**
      * The current request that is being crafted;
      */
     public IRequest<? extends PublicCrafting> currentRequest;
@@ -117,10 +109,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     {
         super(job);
         super.registerTargets(
-          new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen, SERVE_DELAY),
-          new AITarget(QUERY_ITEMS, this::queryItems, STANDARD_DELAY),
-          new AITarget(GET_RECIPE, this::getRecipe, STANDARD_DELAY),
-          new AITarget(CRAFT, this::craft, HIT_DELAY)
+          new AITarget(COOK_SERVE_FOOD_TO_CITIZEN, this::serveFoodToCitizen, SERVE_DELAY)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -139,18 +128,21 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected void extractFromFurnace(final FurnaceTileEntity furnace)
     {
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
-          new InvWrapper(furnace), RESULT_SLOT,
-          worker.getInventoryCitizen());
-        worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
-        this.incrementActionsDoneAndDecSaturation();
+        if(!getOwnBuilding().getIsCooking())
+        {
+            InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
+                new InvWrapper(furnace), RESULT_SLOT,
+                worker.getInventoryCitizen());
+            worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+            this.incrementActionsDoneAndDecSaturation();
+        }
     }
 
     @Override
     protected boolean isSmeltable(final ItemStack stack)
     {
         //Only return true if the item isn't queued for a recipe. 
-        if(job.getTaskQueue().isEmpty())
+        if(!getOwnBuilding().getIsCooking())
         {
             return ItemStackUtils.ISCOOKABLE.test(stack);
         }
@@ -317,69 +309,9 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return GATHERING_REQUIRED_MATERIALS;
         }
 
-        //todo add to the building a .isMinimumStockRequest to not solve it in the buildingBasedResolver
-        if (job.getTaskQueue().isEmpty())
-        {
-            return START_WORKING;
-        }
-
-        if (job.getCurrentTask() == null)
-        {
-            return START_WORKING;
-        }
-
-        if (walkToBuilding())
-        {
-            return START_WORKING;
-        }
-
-        if (job.getActionsDone() > 0)
-        {
-            // Wait to dump before continuing.
-            return getState();
-        }
-
-        if (currentRequest != null && currentRecipeStorage != null)
-        {
-            return QUERY_ITEMS;
-        }
-
-        if (getOwnBuilding().getFirstFullFillableRecipe(job.getCurrentTask().getRequest().getStack()) == null)
-        {
-            job.finishRequest(false);
-            return START_WORKING;
-        }
-
-        return GET_RECIPE;
+        return START_WORKING;
     }
 
-    /**
-     * Query the IRecipeStorage of the first request in the queue.
-     *
-     * @return the next state to go to.
-     */
-    private IAIState getRecipe()
-    {
-        final IRequest<? extends PublicCrafting> currentTask = job.getCurrentTask();
-
-        if (currentTask == null)
-        {
-            return START_WORKING;
-        }
-        final IBuildingWorker buildingWorker = getOwnBuilding();
-        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(currentTask.getRequest().getStack());
-
-        if (currentRecipeStorage == null)
-        {
-            job.finishRequest(false);
-            return START_WORKING;
-        }
-
-        currentRequest = currentTask;
-        job.setMaxCraftingCount(currentRequest.getRequest().getCount());
-
-        return QUERY_ITEMS;
-    }
 
     @Override
     protected int getActionsDoneUntilDumping()
@@ -387,20 +319,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         return 1;
     }
 
-    /**
-     * Query the required items to take them in the inventory to craft.
-     *
-     * @return the next state to go to.
-     */
-    private IAIState queryItems()
-    {
-        if (currentRecipeStorage == null)
-        {
-            return START_WORKING;
-        }
-
-        return checkForItems(currentRecipeStorage);
-    }
 
     /**
      * Check for all items of the required recipe.
@@ -430,122 +348,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         return CRAFT;
     }
 
-    /**
-     * The actual crafting logic.
-     *
-     * @return the next state to go to.
-     */
-    protected IAIState craft()
-    {
-        if (currentRecipeStorage == null)
-        {
-            return START_WORKING;
-        }
-
-        if (currentRequest == null)
-        {
-            return GET_RECIPE;
-        }
-
-        if (walkToBuilding())
-        {
-            return getState();
-        }
-
-        job.setProgress(job.getProgress() + 1);
-
-        worker.setHeldItem(Hand.MAIN_HAND,
-          currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
-        worker.setHeldItem(Hand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
-        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
-
-        currentRequest = job.getCurrentTask();
-
-        if (currentRequest != null && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED))
-        {
-            currentRequest = null;
-            incrementActionsDone();
-            currentRecipeStorage = null;
-            return START_WORKING;
-        }
-
-        if (job.getProgress() >= getRequiredProgressForMakingRawMaterial())
-        {
-            final IAIState check = checkForItems(currentRecipeStorage);
-            if (check == CRAFT)
-            {
-                if (!currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen()))
-                {
-                    currentRequest = null;
-                    incrementActionsDone();
-                    job.finishRequest(false);
-                    resetValues();
-                    return START_WORKING;
-                }
-
-                currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
-                job.setCraftCounter(job.getCraftCounter() + 1);
-
-                if (job.getCraftCounter() >= job.getMaxCraftingCount())
-                {
-                    incrementActionsDone();
-                    currentRecipeStorage = null;
-                    resetValues();
-
-                    if (inventoryNeedsDump())
-                    {
-                        if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
-                        {
-                            job.finishRequest(true);
-                            worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
-                            currentRequest = null;
-                        }
-                    }
-                }
-                else
-                {
-                    job.setProgress(0);
-                    return GET_RECIPE;
-                }
-            }
-            else
-            {
-                currentRequest = null;
-                job.finishRequest(false);
-                incrementActionsDoneAndDecSaturation();
-                resetValues();
-            }
-            return START_WORKING;
-        }
-
-        return getState();
-    }
-
-    /**
-     * Reset all the values.
-     */
-    public void resetValues()
-    {
-        job.setMaxCraftingCount(0);
-        job.setProgress(0);
-        job.setCraftCounter(0);
-        worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
-        worker.setHeldItem(Hand.OFF_HAND, ItemStackUtils.EMPTY);
-    }
-
-    @Override
-    public IAIState afterDump()
-    {
-        if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
-        {
-            job.finishRequest(true);
-            worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
-            currentRequest = null;
-        }
-
-        resetValues();
-        return super.afterDump();
-    }
 
     @Override
     protected IRequestable getSmeltAbleClass()
@@ -553,13 +355,4 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         return new Food(STACKSIZE);
     }
 
-    /**
-     * Get the required progress to execute a recipe.
-     *
-     * @return the amount of hits required.
-     */
-    private int getRequiredProgressForMakingRawMaterial()
-    {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL) * HITTING_TIME;
-    }
 }

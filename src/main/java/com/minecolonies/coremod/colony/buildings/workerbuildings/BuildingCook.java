@@ -20,10 +20,11 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCook;
+import com.minecolonies.coremod.colony.jobs.JobCookAssistant;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
@@ -51,7 +52,7 @@ import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
  * Class of the cook building.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public class BuildingCook extends AbstractBuildingFurnaceUser
+public class BuildingCook extends AbstractBuildingSmelterCrafter
 {
     /**
      * The cook string.
@@ -64,6 +65,12 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
+     * If the assistant is fulfilling a recipe
+     * This blocks the auto-smelting of the cook
+     */
+    private boolean isCooking = false;
+    
+    /**
      * Instantiates a new cook building.
      *
      * @param c the colony.
@@ -75,6 +82,16 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         keepX.put(ItemStackUtils.ISFOOD, new Tuple<>(STACKSIZE, true));
         keepX.put(ItemStackUtils.ISCOOKABLE, new Tuple<>(STACKSIZE, true));
         keepX.put(FurnaceTileEntity::isFuel, new Tuple<>(STACKSIZE, true));
+    }
+
+    public boolean getIsCooking()
+    {
+        return isCooking;
+    }
+
+    public void setIsCooking(final boolean cookingState)
+    {
+        isCooking = cookingState;
     }
 
     @NotNull
@@ -94,6 +111,12 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     @Override
     public IJob<?> createJob(final ICitizenData citizen)
     {
+        for (final ICitizenData leadCitizen : getAssignedCitizen())    {
+            if (leadCitizen.getJob() instanceof JobCook)   
+            {
+                return new JobCookAssistant(citizen);
+            }
+        }
         return new JobCook(citizen);
     }
 
@@ -102,6 +125,16 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     public String getJobName()
     {
         return COOK_DESC;
+    }
+
+    @Override
+    public int getMaxInhabitants()
+    {
+        if(getBuildingLevel() < 3)
+        {
+            return 1;
+        }
+        return 2;
     }
 
     @Override
@@ -142,6 +175,11 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     @Nullable
     public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
     {
+        if (getBuildingLevel() < 3)
+        {
+            return null;
+        }
+
         //First, do the normal check against taught recipes, and return those if found
         IRecipeStorage storage = super.getFirstRecipe(stackPredicate);
         if(storage != null)
@@ -226,6 +264,11 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
+        if(getBuildingLevel() < 3)
+        {
+            return false;
+        }
+
         Optional<Boolean> isRecipeAllowed;
 
         if (!super.canRecipeBeAdded(token))
