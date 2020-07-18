@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.EventType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -102,7 +103,7 @@ public final class SoundUtils
         {
             playSoundAtCitizenWith(worldIn, pos, EventType.GENERAL, citizen);
         }
-        else if (v <= 0.4 && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick())
+        else if (v <= 0.4 && citizen.getEntity().isPresent() && ((AbstractEntityCitizen) citizen.getEntity().get()).getCitizenDiseaseHandler().isSick())
         {
             playSoundAtCitizenWith(worldIn, pos, EventType.SICKNESS, citizen);
         }

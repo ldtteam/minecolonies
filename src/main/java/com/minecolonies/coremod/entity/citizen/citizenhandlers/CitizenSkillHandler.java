@@ -218,12 +218,12 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     public void levelUp(final ICitizenData data)
     {
         // Show level-up particles
-        if (data.getCitizenEntity().isPresent())
+        if (data.getEntity().isPresent())
         {
-            final AbstractEntityCitizen citizen = data.getCitizenEntity().get();
+            final AbstractEntityCitizen citizen = data.getEntity().get();
             Network.getNetwork()
               .sendToTrackingEntity(new VanillaParticleMessage(citizen.getPosX(), citizen.getPosY(), citizen.getPosZ(), ParticleTypes.HAPPY_VILLAGER),
-                data.getCitizenEntity().get());
+                data.getEntity().get());
         }
 
         if (data.getJob() != null)

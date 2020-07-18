@@ -36,14 +36,14 @@ public class CommandWhereAmI implements IMCCommand
 
         if (!IColonyManager.getInstance().isCoordinateInAnyColony(sender.getEntityWorld(), playerPos))
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.whereami.colonyclose", Math.sqrt(distance));
+            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.whereami.colonyclose", distance);
             return 0;
         }
 
         final String colonyName = colony.getName();
         final String id = Integer.toString(colony.getID());
 
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.whereami.incolony", colonyName, id, Math.sqrt(distance));
+        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.whereami.incolony", colonyName, id, distance);
 
         return 0;
     }

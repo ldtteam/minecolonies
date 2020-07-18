@@ -149,7 +149,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
                 citizen.getInventoryCitizen().setCustomName(name);
             }
 
-            NetworkHooks.openGui(player, citizen, packetBuffer -> packetBuffer.writeVarInt(citizen.getCitizenColonyHandler().getColonyId()).writeVarInt(citizen.getCitizenId()));
+            NetworkHooks.openGui(player, citizen, packetBuffer -> packetBuffer.writeVarInt(citizen.getCitizenColonyHandler().getColonyId()).writeVarInt(citizen.getCivilianID()));
         }
     }
 

@@ -12,7 +12,7 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +31,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     /**
      * The map of response options of the player, to new inquires of the interacting entity.
      */
-    private Map<ITextComponent, ITextComponent> responses = new HashMap<>();
+    private Map<ITextComponent, ITextComponent> responses = new LinkedHashMap<>();
 
     /**
      * If the interaction is a primary (true) or secondary (false) interaction.
