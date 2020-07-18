@@ -10,7 +10,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
@@ -289,7 +289,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             //If the miner hut has been placed too deep.
             if (buildingMiner.getNumberOfLevels() == 0)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NEEDS_BETTER_HUT), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NEEDS_BETTER_HUT), ChatPriority.BLOCKING));
                 buildingMiner.setClearedShaft(false);
                 return IDLE;
             }

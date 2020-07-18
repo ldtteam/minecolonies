@@ -170,7 +170,7 @@ public final class ColonyManager implements IColonyManager
             for (final ICitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
                 Log.getLogger().info("Kill Citizen " + citizenData.getName());
-                citizenData.getCitizenEntity().ifPresent(entityCitizen -> {
+                citizenData.getEntity().ifPresent(entityCitizen -> {
                     entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE);
                 });
             }

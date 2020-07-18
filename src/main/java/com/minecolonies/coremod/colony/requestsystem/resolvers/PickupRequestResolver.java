@@ -59,7 +59,7 @@ public class PickupRequestResolver extends AbstractRequestResolver<Pickup>
         final Colony colony = (Colony) manager.getColony();
         final ICitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                                .stream()
-                                               .filter(citizenData -> citizenData.getCitizenEntity()
+                                               .filter(citizenData -> citizenData.getEntity()
                                                                         .map(entityCitizen -> requestToCheck.getRequester()
                                                                                                 .getLocation()
                                                                                                 .isReachableFromLocation(entityCitizen.getLocation()))
@@ -84,7 +84,7 @@ public class PickupRequestResolver extends AbstractRequestResolver<Pickup>
         final ICitizenData freeDeliveryMan = colony.getCitizenManager()
                                                .getCitizens()
                                                .stream()
-                                               .filter(citizenData -> citizenData.getCitizenEntity()
+                                               .filter(citizenData -> citizenData.getEntity()
                                                                         .map(entityCitizen -> request.getRequester()
                                                                                                 .getLocation()
                                                                                                 .isReachableFromLocation(entityCitizen.getLocation()))
@@ -95,7 +95,7 @@ public class PickupRequestResolver extends AbstractRequestResolver<Pickup>
                                                       .thenComparing(Comparator.comparing(c -> {
                                                           BlockPos targetPos = request.getRequester().getLocation().getInDimensionLocation();
                                                           //We can do an instant get here, since we are already filtering on anything that has no entity.
-                                                          BlockPos entityLocation = c.getCitizenEntity().get().getLocation().getInDimensionLocation();
+                                                          BlockPos entityLocation = c.getEntity().get().getLocation().getInDimensionLocation();
 
                                                           return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
                                                       })))

@@ -364,11 +364,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                     final ICitizenData data;
                     if (workersTagList.getCompound(i).keySet().contains(TAG_ID))
                     {
-                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompound(i).getInt(TAG_ID));
+                        data = getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_ID));
                     }
                     else if (workersTagList.getCompound(i).keySet().contains(TAG_WORKER_ID))
                     {
-                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
+                        data = getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
                     }
                     else
                     {
@@ -384,7 +384,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             catch (final Exception e)
             {
                 Log.getLogger().warn("Warning: Updating data structures:", e);
-                final ICitizenData worker = getColony().getCitizenManager().getCitizen(compound.getInt(TAG_WORKER));
+                final ICitizenData worker = getColony().getCitizenManager().getCivilian(compound.getInt(TAG_WORKER));
                 assignCitizen(worker);
             }
         }

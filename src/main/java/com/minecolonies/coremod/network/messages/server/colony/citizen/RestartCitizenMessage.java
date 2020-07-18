@@ -73,7 +73,7 @@ public class RestartCitizenMessage extends AbstractColonyServerMessage
             return;
         }
 
-        final ICitizenData citizen = colony.getCitizenManager().getCitizen(citizenID);
+        final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
 
         // Restart also worker building and AI
         citizen.scheduleRestart(player);
