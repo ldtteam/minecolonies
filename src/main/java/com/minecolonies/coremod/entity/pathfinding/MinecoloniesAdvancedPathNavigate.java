@@ -15,7 +15,9 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.AbstractRailBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -127,7 +129,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         this.destination = dest;
         this.originalDestination = dest;
-        this.walkSpeed = speed;
 
         if (speed > MAX_SPEED_ALLOWED)
         {
@@ -313,9 +314,20 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             speed = walkSpeed * CITIZEN_SWIM_BONUS;
             return speed;
         }
-
-        speed = walkSpeed;
+		else if (WorkerUtil.isPathBlock(world.getBlockState(ourEntity.getPosition().down()).getBlock()))
+                {
+                    speed = walkSpeed * ON_PATH_SPEED_MULTIPLIER;
+					return speed;
+                }
+		else if (world.getBlockState(ourEntity.getPosition()).getBlock() == Blocks.GRASS_PATH)
+                {
+                    speed = walkSpeed * ON_PATH_SPEED_MULTIPLIER;
+					return speed;
+                }
+		else {
+		speed = walkSpeed;
         return walkSpeed;
+		}
     }
 
     @Override
@@ -326,7 +338,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             Log.getLogger().error("Tried to set a too high speed for entity:" + ourEntity, new Exception());
             return;
         }
-        walkSpeed = d;
+        speed = d;
     }
 
     /**
@@ -460,17 +472,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             else if (ourEntity.isInWater())
             {
                 return handleEntityInWater(oldIndex, pEx);
-            }
-            else
-            {
-                if (WorkerUtil.isPathBlock(world.getBlockState(ourEntity.getPosition().down()).getBlock()))
-                {
-                    speed = ON_PATH_SPEED_MULTIPLIER * getSpeed();
-                }
-                else
-                {
-                    speed = getSpeed();
-                }
             }
         }
         return false;
