@@ -84,11 +84,19 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         keepX.put(FurnaceTileEntity::isFuel, new Tuple<>(STACKSIZE, true));
     }
 
+    /**
+     * Get the status of the assistant processing requests
+     * @return true if currently crafting
+     */
     public boolean getIsCooking()
     {
         return isCooking;
     }
 
+    /**
+     * Record the state of the assistant processing requests
+     * @param cookingState true if currently crafting
+     */
     public void setIsCooking(final boolean cookingState)
     {
         isCooking = cookingState;
