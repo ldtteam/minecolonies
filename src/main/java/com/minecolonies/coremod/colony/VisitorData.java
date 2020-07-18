@@ -92,7 +92,7 @@ public class VisitorData extends CitizenData implements IVisitorData
     public void serializeViewNetworkData(@NotNull final PacketBuffer buf)
     {
         super.serializeViewNetworkData(buf);
-        buf.writeCompoundTag(recruitCost.write(new CompoundNBT()));
+        buf.writeItemStack(recruitCost);
     }
 
     @Override
