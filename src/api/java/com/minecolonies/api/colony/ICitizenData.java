@@ -212,4 +212,18 @@ public interface ICitizenData extends ICivilianData
      */
     @Override
     Optional<AbstractEntityCitizen> getEntity();
+
+    /**
+     * Gets the citizen's status
+     *
+     * @return status
+     */
+    VisibleCitizenStatus getStatus();
+
+    /**
+     * Sets the citizens status
+     *
+     * @param status status to set
+     */
+    void setVisibleStatus(VisibleCitizenStatus status);
 }
