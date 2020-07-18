@@ -293,7 +293,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     protected boolean isDirectPathBetweenPoints(final Vec3d start, final Vec3d end, final int sizeX, final int sizeY, final int sizeZ)
     {
         // TODO improve road walking. This is better in some situations, but still not great.
-        return !WorkerUtil.isPathBlock(world.getBlockState(new BlockPos(start.x, start.y - 1, start.z)).getBlock())
+        return !WorkerUtil.isPathBlock(world.getBlockState(new BlockPos(start.x, start.y - 1, start.z)) .getBlock() )
                  && super.isDirectPathBetweenPoints(start, end, sizeX, sizeY, sizeZ);
     }
 
@@ -314,12 +314,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             speed = walkSpeed * CITIZEN_SWIM_BONUS;
             return speed;
         }
-		else if (WorkerUtil.isPathBlock(world.getBlockState(ourEntity.getPosition().down()).getBlock()))
-                {
-                    speed = walkSpeed * ON_PATH_SPEED_MULTIPLIER;
-					return speed;
-                }
-		else if (world.getBlockState(ourEntity.getPosition()).getBlock() == Blocks.GRASS_PATH)
+		else if (WorkerUtil.isPathBlock(findBlockTypeUnderEntity(ourEntity) ) )
                 {
                     speed = walkSpeed * ON_PATH_SPEED_MULTIPLIER;
 					return speed;
@@ -330,6 +325,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 		}
     }
 
+	public Block findBlockTypeUnderEntity(Entity parEntity)
+{
+    int blockX = MathHelper.floor(parEntity.posX);
+    int blockY = MathHelper.floor(parEntity.posY-0.2D);
+    int blockZ = MathHelper.floor(parEntity.posZ);
+    return world.getBlockState(new BlockPos(blockX, blockY, blockZ)).getBlock() ;
+}
     @Override
     public void setSpeed(final double d)
     {
@@ -338,7 +340,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             Log.getLogger().error("Tried to set a too high speed for entity:" + ourEntity, new Exception());
             return;
         }
-        speed = d;
+        walkSpeed = d;
     }
 
     /**
