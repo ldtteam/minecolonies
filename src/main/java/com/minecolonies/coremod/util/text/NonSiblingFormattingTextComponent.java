@@ -17,7 +17,6 @@ public class NonSiblingFormattingTextComponent extends StringTextComponent
     public String getString()
     {
         StringBuilder stringbuilder = new StringBuilder();
-        stringbuilder.append(this.getStyle());
 
         for (ITextComponent itextcomponent : this.siblings)
         {

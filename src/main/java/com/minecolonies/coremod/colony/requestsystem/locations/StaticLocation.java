@@ -97,7 +97,7 @@ public class StaticLocation implements ILocation
     @Override
     public String toString()
     {
-        return "Dim: " + dimension + " " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + " ";
+        return "Dim: " + dimension.getPath() + " " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + " ";
     }
 
     /**
