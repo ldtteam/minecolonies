@@ -2,16 +2,13 @@ package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.commands.EntryPoint;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.client.ServerUUIDMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,12 +47,6 @@ public class FMLEventHandler
             IColonyManager.getInstance().getIColonyByOwner(((ServerPlayerEntity) event.getPlayer()).getServerWorld(), event.getPlayer());
             //ColonyManager.syncAllColoniesAchievements();
         }
-    }
-
-    @SubscribeEvent
-    public void onCommandsRegister(RegisterCommandsEvent event)
-    {
-        EntryPoint.register(event.getDispatcher());
     }
 
     @SubscribeEvent
