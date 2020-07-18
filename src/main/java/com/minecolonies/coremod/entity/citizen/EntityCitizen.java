@@ -206,6 +206,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     private       ICitizenDataView          citizenDataView;
 
     /**
+     * The location used for requests
+     */
+    private ILocation location = null;
+
+    /**
      * Constructor for a new citizen typed entity.
      *
      * @param type  the entity type.
@@ -298,7 +303,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public String getScoreboardName()
     {
-        return getName().getString() + " (" + getCitizenId() + ")";
+        return getName().getString() + " (" + getCivilianID() + ")";
     }
 
     /**
@@ -682,7 +687,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public ILocation getLocation()
     {
-        return StandardFactoryController.getInstance().getNewInstance(TypeConstants.ILOCATION, this);
+        if (location == null)
+        {
+            location = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ILOCATION, this);
+        }
+        return location;
     }
 
     /**
@@ -720,11 +729,11 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @param data the data to set.
      */
     @Override
-    public void setCitizenData(@Nullable final ICitizenData data)
+    public void setCivilianData(@Nullable final ICivilianData data)
     {
         if (data != null)
         {
-            this.citizenData = data;
+            this.citizenData = (ICitizenData) data;
             data.initEntityValues();
         }
     }
@@ -883,7 +892,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @return the id.
      */
     @Override
-    public int getCitizenId()
+    public int getCivilianID()
     {
         return citizenId;
     }
@@ -1427,12 +1436,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         moveAwayPath = this.getNavigator().moveAwayFromLivingEntity(attacker, 15, INITIAL_RUN_SPEED_AVOID);
     }
 
-    /**
-     * Calls a guard for help against an attacker.
-     *
-     * @param attacker       the attacking entity
-     * @param guardHelpRange the squaredistance in which we search for nearby guards
-     */
+    @Override
     public void callForHelp(final Entity attacker, final int guardHelpRange)
     {
         if (!(attacker instanceof LivingEntity) || !MineColonies.getConfig().getCommon().citizenCallForHelp.get() || callForHelpCooldown != 0)
@@ -1453,16 +1457,16 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         for (final ICitizenData entry : getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
         {
-            if (entry.getCitizenEntity().isPresent())
+            if (entry.getEntity().isPresent())
             {
-                final long tdist = BlockPosUtil.getDistanceSquared(entry.getCitizenEntity().get().getPosition(), getPosition());
+                final long tdist = BlockPosUtil.getDistanceSquared(entry.getEntity().get().getPosition(), getPosition());
 
                 // Checking for guard nearby
                 if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId() && tdist < guardDistance && entry.getJob().getWorkerAI() != null
                       && ((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
                 {
                     guardDistance = tdist;
-                    guard = entry.getCitizenEntity().get();
+                    guard = entry.getEntity().get();
                 }
             }
         }
@@ -1509,7 +1513,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 citizenData.getJob().onRemoval();
             }
-            citizenColonyHandler.getColony().getCitizenManager().removeCitizen(getCitizenData());
+            citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
             InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
         }
         super.onDeath(damageSource);
@@ -1745,21 +1749,13 @@ public class EntityCitizen extends AbstractEntityCitizen
         return false;
     }
 
-    /**
-     * Get if the citizen is fleeing from an attacker.
-     *
-     * @return true if so.
-     */
+    @Override
     public boolean isCurrentlyFleeing()
     {
         return currentlyFleeing;
     }
 
-    /**
-     * Sets the fleeing state
-     *
-     * @param fleeing true if fleeing.
-     */
+    @Override
     public void setFleeingState(final boolean fleeing)
     {
         currentlyFleeing = fleeing;

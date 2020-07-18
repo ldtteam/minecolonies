@@ -14,7 +14,7 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
@@ -466,7 +466,7 @@ public class EntityAIEatTask extends Goal
         if (uncookedFood != -1)
         {
             complained = true;
-            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
+            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
         }
 
         final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
@@ -479,7 +479,7 @@ public class EntityAIEatTask extends Goal
         {
             if (!complained)
             {
-                citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
             }
             return IDLE;
         }

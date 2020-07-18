@@ -148,6 +148,7 @@ public class MineColonies
         CapabilityManager.INSTANCE.register(IColonyManagerCapability.class, new IColonyManagerCapability.Storage(), IColonyManagerCapability.Impl::new);
         DeferredWorkQueue.runLater(() -> {
             GlobalEntityTypeAttributes.put(ModEntities.CITIZEN, AbstractEntityCitizen.getDefaultAttributes().func_233813_a_());
+            GlobalEntityTypeAttributes.put(ModEntities.VISITOR, AbstractEntityCitizen.getDefaultAttributes().func_233813_a_());
             GlobalEntityTypeAttributes.put(ModEntities.MERCENARY, EntityMercenary.getDefaultAttributes().func_233813_a_());
             GlobalEntityTypeAttributes.put(ModEntities.MERCENARY, EntityMercenary.getDefaultAttributes().func_233813_a_());
             GlobalEntityTypeAttributes.put(ModEntities.BARBARIAN, EntityMercenary.getDefaultAttributes().func_233813_a_());
@@ -194,6 +195,7 @@ public class MineColonies
     public static void doClientStuff(final FMLClientSetupEvent event)
     {
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.CITIZEN, RenderBipedCitizen::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.VISITOR, RenderBipedCitizen::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.FISHHOOK, RenderFishHook::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.FIREARROW, FireArrowRenderer::new);
 

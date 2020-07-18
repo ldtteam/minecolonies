@@ -117,6 +117,13 @@ public interface IColony
     }
 
     /**
+     * Whether it is day for the colony
+     *
+     * @return true if it is day
+     */
+    boolean isDay();
+
+    /**
      * Retrieves the team of the colony
      *
      * @return Team of the colony
@@ -223,6 +230,13 @@ public interface IColony
 
     ICitizenManager getCitizenManager();
 
+    /**
+     * Gets the visitor manager
+     *
+     * @return manager
+     */
+    IVisitorManager getVisitorManager();
+
     IRaiderManager getRaiderManager();
 
     IEventManager getEventManager();
@@ -310,10 +324,6 @@ public interface IColony
     void read(CompoundNBT compound);
 
     void setMoveIn(boolean newMoveIn);
-
-    int getBoughtCitizenCost();
-
-    void increaseBoughtCitizenCost();
 
     /**
      * Returns a set of players receiving important messages for the colony.

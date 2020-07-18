@@ -36,7 +36,7 @@ public class CommandCitizenSpawnNew implements IMCOPCommand
 
         context.getSource()
           .sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenspawn.success",
-            colony.getCitizenManager().spawnOrCreateCitizen(null, colony.getWorld(), null, true).getName()), true);
+            colony.getCitizenManager().spawnOrCreateCivilian(null, colony.getWorld(), null, true).getName()), true);
         return 1;
     }
 

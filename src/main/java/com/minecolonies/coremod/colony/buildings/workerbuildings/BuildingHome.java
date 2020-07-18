@@ -97,7 +97,7 @@ public class BuildingHome extends AbstractBuilding
             final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
             for (final int citizenId : residentIds)
             {
-                final ICitizenData citizen = getColony().getCitizenManager().getCitizen(citizenId);
+                final ICitizenData citizen = getColony().getCitizenManager().getCivilian(citizenId);
                 if (citizen != null)
                 {
                     // Bypass assignCitizen (which marks dirty)
@@ -287,7 +287,7 @@ public class BuildingHome extends AbstractBuilding
                 return;
             }
 
-            final ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterNewCitizenData();
+            final ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCivilianData();
 
             final Random rand = new Random();
 

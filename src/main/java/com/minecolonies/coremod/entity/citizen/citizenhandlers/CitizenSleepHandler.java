@@ -2,8 +2,8 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSleepHandler;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
@@ -30,14 +30,14 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     /**
      * The citizen assigned to this manager.
      */
-    private final EntityCitizen citizen;
+    private final AbstractEntityCitizen citizen;
 
     /**
      * Constructor for the experience handler.
      *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenSleepHandler(final EntityCitizen citizen)
+    public CitizenSleepHandler(final AbstractEntityCitizen citizen)
     {
         this.citizen = citizen;
     }

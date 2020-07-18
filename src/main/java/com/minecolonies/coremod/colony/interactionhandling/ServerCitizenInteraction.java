@@ -9,7 +9,8 @@ import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.server.colony.TriggerServerResponseHandlerMessage;
+import com.minecolonies.coremod.network.messages.server.colony.InteractionResponse;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.text.ITextComponent;
@@ -29,7 +30,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 /**
  * The server side interaction response handler.
  */
-public abstract class ServerCitizenInteractionResponseHandler extends AbstractInteractionResponseHandler
+public abstract class ServerCitizenInteraction extends AbstractInteractionResponseHandler
 {
     private static final String TAG_DELAY        = "delay";
     private static final String TAG_PARENT       = "parent";
@@ -67,7 +68,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
      * @param responseTuples the tuples mapping player responses to further interactions.
      */
     @SafeVarargs
-    public ServerCitizenInteractionResponseHandler(
+    public ServerCitizenInteraction(
       final ITextComponent inquiry,
       final boolean primary,
       final IChatPriority priority,
@@ -85,7 +86,7 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
      *
      * @param data the citizen owning this handler.
      */
-    public ServerCitizenInteractionResponseHandler(final ICitizen data)
+    public ServerCitizenInteraction(final ICitizen data)
     {
         super();
     }
@@ -123,27 +124,26 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
     }
 
     @Override
-    public void onServerResponseTriggered(final ITextComponent response, final World world, final ICitizenData data)
+    public void onServerResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenData data)
     {
         if (response instanceof TranslationTextComponent)
         {
             if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
             {
-                displayAtWorldTick = (int) (world.getGameTime() + (TICKS_SECOND * 60 * 10));
+                displayAtWorldTick = (int) (player.world.getGameTime() + (TICKS_SECOND * 60 * 10));
             }
             else if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
             {
-                displayAtWorldTick = (int) (world.getGameTime() + (TICKS_SECOND * 60 * 20));
+                displayAtWorldTick = (int) (player.world.getGameTime() + (TICKS_SECOND * 60 * 20));
             }
         }
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final ITextComponent response, final World world, final ICitizenDataView data, final Window window)
+    public boolean onClientResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenDataView data, final Window window)
     {
-        Network.getNetwork()
-          .sendToServer(new TriggerServerResponseHandlerMessage(data.getColonyId(), data.getId(), world.func_234923_W_().func_240901_a_(), this.getInquiry(), response));
+        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.world.func_234923_W_().func_240901_a_(), this.getInquiry(), response));
         return true;
     }
 
@@ -173,9 +173,9 @@ public abstract class ServerCitizenInteractionResponseHandler extends AbstractIn
         final ListNBT list = compoundNBT.getList(TAG_PARENTS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
-            this.parents.add(ITextComponent.Serializer.func_240643_a_(compoundNBT.getString(TAG_PARENT)));
+            this.parents.add(ITextComponent.Serializer.func_240644_b_(compoundNBT.getString(TAG_PARENT)));
         }
-        this.validatorId = ITextComponent.Serializer.func_240643_a_(compoundNBT.getString(TAG_VALIDATOR_ID));
+        this.validatorId = ITextComponent.Serializer.func_240644_b_(compoundNBT.getString(TAG_VALIDATOR_ID));
         loadValidator();
     }
 

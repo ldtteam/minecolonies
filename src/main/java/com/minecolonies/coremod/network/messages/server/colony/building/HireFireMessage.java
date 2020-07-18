@@ -76,7 +76,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuildingWork
     protected void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuildingWorker building)
     {
-        final ICitizenData citizen = colony.getCitizenManager().getCitizen(citizenID);
+        final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
         citizen.setPaused(false);
         if (hire)
         {

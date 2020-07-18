@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
@@ -46,7 +47,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
     /**
      * The max distance to search for a loaded blockpos on a respawn try
      */
-    public static int MAX_RESPAWN_DEVIATION = 5 * 16;
+    public static int MAX_RESPAWN_DEVIATION = 10 * 16;
 
     /**
      * The minimum distance to the colony center where mobs are allowed to spawn
@@ -362,9 +363,16 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
             }
         }
 
-        if (colony.getRaiderManager().areSpiesEnabled())
+        for (final Entity entity : getEntities())
         {
-            for (final Entity entity : getEntities())
+            if (!entity.isAlive() || !WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(entity.getPositionVec())))
+            {
+                entity.remove();
+                respawns.add(new Tuple<>(entity.getType(), new BlockPos(entity.getPositionVec())));
+                continue;
+            }
+
+            if (colony.getRaiderManager().areSpiesEnabled())
             {
                 ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.GLOWING, 550));
             }

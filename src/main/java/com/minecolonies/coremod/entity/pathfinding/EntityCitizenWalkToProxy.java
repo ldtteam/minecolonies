@@ -10,7 +10,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.util.Direction;
@@ -249,7 +248,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     @Override
     public boolean isLivingAtSiteWithMove(final MobEntity entity, final int x, final int y, final int z, final int range)
     {
-        if (!WorkerUtil.isWorkerAtSiteWithMove((EntityCitizen) entity, x, y, z, range))
+        if (!WorkerUtil.isWorkerAtSiteWithMove((AbstractEntityCitizen) entity, x, y, z, range))
         {
             EntityUtils.tryMoveLivingToXYZ(entity, x, y, z);
             return false;

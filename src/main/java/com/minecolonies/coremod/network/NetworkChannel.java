@@ -160,7 +160,6 @@ public class NetworkChannel
         registerMessage(++idx, PostBoxRequestMessage.class, PostBoxRequestMessage::new);
         registerMessage(++idx, ComposterRetrievalMessage.class, ComposterRetrievalMessage::new);
         registerMessage(++idx, CrusherSetModeMessage.class, CrusherSetModeMessage::new);
-        registerMessage(++idx, BuyCitizenMessage.class, BuyCitizenMessage::new);
         registerMessage(++idx, HireMercenaryMessage.class, HireMercenaryMessage::new);
         registerMessage(++idx, ShepherdSetDyeSheepsMessage.class, ShepherdSetDyeSheepsMessage::new);
         registerMessage(++idx, SifterSettingsMessage.class, SifterSettingsMessage::new);
@@ -171,7 +170,7 @@ public class NetworkChannel
         registerMessage(++idx, DirectPlaceMessage.class, DirectPlaceMessage::new);
         registerMessage(++idx, TeleportToColonyMessage.class, TeleportToColonyMessage::new);
         registerMessage(++idx, EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage::new);
-        registerMessage(++idx, TriggerServerResponseHandlerMessage.class, TriggerServerResponseHandlerMessage::new);
+        registerMessage(++idx, InteractionResponse.class, InteractionResponse::new);
         registerMessage(++idx, TryResearchMessage.class, TryResearchMessage::new);
         registerMessage(++idx, HireSpiesMessage.class, HireSpiesMessage::new);
         registerMessage(++idx, AddMinimumStockToBuildingMessage.class, AddMinimumStockToBuildingMessage::new);
@@ -192,6 +191,8 @@ public class NetworkChannel
         registerMessage(++idx, VanillaParticleMessage.class, VanillaParticleMessage::new);
         registerMessage(++idx, StopMusicMessage.class, StopMusicMessage::new);
         registerMessage(++idx, PlayMusicMessage.class, PlayMusicMessage::new);
+        registerMessage(++idx, PlayMusicAtPosMessage.class, PlayMusicAtPosMessage::new);
+        registerMessage(++idx, ColonyVisitorViewDataMessage.class, ColonyVisitorViewDataMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage::new);

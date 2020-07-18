@@ -2,8 +2,6 @@ package com.minecolonies.coremod.commands.colonycommands;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
@@ -42,12 +40,6 @@ public class CommandClaimChunks implements IMCOPCommand
 
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().func_234923_W_().func_240901_a_());
-        if (colony == null)
-        {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
-            return 0;
-        }
 
         // Range
         final int range = IntegerArgumentType.getInteger(context, RANGE_ARG);

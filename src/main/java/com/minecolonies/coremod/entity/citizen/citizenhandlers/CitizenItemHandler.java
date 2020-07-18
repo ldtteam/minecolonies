@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenItemHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.BlockParticleEffectMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.block.Block;
@@ -41,14 +41,14 @@ public class CitizenItemHandler implements ICitizenItemHandler
     /**
      * The citizen assigned to this manager.
      */
-    private final EntityCitizen citizen;
+    private final AbstractEntityCitizen citizen;
 
     /**
      * Constructor for the experience handler.
      *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenItemHandler(final EntityCitizen citizen)
+    public CitizenItemHandler(final AbstractEntityCitizen citizen)
     {
         this.citizen = citizen;
     }

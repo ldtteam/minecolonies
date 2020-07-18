@@ -21,10 +21,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public interface IColonyView extends IColony
 {
@@ -253,6 +250,14 @@ public interface IColonyView extends IColony
     IMessage handleColonyViewCitizensMessage(int id, PacketBuffer buf);
 
     /**
+     * Handles visitor view messages
+     *
+     * @param refresh         whether to override old data
+     * @param visitorViewData the new data to set
+     */
+    void handleColonyViewVisitorMessage(boolean refresh, Set<IVisitorViewData> visitorViewData);
+
+    /**
      * Remove a citizen from the ColonyView.
      *
      * @param citizen citizen ID.
@@ -408,13 +413,6 @@ public interface IColonyView extends IColony
     List<IBuildingView> getBuildings();
 
     /**
-     * Get the cost multiplier of buying a citizen.
-     *
-     * @return the current cost.
-     */
-    int getBoughtCitizenCost();
-
-    /**
      * Get the style of the colony.
      *
      * @return the current default style.
@@ -443,4 +441,12 @@ public interface IColonyView extends IColony
     List<CompactColonyReference> getFeuds();
 
     boolean areSpiesEnabled();
+
+    /**
+     * Gets the data view for a visitor
+     *
+     * @param citizenId id to query
+     * @return citizen data for visitor
+     */
+    ICitizenDataView getVisitor(int citizenId);
 }

@@ -2,9 +2,9 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
@@ -24,14 +24,14 @@ public class CitizenChatHandler implements ICitizenChatHandler
     /**
      * The citizen assigned to this manager.
      */
-    private final EntityCitizen citizen;
+    private final AbstractEntityCitizen citizen;
 
     /**
      * Constructor for the experience handler.
      *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenChatHandler(final EntityCitizen citizen)
+    public CitizenChatHandler(final AbstractEntityCitizen citizen)
     {
         this.citizen = citizen;
     }

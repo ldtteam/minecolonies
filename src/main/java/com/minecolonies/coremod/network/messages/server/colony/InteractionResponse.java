@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to trigger a response handler on the server side.
  */
-public class TriggerServerResponseHandlerMessage extends AbstractColonyServerMessage
+public class InteractionResponse extends AbstractColonyServerMessage
 {
     /**
      * Id of the citizen.
@@ -32,7 +32,7 @@ public class TriggerServerResponseHandlerMessage extends AbstractColonyServerMes
     /**
      * Empty public constructor.
      */
-    public TriggerServerResponseHandlerMessage()
+    public InteractionResponse()
     {
         super();
     }
@@ -46,7 +46,7 @@ public class TriggerServerResponseHandlerMessage extends AbstractColonyServerMes
      * @param key       the key of the handler.
      * @param response  the response to trigger.
      */
-    public TriggerServerResponseHandlerMessage(
+    public InteractionResponse(
       final int colonyId,
       final int citizenId,
       final ResourceLocation dimension,
@@ -88,10 +88,15 @@ public class TriggerServerResponseHandlerMessage extends AbstractColonyServerMes
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
+        ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
+        if (citizenData == null)
+        {
+            citizenData = colony.getVisitorManager().getVisitor(citizenId);
+        }
+
         if (citizenData != null && ctxIn.getSender() != null)
         {
-            citizenData.onResponseTriggered(key, response, ctxIn.getSender().world);
+            citizenData.onResponseTriggered(key, response, ctxIn.getSender());
         }
     }
 }

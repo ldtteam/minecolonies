@@ -299,7 +299,7 @@ public class EntityAISleep extends Goal
     {
         for (ICitizenData citizen : hut.getAssignedCitizen())
         {
-            if (this.citizen.getCitizenId() != citizen.getId())
+            if (this.citizen.getCivilianID() != citizen.getId())
             {
                 if (citizen.getBedPos().equals(bed))
                 {

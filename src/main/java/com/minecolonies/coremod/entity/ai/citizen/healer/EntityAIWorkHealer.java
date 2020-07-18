@@ -17,7 +17,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobHealer;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -120,18 +120,18 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         final BuildingHospital hospital = getOwnBuilding();
         for (final AbstractEntityCitizen citizen : world.getEntitiesWithinAABB(ModEntities.CITIZEN, getTargetableArea(), cit -> cit.getCitizenDiseaseHandler().isSick()))
         {
-            hospital.checkOrCreatePatientFile(citizen.getCitizenId());
+            hospital.checkOrCreatePatientFile(citizen.getCivilianID());
         }
 
         for (final Patient patient : hospital.getPatients())
         {
-            final ICitizenData data = hospital.getColony().getCitizenManager().getCitizen(patient.getId());
-            if (data == null || (data.getCitizenEntity().isPresent() && !data.getCitizenEntity().get().getCitizenDiseaseHandler().isSick()))
+            final ICitizenData data = hospital.getColony().getCitizenManager().getCivilian(patient.getId());
+            if (data == null || (data.getEntity().isPresent() && !data.getEntity().get().getCitizenDiseaseHandler().isSick()))
             {
                 hospital.removePatientFile(patient);
                 continue;
             }
-            final EntityCitizen citizen = (EntityCitizen) data.getCitizenEntity().get();
+            final EntityCitizen citizen = (EntityCitizen) data.getEntity().get();
             final String diseaseName = citizen.getCitizenDiseaseHandler().getDisease();
             @Nullable final Disease disease = diseaseName.isEmpty() ? null : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName);
 
@@ -194,7 +194,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                 }
                 else
                 {
-                    data.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(PATIENT_FULL_INVENTORY), ChatPriority.BLOCKING));
+                    data.triggerInteraction(new StandardInteraction(new TranslationTextComponent(PATIENT_FULL_INVENTORY), ChatPriority.BLOCKING));
                 }
             }
 
@@ -223,8 +223,8 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         }
 
         final ICitizenData data = getOwnBuilding().getColony().getCitizenManager().getRandomCitizen();
-        if (data.getCitizenEntity().isPresent() && data.getCitizenEntity().get().getHealth() < 10.0
-              && BlockPosUtil.getDistance2D(data.getCitizenEntity().get().getPosition(), getOwnBuilding().getPosition()) < getOwnBuilding().getBuildingLevel() * 40)
+        if (data.getEntity().isPresent() && data.getEntity().get().getHealth() < 10.0
+              && BlockPosUtil.getDistance2D(data.getEntity().get().getPosition(), getOwnBuilding().getPosition()) < getOwnBuilding().getBuildingLevel() * 40)
         {
             remotePatient = data;
             return WANDER;
@@ -244,14 +244,14 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             return DECIDE;
         }
 
-        final ICitizenData data = getOwnBuilding().getColony().getCitizenManager().getCitizen(currentPatient.getId());
-        if (data == null || !data.getCitizenEntity().isPresent() || !data.getCitizenEntity().get().getCitizenDiseaseHandler().isSick())
+        final ICitizenData data = getOwnBuilding().getColony().getCitizenManager().getCivilian(currentPatient.getId());
+        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenDiseaseHandler().isSick())
         {
             currentPatient = null;
             return DECIDE;
         }
 
-        final EntityCitizen citizen = (EntityCitizen) data.getCitizenEntity().get();
+        final EntityCitizen citizen = (EntityCitizen) data.getEntity().get();
         if (walkToBlock(citizen.getPosition()))
         {
             return REQUEST_CURE;
@@ -303,15 +303,15 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             return DECIDE;
         }
 
-        final ICitizenData data = getOwnBuilding().getColony().getCitizenManager().getCitizen(currentPatient.getId());
-        if (data == null || !data.getCitizenEntity().isPresent() || !data.getCitizenEntity().get().getCitizenDiseaseHandler().isSick())
+        final ICitizenData data = getOwnBuilding().getColony().getCitizenManager().getCivilian(currentPatient.getId());
+        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenDiseaseHandler().isSick())
         {
             currentPatient = null;
             return DECIDE;
         }
 
-        final EntityCitizen citizen = (EntityCitizen) data.getCitizenEntity().get();
-        if (walkToBlock(data.getCitizenEntity().get().getPosition()))
+        final EntityCitizen citizen = (EntityCitizen) data.getEntity().get();
+        if (walkToBlock(data.getEntity().get().getPosition()))
         {
             return CURE;
         }
@@ -352,7 +352,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                 {
                     if (InventoryUtils.isItemHandlerFull(citizen.getInventoryCitizen()))
                     {
-                        data.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(PATIENT_FULL_INVENTORY), ChatPriority.BLOCKING));
+                        data.triggerInteraction(new StandardInteraction(new TranslationTextComponent(PATIENT_FULL_INVENTORY), ChatPriority.BLOCKING));
                         currentPatient = null;
                         return DECIDE;
                     }
@@ -383,14 +383,14 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             return DECIDE;
         }
 
-        final ICitizenData data = getOwnBuilding().getColony().getCitizenManager().getCitizen(currentPatient.getId());
-        if (data == null || !data.getCitizenEntity().isPresent() || !data.getCitizenEntity().get().getCitizenDiseaseHandler().isSick())
+        final ICitizenData data = getOwnBuilding().getColony().getCitizenManager().getCivilian(currentPatient.getId());
+        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenDiseaseHandler().isSick())
         {
             currentPatient = null;
             return DECIDE;
         }
 
-        final EntityCitizen citizen = (EntityCitizen) data.getCitizenEntity().get();
+        final EntityCitizen citizen = (EntityCitizen) data.getEntity().get();
         if (walkToBlock(citizen.getPosition()))
         {
             progressTicks = 0;
@@ -461,20 +461,20 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      */
     private IAIState wander()
     {
-        if (remotePatient == null || !remotePatient.getCitizenEntity().isPresent())
+        if (remotePatient == null || !remotePatient.getEntity().isPresent())
         {
             return DECIDE;
         }
 
-        final EntityCitizen citizen = (EntityCitizen) remotePatient.getCitizenEntity().get();
-        if (walkToBlock(remotePatient.getCitizenEntity().get().getPosition()))
+        final EntityCitizen citizen = (EntityCitizen) remotePatient.getEntity().get();
+        if (walkToBlock(remotePatient.getEntity().get().getPosition()))
         {
             return getState();
         }
 
         Network.getNetwork().sendToTrackingEntity(
           new CircleParticleEffectMessage(
-            remotePatient.getCitizenEntity().get().getPositionVec(),
+            remotePatient.getEntity().get().getPositionVec(),
             ParticleTypes.HEART,
             1), worker);
 

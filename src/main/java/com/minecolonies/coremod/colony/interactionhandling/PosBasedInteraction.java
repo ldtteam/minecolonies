@@ -21,12 +21,12 @@ import java.util.function.BiPredicate;
 /**
  * The position based interaction response handler.
  */
-public class PosBasedInteractionResponseHandler extends ServerCitizenInteractionResponseHandler
+public class PosBasedInteraction extends ServerCitizenInteraction
 {
     private static final String POS_TAG = "pos";
 
     @SuppressWarnings("unchecked")
-    private static final Tuple<ITextComponent, ITextComponent>[] tuples = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
+    private static final Tuple<ITextComponent, ITextComponent>[] responses = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
@@ -49,13 +49,13 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
      * @param pos       the pos this is related to.
      * @param validator the validator id.
      */
-    public PosBasedInteractionResponseHandler(
+    public PosBasedInteraction(
       final ITextComponent inquiry,
       final IChatPriority priority,
       final ITextComponent validator,
       final BlockPos pos)
     {
-        super(inquiry, true, priority, null, validator, tuples);
+        super(inquiry, true, priority, null, validator, responses);
         this.validator = InteractionValidatorRegistry.getPosBasedInteractionValidatorPredicate(validator);
         this.pos = pos;
     }
@@ -67,12 +67,12 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
      * @param priority the interaction priority.
      * @param pos      the pos this is related to.
      */
-    public PosBasedInteractionResponseHandler(
+    public PosBasedInteraction(
       final ITextComponent inquiry,
       final IChatPriority priority,
       final BlockPos pos)
     {
-        super(inquiry, true, priority, null, inquiry, tuples);
+        super(inquiry, true, priority, null, inquiry, responses);
         this.validator = InteractionValidatorRegistry.getPosBasedInteractionValidatorPredicate(inquiry);
         this.pos = pos;
     }
@@ -82,7 +82,7 @@ public class PosBasedInteractionResponseHandler extends ServerCitizenInteraction
      *
      * @param data the citizen owning this handler.
      */
-    public PosBasedInteractionResponseHandler(final ICitizen data)
+    public PosBasedInteraction(final ICitizen data)
     {
         super(data);
     }

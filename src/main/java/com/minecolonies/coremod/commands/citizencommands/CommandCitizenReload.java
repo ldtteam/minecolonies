@@ -36,7 +36,7 @@ public class CommandCitizenReload implements IMCColonyOfficerCommand
             return 0;
         }
 
-        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(IntegerArgumentType.getInteger(context, CITIZENID_ARG));
+        final ICitizenData citizenData = colony.getCitizenManager().getCivilian(IntegerArgumentType.getInteger(context, CITIZENID_ARG));
 
         if (citizenData == null)
         {
@@ -44,7 +44,7 @@ public class CommandCitizenReload implements IMCColonyOfficerCommand
             return 0;
         }
 
-        citizenData.updateCitizenEntityIfNecessary();
+        citizenData.updateEntityIfNecessary();
         context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenreload.success", citizenData.getId()), true);
         return 1;
     }

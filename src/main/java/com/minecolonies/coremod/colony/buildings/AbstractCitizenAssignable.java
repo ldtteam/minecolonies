@@ -153,7 +153,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
         {
             return Optional.empty();
         }
-        return assignedCitizen.get(0).getCitizenEntity();
+        return assignedCitizen.get(0).getEntity();
     }
 
     /**
@@ -176,7 +176,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     @Nullable
     public List<Optional<AbstractEntityCitizen>> getAssignedEntities()
     {
-        return assignedCitizen.stream().filter(Objects::nonNull).map(ICitizenData::getCitizenEntity).collect(Collectors.toList());
+        return assignedCitizen.stream().filter(Objects::nonNull).map(ICitizenData::getEntity).collect(Collectors.toList());
     }
 
     /**

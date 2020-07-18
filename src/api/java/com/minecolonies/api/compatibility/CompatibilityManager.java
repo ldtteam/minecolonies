@@ -111,6 +111,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Map<ItemStorage, ItemStorage> crusherModes = new HashMap<>();
 
     /**
+     * The items and weights of the recruitment.
+     */
+    private final List<Tuple<Item, Integer>> recruitmentCostsWeights = new ArrayList<>();
+
+    /**
      * The meshes the sifter is going to be able to use.
      */
     private final List<Tuple<ItemStorage, Double>> sifterMeshes = new ArrayList<>();
@@ -190,6 +195,7 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverCompostableItems();
         discoverPlantables();
         discoverLuckyOres();
+        discoverRecruitCosts();
         discoverDiseases();
         discoverCrusherModes();
         discoverSifting();
@@ -381,6 +387,12 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<Disease> getDiseases()
     {
         return new ArrayList<>(diseases.values());
+    }
+
+    @Override
+    public List<Tuple<Item, Integer>> getRecruitmentCostsWeights()
+    {
+        return Collections.unmodifiableList(recruitmentCostsWeights);
     }
 
     @Override
@@ -650,6 +662,43 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         Log.getLogger().info("Finished discovering lucky oreBlocks");
+    }
+
+    /**
+     * Parses recruitment costs from config
+     */
+    private void discoverRecruitCosts()
+    {
+        if (recruitmentCostsWeights.isEmpty())
+        {
+            for (final String itemString : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().configListRecruitmentItems.get())
+            {
+                final String[] split = itemString.split(";");
+                if (split.length < 2)
+                {
+                    Log.getLogger().warn("Wrong configured recruitment cost: " + itemString);
+                    continue;
+                }
+
+                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0]));
+                if (item == null || item == Items.AIR)
+                {
+                    Log.getLogger().warn("Invalid recruitment item: " + item);
+                    continue;
+                }
+
+                try
+                {
+                    final int rarity = Integer.parseInt(split[split.length - 1]);
+                    recruitmentCostsWeights.add(new Tuple<>(item, rarity));
+                }
+                catch (final NumberFormatException ex)
+                {
+                    Log.getLogger().warn("Invalid recruitment weight for: " + item);
+                }
+            }
+        }
+        Log.getLogger().info("Finished discovering recruitment costs");
     }
 
     /**

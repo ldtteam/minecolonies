@@ -46,7 +46,7 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand
             return 0;
         }
 
-        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(IntegerArgumentType.getInteger(context, CITIZENID_ARG));
+        final ICitizenData citizenData = colony.getCitizenManager().getCivilian(IntegerArgumentType.getInteger(context, CITIZENID_ARG));
 
         if (citizenData == null)
         {
@@ -54,7 +54,7 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand
             return 0;
         }
 
-        final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+        final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();
 
         if (!optionalEntityCitizen.isPresent())
         {

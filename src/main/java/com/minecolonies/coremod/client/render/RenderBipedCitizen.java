@@ -3,9 +3,7 @@ package com.minecolonies.coremod.client.render;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.model.ModelEntityFemaleCitizen;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -32,16 +30,6 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 {
     private static final double  SHADOW_SIZE   = 0.5F;
     public static        boolean isItGhostTime = false;
-
-    /**
-     * The resource location for the blocking overlay.
-     */
-    private static final ResourceLocation BLOCKING_RESOURCE = new ResourceLocation(Constants.MOD_ID, "textures/icons/blocking.png");
-
-    /**
-     * The resource location for the pending overlay.
-     */
-    private static final ResourceLocation PENDING_RESOURCE = new ResourceLocation(Constants.MOD_ID, "textures/icons/warning.png");
 
     /**
      * Renders model, see {@link BipedRenderer}.
@@ -117,8 +105,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     {
         super.renderName(entityIn, str, matrixStack, buffer, maxDistance);
 
-        if (entityIn instanceof EntityCitizen && entityIn.getCitizenDataView() != null && entityIn.getCitizenDataView()
-                                                                                                              .hasPendingInteractions())
+        if (entityIn.getCitizenDataView() != null && entityIn.getCitizenDataView().hasPendingInteractions())
         {
             double distance = this.renderManager.getDistanceToCamera(entityIn.getPosX(), entityIn.getPosY(), entityIn.getPosZ());
             if (distance <= 4096.0D)
@@ -128,7 +115,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
                 double height = entityIn.getHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
                 double y = height + 0.3 + yOffset;
 
-                final ResourceLocation texture = ((EntityCitizen) entityIn).getCitizenDataView().hasBlockingInteractions() ? BLOCKING_RESOURCE : PENDING_RESOURCE;
+                final ResourceLocation texture = entityIn.getCitizenDataView().getInteractionIcon();
 
                 matrixStack.push();
                 matrixStack.translate(0, y, 0);

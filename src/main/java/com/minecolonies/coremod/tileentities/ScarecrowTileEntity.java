@@ -431,13 +431,13 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
         this.ownerId = ownerId;
         if (colony != null)
         {
-            if (colony.getCitizenManager().getCitizen(ownerId) == null)
+            if (colony.getCitizenManager().getCivilian(ownerId) == null)
             {
                 owner = "";
             }
             else
             {
-                owner = colony.getCitizenManager().getCitizen(ownerId).getName();
+                owner = colony.getCitizenManager().getCivilian(ownerId).getName();
             }
         }
         setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner)));
