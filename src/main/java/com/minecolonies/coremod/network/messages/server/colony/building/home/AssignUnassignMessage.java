@@ -82,7 +82,7 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Buildin
     public void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingHome building)
     {
-        final ICitizenData citizen = colony.getCitizenManager().getCitizen(citizenID);
+        final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
         if (assign && !building.isFull() && !building.equals(citizen.getHomeBuilding()))
         {
             if (citizen.getHomeBuilding() != null)

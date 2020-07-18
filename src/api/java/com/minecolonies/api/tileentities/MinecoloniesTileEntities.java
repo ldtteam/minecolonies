@@ -9,7 +9,7 @@ import net.minecraftforge.registries.ObjectHolder;
 public class MinecoloniesTileEntities
 {
     @ObjectHolder("scarecrow")
-    public static TileEntityType<? extends AbstractScarescrowTileEntity> SCARECROW;
+    public static TileEntityType<? extends AbstractScarecrowTileEntity> SCARECROW;
 
     @ObjectHolder("barrel")
     public static TileEntityType<? extends AbstractTileEntityBarrel> BARREL;

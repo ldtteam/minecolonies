@@ -65,7 +65,7 @@ public class PauseCitizenMessage extends AbstractColonyServerMessage
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        final ICitizenData citizen = colony.getCitizenManager().getCitizen(citizenID);
+        final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
         citizen.setPaused(!citizen.isPaused());
     }
 }

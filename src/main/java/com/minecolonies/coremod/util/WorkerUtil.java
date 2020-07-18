@@ -125,7 +125,7 @@ public final class WorkerUtil
      * @param range  Range to check in
      * @return True if worker is at site, otherwise false.
      */
-    public static boolean isWorkerAtSiteWithMove(@NotNull final EntityCitizen worker, final int x, final int y, final int z, final int range)
+    public static boolean isWorkerAtSiteWithMove(@NotNull final AbstractEntityCitizen worker, final int x, final int y, final int z, final int range)
     {
         if (!EntityUtils.isLivingAtSiteWithMove(worker, x, y, z, range))
         {

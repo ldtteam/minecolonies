@@ -52,9 +52,9 @@ public class JobRanger extends AbstractJobGuard<JobRanger>
     public void onLevelUp()
     {
         // Bonus Health for guards(gets reset upon Firing)
-        if (getCitizen().getCitizenEntity().isPresent())
+        if (getCitizen().getEntity().isPresent())
         {
-            final AbstractEntityCitizen citizen = getCitizen().getCitizenEntity().get();
+            final AbstractEntityCitizen citizen = getCitizen().getEntity().get();
 
             // +1 half heart every 5 level
             final AttributeModifier healthModLevel =

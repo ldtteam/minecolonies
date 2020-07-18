@@ -9,7 +9,6 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenDiseaseHandle
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobHealer;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 
@@ -46,7 +45,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenDiseaseHandler(final EntityCitizen citizen)
+    public CitizenDiseaseHandler(final AbstractEntityCitizen citizen)
     {
         this.citizen = citizen;
     }
