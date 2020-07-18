@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegis
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.happiness.*;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import net.minecraft.nbt.CompoundNBT;
@@ -49,7 +49,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
           new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_JOB, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_JOB, 0.5)}));
         add(new TimeBasedHappinessModifier(HEALTH,
           2.0,
-          () -> data.getCitizenEntity().isPresent() ? (data.getCitizenEntity().get().getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0,
+          () -> data.getEntity().isPresent() ? (data.getEntity().get().getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0,
           new Tuple[] {new Tuple<>(COMPLAIN_DAYS_SICK, 0.5), new Tuple<>(DEMANDS_CURE_SICK, 0.1)}));
         add(new TimeBasedHappinessModifier(IDLEATJOB,
           1.0,
@@ -113,11 +113,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             happinessModifier.dayEnd();
             if (InteractionValidatorRegistry.hasValidator(new TranslationTextComponent(NO + happinessModifier.getId())))
             {
-                citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO + happinessModifier.getId()), ChatPriority.CHITCHAT));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
             if (InteractionValidatorRegistry.hasValidator(new TranslationTextComponent(DEMANDS + happinessModifier.getId())))
             {
-                citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS + happinessModifier.getId()), ChatPriority.CHITCHAT));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(DEMANDS + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
         }
     }
@@ -206,7 +206,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
                 homelessness++;
             }
 
-            if (citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick())
+            if (citizen.getEntity().isPresent() && citizen.getEntity().get().getCitizenDiseaseHandler().isSick())
             {
                 sickPeople++;
             }

@@ -60,7 +60,8 @@ import java.util.*;
 import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
@@ -110,6 +111,11 @@ public class Colony implements IColony
      * Citizen manager of the colony.
      */
     private final ICitizenManager citizenManager = new CitizenManager(this);
+
+    /**
+     * Citizen manager of the colony.
+     */
+    private final IVisitorManager visitorManager = new VisitorManager(this);
 
     /**
      * Barbarian manager of the colony.
@@ -239,11 +245,6 @@ public class Colony implements IColony
      * The colony team color.
      */
     private TextFormatting colonyTeamColor = TextFormatting.WHITE;
-
-    /**
-     * The cost of citizens bought
-     */
-    private int boughtCitizenCost = 0;
 
     /**
      * The last time the mercenaries were used.
@@ -395,6 +396,7 @@ public class Colony implements IColony
         buildingManager.cleanUpBuildings(this);
         raidManager.tryToRaidColony(this);
         citizenManager.onColonyTick(this);
+        visitorManager.onColonyTick(this);
         updateAttackingPlayers();
         eventManager.onColonyTick(this);
         buildingManager.onColonyTick(this);
@@ -597,7 +599,6 @@ public class Colony implements IColony
             mourning = false;
         }
 
-        boughtCitizenCost = compound.getInt(TAG_BOUGHT_CITIZENS);
         mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
         additionalChildTime = compound.getInt(TAG_CHILD_TIME);
 
@@ -605,6 +606,7 @@ public class Colony implements IColony
         permissions.loadPermissions(compound);
 
         citizenManager.read(compound.getCompound(TAG_CITIZEN_MANAGER));
+        visitorManager.read(compound);
         buildingManager.read(compound.getCompound(TAG_BUILDING_MANAGER));
 
         // Recalculate max after citizens and buildings are loaded.
@@ -728,9 +730,6 @@ public class Colony implements IColony
         compound.putBoolean(TAG_NEED_TO_MOURN, needToMourn);
         compound.putBoolean(TAG_MOURNING, mourning);
 
-        // Bought citizen count
-        compound.putInt(TAG_BOUGHT_CITIZENS, boughtCitizenCost);
-
         compound.putLong(TAG_MERCENARY_TIME, mercenaryLastUse);
 
         compound.putInt(TAG_CHILD_TIME, additionalChildTime);
@@ -745,6 +744,8 @@ public class Colony implements IColony
         final CompoundNBT citizenCompound = new CompoundNBT();
         citizenManager.write(citizenCompound);
         compound.put(TAG_CITIZEN_MANAGER, citizenCompound);
+
+        visitorManager.write(compound);
 
         //  Workload
         @NotNull final CompoundNBT workManagerCompound = new CompoundNBT();
@@ -1368,6 +1369,17 @@ public class Colony implements IColony
     }
 
     /**
+     * Get the visitor manager of the colony.
+     *
+     * @return the visitor manager.
+     */
+    @Override
+    public IVisitorManager getVisitorManager()
+    {
+        return visitorManager;
+    }
+
+    /**
      * Get the barbManager of the colony.
      *
      * @return the barbManager.
@@ -1611,25 +1623,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Get the amount of citizens bought
-     *
-     * @return amount
-     */
-    public int getBoughtCitizenCost()
-    {
-        return boughtCitizenCost;
-    }
-
-    /**
-     * Increases the amount of citizens that have been bought
-     */
-    public void increaseBoughtCitizenCost()
-    {
-        boughtCitizenCost = Math.min(1 + (int) Math.ceil(boughtCitizenCost * 1.5), STACKSIZE);
-        markDirty();
-    }
-
-    /**
      * Save the time when mercenaries are used, to set a cooldown.
      */
     @Override
@@ -1704,5 +1697,11 @@ public class Colony implements IColony
     public boolean isActive()
     {
         return colonyStateMachine.getState() != INACTIVE;
+    }
+
+    @Override
+    public boolean isDay()
+    {
+        return isDay;
     }
 }

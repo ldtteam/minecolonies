@@ -8,20 +8,22 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteractionResponseHandler;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,19 +39,29 @@ public class CitizenDataView implements ICitizenDataView
     private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
 
     /**
+     * The resource location for the blocking overlay.
+     */
+    private static final ResourceLocation BLOCKING_RESOURCE = new ResourceLocation(Constants.MOD_ID, "textures/icons/blocking.png");
+
+    /**
+     * The resource location for the pending overlay.
+     */
+    private static final ResourceLocation PENDING_RESOURCE = new ResourceLocation(Constants.MOD_ID, "textures/icons/warning.png");
+
+    /**
      * Attributes.
      */
     private final int     id;
-    private       int     entityId;
-    private       String  name;
-    private       boolean female;
-    private       boolean paused;
-    private       boolean isChild;
+    protected     int     entityId;
+    protected     String  name;
+    protected     boolean female;
+    protected     boolean paused;
+    protected     boolean isChild;
 
     /**
      * colony id of the citizen.
      */
-    private int colonyId;
+    protected int colonyId;
 
     /**
      * Placeholder skills.
@@ -86,22 +98,12 @@ public class CitizenDataView implements ICitizenDataView
     /**
      * The citizen chat options on the server side.
      */
-    private final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
-
-    /**
-     * If the citizen has any primary blocking interactions.
-     */
-    private boolean hasPrimaryBlockingInteractions;
-
-    /**
-     * If the citizen has any primary interactions.
-     */
-    private boolean hasAnyPrimaryInteraction;
+    private final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new LinkedHashMap<>();
 
     /**
      * List of primary interactions (sorted by priority).
      */
-    private List<IInteractionResponseHandler> primaryInteractions;
+    private List<IInteractionResponseHandler> sortedInteractions;
 
     /**
      * The citizen skill handler on the client side.
@@ -260,7 +262,6 @@ public class CitizenDataView implements ICitizenDataView
         happiness = buf.readDouble();
 
         citizenSkillHandler.read(buf.readCompoundTag());
-        ;
 
         job = buf.readString(32767);
 
@@ -280,26 +281,12 @@ public class CitizenDataView implements ICitizenDataView
         for (int i = 0; i < size; i++)
         {
             final CompoundNBT compoundNBT = buf.readCompoundTag();
-            final ServerCitizenInteractionResponseHandler handler =
-              (ServerCitizenInteractionResponseHandler) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, compoundNBT);
+            final ServerCitizenInteraction handler =
+              (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, compoundNBT);
             citizenChatOptions.put(handler.getInquiry(), handler);
         }
 
-        primaryInteractions = citizenChatOptions.values()
-                                .stream()
-                                .filter(IInteractionResponseHandler::isPrimary)
-                                .sorted(Comparator.comparingInt(e -> e.getPriority().getPriority()))
-                                .collect(Collectors.toList());
-        if (!primaryInteractions.isEmpty())
-        {
-            hasAnyPrimaryInteraction = true;
-            hasPrimaryBlockingInteractions = primaryInteractions.get(0).getPriority().getPriority() >= ChatPriority.IMPORTANT.ordinal();
-        }
-        else
-        {
-            hasAnyPrimaryInteraction = false;
-            hasPrimaryBlockingInteractions = false;
-        }
+        sortedInteractions = citizenChatOptions.values().stream().sorted(Comparator.comparingInt(e -> e.getPriority().getPriority())).collect(Collectors.toList());
 
         citizenHappinessHandler.read(buf.readCompoundTag());
 
@@ -316,7 +303,7 @@ public class CitizenDataView implements ICitizenDataView
     @Override
     public List<IInteractionResponseHandler> getOrderedInteractions()
     {
-        return primaryInteractions;
+        return sortedInteractions;
     }
 
     @Override
@@ -329,13 +316,35 @@ public class CitizenDataView implements ICitizenDataView
     @Override
     public boolean hasBlockingInteractions()
     {
-        return this.hasPrimaryBlockingInteractions;
+        if (sortedInteractions.isEmpty())
+        {
+            return false;
+        }
+
+        final IInteractionResponseHandler interaction = sortedInteractions.get(0);
+        if (interaction != null)
+        {
+            return interaction.getPriority().getPriority() >= ChatPriority.IMPORTANT.getPriority();
+        }
+
+        return false;
     }
 
     @Override
     public boolean hasPendingInteractions()
     {
-        return this.hasAnyPrimaryInteraction;
+        if (sortedInteractions.isEmpty())
+        {
+            return false;
+        }
+
+        final IInteractionResponseHandler interaction = sortedInteractions.get(0);
+        if (interaction != null)
+        {
+            return interaction.isPrimary();
+        }
+
+        return false;
     }
 
     @Override
@@ -348,6 +357,30 @@ public class CitizenDataView implements ICitizenDataView
     public ICitizenHappinessHandler getHappinessHandler()
     {
         return citizenHappinessHandler;
+    }
+
+    @Override
+    public ResourceLocation getInteractionIcon()
+    {
+        if (sortedInteractions == null || sortedInteractions.isEmpty())
+        {
+            return null;
+        }
+
+        ResourceLocation icon = sortedInteractions.get(0).getInteractionIcon();
+        if (icon == null)
+        {
+            if (hasBlockingInteractions())
+            {
+                icon = BLOCKING_RESOURCE;
+            }
+            else
+            {
+                icon = PENDING_RESOURCE;
+            }
+        }
+
+        return icon;
     }
 
     @Override

@@ -170,7 +170,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
               .error(
                 "Affected Citizen name:" + citizen.getName() + " id:" + citizen.getId() + " job:" + citizen.getJob() + " jobForAICreation:" + nameTag + " class:" + this.getClass()
                   + " entityPresent:"
-                  + citizen.getCitizenEntity().isPresent());
+                  + citizen.getEntity().isPresent());
             return;
         }
 

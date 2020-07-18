@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -132,6 +133,13 @@ public interface ICitizenDataView extends ICitizen
      * @return the handler.
      */
     ICitizenHappinessHandler getHappinessHandler();
+
+    /**
+     * The texture to render for interactions
+     *
+     * @return resourcelocation
+     */
+    ResourceLocation getInteractionIcon();
 
     /**
      * Get the visible citizen status
