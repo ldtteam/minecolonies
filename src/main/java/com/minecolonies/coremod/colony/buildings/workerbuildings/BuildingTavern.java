@@ -253,7 +253,7 @@ public class BuildingTavern extends BuildingHome
             citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.DIAMOND_BOOTS));
         }
 
-        newCitizen.setRecruitCosts(new ItemStack(cost.getA(), recruitLevel * 3 / cost.getB()));
+        newCitizen.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));
         newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
           "com.minecolonies.coremod.gui.chat.recruitstory" + (colony.getWorld().rand.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]), ChatPriority.IMPORTANT));
     }

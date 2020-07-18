@@ -29,7 +29,8 @@ public class PosBasedInteraction extends ServerCitizenInteraction
     private static final Tuple<ITextComponent, ITextComponent>[] responses = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.skipchitchat"), null)};
 
     /**
      * The position this is related to.

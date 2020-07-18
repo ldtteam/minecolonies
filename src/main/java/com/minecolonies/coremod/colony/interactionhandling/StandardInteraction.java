@@ -21,7 +21,8 @@ public class StandardInteraction extends ServerCitizenInteraction
     private static final Tuple<ITextComponent, ITextComponent>[] tuples = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null)};
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null),
+      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.skipchitchat"), null)};
 
     /**
      * The server interaction response handler with custom validator.
