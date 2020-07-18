@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -50,6 +51,7 @@ import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
@@ -371,12 +373,6 @@ public class EventHandler
                 }
             }
 
-            Network.getNetwork()
-              .sendToPlayer(new UpdateChunkRangeCapabilityMessage(player.world,
-                player.chunkCoordX,
-                player.chunkCoordZ,
-                8, true), (ServerPlayerEntity) event.getEntity());
-
             // Add visiting/subscriber to colony we're logging into
             final Chunk chunk = (Chunk) player.world.getChunk(player.getPosition());
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
@@ -432,8 +428,8 @@ public class EventHandler
         if (MineColonies.getConfig().getCommon().pvp_mode.get() && event.getEntity() instanceof EntityCitizen)
         {
             if (event.getEntity().world == null
-                  || !event.getEntity().world.chunkExists(event.getNewChunkX(), event.getNewChunkZ())
-                  || !event.getEntity().world.chunkExists(event.getOldChunkX(), event.getOldChunkZ()))
+                  || !WorldUtil.isEntityChunkLoaded(event.getEntity().world, new ChunkPos(event.getNewChunkX(), event.getNewChunkZ()))
+                  || !WorldUtil.isEntityChunkLoaded(event.getEntity().world, new ChunkPos(event.getOldChunkX(), event.getOldChunkZ())))
             {
                 return;
             }

@@ -14,7 +14,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
@@ -123,7 +123,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
                 if (worker.getCitizenData() != null)
                 {
                     worker.getCitizenData()
-                      .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
+                      .triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
                 }
                 return IDLE;
             }
@@ -299,7 +299,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             return getState();
         }
 
-        if (!citizenToGatherFrom.getCitizenEntity().isPresent())
+        if (!citizenToGatherFrom.getEntity().isPresent())
         {
             citizenToGatherFrom = null;
             return getState();
@@ -308,7 +308,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         if (progressTicks == 0)
         {
             // If worker is too far away wait.
-            if (BlockPosUtil.getDistance2D(citizenToGatherFrom.getCitizenEntity().get().getPosition(), worker.getPosition()) > MIN_DISTANCE_TO_DRAIN)
+            if (BlockPosUtil.getDistance2D(citizenToGatherFrom.getEntity().get().getPosition(), worker.getPosition()) > MIN_DISTANCE_TO_DRAIN)
             {
                 if (!job.incrementWaitingTicks())
                 {
@@ -323,7 +323,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         if (progressTicks < MAX_PROGRESS_TICKS)
         {
             final Vec3d start = worker.getPositionVector().add(0, 2, 0);
-            final Vec3d goal = citizenToGatherFrom.getCitizenEntity().get().getPositionVector().add(0, 2, 0);
+            final Vec3d goal = citizenToGatherFrom.getEntity().get().getPositionVector().add(0, 2, 0);
 
             Network.getNetwork().sendToTrackingEntity(
               new StreamParticleEffectMessage(

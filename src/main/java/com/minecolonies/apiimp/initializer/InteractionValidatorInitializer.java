@@ -56,14 +56,14 @@ public class InteractionValidatorInitializer
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISCOOKABLE) > 0
                        && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == 0);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_RESTAURANT),
-          citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getCitizenEntity().isPresent()
-                       && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getCitizenEntity().get()) == null
+          citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getEntity().isPresent()
+                       && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getEntity().get()) == null
                        && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == 0);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_HOSPITAL),
-          citizen -> citizen.getColony() != null && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick()
-                       && citizen.getColony().getBuildingManager().getBestHospital(citizen.getCitizenEntity().get()) == null);
+          citizen -> citizen.getColony() != null && citizen.getEntity().isPresent() && citizen.getEntity().get().getCitizenDiseaseHandler().isSick()
+                       && citizen.getColony().getBuildingManager().getBestHospital(citizen.getEntity().get()) == null);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WAITING_FOR_CURE),
-          citizen -> citizen.getColony() != null && citizen.getCitizenEntity().isPresent() && !citizen.getCitizenEntity().get().getCitizenDiseaseHandler().getDisease().isEmpty());
+          citizen -> citizen.getColony() != null && citizen.getEntity().isPresent() && !citizen.getEntity().get().getCitizenDiseaseHandler().getDisease().isEmpty());
 
         InteractionValidatorRegistry.registerPosBasedPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
           (citizen, pos) ->
@@ -170,11 +170,11 @@ public class InteractionValidatorInitializer
                                                                                                         .contains(storage)));
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(PATIENT_FULL_INVENTORY),
-          citizen -> citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick()
-                       && InventoryUtils.isItemHandlerFull(citizen.getCitizenEntity().get().getInventoryCitizen()));
+          citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().getCitizenDiseaseHandler().isSick()
+                       && InventoryUtils.isItemHandlerFull(citizen.getEntity().get().getInventoryCitizen()));
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(PUPIL_NO_CARPET),
-          citizen -> citizen.getCitizenEntity().isPresent() && citizen.isChild() && citizen.getWorkBuilding() instanceof BuildingSchool
+          citizen -> citizen.getEntity().isPresent() && citizen.isChild() && citizen.getWorkBuilding() instanceof BuildingSchool
                        && ((BuildingSchool) citizen.getWorkBuilding()).getRandomPlaceToSit() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WATER_TOO_FAR),

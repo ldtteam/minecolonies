@@ -4,6 +4,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.block.BlockState;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
@@ -127,6 +128,13 @@ public interface ICompatibilityManager
      * @return a copy of the list.
      */
     List<Disease> getDiseases();
+
+    /**
+     * Gets the list of recruitment costs with weights
+     *
+     * @return list of costs
+     */
+    List<Tuple<Item, Integer>> getRecruitmentCostsWeights();
 
     /**
      * Checks if a certain Block is an ore.
