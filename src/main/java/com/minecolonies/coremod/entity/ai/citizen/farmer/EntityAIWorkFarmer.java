@@ -70,7 +70,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     /**
      * The standard delay the farmer should have.
      */
-    private static final int STANDARD_DELAY = 40;
+    private static final int STANDARD_DELAY = 10;
 
     /**
      * The smallest delay the farmer should have.
@@ -120,11 +120,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, () -> START_WORKING, 10),
-          new AITarget(PREPARING, this::prepareForFarming, TICKS_SECOND),
-          new AITarget(FARMER_HOE, this::workAtField, 5),
-          new AITarget(FARMER_PLANT, this::workAtField, 5),
-          new AITarget(FARMER_HARVEST, this::workAtField, 5)
+          new AITarget(IDLE, () -> START_WORKING, 30),
+          new AITarget(PREPARING, this::prepareForFarming, TICKS_SECOND/4),
+          new AITarget(FARMER_HOE, this::workAtField, 3),
+          new AITarget(FARMER_PLANT, this::workAtField, 3),
+          new AITarget(FARMER_HARVEST, this::workAtField, 2)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -209,7 +209,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
         
         building.syncWithColony(world);
-        if (building.getFarmerFields().size() < getOwnBuilding().getBuildingLevel() && !building.assignManually())
+        if (building.getFarmerFields().size() < (2*getOwnBuilding().getBuildingLevel()-1) && !building.assignManually())
         {
             searchAndAddFields();
         }
@@ -561,7 +561,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 equipHoe();
                 worker.swingArm(worker.getActiveHand());
                 world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
-                worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+              //  worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
                 worker.decreaseSaturationForContinuousAction();
                 return true;
             }
@@ -722,25 +722,35 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     @Override
     protected List<ItemStack> increaseBlockDrops(final List<ItemStack> drops)
     {
-        final MultiplierModifierResearchEffect effect =
+		@Nullable final BuildingFarmer building = getOwnBuilding();
+		final List<ItemStack> levelDrops = new ArrayList<>();
+
+			for (final ItemStack stack : drops)
+			{
+            final ItemStack drop = stack.copy();
+			drop.setCount(drop.getCount() * (int)Math.pow(2, building.getBuildingLevel()));
+            levelDrops.add(drop);
+			}
+        
+		final MultiplierModifierResearchEffect effect =
           worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(FARMING, MultiplierModifierResearchEffect.class);
         if (effect == null)
         {
-            return drops;
+            return levelDrops;
         }
 
-        final List<ItemStack> newDrops = new ArrayList<>();
-        for (final ItemStack stack : drops)
+        final List<ItemStack> skillDrops = new ArrayList<>();
+        for (final ItemStack stack : levelDrops)
         {
             final ItemStack drop = stack.copy();
             if (worker.getRandom().nextDouble() < effect.getEffect())
             {
                 drop.setCount(drop.getCount() * 2);
             }
-            newDrops.add(drop);
+            skillDrops.add(drop);
         }
 
-        return newDrops;
+        return skillDrops;
     }
 
     /**
