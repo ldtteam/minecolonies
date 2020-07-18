@@ -118,7 +118,6 @@ public class ModelEntityFemaleAristocrat extends CitizenModel<AbstractEntityCiti
         SkirtPart2.setRotationPoint(-36.8F, 9.6F, -3.0F);
         bipedBody.addChild(SkirtPart2);
 
-
         dressPart13 = new ModelRenderer(this);
         dressPart13.setRotationPoint(-3.0F, -2.0F, -3.0F);
         SkirtPart2.addChild(dressPart13);
@@ -191,8 +190,8 @@ public class ModelEntityFemaleAristocrat extends CitizenModel<AbstractEntityCiti
         leftArm2.setTextureOffset(46, 22).addBox(-0.99F, -1.01F, -1.0F, 3.0F, 7.0F, 3.0F, 0.0F, false);
 
         bipedRightArm = new ModelRenderer(this);
-        bipedRightArm.setRotationPoint(-4.0F, 0.0F, 0.0F);
-        bipedRightArm.setTextureOffset(34, 17).addBox(-3.0F, 0.0F, -1.0F, 3.0F, 12.0F, 3.0F, 0.0F, false);
+        bipedRightArm.setRotationPoint(-5.0F, 0.0F, 0.0F);
+        bipedRightArm.setTextureOffset(34, 17).addBox(-2.0F, -2.0F, -1.0F, 3.0F, 12.0F, 3.0F, 0.0F, false);
 
         bipedRightLeg = new ModelRenderer(this);
         bipedRightLeg.setRotationPoint(-1.0F, 12.0F, 1.0F);

@@ -11,8 +11,10 @@ public class ModelEntityConcreteMixerFemale extends CitizenModel<AbstractEntityC
 {
     public ModelEntityConcreteMixerFemale()
     {
-        ModelRenderer mask;
-        ModelRenderer bone;
+        final ModelRenderer mask;
+        final ModelRenderer headDetail;
+        final ModelRenderer breast;
+
         textureWidth = 128;
         textureHeight = 64;
 
@@ -49,13 +51,18 @@ public class ModelEntityConcreteMixerFemale extends CitizenModel<AbstractEntityC
         mask = new ModelRenderer(this);
         mask.setRotationPoint(6.0F, -0.5F, -5.0F);
         bipedHead.addChild(mask);
-        mask.setTextureOffset(73, 0).addBox(-10.28F, -2.0F, 0.77F, 0.28F, 1.5F, 6.75F, 0.0F, false);
+        mask.setTextureOffset(72, 0).addBox(-10.28F, -2.0F, 0.77F, 0.28F, 1.5F, 6.75F, 0.0F, false);
         mask.setTextureOffset(87, 0).addBox(-10.0F, -2.75F, 0.75F, 3.0F, 3.5F, 0.25F, 0.0F, false);
         mask.setTextureOffset(87, 4).addBox(-7.5F, -3.0F, 0.76F, 3.0F, 4.0F, 0.75F, 0.0F, false);
         mask.setTextureOffset(87, 10).addBox(-5.0F, -2.75F, 0.75F, 3.0F, 3.5F, 0.25F, 0.0F, false);
         mask.setTextureOffset(94, 0).addBox(-9.5F, -1.0F, 0.77F, 3.0F, 2.0F, 0.75F, 0.0F, false);
         mask.setTextureOffset(95, 3).addBox(-5.5F, -1.0F, 0.77F, 3.0F, 2.0F, 0.75F, 0.0F, false);
         mask.setTextureOffset(95, 6).addBox(-2.0F, -2.0F, 0.77F, 0.28F, 1.5F, 6.75F, 0.0F, false);
+
+        headDetail = new ModelRenderer(this);
+        headDetail.setRotationPoint(0.0F, 0.0F, 1.0F);
+        bipedHead.addChild(headDetail);
+        headDetail.setTextureOffset(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
 
         bipedRightLeg = new ModelRenderer(this);
         bipedRightLeg.setRotationPoint(-2.0F, 12.0F, 0.0F);
@@ -75,12 +82,13 @@ public class ModelEntityConcreteMixerFemale extends CitizenModel<AbstractEntityC
         bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
         bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, true);
 
-        bone = new ModelRenderer(this);
-        bone.setRotationPoint(3.0F, 2.5F, -2.0F);
-        bipedBody.addChild(bone);
-        setRotationAngle(bone, 0.7854F, 0.0F, 0.0F);
-        bone.setTextureOffset(41, 32).addBox(-6.0F, -1.0F, -2.0F, 6.0F, 3.0F, 3.0F, 0.0F, false);
-        bipedHeadwear.showModel = false;
+        breast = new ModelRenderer(this);
+        breast.setRotationPoint(3.0F, 2.5F, -2.0F);
+        bipedBody.addChild(breast);
+        setRotationAngle(breast, 0.7854F, 0.0F, 0.0F);
+        breast.setTextureOffset(41, 32).addBox(-6.0F, -1.0F, -2.0F, 6.0F, 3.0F, 3.0F, 0.0F, false);
+
+        this.bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
