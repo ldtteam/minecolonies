@@ -9,9 +9,8 @@
     "\\src\\main\\java\\com\\minecolonies\\coremod",
     "\\src\\main\\java\\com\\minecolonies\\coremod\\entity",
     "\\src\\main\\java\\com\\minecolonies\\coremod\\entity\\ai",
-    "\\src\\main\\java\\com\\minecolonies\\coremod\\entity\\ai\\citizen",
-    "\\src\\main\\java\\com\\minecolonies\\coremod\\entity\\ai\\citizen\\farmer"
+    "\\src\\main\\java\\com\\minecolonies\\coremod\\entity\\ai\\citizen"
   ],
-  "SelectedNode": "\\src\\main\\java\\com\\minecolonies\\coremod\\entity\\ai\\citizen\\farmer\\EntityAIWorkFarmer.java",
+  "SelectedNode": "\\src\\main\\java\\com\\minecolonies\\coremod\\entity\\ai\\citizen\\farmer",
   "PreviewInSolutionExplorer": false
 }
