@@ -314,7 +314,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             speed = walkSpeed * CITIZEN_SWIM_BONUS;
             return speed;
         }
-		else if (WorkerUtil.isPathBlock(findBlockTypeUnderEntity(ourEntity) ) )
+		else if (WorkerUtil.isPathBlock(findBlockTypeUnderEntity(ourEntity)))
                 {
                     speed = walkSpeed * ON_PATH_SPEED_MULTIPLIER;
 					return speed;
@@ -332,12 +332,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * @return the Blockstate.
      */
 	private Block findBlockTypeUnderEntity(Entity parEntity)
-{
-    int blockX = MathHelper.round(parEntity.posX);
-    int blockY = MathHelper.floor(parEntity.posY-0.2D);
-    int blockZ = MathHelper.round(parEntity.posZ);
-    return world.getBlockState(new BlockPos(blockX, blockY, blockZ)).getBlock();
-}
+	{
+		int blockX = MathHelper.round(parEntity.posX);
+		int blockY = MathHelper.floor(parEntity.posY-0.2D);
+		int blockZ = MathHelper.round(parEntity.posZ);
+		return world.getBlockState(new BlockPos(blockX, blockY, blockZ)).getBlock();
+	}
+
     @Override
     public void setSpeed(final double d)
     {
