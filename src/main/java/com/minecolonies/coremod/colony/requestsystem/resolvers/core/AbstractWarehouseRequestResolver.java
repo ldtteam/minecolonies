@@ -52,7 +52,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
      */
     protected boolean isRequestFromSelf(final IRequest<?> requestToCheck)
     {
-        if (requestToCheck.getRequester() instanceof AbstractWarehouseRequestResolver)
+        if (requestToCheck.getRequester().getClass().equals(this.getClass()))
         {
             return true;
         }
@@ -69,6 +69,8 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
     {
         return TypeConstants.DELIVERABLE;
     }
+
+    protected abstract boolean internalCanResolve(final Set<TileEntityWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck);
 
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
@@ -96,20 +98,13 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
 
             try
             {
-                if(requestToCheck.getRequest() instanceof IConcreteDeliverable)
-                {
-                    return false; 
-                }
-                return wareHouses.stream()
-                        .anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack),
-                        requestToCheck.getRequest().getMinimumCount()));
+                return internalCanResolve(wareHouses, requestToCheck);
             }
             catch (Exception e)
             {
                 Log.getLogger().error(e);
             }
         }
-
         return false;
     }
 

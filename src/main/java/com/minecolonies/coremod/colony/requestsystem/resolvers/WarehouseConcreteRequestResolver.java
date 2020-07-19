@@ -33,48 +33,18 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
     }
 
     @Override
-    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
+    protected boolean internalCanResolve(final Set<TileEntityWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck)
     {
-        if (requestToCheck.getRequester() instanceof BuildingBasedRequester)
+        final IDeliverable deliverable = requestToCheck.getRequest();
+        if(deliverable instanceof IConcreteDeliverable)
         {
-            final BuildingBasedRequester requester = ((BuildingBasedRequester) requestToCheck.getRequester());
-            final Optional<IRequester> building = requester.getBuilding(manager, requestToCheck.getRequester().getId());
-            if (building.isPresent() && building.get() instanceof BuildingWareHouse)
+            for(final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
             {
-                return false;
+                final ItemStack stack = possible.copy();
+                stack.setCount(requestToCheck.getRequest().getMinimumCount());
+                return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(stack));
             }
         }
-
-        if (!manager.getColony().getWorld().isRemote)
-        {
-            if (!isRequestChainValid(manager, requestToCheck))
-            {
-                return false;
-            }
-
-            final Colony colony = (Colony) manager.getColony();
-            final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
-            wareHouses.removeIf(Objects::isNull);
-
-            try
-            {
-                final IDeliverable deliverable = requestToCheck.getRequest();
-                if(deliverable instanceof IConcreteDeliverable)
-                {
-                    for(final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
-                    {
-                        final ItemStack stack = possible.copy();
-                        stack.setCount(requestToCheck.getRequest().getMinimumCount());
-                        return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(stack));
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Log.getLogger().error(e);
-            }
-        }
-
         return false;
     }
 

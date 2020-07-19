@@ -32,46 +32,15 @@ public class WarehouseRequestResolver extends AbstractWarehouseRequestResolver
     }
 
     @Override
-    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
+    protected boolean internalCanResolve(final Set<TileEntityWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck)
     {
-        if (requestToCheck.getRequester() instanceof BuildingBasedRequester)
+        if(requestToCheck.getRequest() instanceof IConcreteDeliverable)
         {
-            final BuildingBasedRequester requester = ((BuildingBasedRequester) requestToCheck.getRequester());
-            final Optional<IRequester> building = requester.getBuilding(manager, requestToCheck.getRequester().getId());
-            if (building.isPresent() && building.get() instanceof BuildingWareHouse)
-            {
-                return false;
-            }
+            return false; 
         }
-
-        if (!manager.getColony().getWorld().isRemote)
-        {
-            if (!isRequestChainValid(manager, requestToCheck))
-            {
-                return false;
-            }
-
-            final Colony colony = (Colony) manager.getColony();
-            final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
-            wareHouses.removeIf(Objects::isNull);
-
-            try
-            {
-                if(requestToCheck.getRequest() instanceof IConcreteDeliverable)
-                {
-                    return false; 
-                }
-                return wareHouses.stream()
-                        .anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack),
-                        requestToCheck.getRequest().getMinimumCount()));
-            }
-            catch (Exception e)
-            {
-                Log.getLogger().error(e);
-            }
-        }
-
-        return false;
+        return wareHouses.stream()
+                .anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack),
+                requestToCheck.getRequest().getMinimumCount()));
     }
 
     @Override
