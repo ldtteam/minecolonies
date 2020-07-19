@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.PathingConstants.HALF_A_BLOCK;
+
 /**
  * Manages all visiting entities to the colony
  */
@@ -225,7 +227,7 @@ public class VisitorManager implements IVisitorManager
         data.setEntity(citizenEntity);
         data.initEntityValues();
 
-        citizenEntity.setPosition(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
+        citizenEntity.setPosition(spawnPos.getX() + HALF_A_BLOCK, spawnPos.getY(), spawnPos.getZ() + HALF_A_BLOCK);
         world.addEntity(citizenEntity);
         return (IVisitorData) data;
     }
