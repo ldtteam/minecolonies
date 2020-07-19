@@ -39,9 +39,9 @@ import static com.minecolonies.api.util.RSConstants.CONST_WAREHOUSE_RESOLVER_PRI
 /**
  * ----------------------- Not Documented Object ---------------------
  */
-public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverable>
+public class WarehouseConcreteRequestResolver extends AbstractRequestResolver<IDeliverable>
 {
-    public WarehouseRequestResolver(
+    public WarehouseConcreteRequestResolver(
       @NotNull final ILocation location,
       @NotNull final IToken<?> token)
     {
@@ -80,13 +80,19 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
             try
             {
-                if(requestToCheck.getRequest() instanceof IConcreteDeliverable)
+                final IDeliverable deliverable = requestToCheck.getRequest();
+                if(deliverable instanceof IConcreteDeliverable)
                 {
-                    return false; 
+                    for(final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
+                    {
+                        final ItemStack stack = possible.copy();
+                        stack.setCount(requestToCheck.getRequest().getMinimumCount());
+                        if (wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(stack)))
+                        {
+                            return true;
+                        }
+                    }
                 }
-                return wareHouses.stream()
-                        .anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack),
-                        requestToCheck.getRequest().getMinimumCount()));
             }
             catch (Exception e)
             {
@@ -99,7 +105,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     public boolean isRequestChainValid(@NotNull final IRequestManager manager, final IRequest<?> requestToCheck)
     {
-        if (requestToCheck.getRequester() instanceof WarehouseRequestResolver)
+        if (requestToCheck.getRequester() instanceof WarehouseConcreteRequestResolver)
         {
             return false;
         }
@@ -214,7 +220,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                 final Delivery delivery = new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy(), getDefaultDeliveryPriority(true));
 
                 final IToken<?> requestToken =
-                  manager.createRequest(new WarehouseRequestResolver(completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
+                  manager.createRequest(new WarehouseConcreteRequestResolver(completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
 
                 deliveries.add(manager.getRequestForToken(requestToken));
                 remainingCount -= ItemStackUtils.getSize(matchingStack);
