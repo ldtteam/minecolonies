@@ -377,7 +377,8 @@ public class StackList implements IConcreteDeliverable
     }
 
     @Override
-    public List<ItemStack> getRequestedItems() {
+    public List<ItemStack> getRequestedItems() 
+    {
         return theStacks;
     }
 }
