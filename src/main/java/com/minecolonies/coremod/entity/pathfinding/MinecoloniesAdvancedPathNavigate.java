@@ -463,7 +463,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
             else
             {
-                if (WorkerUtil.isPathBlock(world.getBlockState(ourEntity.getPosition().down()).getBlock()))
+                if (WorkerUtil.isPathBlock(world.getBlockState(findBlockUnderEntity(ourEntity)).getBlock()))
                 {
                     speed = ON_PATH_SPEED_MULTIPLIER * getSpeed();
                 }
@@ -474,6 +474,20 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
         }
         return false;
+    }
+
+    /**
+     * Determine what block the entity stands on
+     *
+     * @param parEntity	the entity that stands on the block
+     * @return the Blockstate.
+     */
+    private BlockPos findBlockUnderEntity(@NotNull final Entity parEntity)
+    {
+        int blockX = (int)Math.round(parEntity.posX);
+        int blockY = MathHelper.floor(parEntity.posY-0.2D);
+        int blockZ = (int)Math.round(parEntity.posZ);
+        return new BlockPos(blockX, blockY, blockZ);
     }
 
     /**

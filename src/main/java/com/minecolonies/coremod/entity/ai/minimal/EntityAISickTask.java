@@ -476,11 +476,6 @@ public class EntityAISickTask extends Goal
               ChatPriority.BLOCKING));
         }
 
-        // Reset AI when starting to go to the hospital.
-        if (citizen.getCitizenJobHandler().getColonyJob() != null)
-        {
-            citizen.getCitizenJobHandler().getColonyJob().resetAI();
-        }
         return GO_TO_HOSPITAL;
     }
 

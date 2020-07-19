@@ -168,6 +168,6 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
      */
     public void resetAI()
     {
-        stateMachine.addTransition(new AIOneTimeEventTarget(AIWorkerState.IDLE));
+        stateMachine.reset();
     }
 }
