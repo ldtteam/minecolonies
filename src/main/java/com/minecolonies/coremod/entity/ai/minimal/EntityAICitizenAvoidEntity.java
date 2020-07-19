@@ -4,11 +4,11 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
@@ -51,7 +51,7 @@ public class EntityAICitizenAvoidEntity extends Goal
     /**
      * The entity we are attached to.
      */
-    private final EntityCitizen           citizen;
+    private final AbstractEntityCitizen   citizen;
     private final double                  farSpeed;
     private final double                  nearSpeed;
     private final float                   distanceFromEntity;
@@ -94,7 +94,7 @@ public class EntityAICitizenAvoidEntity extends Goal
      * @param nearSpeed          how fast we should move when we are close.
      */
     public EntityAICitizenAvoidEntity(
-      @NotNull final EntityCitizen entity, @NotNull final Class<? extends Entity> targetEntityClass,
+      @NotNull final AbstractEntityCitizen entity, @NotNull final Class<? extends Entity> targetEntityClass,
       final float distanceFromEntity, final double farSpeed, final double nearSpeed)
     {
         super();
@@ -201,7 +201,7 @@ public class EntityAICitizenAvoidEntity extends Goal
      * @param citizen the citizen doing the action.
      * @return the distance to run away.
      */
-    private float getMoveAwayDist(final EntityCitizen citizen)
+    private float getMoveAwayDist(final AbstractEntityCitizen citizen)
     {
         if (citizen.getHealth() >= citizen.getMaxHealth() - 4)
         {

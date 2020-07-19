@@ -123,6 +123,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> extraOres;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> guardResourceLocations;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> listOfCompostableItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyBlocks;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyOres;
@@ -394,7 +395,7 @@ public class CommonConfiguration extends AbstractConfiguration
         fisherSpongeChance = defineDouble(builder, "fisherspongechance", 0.1, 0, 100);
         minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
         suggestBuildToolPlacement = defineBoolean(builder, "suggestbuildtoolplacement", true);
-        foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0, 100);
+        foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
         disableCitizenVoices = defineBoolean(builder, "disablecitizenvoices", false);
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
         generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
@@ -478,6 +479,19 @@ public class CommonConfiguration extends AbstractConfiguration
         configListStudyItems = defineList(builder, "configliststudyitems",
           Arrays.asList
                    ("minecraft:paper;400;100"),
+          s -> s instanceof String);
+        configListRecruitmentItems = defineList(builder, "configlistrecruitmentitems",
+          Arrays.asList
+                   ("minecraft:hay_block;2",
+                     "minecraft:book;2",
+                     "minecraft:diamond;7",
+                     "minecraft:emerald;10",
+                     "minecraft:baked_potato;1",
+                     "minecraft:gold;3",
+                     "minecraft:redstone;2",
+                     "minecraft:sunflower;5",
+                     "minecraft:honeycomb;6",
+                     "minecraft:quartz;4"),
           s -> s instanceof String);
         listOfCompostableItems = defineList(builder, "listOfCompostableItems",
           Arrays.asList
@@ -671,14 +685,14 @@ public class CommonConfiguration extends AbstractConfiguration
         listOfPlantables = defineList(builder, "listofplantables",
           Arrays.asList
                    ("minecraft:sunflower",
-                    "minecraft:lilac",
-                    "minecraft:rose_bush",
-                    "minecraft:peony",
-                    "minecraft:tall_grass",
-                    "minecraft:large_fern",
-                    "minecraft:fern",
-                    "biomesoplenty:small_flowers",
-                    "minecraft:small_flowers"
+                     "minecraft:lilac",
+                     "minecraft:rose_bush",
+                     "minecraft:peony",
+                     "minecraft:tall_grass",
+                     "minecraft:large_fern",
+                     "minecraft:fern",
+                     "biomesoplenty:small_flowers",
+                     "minecraft:small_flowers"
                    ),
           s -> s instanceof String);
 

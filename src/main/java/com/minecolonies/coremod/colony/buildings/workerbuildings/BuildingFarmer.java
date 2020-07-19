@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -45,8 +44,6 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE;
 
 /**
  * Class which handles the farmer building.
@@ -168,7 +165,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
         if (scareCrow instanceof ScarecrowTileEntity)
         {
-            ((ScarecrowTileEntity) scareCrow).calculateSize(getColony().getWorld(), field.down());
             farmerFields.add(field);
             this.markDirty();
         }
@@ -304,8 +300,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
                     getColony().getWorld().getBlockState(scareCrow.getPos()),
                     getColony().getWorld().getBlockState(scareCrow.getPos()),
                     BLOCK_UPDATE_FLAG);
-                ((ScarecrowTileEntity) scareCrow).setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
-                  LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
             }
         }
     }
@@ -495,7 +489,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
             if (scareCrow instanceof ScarecrowTileEntity)
             {
                 ((ScarecrowTileEntity) scareCrow).setNeedsWork(true);
-                ((ScarecrowTileEntity) scareCrow).calculateSize(getColony().getWorld(), field.down());
             }
         }
     }
@@ -516,17 +509,13 @@ public class BuildingFarmer extends AbstractBuildingCrafter
                 final TileEntity scarecrow = world.getTileEntity(field);
                 if (scarecrow instanceof ScarecrowTileEntity)
                 {
-                    ((ScarecrowTileEntity) scarecrow).setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER, getMainCitizen().getName()));
                     getColony().getWorld()
                       .notifyBlockUpdate(scarecrow.getPos(),
                         getColony().getWorld().getBlockState(scarecrow.getPos()),
                         getColony().getWorld().getBlockState(scarecrow.getPos()),
                         BLOCK_UPDATE_FLAG);
                     ((ScarecrowTileEntity) scarecrow).setTaken(true);
-                    if (getMainCitizen() != null)
-                    {
-                        ((ScarecrowTileEntity) scarecrow).setOwner(getMainCitizen().getId());
-                    }
+                    ((ScarecrowTileEntity) scarecrow).setOwner(getMainCitizen() != null? getMainCitizen().getId() : 0);
                     ((ScarecrowTileEntity) scarecrow).setColony(colony);
                 }
                 else
@@ -569,8 +558,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
                 getColony().getWorld().getBlockState(scarecrow.getPos()),
                 getColony().getWorld().getBlockState(scarecrow.getPos()),
                 BLOCK_UPDATE_FLAG);
-            ((ScarecrowTileEntity) scarecrow).setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
-              LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
         }
     }
 

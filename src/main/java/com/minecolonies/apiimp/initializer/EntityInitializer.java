@@ -7,6 +7,7 @@ import com.minecolonies.coremod.entity.FireArrowEntity;
 import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
@@ -54,6 +55,12 @@ public class EntityInitializer
             .size(0.25F, 0.25F)
             .setShouldReceiveVelocityUpdates(true)
             .setCustomClientFactory(NewBobberEntity::new));
+
+        ModEntities.VISITOR = build("visitor", EntityType.Builder.create(VisitorCitizen::new, EntityClassification.CREATURE)
+                                                 .setTrackingRange(ENTITY_TRACKING_RANGE)
+                                                 .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                                                 .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                                                 .setShouldReceiveVelocityUpdates(true));
 
         ModEntities.MERCENARY = build("mercenary",
           EntityType.Builder.create(EntityMercenary::new, EntityClassification.CREATURE)
@@ -178,6 +185,7 @@ public class EntityInitializer
     {
         event.getRegistry()
           .registerAll(ModEntities.CITIZEN,
+            ModEntities.VISITOR,
             ModEntities.PIRATE,
             ModEntities.ARCHERPIRATE,
             ModEntities.CHIEFPIRATE,

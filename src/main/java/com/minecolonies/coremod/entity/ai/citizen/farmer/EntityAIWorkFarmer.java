@@ -10,7 +10,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -19,8 +19,8 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
-import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteractionResponseHandler;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.client.CompostParticleMessage;
@@ -32,6 +32,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -237,7 +238,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_FREE_FIELDS), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_FREE_FIELDS), ChatPriority.BLOCKING));
             }
             worker.getCitizenData().setIdleAtJob(true);
             return PREPARING;
@@ -300,7 +301,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         final IColony colony = worker.getCitizenColonyHandler().getColony();
         if (colony != null)
         {
-            @Nullable final AbstractScarescrowTileEntity newField = colony.getBuildingManager().getFreeField(worker.getCitizenData().getId(), world);
+            @Nullable final AbstractScarecrowTileEntity newField = colony.getBuildingManager().getFreeField(worker.getCitizenData().getId(), world);
 
             if (newField != null && getOwnBuilding() != null)
             {
@@ -322,18 +323,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private boolean checkIfShouldExecute(@NotNull final ScarecrowTileEntity field, @NotNull final Predicate<BlockPos> predicate)
     {
         if (workingOffset == null)
-        {
-            handleOffset(field);
-        }
+            workingOffset = nextValidCell(field);
 
         BlockPos position = field.getPos().down().south(workingOffset.getZ()).east(workingOffset.getX());
 
         while (!predicate.test(position))
         {
-            if (!handleOffset(field))
-            {
+            workingOffset = nextValidCell(field);
+            if (workingOffset == null)
                 return false;
-            }
+
             position = field.getPos().down().south(workingOffset.getZ()).east(workingOffset.getX());
         }
         return true;
@@ -351,7 +350,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         if (currentField.getSeed() == null)
         {
             worker.getCitizenData()
-              .triggerInteraction(new PosBasedInteractionResponseHandler(new TranslationTextComponent(NO_SEED_SET, currentField.getPos()),
+              .triggerInteraction(new PosBasedInteraction(new TranslationTextComponent(NO_SEED_SET, currentField.getPos()),
                 ChatPriority.BLOCKING,
                 new TranslationTextComponent(NO_SEED_SET),
                 currentField.getPos()));
@@ -396,50 +395,57 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     }
 
     /**
-     * Handles the offset of the field for the farmer.
-     *
-     * @param field the field object.
-     * @return true if successful.
+     * The current index within the current field
      */
-    private boolean handleOffset(@NotNull final ScarecrowTileEntity field)
+    private int cell = -1;
+
+    /**
+     * Fetch the next available block within the field.
+     * Uses mathemajical quadratic equations to determine
+     * the coordinates by an index.
+     * Considers max radii set in the field gui.
+     * @return the new offset position
+     */
+    protected BlockPos nextValidCell (AbstractScarecrowTileEntity field)
     {
+        int ring, ringCell, x, z;
+        Direction facing;
+
         if (workingOffset == null)
+            cell = -1;
+
+        do
         {
-            workingOffset = new BlockPos(0, 0, 0);
-            totalDis = 1;
-            dist = 0;
-            horizontal = true;
-        }
-        else
-        {
-            if (workingOffset.getZ() >= field.getWidthPlusZ() && workingOffset.getX() <= -field.getLengthMinusX())
+            if (++cell == getLargestCell()) return null;
+            ring = (int) Math.floor((Math.sqrt(cell+1) + 1) / 2.0);
+            ringCell = cell - (int) (4*Math.pow(ring-1,2) + 4*(ring-1));
+            facing = Direction.byHorizontalIndex(Math.floorDiv(ringCell, 2*ring));
+
+
+            if (facing.getAxis() == Direction.Axis.Z)
             {
-                workingOffset = null;
-                return false;
+                x = (facing == Direction.NORTH ? -1: 1) * (ring - (ringCell % (2*ring)));
+                z = (facing == Direction.NORTH ? -1: 1) * ring;
             }
             else
             {
-                if (totalDis == dist)
-                {
-                    horizontal = !horizontal;
-                    dist = 0;
-                    if (horizontal)
-                    {
-                        totalDis++;
-                    }
-                }
-                if (horizontal)
-                {
-                    workingOffset = new BlockPos(workingOffset.getX(), 0, workingOffset.getZ() - Math.pow(-1, totalDis));
-                }
-                else
-                {
-                    workingOffset = new BlockPos(workingOffset.getX() - Math.pow(-1, totalDis), 0, workingOffset.getZ());
-                }
-                dist++;
+                x = (facing == Direction.WEST ? -1: 1) * ring;
+                z = (facing == Direction.EAST ? -1: 1) * (ring - (ringCell % (2*ring)));
             }
         }
-        return true;
+        while (
+                -z > field.getRadius(Direction.NORTH)
+             ||  x > field.getRadius(Direction.EAST)
+             ||  z > field.getRadius(Direction.SOUTH)
+             || -x > field.getRadius(Direction.WEST)
+        );
+
+        return new BlockPos(x, 0, z);
+    }
+
+    protected int getLargestCell()
+    {
+        return (int) Math.pow(ScarecrowTileEntity.getMaxRange()*2+1, 2);
     }
 
     /**
@@ -478,7 +484,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) entity;
             if (workingOffset != null)
             {
-                if (scarecrow.getOwnerId() != worker.getCitizenId())
+                if (scarecrow.getOwnerId() != worker.getCivilianID())
                 {
                     buildingFarmer.freeField(buildingFarmer.getCurrentField());
                     buildingFarmer.setCurrentField(null);
@@ -487,50 +493,45 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
                 final BlockPos position = field.down().south(workingOffset.getZ()).east(workingOffset.getX());
 
-                if (workingOffset.getX() <= scarecrow.getLengthPlusX()
-                      && workingOffset.getZ() <= scarecrow.getWidthPlusZ()
-                      && workingOffset.getX() >= -scarecrow.getLengthMinusX()
-                      && workingOffset.getZ() >= -scarecrow.getWidthMinusZ())
+                // Still moving to the block
+                if (walkToBlock(position.up()))
                 {
-                    // Still moving to the block
-                    if (walkToBlock(position.up()))
-                    {
-                        return getState();
-                    }
-
-                    switch ((AIWorkerState) getState())
-                    {
-                        case FARMER_HOE:
-                            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.hoeing"));
-
-                            if (!hoeIfAble(position, scarecrow))
-                            {
-                                return getState();
-                            }
-                            break;
-                        case FARMER_PLANT:
-                            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.planting"));
-                            if (!tryToPlant(scarecrow, position))
-                            {
-                                return PREPARING;
-                            }
-                            break;
-                        case FARMER_HARVEST:
-                            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.harvesting"));
-                            if (!harvestIfAble(position))
-                            {
-                                return getState();
-                            }
-                            break;
-                        default:
-                            return PREPARING;
-                    }
-                    prevPos = position;
+                    return getState();
                 }
+
+                switch ((AIWorkerState) getState())
+                {
+                    case FARMER_HOE:
+                        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.hoeing"));
+
+                        if (!hoeIfAble(position, scarecrow))
+                        {
+                            return getState();
+                        }
+                        break;
+                    case FARMER_PLANT:
+                        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.planting"));
+                        if (!tryToPlant(scarecrow, position))
+                        {
+                            return PREPARING;
+                        }
+                        break;
+                    case FARMER_HARVEST:
+                        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.harvesting"));
+                        if (!harvestIfAble(position))
+                        {
+                            return getState();
+                        }
+                        break;
+                    default:
+                        return PREPARING;
+                }
+                prevPos = position;
                 setDelay(getLevelDelay());
             }
 
-            if (!handleOffset(scarecrow))
+            workingOffset = nextValidCell(scarecrow);
+            if (workingOffset == null)
             {
                 shouldDumpInventory = true;
                 scarecrow.nextState();

@@ -186,7 +186,7 @@ public class BuildToolPasteMessage implements IMessage
                 final TileEntity tileEntity = player.world.getTileEntity(pos);
                 if (tileEntity instanceof IBlueprintDataProvider && blueprint != null)
                 {
-                    final CompoundNBT teData = blueprint.getTileEntityData(blueprint.getPrimaryBlockOffset(), tileEntity.getPos());
+                    final CompoundNBT teData = blueprint.getTileEntityData(tileEntity.getPos(), blueprint.getPrimaryBlockOffset());
                     if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
                     {
                         ((IBlueprintDataProvider) tileEntity).readSchematicDataFromNBT(teData);

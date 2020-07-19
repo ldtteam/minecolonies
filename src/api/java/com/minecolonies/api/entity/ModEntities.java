@@ -19,6 +19,9 @@ public class ModEntities
     @ObjectHolder("citizen")
     public static EntityType<? extends AbstractEntityCitizen> CITIZEN;
 
+    @ObjectHolder("visitor")
+    public static EntityType<? extends AbstractEntityCitizen> VISITOR;
+
     @ObjectHolder("fishhook")
     public static EntityType<? extends Entity> FISHHOOK;
 

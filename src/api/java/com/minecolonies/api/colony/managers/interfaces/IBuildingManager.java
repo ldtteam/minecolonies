@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
@@ -130,7 +130,7 @@ public interface IBuildingManager
      * @param pos        Position where the field has been placed.
      * @param world      the world of the field.
      */
-    void addNewField(final AbstractScarescrowTileEntity tileEntity, final BlockPos pos, final World world);
+    void addNewField(final AbstractScarecrowTileEntity tileEntity, final BlockPos pos, final World world);
 
     /**
      * Returns a field which has not been taken yet.
@@ -140,7 +140,7 @@ public interface IBuildingManager
      * @return a field if there is one available, else null.
      */
     @Nullable
-    AbstractScarescrowTileEntity getFreeField(final int owner, final World world);
+    AbstractScarecrowTileEntity getFreeField(final int owner, final World world);
 
     /**
      * Remove a IBuilding from the Colony (when it is destroyed).
