@@ -50,8 +50,14 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
     /**
      * Check to see if this object type is the same as the request
      */
-    protected abstract boolean isRequestFromSelf(IRequest<?> requestToCheck);
-
+    protected boolean isRequestFromSelf(final IRequest<?> requestToCheck)
+    {
+        if (requestToCheck.getRequester() instanceof AbstractWarehouseRequestResolver)
+        {
+            return true;
+        }
+        return false;
+    }
     /**
      * Let the decendant class create an instance for use
      */

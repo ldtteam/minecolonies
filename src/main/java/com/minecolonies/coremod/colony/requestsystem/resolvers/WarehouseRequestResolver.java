@@ -75,16 +75,6 @@ public class WarehouseRequestResolver extends AbstractWarehouseRequestResolver
     }
 
     @Override
-    protected boolean isRequestFromSelf(final IRequest<?> requestToCheck)
-    {
-        if (requestToCheck.getRequester() instanceof WarehouseRequestResolver)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     protected AbstractWarehouseRequestResolver newInstanceOfSelf(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         return new WarehouseRequestResolver(location, token);
