@@ -21,7 +21,8 @@ public class UpdateHandler implements IUpdateHandler
       new ResetRSToFixBuildingId(),
       new ResetRSToAddDelivermanPickups(),
       new ResetRSToCleanCompletedRequests(),
-      new ResetRSToAddFarmerCrafter()
+      new ResetRSToAddFarmerCrafter(),
+      new ResetRSToAddSecondWarehouseResolver()
     );
 
     private final IStandardRequestManager manager;
