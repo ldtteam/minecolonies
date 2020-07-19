@@ -113,7 +113,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
                                                .setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                  String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId())))), true);
 
-            citizen.getCitizenEntity().ifPresent(entityCitizen ->
+            citizen.getEntity().ifPresent(entityCitizen ->
             {
                 final BlockPos position = entityCitizen.getPosition();
                 context.getSource()

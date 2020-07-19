@@ -30,7 +30,9 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
      * Predicate to check if concrete powder is in inv.
      */
     private static final Predicate<ItemStack> CONCRETE =
-      stack -> !stack.isEmpty() && stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof ConcretePowderBlock;
+      stack -> !stack.isEmpty() 
+            && stack.getItem() instanceof BlockItem 
+            && ((BlockItem) stack.getItem()).getBlock() instanceof ConcretePowderBlock;
 
     /**
      * Constructor for the Concrete mason. Defines the tasks the Concrete mason executes.
@@ -51,6 +53,9 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     @Override
     protected IAIState decide()
     {
+        // This needs to only run on concrete powder that isn't earmarked for delivery. 
+        // We need an 'output' inventory to protect those from processing here. 
+        /*
         if (job.getTaskQueue().isEmpty())
         {
             final IAIState state = mixConcrete();
@@ -60,6 +65,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             }
             return START_WORKING;
         }
+        */
 
         if (job.getCurrentTask() == null)
         {
@@ -98,7 +104,24 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
      */
     private IAIState mixConcrete()
     {
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), CONCRETE);
+        int slot = -1;
+
+        if(currentRequest != null && currentRecipeStorage != null)
+        {
+            ItemStack inputStack = currentRecipeStorage.getCleanedInput().get(0).getItemStack();
+            if(CONCRETE.test(inputStack))
+            {
+                slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), s -> s.isItemEqual(inputStack));
+            }
+            else
+            {
+                return START_WORKING;
+            }
+        }
+        else
+        { 
+            slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), CONCRETE);
+        }
 
         if (slot != -1)
         {

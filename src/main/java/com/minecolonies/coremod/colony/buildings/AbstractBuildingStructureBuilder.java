@@ -363,7 +363,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             buf.writeString("");
             buf.writeDouble(0.0);
         }
-        buf.writeString((getMainCitizen() == null || colony.getCitizenManager().getCitizen(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());
+        buf.writeString((getMainCitizen() == null || colony.getCitizenManager().getCivilian(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());
     }
 
     /**

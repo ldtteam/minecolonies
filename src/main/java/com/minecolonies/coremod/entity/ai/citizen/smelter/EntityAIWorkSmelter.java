@@ -9,10 +9,12 @@ import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
@@ -24,6 +26,7 @@ import net.minecraft.item.*;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -84,6 +87,12 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     public static final String ORE_LIST = "ores";
 
     /**
+     * Smelting icon
+     */
+    private final static VisibleCitizenStatus SMELTING =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/smelting.png"), "com.minecolonies.gui.visiblestatus.smelting");
+
+    /**
      * Progress in hitting the product.
      */
     private int progress = 0;
@@ -126,6 +135,8 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     private IAIState smeltStuff()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(SMELTING_DOWN));
+        worker.getCitizenData().setVisibleStatus(SMELTING);
+
         if (walkToBuilding())
         {
             return getState();
@@ -345,7 +356,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                     if (worker.getCitizenData() != null)
                     {
                         worker.getCitizenData()
-                          .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(FURNACE_USER_NO_ORE), ChatPriority.BLOCKING));
+                          .triggerInteraction(new StandardInteraction(new TranslationTextComponent(FURNACE_USER_NO_ORE), ChatPriority.BLOCKING));
                     }
                 }
                 else

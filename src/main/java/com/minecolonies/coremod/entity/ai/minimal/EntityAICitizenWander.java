@@ -100,4 +100,10 @@ public class EntityAICitizenWander extends Goal
     {
         citizen.getNavigator().tryMoveToXYZ(this.xPosition, this.yPosition, this.zPosition, this.speed);
     }
+
+    @Override
+    public void resetTask()
+    {
+        citizen.getCitizenData().setVisibleStatus(null);
+    }
 }

@@ -216,6 +216,13 @@ public class TileEntityRack extends AbstractTileEntityRack
         notifyParentAboutInvChange();
     }
 
+    @Override
+    public void onChunkUnloaded()
+    {
+        super.onChunkUnloaded();
+        notifyParentAboutInvChange();
+    }
+
     /* Get the amount of items matching a predicate in the inventory.
      * @param predicate the predicate.
      * @return the total count.

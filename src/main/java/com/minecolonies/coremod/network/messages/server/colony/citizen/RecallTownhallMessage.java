@@ -45,12 +45,12 @@ public class RecallTownhallMessage extends AbstractColonyServerMessage
             final World world = colony.getWorld();
             for (final ICitizenData citizenData : colony.getCitizenManager().getCitizens())
             {
-                Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+                Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();
                 if (!optionalEntityCitizen.isPresent())
                 {
                     Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
-                    citizenData.updateCitizenEntityIfNecessary();
-                    optionalEntityCitizen = citizenData.getCitizenEntity();
+                    citizenData.updateEntityIfNecessary();
+                    optionalEntityCitizen = citizenData.getEntity();
                 }
 
                 if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), world, location))

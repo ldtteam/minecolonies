@@ -6,10 +6,7 @@ import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
@@ -19,6 +16,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
+import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -168,8 +166,8 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         buildingWorker.resetNeededResources();
 
         StructurePhasePlacementResult result;
-        final LoadOnlyStructureHandler structure =
-          new LoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true);
+        final WorkerLoadOnlyStructureHandler structure =
+          new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
         final StructurePlacer placer = new StructurePlacer(structure);
         BlockPos progressPos = NULL_POS;
 
