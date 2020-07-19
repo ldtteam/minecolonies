@@ -85,6 +85,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Objects;
 
+import static com.minecolonies.api.entity.citizen.VisibleCitizenStatus.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -789,9 +790,21 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil && world.getDayTime() % 24000 > NOON)
             {
+                if (getCitizenData().getStatus() == null)
+                {
+                    getCitizenData().setVisibleStatus(HOUSE);
+                }
                 return DesiredActivity.IDLE;
             }
-            return hidingFromRain ? DesiredActivity.IDLE : DesiredActivity.WORK;
+            if (hidingFromRain)
+            {
+                if (getCitizenData().getStatus() == null)
+                {
+                    getCitizenData().setVisibleStatus(BAD_WEATHER);
+                }
+                return DesiredActivity.IDLE;
+            }
+            return DesiredActivity.WORK;
         }
         else
         {
@@ -1112,6 +1125,10 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (getCitizenColonyHandler().getColony().getRaiderManager().isRaided()))
         {
             isDay = false;
+            if (getCitizenData().getStatus() == null)
+            {
+                getCitizenData().setVisibleStatus(RAIDED);
+            }
             return DesiredActivity.SLEEP;
         }
 
@@ -1137,6 +1154,10 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
 
             citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.sleeping"));
+            if (getCitizenData().getStatus() == null)
+            {
+                getCitizenData().setVisibleStatus(SLEEP);
+            }
             return DesiredActivity.SLEEP;
         }
 
@@ -1153,6 +1174,10 @@ public class EntityCitizen extends AbstractEntityCitizen
             hidingFromRain = true;
             citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"),
               new TranslationTextComponent("com.minecolonies.coremod.status.rainStop"));
+            if (getCitizenData().getStatus() == null)
+            {
+                getCitizenData().setVisibleStatus(BAD_WEATHER);
+            }
             return DesiredActivity.IDLE;
         }
         else
@@ -1162,7 +1187,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 this.getNavigator().clearPath();
             }
-
 
             return DesiredActivity.WORK;
         }

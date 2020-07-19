@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -17,6 +18,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -65,6 +67,12 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      * Id in compostable map for list.
      */
     private static final String COMPOSTABLE_LIST = "compostables";
+
+    /**
+     * Composting icon
+     */
+    private final static VisibleCitizenStatus COMPOST =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/composter.png"), "com.minecolonies.gui.visiblestatus.composter");
 
     /**
      * Constructor for the AI
@@ -148,6 +156,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     private IAIState decideWhatToDo()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
         if (walkToBuilding())
         {
@@ -167,6 +176,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
                 if (((TileEntityBarrel) te).isDone())
                 {
                     setDelay(DECIDE_DELAY);
+                    worker.getCitizenData().setVisibleStatus(COMPOST);
                     return COMPOSTER_HARVEST;
                 }
             }
@@ -179,6 +189,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             {
                 this.currentTarget = barrel;
                 setDelay(DECIDE_DELAY);
+                worker.getCitizenData().setVisibleStatus(COMPOST);
                 return COMPOSTER_FILL;
             }
         }

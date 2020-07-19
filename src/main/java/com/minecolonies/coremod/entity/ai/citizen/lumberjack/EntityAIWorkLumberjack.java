@@ -5,9 +5,11 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
@@ -28,6 +30,7 @@ import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -115,6 +118,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      * Delay before going to gather after cutting a tree.
      */
     private static final int GATHERING_DELAY = 3;
+
+    /**
+     * Searching icon
+     */
+    private final static VisibleCitizenStatus SEARCH =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/lumberjack_search.png"), "com.minecolonies.gui.visiblestatus.lumberjack_search");
 
     /**
      * Position where the Builders constructs from.
@@ -297,6 +306,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             return findTree();
         }
 
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         return LUMBERJACK_CHOP_TREE;
     }
 
@@ -308,6 +318,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     private IAIState findTree()
     {
         final IBuilding building = getOwnBuilding();
+        worker.getCitizenData().setVisibleStatus(SEARCH);
 
         if (pathResult == null || pathResult.treeLocation == null)
         {

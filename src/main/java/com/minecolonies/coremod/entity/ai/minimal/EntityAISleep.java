@@ -309,4 +309,10 @@ public class EntityAISleep extends Goal
         }
         return false;
     }
+
+    @Override
+    public void resetTask()
+    {
+        citizen.getCitizenData().setVisibleStatus(null);
+    }
 }

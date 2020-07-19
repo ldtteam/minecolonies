@@ -4,9 +4,11 @@ import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -24,6 +26,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +45,12 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
      * Update interval for the guards attack ai
      */
     private final static int GUARD_ATTACK_INTERVAL = 8;
+
+    /**
+     * Combat icon
+     */
+    private final static VisibleCitizenStatus COMBAT =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/knight_combat.png"), "com.minecolonies.gui.visiblestatus.knight_combat");
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -66,6 +75,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
     @Override
     public IAIState getAttackState()
     {
+        worker.getCitizenData().setVisibleStatus(COMBAT);
         return GUARD_ATTACK_PHYSICAL;
     }
 
@@ -149,6 +159,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
             worker.getNavigator().clearPath();
             worker.getMoveHelper().strafe(0, 0);
             setDelay(STANDARD_DELAY);
+            worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
             return state;
         }
 

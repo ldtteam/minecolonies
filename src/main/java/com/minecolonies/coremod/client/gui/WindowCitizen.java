@@ -40,10 +40,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_CANT_TAKE_EQUIPPED;
@@ -123,6 +120,16 @@ public class WindowCitizen extends AbstractWindowRequestTree
           Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX,
           IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.func_234923_W_().func_240901_a_()));
         this.citizen = citizen;
+
+        if (citizen.getVisibleStatus() == null)
+        {
+            findPaneOfTypeByID(STATUS_ICON, Image.class).setVisible(false);
+        }
+        else
+        {
+            findPaneOfTypeByID(STATUS_ICON, Image.class).setImage(citizen.getVisibleStatus().getIcon());
+            findPaneOfTypeByID(STATUS_ICON, Image.class).setHoverToolTip(Collections.singletonList(citizen.getVisibleStatus().getTranslatedText()));
+        }
 
         updateJobPage(citizen, this, colony);
     }

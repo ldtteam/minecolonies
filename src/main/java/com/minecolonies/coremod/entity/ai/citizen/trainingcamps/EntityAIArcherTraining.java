@@ -2,8 +2,10 @@ package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
@@ -12,6 +14,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -54,6 +57,12 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      * Time to wait before analyzing the shot.
      */
     private static final int CHECK_SHOT_DELAY = TICKS_20 * 3;
+
+    /**
+     * Shooting icon
+     */
+    private final static VisibleCitizenStatus ARCHER_TRAIN =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/archer_uni.png"), "com.minecolonies.gui.visiblestatus.archer_uni");
 
     /**
      * Current target to shoot at.
@@ -108,6 +117,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             return DECIDE;
         }
 
+        worker.getCitizenData().setVisibleStatus(ARCHER_TRAIN);
         currentShootingTarget = targetPos;
         targetCounter++;
         return ARCHER_SHOOT;
@@ -144,6 +154,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         setDelay(STANDARD_DELAY);
         if (currentShootingTarget == null || !isSetup())
         {
+            worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
             return START_WORKING;
         }
 
@@ -206,6 +217,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
         }
 
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         return ARCHER_SELECT_TARGET;
     }
 

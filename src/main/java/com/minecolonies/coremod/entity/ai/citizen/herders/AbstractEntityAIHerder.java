@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -142,6 +143,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     public IAIState decideWhatToDo()
     {
         setDelay(DECIDING_DELAY);
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
         final List<T> animals = new ArrayList<>(searchForAnimals());
 
@@ -221,7 +223,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      *
      * @return The next {@link IAIState}.
      */
-    private IAIState butcherAnimals()
+    protected IAIState butcherAnimals()
     {
         setDelay(BUTCHER_DELAY);
         final List<T> animals = new ArrayList<>(searchForAnimals());
@@ -263,7 +265,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      *
      * @return The next {@link IAIState}.
      */
-    private IAIState breedAnimals()
+    protected IAIState breedAnimals()
     {
         setDelay(BREEDING_DELAY);
 

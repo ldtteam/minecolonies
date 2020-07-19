@@ -671,7 +671,7 @@ public final class BlockPosUtil
                 for (int x = 0; x <= steps; x++)
                 {
                     temp = temp.add(1, 0, 0);
-                    if (predicate.test(world.getBlockState(temp)))
+                    if (predicate.test(world.getBlockState(temp)) && predicate.test(world.getBlockState(temp.up())))
                     {
                         return temp;
                     }
@@ -683,7 +683,7 @@ public final class BlockPosUtil
                 for (int z = 0; z <= steps; z++)
                 {
                     temp = temp.add(0, 0, 1);
-                    if (predicate.test(world.getBlockState(temp)))
+                    if (predicate.test(world.getBlockState(temp)) && predicate.test(world.getBlockState(temp.up())))
                     {
                         return temp;
                     }
@@ -693,7 +693,7 @@ public final class BlockPosUtil
                 for (int x = 0; x <= steps; x++)
                 {
                     temp = temp.add(-1, 0, 0);
-                    if (predicate.test(world.getBlockState(temp)))
+                    if (predicate.test(world.getBlockState(temp)) && predicate.test(world.getBlockState(temp.up())))
                     {
                         return temp;
                     }
@@ -705,7 +705,7 @@ public final class BlockPosUtil
                 for (int z = 0; z <= steps; z++)
                 {
                     temp = temp.add(0, 0, -1);
-                    if (predicate.test(world.getBlockState(temp)))
+                    if (predicate.test(world.getBlockState(temp)) && predicate.test(world.getBlockState(temp.up())))
                     {
                         return temp;
                     }
