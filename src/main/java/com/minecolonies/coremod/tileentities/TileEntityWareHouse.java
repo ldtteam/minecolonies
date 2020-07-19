@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.google.common.collect.Lists;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
