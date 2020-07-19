@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**
- * Load only structure handler just to get dimensions etc from structures, not for placement.
+ * Load only structure handler just to get dimensions etc from structures, not for placement specific for worker usage.
  */
 public final class WorkerLoadOnlyStructureHandler<J extends AbstractJobStructure<?, J>, B extends AbstractBuildingStructureBuilder> extends LoadOnlyStructureHandler
 {
@@ -21,7 +21,7 @@ public final class WorkerLoadOnlyStructureHandler<J extends AbstractJobStructure
     private final AbstractEntityAIStructure<J, B> structureAI;
 
     /**
-     * The minecolonies specific creative structure placer.
+     * The minecolonies specific worker load only structure placer.
      *
      * @param world          the world.
      * @param pos            the pos it is placed at.
