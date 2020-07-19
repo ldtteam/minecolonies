@@ -17,6 +17,7 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -81,12 +82,26 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     @NotNull
     public List<ItemStack> getMatchingItemStacksInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
+        ArrayList<ItemStack> found = new ArrayList<ItemStack>();
+        
         if (getBuilding() != null)
         {
-            return InventoryUtils.filterItemHandler(getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), itemStackSelectionPredicate);
-        }
+            for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+            {
+                final TileEntity entity = getWorld().getTileEntity(pos);
+                if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).getItemCount(itemStackSelectionPredicate) > 0)
+                {
+                    final TileEntityRack rack = (TileEntityRack) entity;
+                    found.addAll(InventoryUtils.filterItemHandler(rack.getInventory(), itemStackSelectionPredicate));
+                }
 
-        return Lists.newArrayList();
+                if (entity instanceof ChestTileEntity && InventoryUtils.hasItemInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), itemStackSelectionPredicate))
+                {
+                    found.addAll(InventoryUtils.filterItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), itemStackSelectionPredicate));
+                }
+            }
+        }
+        return found;
     }
 
     /**
