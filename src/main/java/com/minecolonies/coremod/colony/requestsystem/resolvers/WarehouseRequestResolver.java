@@ -61,18 +61,9 @@ public class WarehouseRequestResolver extends AbstractWarehouseRequestResolver
                 {
                     return false; 
                 }
-                boolean found = wareHouses.stream()
+                return wareHouses.stream()
                         .anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack),
                         requestToCheck.getRequest().getMinimumCount()));
-                if(!found)
-                {
-                    Log.getLogger().info("Failed to resolve old style: " + requestToCheck.getDisplayStacks().get(0).toString());
-                } 
-                else 
-                {
-                    Log.getLogger().info("Old Style success");
-                }
-                return found;
             }
             catch (Exception e)
             {

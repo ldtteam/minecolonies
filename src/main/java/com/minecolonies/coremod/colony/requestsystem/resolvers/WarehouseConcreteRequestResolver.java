@@ -65,13 +65,8 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
                     {
                         final ItemStack stack = possible.copy();
                         stack.setCount(requestToCheck.getRequest().getMinimumCount());
-                        if (wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(stack)))
-                        {
-                            Log.getLogger().info("New Style success");
-                            return true;
-                        }
+                        return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(stack));
                     }
-                    Log.getLogger().info("Failed to find new style: " + ((IConcreteDeliverable) deliverable).getRequestedItems().get(0).toString());
                 }
             }
             catch (Exception e)
@@ -97,5 +92,11 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
     protected AbstractWarehouseRequestResolver newInstanceOfSelf(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         return new WarehouseConcreteRequestResolver(location, token);
+    }
+ 
+    @Override
+    public int getPriority()
+    {
+        return super.getPriority() + 10;
     }
 }
