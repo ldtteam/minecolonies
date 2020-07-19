@@ -128,7 +128,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         else
         {
             findPaneOfTypeByID(STATUS_ICON, Image.class).setImage(citizen.getVisibleStatus().getIcon());
-            findPaneOfTypeByID(STATUS_ICON, Image.class).setHoverToolTip(Collections.singletonList(citizen.getVisibleStatus().getTranslatedText()));
+            findPaneOfTypeByID(STATUS_ICON, Image.class).setHoverToolTip(Collections.singletonList(new StringTextComponent(citizen.getVisibleStatus().getTranslatedText())));
         }
 
         updateJobPage(citizen, this, colony);

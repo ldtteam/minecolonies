@@ -485,9 +485,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      */
     private BlockPos findBlockUnderEntity(@NotNull final Entity parEntity)
     {
-        int blockX = (int)Math.round(parEntity.posX);
-        int blockY = MathHelper.floor(parEntity.posY-0.2D);
-        int blockZ = (int)Math.round(parEntity.posZ);
+        int blockX = (int)Math.round(parEntity.getPosX());
+        int blockY = MathHelper.floor(parEntity.getPosY()-0.2D);
+        int blockZ = (int)Math.round(parEntity.getPosZ());
         return new BlockPos(blockX, blockY, blockZ);
     }
 

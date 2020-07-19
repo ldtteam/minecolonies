@@ -195,7 +195,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
             return state;
         }
 
-        final double sqDistanceToEntity = BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target.getPosition());
+        final double sqDistanceToEntity = BlockPosUtil.getDistanceSquared2D(worker.getPosition(), new BlockPos(target.getPositionVec()));
         final boolean canSee = worker.getEntitySenses().canSee(target);
         final double sqAttackRange = getRealAttackRange() * getRealAttackRange();
 
