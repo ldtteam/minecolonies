@@ -483,11 +483,6 @@ public class EntityAIEatTask extends Goal
             }
             return IDLE;
         }
-        // Reset AI when going to the restaurant to eat
-        if (citizen.getCitizenJobHandler().getColonyJob() != null)
-        {
-            citizen.getCitizenJobHandler().getColonyJob().resetAI();
-        }
         return GO_TO_RESTAURANT;
     }
 

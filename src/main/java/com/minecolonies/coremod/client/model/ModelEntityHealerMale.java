@@ -47,7 +47,7 @@ public class ModelEntityHealerMale extends CitizenModel<AbstractEntityCitizen>
         ModelRenderer BeakTop;
         ModelRenderer BeakEnd1;
         ModelRenderer BeakEnd3;
-        ModelRenderer cap;
+        ModelRenderer headDetail;
         ModelRenderer rightarmGlove;
 
         textureWidth = 128;
@@ -266,10 +266,10 @@ public class ModelEntityHealerMale extends CitizenModel<AbstractEntityCitizen>
         setRotationAngle(BeakEnd3, 0.7669F, 0.0F, 0.0F);
         BeakEnd3.setTextureOffset(103, 0).addBox(-0.5F, -7.2F, -9.0F, 1.0F, 1.0F, 3.0F, 0.0F, true);
 
-        cap = new ModelRenderer(this);
-        cap.setRotationPoint(0.0F, 0.0F, 1.0F);
-        bipedHead.addChild(cap);
-        cap.setTextureOffset(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
+        headDetail = new ModelRenderer(this);
+        headDetail.setRotationPoint(0.0F, 0.0F, 1.0F);
+        bipedHead.addChild(headDetail);
+        headDetail.setTextureOffset(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
 
         bipedRightArm = new ModelRenderer(this);
         bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
@@ -279,6 +279,7 @@ public class ModelEntityHealerMale extends CitizenModel<AbstractEntityCitizen>
         rightarmGlove.setRotationPoint(-5.0F, 6.0F, 0.0F);
         bipedRightArm.addChild(rightarmGlove);
         rightarmGlove.setTextureOffset(90, 30).addBox(1.5F, 1.0F, -2.5F, 5.0F, 4.0F, 5.0F, 0.0F, true);
+
         bipedHeadwear.showModel = false;
     }
 
