@@ -93,10 +93,5 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
     {
         return new WarehouseConcreteRequestResolver(location, token);
     }
- 
-    @Override
-    public int getPriority()
-    {
-        return super.getPriority() + 10;
-    }
+
 }
