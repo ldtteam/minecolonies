@@ -869,6 +869,8 @@ public final class WindowConstants
      */
     public static final String WINDOW_ID_NAME = "name";
 
+    public static final String STATUS_ICON = "statusicon";
+
     /**
      * The label to find the happiness label in the gui.
      */

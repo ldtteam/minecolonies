@@ -12,6 +12,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
@@ -24,6 +25,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -69,6 +72,13 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      * The citizen the worker is currently trying to serve.
      */
     private final List<PlayerEntity> playerToServe = new ArrayList<>();
+
+    /**
+     * Cooking icon
+     */
+    private final static VisibleCitizenStatus COOK =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/cook.png"), "com.minecolonies.gui.visiblestatus.cook");
+
 
     /**
      * The building range the cook should search for clients.
@@ -182,6 +192,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         {
             return START_WORKING;
         }
+
+        worker.getCitizenData().setVisibleStatus(COOK);
 
         final Entity living = citizenToServe.isEmpty() ? playerToServe.get(0) : citizenToServe.get(0);
 
@@ -318,36 +330,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     {
         return 1;
     }
-
-
-    /**
-     * Check for all items of the required recipe.
-     *
-     * @param storage the storage.
-     * @return the next state to go to.
-     */
-    protected IAIState checkForItems(@NotNull final IRecipeStorage storage)
-    {
-        final List<ItemStorage> input = storage.getCleanedInput();
-        for (final ItemStorage inputStorage : input)
-        {
-            final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) < inputStorage.getAmount())
-            {
-                if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
-                {
-                    needsCurrently = new Tuple<>(predicate, Constants.STACKSIZE);
-                    return GATHERING_REQUIRED_MATERIALS;
-                }
-                currentRecipeStorage = null;
-                currentRequest = null;
-                return GET_RECIPE;
-            }
-        }
-
-        return CRAFT;
-    }
-
 
     @Override
     protected IRequestable getSmeltAbleClass()
