@@ -9,7 +9,7 @@ import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.Direction;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 import java.util.Arrays;
@@ -130,7 +130,7 @@ public class PathingStuckHandler implements IStuckHandler
         }
 
         final double distanceToGoal =
-          navigator.getOurEntity().getPositionVector().distanceTo(new Vec3d(navigator.getDesiredPos().getX(), navigator.getDesiredPos().getY(), navigator.getDesiredPos().getZ()));
+          navigator.getOurEntity().getPositionVec().distanceTo(new Vector3d(navigator.getDesiredPos().getX(), navigator.getDesiredPos().getY(), navigator.getDesiredPos().getZ()));
 
         // Close enough to be considered at the goal
         if (distanceToGoal < MIN_TARGET_DIST)
@@ -235,13 +235,13 @@ public class PathingStuckHandler implements IStuckHandler
 
         if (completeStuckBlockBreakRange > 0)
         {
-            final Direction facing = BlockPosUtil.getFacing(entity.getPosition(), navigator.getDesiredPos());
+            final Direction facing = BlockPosUtil.getFacing(new BlockPos(entity.getPositionVec()), navigator.getDesiredPos());
 
             for (int i = 1; i <= completeStuckBlockBreakRange; i++)
             {
-                if (!world.isAirBlock(entity.getPosition().offset(facing, i)) || !world.isAirBlock(entity.getPosition().offset(facing, i).up()))
+                if (!world.isAirBlock(new BlockPos(entity.getPositionVec()).offset(facing, i)) || !world.isAirBlock(new BlockPos(entity.getPositionVec()).offset(facing, i).up()))
                 {
-                    breakBlocksAhead(world, entity.getPosition().offset(facing, i - 1), facing);
+                    breakBlocksAhead(world, new BlockPos(entity.getPositionVec()).offset(facing, i - 1), facing);
                     break;
                 }
             }
@@ -276,7 +276,7 @@ public class PathingStuckHandler implements IStuckHandler
             stuckLevel++;
             delayToNextUnstuckAction = 200;
             navigator.clearPath();
-            navigator.moveAwayFromXYZ(new BlockPos(navigator.getOurEntity().getPosition()), 10, 1.0f);
+            navigator.moveAwayFromXYZ(new BlockPos(navigator.getOurEntity().getPositionVec()), 10, 1.0f);
             return;
         }
 
@@ -381,7 +381,7 @@ public class PathingStuckHandler implements IStuckHandler
         final World world = navigator.getOurEntity().world;
         final MobEntity entity = navigator.getOurEntity();
 
-        BlockPos entityPos = entity.getPosition();
+        BlockPos entityPos = new BlockPos(entity.getPositionVec());
 
         while (world.getBlockState(entityPos).getBlock() == Blocks.LADDER)
         {
@@ -403,7 +403,7 @@ public class PathingStuckHandler implements IStuckHandler
         final World world = navigator.getOurEntity().world;
         final MobEntity entity = navigator.getOurEntity();
 
-        final Direction badFacing = BlockPosUtil.getFacing(entity.getPosition(), navigator.getDesiredPos()).getOpposite();
+        final Direction badFacing = BlockPosUtil.getFacing(new BlockPos(entity.getPositionVec()), navigator.getDesiredPos()).getOpposite();
 
         for (final Direction dir : directions)
         {
@@ -412,9 +412,9 @@ public class PathingStuckHandler implements IStuckHandler
                 continue;
             }
 
-            if (world.isAirBlock(entity.getPosition().down().offset(dir)))
+            if (world.isAirBlock(new BlockPos(entity.getPositionVec()).down().offset(dir)))
             {
-                world.setBlockState(entity.getPosition().down().offset(dir), Blocks.ACACIA_LEAVES.getDefaultState());
+                world.setBlockState(new BlockPos(entity.getPositionVec()).down().offset(dir), Blocks.ACACIA_LEAVES.getDefaultState());
             }
         }
     }
@@ -429,9 +429,9 @@ public class PathingStuckHandler implements IStuckHandler
         final World world = navigator.getOurEntity().world;
         final MobEntity entity = navigator.getOurEntity();
 
-        final Direction facing = BlockPosUtil.getFacing(entity.getPosition(), navigator.getDesiredPos());
+        final Direction facing = BlockPosUtil.getFacing(new BlockPos(entity.getPositionVec()), navigator.getDesiredPos());
 
-        breakBlocksAhead(world, entity.getPosition(), facing);
+        breakBlocksAhead(world, new BlockPos(entity.getPositionVec()), facing);
     }
 
     /**
