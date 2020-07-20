@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.IConcreteDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -58,11 +57,6 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         }
         return false;
     }
-    /**
-     * Let the decendant class create an instance for use
-     */
-    protected abstract AbstractWarehouseRequestResolver newInstanceOfSelf(@NotNull final ILocation location, @NotNull final IToken<?> token);
-
 
     @Override
     public TypeToken<? extends IDeliverable> getRequestType()
@@ -225,8 +219,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                 final Delivery delivery = new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy(), getDefaultDeliveryPriority(true));
 
                 final IToken<?> requestToken =
-                  manager.createRequest(newInstanceOfSelf(completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
-
+                  manager.createRequest(manager.getFactoryController().getNewInstance(TypeToken.of(this.getClass()), completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
                 deliveries.add(manager.getRequestForToken(requestToken));
                 remainingCount -= ItemStackUtils.getSize(matchingStack);
 
