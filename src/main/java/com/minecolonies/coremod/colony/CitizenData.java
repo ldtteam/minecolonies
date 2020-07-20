@@ -529,6 +529,8 @@ public class CitizenData implements ICitizenData
         {
             getEntity().get().getCitizenJobHandler().setModelDependingOnJob(null);
         }
+
+        setBedPos(BlockPos.ZERO);
     }
 
     @Override
