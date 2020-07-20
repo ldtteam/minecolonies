@@ -108,7 +108,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
             currentPathingTarget = getWanderPosition();
         }
 
-        if (!walkToBlock(currentPathingTarget) || worker.getCitizenStuckHandler().isStuck())
+        if (!walkToBlock(currentPathingTarget))
         {
             currentPathingTarget = null;
             return DECIDE;
