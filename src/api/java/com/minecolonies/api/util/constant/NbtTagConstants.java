@@ -200,22 +200,22 @@ public final class NbtTagConstants
     /**
      * Tag to store the fields positive length.
      */
-    public static final String TAG_LENGTH_PLUS = "length+";
+    public static final String TAG_FIELD_EAST = "plot_east";
 
     /**
      * Tag to store the fields positive width.
      */
-    public static final String TAG_WIDTH_PLUS = "width+";
+    public static final String TAG_FIELD_SOUTH = "plot_south";
 
     /**
      * Tag to store the fields negative length.
      */
-    public static final String TAG_LENGTH_MINUS = "length-";
+    public static final String TAG_FIELD_WEST = "plot_west";
 
     /**
      * Tag to store the fields negative width.
      */
-    public static final String TAG_WIDTH_MINUS = "width-";
+    public static final String TAG_FIELD_NORTH = "plot_north";
 
     /**
      * Tag to store the fields stage.

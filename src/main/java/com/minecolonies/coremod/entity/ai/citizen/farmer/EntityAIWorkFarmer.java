@@ -332,12 +332,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private boolean checkIfShouldExecute(@NotNull final ScarecrowTileEntity field, @NotNull final Predicate<BlockPos> predicate)
     {
-        if (workingOffset == null)
-            workingOffset = nextValidCell(field);
-
-        BlockPos position = field.getPos().down().south(workingOffset.getZ()).east(workingOffset.getX());
-
-        while (!predicate.test(position))
+        BlockPos position;
+        do
         {
             workingOffset = nextValidCell(field);
             if (workingOffset == null)
@@ -345,6 +341,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
             position = field.getPos().down().south(workingOffset.getZ()).east(workingOffset.getX());
         }
+        while (!predicate.test(position));
+
         return true;
     }
 
