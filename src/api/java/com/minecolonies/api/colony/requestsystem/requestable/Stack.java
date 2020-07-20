@@ -16,7 +16,7 @@ import java.util.List;
  * Deliverable that can only be fulfilled by a single stack with a given minimal
  * amount of items.
  */
-public class Stack implements IConcreteDeliverable 
+public class Stack implements IConcreteDeliverable
 {
     ////// --------------------------- NBTConstants ---------------------------
     ////// \\\\\\
@@ -27,8 +27,7 @@ public class Stack implements IConcreteDeliverable
     private static final String NBT_RESULT = "Result";
     private static final String NBT_COUNT = "Count";
     private static final String NBT_MINCOUNT = "MinCount";
-    ////// --------------------------- NBTConstants ---------------------------
-    ////// \\\\\\
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
     private final ItemStack theStack;
@@ -66,7 +65,7 @@ public class Stack implements IConcreteDeliverable
      *
      * @param stack the required stack.
      */
-    public Stack(@NotNull final ItemStack stack) 
+    public Stack(@NotNull final ItemStack stack)
     {
         this(stack, true, false, false, ItemStackUtils.EMPTY, Math.min(stack.getCount(), stack.getMaxStackSize()), Math.min(stack.getCount(), stack.getMaxStackSize()));
     }
@@ -78,7 +77,7 @@ public class Stack implements IConcreteDeliverable
      * @param count    the count.
      * @param minCount the min count.
      */
-    public Stack(@NotNull final ItemStack stack, final int count, final int minCount) 
+    public Stack(@NotNull final ItemStack stack, final int count, final int minCount)
     {
         this(stack, true, false, false, ItemStackUtils.EMPTY, count, minCount);
     }
@@ -88,7 +87,7 @@ public class Stack implements IConcreteDeliverable
      *
      * @param itemStorage the storage to use.
      */
-    public Stack(@NotNull final ItemStorage itemStorage) 
+    public Stack(@NotNull final ItemStorage itemStorage)
     {
         this(itemStorage.getItemStack(), !itemStorage.ignoreDamageValue(), false, false, ItemStackUtils.EMPTY, itemStorage.getAmount(), itemStorage.getAmount());
     }
@@ -104,10 +103,16 @@ public class Stack implements IConcreteDeliverable
      * @param count       the count.
      * @param minCount    the min count.
      */
-    public Stack(@NotNull final ItemStack stack, final boolean matchMeta, final boolean matchNBT,
-            final boolean matchOreDic, @NotNull final ItemStack result, final int count, final int minCount) 
+    public Stack(
+      @NotNull final ItemStack stack, 
+      final boolean matchMeta, 
+      final boolean matchNBT,
+      final boolean matchOreDic, 
+      @NotNull final ItemStack result, 
+      final int count, 
+      final int minCount) 
     {
-        if (ItemStackUtils.isEmpty(stack)) 
+        if (ItemStackUtils.isEmpty(stack))
         {
             throw new IllegalArgumentException("Cannot deliver Empty Stack.");
         }
@@ -128,7 +133,7 @@ public class Stack implements IConcreteDeliverable
      * @param input      the input.
      * @return the compound.
      */
-    public static CompoundNBT serialize(final IFactoryController controller, final Stack input) 
+    public static CompoundNBT serialize(final IFactoryController controller, final Stack input)
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.put(NBT_STACK, input.theStack.serializeNBT());
@@ -152,7 +157,7 @@ public class Stack implements IConcreteDeliverable
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static Stack deserialize(final IFactoryController controller, final CompoundNBT compound) 
+    public static Stack deserialize(final IFactoryController controller, final CompoundNBT compound)
     {
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
         final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
@@ -179,7 +184,7 @@ public class Stack implements IConcreteDeliverable
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Stack input) 
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Stack input)
     {
         buffer.writeItemStack(input.theStack);
         buffer.writeBoolean(input.matchMeta);
@@ -202,7 +207,7 @@ public class Stack implements IConcreteDeliverable
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static Stack deserialize(final IFactoryController controller, final PacketBuffer buffer) 
+    public static Stack deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
         final ItemStack stack = buffer.readItemStack();
         final boolean matchMeta = buffer.readBoolean();
@@ -218,9 +223,9 @@ public class Stack implements IConcreteDeliverable
     }
 
     @Override
-    public boolean matches(@NotNull final ItemStack stack) 
+    public boolean matches(@NotNull final ItemStack stack)
     {
-        if (matchOreDic) 
+        if (matchOreDic)
         {
             if (!Collections.disjoint(stack.getItem().getTags(), theStack.getItem().getTags())) 
             {
@@ -232,44 +237,44 @@ public class Stack implements IConcreteDeliverable
     }
 
     @Override
-    public int getCount() 
+    public int getCount()
     {
         return this.count;
     }
 
     @Override
-    public int getMinimumCount() 
+    public int getMinimumCount()
     {
         return minCount;
     }
 
     @NotNull
-    public ItemStack getStack() 
+    public ItemStack getStack()
     {
         return theStack;
     }
 
     @Override
-    public void setResult(@NotNull final ItemStack result) 
+    public void setResult(@NotNull final ItemStack result)
     {
         this.result = result;
     }
 
     @Override
-    public IDeliverable copyWithCount(final int newCount) 
+    public IDeliverable copyWithCount(final int newCount)
     {
         return new Stack(this.theStack, this.matchMeta, this.matchNBT, this.matchOreDic, this.result, newCount, this.minCount);
     }
 
     @NotNull
     @Override
-    public ItemStack getResult() 
+    public ItemStack getResult()
     {
             return result;
     }
 
     @Override
-    public boolean equals(final Object o) 
+    public boolean equals(final Object o)
     {
         if (this == o) 
         {
@@ -282,19 +287,19 @@ public class Stack implements IConcreteDeliverable
 
         final Stack stack1 = (Stack) o;
 
-        if (matchMeta != stack1.matchMeta) 
+        if (matchMeta != stack1.matchMeta)
         {
             return false;
         }
-        if (matchNBT != stack1.matchNBT) 
+        if (matchNBT != stack1.matchNBT)
         {
             return false;
         }
-        if (matchOreDic != stack1.matchOreDic) 
+        if (matchOreDic != stack1.matchOreDic)
         {
             return false;
         }
-        if (!ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack1.getStack())) 
+        if (!ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack1.getStack()))
         {
             return false;
         }
@@ -302,7 +307,7 @@ public class Stack implements IConcreteDeliverable
     }
 
     @Override
-    public int hashCode() 
+    public int hashCode()
     {
         int result1 = getStack().hashCode();
         result1 = 31 * result1 + (matchMeta ? 1 : 0);
@@ -313,7 +318,7 @@ public class Stack implements IConcreteDeliverable
     }
 
     @Override
-    public List<ItemStack> getRequestedItems() 
+    public List<ItemStack> getRequestedItems()
     {
         return Lists.newArrayList(theStack);
     }
