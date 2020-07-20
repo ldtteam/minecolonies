@@ -157,6 +157,6 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     protected IAIState butcherAnimals()
     {
         worker.getCitizenData().setVisibleStatus(HERD_COW);
-        return super.breedAnimals();
+        return super.butcherAnimals();
     }
 }

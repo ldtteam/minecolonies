@@ -139,6 +139,7 @@ public class EntityAISleep extends Goal
     public void startExecuting()
     {
         citizen.getCitizenStatusHandler().setStatus(Status.SLEEPING);
+        usedBed = null;
     }
 
     /**
