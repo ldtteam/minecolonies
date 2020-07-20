@@ -64,6 +64,12 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         return TypeConstants.DELIVERABLE;
     }
 
+    /**
+     * Override to implement decendent specific checks during canResolveRequest
+     * @param wareHouses
+     * @param requestToCheck
+     * @return
+     */
     protected abstract boolean internalCanResolve(final Set<TileEntityWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck);
 
     @Override
@@ -102,6 +108,12 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         return false;
     }
 
+    /**
+     * Use to verify that a request chain is valid, and doesn't contain recursive cycles.
+     * @param manager
+     * @param requestToCheck
+     * @return
+     */
     public boolean isRequestChainValid(@NotNull final IRequestManager manager, final IRequest<?> requestToCheck)
     {
         if (isRequestFromSelf(requestToCheck))
@@ -245,6 +257,11 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
 
     }
 
+    /**
+     * Use to get the set of all warehouses
+     * @param colony
+     * @return
+     */
     protected static Set<TileEntityWareHouse> getWareHousesInColony(final Colony colony)
     {
         return colony.getBuildingManager().getBuildings().values().stream()
