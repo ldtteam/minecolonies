@@ -214,11 +214,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
 
         if (walkToBlock(new BlockPos(living.getPositionVec())))
         {
-            if (worker.getCitizenStuckHandler().isStuck())
-            {
-                worker.getNavigator().clearPath();
-                removeFromQueue();
-            }
             return getState();
         }
 

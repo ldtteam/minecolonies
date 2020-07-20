@@ -246,7 +246,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 walkTo = pos;
             }
 
-            if (walkToBlock(walkTo) && !worker.getCitizenStuckHandler().isStuck())
+            if (walkToBlock(walkTo))
             {
                 return getState();
             }

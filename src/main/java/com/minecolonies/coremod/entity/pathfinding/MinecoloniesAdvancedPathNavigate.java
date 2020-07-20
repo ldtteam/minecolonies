@@ -12,7 +12,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.BlockState;
@@ -25,7 +24,6 @@ import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.pathfinding.WalkNodeProcessor;
 import net.minecraft.state.properties.RailShape;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -50,11 +48,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     public static final  double MIN_Y_DISTANCE           = 0.001;
     public static final  int    MAX_SPEED_ALLOWED        = 100;
 
-    /**
-     * Amount of ticks before vanilla stuck handling is allowed to discard an existing path
-     */
-    private static final long MIN_KEEP_TIME = 100;
-
     @Nullable
     private PathResult pathResult;
 
@@ -67,6 +60,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * Spawn pos of minecart.
      */
     private BlockPos spawnedPos = BlockPos.ZERO;
+
+    /**
+     * Desired position to reach
+     */
+    private BlockPos desiredPos;
+
+    /**
+     * The stuck handler to use
+     */
+    private IStuckHandler stuckHandler;
 
     /**
      * Instantiates the navigation of an ourEntity.
@@ -85,6 +88,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         getPathingOptions().setCanOpenDoors(true);
         this.nodeProcessor.setCanSwim(true);
         getPathingOptions().setCanSwim(true);
+
+        stuckHandler = PathingStuckHandler.createStuckHandler().withTakeDamageOnStuck(0.2f).withTeleportSteps(6).withTeleportOnFullStuck();
     }
 
     /**
@@ -124,10 +129,19 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
       final BlockPos dest,
       final double speed)
     {
+        if (dest != null && dest.equals(desiredPos) && calculationFuture != null && pathResult != null)
+        {
+            return pathResult;
+        }
+
         clearPath();
 
         this.destination = dest;
         this.originalDestination = dest;
+        if (dest != null)
+        {
+            desiredPos = dest;
+        }
         this.walkSpeed = speed;
 
         if (speed > MAX_SPEED_ALLOWED)
@@ -140,6 +154,15 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         calculationFuture = Pathfinding.enqueue(job);
         pathResult = job.getResult();
         return pathResult;
+    }
+
+    /**
+     * If null path or reached the end.
+     */
+    @Override
+    public boolean noPath()
+    {
+        return calculationFuture == null && super.noPath();
     }
 
     @Override
@@ -186,6 +209,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             pathResult.setStatus(PathFindingStatus.COMPLETE);
             pathResult = null;
         }
+
+        stuckHandler.checkStuck(this);
     }
 
     /**
@@ -216,15 +241,15 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
-        @NotNull final BlockPos dest = new BlockPos(newX, newY, newZ);
+        desiredPos = new BlockPos(newX, newY, newZ);
 
         return setPathJob(
           new PathJobMoveToLocation(CompatibilityUtils.getWorldFromEntity(ourEntity),
             start,
-            dest,
+            desiredPos,
             (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
             ourEntity),
-          dest, speed);
+          desiredPos, speed);
     }
 
     public boolean tryMoveToBlockPos(final BlockPos pos, final double speed)
@@ -309,7 +334,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             speed = walkSpeed * BARBARIAN_SWIM_BONUS;
             return speed;
         }
-        else if (ourEntity instanceof EntityCitizen && ourEntity.isInWater())
+        else if (ourEntity instanceof AbstractEntityCitizen && ourEntity.isInWater())
         {
             speed = walkSpeed * CITIZEN_SWIM_BONUS;
             return speed;
@@ -757,55 +782,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     protected void checkForStuck(@NotNull final Vector3d positionVec3)
     {
-        if (world.getGameTime() - pathStartTime < MIN_KEEP_TIME)
-        {
-            return;
-        }
-
-        if (this.totalTicks - this.ticksAtLastPos > 100)
-        {
-            if (positionVec3.squareDistanceTo(this.lastPosCheck) < 2.25D)
-            {
-                this.clearPath();
-            }
-
-            this.ticksAtLastPos = this.totalTicks;
-            this.lastPosCheck = positionVec3;
-        }
-
-        if (this.currentPath != null && !this.currentPath.isFinished())
-        {
-            Vector3i vec = this.currentPath.getCurrentPos();
-            if (vec.equals(this.timeoutCachedNode))
-            {
-                this.timeoutTimer += Util.milliTime() - this.lastTimeoutCheck;
-            }
-            else
-            {
-                this.timeoutCachedNode = vec;
-                double d0 = positionVec3.distanceTo(new Vector3d(this.timeoutCachedNode.getX(), this.timeoutCachedNode.getY(), this.timeoutCachedNode.getZ()));
-                this.timeoutLimit = (this.entity.getAIMoveSpeed() > 0.0F ? d0 / (double) this.entity.getAIMoveSpeed() * 1000.0D : 0.0D) * 25;
-            }
-
-            if (this.timeoutLimit > 0.0D && (double) this.timeoutTimer > this.timeoutLimit * 3.0D)
-            {
-                this.timeoutCachedNode = Vector3i.NULL_VECTOR;
-                this.timeoutTimer = 0L;
-                this.timeoutLimit = 0.0D;
-                this.clearPath();
-            }
-
-            this.lastTimeoutCheck = Util.milliTime();
-        }
-    }
-
-    /**
-     * If null path or reached the end.
-     */
-    @Override
-    public boolean noPath()
-    {
-        return calculationFuture == null && super.noPath();
+        // Do nothing, unstuck is checked on tick, not just when we have a path
     }
 
     @Override
@@ -922,5 +899,21 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         super.setCanSwim(canSwim);
         getPathingOptions().setCanSwim(canSwim);
+    }
+
+    public BlockPos getDesiredPos()
+    {
+        return desiredPos;
+    }
+
+    /**
+     * Sets the stuck handler
+     *
+     * @param stuckHandler handler to set
+     */
+    @Override
+    public void setStuckHandler(final IStuckHandler stuckHandler)
+    {
+        this.stuckHandler = stuckHandler;
     }
 }

@@ -425,12 +425,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public ICitizenStuckHandler getCitizenStuckHandler()
-    {
-        return null;
-    }
-
-    @Override
     public ICitizenDiseaseHandler getCitizenDiseaseHandler()
     {
         return citizenDiseaseHandler;
@@ -488,12 +482,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     public boolean isDead()
     {
         return !isAlive();
-    }
-
-    @Override
-    public void setCitizenStuckHandler(final ICitizenStuckHandler citizenStuckHandler)
-    {
-
     }
 
     @Override

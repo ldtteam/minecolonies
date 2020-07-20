@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.BarbarianSounds;
@@ -108,6 +109,16 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     private boolean envDamageImmunity = false;
 
     /**
+     * Counts entity collisions
+     */
+    private int collisionCounter = 0;
+
+    /**
+     * The collision threshold
+     */
+    private final static int COLL_THRESHOLD = 50;
+
+    /**
      * Constructor method for Abstract Barbarians.
      *
      * @param world the world.
@@ -129,9 +140,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     @Override
     public void applyEntityCollision(@NotNull final Entity entityIn)
     {
-        if (invulTime < 0 && entityIn instanceof AbstractEntityMinecoloniesMob
-              && ((stuckCounter > 0 || ladderCounter > 0 || ((AbstractEntityMinecoloniesMob) entityIn).stuckCounter > 0
-                     || ((AbstractEntityMinecoloniesMob) entityIn).ladderCounter > 0)))
+        if (invulTime > 0 || (collisionCounter += 3) > COLL_THRESHOLD)
         {
             return;
         }
@@ -183,6 +192,12 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
             this.newNavigator.setCanSwim(true);
             this.newNavigator.getNodeProcessor().setCanEnterDoors(true);
             newNavigator.getPathingOptions().withJumpDropCost(1.1D);
+            newNavigator.setStuckHandler(PathingStuckHandler.createStuckHandler()
+                                           .withTakeDamageOnStuck(0.4f)
+                                           .withBlockBreaks()
+                                           .withCompleteStuckBlockBreak(6)
+                                           .withBuildLeafBridges()
+                                           .withPlaceLadders());
         }
         return newNavigator;
     }
@@ -295,6 +310,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         else
         {
             this.setInvulnerable(false);
+        }
+
+        if (collisionCounter > 0)
+        {
+            collisionCounter--;
         }
 
         if (world.isRemote)
