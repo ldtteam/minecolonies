@@ -18,15 +18,14 @@ import java.util.List;
  */
 public class Stack implements IConcreteDeliverable
 {
-    ////// --------------------------- NBTConstants ---------------------------
-    ////// \\\\\\
-    private static final String NBT_STACK = "Stack";
-    private static final String NBT_MATCHMETA = "MatchMeta";
-    private static final String NBT_MATCHNBT = "MatchNBT";
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_STACK       = "Stack";
+    private static final String NBT_MATCHMETA   = "MatchMeta";
+    private static final String NBT_MATCHNBT    = "MatchNBT";
     private static final String NBT_MATCHOREDIC = "MatchOreDic";
-    private static final String NBT_RESULT = "Result";
-    private static final String NBT_COUNT = "Count";
-    private static final String NBT_MINCOUNT = "MinCount";
+    private static final String NBT_RESULT      = "Result";
+    private static final String NBT_COUNT       = "Count";
+    private static final String NBT_MINCOUNT    = "MinCount";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
@@ -104,13 +103,13 @@ public class Stack implements IConcreteDeliverable
      * @param minCount    the min count.
      */
     public Stack(
-      @NotNull final ItemStack stack, 
-      final boolean matchMeta, 
+      @NotNull final ItemStack stack,
+      final boolean matchMeta,
       final boolean matchNBT,
-      final boolean matchOreDic, 
-      @NotNull final ItemStack result, 
-      final int count, 
-      final int minCount) 
+      final boolean matchOreDic,
+      @NotNull final ItemStack result,
+      final int count,
+      final int minCount)
     {
         if (ItemStackUtils.isEmpty(stack))
         {
@@ -140,7 +139,7 @@ public class Stack implements IConcreteDeliverable
         compound.putBoolean(NBT_MATCHMETA, input.matchMeta);
         compound.putBoolean(NBT_MATCHNBT, input.matchNBT);
         compound.putBoolean(NBT_MATCHOREDIC, input.matchOreDic);
-        if (!ItemStackUtils.isEmpty(input.result)) 
+        if (!ItemStackUtils.isEmpty(input.result))
         {
             compound.put(NBT_RESULT, input.result.serializeNBT());
         }
@@ -163,13 +162,12 @@ public class Stack implements IConcreteDeliverable
         final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
         final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
         final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
-        final ItemStack result = compound.keySet().contains(NBT_RESULT)
-                ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT))
-                : ItemStackUtils.EMPTY;
+        final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         int count = compound.getInt("size");
         int minCount = count;
-        if (compound.keySet().contains(NBT_COUNT)) {
+        if (compound.keySet().contains(NBT_COUNT))
+        {
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);
         }
@@ -192,7 +190,7 @@ public class Stack implements IConcreteDeliverable
         buffer.writeBoolean(input.matchOreDic);
 
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
-        if (!ItemStackUtils.isEmpty(input.result)) 
+        if (!ItemStackUtils.isEmpty(input.result))
         {
             buffer.writeItemStack(input.result);
         }
@@ -227,7 +225,7 @@ public class Stack implements IConcreteDeliverable
     {
         if (matchOreDic)
         {
-            if (!Collections.disjoint(stack.getItem().getTags(), theStack.getItem().getTags())) 
+            if (!Collections.disjoint(stack.getItem().getTags(), theStack.getItem().getTags()))
             {
                 return true;
             }
@@ -270,17 +268,17 @@ public class Stack implements IConcreteDeliverable
     @Override
     public ItemStack getResult()
     {
-            return result;
+        return result;
     }
 
     @Override
     public boolean equals(final Object o)
     {
-        if (this == o) 
+        if (this == o)
         {
             return true;
         }
-        if (!(o instanceof Stack)) 
+        if (!(o instanceof Stack))
         {
             return false;
         }
