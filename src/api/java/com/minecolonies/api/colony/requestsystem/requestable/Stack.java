@@ -13,8 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Deliverable that can only be fulfilled by a single stack with a given minimal
- * amount of items.
+ * Deliverable that can only be fulfilled by a single stack with a given minimal amount of items.
  */
 public class Stack implements IConcreteDeliverable
 {
