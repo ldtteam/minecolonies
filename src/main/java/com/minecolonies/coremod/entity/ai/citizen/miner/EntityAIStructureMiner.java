@@ -8,7 +8,9 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
@@ -20,6 +22,7 @@ import net.minecraft.block.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -98,6 +101,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
      */
     private static final int LIQUID_CHECK_RANGE = 5;
 
+    /**
+     * Mining icon
+     */
+    private final static VisibleCitizenStatus MINING =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/miner.png"), "com.minecolonies.gui.visiblestatus.miner");
+
     //The current block to mine
     @Nullable
     private BlockPos minerWorkingLocation;
@@ -145,6 +154,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @NotNull
     private IAIState startWorkingAtOwnBuilding()
     {
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         if (worker.getPosY() >= getOwnBuilding().getPosition().getY() && walkToBuilding())
         {
             return START_WORKING;
@@ -250,7 +260,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (!world.getBlockState(nextCobble).isSolid())
         {
-            if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE, COBBLE_REQUEST_BATCHES)))
+            if (!checkIfRequestForItemExistOrCreate(new ItemStack(getSolidSubstitution(nextCobble).getBlock(), COBBLE_REQUEST_BATCHES)))
             {
                 return getState();
             }
@@ -293,9 +303,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 buildingMiner.setClearedShaft(false);
                 return IDLE;
             }
+            worker.getCitizenData().setVisibleStatus(MINING);
             buildingMiner.setClearedShaft(true);
             return MINER_MINING_NODE;
         }
+        worker.getCitizenData().setVisibleStatus(MINING);
         buildingMiner.setClearedShaft(false);
         return MINER_MINING_SHAFT;
     }

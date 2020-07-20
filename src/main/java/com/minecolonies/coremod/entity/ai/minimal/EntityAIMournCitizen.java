@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.minimal;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
@@ -159,6 +160,7 @@ public class EntityAIMournCitizen extends Goal
     public void startExecuting()
     {
         citizen.getCitizenItemHandler().removeHeldItem();
+        citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.MOURNING);
         citizen.getNavigator().tryMoveToXYZ(this.xPosition, this.yPosition, this.zPosition, this.speed);
     }
 

@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import net.minecraft.network.PacketBuffer;
@@ -139,4 +140,11 @@ public interface ICitizenDataView extends ICitizen
      * @return resourcelocation
      */
     ResourceLocation getInteractionIcon();
+
+    /**
+     * Get the visible citizen status
+     *
+     * @return status
+     */
+    VisibleCitizenStatus getVisibleStatus();
 }

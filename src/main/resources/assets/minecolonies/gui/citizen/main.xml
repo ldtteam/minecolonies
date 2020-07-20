@@ -41,7 +41,7 @@
         <image size="9 9" source="minecolonies:textures/entity/skills/small/intelligence.png"/>
     </group>
 
-
+    <image id="statusicon" size="30 30" pos="138 99"/>
     <image id="deco4" size="15 49" pos="137 194"
            source="minecolonies:textures/gui/citizen/colonist_decor_up_ribbon_smaller.png"/>
     <image id="gender" size="30 30" pos="130 189"
