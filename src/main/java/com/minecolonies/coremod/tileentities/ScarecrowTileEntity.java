@@ -429,10 +429,10 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
 
         taken = compound.getBoolean(TAG_TAKEN);
         fieldStage = ScarecrowFieldStage.values()[compound.getInt(TAG_STAGE)];
-        radii[3] = compound.contains(TAG_LENGTH_PLUS)  ? compound.getInt(TAG_LENGTH_PLUS) : MAX_RANGE;
-        radii[2] = compound.contains(TAG_WIDTH_PLUS)   ? compound.getInt(TAG_WIDTH_PLUS) : MAX_RANGE;
-        radii[1] = compound.contains(TAG_LENGTH_MINUS) ? compound.getInt(TAG_LENGTH_MINUS) : MAX_RANGE;
-        radii[0] = compound.contains(TAG_WIDTH_MINUS)  ? compound.getInt(TAG_WIDTH_MINUS) : MAX_RANGE;
+        radii[3] = compound.contains(TAG_FIELD_EAST)  ? compound.getInt(TAG_FIELD_EAST)  : MAX_RANGE;
+        radii[2] = compound.contains(TAG_FIELD_NORTH) ? compound.getInt(TAG_FIELD_NORTH) : MAX_RANGE;
+        radii[1] = compound.contains(TAG_FIELD_WEST)  ? compound.getInt(TAG_FIELD_WEST)  : MAX_RANGE;
+        radii[0] = compound.contains(TAG_FIELD_SOUTH) ? compound.getInt(TAG_FIELD_SOUTH) : MAX_RANGE;
         ownerId = compound.getInt(TAG_OWNER);
         setOwner(ownerId);
 
@@ -461,10 +461,10 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
 
         compound.putBoolean(TAG_TAKEN, taken);
         compound.putInt(TAG_STAGE, fieldStage.ordinal());
-        compound.putInt(TAG_LENGTH_PLUS, radii[3]);
-        compound.putInt(TAG_WIDTH_PLUS, radii[2]);
-        compound.putInt(TAG_LENGTH_MINUS, radii[1]);
-        compound.putInt(TAG_WIDTH_MINUS, radii[0]);
+        compound.putInt(TAG_FIELD_EAST, radii[3]);
+        compound.putInt(TAG_FIELD_NORTH, radii[2]);
+        compound.putInt(TAG_FIELD_WEST, radii[1]);
+        compound.putInt(TAG_FIELD_SOUTH, radii[0]);
         compound.putInt(TAG_OWNER, ownerId);
         if (colony != null)
         {
