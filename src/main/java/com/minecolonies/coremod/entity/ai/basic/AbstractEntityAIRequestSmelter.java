@@ -328,7 +328,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                         new InvWrapper(furnace), SMELTABLE_SLOT);
                     }
                 }
-                else if (currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
+                else if (currentRecipeStorage.getIntermediate() == Blocks.FURNACE && currentRequest != null)
                 {
                     needsCurrently = new Tuple<>(smeltable, currentRequest.getRequest().getCount());
                     return GATHERING_REQUIRED_MATERIALS;
@@ -364,12 +364,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         if (currentRecipeStorage == null)
         {
             IAIState newState = checkIfAbleToSmelt(amountOfFuelInBuilding + amountOfFuelInInv, false);
-            if(newState == CRAFT)
-            {
-                setDelay(TICKS_20);
-                return START_WORKING;
-            }
-            else
+            if(newState != CRAFT)
             {
                 return newState;
             }
