@@ -87,7 +87,7 @@
   "minecolonies.config.alwaysrendernametag": "Name tags",
   "minecolonies.config.alwaysrendernametag.comment": "Should citizen name tags be rendered? [Default: true]",
   "minecolonies.config.growthmodifier": "Growth Modifier",
-  "minecolonies.config.growthmodifier.comment": "Child growth modifier. On average children take about 60min to grow at 1.0x modifier. 5=5x as fast. [Default: 1]",
+  "minecolonies.config.growthmodifier.comment": "Child growth modifier. On average children take about 60min to grow at 1.0x modifier (the default). 5 = 5x as fast. [Default: 1]",
   "minecolonies.config.workersalwaysworkinrain": "Working in Rain",
   "minecolonies.config.workersalwaysworkinrain.comment": "Should workers work during the rain? [Default: false]",
   "minecolonies.config.sendenteringleavingmessages": "Colony Notifications",
