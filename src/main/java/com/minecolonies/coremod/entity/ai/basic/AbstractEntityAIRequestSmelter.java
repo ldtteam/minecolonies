@@ -211,7 +211,11 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             currentRequest.addDelivery(stack);
 
             incrementActionsDoneAndDecSaturation();
-            job.finishRequest(true);
+            job.setCraftCounter(job.getCraftCounter() + resultCount);
+            if(job.getCraftCounter() >= job.getMaxCraftingCount())
+            {
+                job.finishRequest(true);
+            }
         }
 
         setDelay(STANDARD_DELAY);
