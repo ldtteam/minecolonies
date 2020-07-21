@@ -183,11 +183,11 @@ task downloadCrowdin() {
         id = 'minecolonies'
     }
     onlyIf {
-        project.hasProperty('crowdinKey') && !project.gradle.startParameter.isOffline()
+        System.getenv().containsKey("crowdinKey") && !project.gradle.startParameter.isOffline()
     }
     doLast {
         download {
-            src "https://api.crowdin.com/api/project/${id}/export?key=${project.crowdinKey}&json"
+            src "https://api.crowdin.com/api/project/${id}/export?key=${System.getenv("crowdinKey")}&json"
             dest update
             overwrite true
         }
@@ -195,7 +195,7 @@ task downloadCrowdin() {
             throw new RuntimeException("Crowdin export failed, see ${update} for more info")
         }
         download {
-            src "https://api.crowdin.com/api/project/${id}/download/all.zip?key=${project.crowdinKey}"
+            src "https://api.crowdin.com/api/project/${id}/download/all.zip?key=${System.getenv("crowdinKey")}"
             dest output
             overwrite true
         }
