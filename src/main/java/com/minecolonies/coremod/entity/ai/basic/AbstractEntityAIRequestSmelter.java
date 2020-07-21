@@ -61,6 +61,13 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
           new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, 1));
     }
 
+    @NotNull
+    @Override
+    protected List<ItemStack> itemsNiceToHave()
+    {
+        return getOwnBuilding().getAllowedFuel();
+    }
+
     @Override
     protected IAIState getRecipe()
     {
@@ -321,7 +328,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                         new InvWrapper(furnace), SMELTABLE_SLOT);
                     }
                 }
-                else
+                else if (currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
                 {
                     needsCurrently = new Tuple<>(smeltable, currentRequest.getRequest().getCount());
                     return GATHERING_REQUIRED_MATERIALS;
@@ -352,12 +359,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)))
         {
             worker.getCitizenData().createRequestAsync(new StackList(possibleFuels, COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE, 1));
-        }
-
-        if (amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)
-        {
-            needsCurrently = new Tuple<>(item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> item.isItemEqual(candidate)), STACKSIZE);
-            return GATHERING_REQUIRED_MATERIALS;
         }
 
         if (currentRecipeStorage == null)
@@ -412,6 +413,12 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             walkTo = posOfOven;
             worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.retrieving"));
             return RETRIEVING_END_PRODUCT_FROM_FURNACE;
+        }
+
+        if (amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)
+        {
+            needsCurrently = new Tuple<>(item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> item.isItemEqual(candidate)), STACKSIZE);
+            return GATHERING_REQUIRED_MATERIALS;
         }
 
         return checkIfAbleToSmelt(amountOfFuelInBuilding + amountOfFuelInInv, true);
