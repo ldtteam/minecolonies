@@ -199,12 +199,15 @@ public class TileEntityRack extends AbstractTileEntityRack
      */
     private void notifyParentAboutInvChange()
     {
-        if (!buildingPos.equals(BlockPos.ZERO) && WorldUtil.isBlockLoaded(world, buildingPos))
+        if (!buildingPos.equals(BlockPos.ZERO))
         {
-            TileEntity building = world.getTileEntity(buildingPos);
-            if (building instanceof TileEntityColonyBuilding)
+            if (WorldUtil.isBlockLoaded(world, buildingPos))
             {
-                ((TileEntityColonyBuilding) building).markInvDirty();
+                TileEntity building = world.getTileEntity(buildingPos);
+                if (building instanceof TileEntityColonyBuilding)
+                {
+                    ((TileEntityColonyBuilding) building).markInvDirty();
+                }
             }
         }
         else if (inWarehouse && world != null)
