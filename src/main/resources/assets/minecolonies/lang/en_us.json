@@ -1536,9 +1536,9 @@
   "com.minecolonies.coremod.info.barracks.0.name": "Introduction",
   "com.minecolonies.coremod.info.barracks.0": "The Barracks is the heart of your military defense. Without it you wouldn't be able to build any Barracks Towers!\n Each Barracks contains four Barracks Towers, one for each level (up to level four).",
   "com.minecolonies.coremod.info.barracks.1.name": "Restrictions",
-  "com.minecolonies.coremod.info.barracks.1": "Now let's cover restrictions:\n\n 1. Barracks only hold 1 Barracks Tower per level, and each tower can only level as high as the Barracks. So if you have a level one barracks, it will only allow for one barracks tower with a max level of one. If you have a level three barracks, it will allow for three barracks towers with a max level of three.",
+  "com.minecolonies.coremod.info.barracks.1": "Now let's cover restrictions:\n\n 1. Barracks only hold 1 Barracks Tower per level, and each tower can only level as high as the Barracks. So if you have a level 1 Barracks, it will only allow 1 Barracks Tower with a max level of 1. If you have a level 3 Barracks, it will allow 3 Barracks Towers with a max level of 3.",
   "com.minecolonies.coremod.info.barracks.2.name": "FAQ",
-  "com.minecolonies.coremod.info.barracks.2": "Now let's cover some frequently asked questions:\n\n Q 1. Can I have more than one barracks?\n   A 1. Yes, but the tower levels are based on the barracks they are attached to. So even if you have one barracks that is level 5, if the second barracks is only level one, then that barracks can only have a single level one tower.",
+  "com.minecolonies.coremod.info.barracks.2": "Now let's cover some frequently asked questions:\n\n Q 1. Can I have more than 1 Barracks?\n   A 1. Yes, but the Barracks Tower levels are based on the Barracks they are attached to. So even if you have one Barracks that is level 5, if the second Barracks is only level 1, then that Barracks can only have a single level 1 tower.",
 
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!",
 
