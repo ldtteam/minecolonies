@@ -16,6 +16,7 @@ buildscript {
 
 plugins {
     id "com.matthewprenger.cursegradle" version "1.1.0"
+    id 'de.undercouch.download' version '3.3.0'
 }
 repositories {
     jcenter()
@@ -178,6 +179,52 @@ minecraft {
     }
 }
 
+task downloadCrowdin() {
+    ext {
+        output = file('build/crowdin_raw.zip')
+        update = file('build/crowdin.json')
+        id = 'minecolonies'
+    }
+    onlyIf {
+        System.getenv().containsKey("crowdinKey") && !project.gradle.startParameter.isOffline()
+    }
+    doLast {
+        download {
+            src "https://api.crowdin.com/api/project/${id}/export?key=${System.getenv("crowdinKey")}&json"
+            dest update
+            overwrite true
+        }
+        if (!update.text.contains('success')) {
+            throw new RuntimeException("Crowdin export failed, see ${update} for more info")
+        }
+        download {
+            src "https://api.crowdin.com/api/project/${id}/download/all.zip?key=${System.getenv("crowdinKey")}"
+            dest output
+            overwrite true
+        }
+    }
+}
+
+task crowdin(type: Zip) {
+    dependsOn downloadCrowdin
+    onlyIf {
+        !downloadCrowdin.state.skipped
+    }
+    baseName = project.name
+    version = project.version
+    classifier = 'crowdin'
+    destinationDir = file('build/distributions')
+    from(zipTree(downloadCrowdin.output)){
+        eachFile {
+            if (!it.path.startsWith('assets/')) {
+                it.relativePath = new RelativePath(true, it.relativePath.segments.drop(4))
+            }
+        }
+        exclude { it.isDirectory() }
+        rename { it.toLowerCase() }
+    }
+}
+
 task apiJar(type: Jar) {
     from sourceSets.api.output
     classifier 'api'
@@ -186,6 +233,10 @@ task apiJar(type: Jar) {
 jar {
     from sourceSets.api.output
     from sourceSets.main.output
+
+    // add crowdin locales
+    from { !crowdin.state.skipped ? zipTree(crowdin.archivePath) : null}
+    dependsOn crowdin
 
     manifest {
         attributes([
@@ -316,7 +367,6 @@ task("createChangelog") {
         out.close()
     }
 }
-
 
 // Example configuration to allow publishing using the maven-publish task
 // we define a custom artifact that is sourced from the reobfJar output task
