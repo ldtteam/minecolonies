@@ -61,6 +61,13 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
           new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, 1));
     }
 
+    @NotNull
+    @Override
+    protected List<ItemStack> itemsNiceToHave()
+    {
+        return getOwnBuilding().getAllowedFuel();
+    }
+
     @Override
     protected IAIState getRecipe()
     {
@@ -204,7 +211,11 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             currentRequest.addDelivery(stack);
 
             incrementActionsDoneAndDecSaturation();
-            job.finishRequest(true);
+            job.setCraftCounter(job.getCraftCounter() + resultCount);
+            if(job.getCraftCounter() >= job.getMaxCraftingCount())
+            {
+                job.finishRequest(true);
+            }
         }
 
         setDelay(STANDARD_DELAY);
@@ -321,7 +332,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                         new InvWrapper(furnace), SMELTABLE_SLOT);
                     }
                 }
-                else
+                else if (currentRecipeStorage.getIntermediate() == Blocks.FURNACE && currentRequest != null)
                 {
                     needsCurrently = new Tuple<>(smeltable, currentRequest.getRequest().getCount());
                     return GATHERING_REQUIRED_MATERIALS;
@@ -354,21 +365,10 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             worker.getCitizenData().createRequestAsync(new StackList(possibleFuels, COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE, 1));
         }
 
-        if (amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)
-        {
-            needsCurrently = new Tuple<>(item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> item.isItemEqual(candidate)), STACKSIZE);
-            return GATHERING_REQUIRED_MATERIALS;
-        }
-
         if (currentRecipeStorage == null)
         {
             IAIState newState = checkIfAbleToSmelt(amountOfFuelInBuilding + amountOfFuelInInv, false);
-            if(newState == CRAFT)
-            {
-                setDelay(TICKS_20);
-                return START_WORKING;
-            }
-            else
+            if(newState != CRAFT)
             {
                 return newState;
             }
@@ -412,6 +412,12 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             walkTo = posOfOven;
             worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.retrieving"));
             return RETRIEVING_END_PRODUCT_FROM_FURNACE;
+        }
+
+        if (amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)
+        {
+            needsCurrently = new Tuple<>(item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> item.isItemEqual(candidate)), STACKSIZE);
+            return GATHERING_REQUIRED_MATERIALS;
         }
 
         return checkIfAbleToSmelt(amountOfFuelInBuilding + amountOfFuelInInv, true);
