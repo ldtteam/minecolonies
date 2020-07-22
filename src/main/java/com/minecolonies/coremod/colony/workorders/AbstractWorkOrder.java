@@ -185,7 +185,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
             final int citizenId = compound.getInt(TAG_CLAIMED_BY);
             if (manager.getColony() != null)
             {
-                final ICitizenData data = manager.getColony().getCitizenManager().getCitizen(citizenId);
+                final ICitizenData data = manager.getColony().getCitizenManager().getCivilian(citizenId);
                 if (data != null && data.getWorkBuilding() != null)
                 {
                     claimedBy = data.getWorkBuilding().getPosition();

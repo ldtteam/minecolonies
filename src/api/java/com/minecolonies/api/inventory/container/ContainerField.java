@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.ModContainers;
-import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -42,7 +42,7 @@ public class ContainerField extends Container
     /**
      * The tile entity.
      */
-    private final AbstractScarescrowTileEntity tileEntity;
+    private final AbstractScarecrowTileEntity tileEntity;
 
     /**
      * Constructs the GUI with the player.
@@ -64,7 +64,7 @@ public class ContainerField extends Container
         }
 
         this.colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-        this.tileEntity = ((AbstractScarescrowTileEntity) world.getTileEntity(pos));
+        this.tileEntity = ((AbstractScarecrowTileEntity) world.getTileEntity(pos));
         this.inventory = getTileEntity().getInventory();
         final int extraOffset = 0;
 
@@ -144,7 +144,7 @@ public class ContainerField extends Container
      *
      * @return the tile.
      */
-    public AbstractScarescrowTileEntity getTileEntity()
+    public AbstractScarecrowTileEntity getTileEntity()
     {
         return tileEntity;
     }

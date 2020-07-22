@@ -8,6 +8,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -200,10 +201,13 @@ public class TileEntityRack extends AbstractTileEntityRack
     {
         if (!buildingPos.equals(BlockPos.ZERO))
         {
-            TileEntity building = world.getTileEntity(buildingPos);
-            if (building instanceof TileEntityColonyBuilding)
+            if (WorldUtil.isBlockLoaded(world, buildingPos))
             {
-                ((TileEntityColonyBuilding) building).markInvDirty();
+                TileEntity building = world.getTileEntity(buildingPos);
+                if (building instanceof TileEntityColonyBuilding)
+                {
+                    ((TileEntityColonyBuilding) building).markInvDirty();
+                }
             }
         }
         else if (inWarehouse && world != null)
@@ -211,7 +215,12 @@ public class TileEntityRack extends AbstractTileEntityRack
             final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
             if (colony != null)
             {
-                colony.getBuildingManager().getWareHouses().forEach(warehouse -> warehouse.getTileEntity().markInvDirty());
+                colony.getBuildingManager().getWareHouses().forEach(warehouse -> {
+                    if (WorldUtil.isBlockLoaded(world, warehouse.getPosition()))
+                    {
+                        warehouse.getTileEntity().markInvDirty();
+                    }
+                });
             }
         }
     }
@@ -220,6 +229,13 @@ public class TileEntityRack extends AbstractTileEntityRack
     public void remove()
     {
         super.remove();
+        notifyParentAboutInvChange();
+    }
+
+    @Override
+    public void onChunkUnloaded()
+    {
+        super.onChunkUnloaded();
         notifyParentAboutInvChange();
     }
 

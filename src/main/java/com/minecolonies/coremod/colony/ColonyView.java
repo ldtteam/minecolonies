@@ -71,6 +71,7 @@ public final class ColonyView implements IColonyView
     //  Citizenry
     @NotNull
     private final Map<Integer, ICitizenDataView> citizens    = new HashMap<>();
+    private       Map<Integer, IVisitorViewData> visitors    = new HashMap<>();
     private       String                         name        = "Unknown";
     private       int                            dimensionId;
 
@@ -163,11 +164,6 @@ public final class ColonyView implements IColonyView
      * Print progress.
      */
     private boolean printProgress;
-
-    /**
-     * The cost of citizens bought
-     */
-    private int boughtCitizenCost;
 
     /**
      * The last use time of the mercenaries.
@@ -295,7 +291,6 @@ public final class ColonyView implements IColonyView
 
         buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
 
-        buf.writeInt(colony.getBoughtCitizenCost());
         buf.writeLong(colony.getMercenaryUseTime());
 
         buf.writeString(colony.getStyle());
@@ -715,7 +710,14 @@ public final class ColonyView implements IColonyView
     @Override
     public ICitizenDataView getCitizen(final int id)
     {
-        return citizens.get(id);
+        if (id > 0)
+        {
+            return citizens.get(id);
+        }
+        else
+        {
+            return visitors.get(id);
+        }
     }
 
     /**
@@ -790,8 +792,6 @@ public final class ColonyView implements IColonyView
         this.teamColonyColor = TextFormatting.values()[buf.readInt()];
 
         this.printProgress = buf.readBoolean();
-
-        this.boughtCitizenCost = buf.readInt();
 
         this.mercenaryLastUseTime = buf.readLong();
 
@@ -874,6 +874,20 @@ public final class ColonyView implements IColonyView
         }
 
         return null;
+    }
+
+    @Override
+    public void handleColonyViewVisitorMessage(final boolean refresh, final Set<IVisitorViewData> visitorViewData)
+    {
+        if (refresh)
+        {
+            visitors = new HashMap<>();
+        }
+
+        for (final IVisitorViewData data : visitorViewData)
+        {
+            visitors.put(data.getId(), data);
+        }
     }
 
     /**
@@ -1067,6 +1081,12 @@ public final class ColonyView implements IColonyView
     public boolean hasWarehouse()
     {
         return hasColonyWarehouse;
+    }
+
+    @Override
+    public boolean isDay()
+    {
+        return false;
     }
 
     @Override
@@ -1270,23 +1290,6 @@ public final class ColonyView implements IColonyView
         return new ArrayList<>(buildings.values());
     }
 
-    /**
-     * Get the cost multiplier of buying a citizen.
-     *
-     * @return the current cost.
-     */
-    @Override
-    public int getBoughtCitizenCost()
-    {
-        return boughtCitizenCost;
-    }
-
-    @Override
-    public void increaseBoughtCitizenCost()
-    {
-
-    }
-
     @NotNull
     @Override
     public List<PlayerEntity> getImportantMessageEntityPlayers()
@@ -1319,6 +1322,12 @@ public final class ColonyView implements IColonyView
 
     @Override
     public ICitizenManager getCitizenManager()
+    {
+        return null;
+    }
+
+    @Override
+    public IVisitorManager getVisitorManager()
     {
         return null;
     }
@@ -1387,5 +1396,11 @@ public final class ColonyView implements IColonyView
     public boolean areSpiesEnabled()
     {
         return spiesEnabled;
+    }
+
+    @Override
+    public ICitizenDataView getVisitor(final int citizenId)
+    {
+        return visitors.get(citizenId);
     }
 }

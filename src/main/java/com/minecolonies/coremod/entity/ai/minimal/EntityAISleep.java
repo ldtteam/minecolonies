@@ -139,6 +139,7 @@ public class EntityAISleep extends Goal
     public void startExecuting()
     {
         citizen.getCitizenStatusHandler().setStatus(Status.SLEEPING);
+        usedBed = null;
     }
 
     /**
@@ -300,7 +301,7 @@ public class EntityAISleep extends Goal
     {
         for (ICitizenData citizen : hut.getAssignedCitizen())
         {
-            if (this.citizen.getCitizenId() != citizen.getId())
+            if (this.citizen.getCivilianID() != citizen.getId())
             {
                 if (citizen.getBedPos().equals(bed))
                 {
@@ -309,5 +310,11 @@ public class EntityAISleep extends Goal
             }
         }
         return false;
+    }
+
+    @Override
+    public void resetTask()
+    {
+        citizen.getCitizenData().setVisibleStatus(null);
     }
 }

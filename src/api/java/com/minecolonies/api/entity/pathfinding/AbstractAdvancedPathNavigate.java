@@ -80,4 +80,28 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
     {
         return pathingOptions;
     }
+
+    /**
+     * Get the entity of this navigator
+     *
+     * @return mobentity
+     */
+    public MobEntity getOurEntity()
+    {
+        return ourEntity;
+    }
+
+    /**
+     * Gets the desired to go position
+     *
+     * @return desired go to pos
+     */
+    public abstract BlockPos getDesiredPos();
+
+    /**
+     * Sets the stuck handler for this navigator
+     *
+     * @param stuckHandler handler to use
+     */
+    public abstract void setStuckHandler(final IStuckHandler stuckHandler);
 }

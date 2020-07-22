@@ -29,9 +29,9 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteractionResponseHandler;
-import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteractionResponseHandler;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
@@ -245,7 +245,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 walkTo = pos;
             }
 
-            if (walkToBlock(walkTo) && !worker.getCitizenStuckHandler().isStuck())
+            if (walkToBlock(walkTo))
             {
                 return getState();
             }
@@ -312,7 +312,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @Override
     protected void onException(final RuntimeException e)
     {
-        worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(WORKER_AI_EXCEPTION), ChatPriority.BLOCKING));
+        worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(WORKER_AI_EXCEPTION), ChatPriority.BLOCKING));
 
         try
         {
@@ -435,12 +435,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 {
                     if (worker.getCitizenData().isRequestAsync(request.getId()))
                     {
-                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(ASYNC_REQUEST,
+                        worker.getCitizenData().triggerInteraction(new RequestBasedInteraction(new TranslationTextComponent(ASYNC_REQUEST,
                           request.getShortDisplayString()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
                     }
                     else
                     {
-                        worker.getCitizenData().triggerInteraction(new RequestBasedInteractionResponseHandler(new TranslationTextComponent(NORMAL_REQUEST,
+                        worker.getCitizenData().triggerInteraction(new RequestBasedInteraction(new TranslationTextComponent(NORMAL_REQUEST,
                           request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
                     }
                 }
@@ -1018,7 +1018,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (citizenData != null)
             {
                 citizenData
-                  .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
+                  .triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
                     ChatPriority.IMPORTANT));
             }
 
@@ -1194,7 +1194,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
         if (getOwnBuilding().getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
-            worker.getCitizenData().triggerInteraction(new PosBasedInteractionResponseHandler(
+            worker.getCitizenData().triggerInteraction(new PosBasedInteraction(
               new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW, new ItemStack(target).getDisplayName(), pos.getX(), pos.getY(), pos.getZ()),
               ChatPriority.IMPORTANT,
               new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW),

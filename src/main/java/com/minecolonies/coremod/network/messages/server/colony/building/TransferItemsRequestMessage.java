@@ -2,9 +2,11 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,6 +15,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  * Transfer some items from the player inventory to the Builder's chest or additional chests. Created: January 20, 2017
@@ -92,6 +96,8 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         }
 
         final boolean isCreative = player.isCreative();
+        // Inventory content before
+        Map<ItemStorage, ItemStorage> previousContent = null;
         final int amountToTake;
         if (isCreative)
         {
@@ -99,6 +105,11 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         }
         else
         {
+            if (MineColonies.getConfig().getCommon().debugInventories.get())
+            {
+                previousContent = InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.inventory));
+            }
+
             amountToTake = Math.min(quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory),
               stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true)));
         }
@@ -145,6 +156,11 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
             {
                 building.overruleNextOpenRequestWithStack(itemStack);
             }
+        }
+
+        if (!isCreative && previousContent != null && MineColonies.getConfig().getCommon().debugInventories.get())
+        {
+            InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.inventory)), true);
         }
     }
 }

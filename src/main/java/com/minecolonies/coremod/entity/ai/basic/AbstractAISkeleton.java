@@ -10,6 +10,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.ai.goal.Goal;
@@ -47,14 +48,14 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     {
         super();
 
-        if (!job.getCitizen().getCitizenEntity().isPresent())
+        if (!job.getCitizen().getEntity().isPresent())
         {
             throw new IllegalArgumentException("Cannot instantiate a AI from a Job that is attached to a Citizen without entity.");
         }
 
         this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
         this.job = job;
-        this.worker = this.job.getCitizen().getCitizenEntity().get();
+        this.worker = this.job.getCitizen().getEntity().get();
         this.world = CompatibilityUtils.getWorldFromCitizen(this.worker);
         stateMachine = new TickRateStateMachine<>(AIWorkerState.INIT, this::onException);
         stateMachine.setTickRate(MineColonies.getConfig().getCommon().updateRate.get());
@@ -107,6 +108,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     public final void startExecuting()
     {
         worker.getCitizenStatusHandler().setStatus(Status.WORKING);
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
     }
 
     /**
@@ -116,6 +118,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     public final void resetTask()
     {
         resetAI();
+        worker.getCitizenData().setVisibleStatus(null);
     }
 
     /**
@@ -168,6 +171,6 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
      */
     public void resetAI()
     {
-        stateMachine.addTransition(new AIOneTimeEventTarget(AIWorkerState.IDLE));
+        stateMachine.reset();
     }
 }
