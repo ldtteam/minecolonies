@@ -573,7 +573,7 @@
   "com.minecolonies.coremod.gui.workerhuts.bakery": "Bakery",
   "com.minecolonies.coremod.gui.workerhuts.bakery.recipes": "Recipes",
 
-  "com.minecolonies.coremod.gui.workerhuts.level0": "You must construct the hut before you can hire a worker!",
+  "com.minecolonies.coremod.gui.workerhuts.level0": "You must construct this hut before you can hire a worker!",
   "com.minecolonies.coremod.job.guard.needweapon": "a weapon!",
   "com.minecolonies.coremod.gui.workerhuts.guardactions": "Guard Actions:",
   "com.minecolonies.coremod.gui.workerhuts.assign": "Assign the guard to the job:",
