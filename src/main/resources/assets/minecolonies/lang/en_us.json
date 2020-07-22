@@ -842,9 +842,9 @@
 
   "com.minecolonies.coremod.gui.workerhuts.buildprio": "Pickup Prio.: ",
   "item.supplychestdeployer.invalid": "You must place it in a fitting pool of water.",
-  "item.supplychestdeployer.missing": "Are you trying to trick me by picking up that Supply Ship again?",
-  "com.minecolonies.coremod.citizen.rename.same": "Renaming failed as two citizens are not allowed to have the same name!",
-  "com.minecolonies.coremod.citizen.rename.notallowed": "Renaming failed as you're not allowed to rename your citizen!",
+  "item.supplychestdeployer.missing": "Are you trying to trick me by picking up that Supply Ship (or Camp) again?",
+  "com.minecolonies.coremod.citizen.rename.same": "Renaming failed, as two citizens are not allowed to have the same name!",
+  "com.minecolonies.coremod.citizen.rename.notallowed": "Renaming failed, as you're not allowed to rename your citizen!",
 
   "com.minecolonies.coremod.request.smeltableore": "Smeltable Ore",
   "block.minecolonies.blockhutsmeltery": "Smeltery",
