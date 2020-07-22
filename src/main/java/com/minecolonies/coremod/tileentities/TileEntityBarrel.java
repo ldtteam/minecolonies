@@ -6,6 +6,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -166,8 +167,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     public void updateBlock(final World worldIn)
     {
         worldIn.setBlockState(pos, AbstractBlockBarrel.changeStateOverFullness(this, world.getBlockState(pos)));
-        worldIn.markChunkDirty(pos, this);
-        this.markDirty();
+        markDirty();
     }
 
     @Override
@@ -211,7 +211,13 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     {
         final CompoundNBT compound = packet.getNbtCompound();
         this.read(compound);
-        world.markChunkDirty(pos, this);
+        markDirty();
+    }
+
+    @Override
+    public void markDirty()
+    {
+        WorldUtil.markChunkDirty(world, pos);
     }
 
     @Override

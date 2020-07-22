@@ -597,6 +597,12 @@ public class TileEntityRack extends AbstractTileEntityRack
         return false;
     }
 
+    @Override
+    public void markDirty()
+    {
+        WorldUtil.markChunkDirty(world, pos);
+    }
+
     @Nullable
     @Override
     public Container createMenu(final int id, final PlayerInventory inv, final PlayerEntity player)

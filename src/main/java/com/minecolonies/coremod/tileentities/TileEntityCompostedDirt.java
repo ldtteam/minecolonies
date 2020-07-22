@@ -2,6 +2,7 @@ package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.DoublePlantBlock;
 import net.minecraft.item.BlockItem;
@@ -122,6 +123,12 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickableTile
             this.ticker = 0;
             this.composted = false;
         }
+    }
+
+    @Override
+    public void markDirty()
+    {
+        WorldUtil.markChunkDirty(world, pos);
     }
 
     /**
