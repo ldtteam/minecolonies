@@ -1677,7 +1677,7 @@
 
   "item.minecolonies.amazonegg": "Amazon Spawn Egg",
   "item.minecolonies.amazonchiefegg": "Amazon Leader Spawn Egg",
-  "com.minecolonies.coremod.playerinvfull": "Can't pick up, inventory is full!",
+  "com.minecolonies.coremod.playerinvfull": "You can't pick up this item as your inventory is full!",
 
   "com.minecolonies.coremod.gui.workerhuts.concretemixer": "Concrete Mixer's Hut",
   "com.minecolonies.coremod.job.concretemixer": "Concrete Mixer",
