@@ -1637,7 +1637,7 @@
   "entity.pharao": "Pharaoh",
   "death.attack.entity.minecolonies.mummy": "%s was scared to death by a Mummy!",
   "death.attack.entity.minecolonies.pharao": "%s was put to sleep by a Pharaoh!",
-  "death.attack.entity.minecolonies.archermummy": "%s was pierced by a Mummy's deadly glance!",
+  "death.attack.entity.minecolonies.archermummy": "%s was pierced by a Mummy's deadly glare!",
 
   "com.minecolonies.coremod.gui.workerhuts.fletcher": "Fletcher's Hut",
   "com.minecolonies.coremod.job.fletcher": "Fletcher",
