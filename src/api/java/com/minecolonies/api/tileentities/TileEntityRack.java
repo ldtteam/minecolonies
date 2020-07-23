@@ -449,6 +449,8 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             this.buildingPos = BlockPosUtil.read(compound, TAG_POS);
         }
+
+        notifyParentAboutInvChange();
     }
 
     @NotNull
