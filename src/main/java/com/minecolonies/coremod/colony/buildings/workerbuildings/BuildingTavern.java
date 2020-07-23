@@ -219,6 +219,7 @@ public class BuildingTavern extends BuildingHome
             spawnPos = getPosition();
         }
 
+        spawnPos.add(0.5d, 0, 0.5d);
         colony.getVisitorManager().spawnOrCreateCivilian(newCitizen, colony.getWorld(), spawnPos, true);
 
         final AbstractEntityCitizen citizenEntity = newCitizen.getEntity().get();
