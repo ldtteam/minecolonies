@@ -137,21 +137,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     {
         final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
 
-        if(!ignoreDamageValue || !checkItem.getItem().isDamageable())
-        {
-            return content.containsKey(checkItem) && content.get(checkItem) >= stack.getCount(); 
-        } 
-        else
-        {
-            for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-            {
-                if (checkItem.equals(entry.getKey()))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        return content.containsKey(checkItem) && content.get(checkItem) >= stack.getCount(); 
     }
 
     /**
