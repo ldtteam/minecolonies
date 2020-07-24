@@ -15,7 +15,7 @@ Before reporting: Update to the newest minecolonies alpha and see if your issue 
 -->
 
 - Minecraft Version:
-- Minecolonies Version:
+- MineColonies Version:
 - Related mods & Versions:
 
 ### Expected behavior
