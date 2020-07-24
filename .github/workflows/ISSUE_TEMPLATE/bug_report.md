@@ -1,6 +1,6 @@
 # Prerequisites
 
-- [ ] I am running the latest version of MineColonies for my Minecraft version.
+- [ ] I am running the latest Alpha version of MineColonies for my Minecraft version.
 - [ ] I checked the MineColonies [Wiki](https://wiki.minecolonies.ldtteam.com/) and made sure that my issue is not covered there.
 - [ ] I made sure that **this issue is not a duplicate of any existing issue.**
 - [ ] This is an issue and not a feature request. Please create all feature requests [here](https://github.com/ldtteam/minecolonies-features/issues).
