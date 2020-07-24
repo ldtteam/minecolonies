@@ -2,7 +2,7 @@
 
 - [ ] I am running the latest version of MineColonies for my Minecraft version.
 - [ ] I checked the MineColonies [Wiki](https://wiki.minecolonies.ldtteam.com/) and made sure that my issue is not covered there.
-- [ ] I checked and made sure that **this issue is not already covered by any existing issue**.
+- [ ] I made sure that **this issue is not a duplicate of any existing issue.**
 - [ ] This is an issue and not a feature request. Please create all feature requests at [Minecolonies-features](https://github.com/ldtteam/minecolonies-features/issues).
 
 <!-- If you are making a bug report, please fill out this template as best as possible, this will help
