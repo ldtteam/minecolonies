@@ -170,7 +170,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                         if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), cure::isItemEqual))
                         {
                             if (InventoryUtils.getItemCountInItemHandler(getOwnBuilding().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null),
-                              stack -> stack.isItemEqual(cure)) < cure.getCount())
+                              stack -> stack.isItemEqual(cure)) >= cure.getCount())
                             {
                                 needsCurrently = new Tuple<>(stack -> stack.isItemEqual(cure), cure.getCount());
                                 return GATHERING_REQUIRED_MATERIALS;
