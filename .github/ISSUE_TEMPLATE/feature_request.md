@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Create a request for a new feature.
+about: Create a request for a new feature
 title: ''
 labels: ''
 assignees: ''
