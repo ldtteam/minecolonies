@@ -97,6 +97,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public ResourceLocation registryName;
 
     /**
+     * Whether to keep the cached combined inventory
+     */
+    private boolean keepInv;
+
+    /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
      */
     public TileEntityColonyBuilding()
@@ -365,6 +370,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 colonyId = tempColony.getID();
             }
         }
+
+        if (!keepInv)
+        {
+            combinedInv = null;
+        }
     }
 
     public boolean isUsableByPlayer(@NotNull final PlayerEntity player)
@@ -454,6 +464,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 final World world = colony.getWorld();
                 if (world != null)
                 {
+                    keepInv = true;
                     for (final BlockPos pos : building.getAdditionalCountainers())
                     {
                         if (WorldUtil.isBlockLoaded(world, pos))
@@ -468,6 +479,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                                     ((AbstractTileEntityRack) te).setBuildingPos(pos);
                                 }
                             }
+                        }
+                        else
+                        {
+                            keepInv = false;
                         }
                     }
                 }

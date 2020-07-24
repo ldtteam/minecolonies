@@ -28,7 +28,6 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -450,13 +449,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             this.buildingPos = BlockPosUtil.read(compound, TAG_POS);
         }
-    }
-
-    @Override
-    public void setWorldAndPos(World world, BlockPos pos)
-    {
-        super.setWorldAndPos(world, pos);
-        notifyParentAboutInvChange();
     }
 
     @NotNull
