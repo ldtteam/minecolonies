@@ -82,7 +82,8 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public boolean hasItemStack(final ItemStack stack)
     {
-        return content.containsKey(new ItemStorage(stack));
+        final ItemStorage checkItem = new ItemStorage(stack);
+        return content.containsKey(checkItem) && content.get(checkItem) >= stack.getCount();
     }
 
     /**
@@ -134,15 +135,9 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public boolean hasItemStack(final ItemStack stack, final boolean ignoreDamageValue)
     {
-        final ItemStorage compareStorage = new ItemStorage(stack, ignoreDamageValue);
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            if (compareStorage.equals(entry.getKey()))
-            {
-                return true;
-            }
-        }
-        return false;
+        final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
+
+        return content.containsKey(checkItem) && content.get(checkItem) >= stack.getCount(); 
     }
 
     /**
