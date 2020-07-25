@@ -573,10 +573,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 {
                     return true;
                 }
-                if (path.getCurrentPathLength() == 0)
-                {
-                    return true;
-                }
+                return path.getCurrentPathLength() == 0;
             }
             else
             {
@@ -593,6 +590,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         if (worker.getCurrentPosition() == null)
         {
+            worker.setCurrentPosition(worker.getPosition());
             return;
         }
 
