@@ -102,14 +102,11 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     /**
      * Method called when a player uses the block. Takes the needed itmes from the player if needed.
      *
-     * @param worldIn   the world
      * @param playerIn  the player
      * @param itemstack the itemStack on the hand of the player
-     * @param state     the state of the block
-     * @param pos       the position
      * @return if the barrel took any item
      */
-    public boolean useBarrel(final World worldIn, final PlayerEntity playerIn, final ItemStack itemstack, final BlockState state, final BlockPos pos)
+    public boolean useBarrel(final PlayerEntity playerIn, final ItemStack itemstack)
     {
         if (done)
         {
