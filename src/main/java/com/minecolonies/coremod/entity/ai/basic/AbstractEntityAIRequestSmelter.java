@@ -62,13 +62,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
           new AITarget(START_USING_FURNACE, this::fillUpFurnace, 1),
           new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, 1));
     }
-
-    @Override
-    protected int getActionsDoneUntilDumping()
-    {
-        return 32;
-    }
-
+    
     @NotNull
     @Override
     protected List<ItemStack> itemsNiceToHave()
@@ -76,6 +70,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         return getOwnBuilding().getAllowedFuel();
     }
 
+    @Override
     protected int getExtendedOutputCount(final ItemStack primaryOutput)
     {
         if(currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
@@ -229,6 +224,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
             incrementActionsDoneAndDecSaturation();
             job.setCraftCounter(job.getCraftCounter() + resultCount);
+            job.setProgress(job.getProgress() - resultCount);
             if(job.getCraftCounter() >= job.getMaxCraftingCount())
             {
                 job.finishRequest(true);
@@ -278,7 +274,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                           || (hasFuelInFurnaceAndNoSmeltable(furnace) && checkSmeltables)
                           || (amountOfFuel > 0 && hasNeitherFuelNorSmeltAble(furnace)))
                     {
-                        Log.getLogger().info("Check: We can smelt, start using furnace");
                         walkTo = pos;
                         return START_USING_FURNACE;
                     }
@@ -297,7 +292,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             }
         }
 
-        Log.getLogger().info("Check: Furnaces are full, waiting");
         if(furnaceBurning)
         {
             //Todo: Scalable Delay 
@@ -353,12 +347,12 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             if(currentRecipeStorage != null)
             {
                 final Predicate<ItemStack> smeltable = stack -> currentRecipeStorage.getCleanedInput().get(0).getItemStack().isItemEqual(stack);
+                worker.setHeldItem(Hand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(0).getItemStack().copy());
                 if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), smeltable))
                 {
-                    worker.setHeldItem(Hand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(0).getItemStack().copy());
                     if (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace))
                     {
-                        final int toTransfer = Math.min(STACKSIZE, job.getMaxCraftingCount() - job.getProgress());
+                        final int toTransfer = Math.min(STACKSIZE, job.getMaxCraftingCount() - (job.getProgress() + job.getCraftCounter()));
                         if(toTransfer > 0)
                         {
                             job.setProgress(job.getProgress() + toTransfer);
