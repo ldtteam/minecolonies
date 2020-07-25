@@ -338,13 +338,6 @@ public final class ModBuildingsInitializer
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BEEKEEPER_ID))
                                    .createBuildingEntry();
 
-        ModBuildings.alchemist = new BuildingEntry.Builder()
-                                   .setBuildingBlock(ModBlocks.blockHutAlchemist)
-                                   .setBuildingProducer(BuildingAlchemist::new)
-                                   .setBuildingViewProducer(() -> BuildingAlchemist.View::new)
-                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ALCHEMIST_ID))
-                                   .createBuildingEntry();
-
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
@@ -390,6 +383,5 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.rabbitHutch);
         reg.register(ModBuildings.concreteMixer);
         reg.register(ModBuildings.beekeeper);
-        reg.register(ModBuildings.alchemist);
     }
 }

@@ -62,7 +62,6 @@ public final class ModBlocks
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutRabbitHutch;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutConcreteMixer;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutBeekeeper;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutAlchemist;
 
     /**
      * Utility blocks.
