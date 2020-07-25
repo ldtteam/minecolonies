@@ -20,7 +20,7 @@ import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedReq
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -226,7 +226,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
 
                 final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> stack == itemStack);
                 final ILocation itemStackLocation =
-                  manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().getDimension().getType().getId());
+                  manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().func_234923_W_().func_240901_a_());
 
                 final Delivery delivery = new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy(), getDefaultDeliveryPriority(true));
 
@@ -282,7 +282,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
 
     @NotNull
     @Override
-    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         return new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
     }
