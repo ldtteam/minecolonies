@@ -1,3 +1,13 @@
+
+---
+name: Bug Report
+about: Create a report to help us improve
+title: ''
+labels: ''
+assignees: ''
+
+---
+
 # Prerequisites
 
 - [ ] I am running the latest **alpha** version of MineColonies for my Minecraft version.
