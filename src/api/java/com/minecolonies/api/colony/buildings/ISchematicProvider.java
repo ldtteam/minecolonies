@@ -117,7 +117,7 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
     /**
      * Sets the mirror of the current building.
      */
-    void invertMirror();
+    void setIsMirrored(final boolean isMirrored);
 
     /**
      * Returns the mirror of the current building.
@@ -142,6 +142,7 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
 
     /**
      * Check if the building was deconstructed.
+     *
      * @return true if so.
      */
     boolean isDeconstructed();

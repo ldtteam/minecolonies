@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.EventType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -68,8 +69,9 @@ public final class SoundUtils
 
     /**
      * Play a random sound at the citizen.
+     *
      * @param worldIn the world to play it in.
-     * @param pos the pos to play it at.
+     * @param pos     the pos to play it at.
      * @param citizen the citizen to play it for.
      */
     public static void playRandomSound(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final ICitizenData citizen)
@@ -101,7 +103,7 @@ public final class SoundUtils
         {
             playSoundAtCitizenWith(worldIn, pos, EventType.GENERAL, citizen);
         }
-        else if (v <= 0.4 && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick())
+        else if (v <= 0.4 && citizen.getEntity().isPresent() && ((AbstractEntityCitizen) citizen.getEntity().get()).getCitizenDiseaseHandler().isSick())
         {
             playSoundAtCitizenWith(worldIn, pos, EventType.SICKNESS, citizen);
         }
@@ -139,12 +141,16 @@ public final class SoundUtils
     /**
      * Plays a sound with a certain chance at a certain position.
      *
-     * @param worldIn  the world to play the sound in.
-     * @param position position to play the sound at.
-     * @param type    sound to play.
+     * @param worldIn     the world to play the sound in.
+     * @param position    position to play the sound at.
+     * @param type        sound to play.
      * @param citizenData the citizen.
      */
-    public static void playSoundAtCitizenWith(@NotNull final World worldIn, @NotNull final BlockPos position, @Nullable final EventType type, @Nullable final ICitizenData citizenData)
+    public static void playSoundAtCitizenWith(
+      @NotNull final World worldIn,
+      @NotNull final BlockPos position,
+      @Nullable final EventType type,
+      @Nullable final ICitizenData citizenData)
     {
         if (citizenData == null)
         {
@@ -181,6 +187,7 @@ public final class SoundUtils
 
     /**
      * Get a random pitch for a sound.
+     *
      * @param random the random method.
      * @return a random double for the pitch.
      */

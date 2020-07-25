@@ -48,7 +48,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     /**
      * Skill map.
      */
-    public Map<Skill, Tuple<Integer, Double>> skillMap        = new HashMap<>();
+    public Map<Skill, Tuple<Integer, Double>> skillMap = new HashMap<>();
 
     @Override
     public void init(final int levelCap)
@@ -75,7 +75,10 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     {
         for (final Skill skill : Skill.values())
         {
-            skillMap.put(skill, new Tuple<>(Math.max(1, (Math.min(MAX_INHERITANCE, mom.getCitizenSkillHandler().getLevel(skill)) + Math.min(MAX_INHERITANCE, dad.getCitizenSkillHandler().getLevel(skill))) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE)), 0.0D));
+            skillMap.put(skill,
+              new Tuple<>(Math.max(1,
+                (Math.min(MAX_INHERITANCE, mom.getCitizenSkillHandler().getLevel(skill)) + Math.min(MAX_INHERITANCE, dad.getCitizenSkillHandler().getLevel(skill))) / 2
+                  + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE)), 0.0D));
         }
     }
 
@@ -200,7 +203,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
             else
             {
                 xpToDiscount -= currentXp;
-                currentXp = ExperienceUtils.getXPNeededForNextLevel(level-1);
+                currentXp = ExperienceUtils.getXPNeededForNextLevel(level - 1);
                 level--;
             }
         }
@@ -215,11 +218,12 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     public void levelUp(final ICitizenData data)
     {
         // Show level-up particles
-        if (data.getCitizenEntity().isPresent())
+        if (data.getEntity().isPresent())
         {
-            final AbstractEntityCitizen citizen = data.getCitizenEntity().get();
+            final AbstractEntityCitizen citizen = data.getEntity().get();
             Network.getNetwork()
-              .sendToTrackingEntity(new VanillaParticleMessage(citizen.getPosX(), citizen.getPosY(), citizen.getPosZ(), ParticleTypes.HAPPY_VILLAGER), data.getCitizenEntity().get());
+              .sendToTrackingEntity(new VanillaParticleMessage(citizen.getPosX(), citizen.getPosY(), citizen.getPosZ(), ParticleTypes.HAPPY_VILLAGER),
+                data.getEntity().get());
         }
 
         if (data.getJob() != null)
@@ -236,7 +240,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         {
             final Skill primary = ((AbstractBuildingWorker) workBuilding).getPrimarySkill();
             final Skill secondary = ((AbstractBuildingWorker) workBuilding).getSecondarySkill();
-            return (getLevel(primary) + getLevel(secondary))/4;
+            return (getLevel(primary) + getLevel(secondary)) / 4;
         }
         return 0;
     }
@@ -248,7 +252,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         {
             final Skill primary = ((AbstractBuildingWorker.View) workBuilding).getPrimarySkill();
             final Skill secondary = ((AbstractBuildingWorker.View) workBuilding).getSecondarySkill();
-            return (getLevel(primary) + getLevel(secondary))/4;
+            return (getLevel(primary) + getLevel(secondary)) / 4;
         }
         return 0;
     }

@@ -3,10 +3,12 @@ package com.minecolonies.coremod.network.messages.server.colony.citizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -15,6 +17,9 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -80,14 +85,14 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
+        final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
         if (citizenData == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage citizenData is null");
             return;
         }
 
-        final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+        final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();
         if (!optionalEntityCitizen.isPresent())
         {
             Log.getLogger().warn("TransferItemsRequestMessage entity citizen is null");
@@ -107,6 +112,8 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
             return;
         }
 
+        // Inventory content before
+        Map<ItemStorage, ItemStorage> previousContent = null;
         final int amountToTake;
         if (isCreative)
         {
@@ -114,22 +121,57 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
         }
         else
         {
-            amountToTake = Math.min(quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), stack -> stack.isItemEqual(itemStack)));
+            amountToTake = Math.min(quantity,
+              InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack)));
         }
 
-        final ItemStack itemStackToTake = itemStack.copy();
-        ItemStackUtils.setSize(itemStackToTake, quantity);
+        final List<ItemStack> itemsToPut = new ArrayList<>();
+        int tempAmount = amountToTake;
+
+        while (tempAmount > 0)
+        {
+            int count = Math.min(itemStack.getMaxStackSize(), tempAmount);
+            ItemStack stack = itemStack.copy();
+            stack.setCount(count);
+            itemsToPut.add(stack);
+            tempAmount -= count;
+        }
+
         final AbstractEntityCitizen citizen = optionalEntityCitizen.get();
-        final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(citizen.getInventoryCitizen(), itemStackToTake);
+
+        if (!isCreative && MineColonies.getConfig().getCommon().debugInventories.get())
+        {
+            previousContent = InventoryUtils.getAllItemsForProviders(citizen.getInventoryCitizen(), new InvWrapper(player.inventory));
+        }
+
+        tempAmount = 0;
+        for (final ItemStack insertStack : itemsToPut)
+        {
+            final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(citizen.getInventoryCitizen(), insertStack);
+            if (!ItemStackUtils.isEmpty(remainingItemStack))
+            {
+                insertStack.setCount(remainingItemStack.getCount());
+                tempAmount += (insertStack.getCount() - remainingItemStack.getCount());
+                break;
+            }
+            tempAmount += insertStack.getCount();
+        }
+
         if (!isCreative)
         {
-            int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
+            int amountToRemoveFromPlayer = tempAmount;
             while (amountToRemoveFromPlayer > 0)
             {
-                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack));
+                final int slot =
+                  InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack));
                 final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
                 amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
             }
+        }
+
+        if (!isCreative && previousContent != null && MineColonies.getConfig().getCommon().debugInventories.get())
+        {
+            InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(citizen.getInventoryCitizen(), new InvWrapper(player.inventory)), true);
         }
     }
 }

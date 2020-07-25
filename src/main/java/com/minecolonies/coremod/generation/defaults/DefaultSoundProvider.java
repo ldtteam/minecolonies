@@ -84,7 +84,7 @@ public class DefaultSoundProvider implements IDataProvider
         sounds.add("mob.citizen.snore", createSoundJson("neutral", getDefaultProperties(), ImmutableList.of("minecolonies:mob/citizen/snore")));
 
         JsonObject tavernProperties = getDefaultProperties();
-        tavernProperties.addProperty("attenuation_distance", 13);
+        tavernProperties.addProperty("attenuation_distance", 23);
         tavernProperties.addProperty("stream", true);
         tavernProperties.addProperty("comment", "Credits to Darren Curtis - Fireside Tales");
         sounds.add("tile.tavern.tavern_theme", createSoundJson("music", tavernProperties, ImmutableList.of("minecolonies:tile/tavern/tavern_theme")));

@@ -1,44 +1,173 @@
 {
-	"credit": "Made with Blockbench",
-	"textures": {
-		"13": "block/quartz_block_bottom",
-		"14": "block/cauldron_inner",
-		"particle": "block/quartz_block_bottom"
-	},
-	"elements": [
-		{
-			"name": "Charcoal",
-			"from": [4.8, 0.05, 5.5],
-			"to": [5.05, 0.3, 7],
-			"rotation": {"angle": 22.5, "axis": "y", "origin": [8.3, 8, 2]},
-			"faces": {
-				"north": {"uv": [0, 0, 0.25, 0.25], "texture": "#14"},
-				"east": {"uv": [0, 0, 1.5, 0.25], "texture": "#14"},
-				"south": {"uv": [0, 0, 0.25, 0.25], "texture": "#14"},
-				"west": {"uv": [0, 0, 1.5, 0.25], "texture": "#14"},
-				"up": {"uv": [0, 0, 0.25, 1.5], "texture": "#14"},
-				"down": {"uv": [0, 0, 0.25, 1.5], "texture": "#14"}
-			}
-		},
-		{
-			"name": "Paper",
-			"from": [6.3, 0, 6],
-			"to": [9.55, 0.05, 10],
-			"faces": {
-				"north": {"uv": [0, 0, 3.25, 0.05], "texture": "#13"},
-				"east": {"uv": [0, 0, 4, 0.05], "texture": "#13"},
-				"south": {"uv": [0, 0, 3.25, 0.05], "texture": "#13"},
-				"west": {"uv": [0, 0, 4, 0.05], "texture": "#13"},
-				"up": {"uv": [0, 0, 16, 16], "rotation": 90, "texture": "#13"},
-				"down": {"uv": [0, 0, 16, 16], "rotation": 270, "texture": "#13"}
-			}
-		}
-	],
-	"groups": [
-		{
-			"name": "WritingSet-charcoal",
-			"origin": [8, 8, 8],
-			"children": [0, 1]
-		}
-	]
+  "credit": "Made with Blockbench",
+  "textures": {
+    "13": "block/quartz_block_bottom",
+    "14": "block/cauldron_inner",
+    "particle": "block/quartz_block_bottom"
+  },
+  "elements": [
+    {
+      "name": "Charcoal",
+      "from": [
+        4.8,
+        0.05,
+        5.5
+      ],
+      "to": [
+        5.05,
+        0.3,
+        7
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          8.3,
+          8,
+          2
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            0.25,
+            0.25
+          ],
+          "texture": "#14"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1.5,
+            0.25
+          ],
+          "texture": "#14"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            0.25,
+            0.25
+          ],
+          "texture": "#14"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1.5,
+            0.25
+          ],
+          "texture": "#14"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            0.25,
+            1.5
+          ],
+          "texture": "#14"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            0.25,
+            1.5
+          ],
+          "texture": "#14"
+        }
+      }
+    },
+    {
+      "name": "Paper",
+      "from": [
+        6.3,
+        0,
+        6
+      ],
+      "to": [
+        9.55,
+        0.05,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            3.25,
+            0.05
+          ],
+          "texture": "#13"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            4,
+            0.05
+          ],
+          "texture": "#13"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            3.25,
+            0.05
+          ],
+          "texture": "#13"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            4,
+            0.05
+          ],
+          "texture": "#13"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90,
+          "texture": "#13"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 270,
+          "texture": "#13"
+        }
+      }
+    }
+  ],
+  "groups": [
+    {
+      "name": "WritingSet-charcoal",
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "children": [
+        0,
+        1
+      ]
+    }
+  ]
 }

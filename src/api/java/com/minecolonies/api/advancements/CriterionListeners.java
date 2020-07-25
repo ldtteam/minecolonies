@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 
 public class CriterionListeners<T extends ICriterionInstance>
 {
-    private final PlayerAdvancements playerAdvancements;
+    private final PlayerAdvancements                 playerAdvancements;
     private final Set<ICriterionTrigger.Listener<T>> listeners = Sets.newHashSet();
 
     public CriterionListeners(PlayerAdvancements playerAdvancements)

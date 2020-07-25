@@ -12,14 +12,15 @@ import java.util.Map;
 public interface IFurnaceRecipes
 {
     /**
-     * Set the map.
-     * This is called from the client side message.
+     * Set the map. This is called from the client side message.
+     *
      * @param map the map to set.
      */
     void setMap(final Map<ItemStorage, RecipeStorage> map);
 
     /**
      * Get the smelting result for a certain itemStack.
+     *
      * @param itemStack the itemStack to test.
      * @return the result or empty if not existent.
      */

@@ -24,6 +24,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenJobHandler(final AbstractEntityCitizen citizen)
@@ -33,6 +34,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
 
     /**
      * Set Model depending on job.
+     *
      * @param job the new job.
      */
     @Override
@@ -126,6 +128,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
 
     /**
      * Gets the job of the entity.
+     *
      * @return the job or els enull.
      */
     @Override

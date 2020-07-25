@@ -22,17 +22,17 @@ public interface ILocalResearchFactory extends IFactory<FactoryVoidInput, ILocal
             throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only " + PARAMS_LOCAL_RESEARCH + " are allowed!");
         }
 
-        if(!(context[0] instanceof String))
+        if (!(context[0] instanceof String))
         {
             throw new IllegalArgumentException("First parameter is supposed to be the String ID!");
         }
 
-        if(!(context[2] instanceof String))
+        if (!(context[2] instanceof String))
         {
             throw new IllegalArgumentException("Third parameter is supposed to be the Branch (String)!");
         }
 
-        if(!(context[4] instanceof Integer))
+        if (!(context[4] instanceof Integer))
         {
             throw new IllegalArgumentException("Fifth parameter is supposed to be the Depth (int)!");
         }
@@ -46,9 +46,9 @@ public interface ILocalResearchFactory extends IFactory<FactoryVoidInput, ILocal
     /**
      * Method to get a new Instance of a Research.
      *
-     * @param id the id.
+     * @param id     the id.
      * @param branch the branch.
-     * @param depth the depth.
+     * @param depth  the depth.
      * @return a new Instance of Research.
      */
     @NotNull

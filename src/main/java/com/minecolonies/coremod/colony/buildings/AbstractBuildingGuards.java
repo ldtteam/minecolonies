@@ -221,7 +221,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         // Only change HP values if assign successful
         if (super.assignCitizen(citizen) && citizen != null)
         {
-            final Optional<AbstractEntityCitizen> optCitizen = citizen.getCitizenEntity();
+            final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
             if (optCitizen.isPresent())
             {
                 final AbstractEntityCitizen citizenEntity = optCitizen.get();
@@ -332,7 +332,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     {
         if (citizen != null)
         {
-            final Optional<AbstractEntityCitizen> optCitizen = citizen.getCitizenEntity();
+            final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
             if (optCitizen.isPresent())
             {
                 AttributeModifierUtils.removeAllHealthModifiers(optCitizen.get());
@@ -344,6 +344,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 optCitizen.get().setItemStackToSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
             }
         }
+        citizen.setHomeBuilding(null);
         super.removeCitizen(citizen);
     }
 
@@ -430,7 +431,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private int patrolTimer = 0;
 
     @Override
-    public void onColonyTick(final IColony colony)
+    public void onColonyTick(@NotNull final IColony colony)
     {
         super.onColonyTick(colony);
         if (patrolTimer > 0 && task == GuardTask.PATROL)
@@ -472,11 +473,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         for (final ICitizenData curguard : getAssignedCitizen())
         {
-            if (curguard.getCitizenEntity().isPresent())
+            if (curguard.getEntity().isPresent())
             {
-                if (curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+                if (curguard.getEntity().get().getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
                 {
-                    ((AbstractEntityAIGuard<?, ?>) curguard.getCitizenEntity().get().getCitizenJobHandler().getColonyJob().getWorkerAI()).setNextPatrolTarget(lastPatrolPoint);
+                    ((AbstractEntityAIGuard<?, ?>) curguard.getEntity().get().getCitizenJobHandler().getColonyJob().getWorkerAI()).setNextPatrolTarget(lastPatrolPoint);
                 }
             }
         }

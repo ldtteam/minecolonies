@@ -26,6 +26,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
 
     /**
      * Check whether dynamic tree's mod is present
+     *
      * @return true
      */
     @Override
@@ -266,7 +267,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      *
      * @param block1 First blockpos to compare
      * @param block2 Second blockpos to compare
-     * @param world the world.
+     * @param world  the world.
      * @return true when same family
      */
     public static boolean hasFittingTreeFamily(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final IWorld world)

@@ -10,6 +10,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.ai.goal.Goal;
@@ -20,19 +21,17 @@ import java.util.Arrays;
 import java.util.EnumSet;
 
 /**
- * Skeleton class for worker ai.
- * Here general target execution will be handled.
- * No utility on this level!
+ * Skeleton class for worker ai. Here general target execution will be handled. No utility on this level!
  *
  * @param <J> the job this ai will have.
  */
 public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
 {
     @NotNull
-    protected final      J                     job;
+    protected final J                     job;
     @NotNull
-    protected final      AbstractEntityCitizen worker;
-    protected final      World                 world;
+    protected final AbstractEntityCitizen worker;
+    protected final World                 world;
 
     /**
      * The statemachine this AI uses
@@ -49,14 +48,14 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     {
         super();
 
-        if (!job.getCitizen().getCitizenEntity().isPresent())
+        if (!job.getCitizen().getEntity().isPresent())
         {
             throw new IllegalArgumentException("Cannot instantiate a AI from a Job that is attached to a Citizen without entity.");
         }
 
         this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
         this.job = job;
-        this.worker = this.job.getCitizen().getCitizenEntity().get();
+        this.worker = this.job.getCitizen().getEntity().get();
         this.world = CompatibilityUtils.getWorldFromCitizen(this.worker);
         stateMachine = new TickRateStateMachine<>(AIWorkerState.INIT, this::onException);
         stateMachine.setTickRate(MineColonies.getConfig().getCommon().updateRate.get());
@@ -73,9 +72,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     }
 
     /**
-     * Register all targets your ai needs.
-     * They will be checked in the order of registration,
-     * so sort them accordingly.
+     * Register all targets your ai needs. They will be checked in the order of registration, so sort them accordingly.
      *
      * @param targets a number of targets that need registration
      */
@@ -111,6 +108,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     public final void startExecuting()
     {
         worker.getCitizenStatusHandler().setStatus(Status.WORKING);
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
     }
 
     /**
@@ -120,6 +118,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     public final void resetTask()
     {
         resetAI();
+        worker.getCitizenData().setVisibleStatus(null);
     }
 
     /**
@@ -136,9 +135,8 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     }
 
     /**
-     * Made final to preserve behaviour:
-     * Sets a bitmask telling which other tasks may not run concurrently. The test is a simple bitwise AND - if it
-     * yields zero, the two tasks may run concurrently, if not - they must run exclusively from each other.
+     * Made final to preserve behaviour: Sets a bitmask telling which other tasks may not run concurrently. The test is a simple bitwise AND - if it yields zero, the two tasks may
+     * run concurrently, if not - they must run exclusively from each other.
      *
      * @param mutexBits the bits to flag this with.
      */
@@ -173,6 +171,6 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
      */
     public void resetAI()
     {
-        stateMachine.addTransition(new AIOneTimeEventTarget(AIWorkerState.IDLE));
+        stateMachine.reset();
     }
 }

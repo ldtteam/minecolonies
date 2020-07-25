@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -8,14 +9,19 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobStonemason;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +56,29 @@ public class BuildingStonemason extends AbstractBuildingCrafter
         super(c, l);
     }
 
+    @Override
+    public void checkForWorkerSpecificRecipes()
+    {
+        final IRecipeStorage sandstoneStorage = StandardFactoryController.getInstance().getNewInstance(
+          TypeConstants.RECIPE,
+          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+          ImmutableList.of(new ItemStack(Blocks.COBBLESTONE, 1), new ItemStack(Blocks.SAND, 1)),
+          1,
+          new ItemStack(Blocks.SANDSTONE, 1),
+          Blocks.AIR);
+
+        final IRecipeStorage redsandstoneStorage = StandardFactoryController.getInstance().getNewInstance(
+          TypeConstants.RECIPE,
+          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+          ImmutableList.of(new ItemStack(Blocks.COBBLESTONE, 1), new ItemStack(Blocks.RED_SAND, 1)),
+          1,
+          new ItemStack(Blocks.RED_SANDSTONE, 1),
+          Blocks.AIR);
+              
+        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(sandstoneStorage));
+        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(redsandstoneStorage));
+
+    }
 
     @NotNull
     @Override

@@ -19,7 +19,6 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.RecipeBook;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -62,8 +61,7 @@ public abstract class CommonProxy implements IProxy
      * Adds an entity's custom data to the map for temporary storage.
      *
      * @param name     player UUID + Properties name, HashMap key.
-     * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties
-     *                 data only.
+     * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties data only.
      */
     public static void storeEntityData(final String name, final CompoundNBT compound)
     {
@@ -71,8 +69,7 @@ public abstract class CommonProxy implements IProxy
     }
 
     /**
-     * Removes the compound from the map and returns the NBT tag stored for name
-     * or null if none exists.
+     * Removes the compound from the map and returns the NBT tag stored for name or null if none exists.
      *
      * @param name player UUID + Properties name, HashMap key.
      * @return CompoundNBT PlayerProperties NBT compound.

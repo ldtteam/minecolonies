@@ -21,6 +21,7 @@ import com.minecolonies.coremod.client.gui.WindowHutWareHouse;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseConcreteRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.block.AbstractChestBlock;
@@ -146,6 +147,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
     /**
      * Get the maximimum number of dmen that can be assigned to the warehoue.
+     *
      * @return the maximum amount.
      */
     private int getMaxAssignedDmen()
@@ -203,7 +205,8 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         for (int i = 0; i < deliverymanTagList.size(); i++)
         {
             final BlockPos pos = NBTUtil.readBlockPos(deliverymanTagList.getCompound(i));
-            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker) {
+            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker)
+            {
                 registeredDeliverymen.add(new Vec3d(pos));
             }
         }
@@ -244,6 +247,12 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     }
 
     @Override
+    public boolean hasContainerPosition(final BlockPos inDimensionLocation)
+    {
+        return containerList.contains(inDimensionLocation) || getLocation().getInDimensionLocation().equals(inDimensionLocation);
+    }
+
+    @Override
     public int getMaxBuildingLevel()
     {
         return MAX_LEVEL;
@@ -270,8 +279,8 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             {
                 ((AbstractTileEntityRack) entity).setInWarehouse(true);
             }
-            addContainerPosition(pos);
         }
+        super.registerBlockPosition(block, pos, world);
     }
 
     /**
@@ -323,7 +332,10 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
         builder.addAll(supers);
         builder.add(new WarehouseRequestResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+          new WarehouseConcreteRequestResolver(getRequester().getLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN))
+          );
 
         return builder.build();
     }

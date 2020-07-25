@@ -45,10 +45,8 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     }
 
     /**
-     * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the worker inventory.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the stack.
+     * Finds the first @see ItemStack the type of {@code is}. It will be taken from the chest and placed in the worker inventory. Make sure that the worker stands next the chest to
+     * not break immersion. Also make sure to have inventory space for the stack.
      *
      * @param entity                      the tileEntity chest or building.
      * @param itemStackSelectionPredicate the itemStack predicate.
@@ -189,7 +187,6 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
         tagPosMap = positionedTags;
     }
 
-
     @Override
     public Tuple<BlockPos, BlockPos> getCornerPositions()
     {
@@ -215,6 +212,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
         readSchematicDataFromNBT(compound);
     }
 
+    @NotNull
     @Override
     public CompoundNBT write(@NotNull final CompoundNBT compound)
     {

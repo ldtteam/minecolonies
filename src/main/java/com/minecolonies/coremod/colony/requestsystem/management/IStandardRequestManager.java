@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.requestsystem.management;
 
 import com.minecolonies.api.colony.requestsystem.data.*;
+import com.minecolonies.api.colony.requestsystem.management.*;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.*;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import org.jetbrains.annotations.NotNull;
 

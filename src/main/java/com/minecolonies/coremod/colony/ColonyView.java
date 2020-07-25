@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
@@ -18,6 +19,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
@@ -56,7 +58,7 @@ public final class ColonyView implements IColonyView
     /**
      * Max allowed CompoundNBT in bytes
      */
-    private static final int MAX_BYTES_NBTCOMPOUND = 350000;
+    private static final int REQUEST_MANAGER_MAX_SIZE = 700000;
 
     //  General Attributes
     private final int                            id;
@@ -69,6 +71,7 @@ public final class ColonyView implements IColonyView
     //  Citizenry
     @NotNull
     private final Map<Integer, ICitizenDataView> citizens    = new HashMap<>();
+    private       Map<Integer, IVisitorViewData> visitors    = new HashMap<>();
     private       String                         name        = "Unknown";
     private       int                            dimensionId;
 
@@ -161,11 +164,6 @@ public final class ColonyView implements IColonyView
      * Print progress.
      */
     private boolean printProgress;
-
-    /**
-     * The cost of citizens bought
-     */
-    private int boughtCitizenCost;
 
     /**
      * The last use time of the mercenaries.
@@ -270,16 +268,12 @@ public final class ColonyView implements IColonyView
         if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || hasNewSubscribers))
         {
             final int preSize = buf.writerIndex();
-            final int preState = buf.readerIndex();
             buf.writeBoolean(true);
-            buf.writeCompoundTag(colony.getRequestManager().serializeNBT());
+            colony.getRequestManager().serialize(StandardFactoryController.getInstance(), buf);
             final int postSize = buf.writerIndex();
-            if ((postSize - preSize) >= ColonyView.MAX_BYTES_NBTCOMPOUND)
+            if ((postSize - preSize) >= ColonyView.REQUEST_MANAGER_MAX_SIZE)
             {
-                colony.getRequestManager().reset();
-                buf.setIndex(preState, preSize);
-                buf.writeBoolean(true);
-                buf.writeCompoundTag(colony.getRequestManager().serializeNBT());
+                Log.getLogger().warn("Colony " + colony.getID() + " has a very big memory imprint, this could be a memory leak, please contact the mod author!");
             }
         }
         else
@@ -297,7 +291,6 @@ public final class ColonyView implements IColonyView
 
         buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
 
-        buf.writeInt(colony.getBoughtCitizenCost());
         buf.writeLong(colony.getMercenaryUseTime());
 
         buf.writeString(colony.getStyle());
@@ -562,6 +555,12 @@ public final class ColonyView implements IColonyView
         return null;
     }
 
+    @Override
+    public boolean isActive()
+    {
+        return true;
+    }
+
     /**
      * Sets if citizens can move in.
      *
@@ -583,14 +582,12 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Get a AbstractBuilding.View for a given building (by coordinate-id) using
-     * raw x,y,z.
+     * Get a AbstractBuilding.View for a given building (by coordinate-id) using raw x,y,z.
      *
      * @param x x-coordinate.
      * @param y y-coordinate.
      * @param z z-coordinate.
-     * @return {@link AbstractBuildingView} of a AbstractBuilding for the given
-     * Coordinates/ID, or null.
+     * @return {@link AbstractBuildingView} of a AbstractBuilding for the given Coordinates/ID, or null.
      */
     @Override
     public IBuildingView getBuilding(final int x, final int y, final int z)
@@ -599,12 +596,10 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Get a AbstractBuilding.View for a given building (by coordinate-id) using
-     * ChunkCoordinates.
+     * Get a AbstractBuilding.View for a given building (by coordinate-id) using ChunkCoordinates.
      *
      * @param buildingId Coordinates/ID of the AbstractBuilding.
-     * @return {@link AbstractBuildingView} of a AbstractBuilding for the given
-     * Coordinates/ID, or null.
+     * @return {@link AbstractBuildingView} of a AbstractBuilding for the given Coordinates/ID, or null.
      */
     @Override
     public IBuildingView getBuilding(final BlockPos buildingId)
@@ -613,8 +608,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Returns a map of players in the colony. Key is the UUID, value is {@link
-     * Player}
+     * Returns a map of players in the colony. Key is the UUID, value is {@link Player}
      *
      * @return Map of UUID's and {@link Player}
      */
@@ -626,8 +620,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Sets a specific permission to a rank. If the permission wasn't already
-     * set, it sends a message to the server.
+     * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server.
      *
      * @param rank   Rank to get the permission.
      * @param action Permission to get.
@@ -642,8 +635,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * removes a specific permission to a rank. If the permission was set, it
-     * sends a message to the server.
+     * removes a specific permission to a rank. If the permission was set, it sends a message to the server.
      *
      * @param rank   Rank to remove permission from.
      * @param action Action to remove permission of.
@@ -718,7 +710,14 @@ public final class ColonyView implements IColonyView
     @Override
     public ICitizenDataView getCitizen(final int id)
     {
-        return citizens.get(id);
+        if (id > 0)
+        {
+            return citizens.get(id);
+        }
+        else
+        {
+            return visitors.get(id);
+        }
     }
 
     /**
@@ -779,9 +778,8 @@ public final class ColonyView implements IColonyView
 
         if (buf.readBoolean())
         {
-            final CompoundNBT compound = buf.readCompoundTag();
             this.requestManager = new StandardRequestManager(this);
-            this.requestManager.deserializeNBT(compound);
+            this.requestManager.deserialize(StandardFactoryController.getInstance(), buf);
         }
 
         final int barbSpawnListSize = buf.readInt();
@@ -794,8 +792,6 @@ public final class ColonyView implements IColonyView
         this.teamColonyColor = TextFormatting.values()[buf.readInt()];
 
         this.printProgress = buf.readBoolean();
-
-        this.boughtCitizenCost = buf.readInt();
 
         this.mercenaryLastUseTime = buf.readLong();
 
@@ -838,9 +834,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Update a ColonyView's workOrders given a network data ColonyView update
-     * packet. This uses a full-replacement - workOrders do not get updated and
-     * are instead overwritten.
+     * Update a ColonyView's workOrders given a network data ColonyView update packet. This uses a full-replacement - workOrders do not get updated and are instead overwritten.
      *
      * @param buf Network data.
      * @return null == no response.
@@ -863,9 +857,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Update a ColonyView's citizens given a network data ColonyView update
-     * packet. This uses a full-replacement - citizens do not get updated and
-     * are instead overwritten.
+     * Update a ColonyView's citizens given a network data ColonyView update packet. This uses a full-replacement - citizens do not get updated and are instead overwritten.
      *
      * @param id  ID of the citizen.
      * @param buf Network data.
@@ -882,6 +874,20 @@ public final class ColonyView implements IColonyView
         }
 
         return null;
+    }
+
+    @Override
+    public void handleColonyViewVisitorMessage(final boolean refresh, final Set<IVisitorViewData> visitorViewData)
+    {
+        if (refresh)
+        {
+            visitors = new HashMap<>();
+        }
+
+        for (final IVisitorViewData data : visitorViewData)
+        {
+            visitors.put(data.getId(), data);
+        }
     }
 
     /**
@@ -932,9 +938,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Update a ColonyView's buildings given a network data ColonyView update
-     * packet. This uses a full-replacement - buildings do not get updated and
-     * are instead overwritten.
+     * Update a ColonyView's buildings given a network data ColonyView update packet. This uses a full-replacement - buildings do not get updated and are instead overwritten.
      *
      * @param buildingId location of the building.
      * @param buf        buffer containing ColonyBuilding information.
@@ -1077,6 +1081,12 @@ public final class ColonyView implements IColonyView
     public boolean hasWarehouse()
     {
         return hasColonyWarehouse;
+    }
+
+    @Override
+    public boolean isDay()
+    {
+        return false;
     }
 
     @Override
@@ -1280,23 +1290,6 @@ public final class ColonyView implements IColonyView
         return new ArrayList<>(buildings.values());
     }
 
-    /**
-     * Get the cost multiplier of buying a citizen.
-     *
-     * @return the current cost.
-     */
-    @Override
-    public int getBoughtCitizenCost()
-    {
-        return boughtCitizenCost;
-    }
-
-    @Override
-    public void increaseBoughtCitizenCost()
-    {
-
-    }
-
     @NotNull
     @Override
     public List<PlayerEntity> getImportantMessageEntityPlayers()
@@ -1329,6 +1322,12 @@ public final class ColonyView implements IColonyView
 
     @Override
     public ICitizenManager getCitizenManager()
+    {
+        return null;
+    }
+
+    @Override
+    public IVisitorManager getVisitorManager()
     {
         return null;
     }
@@ -1397,5 +1396,11 @@ public final class ColonyView implements IColonyView
     public boolean areSpiesEnabled()
     {
         return spiesEnabled;
+    }
+
+    @Override
+    public ICitizenDataView getVisitor(final int citizenId)
+    {
+        return visitors.get(citizenId);
     }
 }

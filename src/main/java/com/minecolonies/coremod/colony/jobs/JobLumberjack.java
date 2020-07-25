@@ -21,7 +21,7 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
      * The tree this lumberjack is currently working on.
      */
     @Nullable
-    private              Tree   tree;
+    private Tree tree;
 
     /**
      * Create a lumberjack job.

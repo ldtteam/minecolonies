@@ -25,7 +25,6 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
      */
     private final List<String> branches = new ArrayList<>();
 
-
     /**
      * Constructor for the window of the lumberjack.
      *
@@ -37,7 +36,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
 
         final View view = this.findPaneOfTypeByID(BRANCH_VIEW_ID, View.class);
         int offset = 0;
-        for (final String branch: IGlobalResearchTree.getInstance().getBranches())
+        for (final String branch : IGlobalResearchTree.getInstance().getBranches())
         {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
@@ -60,10 +59,9 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
 
         if (branches.contains(label))
         {
-            new WindowResearchTree( label, building, this).open();
+            new WindowResearchTree(label, building, this).open();
         }
     }
-
 
     /**
      * Returns the name of a building.

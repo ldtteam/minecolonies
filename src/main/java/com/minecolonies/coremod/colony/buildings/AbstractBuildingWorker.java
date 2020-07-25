@@ -126,9 +126,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
+     * Override this method if you want to keep an amount of items in inventory. When the inventory is full, everything get's dumped into the building chest. But you can use this
+     * method to hold some stacks back.
      *
      * @return a list of objects which should be kept.
      */
@@ -239,6 +238,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             return Optional.of(false);
         }
 
+        // Check against allowed products
+        if (ItemTags.getCollection().getOrCreate(products).contains(storage.getPrimaryOutput().getItem()))
+        {
+            return Optional.of(true);
+        }
+
         // Check against excluded ingredients
         for (final ItemStack stack : storage.getInput())
         {
@@ -246,12 +251,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             {
                 return Optional.of(false);
             }
-        }
-
-        // Check against allowed products
-        if (ItemTags.getCollection().getOrCreate(products).contains(storage.getPrimaryOutput().getItem()))
-        {
-            return Optional.of(true);
         }
 
         // Check against allowed ingredients
@@ -365,11 +364,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                     final ICitizenData data;
                     if (workersTagList.getCompound(i).keySet().contains(TAG_ID))
                     {
-                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompound(i).getInt(TAG_ID));
+                        data = getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_ID));
                     }
                     else if (workersTagList.getCompound(i).keySet().contains(TAG_WORKER_ID))
                     {
-                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
+                        data = getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
                     }
                     else
                     {
@@ -385,7 +384,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             catch (final Exception e)
             {
                 Log.getLogger().warn("Warning: Updating data structures:", e);
-                final ICitizenData worker = getColony().getCitizenManager().getCitizen(compound.getInt(TAG_WORKER));
+                final ICitizenData worker = getColony().getCitizenManager().getCivilian(compound.getInt(TAG_WORKER));
                 assignCitizen(worker);
             }
         }
@@ -395,7 +394,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         final ListNBT recipesTags = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < recipesTags.size(); i++)
         {
-            final IToken<?> token  = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
+            final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
             if (!recipes.contains(token))
             {
                 recipes.add(token);
@@ -438,16 +437,30 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     {
         if (canRecipeBeAdded(token))
         {
-            recipes.add(token);
+            addRecipeToList(token);
             markDirty();
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
             {
-                colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                colony.getRequestManager()
+                  .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
             }
             return true;
         }
         return false;
+    }
+
+    /**
+     * Add a recipe to the list of recipes.
+     *
+     * @param token the token to add.
+     */
+    public void addRecipeToList(final IToken<?> token)
+    {
+        if (!recipes.contains(token))
+        {
+            recipes.add(token);
+        }
     }
 
     @Override
@@ -461,6 +474,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public void onColonyTick(@NotNull final IColony colony)
     {
         super.onColonyTick(colony);
+        checkForWorkerSpecificRecipes();
 
         // If we have no active worker, grab one from the Colony
         if (!isFull() && ((getBuildingLevel() > 0 && isBuilt()) || this instanceof BuildingBuilder)
@@ -604,6 +618,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public boolean canEat(final ItemStack stack)
     {
         return true;
+    }
+
+    /**
+     * Check for worker specific recipes and add them if necessary.
+     */
+    public void checkForWorkerSpecificRecipes()
+    {
+        // Override if necessary.
     }
 
     /**

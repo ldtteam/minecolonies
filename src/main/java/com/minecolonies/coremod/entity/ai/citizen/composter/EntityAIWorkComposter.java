@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -17,6 +18,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +41,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     /**
      * The block pos to which the AI is going.
      */
-    private  BlockPos currentTarget;
+    private BlockPos currentTarget;
 
     /**
      * The number of times the AI will check if the player has set any items on the list until messaging him
@@ -67,6 +69,12 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     private static final String COMPOSTABLE_LIST = "compostables";
 
     /**
+     * Composting icon
+     */
+    private final static VisibleCitizenStatus COMPOST =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/composter.png"), "com.minecolonies.gui.visiblestatus.composter");
+
+    /**
      * Constructor for the AI
      *
      * @param job the job to fulfill
@@ -86,6 +94,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
     /**
      * Method for the AI to try to get the materials needed for the task he's doing. Will request if there are no materials
+     *
      * @return the new IAIState after doing this
      */
     private IAIState getMaterials()
@@ -95,25 +104,24 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             setDelay(2);
             return getState();
         }
-        if(getOwnBuilding().getCopyOfAllowedItems().isEmpty())
+        if (getOwnBuilding().getCopyOfAllowedItems().isEmpty())
         {
             complain();
             return getState();
         }
-        if(InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))))
+        if (InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))))
         {
             InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
               getOwnBuilding(),
               InventoryUtils.findFirstSlotInProviderNotEmptyWith(getOwnBuilding(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))),
               worker.getInventoryCitizen());
-
         }
 
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
           worker.getInventoryCitizen(),
           stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))
         );
-        if(slot >= 0)
+        if (slot >= 0)
         {
             worker.setHeldItem(Hand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(slot));
             return START_WORKING;
@@ -121,7 +129,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         worker.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
 
-        if(!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
+        if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
         {
             final ArrayList<ItemStack> itemList = new ArrayList<>();
             for (final ItemStorage item : getOwnBuilding().getCopyOfAllowedItems().get(COMPOSTABLE_LIST))
@@ -142,13 +150,15 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
     /**
      * Method for the AI to decide what to do. Possible actions: harvest barrels, fill barrels or idle
+     *
      * @return the decision it made
      */
     private IAIState decideWhatToDo()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
-        if(walkToBuilding())
+        if (walkToBuilding())
         {
             setDelay(2);
             return getState();
@@ -156,28 +166,30 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         final BuildingComposter building = this.getOwnBuilding();
 
-        for(final BlockPos barrel : building.getBarrels())
+        for (final BlockPos barrel : building.getBarrels())
         {
-            final TileEntity te =world.getTileEntity(barrel);
-            if(te instanceof TileEntityBarrel)
+            final TileEntity te = world.getTileEntity(barrel);
+            if (te instanceof TileEntityBarrel)
             {
 
                 this.currentTarget = barrel;
                 if (((TileEntityBarrel) te).isDone())
                 {
                     setDelay(DECIDE_DELAY);
+                    worker.getCitizenData().setVisibleStatus(COMPOST);
                     return COMPOSTER_HARVEST;
                 }
             }
         }
 
-        for(final BlockPos barrel : building.getBarrels())
+        for (final BlockPos barrel : building.getBarrels())
         {
-            final TileEntity te =world.getTileEntity(barrel);
-            if(te instanceof TileEntityBarrel && !((TileEntityBarrel) te).checkIfWorking())
+            final TileEntity te = world.getTileEntity(barrel);
+            if (te instanceof TileEntityBarrel && !((TileEntityBarrel) te).checkIfWorking())
             {
                 this.currentTarget = barrel;
                 setDelay(DECIDE_DELAY);
+                worker.getCitizenData().setVisibleStatus(COMPOST);
                 return COMPOSTER_FILL;
             }
         }
@@ -188,18 +200,19 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
     /**
      * The AI will now fill the barrel that he found empty on his building
+     *
      * @return the nex IAIState after doing this
      */
     private IAIState fillBarrels()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING));
 
-        if(worker.getHeldItem(Hand.MAIN_HAND) == ItemStack.EMPTY)
+        if (worker.getHeldItem(Hand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-                            worker.getInventoryCitizen(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack)));
+              worker.getInventoryCitizen(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack)));
 
-            if(slot >= 0)
+            if (slot >= 0)
             {
                 worker.setHeldItem(Hand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(slot));
             }
@@ -214,7 +227,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
 
-        if(world.getTileEntity(currentTarget) instanceof TileEntityBarrel)
+        if (world.getTileEntity(currentTarget) instanceof TileEntityBarrel)
         {
 
             final TileEntityBarrel barrel = (TileEntityBarrel) world.getTileEntity(currentTarget);
@@ -226,7 +239,6 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
 
             incrementActionsDone();
-
         }
         setDelay(AFTER_TASK_DELAY);
         return START_WORKING;
@@ -234,6 +246,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
     /**
      * The AI will harvest the barrels he found finished on his building.
+     *
      * @return the next IAIState after doing this
      */
     private IAIState harvestBarrels()
@@ -246,7 +259,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
 
-        if(world.getTileEntity(currentTarget) instanceof TileEntityBarrel)
+        if (world.getTileEntity(currentTarget) instanceof TileEntityBarrel)
         {
             worker.getCitizenItemHandler().hitBlockWithToolInHand(currentTarget);
 
@@ -271,24 +284,25 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
     /**
      * Gives the loot multiplier based on the citizen level and a random number.
+     *
      * @param random the random number to get the percentages
      * @return the multiplier for the amount of compost (base amount: 6)
      */
-    private double getLootMultiplier( final Random random)
+    private double getLootMultiplier(final Random random)
     {
         final int citizenLevel = worker.getCitizenData().getJobModifier();
 
         final int diceResult = random.nextInt(100);
 
-        if(diceResult <= citizenLevel*2)
+        if (diceResult <= citizenLevel * 2)
         {
             return DOUBLE;
         }
-        if(diceResult <= citizenLevel*4)
+        if (diceResult <= citizenLevel * 4)
         {
             return 1.5;
         }
-        if(diceResult <= citizenLevel*8)
+        if (diceResult <= citizenLevel * 8)
         {
             return 1.25;
         }
@@ -303,12 +317,12 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     }
 
     /**
-     * If the list of allowed items is empty, the AI will message all the officers of the colony asking for them to set the list.
-     * Happens more or less once a day if the list is not filled
+     * If the list of allowed items is empty, the AI will message all the officers of the colony asking for them to set the list. Happens more or less once a day if the list is not
+     * filled
      */
     private void complain()
     {
-        if(ticksToComplain <= 0)
+        if (ticksToComplain <= 0)
         {
             ticksToComplain = TICKS_UNTIL_COMPLAIN;
             for (final PlayerEntity player : getOwnBuilding().getColony().getMessagePlayerEntities())

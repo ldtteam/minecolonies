@@ -277,7 +277,7 @@ public class EntityAIWalkToRandomHuts extends Goal
 
     /**
      * Handles beeing completly stuck, teleports the entity a little.
-     * 
+     *
      * @param targetDist the current distance from the target.
      * @return whether the handling worked.
      */
@@ -311,7 +311,7 @@ public class EntityAIWalkToRandomHuts extends Goal
 
     /**
      * Tries to skip ahead on an existing path.
-     * 
+     *
      * @return whether we skipped ahead on the current path.
      */
     private boolean trySkipAheadOnPath()

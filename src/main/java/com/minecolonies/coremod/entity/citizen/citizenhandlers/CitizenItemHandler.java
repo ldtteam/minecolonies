@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenItemHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.BlockParticleEffectMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.block.Block;
@@ -41,13 +41,14 @@ public class CitizenItemHandler implements ICitizenItemHandler
     /**
      * The citizen assigned to this manager.
      */
-    private final EntityCitizen citizen;
+    private final AbstractEntityCitizen citizen;
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenItemHandler(final EntityCitizen citizen)
+    public CitizenItemHandler(final AbstractEntityCitizen citizen)
     {
         this.citizen = citizen;
     }
@@ -160,8 +161,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     /**
      * Swing entity arm, create sound and particle effects.
      * <p>
-     * If breakBlock is true then it will break the block (different sound and
-     * particles), and damage the tool in the citizens hand.
+     * If breakBlock is true then it will break the block (different sound and particles), and damage the tool in the citizens hand.
      *
      * @param blockPos   Block position.
      * @param breakBlock if we want to break this block.
@@ -236,7 +236,8 @@ public class CitizenItemHandler implements ICitizenItemHandler
         }
 
         double chance = 0;
-        final MultiplierModifierResearchEffect effect = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TOOL_DURABILITY, MultiplierModifierResearchEffect.class);
+        final MultiplierModifierResearchEffect effect =
+          citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TOOL_DURABILITY, MultiplierModifierResearchEffect.class);
         if (effect != null)
         {
             chance = effect.getEffect();
@@ -267,8 +268,8 @@ public class CitizenItemHandler implements ICitizenItemHandler
     {
         for (final ItemEntity item :
           CompatibilityUtils.getWorldFromCitizen(citizen).
-                                             getEntitiesWithinAABB(ItemEntity.class,
-                                               new AxisAlignedBB(citizen.getPosition()).expand(2.0F, 1.0F, 2.0F).expand(-2.0F, -1.0F, -2.0F)))
+                                                           getEntitiesWithinAABB(ItemEntity.class,
+                                                             new AxisAlignedBB(citizen.getPosition()).expand(2.0F, 1.0F, 2.0F).expand(-2.0F, -1.0F, -2.0F)))
         {
             if (item != null && citizen.canPickUpLoot())
             {
@@ -280,8 +281,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     /**
      * Swing entity arm, create sound and particle effects.
      * <p>
-     * This will break the block (different sound and particles),
-     * and damage the tool in the citizens hand.
+     * This will break the block (different sound and particles), and damage the tool in the citizens hand.
      *
      * @param blockPos Block position.
      */
@@ -341,8 +341,9 @@ public class CitizenItemHandler implements ICitizenItemHandler
     {
         double localXp = xp;
 
-        final int toolSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventoryCitizen(), stack -> stack.isEnchanted() && EnchantmentHelper.getEnchantments(stack).containsKey(
-          Enchantments.MENDING));
+        final int toolSlot =
+          InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventoryCitizen(), stack -> stack.isEnchanted() && EnchantmentHelper.getEnchantments(stack).containsKey(
+            Enchantments.MENDING));
         if (toolSlot == -1)
         {
             return localXp;

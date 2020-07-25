@@ -22,6 +22,7 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
 
     /**
      * Create a new Pirate raid event.
+     *
      * @param colony the colony.
      */
     public PirateRaidEvent(@NotNull final IColony colony)

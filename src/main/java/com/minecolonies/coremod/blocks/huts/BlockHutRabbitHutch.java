@@ -6,8 +6,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Hut for the rabbit hutch.
- * No different from {@link AbstractBlockHut}
+ * Hut for the rabbit hutch. No different from {@link AbstractBlockHut}
  */
 public class BlockHutRabbitHutch extends AbstractBlockHut<BlockHutRabbitHutch>
 {

@@ -23,14 +23,14 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_MANAGER;
 
 /**
- *
  * Capability for the colony tag for chunks
  */
 public interface IColonyManagerCapability
 {
     /**
      * Create a colony and return it.
-     * @param w the world the colony is in.
+     *
+     * @param w   the world the colony is in.
      * @param pos the position of the colony.
      * @return the created colony.
      */
@@ -38,12 +38,14 @@ public interface IColonyManagerCapability
 
     /**
      * Delete a colony with a certain id.
+     *
      * @param id the id of the colony.
      */
     void deleteColony(final int id);
 
     /**
      * Get a colony with a certain id.
+     *
      * @param id the id of the colony.
      * @return the colony or null.
      */
@@ -52,18 +54,21 @@ public interface IColonyManagerCapability
 
     /**
      * Get a list of all colonies.
+     *
      * @return a complete list.
      */
     List<IColony> getColonies();
 
     /**
      * add a new colony to the capability.
+     *
      * @param colony the colony to add.
      */
     void addColony(IColony colony);
 
     /**
      * Get the top most id of all colonies.
+     *
      * @return the top most id.
      */
     int getTopID();
@@ -134,8 +139,9 @@ public interface IColonyManagerCapability
         }
 
         @Override
-        public void readNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance,
-                @Nullable final Direction side, @NotNull final INBT nbt)
+        public void readNBT(
+          @NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance,
+          @Nullable final Direction side, @NotNull final INBT nbt)
         {
             if (nbt instanceof CompoundNBT)
             {

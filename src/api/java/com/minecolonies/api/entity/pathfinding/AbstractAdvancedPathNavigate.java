@@ -18,7 +18,7 @@ import java.util.concurrent.Future;
 public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
 {
     //  Parent class private members
-    protected final MobEntity ourEntity;
+    protected final MobEntity    ourEntity;
     @Nullable
     protected       BlockPos     destination;
     protected       double       walkSpeed = 1.0D;
@@ -60,7 +60,12 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
 
     public abstract boolean tryMoveToBlockPos(final BlockPos position, final double speed);
 
-    public abstract TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> treesToCut, final IColony colony);
+    public abstract TreePathResult moveToTree(
+      final BlockPos startRestriction,
+      final BlockPos endRestriction,
+      final double speed,
+      final List<ItemStorage> treesToCut,
+      final IColony colony);
 
     public abstract TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> treesToCut, final IColony colony);
 
@@ -75,4 +80,28 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
     {
         return pathingOptions;
     }
+
+    /**
+     * Get the entity of this navigator
+     *
+     * @return mobentity
+     */
+    public MobEntity getOurEntity()
+    {
+        return ourEntity;
+    }
+
+    /**
+     * Gets the desired to go position
+     *
+     * @return desired go to pos
+     */
+    public abstract BlockPos getDesiredPos();
+
+    /**
+     * Sets the stuck handler for this navigator
+     *
+     * @param stuckHandler handler to use
+     */
+    public abstract void setStuckHandler(final IStuckHandler stuckHandler);
 }

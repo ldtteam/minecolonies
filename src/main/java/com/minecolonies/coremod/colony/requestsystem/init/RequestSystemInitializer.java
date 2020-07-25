@@ -38,6 +38,7 @@ public class RequestSystemInitializer
         RequestMappingHandler.registerRequestableTypeMapping(StackList.class, StandardRequests.ItemStackListRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(PublicCrafting.class, StandardRequests.PublicCraftingRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(PrivateCrafting.class, StandardRequests.PrivateCraftingRequest.class);
+        RequestMappingHandler.registerRequestableTypeMapping(Tag.class, StandardRequests.ItemTagRequest.class);
     }
 
     private static void reconfigureLogging()

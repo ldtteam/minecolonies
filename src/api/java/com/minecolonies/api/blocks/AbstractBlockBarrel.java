@@ -15,7 +15,7 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
     /**
      * The position it faces.
      */
-    public static final DirectionProperty        FACING  = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
 
     public AbstractBlockBarrel(final Properties properties)
     {
@@ -28,7 +28,7 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
          * 12.8 -> the number of items needed to go up on a state (having 6 filling states)
          * So items/12.8 -> meta of the state we should get
          */
-        BarrelType type = BarrelType.byMetadata((int) Math.round(te.getItems()/12.8));
+        BarrelType type = BarrelType.byMetadata((int) Math.round(te.getItems() / 12.8));
 
         /*
          * We check if the barrel is marked as empty but it have items inside. If so, means that it
@@ -36,7 +36,7 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
          * knows it have some items inside
          */
 
-        if(type.equals(BarrelType.ZERO) && te.getItems() > 0)
+        if (type.equals(BarrelType.ZERO) && te.getItems() > 0)
         {
             type = BarrelType.TWENTY;
         }
@@ -44,7 +44,7 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
         {
             type = BarrelType.WORKING;
         }
-        if(te.isDone())
+        if (te.isDone())
         {
             type = BarrelType.DONE;
         }

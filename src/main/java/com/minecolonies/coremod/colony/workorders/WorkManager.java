@@ -260,7 +260,11 @@ public class WorkManager implements IWorkManager
             }
             if (!readingFromNbt && !isWorkOrderWithinColony((WorkOrderBuildDecoration) order))
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), OUT_OF_COLONY, ((WorkOrderBuildDecoration) order).getName(), ((WorkOrderBuildDecoration) order).getBuildingLocation().getX(), ((WorkOrderBuildDecoration) order).getBuildingLocation().getZ());
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                  OUT_OF_COLONY,
+                  ((WorkOrderBuildDecoration) order).getName(),
+                  ((WorkOrderBuildDecoration) order).getBuildingLocation().getX(),
+                  ((WorkOrderBuildDecoration) order).getBuildingLocation().getZ());
                 return;
             }
         }
@@ -279,12 +283,12 @@ public class WorkManager implements IWorkManager
             {
                 final int level = ((WorkOrderBuildBuilding) order).getUpgradeLevel();
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                        AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, level));
+                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, level));
             }
             else
             {
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                        AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, 0));
+                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, 0));
             }
         }
 
@@ -294,6 +298,7 @@ public class WorkManager implements IWorkManager
 
     /**
      * Check if the workOrder is within a colony.
+     *
      * @param order the workorder to check.
      * @return true if so.
      */
@@ -301,19 +306,22 @@ public class WorkManager implements IWorkManager
     {
         final World world = colony.getWorld();
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-          = ColonyUtils.calculateCorners(order.getBuildingLocation(), world,
-          new LoadOnlyStructureHandler(world, order.getBuildingLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(), order.getRotation(world), order.isMirrored());
+          = ColonyUtils.calculateCorners(order.getBuildingLocation(),
+          world,
+          new LoadOnlyStructureHandler(world, order.getBuildingLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(),
+          order.getRotation(world),
+          order.isMirrored());
 
         Set<ChunkPos> chunks = new HashSet<>();
-        final int minX = Math.min(corners.getA().getA(), corners.getA().getB());
+        final int minX = Math.min(corners.getA().getA(), corners.getA().getB()) + 1;
         final int maxX = Math.max(corners.getA().getA(), corners.getA().getB());
 
-        final int minZ = Math.min(corners.getB().getA(), corners.getB().getB());
+        final int minZ = Math.min(corners.getB().getA(), corners.getB().getB()) + 1;
         final int maxZ = Math.max(corners.getB().getA(), corners.getB().getB());
 
-        for (int x = minX; x < maxX; x++)
+        for (int x = minX; x < maxX; x+=16)
         {
-            for (int z = minZ; z < maxZ; z++)
+            for (int z = minZ; z < maxZ; z+=16)
             {
                 final int chunkX = x >> 4;
                 final int chunkZ = z >> 4;

@@ -9,7 +9,6 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenDiseaseHandle
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobHealer;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 
@@ -43,9 +42,10 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenDiseaseHandler(final EntityCitizen citizen)
+    public CitizenDiseaseHandler(final AbstractEntityCitizen citizen)
     {
         this.citizen = citizen;
     }
@@ -56,12 +56,16 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public void tick()
     {
-        if (citizen.getTicksExisted() % TICKS_20 == 0 && !(citizen.getCitizenJobHandler().getColonyJob() instanceof JobHealer)
-              && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > IMinecoloniesAPI.getInstance().getConfig().getCommon().initialCitizenAmount.get())
+        if (citizen.getTicksExisted() % TICKS_20 == 0 && citizen.getCitizenColonyHandler().getColony().isActive() && !(citizen.getCitizenJobHandler()
+                                                                                                                         .getColonyJob() instanceof JobHealer)
+              && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > IMinecoloniesAPI.getInstance()
+                                                                                                                .getConfig()
+                                                                                                                .getCommon().initialCitizenAmount.get())
         {
             final int citizenModifier = citizen.getCitizenJobHandler().getColonyJob() == null ? 1 : citizen.getCitizenJobHandler().getColonyJob().getDiseaseModifier();
             final int configModifier = MineColonies.getConfig().getCommon().diseaseModifier.get();
-            if (citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR / citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount()) < citizenModifier)
+            if (citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR / citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount())
+                  < citizenModifier)
             {
                 this.disease = IColonyManager.getInstance().getCompatibilityManager().getRandomDisease();
             }
@@ -71,7 +75,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public boolean isSick()
     {
-        return !disease.isEmpty() || ( !(citizen.getCitizenJobHandler() instanceof AbstractJobGuard) && citizen.getHealth() <= SEEK_DOCTOR_HEALTH);
+        return !disease.isEmpty() || (!(citizen.getCitizenJobHandler() instanceof AbstractJobGuard) && citizen.getHealth() <= SEEK_DOCTOR_HEALTH);
     }
 
     @Override

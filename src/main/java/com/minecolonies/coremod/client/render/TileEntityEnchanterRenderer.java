@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityColonyBuilding>
 {
     public static final Material TEXTURE_BOOK;
-
     static
     {
         TEXTURE_BOOK = new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(Constants.MOD_ID, "blocks/enchanting_table_book"));
@@ -36,6 +35,7 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityCo
 
     /**
      * Create the renderer.
+     *
      * @param dispatcher the dispatcher.
      */
     public TileEntityEnchanterRenderer(final TileEntityRendererDispatcher dispatcher)
@@ -44,7 +44,13 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityCo
     }
 
     @Override
-    public void render(@NotNull final TileEntityColonyBuilding ent, float partialTicks, @NotNull final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer renderTypeBuffer, final int lightA, final int lightB)
+    public void render(
+      @NotNull final TileEntityColonyBuilding ent,
+      float partialTicks,
+      @NotNull final MatrixStack matrixStack,
+      @NotNull final IRenderTypeBuffer renderTypeBuffer,
+      final int lightA,
+      final int lightB)
     {
         if (ent instanceof TileEntityEnchanter)
         {

@@ -31,6 +31,7 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenStatusHandler(final AbstractEntityCitizen citizen)
@@ -84,8 +85,7 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
     }
 
     /**
-     * Append to the existing latestStatus list.
-     * This will override the oldest one if full and move the others one down in the array.
+     * Append to the existing latestStatus list. This will override the oldest one if full and move the others one down in the array.
      *
      * @param status the latest status to append
      */
@@ -99,6 +99,7 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
 
     /**
      * Getter for the current status.
+     *
      * @return the status.
      */
     @Override
@@ -109,6 +110,7 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
 
     /**
      * Setter for the current status.
+     *
      * @param status the status to set.
      */
     @Override

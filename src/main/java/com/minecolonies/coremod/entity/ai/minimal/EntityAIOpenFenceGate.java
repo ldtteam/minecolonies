@@ -17,15 +17,15 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
     /**
      * Close door after ... ticks.
      */
-    private static final int TIME_TO_CLOSE_DOOR = 20;
+    private static final int     TIME_TO_CLOSE_DOOR = 20;
     /**
      * Checks if the gate should be closed.
      */
-    private final boolean closeDoor;
+    private final        boolean closeDoor;
     /**
      * Ticks until the gate should be closed.
      */
-    private       int     closeDoorTemporisation;
+    private              int     closeDoorTemporisation;
 
     /**
      * Constructor called to register the AI class with an entity.
@@ -52,8 +52,7 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
     }
 
     /**
-     * Start the execution.
-     * Initiate time frame until closing.
+     * Start the execution. Initiate time frame until closing.
      */
     @Override
     public void startExecuting()
@@ -80,9 +79,7 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
     }
 
     /**
-     * Updates the task.
-     * Decrease the time the door is open already.
-     * Door has to stay open enough to let the worker go through it.
+     * Updates the task. Decrease the time the door is open already. Door has to stay open enough to let the worker go through it.
      */
     @Override
     public void tick()
@@ -92,8 +89,7 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
     }
 
     /**
-     * Reset the action.
-     * Close the door.
+     * Reset the action. Close the door.
      */
     @Override
     public void resetTask()

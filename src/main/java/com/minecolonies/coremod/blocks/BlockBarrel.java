@@ -31,15 +31,15 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     /**
      * The hardness this block has.
      */
-    private static final float                      BLOCK_HARDNESS = 5F;
+    private static final float  BLOCK_HARDNESS = 5F;
     /**
      * This blocks name.
      */
-    private static final String                     BLOCK_NAME     = "barrel_block";
+    private static final String BLOCK_NAME     = "barrel_block";
     /**
      * The resistance this block has.
      */
-    private static final float                      RESISTANCE     = 1F;
+    private static final float  RESISTANCE     = 1F;
 
     public BlockBarrel()
     {
@@ -49,7 +49,8 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+    {
         builder.add(AbstractBlockBarrel.FACING, VARIANT);
     }
 
@@ -66,6 +67,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
         return true;
     }
 
+    @NotNull
     @Override
     public ActionResultType onBlockActivated(
       final BlockState state,
@@ -79,7 +81,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
         final TileEntity te = worldIn.getTileEntity(pos);
         if (te instanceof TileEntityBarrel && !worldIn.isRemote)
         {
-            ((TileEntityBarrel) te).useBarrel(worldIn, player, itemstack, state, pos);
+            ((TileEntityBarrel) te).useBarrel(player, itemstack);
             ((TileEntityBarrel) te).updateBlock(worldIn);
         }
 
@@ -90,7 +92,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @Override
     public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
-        return VoxelShapes.create(0,0,0,1,1.5,1);
+        return VoxelShapes.create(0, 0, 0, 1, 1.5, 1);
     }
 
     /**
@@ -122,18 +124,6 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
         return super.getStateForPlacement(context).with(AbstractBlockBarrel.FACING, context.getPlacementHorizontalFacing());
-    }
-
-    @Override
-    public BlockState updatePostPlacement(@NotNull final BlockState stateIn, final Direction facing, final BlockState state, final IWorld worldIn, final BlockPos currentPos, final BlockPos pos)
-    {
-        final TileEntity entity = worldIn.getTileEntity(pos);
-        if (!(entity instanceof TileEntityBarrel))
-        {
-            return super.updatePostPlacement(stateIn, facing, state, worldIn, currentPos, pos);
-        }
-
-        return AbstractBlockBarrel.changeStateOverFullness((TileEntityBarrel) entity, state);
     }
 
     @Override

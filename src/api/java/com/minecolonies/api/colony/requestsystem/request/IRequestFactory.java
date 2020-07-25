@@ -8,8 +8,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Marker interface used to specify a factory for requests.
- * Restricts the output type of the general factory interface to IRequest
+ * Marker interface used to specify a factory for requests. Restricts the output type of the general factory interface to IRequest
  *
  * @param <T> The type of request.
  * @param <R> The request type.
@@ -26,7 +25,6 @@ public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> 
      * @param t                 The input to build a new output for.
      * @param context           The context of the request.
      * @return The new output instance for a given input.
-     *
      * @throws IllegalArgumentException is thrown when the factory cannot produce a new instance out of the given context and input.
      */
     @NotNull

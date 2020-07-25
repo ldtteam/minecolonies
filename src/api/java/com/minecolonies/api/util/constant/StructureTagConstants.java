@@ -10,5 +10,5 @@ public class StructureTagConstants
      */
     public static final String NORMAL_RAIDER = "normal";
     public static final String ARCHER_RAIDER = "archer";
-    public static final String BOSS_RAIDER = "boss";
+    public static final String BOSS_RAIDER   = "boss";
 }

@@ -31,10 +31,8 @@ import static com.minecolonies.api.util.constant.Suppression.CLASSES_SHOULD_NOT_
 /**
  * Basic job information.
  * <p>
- * Suppressing Sonar Rule squid:S2390
- * This rule does "Classes should not access static members of their own subclasses during initialization"
- * But in this case the rule does not apply because
- * We are only mapping classes and that is reasonable
+ * Suppressing Sonar Rule squid:S2390 This rule does "Classes should not access static members of their own subclasses during initialization" But in this case the rule does not
+ * apply because We are only mapping classes and that is reasonable
  */
 @SuppressWarnings(CLASSES_SHOULD_NOT_ACCESS_STATIC_MEMBERS_OF_THEIR_OWN_SUBCLASSES_DURING_INITIALIZATION)
 public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends AbstractJob<AI, J>> implements IJob<AI>
@@ -150,6 +148,12 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     @Override
+    public void markRequestSync(final IToken<?> id)
+    {
+        asyncRequests.remove(id);
+    }
+
+    @Override
     public void addWorkerAIToTaskList(@NotNull final GoalSelector tasks)
     {
         final AI tempAI = generateAI();
@@ -166,7 +170,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
               .error(
                 "Affected Citizen name:" + citizen.getName() + " id:" + citizen.getId() + " job:" + citizen.getJob() + " jobForAICreation:" + nameTag + " class:" + this.getClass()
                   + " entityPresent:"
-                  + citizen.getCitizenEntity().isPresent());
+                  + citizen.getEntity().isPresent());
             return;
         }
 

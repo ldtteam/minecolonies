@@ -18,14 +18,15 @@ import java.util.List;
 /**
  * Load only structure handler just to get dimensions etc from structures, not for placement.
  */
-public final class LoadOnlyStructureHandler extends CreativeStructureHandler
+public class LoadOnlyStructureHandler extends CreativeStructureHandler
 {
     /**
      * The minecolonies specific creative structure placer.
-     * @param world the world.
-     * @param pos the pos it is placed at.
-     * @param structureName the name of the structure.
-     * @param settings the placement settings.
+     *
+     * @param world          the world.
+     * @param pos            the pos it is placed at.
+     * @param structureName  the name of the structure.
+     * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
     public LoadOnlyStructureHandler(final World world, final BlockPos pos, final String structureName, final PlacementSettings settings, final boolean fancyPlacement)
@@ -35,10 +36,11 @@ public final class LoadOnlyStructureHandler extends CreativeStructureHandler
 
     /**
      * The minecolonies specific creative structure placer.
-     * @param world the world.
-     * @param pos the pos it is placed at.
-     * @param blueprint the blueprint.
-     * @param settings the placement settings.
+     *
+     * @param world          the world.
+     * @param pos            the pos it is placed at.
+     * @param blueprint      the blueprint.
+     * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
     public LoadOnlyStructureHandler(final World world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings, final boolean fancyPlacement)
@@ -76,7 +78,7 @@ public final class LoadOnlyStructureHandler extends CreativeStructureHandler
     public boolean isStackFree(@Nullable final ItemStack itemStack)
     {
         return itemStack == null
-                 ||itemStack.isEmpty()
+                 || itemStack.isEmpty()
                  || itemStack.getItem().isIn(ItemTags.LEAVES)
                  || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
     }

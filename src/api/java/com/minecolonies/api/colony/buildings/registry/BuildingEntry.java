@@ -14,17 +14,16 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 /**
- * Entry for the {@link IBuilding} registry.
- * Makes it possible to create a single registry for a {@link IBuilding}.
- * Used to lookup how to create {@link IBuilding} and {@link IBuildingView}.
- * Also links a given {@link IBuilding} to a given {@link AbstractBlockHut}.
+ * Entry for the {@link IBuilding} registry. Makes it possible to create a single registry for a {@link IBuilding}. Used to lookup how to create {@link IBuilding} and {@link
+ * IBuildingView}. Also links a given {@link IBuilding} to a given {@link AbstractBlockHut}.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
 public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
 {
     private final AbstractBlockHut<?> buildingBlock;
 
-    private final BiFunction<IColony, BlockPos, IBuilding>         buildingProducer;
+    private final BiFunction<IColony, BlockPos, IBuilding> buildingProducer;
+
     /**
      * A builder class for {@link BuildingEntry}.
      */

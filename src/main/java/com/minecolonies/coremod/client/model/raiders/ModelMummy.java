@@ -6,8 +6,7 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 
 /**
- * Create a mummy model.
- * Created using Tabula 7.0.0
+ * Create a mummy model. Created using Tabula 7.0.0
  */
 public class ModelMummy extends EgyptianModel<AbstractEntityEgyptian>
 {
@@ -22,7 +21,7 @@ public class ModelMummy extends EgyptianModel<AbstractEntityEgyptian>
         ModelRenderer armLeftLayer;
         ModelRenderer legRightLayer;
         ModelRenderer legLeftLayer;
-        
+
         textureWidth = 64;
         textureHeight = 64;
         stripRightB = new ModelRenderer(this, 36, -2);
@@ -85,10 +84,11 @@ public class ModelMummy extends EgyptianModel<AbstractEntityEgyptian>
 
     /**
      * this is a helper function from tabula to set the rotation of model parts
+     *
      * @param modelRenderer the model renderer.
-     * @param z the z coord.
-     * @param y the y coord.
-     * @param x the x coord.
+     * @param z             the z coord.
+     * @param y             the y coord.
+     * @param x             the x coord.
      */
     public void setRotateAngle(ModelRenderer modelRenderer, float x, float y, float z)
     {
@@ -98,20 +98,21 @@ public class ModelMummy extends EgyptianModel<AbstractEntityEgyptian>
     }
 
     @Override
-    public void setRotationAngles(AbstractEntityEgyptian entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setRotationAngles(AbstractEntityEgyptian entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    {
         super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        float f = 0.05F * MathHelper.sin((float) Math.PI * ageInTicks/ 30.0F) % 2.0F;
+        float f = 0.05F * MathHelper.sin((float) Math.PI * ageInTicks / 30.0F) % 2.0F;
         setRotateAngle(this.stripLeftA,
-                - 1.1F * this.bipedLeftArm.rotateAngleX + f,
-                - this.bipedLeftArm.rotateAngleY,
-                - this.bipedLeftArm.rotateAngleZ + f);
+          -1.1F * this.bipedLeftArm.rotateAngleX + f,
+          -this.bipedLeftArm.rotateAngleY,
+          -this.bipedLeftArm.rotateAngleZ + f);
         setRotateAngle(this.stripRightA,
-                - 1.1F * this.bipedRightArm.rotateAngleX + f,
-                - this.bipedRightArm.rotateAngleY,
-                - this.bipedRightArm.rotateAngleZ + f);
+          -1.1F * this.bipedRightArm.rotateAngleX + f,
+          -this.bipedRightArm.rotateAngleY,
+          -this.bipedRightArm.rotateAngleZ + f);
         setRotateAngle(this.stripRightB,
-                - 1.1F * this.bipedRightArm.rotateAngleX + f,
-                - this.bipedRightArm.rotateAngleY,
-                - this.bipedRightArm.rotateAngleZ + f);
+          -1.1F * this.bipedRightArm.rotateAngleX + f,
+          -this.bipedRightArm.rotateAngleY,
+          -this.bipedRightArm.rotateAngleZ + f);
     }
 }

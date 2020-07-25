@@ -22,7 +22,13 @@ public class EmptyTileEntitySpecialRenderer extends TileEntityRenderer<AbstractT
     }
 
     @Override
-    public void render(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final float v, @NotNull final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer iRenderTypeBuffer, final int i, final int i1)
+    public void render(
+      @NotNull final AbstractTileEntityColonyBuilding tileEntity,
+      final float v,
+      @NotNull final MatrixStack matrixStack,
+      @NotNull final IRenderTypeBuffer iRenderTypeBuffer,
+      final int i,
+      final int i1)
     {
 
     }

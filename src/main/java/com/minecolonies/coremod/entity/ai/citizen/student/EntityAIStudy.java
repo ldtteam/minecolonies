@@ -36,8 +36,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
     private BlockPos studyPos = null;
 
     /**
-     * Constructor for the student.
-     * Defines the tasks the student executes.
+     * Constructor for the student. Defines the tasks the student executes.
      *
      * @param job a student job to use.
      */
@@ -59,8 +58,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
     }
 
     /**
-     * The AI task for the student to study.
-     * For this he should walk between the different bookcase hit them once and then stand around for a while.
+     * The AI task for the student to study. For this he should walk between the different bookcase hit them once and then stand around for a while.
      *
      * @return the next IAIState.
      */

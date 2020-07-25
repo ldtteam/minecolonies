@@ -14,7 +14,7 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
 import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
@@ -42,8 +42,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WATER_TOO_
 /**
  * Fisherman AI class.
  * <p>
- * A fisherman has some ponds where
- * he randomly selects one and fishes there.
+ * A fisherman has some ponds where he randomly selects one and fishes there.
  * <p>
  * To keep it immersive he chooses his place at random around the pond.
  */
@@ -70,10 +69,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     private static final int MAX_PONDS = 20;
 
     /**
-     * Variable to calculate the delay the fisherman needs to throw his rod.
-     * The delay will be calculated randomly. The FISHING_DELAY defines the upper limit.
-     * The delay is calculated using the CHANCE anf fishingSkill variables. A higher FISHING_DELAY will lead
-     * to a longer delay.
+     * Variable to calculate the delay the fisherman needs to throw his rod. The delay will be calculated randomly. The FISHING_DELAY defines the upper limit. The delay is
+     * calculated using the CHANCE anf fishingSkill variables. A higher FISHING_DELAY will lead to a longer delay.
      */
     private static final int FISHING_DELAY = 500 / TICKS_SECOND;
 
@@ -115,7 +112,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     /**
      * Required level for sponge drop.
      */
-    private static final int LEVEL_FOR_SPONGE   = 4;
+    private static final int LEVEL_FOR_SPONGE = 4;
 
     /**
      * Per level lure speed.
@@ -125,14 +122,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     /**
      * The number of executed adjusts of the fisherman's rotation.
      */
-    private              int    executedRotations    = 0;
+    private int executedRotations = 0;
 
     /**
      * The PathResult when the fisherman searches water.
      */
     @Nullable
     private WaterPathResult pathResult;
-
 
     /**
      * The Previous PathResult when the fisherman already found water.
@@ -147,8 +143,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     private NewBobberEntity entityFishHook;
 
     /**
-     * Constructor for the Fisherman.
-     * Defines the tasks the fisherman executes.
+     * Constructor for the Fisherman. Defines the tasks the fisherman executes.
      *
      * @param job a fisherman job to use.
      */
@@ -188,8 +183,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     }
 
     /**
-     * Prepares the fisherman for fishing and
-     * requests fishingRod and checks if the fisherman already had found a pond.
+     * Prepares the fisherman for fishing and requests fishingRod and checks if the fisherman already had found a pond.
      *
      * @return the next IAIState
      */
@@ -255,7 +249,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean hasRodButNotEquipped()
     {
-        return worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof FishingRodItem);
+        return worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand()
+                                                                                                                                        .getItem() instanceof FishingRodItem);
     }
 
     /**
@@ -320,8 +315,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     }
 
     /**
-     * Checks if the fisherman already has found 20 pools, if yes search a water pool out of these 20, else
-     * search a new one.
+     * Checks if the fisherman already has found 20 pools, if yes search a water pool out of these 20, else search a new one.
      *
      * @return the next IAIState the fisherman should switch to, after executing this method.
      */
@@ -341,8 +335,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     }
 
     /**
-     * If the fisherman can't find 20 ponds or already has found 20, the fisherman should randomly choose a fishing spot
-     * from the previously found ones.
+     * If the fisherman can't find 20 ponds or already has found 20, the fisherman should randomly choose a fishing spot from the previously found ones.
      *
      * @return the next IAIState.
      */
@@ -350,11 +343,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     {
         if (job.getPonds().isEmpty())
         {
-            if ( ( pathResult != null && pathResult.failedToReachDestination() && lastPathResult == null )  || ( lastPathResult != null && lastPathResult.isEmpty && !lastPathResult.isCancelled()))
+            if ((pathResult != null && pathResult.failedToReachDestination() && lastPathResult == null) || (lastPathResult != null && lastPathResult.isEmpty
+                                                                                                              && !lastPathResult.isCancelled()))
             {
                 if (worker.getCitizenData() != null)
                 {
-                    worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(WATER_TOO_FAR), ChatPriority.IMPORTANT));
+                    worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(WATER_TOO_FAR), ChatPriority.IMPORTANT));
                 }
             }
 
@@ -370,8 +364,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     }
 
     /**
-     * Uses the pathFinding system to search close water spots which possibilitate fishing.
-     * Sets a number of possible water pools and sets the water pool the fisherman should fish now.
+     * Uses the pathFinding system to search close water spots which possibilitate fishing. Sets a number of possible water pools and sets the water pool the fisherman should fish
+     * now.
      *
      * @return the next IAIState the fisherman should switch to, after executing this method
      */
@@ -406,10 +400,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     }
 
     /**
-     * Main fishing methods,
-     * let's the fisherman gather xp orbs next to him,
-     * check if all requirements to fish are given.
-     * Actually fish, retrieve his rod if stuck or if a fish bites.
+     * Main fishing methods, let's the fisherman gather xp orbs next to him, check if all requirements to fish are given. Actually fish, retrieve his rod if stuck or if a fish
+     * bites.
      *
      * @return the next IAIState the fisherman should switch to, after executing this method.
      */
@@ -423,11 +415,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         {
             return notReadyState;
         }
-        
+
         if (caughtFish())
         {
             playCaughtFishSound();
-            if (getOwnBuilding().getBuildingLevel() > LEVEL_FOR_SPONGE && worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < MineColonies.getConfig().getCommon().fisherSpongeChance.get())
+            if (getOwnBuilding().getBuildingLevel() > LEVEL_FOR_SPONGE && worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < MineColonies.getConfig()
+                                                                                                                              .getCommon().fisherSpongeChance.get())
             {
                 InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.SPONGE));
             }
@@ -451,8 +444,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     }
 
     /**
-     * Check if a hook is out there,
-     * and throw/retrieve it if needed.
+     * Check if a hook is out there, and throw/retrieve it if needed.
      *
      * @return the next IAIState the fisherman should switch to, after executing this method
      */
@@ -495,7 +487,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
               0.5F,
               (float) (0.4D / (this.world.rand.nextFloat() * 0.4D + 0.8D)));
             this.entityFishHook = (NewBobberEntity) ModEntities.FISHHOOK.create(world);
-            this.entityFishHook.setAngler((EntityCitizen) worker, EnchantmentHelper.getFishingLuckBonus(worker.getHeldItemMainhand()), worker.getCitizenData().getJobModifier() / LURE_SPEED_DIVIDER + EnchantmentHelper.getFishingSpeedBonus(worker.getHeldItemMainhand()));
+            this.entityFishHook.setAngler((EntityCitizen) worker,
+              EnchantmentHelper.getFishingLuckBonus(worker.getHeldItemMainhand()),
+              worker.getCitizenData().getJobModifier() / LURE_SPEED_DIVIDER + EnchantmentHelper.getFishingSpeedBonus(worker.getHeldItemMainhand()));
             world.addEntity(this.entityFishHook);
         }
 
@@ -504,8 +498,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     }
 
     /**
-     * Checks if the fishHook is stuck on land or in an entity.
-     * If the fishhook is neither in water,land nether connected with an entity, give it a time to land in water.
+     * Checks if the fishHook is stuck on land or in an entity. If the fishhook is neither in water,land nether connected with an entity, give it a time to land in water.
      *
      * @return false if the hook landed in water, else return true
      */
@@ -517,8 +510,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     /**
      * Checks how lucky the fisherman is.
      * <p>
-     * This check depends on his fishing skill.
-     * Which in turn depends on intelligence.
+     * This check depends on his fishing skill. Which in turn depends on intelligence.
      *
      * @return true if he has to wait.
      */
@@ -578,8 +570,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     }
 
     /**
-     * Will be called to check if the fisherman caught a fish. If the hook hasn't noticed a fish it will return false.
-     * Else the method will pick up the loot and call the method to retrieve the rod.
+     * Will be called to check if the fisherman caught a fish. If the hook hasn't noticed a fish it will return false. Else the method will pick up the loot and call the method to
+     * retrieve the rod.
      *
      * @return If the fisherman caught a fish.
      */
@@ -600,12 +592,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     }
 
     /**
-     * Retrieves the previously thrown fishingRod.
-     * If the fishingRod still has a hook connected to it, destroy the hook object.
+     * Retrieves the previously thrown fishingRod. If the fishingRod still has a hook connected to it, destroy the hook object.
      */
     private void retrieveRod()
     {
-        if(entityFishHook != null)
+        if (entityFishHook != null)
         {
             worker.swingArm(worker.getActiveHand());
             final int i = entityFishHook.getDamage();

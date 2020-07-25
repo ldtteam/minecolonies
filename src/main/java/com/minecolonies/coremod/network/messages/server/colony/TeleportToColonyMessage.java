@@ -19,7 +19,7 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
         super();
     }
 
-    public TeleportToColonyMessage(final int dimensionId, final int colonyId)
+    public TeleportToColonyMessage(final int colonyId, final int dimensionId)
     {
         super(dimensionId, colonyId);
     }

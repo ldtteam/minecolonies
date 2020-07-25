@@ -40,6 +40,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
     /**
      * GuardScepter constructor. Sets max stack to 1, like other tools.
+     *
      * @param properties the properties.
      */
     public ItemScepterGuard(final Item.Properties properties)
@@ -143,7 +144,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
         final IGuardBuilding tower = (IGuardBuilding) hut;
 
-        if(BlockPosUtil.getDistance2D(pos, guardTower) > tower.getPatrolDistance())
+        if (BlockPosUtil.getDistance2D(pos, guardTower) > tower.getPatrolDistance())
         {
             LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickGuardTooFar");
             return ActionResultType.FAIL;

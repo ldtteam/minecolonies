@@ -9,16 +9,16 @@ public final class HappinessConstants
      * constants for house modifier.
      */
     public static final int COMPLAIN_DAYS_WITHOUT_HOUSE = 7;
-    public static final int DEMANDS_DAYS_WITHOUT_HOUSE = 14;
+    public static final int DEMANDS_DAYS_WITHOUT_HOUSE  = 14;
 
     public static final int COMPLAIN_DAYS_SICK = 7;
-    public static final int DEMANDS_CURE_SICK = 14;
+    public static final int DEMANDS_CURE_SICK  = 14;
 
     /**
      * constants for job modifier.
      */
     public static final int COMPLAIN_DAYS_WITHOUT_JOB = 7;
-    public static final int DEMANDS_DAYS_WITHOUT_JOB = 14;
+    public static final int DEMANDS_DAYS_WITHOUT_JOB  = 14;
 
     /**
      * constants for happiness min/max and start happines values.
@@ -40,18 +40,18 @@ public final class HappinessConstants
     /**
      * Happiness modifiers
      */
-    public static final String HOMELESSNESS = "homelessness";
-    public static final String UNEMPLOYMENT = "unemployment";
-    public static final String HEALTH = "health";
-    public static final String IDLEATJOB = "idleatjob";
-    public static final String SCHOOL = "school";
-    public static final String SECURITY = "security";
-    public static final String SOCIAL = "social";
-    public static final String SATURATION = "saturation";
-    public static final String DAMAGE = "damage";
-    public static final String DEATH = "death";
+    public static final String HOMELESSNESS     = "homelessness";
+    public static final String UNEMPLOYMENT     = "unemployment";
+    public static final String HEALTH           = "health";
+    public static final String IDLEATJOB        = "idleatjob";
+    public static final String SCHOOL           = "school";
+    public static final String SECURITY         = "security";
+    public static final String SOCIAL           = "social";
+    public static final String SATURATION       = "saturation";
+    public static final String DAMAGE           = "damage";
+    public static final String DEATH            = "death";
     public static final String RAIDWITHOUTDEATH = "raidwithoutdeath";
-    public static final String SLEPTTONIGHT = "slepttonight";
+    public static final String SLEPTTONIGHT     = "slepttonight";
 
     /**
      * Private constructor to hide implicit public one.

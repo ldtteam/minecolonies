@@ -6,8 +6,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Hut for the glassblower.
- * No different from {@link AbstractBlockHut}
+ * Hut for the glassblower. No different from {@link AbstractBlockHut}
  */
 public class BlockHutGlassblower extends AbstractBlockHut<BlockHutGlassblower>
 {

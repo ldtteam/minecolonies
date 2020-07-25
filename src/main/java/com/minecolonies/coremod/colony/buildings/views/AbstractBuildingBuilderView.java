@@ -78,6 +78,7 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
 
     /**
      * Get the construction name he is working at.
+     *
      * @return a string describing it.
      */
     public String getConstructionName()
@@ -87,6 +88,7 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
 
     /**
      * Get the construction pos he is working at.
+     *
      * @return a string describing the pos.
      */
     public String getConstructionPos()
@@ -107,6 +109,7 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
 
     /**
      * Get the name of the worker assigned to this building.
+     *
      * @return the name.
      */
     public String getWorkerName()
@@ -116,11 +119,12 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
 
     /**
      * Get the building progress (relative to items used)
+     *
      * @return the progress.
      */
     public String getProgress()
     {
-        return 100 - (int) (progress*100) + "%";
+        return 100 - (int) (progress * 100) + "%";
     }
 }
 

@@ -8,6 +8,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -53,9 +54,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     private final Map<ItemStorage, Integer> content = new HashMap<>();
 
     /**
-     * Size multiplier of the inventory.
-     * 0 = default value.
-     * 1 = 1*9 additional slots, and so on.
+     * Size multiplier of the inventory. 0 = default value. 1 = 1*9 additional slots, and so on.
      */
     private int size = 0;
 
@@ -83,7 +82,8 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public boolean hasItemStack(final ItemStack stack)
     {
-        return content.containsKey(new ItemStorage(stack));
+        final ItemStorage checkItem = new ItemStorage(stack);
+        return content.getOrDefault(checkItem, 0) >= stack.getCount();
     }
 
     /**
@@ -135,15 +135,9 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public boolean hasItemStack(final ItemStack stack, final boolean ignoreDamageValue)
     {
-        final ItemStorage compareStorage = new ItemStorage(stack, ignoreDamageValue);
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            if (compareStorage.equals(entry.getKey()))
-            {
-                return true;
-            }
-        }
-        return false;
+        final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
+
+        return content.getOrDefault(checkItem, 0) >= stack.getCount();
     }
 
     /**
@@ -167,6 +161,7 @@ public class TileEntityRack extends AbstractTileEntityRack
 
     /**
      * Gets the content of the Rack
+     *
      * @return the map of content.
      */
     public Map<ItemStorage, Integer> getAllContent() {return content;}
@@ -201,10 +196,13 @@ public class TileEntityRack extends AbstractTileEntityRack
     {
         if (!buildingPos.equals(BlockPos.ZERO))
         {
-            TileEntity building = world.getTileEntity(buildingPos);
-            if (building instanceof TileEntityColonyBuilding)
+            if (WorldUtil.isBlockLoaded(world, buildingPos))
             {
-                ((TileEntityColonyBuilding) building).markInvDirty();
+                TileEntity building = world.getTileEntity(buildingPos);
+                if (building instanceof TileEntityColonyBuilding)
+                {
+                    ((TileEntityColonyBuilding) building).markInvDirty();
+                }
             }
         }
         else if (inWarehouse && world != null)
@@ -212,7 +210,12 @@ public class TileEntityRack extends AbstractTileEntityRack
             final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
             if (colony != null)
             {
-                colony.getBuildingManager().getWareHouses().forEach(warehouse -> warehouse.getTileEntity().markInvDirty());
+                colony.getBuildingManager().getWareHouses().forEach(warehouse -> {
+                    if (WorldUtil.isBlockLoaded(world, warehouse.getPosition()))
+                    {
+                        warehouse.getTileEntity().markInvDirty();
+                    }
+                });
             }
         }
     }
@@ -221,6 +224,13 @@ public class TileEntityRack extends AbstractTileEntityRack
     public void remove()
     {
         super.remove();
+        notifyParentAboutInvChange();
+    }
+
+    @Override
+    public void onChunkUnloaded()
+    {
+        super.onChunkUnloaded();
         notifyParentAboutInvChange();
     }
 
@@ -266,8 +276,11 @@ public class TileEntityRack extends AbstractTileEntityRack
             content.put(storage, amount);
         }
 
-        updateBlockState();
-        markDirty();
+        if (world != null)
+        {
+            updateBlockState();
+            markDirty();
+        }
     }
 
     /**
@@ -426,21 +439,6 @@ public class TileEntityRack extends AbstractTileEntityRack
             }
         }
 
-        if (compound.keySet().contains("Items"))
-        {
-            ListNBT nbttaglist = compound.getList("Items", 10);
-
-            for (int i = 0; i < nbttaglist.size(); ++i)
-            {
-                CompoundNBT nbttagcompound = nbttaglist.getCompound(i);
-                int j = nbttagcompound.getByte("Slot") & 255;
-                if (j >= 0 && j < inventory.getSlots())
-                {
-                    inventory.setStackInSlot(j, ItemStack.read(nbttagcompound));
-                }
-            }
-        }
-
         main = compound.getBoolean(TAG_MAIN);
         updateItemStorage();
 
@@ -495,7 +493,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return write(new CompoundNBT());
+        return this.write(new CompoundNBT());
     }
 
     @Override
@@ -512,6 +510,12 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             relativeNeighbor = relativeNeighbor.rotate(rotationIn);
         }
+    }
+
+    @Override
+    public void handleUpdateTag(final CompoundNBT tag)
+    {
+        this.read(tag);
     }
 
     @Nonnull
@@ -597,9 +601,15 @@ public class TileEntityRack extends AbstractTileEntityRack
         return false;
     }
 
+    @Override
+    public void markDirty()
+    {
+        WorldUtil.markChunkDirty(world, pos);
+    }
+
     @Nullable
     @Override
-    public Container createMenu(final int id, final PlayerInventory inv, final PlayerEntity player)
+    public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
     {
         final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         buffer.writeBlockPos(this.getPos());
@@ -608,6 +618,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         return new ContainerRack(id, inv, buffer);
     }
 
+    @NotNull
     @Override
     public ITextComponent getDisplayName()
     {

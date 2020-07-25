@@ -151,6 +151,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             sendWorkOrderPackets();
 
             colony.getCitizenManager().sendPackets(closeSubscribers, newSubscribers);
+            colony.getVisitorManager().sendPackets(closeSubscribers, newSubscribers);
             colony.getBuildingManager().sendPackets(closeSubscribers, newSubscribers);
 
             sendSchematicsPackets();

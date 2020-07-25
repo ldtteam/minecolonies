@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
-import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * Class to render the scarecrow.
  */
 @OnlyIn(Dist.CLIENT)
-public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScarescrowTileEntity>
+public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScarecrowTileEntity>
 {
     /**
      * Offset to the block middle.
@@ -77,6 +77,7 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
     }
     /**
      * The public constructor for the renderer.
+     *
      * @param dispatcher the render dispatcher.
      */
     public TileEntityScarecrowRenderer(final TileEntityRendererDispatcher dispatcher)
@@ -86,7 +87,13 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
     }
 
     @Override
-    public void render(final AbstractScarescrowTileEntity te, final float partialTicks, final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer iRenderTypeBuffer, final int lightA, final int lightB)
+    public void render(
+      final AbstractScarecrowTileEntity te,
+      final float partialTicks,
+      final MatrixStack matrixStack,
+      @NotNull final IRenderTypeBuffer iRenderTypeBuffer,
+      final int lightA,
+      final int lightB)
     {
         //Store the transformation
         matrixStack.push();
@@ -126,7 +133,7 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
      * @return the material.
      */
     @NotNull
-    private static Material getMaterial(@NotNull final AbstractScarescrowTileEntity tileEntity)
+    private static Material getMaterial(@NotNull final AbstractScarecrowTileEntity tileEntity)
     {
         if (tileEntity.getScarecrowType() == ScareCrowType.PUMPKINHEAD)
         {

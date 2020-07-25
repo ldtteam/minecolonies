@@ -18,17 +18,19 @@ public final class CraftingUtils
 
     /**
      * Calculate the max time a recipe has to be executed.
+     *
      * @param outputStack the output stack.
-     * @param storage the storage.
+     * @param storage     the storage.
      * @return the quantity.
      */
     public static int calculateMaxCraftingCount(@NotNull final ItemStack outputStack, @NotNull final IRecipeStorage storage)
     {
         //Calculate the initial crafting count from the request and the storage output.
-        int craftingCount = (int)Math.ceil(Math.max(ItemStackUtils.getSize(outputStack), ItemStackUtils.getSize(storage.getPrimaryOutput())) / (double)ItemStackUtils.getSize(storage.getPrimaryOutput()));
+        int craftingCount = (int) Math.ceil(
+          Math.max(ItemStackUtils.getSize(outputStack), ItemStackUtils.getSize(storage.getPrimaryOutput())) / (double) ItemStackUtils.getSize(storage.getPrimaryOutput()));
 
         //Now check if we excede an ingredients max stack size.
-        for(final ItemStorage ingredientStorage : storage.getCleanedInput())
+        for (final ItemStorage ingredientStorage : storage.getCleanedInput())
         {
             final ItemStack ingredient = ingredientStorage.getItemStack();
             //Calculate the input count for the ingredient.
@@ -46,17 +48,18 @@ public final class CraftingUtils
 
     /**
      * Calculate the max time a recipe has to be executed.
-     * @param count the count.
+     *
+     * @param count   the count.
      * @param storage the storage.
      * @return the quantity.
      */
     public static int calculateMaxCraftingCount(@NotNull final int count, @NotNull final IRecipeStorage storage)
     {
         //Calculate the initial crafting count from the request and the storage output.
-        int craftingCount = (int)Math.ceil(Math.max(count, ItemStackUtils.getSize(storage.getPrimaryOutput())) / (double)ItemStackUtils.getSize(storage.getPrimaryOutput()));
+        int craftingCount = (int) Math.ceil(Math.max(count, ItemStackUtils.getSize(storage.getPrimaryOutput())) / (double) ItemStackUtils.getSize(storage.getPrimaryOutput()));
 
         //Now check if we excede an ingredients max stack size.
-        for(final ItemStorage ingredientStorage : storage.getCleanedInput())
+        for (final ItemStorage ingredientStorage : storage.getCleanedInput())
         {
             final ItemStack ingredient = ingredientStorage.getItemStack();
             //Calculate the input count for the ingredient.

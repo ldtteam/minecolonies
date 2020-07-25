@@ -72,7 +72,8 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     }
 
     @Override
-    public boolean propagatesSkylightDown(final BlockState state, @NotNull final IBlockReader reader, @NotNull final BlockPos pos) {
+    public boolean propagatesSkylightDown(final BlockState state, @NotNull final IBlockReader reader, @NotNull final BlockPos pos)
+    {
         return true;
     }
 
@@ -102,9 +103,10 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
 
     /**
      * Get the statement ready.
-     * @param state the state to place.
+     *
+     * @param state  the state to place.
      * @param entity the tileEntity.
-     * @param pos the position.
+     * @param pos    the position.
      * @return the next state.
      */
     public static BlockState getPlacementState(final BlockState state, final TileEntity entity, final BlockPos pos)
@@ -174,7 +176,13 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     }
 
     @Override
-    public BlockState updatePostPlacement(@NotNull final BlockState stateIn, final Direction facing, final BlockState state, final IWorld worldIn, final BlockPos currentPos, final BlockPos pos)
+    public BlockState updatePostPlacement(
+      @NotNull final BlockState stateIn,
+      final Direction facing,
+      final BlockState state,
+      final IWorld worldIn,
+      final BlockPos currentPos,
+      final BlockPos pos)
     {
         if (state.getBlock() instanceof BlockMinecoloniesRack || stateIn.getBlock() instanceof BlockMinecoloniesRack)
         {
@@ -191,7 +199,6 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         }
         return super.updatePostPlacement(stateIn, facing, state, worldIn, currentPos, pos);
     }
-
 
     @Override
     public void spawnAdditionalDrops(final BlockState state, final World worldIn, final BlockPos pos, final ItemStack stack)
@@ -223,7 +230,9 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
             final TileEntityRack rack = (TileEntityRack) tileEntity;
             if (!worldIn.isRemote)
             {
-                NetworkHooks.openGui((ServerPlayerEntity) player, rack, buf -> buf.writeBlockPos(rack.getPos()).writeBlockPos(rack.getOtherChest() == null ? BlockPos.ZERO : rack.getOtherChest().getPos()));
+                NetworkHooks.openGui((ServerPlayerEntity) player,
+                  rack,
+                  buf -> buf.writeBlockPos(rack.getPos()).writeBlockPos(rack.getOtherChest() == null ? BlockPos.ZERO : rack.getOtherChest().getPos()));
             }
             return ActionResultType.SUCCESS;
         }
@@ -244,7 +253,8 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+    {
         builder.add(FACING, VARIANT);
     }
 
@@ -270,16 +280,19 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     }
 
     @Override
-    public void onReplaced(BlockState state, @NotNull World worldIn, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
-        if (state.getBlock() != newState.getBlock()) {
+    public void onReplaced(BlockState state, @NotNull World worldIn, @NotNull BlockPos pos, BlockState newState, boolean isMoving)
+    {
+        if (state.getBlock() != newState.getBlock())
+        {
             TileEntity tileEntity = worldIn.getTileEntity(pos);
-            if (tileEntity instanceof TileEntityRack) {
+            if (tileEntity instanceof TileEntityRack)
+            {
                 TileEntityRack tileEntityRack = (TileEntityRack) tileEntity;
                 InventoryUtils.dropItemHandler(tileEntityRack.getInventory(),
-                        worldIn.getWorld(),
-                        tileEntityRack.getPos().getX(),
-                        tileEntityRack.getPos().getY(),
-                        tileEntityRack.getPos().getZ());
+                  worldIn.getWorld(),
+                  tileEntityRack.getPos().getX(),
+                  tileEntityRack.getPos().getY(),
+                  tileEntityRack.getPos().getZ());
                 worldIn.getWorld().updateComparatorOutputLevel(pos, this);
             }
 

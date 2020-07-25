@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 public class DeliveryRequestResolverFactory implements IRequestResolverFactory<DeliveryRequestResolver>
@@ -34,9 +35,9 @@ public class DeliveryRequestResolverFactory implements IRequestResolverFactory<D
     @NotNull
     @Override
     public DeliveryRequestResolver getNewInstance(
-                                                   @NotNull final IFactoryController factoryController,
-                                                   @NotNull final ILocation iLocation,
-                                                   @NotNull final Object... context)
+      @NotNull final IFactoryController factoryController,
+      @NotNull final ILocation iLocation,
+      @NotNull final Object... context)
       throws IllegalArgumentException
     {
         return new DeliveryRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
@@ -45,7 +46,7 @@ public class DeliveryRequestResolverFactory implements IRequestResolverFactory<D
     @NotNull
     @Override
     public CompoundNBT serialize(
-                                     @NotNull final IFactoryController controller, @NotNull final DeliveryRequestResolver deliveryRequestResolver)
+      @NotNull final IFactoryController controller, @NotNull final DeliveryRequestResolver deliveryRequestResolver)
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.put(NBT_TOKEN, controller.serialize(deliveryRequestResolver.getId()));
@@ -59,6 +60,22 @@ public class DeliveryRequestResolverFactory implements IRequestResolverFactory<D
     {
         final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
+
+        return new DeliveryRequestResolver(location, token);
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, DeliveryRequestResolver input, PacketBuffer packetBuffer)
+    {
+        controller.serialize(packetBuffer, input.getId());
+        controller.serialize(packetBuffer, input.getLocation());
+    }
+
+    @Override
+    public DeliveryRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
+        final IToken<?> token = controller.deserialize(buffer);
+        final ILocation location = controller.deserialize(buffer);
 
         return new DeliveryRequestResolver(location, token);
     }

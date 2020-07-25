@@ -15,6 +15,7 @@ import java.util.Optional;
 
 /**
  * Abstract class used as a base class for request resolver that handle request coming from the building they are originating from.
+ *
  * @param <R> The type of request that they handle
  */
 public abstract class AbstractBuildingDependentRequestResolver<R extends IRequestable> extends AbstractRequestResolver<R> implements IBuildingBasedRequester
@@ -50,7 +51,10 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
     }
 
     @Nullable
-    public abstract List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, @NotNull final AbstractBuilding building);
+    public abstract List<IToken<?>> attemptResolveForBuilding(
+      @NotNull final IRequestManager manager,
+      @NotNull final IRequest<? extends R> request,
+      @NotNull final AbstractBuilding building);
 
     @Override
     public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)

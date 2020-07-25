@@ -10,6 +10,7 @@ public class EgyptianModel<T extends AbstractEntityEgyptian> extends BipedModel<
 {
     /**
      * Create a model of a specific size.
+     *
      * @param size the size.
      */
     public EgyptianModel(final float size)

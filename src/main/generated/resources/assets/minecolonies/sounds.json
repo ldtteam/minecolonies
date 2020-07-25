@@ -22229,7 +22229,7 @@
       {
         "name": "minecolonies:tile/tavern/tavern_theme",
         "stream": true,
-        "attenuation_distance": 13,
+        "attenuation_distance": 23,
         "comment": "Credits to Darren Curtis - Fireside Tales"
       }
     ]

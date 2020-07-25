@@ -48,8 +48,7 @@ public interface ICitizenItemHandler
     /**
      * Swing entity arm, create sound and particle effects.
      * <p>
-     * If breakBlock is true then it will break the block (different sound and
-     * particles), and damage the tool in the citizens hand.
+     * If breakBlock is true then it will break the block (different sound and particles), and damage the tool in the citizens hand.
      *
      * @param blockPos   Block position.
      * @param breakBlock if we want to break this block.
@@ -58,7 +57,8 @@ public interface ICitizenItemHandler
 
     /**
      * Damage the current held item.
-     * @param hand hand the item is in.
+     *
+     * @param hand   hand the item is in.
      * @param damage amount of damage.
      */
     void damageItemInHand(Hand hand, int damage);
@@ -71,8 +71,7 @@ public interface ICitizenItemHandler
     /**
      * Swing entity arm, create sound and particle effects.
      * <p>
-     * This will break the block (different sound and particles),
-     * and damage the tool in the citizens hand.
+     * This will break the block (different sound and particles), and damage the tool in the citizens hand.
      *
      * @param blockPos Block position.
      */
@@ -95,8 +94,9 @@ public interface ICitizenItemHandler
 
     /**
      * Apply mending to the armour.
-     * @return the remaining xp.
+     *
      * @param localXp the xp to add.
+     * @return the remaining xp.
      */
     double applyMending(final double localXp);
 }

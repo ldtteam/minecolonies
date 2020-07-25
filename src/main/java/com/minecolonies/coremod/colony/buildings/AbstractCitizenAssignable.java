@@ -35,7 +35,8 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
 
     /**
      * Constructor for the abstract class which receives the position and colony.
-     * @param pos the position.
+     *
+     * @param pos    the position.
      * @param colony the colony.
      */
     public AbstractCitizenAssignable(final BlockPos pos, @NotNull final IColony colony)
@@ -152,7 +153,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
         {
             return Optional.empty();
         }
-        return assignedCitizen.get(0).getCitizenEntity();
+        return assignedCitizen.get(0).getEntity();
     }
 
     /**
@@ -175,7 +176,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     @Nullable
     public List<Optional<AbstractEntityCitizen>> getAssignedEntities()
     {
-        return assignedCitizen.stream().filter(Objects::nonNull).map(ICitizenData::getCitizenEntity).collect(Collectors.toList());
+        return assignedCitizen.stream().filter(Objects::nonNull).map(ICitizenData::getEntity).collect(Collectors.toList());
     }
 
     /**
@@ -213,7 +214,6 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     {
         return assignedCitizen.contains(citizen);
     }
-
 
     /**
      * Checks if the building is full.

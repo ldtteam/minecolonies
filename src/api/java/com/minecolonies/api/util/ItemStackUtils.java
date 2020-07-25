@@ -40,8 +40,7 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 public final class ItemStackUtils
 {
     /**
-     * Variable representing the empty itemstack in 1.10.
-     * Used for easy updating to 1.11
+     * Variable representing the empty itemstack in 1.10. Used for easy updating to 1.11
      */
     public static final ItemStack EMPTY = ItemStack.EMPTY;
 
@@ -134,7 +133,6 @@ public final class ItemStackUtils
                     return entity;
                 }
             }
-
         }
         catch (final RuntimeException e)
         {
@@ -229,8 +227,7 @@ public final class ItemStackUtils
     }
 
     /**
-     * Verifies if there is one tool with an acceptable level
-     * in a worker's inventory.
+     * Verifies if there is one tool with an acceptable level in a worker's inventory.
      *
      * @param stack        the stack to test.
      * @param toolType     the type of tool needed
@@ -250,8 +247,7 @@ public final class ItemStackUtils
     }
 
     /**
-     * Wrapper method to check if a stack is empty.
-     * Used for easy updating to 1.11.
+     * Wrapper method to check if a stack is empty. Used for easy updating to 1.11.
      *
      * @param stack The stack to check.
      * @return True when the stack is empty, false when not.
@@ -425,8 +421,6 @@ public final class ItemStackUtils
         final Item item = stack.getItem();
         return item == Items.ITEM_FRAME
                  || item == Items.ARMOR_STAND
-                 || item instanceof BannerItem
-                 || !(item instanceof BlockItem)
                  || !Block.getBlockFromItem(item).getDefaultState().getMaterial().isSolid();
     }
 
@@ -455,8 +449,7 @@ public final class ItemStackUtils
     */
 
     /**
-     * This routine converts the material type of armor
-     * into a numerical value for the request system.
+     * This routine converts the material type of armor into a numerical value for the request system.
      *
      * @param material type of material of the armor
      * @return armor level
@@ -661,8 +654,7 @@ public final class ItemStackUtils
     }
 
     /**
-     * get the size of the stack.
-     * This is for compatibility between 1.10 and 1.11
+     * get the size of the stack. This is for compatibility between 1.10 and 1.11
      *
      * @param stack to get the size from
      * @return the size of the stack
@@ -681,14 +673,33 @@ public final class ItemStackUtils
     /**
      * Method to compare to stacks, ignoring their stacksize.
      *
-     * @param itemStack1 The left stack to compare.
-     * @param itemStack2 The right stack to compare.
-     * @param matchMeta  Set to true to match meta data.
-     * @param matchNBT   Set to true to match nbt
+     * @param itemStack1  The left stack to compare.
+     * @param itemStack2  The right stack to compare.
+     * @param matchDamage Set to true to match damage data.
+     * @param matchNBT    Set to true to match nbt
      * @return True when they are equal except the stacksize, false when not.
      */
-    @NotNull
-    public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchMeta, final boolean matchNBT)
+    public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchDamage, final boolean matchNBT)
+    {
+        return compareItemStacksIgnoreStackSize(itemStack1, itemStack2, matchDamage, matchNBT, false);
+    }
+
+    /**
+     * Method to compare to stacks, ignoring their stacksize.
+     *
+     * @param itemStack1  The left stack to compare.
+     * @param itemStack2  The right stack to compare.
+     * @param matchDamage Set to true to match damage data.
+     * @param matchNBT    Set to true to match nbt
+     * @param min         if the count of stack2 has to be at least the same as stack1.
+     * @return True when they are equal except the stacksize, false when not.
+     */
+    public static boolean compareItemStacksIgnoreStackSize(
+      final ItemStack itemStack1,
+      final ItemStack itemStack2,
+      final boolean matchDamage,
+      final boolean matchNBT,
+      final boolean min)
     {
         if (isEmpty(itemStack1) && isEmpty(itemStack2))
         {
@@ -698,12 +709,17 @@ public final class ItemStackUtils
         if (!isEmpty(itemStack1) &&
               !isEmpty(itemStack2) &&
               itemStack1.getItem() == itemStack2.getItem() &&
-              (itemStack1.getDamage() == itemStack2.getDamage() || !matchMeta))
+              (itemStack1.getDamage() == itemStack2.getDamage() || !matchDamage))
         {
             if (!matchNBT)
             {
                 // Not comparing nbt
                 return true;
+            }
+
+            if (min && itemStack1.getCount() > itemStack2.getCount())
+            {
+                return false;
             }
 
             // Then sort on NBT
@@ -736,17 +752,17 @@ public final class ItemStackUtils
     /**
      * Method to check if a stack is in a list of stacks.
      *
-     * @param stacks    the list of stacks.
-     * @param stack     the stack.
-     * @param matchMeta if meta has to match.
-     * @param matchNBT  if nbt has to match.
+     * @param stacks      the list of stacks.
+     * @param stack       the stack.
+     * @param matchDamage if damage has to match.
+     * @param matchNBT    if nbt has to match.
      * @return true if so.
      */
-    public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack, final boolean matchMeta, final boolean matchNBT)
+    public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack, final boolean matchDamage, final boolean matchNBT)
     {
         for (final ItemStack tempStack : stacks)
         {
-            if (compareItemStacksIgnoreStackSize(tempStack, stack, matchMeta, matchNBT))
+            if (compareItemStacksIgnoreStackSize(tempStack, stack, matchDamage, matchNBT))
             {
                 return true;
             }
@@ -755,8 +771,7 @@ public final class ItemStackUtils
     }
 
     /**
-     * set the size of the stack.
-     * This is for compatibility between 1.10 and 1.11
+     * set the size of the stack. This is for compatibility between 1.10 and 1.11
      *
      * @param stack to set the size to
      * @param size  of the stack

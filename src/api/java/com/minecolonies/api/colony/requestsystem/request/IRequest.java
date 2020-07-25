@@ -46,8 +46,7 @@ public interface IRequest<R extends IRequestable>
     <T extends IToken<?>> T getId();
 
     /**
-     * Used to determine which type of request this is.
-     * Only RequestResolvers for this Type are then used to resolve the this.
+     * Used to determine which type of request this is. Only RequestResolvers for this Type are then used to resolve the this.
      *
      * @return The class that represents this Type of Request.
      */
@@ -63,8 +62,7 @@ public interface IRequest<R extends IRequestable>
     RequestState getState();
 
     /**
-     * Setter for the current state of this request.
-     * It is not recommended to call this method from outside of the request management system.
+     * Setter for the current state of this request. It is not recommended to call this method from outside of the request management system.
      *
      * @param manager the request manager.
      * @param state   The new state of this request.
@@ -80,11 +78,9 @@ public interface IRequest<R extends IRequestable>
     IRequester getRequester();
 
     /**
-     * Return the object that is actually requested.
-     * A RequestResolver can compare this object however way it sees fit.
+     * Return the object that is actually requested. A RequestResolver can compare this object however way it sees fit.
      * <p>
-     * During the resolving process this object is called multiple times. But at least twice.
-     * A cached implementation is preferred.
+     * During the resolving process this object is called multiple times. But at least twice. A cached implementation is preferred.
      *
      * @return The object that is actually requested.
      */
@@ -114,8 +110,7 @@ public interface IRequest<R extends IRequestable>
     boolean hasResult();
 
     /**
-     * Returns the parent of this request.
-     * If this is set it means that this request is part of request chain.
+     * Returns the parent of this request. If this is set it means that this request is part of request chain.
      *
      * @param <T> generic token.
      * @return The parent of this request, or null if it has no parent.
@@ -194,8 +189,7 @@ public interface IRequest<R extends IRequestable>
     boolean hasChildren();
 
     /**
-     * Method to get the children of this request.
-     * Immutable.
+     * Method to get the children of this request. Immutable.
      *
      * @return An immutable collection of the children of this request.
      */
@@ -227,21 +221,21 @@ public interface IRequest<R extends IRequestable>
 
     /**
      * Sets the deliveries of this request to the given stacks
-     * 
+     *
      * @param stacks The stacks that will be the deliveries.
      */
     void overrideCurrentDeliveries(@NotNull final ImmutableList<ItemStack> stacks);
 
     /**
      * Adds a single stack as a delivery to this request.
-     * 
+     *
      * @param stack The stack that should be treated as a new delivery.
      */
     void addDelivery(@NotNull final ItemStack stack);
 
     /**
-     * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes the request in short.
-     * Should represent the request, in case the player needs to fulfill it, or information about this request is required.
+     * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes the request in short. Should represent the request, in case the player needs to
+     * fulfill it, or information about this request is required.
      *
      * @return The text that describes this Request.
      */
@@ -249,8 +243,8 @@ public interface IRequest<R extends IRequestable>
     ITextComponent getShortDisplayString();
 
     /**
-     * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes so that the player can complete it.
-     * Should represent the request, in case the player needs to fulfill it, or information about this request is required.
+     * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes so that the player can complete it. Should represent the request, in case the
+     * player needs to fulfill it, or information about this request is required.
      *
      * @return The text that describes this Request.
      */
@@ -258,8 +252,7 @@ public interface IRequest<R extends IRequestable>
     ITextComponent getLongDisplayString();
 
     /**
-     * Method used to get a List of ItemStacks that represents the stack.
-     * This list is used in GUI to show what the request is. If an empty list is returned then no stack is shown.
+     * Method used to get a List of ItemStacks that represents the stack. This list is used in GUI to show what the request is. If an empty list is returned then no stack is shown.
      * If a list with multiple stacks is returned it will switch between the stacks once every second unless the player holds the shift key.
      *
      * @return A List of ItemStacks that represents this request.

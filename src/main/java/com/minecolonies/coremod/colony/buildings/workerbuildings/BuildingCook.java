@@ -202,7 +202,6 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
 
             // End Additional recipe rules
         }
-
     }
 
     @NotNull
@@ -238,7 +237,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
             return stack.getCount();
         }
 
-        if (ISFOOD.test(stack) && localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory)
+        if (ISFOOD.test(stack) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
         {
             final ItemStorage kept = new ItemStorage(stack);
             if (localAlreadyKept.contains(kept))
@@ -250,7 +249,8 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         }
 
         final Predicate<ItemStack> allowedFuel = theStack -> getAllowedFuel().stream().anyMatch(fuelStack -> fuelStack.isItemEqual(theStack));
-        if (allowedFuel.test(stack) && localAlreadyKept.stream().filter(storage -> allowedFuel.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory)
+        if (allowedFuel.test(stack) && (localAlreadyKept.stream().filter(storage -> allowedFuel.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE
+              || !inventory))
         {
             final ItemStorage kept = new ItemStorage(stack);
             if (localAlreadyKept.contains(kept))

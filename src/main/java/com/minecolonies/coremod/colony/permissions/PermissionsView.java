@@ -32,6 +32,7 @@ public class PermissionsView implements IPermissions
 
     /**
      * Getter for the user rank.
+     *
      * @return the rank.
      */
     public Rank getUserRank()
@@ -49,10 +50,10 @@ public class PermissionsView implements IPermissions
     public Set<Player> getPlayersByRank(final Rank rank)
     {
         return Collections.unmodifiableSet(
-                this.players.values()
-                        .stream()
-                        .filter(player -> player.getRank() == rank)
-                        .collect(Collectors.toSet()));
+          this.players.values()
+            .stream()
+            .filter(player -> player.getRank() == rank)
+            .collect(Collectors.toSet()));
     }
 
     @NotNull
@@ -83,10 +84,10 @@ public class PermissionsView implements IPermissions
     public Set<Player> getPlayersByRank(@NotNull final Set<Rank> ranks)
     {
         return Collections.unmodifiableSet(
-                this.players.values()
-                        .stream()
-                        .filter(player -> ranks.contains(player.getRank()))
-                        .collect(Collectors.toSet()));
+          this.players.values()
+            .stream()
+            .filter(player -> ranks.contains(player.getRank()))
+            .collect(Collectors.toSet()));
     }
 
     @NotNull
@@ -117,7 +118,7 @@ public class PermissionsView implements IPermissions
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
         return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
-                || (permissions != null && action != null && permissions.containsKey(rank) && Utils.testFlag(permissions.get(rank), action.getFlag()));
+                 || (permissions != null && action != null && permissions.containsKey(rank) && Utils.testFlag(permissions.get(rank), action.getFlag()));
     }
 
     /**

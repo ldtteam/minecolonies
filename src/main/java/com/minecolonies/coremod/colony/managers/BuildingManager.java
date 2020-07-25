@@ -11,7 +11,7 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
@@ -283,10 +283,9 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void addNewField(final AbstractScarescrowTileEntity tileEntity, final BlockPos pos, final World world)
+    public void addNewField(final AbstractScarecrowTileEntity tileEntity, final BlockPos pos, final World world)
     {
         addField(pos);
-        tileEntity.calculateSize(world, pos.down());
         markFieldsDirty();
     }
 
@@ -334,10 +333,8 @@ public class BuildingManager implements IBuildingManager
                   colony.getID(),
                   tileEntity.getBlockState().getClass(),
                   tileEntity.getPosition()));
-                if (tileEntity.isMirrored())
-                {
-                    building.invertMirror();
-                }
+
+                building.setIsMirrored(tileEntity.isMirrored());
                 if (!tileEntity.getStyle().isEmpty())
                 {
                     building.setStyle(tileEntity.getStyle());
@@ -352,7 +349,8 @@ public class BuildingManager implements IBuildingManager
                     building.onPlacement();
 
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
-                    final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
+                    final LoadOnlyStructureHandler wrapper =
+                      new LoadOnlyStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
                     final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
                       = ColonyUtils.calculateCorners(building.getPosition(),
                       world,

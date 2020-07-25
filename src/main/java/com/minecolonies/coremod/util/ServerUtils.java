@@ -83,12 +83,9 @@ public final class ServerUtils
     /**
      * Returns a list of players from a list of {@link Player}.
      * <p>
-     * The {@link Player} is a wrapper around a {@link UUID} of
-     * minecraft players. The List will simply be converted into an {@link
-     * PlayerEntity} type.
+     * The {@link Player} is a wrapper around a {@link UUID} of minecraft players. The List will simply be converted into an {@link PlayerEntity} type.
      * <p>
-     * Uses {@link ServerUtils#getPlayerFromPermPlayer(Player,
-     * World)}.
+     * Uses {@link ServerUtils#getPlayerFromPermPlayer(Player, World)}.
      *
      * @param players The list of players to convert.
      * @param world   an instance of the world.
@@ -112,8 +109,7 @@ public final class ServerUtils
      * <p>
      * Simply converts our type into the base type.
      * <p>
-     * Passes this {@link Player#getID()} to {@link
-     * ServerUtils#getPlayerFromUUID(UUID, World)}.
+     * Passes this {@link Player#getID()} to {@link ServerUtils#getPlayerFromUUID(UUID, World)}.
      *
      * @param player The {@link Player} to convert
      * @param world  an instance of the world.

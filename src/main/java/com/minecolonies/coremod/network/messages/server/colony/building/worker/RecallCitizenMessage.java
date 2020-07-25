@@ -67,7 +67,7 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
                 if (citizenData != null)
                 {
                     Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
-                    citizenData.updateCitizenEntityIfNecessary();
+                    citizenData.updateEntityIfNecessary();
                 }
                 else
                 {
@@ -77,8 +77,8 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
             }
             else if (optionalEntityCitizen.get().getTicksExisted() == 0)
             {
-                citizenData.getCitizenEntity().ifPresent(Entity::remove);
-                citizenData.updateCitizenEntityIfNecessary();
+                citizenData.getEntity().ifPresent(Entity::remove);
+                citizenData.updateEntityIfNecessary();
             }
 
             final BlockPos loc = building.getPosition();

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.google.common.collect.Lists;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
@@ -17,12 +16,9 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -51,6 +47,31 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     }
 
     /**
+     * Method used to check if this warehouse holds any of the requested itemstacks.
+     *
+     * @param itemStack The stack to check with to check with.
+     * @return True when the warehouse holds a stack, false when not.
+     */
+    @Override
+    public boolean hasMatchingItemStackInWarehouse(@NotNull ItemStack itemStack)
+    {
+        for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+        {
+            final TileEntity entity = getWorld().getTileEntity(pos);
+            if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).hasItemStack(itemStack, true))
+            {
+                return true;
+            }
+
+            if (entity instanceof ChestTileEntity && InventoryUtils.hasItemInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), item -> item.isItemEqualIgnoreDurability(itemStack) && item.getCount() >= itemStack.getCount()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Method to get the first matching ItemStack in the Warehouse.
      *
      * @param itemStackSelectionPredicate The predicate to select the ItemStack with.
@@ -60,48 +81,30 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     @NotNull
     public List<ItemStack> getMatchingItemStacksInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
+        ArrayList<ItemStack> found = new ArrayList<ItemStack>();
+        
         if (getBuilding() != null)
         {
-            final Set<TileEntity> tileEntities = new HashSet<>();
-            tileEntities.add(this);
+            for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+            {
+                final TileEntity entity = getWorld().getTileEntity(pos);
+                if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).getItemCount(itemStackSelectionPredicate) > 0)
+                {
+                    final TileEntityRack rack = (TileEntityRack) entity;
+                    found.addAll(InventoryUtils.filterItemHandler(rack.getInventory(), itemStackSelectionPredicate));
+                }
 
-            return tileEntities.stream()
-                     .flatMap(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStackSelectionPredicate).stream())
-                     .filter(itemStacks -> !itemStacks.isEmpty())
-              .collect(Collectors.toList());
-
+                if (entity instanceof ChestTileEntity && InventoryUtils.hasItemInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), itemStackSelectionPredicate))
+                {
+                    found.addAll(InventoryUtils.filterItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), itemStackSelectionPredicate));
+                }
+            }
         }
-
-        return Lists.newArrayList();
+        return found;
     }
 
     /**
-     * Check for a certain item and return the position of the chest containing it.
-     *
-     * @param itemStackSelectionPredicate the stack to search for.
-     * @return the position or null.
-     */
-    @Nullable
-    public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        if (getBuilding() != null)
-        {
-            final Set<TileEntity> tileEntities = getBuilding().getAdditionalCountainers().stream().map(pos -> getWorld().getTileEntity(pos)).collect(Collectors.toSet());
-            tileEntities.removeIf(Objects::isNull);
-            tileEntities.add(this);
-
-            return tileEntities.stream()
-                     .filter(tileEntity -> InventoryUtils.hasItemInProvider(tileEntity, itemStackSelectionPredicate))
-                     .map(TileEntity::getPos)
-                     .findFirst().orElse(null);
-        }
-
-        return null;
-    }
-
-    /**
-     * Dump the inventory of a citizen into the warehouse.
-     * Go through all items and search the right chest to dump it in.
+     * Dump the inventory of a citizen into the warehouse. Go through all items and search the right chest to dump it in.
      *
      * @param inventoryCitizen the inventory of the citizen
      */

@@ -27,8 +27,8 @@ public class WindowInfo extends AbstractWindowSkeleton
      */
     private int infoIndex;
 
-    private final Label name;
-    private final Label info;
+    private final Label  name;
+    private final Label  info;
     private final Button infoNextPage;
     private final Button infoPrevPage;
 

@@ -76,24 +76,29 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
         }
 
         return tileEntities.stream()
-          .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
-          .filter(itemStack -> !itemStack.isEmpty())
-          .flatMap(List::stream)
-          .filter(itemStack -> {
-              if (!request.hasParent())
-                  return true;
+                 .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
+                 .filter(itemStack -> !itemStack.isEmpty())
+                 .flatMap(List::stream)
+                 .filter(itemStack -> {
+                     if (!request.hasParent())
+                     {
+                         return true;
+                     }
 
-              final IRequest<?> requestParent = manager.getRequestForToken(request.getParent());
+                     final IRequest<?> requestParent = manager.getRequestForToken(request.getParent());
 
-              return !requestParent.getRequestOfType(IDeliverable.class).map(d -> d.matches(itemStack)).orElse(false);
-          })
-          .mapToInt(ItemStack::getCount)
-          .sum() > 0;
+                     return !requestParent.getRequestOfType(IDeliverable.class).map(d -> d.matches(itemStack)).orElse(false);
+                 })
+                 .mapToInt(ItemStack::getCount)
+                 .sum() > 0;
     }
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
+    public List<IToken<?>> attemptResolveForBuilding(
+      @NotNull final IRequestManager manager,
+      @NotNull final IRequest<? extends IDeliverable> request,
+      @NotNull final AbstractBuilding building)
     {
         final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
 
@@ -182,8 +187,9 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
 
     @NotNull
     private Set<ICapabilityProvider> getCapabilityProviders(
-            @NotNull final IRequestManager manager,
-            @NotNull final AbstractBuilding building) {
+      @NotNull final IRequestManager manager,
+      @NotNull final AbstractBuilding building)
+    {
         final Set<ICapabilityProvider> tileEntities = Sets.newHashSet();
         tileEntities.add(building.getTileEntity());
         tileEntities.removeIf(Objects::isNull);

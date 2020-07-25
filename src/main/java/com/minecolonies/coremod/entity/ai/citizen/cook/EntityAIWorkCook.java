@@ -14,8 +14,10 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
@@ -26,7 +28,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Tuple;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -72,6 +74,13 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      * The citizen the worker is currently trying to serve.
      */
     private final List<PlayerEntity> playerToServe = new ArrayList<>();
+
+    /**
+     * Cooking icon
+     */
+    private final static VisibleCitizenStatus COOK =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/cook.png"), "com.minecolonies.gui.visiblestatus.cook");
+
 
     /**
      * The building range the cook should search for clients.
@@ -186,6 +195,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return START_WORKING;
         }
 
+        worker.getCitizenData().setVisibleStatus(COOK);
+
         final Entity living = citizenToServe.isEmpty() ? playerToServe.get(0) : citizenToServe.get(0);
 
         if (range == null)
@@ -202,11 +213,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
 
         if (walkToBlock(living.getPosition()))
         {
-            if (worker.getCitizenStuckHandler().isStuck())
-            {
-                worker.getNavigator().clearPath();
-                removeFromQueue();
-            }
             return getState();
         }
 
@@ -447,6 +453,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return getState();
         }
 
+        worker.getCitizenData().setVisibleStatus(COOK);
         job.setProgress(job.getProgress() + 1);
 
         worker.setHeldItem(Hand.MAIN_HAND,

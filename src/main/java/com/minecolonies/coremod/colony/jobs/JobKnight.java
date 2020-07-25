@@ -53,12 +53,13 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
     public void onLevelUp()
     {
         // Bonus Health for knights(gets reset upon Firing)
-        if (getCitizen().getCitizenEntity().isPresent())
+        if (getCitizen().getEntity().isPresent())
         {
-            final AbstractEntityCitizen citizen = getCitizen().getCitizenEntity().get();
+            final AbstractEntityCitizen citizen = getCitizen().getEntity().get();
 
             // +1 half Heart every 3 level
-            final AttributeModifier healthModLevel = new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME, getCitizen().getJobModifier() / 3 + KNIGHT_HP_BONUS, AttributeModifier.Operation.ADDITION);
+            final AttributeModifier healthModLevel =
+              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME, getCitizen().getJobModifier() / 3 + KNIGHT_HP_BONUS, AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
     }

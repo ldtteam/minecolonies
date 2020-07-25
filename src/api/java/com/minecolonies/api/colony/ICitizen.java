@@ -44,12 +44,14 @@ public interface ICitizen
 
     /**
      * Get the inventory of the citizen.
+     *
      * @return the inventory of the citizen.
      */
     InventoryCitizen getInventory();
 
     /**
      * Check if the citizen is paused.
+     *
      * @param p true if paused, else false.
      */
     void setPaused(boolean p);

@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
@@ -15,8 +16,8 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,7 +61,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, SIFT, 1),
+          new AITarget(IDLE, START_WORKING, 10),
           new AITarget(START_WORKING, SIFT, 1),
           new AITarget(SIFT, this::sift, TICK_DELAY)
         );
@@ -151,7 +152,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
                 }
 
                 final ItemStack result =
-                  IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock());
+                  IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock()).copy();
                 if (!result.isEmpty())
                 {
                     InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), result);
@@ -181,6 +182,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
             Network.getNetwork()
               .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), worker);
 
+            worker.swingArm(Hand.MAIN_HAND);
             SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.ENTITY_LEASH_KNOT_BREAK);
         }
         return getState();

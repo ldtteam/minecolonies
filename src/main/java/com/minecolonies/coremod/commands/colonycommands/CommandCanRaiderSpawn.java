@@ -34,7 +34,7 @@ public class CommandCanRaiderSpawn implements IMCOPCommand
             return 0;
         }
 
-        final boolean canHaveBarbEvents = BoolArgumentType.getBool(context,CANSPAWN_ARG);
+        final boolean canHaveBarbEvents = BoolArgumentType.getBool(context, CANSPAWN_ARG);
 
         colony.getRaiderManager().setCanHaveRaiderEvents(canHaveBarbEvents);
         colony.markDirty();

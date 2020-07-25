@@ -50,8 +50,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
     protected int currentAttackDelay = 0;
 
     /**
-     * Creates the abstract part of the AI.inte
-     * Always use this constructor!
+     * Creates the abstract part of the AI.inte Always use this constructor!
      *
      * @param job the job to fulfill
      */
@@ -91,6 +90,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
 
     /**
      * Method to check if the worker is ready to start.
+     *
      * @return true if so.
      */
     protected abstract boolean isSetup();
@@ -108,7 +108,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
             currentPathingTarget = getWanderPosition();
         }
 
-        if (!walkToBlock(currentPathingTarget) || worker.getCitizenStuckHandler().isStuck())
+        if (!walkToBlock(currentPathingTarget))
         {
             currentPathingTarget = null;
             return DECIDE;

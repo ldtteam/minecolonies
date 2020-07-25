@@ -103,7 +103,11 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
         super(c, l);
 
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+    }
 
+    @Override
+    public void checkForWorkerSpecificRecipes()
+    {
         if (recipes.isEmpty())
         {
             addStrippedWoodRecipe(Items.OAK_LOG, Items.STRIPPED_OAK_LOG);
@@ -118,6 +122,7 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
             addStrippedWoodRecipe(Items.JUNGLE_WOOD, Items.STRIPPED_JUNGLE_WOOD);
             addStrippedWoodRecipe(Items.ACACIA_WOOD, Items.STRIPPED_ACACIA_WOOD);
             addStrippedWoodRecipe(Items.DARK_OAK_WOOD, Items.STRIPPED_DARK_OAK_WOOD);
+            markDirty();
         }
     }
 
@@ -130,7 +135,8 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
           1,
           new ItemStack(strippedVariant, 1),
           Blocks.AIR);
-        recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+
+        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
     }
 
     @Override

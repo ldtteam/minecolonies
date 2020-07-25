@@ -32,6 +32,7 @@ public class PlayMusicMessage implements IMessage
 
     /**
      * Create a play music message with a specific sound event.
+     *
      * @param event the sound event.
      */
     public PlayMusicMessage(final SoundEvent event)

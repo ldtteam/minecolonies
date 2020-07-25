@@ -186,7 +186,7 @@ public class BuildToolPasteMessage implements IMessage
                 final TileEntity tileEntity = player.world.getTileEntity(pos);
                 if (tileEntity instanceof IBlueprintDataProvider && blueprint != null)
                 {
-                    final CompoundNBT teData = blueprint.getTileEntityData(blueprint.getPrimaryBlockOffset(), tileEntity.getPos());
+                    final CompoundNBT teData = blueprint.getTileEntityData(tileEntity.getPos(), blueprint.getPrimaryBlockOffset());
                     if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
                     {
                         ((IBlueprintDataProvider) tileEntity).readSchematicDataFromNBT(teData);
@@ -319,7 +319,13 @@ public class BuildToolPasteMessage implements IMessage
      * @param buildPos The location the hut is being placed.
      * @param mirror   Whether or not the strcture is mirrored.
      */
-    private static void setupBuilding(@NotNull final World world, @NotNull final PlayerEntity player, final StructureName sn, final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+    private static void setupBuilding(
+      @NotNull final World world,
+      @NotNull final PlayerEntity player,
+      final StructureName sn,
+      final int rotation,
+      @NotNull final BlockPos buildPos,
+      final boolean mirror)
     {
         @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, buildPos);
 
@@ -372,10 +378,7 @@ public class BuildToolPasteMessage implements IMessage
                 building.setHeight(wrapper.getBluePrint().getSizeY());
             }
 
-            if (mirror)
-            {
-                building.invertMirror();
-            }
+            building.setIsMirrored(mirror);
         }
     }
 }

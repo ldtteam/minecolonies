@@ -9,13 +9,14 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -59,9 +60,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     protected IRecipeStorage currentRecipeStorage;
 
     /**
-     * The number of actions a crafting "success" is worth.
-     * By default, that's 1 action for 1 crafting success.
-     * Override this in your subclass to make crafting recipes worth more actions :-)
+     * The number of actions a crafting "success" is worth. By default, that's 1 action for 1 crafting success. Override this in your subclass to make crafting recipes worth more
+     * actions :-)
      *
      * @return The number of actions a crafting "success" is worth.
      */
@@ -98,6 +98,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     protected IAIState decide()
     {
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         if (job.getTaskQueue().isEmpty())
         {
             return START_WORKING;
@@ -113,7 +114,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return START_WORKING;
         }
 
-        if (job.getActionsDone() > 0)
+        if (job.getActionsDone() >= getActionsDoneUntilDumping())
         {
             // Wait to dump before continuing.
             return getState();
@@ -179,6 +180,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
 
     /**
      * Get an extended output count that can be overriden.
+     *
      * @param primaryOutput the type of output.
      * @return the output count that should be added too.
      */
@@ -224,7 +226,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + ((job.getCraftCounter() + progressOpsCount ) * inputStorage.getAmount())
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount())
                   < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))

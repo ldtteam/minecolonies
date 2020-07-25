@@ -103,7 +103,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
 
-        storage = StandardFactoryController.getInstance().readFromBuffer(buf);
+        storage = StandardFactoryController.getInstance().deserialize(buf);
         remove = buf.readBoolean();
     }
 
@@ -116,7 +116,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
 
-        StandardFactoryController.getInstance().writeToBuffer(buf, storage);
+        StandardFactoryController.getInstance().serialize(buf, storage);
         buf.writeBoolean(remove);
     }
 

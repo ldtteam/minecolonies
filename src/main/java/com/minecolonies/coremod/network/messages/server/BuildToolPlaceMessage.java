@@ -52,7 +52,7 @@ public class BuildToolPlaceMessage implements IMessage
      * Language key for missing hut
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
-    private static final String WRONG_COLONY = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
+    private static final String WRONG_COLONY        = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
 
     /**
      * The state at the offset position.
@@ -369,10 +369,8 @@ public class BuildToolPlaceMessage implements IMessage
                 ConstructionTapeHelper.placeConstructionTape(building.getPosition(), corners, world);
             }
 
-            if (mirror)
-            {
-                building.invertMirror();
-            }
+            building.setIsMirrored(mirror);
+
             if (complete)
             {
                 building.onUpgradeComplete(building.getBuildingLevel());

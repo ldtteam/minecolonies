@@ -40,8 +40,9 @@ public class LocalResearch implements ILocalResearch
 
     /**
      * Create the new research.
-     * @param id it's id.
-     * @param depth the depth in the tree.
+     *
+     * @param id     it's id.
+     * @param depth  the depth in the tree.
      * @param branch the branch it is on.
      */
     public LocalResearch(final String id, final String branch, final int depth)
@@ -57,7 +58,7 @@ public class LocalResearch implements ILocalResearch
         if (state == ResearchState.IN_PROGRESS)
         {
             progress++;
-            if (progress >= BASE_RESEARCH_TIME * Math.pow(2, depth-1))
+            if (progress >= BASE_RESEARCH_TIME * Math.pow(2, depth - 1))
             {
                 state = ResearchState.FINISHED;
                 effects.applyEffect(IGlobalResearchTree.getInstance().getResearch(this.branch, this.getId()).getEffect());

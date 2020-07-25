@@ -41,8 +41,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     private static final float RESISTANCE = 1F;
 
     /**
-     * Constructor for the Substitution block.
-     * sets the creative tab, as well as the resistance and the hardness.
+     * Constructor for the Substitution block. sets the creative tab, as well as the resistance and the hardness.
      */
     public BlockBarracksTowerSubstitution()
     {
@@ -86,7 +85,8 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+    {
         builder.add(FACING);
     }
 }

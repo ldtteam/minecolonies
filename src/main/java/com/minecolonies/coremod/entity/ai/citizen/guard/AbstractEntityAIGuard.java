@@ -356,9 +356,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             {
                 for (final ICitizenData citizen : getOwnBuilding().getAssignedCitizen())
                 {
-                    if (citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getRevengeTarget() == null)
+                    if (citizen.getEntity().isPresent() && citizen.getEntity().get().getRevengeTarget() == null)
                     {
-                        citizen.getCitizenEntity().get().setRevengeTarget(target);
+                        citizen.getEntity().get().setRevengeTarget(target);
                     }
                 }
                 return getAttackState();
@@ -470,7 +470,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             currentPatrolPoint = buildingGuards.getNextPatrolTarget(false);
         }
 
-        if (currentPatrolPoint != null && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 3) || worker.getCitizenStuckHandler().isStuck()))
+        if (currentPatrolPoint != null && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 3)))
         {
             buildingGuards.arrivedAtPatrolPoint(worker);
         }

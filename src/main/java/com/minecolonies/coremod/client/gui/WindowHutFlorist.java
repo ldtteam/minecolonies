@@ -32,7 +32,7 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
     /**
      * The resource string.
      */
-    private static final String RESOURCE_STRING       = ":gui/windowhutflorist.xml";
+    private static final String RESOURCE_STRING = ":gui/windowhutflorist.xml";
 
     /**
      * The max level the building doesn't let filtering yet.

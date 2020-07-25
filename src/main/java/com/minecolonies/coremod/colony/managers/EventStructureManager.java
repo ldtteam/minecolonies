@@ -76,7 +76,7 @@ public class EventStructureManager implements IEventStructureManager
      * Spawns the given structure at the blockpos and saves a backup for the previous blocks.
      *
      * @param structure the structure to spawn.
-     * @param eventID the id of the event.
+     * @param eventID   the id of the event.
      */
     @Override
     public boolean spawnTemporaryStructure(
@@ -116,12 +116,12 @@ public class EventStructureManager implements IEventStructureManager
             }
         }
 
-        final BlockPos spawnPos = targetSpawnPoint.add(0, -y ,0);
+        final BlockPos spawnPos = targetSpawnPoint.add(0, -y, 0);
 
         final BlockPos zeroPos = targetSpawnPoint.subtract(structure.getPrimaryBlockOffset()).add(0, -y, 0);
         final BlockPos cornerPos = new BlockPos(zeroPos.getX() + structure.getSizeX() - 1, zeroPos.getY() + structure.getSizeY(), zeroPos.getZ() + structure.getSizeZ() - 1);
 
-        final BlockPos anchor = new BlockPos(zeroPos.getX() + structure.getSizeX()/2, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ()/2);
+        final BlockPos anchor = new BlockPos(zeroPos.getX() + structure.getSizeX() / 2, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ() / 2);
 
         final String backupPath = Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER + colony.getID() + colony.getDimension() + anchor;
 

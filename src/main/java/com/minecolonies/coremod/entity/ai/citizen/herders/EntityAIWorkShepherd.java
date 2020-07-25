@@ -44,8 +44,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     private static final int NUMBER_OF_DYE_POSSIBILITIES = 15;
 
     /**
-     * Creates the abstract part of the AI.
-     * Always use this constructor!
+     * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill
      */

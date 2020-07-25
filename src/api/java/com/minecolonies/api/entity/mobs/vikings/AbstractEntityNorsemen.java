@@ -11,7 +11,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
@@ -34,7 +33,8 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesM
 
     /**
      * Constructor method for Abstract norsemen..
-     * @param type the type.
+     *
+     * @param type  the type.
      * @param world the world.
      */
     public AbstractEntityNorsemen(final EntityType<? extends AbstractEntityNorsemen> type, final World world)
@@ -67,7 +67,6 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesM
         return (this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F + 1.0F;
     }
 
-
     @Override
     public boolean canSpawn(final IWorld worldIn, final SpawnReason spawnReasonIn)
     {
@@ -76,6 +75,7 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesM
 
     /**
      * Get the unique texture id.
+     *
      * @return the texture id.
      */
     public int getTextureId()

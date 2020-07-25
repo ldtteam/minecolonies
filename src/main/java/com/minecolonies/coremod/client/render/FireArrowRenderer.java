@@ -16,14 +16,14 @@ public class FireArrowRenderer extends ArrowRenderer<AbstractArrowEntity>
      * Array of different textures.
      */
     private static final ResourceLocation[] RES = new ResourceLocation[]
-                                                   {
-                                                     new ResourceLocation(Constants.MOD_ID, "textures/items/magicalarrows/magical_arrow1.png"),
-                                                     new ResourceLocation(Constants.MOD_ID, "textures/items/magicalarrows/magical_arrow2.png"),
-                                                     new ResourceLocation(Constants.MOD_ID, "textures/items/magicalarrows/magical_arrow3.png"),
-                                                     new ResourceLocation(Constants.MOD_ID, "textures/items/magicalarrows/magical_arrow4.png"),
-                                                     new ResourceLocation(Constants.MOD_ID, "textures/items/magicalarrows/magical_arrow5.png"),
-                                                     new ResourceLocation(Constants.MOD_ID, "textures/items/magicalarrows/magical_arrow6.png")
-                                                   };
+                                                    {
+                                                      new ResourceLocation(Constants.MOD_ID, "textures/items/magicalarrows/magical_arrow1.png"),
+                                                      new ResourceLocation(Constants.MOD_ID, "textures/items/magicalarrows/magical_arrow2.png"),
+                                                      new ResourceLocation(Constants.MOD_ID, "textures/items/magicalarrows/magical_arrow3.png"),
+                                                      new ResourceLocation(Constants.MOD_ID, "textures/items/magicalarrows/magical_arrow4.png"),
+                                                      new ResourceLocation(Constants.MOD_ID, "textures/items/magicalarrows/magical_arrow5.png"),
+                                                      new ResourceLocation(Constants.MOD_ID, "textures/items/magicalarrows/magical_arrow6.png")
+                                                    };
 
     public FireArrowRenderer(EntityRendererManager manager)
     {

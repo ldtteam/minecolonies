@@ -21,24 +21,19 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
- * The fisherman's job class.
- * implements some useful things for him.
+ * The fisherman's job class. implements some useful things for him.
  */
 public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherman>
 {
     /**
-     * The water the fisherman is currently fishing at
-     * Contains the location of the water so that the fisherman can path to the fishing spot.
+     * The water the fisherman is currently fishing at Contains the location of the water so that the fisherman can path to the fishing spot.
      */
     private Tuple<BlockPos, BlockPos> water;
 
     /**
-     * Contains all possible fishing spots.
-     * This list is filled during the execution of the fisherman.
-     * The fisherman will go from spot to spot and always store the location in this list.
-     * After the fisherman has visited an fixed amount of ponds the fisherman will choose a random pond
-     * from this list as the next fishing spot.
-     * The first position is the water to fish in, the second is the land to stand on.
+     * Contains all possible fishing spots. This list is filled during the execution of the fisherman. The fisherman will go from spot to spot and always store the location in this
+     * list. After the fisherman has visited an fixed amount of ponds the fisherman will choose a random pond from this list as the next fishing spot. The first position is the
+     * water to fish in, the second is the land to stand on.
      */
     @NotNull
     private ArrayList<Tuple<BlockPos, BlockPos>> ponds = new ArrayList<>();
@@ -182,7 +177,7 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
     /**
      * Add one pond to our list of ponds.
      *
-     * @param pond the pond to add.
+     * @param pond   the pond to add.
      * @param parent the parent position.
      */
     public void addToPonds(final BlockPos pond, final BlockPos parent)

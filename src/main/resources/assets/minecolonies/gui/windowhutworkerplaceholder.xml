@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
     <switch id="pages" size="100% 100%">
         <view id="pageActions" size="100% 100%">
-        	<layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
+            <layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
         </view>
         <!--<view id="anotherPageAndMore" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>

@@ -6,20 +6,24 @@ import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
-import com.minecolonies.coremod.colony.workorders.*;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
+import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.PICK_UP_RESIDUALS;
@@ -27,12 +31,11 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
 
-
 /**
- * AI class for the builder.
- * Manages building and repairing buildings.
+ * AI class for the builder. Manages building and repairing buildings.
  */
-public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJobStructure<?, J>, B extends AbstractBuildingStructureBuilder> extends AbstractEntityAIStructure<J, B>
+public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJobStructure<?, J>, B extends AbstractBuildingStructureBuilder>
+  extends AbstractEntityAIStructure<J, B>
 {
     /**
      * Initialize the builder and add all his tasks.
@@ -94,7 +97,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     wo.setCleared(true);
                 }
             }
-            else if(!(wo instanceof WorkOrderBuildMiner))
+            else if (!(wo instanceof WorkOrderBuildMiner))
             {
                 worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, wo.getName());
             }
@@ -155,19 +158,20 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
     /**
      * Iterates through all the required resources and stores them in the building.
-     * Suppressing Sonar Rule Squid:S135
-     * The rule thinks we should have less continue and breaks.
-     * But in this case the rule does not apply because code would become unreadable and uneffective without.
      */
-    private void requestMaterials()
+    @Override
+    public void requestMaterials()
     {
         final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
         buildingWorker.resetNeededResources();
 
         StructurePhasePlacementResult result;
-        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true);
+        final WorkerLoadOnlyStructureHandler structure =
+          new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
         final StructurePlacer placer = new StructurePlacer(structure);
         BlockPos progressPos = NULL_POS;
+
+        final List<ItemStack> deco = new ArrayList<>();
 
         do
         {
@@ -177,11 +181,23 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
             for (final ItemStack stack : result.getBlockResult().getRequiredItems())
             {
-                getOwnBuilding().addNeededResource(stack, stack.getCount());
+                if (ItemStackUtils.isDecoration(stack))
+                {
+                    deco.add(stack);
+                }
+                else
+                {
+                    getOwnBuilding().addNeededResource(stack, stack.getCount());
+                }
             }
-
         }
         while (result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
+
+        for (final ItemStack stack : deco)
+        {
+            getOwnBuilding().addNeededResource(stack, stack.getCount());
+        }
+        getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources(), worker.getCitizenData(), true);
     }
 
     @Override
@@ -254,9 +270,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 if (building == null)
                 {
                     Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                            worker.getCitizenColonyHandler().getColony().getID(),
-                            worker.getCitizenData().getId(),
-                            wo.getBuildingLocation()));
+                      worker.getCitizenColonyHandler().getColony().getID(),
+                      worker.getCitizenData().getId(),
+                      wo.getBuildingLocation()));
                 }
                 else
                 {
@@ -339,13 +355,13 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
         BuildingBuilderResource resource = buildingWorker.getNeededResources().get(stack.getTranslationKey() + "-" + hashCode);
 
-        if(resource == null)
+        if (resource == null)
         {
             requestMaterials();
             resource = buildingWorker.getNeededResources().get(stack.getTranslationKey() + "-" + hashCode);
         }
 
-        if(resource == null)
+        if (resource == null)
         {
             return stack;
         }

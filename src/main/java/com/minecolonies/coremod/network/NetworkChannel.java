@@ -21,6 +21,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.farmer.A
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardTaskMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.MobEntryChangeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.herder.HerderSetBreedingMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackReplantSaplingToggleMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackRestrictionToggleMessage;
@@ -147,6 +148,7 @@ public class NetworkChannel
         registerMessage(++idx, UpdateRequestStateMessage.class, UpdateRequestStateMessage::new);
         registerMessage(++idx, BuildingSetStyleMessage.class, BuildingSetStyleMessage::new);
         registerMessage(++idx, CowboySetMilkCowsMessage.class, CowboySetMilkCowsMessage::new);
+        registerMessage(++idx, HerderSetBreedingMessage.class, HerderSetBreedingMessage::new);
         registerMessage(++idx, RecallSingleCitizenMessage.class, RecallSingleCitizenMessage::new);
         registerMessage(++idx, AssignFilterableItemMessage.class, AssignFilterableItemMessage::new);
         registerMessage(++idx, TeamColonyColorChangeMessage.class, TeamColonyColorChangeMessage::new);
@@ -157,7 +159,6 @@ public class NetworkChannel
         registerMessage(++idx, PostBoxRequestMessage.class, PostBoxRequestMessage::new);
         registerMessage(++idx, ComposterRetrievalMessage.class, ComposterRetrievalMessage::new);
         registerMessage(++idx, CrusherSetModeMessage.class, CrusherSetModeMessage::new);
-        registerMessage(++idx, BuyCitizenMessage.class, BuyCitizenMessage::new);
         registerMessage(++idx, HireMercenaryMessage.class, HireMercenaryMessage::new);
         registerMessage(++idx, ShepherdSetDyeSheepsMessage.class, ShepherdSetDyeSheepsMessage::new);
         registerMessage(++idx, SifterSettingsMessage.class, SifterSettingsMessage::new);
@@ -168,12 +169,13 @@ public class NetworkChannel
         registerMessage(++idx, DirectPlaceMessage.class, DirectPlaceMessage::new);
         registerMessage(++idx, TeleportToColonyMessage.class, TeleportToColonyMessage::new);
         registerMessage(++idx, EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage::new);
-        registerMessage(++idx, TriggerServerResponseHandlerMessage.class, TriggerServerResponseHandlerMessage::new);
+        registerMessage(++idx, InteractionResponse.class, InteractionResponse::new);
         registerMessage(++idx, TryResearchMessage.class, TryResearchMessage::new);
         registerMessage(++idx, HireSpiesMessage.class, HireSpiesMessage::new);
         registerMessage(++idx, AddMinimumStockToBuildingMessage.class, AddMinimumStockToBuildingMessage::new);
         registerMessage(++idx, RemoveMinimumStockFromBuildingMessage.class, RemoveMinimumStockFromBuildingMessage::new);
         registerMessage(++idx, PlantationSetPhaseMessage.class, PlantationSetPhaseMessage::new);
+        registerMessage(++idx, FieldPlotResizeMessage.class, FieldPlotResizeMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);
@@ -189,6 +191,8 @@ public class NetworkChannel
         registerMessage(++idx, VanillaParticleMessage.class, VanillaParticleMessage::new);
         registerMessage(++idx, StopMusicMessage.class, StopMusicMessage::new);
         registerMessage(++idx, PlayMusicMessage.class, PlayMusicMessage::new);
+        registerMessage(++idx, PlayMusicAtPosMessage.class, PlayMusicAtPosMessage::new);
+        registerMessage(++idx, ColonyVisitorViewDataMessage.class, ColonyVisitorViewDataMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCrafingTeachingMessage.class, TransferRecipeCrafingTeachingMessage::new);
@@ -200,7 +204,6 @@ public class NetworkChannel
         // Colony-Independent items
         registerMessage(++idx, RemoveFromRallyingListMessage.class, RemoveFromRallyingListMessage::new);
         registerMessage(++idx, ToggleBannerRallyGuardsMessage.class, ToggleBannerRallyGuardsMessage::new);
-
     }
 
     /**

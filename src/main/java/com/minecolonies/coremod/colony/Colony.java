@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -56,17 +57,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
-import static com.minecolonies.coremod.colony.ColonyState.*;
 
 /**
- * This class describes a colony and contains all the data and methods for
- * manipulating a Colony.
+ * This class describes a colony and contains all the data and methods for manipulating a Colony.
  */
 @SuppressWarnings({Suppression.BIG_CLASS, Suppression.SPLIT_CLASS})
 public class Colony implements IColony
@@ -110,6 +111,11 @@ public class Colony implements IColony
      * Citizen manager of the colony.
      */
     private final ICitizenManager citizenManager = new CitizenManager(this);
+
+    /**
+     * Citizen manager of the colony.
+     */
+    private final IVisitorManager visitorManager = new VisitorManager(this);
 
     /**
      * Barbarian manager of the colony.
@@ -239,11 +245,6 @@ public class Colony implements IColony
      * The colony team color.
      */
     private TextFormatting colonyTeamColor = TextFormatting.WHITE;
-
-    /**
-     * The cost of citizens bought
-     */
-    private int boughtCitizenCost = 0;
 
     /**
      * The last time the mercenaries were used.
@@ -395,6 +396,7 @@ public class Colony implements IColony
         buildingManager.cleanUpBuildings(this);
         raidManager.tryToRaidColony(this);
         citizenManager.onColonyTick(this);
+        visitorManager.onColonyTick(this);
         updateAttackingPlayers();
         eventManager.onColonyTick(this);
         buildingManager.onColonyTick(this);
@@ -597,7 +599,6 @@ public class Colony implements IColony
             mourning = false;
         }
 
-        boughtCitizenCost = compound.getInt(TAG_BOUGHT_CITIZENS);
         mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
         additionalChildTime = compound.getInt(TAG_CHILD_TIME);
 
@@ -605,6 +606,7 @@ public class Colony implements IColony
         permissions.loadPermissions(compound);
 
         citizenManager.read(compound.getCompound(TAG_CITIZEN_MANAGER));
+        visitorManager.read(compound);
         buildingManager.read(compound.getCompound(TAG_BUILDING_MANAGER));
 
         // Recalculate max after citizens and buildings are loaded.
@@ -728,9 +730,6 @@ public class Colony implements IColony
         compound.putBoolean(TAG_NEED_TO_MOURN, needToMourn);
         compound.putBoolean(TAG_MOURNING, mourning);
 
-        // Bought citizen count
-        compound.putInt(TAG_BOUGHT_CITIZENS, boughtCitizenCost);
-
         compound.putLong(TAG_MERCENARY_TIME, mercenaryLastUse);
 
         compound.putInt(TAG_CHILD_TIME, additionalChildTime);
@@ -745,6 +744,8 @@ public class Colony implements IColony
         final CompoundNBT citizenCompound = new CompoundNBT();
         citizenManager.write(citizenCompound);
         compound.put(TAG_CITIZEN_MANAGER, citizenCompound);
+
+        visitorManager.write(compound);
 
         //  Workload
         @NotNull final CompoundNBT workManagerCompound = new CompoundNBT();
@@ -949,9 +950,8 @@ public class Colony implements IColony
     }
 
     /**
-     * Any per-world-tick logic should be performed here.
-     * NOTE: If the Colony's world isn't loaded, it won't have a world tick.
-     * Use onServerTick for logic that should _always_ run.
+     * Any per-world-tick logic should be performed here. NOTE: If the Colony's world isn't loaded, it won't have a world tick. Use onServerTick for logic that should _always_
+     * run.
      *
      * @param event {@link TickEvent.WorldTickEvent}
      */
@@ -971,8 +971,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Calculate randomly if the colony should update the citizens.
-     * By mean they update it at CLEANUP_TICK_INCREMENT.
+     * Calculate randomly if the colony should update the citizens. By mean they update it at CLEANUP_TICK_INCREMENT.
      *
      * @param world        the world.
      * @param averageTicks the average ticks to upate it.
@@ -1001,8 +1000,9 @@ public class Colony implements IColony
                     if (world.getChunkProvider().isChunkLoaded(new ChunkPos(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4)))
                     {
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
-                        if ((worldBlock != (entry.getValue().getBlock()) && worldBlock != ModBlocks.blockConstructionTape)
-                              || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
+                        if (
+                          ((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint) && worldBlock != ModBlocks.blockConstructionTape)
+                            || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
                         {
                             wayPoints.remove(entry.getKey());
                             markDirty();
@@ -1034,8 +1034,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Sets the name of the colony.
-     * Marks dirty.
+     * Sets the name of the colony. Marks dirty.
      *
      * @param n new name.
      */
@@ -1370,6 +1369,17 @@ public class Colony implements IColony
     }
 
     /**
+     * Get the visitor manager of the colony.
+     *
+     * @return the visitor manager.
+     */
+    @Override
+    public IVisitorManager getVisitorManager()
+    {
+        return visitorManager;
+    }
+
+    /**
      * Get the barbManager of the colony.
      *
      * @return the barbManager.
@@ -1613,25 +1623,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Get the amount of citizens bought
-     *
-     * @return amount
-     */
-    public int getBoughtCitizenCost()
-    {
-        return boughtCitizenCost;
-    }
-
-    /**
-     * Increases the amount of citizens that have been bought
-     */
-    public void increaseBoughtCitizenCost()
-    {
-        boughtCitizenCost = Math.min(1 + (int) Math.ceil(boughtCitizenCost * 1.5), STACKSIZE);
-        markDirty();
-    }
-
-    /**
      * Save the time when mercenaries are used, to set a cooldown.
      */
     @Override
@@ -1700,6 +1691,18 @@ public class Colony implements IColony
     public ColonyState getState()
     {
         return colonyStateMachine.getState();
+    }
+
+    @Override
+    public boolean isActive()
+    {
+        return colonyStateMachine.getState() != INACTIVE;
+    }
+
+    @Override
+    public boolean isDay()
+    {
+        return isDay;
     }
 
     @Override

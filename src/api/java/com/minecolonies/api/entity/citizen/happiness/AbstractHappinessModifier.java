@@ -21,7 +21,8 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
 
     /**
      * Create an instance of the happiness modifier.
-     * @param id its string id.
+     *
+     * @param id     its string id.
      * @param weight its weight.
      */
     public AbstractHappinessModifier(final String id, final double weight)

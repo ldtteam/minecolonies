@@ -68,9 +68,10 @@ public class ContainerCrafting extends Container
 
     /**
      * Creates a crafting container.
+     *
      * @param windowId the window id.
-     * @param inv the inventory.
-     * @param extra some extra data.
+     * @param inv      the inventory.
+     * @param extra    some extra data.
      */
     public ContainerCrafting(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
@@ -79,7 +80,7 @@ public class ContainerCrafting extends Container
         this.inv = inv;
         this.complete = extra.readBoolean();
         this.pos = extra.readBlockPos();
-        if(complete)
+        if (complete)
         {
             craftMatrix = new CraftingInventory(this, 3, 3);
         }
@@ -101,7 +102,7 @@ public class ContainerCrafting extends Container
         {
             for (int j = 0; j < craftMatrix.getHeight(); ++j)
             {
-                this.addSlot(new Slot(this.craftMatrix, j + i * (complete ? 3 : 2) , X_OFFSET_CRAFTING + j * INVENTORY_OFFSET_EACH, Y_OFFSET_CRAFTING + i * INVENTORY_OFFSET_EACH)
+                this.addSlot(new Slot(this.craftMatrix, j + i * (complete ? 3 : 2), X_OFFSET_CRAFTING + j * INVENTORY_OFFSET_EACH, Y_OFFSET_CRAFTING + i * INVENTORY_OFFSET_EACH)
                 {
                     @Override
                     public int getSlotStackLimit()
@@ -147,9 +148,9 @@ public class ContainerCrafting extends Container
             {
                 addSlot(new Slot(
                   inv,
-                        j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
-                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                        PLAYER_INVENTORY_INITIAL_Y_OFFSET_CRAFTING + i * PLAYER_INVENTORY_OFFSET_EACH
+                  j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
+                  PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                  PLAYER_INVENTORY_INITIAL_Y_OFFSET_CRAFTING + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -158,7 +159,7 @@ public class ContainerCrafting extends Container
         {
             addSlot(new Slot(
               inv, i,
-                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+              PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
               PLAYER_INVENTORY_HOTBAR_OFFSET_CRAFTING
             ));
         }
@@ -178,9 +179,9 @@ public class ContainerCrafting extends Container
             final Optional<ICraftingRecipe> iRecipe = ((ServerPlayerEntity) inv.player).server.getRecipeManager().getRecipe(IRecipeType.CRAFTING, craftMatrix, world);
             final ItemStack stack;
             if (iRecipe.isPresent() && (iRecipe.get().isDynamic()
-                    || !world.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING)
-                    || player.getRecipeBook().isUnlocked(iRecipe.get())
-                    || player.isCreative()))
+                                          || !world.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING)
+                                          || player.getRecipeBook().isUnlocked(iRecipe.get())
+                                          || player.isCreative()))
             {
                 stack = iRecipe.get().getCraftingResult(this.craftMatrix);
                 this.craftResultSlot.putStack(stack);
@@ -210,8 +211,8 @@ public class ContainerCrafting extends Container
         {
             // 1 is shift-click
             if (mode == ClickType.PICKUP
-                    || mode == ClickType.PICKUP_ALL
-                    || mode == ClickType.SWAP)
+                  || mode == ClickType.PICKUP_ALL
+                  || mode == ClickType.SWAP)
             {
                 final Slot slot = this.inventorySlots.get(slotId);
 
@@ -223,7 +224,7 @@ public class ContainerCrafting extends Container
             return ItemStack.EMPTY;
         }
 
-        if(mode == ClickType.QUICK_MOVE)
+        if (mode == ClickType.QUICK_MOVE)
         {
             return ItemStack.EMPTY;
         }
@@ -233,7 +234,8 @@ public class ContainerCrafting extends Container
 
     /**
      * Handle a slot click.
-     * @param slot the clicked slot.
+     *
+     * @param slot  the clicked slot.
      * @param stack the used stack.
      * @return the result.
      */
@@ -287,8 +289,8 @@ public class ContainerCrafting extends Container
                 }
             }
             else if ((index < total_slots
-                    && !this.mergeItemStack(itemstack1, total_crafting_slots, HOTBAR_START, false))
-                    || !this.mergeItemStack(itemstack1, total_crafting_slots, total_slots, false))
+                        && !this.mergeItemStack(itemstack1, total_crafting_slots, HOTBAR_START, false))
+                       || !this.mergeItemStack(itemstack1, total_crafting_slots, total_slots, false))
             {
                 return ItemStack.EMPTY;
             }
@@ -316,6 +318,7 @@ public class ContainerCrafting extends Container
 
     /**
      * Getter for the world obj.
+     *
      * @return the world obj.
      */
     public World getWorldObj()
@@ -325,6 +328,7 @@ public class ContainerCrafting extends Container
 
     /**
      * Getter for the player.
+     *
      * @return the player.
      */
     public PlayerEntity getPlayer()
@@ -334,6 +338,7 @@ public class ContainerCrafting extends Container
 
     /**
      * Getter for completeness.
+     *
      * @return true if 3x3 and false for 2x2.
      */
     public boolean isComplete()
@@ -343,6 +348,7 @@ public class ContainerCrafting extends Container
 
     /**
      * Get the craft matrix inv.
+     *
      * @return the inv.
      */
     public CraftingInventory getInv()
@@ -352,6 +358,7 @@ public class ContainerCrafting extends Container
 
     /**
      * Get for the container position.
+     *
      * @return the position.
      */
     public BlockPos getPos()

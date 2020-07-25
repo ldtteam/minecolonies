@@ -3,10 +3,12 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -20,12 +22,14 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.DECIDE;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_RANGED;
 import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_DAMAGE;
 import static com.minecolonies.api.research.util.ResearchConstants.DOUBLE_ARROWS;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
@@ -36,6 +40,12 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     private static final int    TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 4;
     private static final double SWITCH_STRAFING_DIRECTION                 = 0.3d;
     private static final double STRAFING_SPEED                            = 0.7f;
+
+    /**
+     * Visible combat icon
+     */
+    private final static VisibleCitizenStatus ARCHER_COMBAT =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/archer_combat.png"), "com.minecolonies.gui.visiblestatus.archer_combat");
 
     /**
      * Whether the guard is moving towards his target
@@ -88,8 +98,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     private double lastDistance = 0.0f;
 
     /**
-     * Creates the abstract part of the AI.inte
-     * Always use this constructor!
+     * Creates the abstract part of the AI.inte Always use this constructor!
      *
      * @param job the job to fulfill
      */
@@ -111,6 +120,8 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
         timeCanSee = 0;
         fleeing = false;
         movingToTarget = false;
+        worker.getCitizenData().setVisibleStatus(ARCHER_COMBAT);
+
         return GUARD_ATTACK_RANGED;
     }
 
@@ -179,12 +190,8 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
             worker.getNavigator().clearPath();
             worker.getMoveHelper().strafe(0, 0);
             setDelay(STANDARD_DELAY);
+            worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
             return state;
-        }
-
-        if (worker.getCitizenData() == null)
-        {
-            return START_WORKING;
         }
 
         final double sqDistanceToEntity = BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target.getPosition());
@@ -448,8 +455,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     /**
      * Gets the aim height for ranged guards.
      *
-     * @return the aim height.
-     * Suppression because the method already explains the value.
+     * @return the aim height. Suppression because the method already explains the value.
      */
     @SuppressWarnings({"squid:S3400", "squid:S109"})
     private double getAimHeight()

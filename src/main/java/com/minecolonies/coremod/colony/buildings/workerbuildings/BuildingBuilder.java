@@ -42,7 +42,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     /**
      * The job description.
      */
-    private static final String BUILDER     = "builder";
+    private static final String BUILDER = "builder";
 
     /**
      * NBT tag to store if mobs already got purged.
@@ -130,6 +130,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
 
     /**
      * Set if mobs have been purged by this builder at his hut already today.
+     *
      * @param purgedMobsToday true if so.
      */
     public void setPurgedMobsToday(final boolean purgedMobsToday)
@@ -139,6 +140,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
 
     /**
      * Check if the builder has purged the mobs already.
+     *
      * @return true if so.
      */
     public boolean hasPurgedMobsToday()
@@ -208,7 +210,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        for (final WorkOrderBuildDecoration wo: list)
+        for (final WorkOrderBuildDecoration wo : list)
         {
             double distanceToBuilder = Double.MAX_VALUE;
 

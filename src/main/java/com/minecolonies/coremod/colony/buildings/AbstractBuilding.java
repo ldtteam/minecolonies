@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -81,7 +80,8 @@ import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.
 import static com.minecolonies.api.research.util.ResearchConstants.MINIMUM_STOCK;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
@@ -596,11 +596,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine)
-     * - If not: Check if there is a request for this already.
-     * -- If not: Create a request.
-     * - If so: Check if there is a request for this still.
-     * -- If so: cancel it.
+     * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine) - If not: Check if there is a request for this already. -- If not:
+     * Create a request. - If so: Check if there is a request for this still. -- If so: cancel it.
      */
     @Override
     public void onColonyTick(final IColony colony)
@@ -804,6 +801,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
               && colony != null
               && colony.getWorld() != null
               && getPosition() != null
+              && WorldUtil.isBlockLoaded(colony.getWorld(), getPosition())
               && !(colony.getWorld().getBlockState(getPosition()).getBlock() instanceof AirBlock)
               && colony.getWorld().getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut)
         {
@@ -1325,7 +1323,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         final Set<Integer> citizenIdsWithRequests = getOpenRequestsByCitizen().keySet();
         for (final int citizenId : citizenIdsWithRequests)
         {
-            final ICitizenData data = getColony().getCitizenManager().getCitizen(citizenId);
+            final ICitizenData data = getColony().getCitizenManager().getCivilian(citizenId);
 
             if (data == null)
             {
@@ -1510,11 +1508,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             getOpenRequestsByRequestableType().remove(TypeToken.of(request.getRequest().getClass()));
         }
 
-        if (!getCompletedRequestsByCitizen().containsKey(citizenThatRequested))
+        if (citizenThatRequested >= 0)
         {
-            getCompletedRequestsByCitizen().put(citizenThatRequested, new ArrayList<>());
+            getCompletedRequestsByCitizen().computeIfAbsent(citizenThatRequested, ArrayList::new).add(request.getId());
         }
-        getCompletedRequestsByCitizen().get(citizenThatRequested).add(request.getId());
 
         markDirty();
     }
@@ -1540,9 +1537,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
 
         //Check if the citizen did not die.
-        if (getColony().getCitizenManager().getCitizen(citizenThatRequested) != null)
+        if (getColony().getCitizenManager().getCivilian(citizenThatRequested) != null)
         {
-            getColony().getCitizenManager().getCitizen(citizenThatRequested).onRequestCancelled(request.getId());
+            getColony().getCitizenManager().getCivilian(citizenThatRequested).onRequestCancelled(request.getId());
         }
         markDirty();
     }
@@ -1557,7 +1554,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
 
         final Integer citizenData = getCitizensByRequest().get(request.getId());
-        return new StringTextComponent(this.getSchematicName() + " " + getColony().getCitizenManager().getCitizen(citizenData).getName());
+        return new StringTextComponent(this.getSchematicName() + " " + getColony().getCitizenManager().getCivilian(citizenData).getName());
     }
 
     @Override
@@ -1569,12 +1566,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
 
         final int citizenID = getCitizensByRequest().get(token);
-        if (getColony().getCitizenManager().getCitizen(citizenID) == null)
+        if (getColony().getCitizenManager().getCivilian(citizenID) == null)
         {
             return Optional.empty();
         }
 
-        return Optional.of(getColony().getCitizenManager().getCitizen(citizenID));
+        return Optional.of(getColony().getCitizenManager().getCivilian(citizenID));
     }
 
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//

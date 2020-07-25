@@ -181,7 +181,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
         if (!patients.isEmpty())
         {
             @NotNull final ListNBT patientTagList = new ListNBT();
-            for (@NotNull final Patient patient: patients.values())
+            for (@NotNull final Patient patient : patients.values())
             {
                 final CompoundNBT patientCompound = new CompoundNBT();
                 patient.write(patientCompound);
@@ -215,6 +215,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Get the list of beds.
+     *
      * @return immutable copy
      */
     @NotNull
@@ -225,6 +226,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Get the list of patient files.
+     *
      * @return immutable copy.
      */
     public List<Patient> getPatients()
@@ -234,6 +236,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Remove a patient from the list.
+     *
      * @param patient the patient to remove.
      */
     public void removePatientFile(final Patient patient)
@@ -251,6 +254,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Check if any patient requires this.
+     *
      * @param stack the stack to test.
      * @return true if so.
      */
@@ -258,10 +262,10 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
     {
         for (final Patient patient : patients.values())
         {
-            final ICitizenData data = colony.getCitizenManager().getCitizen(patient.getId());
-            if (data != null && data.getCitizenEntity().isPresent() && data.getCitizenEntity().get().getCitizenDiseaseHandler().isSick())
+            final ICitizenData data = colony.getCitizenManager().getCivilian(patient.getId());
+            if (data != null && data.getEntity().isPresent() && data.getEntity().get().getCitizenDiseaseHandler().isSick())
             {
-                final String diseaseName = data.getCitizenEntity().get().getCitizenDiseaseHandler().getDisease();
+                final String diseaseName = data.getEntity().get().getCitizenDiseaseHandler().getDisease();
                 if (!diseaseName.isEmpty())
                 {
                     final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName);
@@ -280,6 +284,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Add a new patient to the list.
+     *
      * @param citizenId patient to add.
      */
     public void checkOrCreatePatientFile(final int citizenId)
@@ -292,7 +297,8 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Register a citizen.
-     * @param bedPos the pos.
+     *
+     * @param bedPos    the pos.
      * @param citizenId the citizen id.
      */
     public void registerPatient(final BlockPos bedPos, final int citizenId)
@@ -303,7 +309,8 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
     /**
      * Helper method to set bed occupation.
-     * @param bedPos the position of the bed.
+     *
+     * @param bedPos   the position of the bed.
      * @param occupied if occupied.
      */
     private void setBedOccupation(final BlockPos bedPos, final boolean occupied)
@@ -337,13 +344,13 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                 }
                 else if (entry.getValue() != 0)
                 {
-                    final ICitizenData citizen = colony.getCitizenManager().getCitizen(entry.getValue());
+                    final ICitizenData citizen = colony.getCitizenManager().getCivilian(entry.getValue());
                     if (citizen != null)
                     {
                         if (state.get(BedBlock.OCCUPIED))
                         {
-                            if (!citizen.isAsleep() || !citizen.getCitizenEntity().isPresent()
-                                  || citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) > 2.0)
+                            if (!citizen.isAsleep() || !citizen.getEntity().isPresent()
+                                  || citizen.getEntity().get().getPosition().distanceSq(entry.getKey()) > 2.0)
                             {
                                 setBedOccupation(entry.getKey(), false);
                                 bedMap.put(entry.getKey(), 0);
@@ -351,7 +358,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                         }
                         else
                         {
-                            if (citizen.isAsleep() && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getPosition().distanceSq(entry.getKey()) < 2.0)
+                            if (citizen.isAsleep() && citizen.getEntity().isPresent() && citizen.getEntity().get().getPosition().distanceSq(entry.getKey()) < 2.0)
                             {
                                 setBedOccupation(entry.getKey(), true);
                             }

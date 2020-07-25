@@ -18,7 +18,8 @@ public class EntityAmazonChief extends AbstractEntityAmazon implements IAmazonCh
 
     /**
      * Constructor of the entity.
-     * @param type the entity type.
+     *
+     * @param type    the entity type.
      * @param worldIn world to construct it in.
      */
     public EntityAmazonChief(final EntityType<? extends EntityAmazonChief> type, final World worldIn)
