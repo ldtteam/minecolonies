@@ -36,7 +36,7 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     private static final double STRAFING_SPEED                            = 0.6f;
     private static final int    TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 4;
     private static final double SWITCH_STRAFING_DIRECTION                 = 0.3d;
-    private static final int    MIN_POTION_DISTANCE                       = 5; //TODO ???
+    private static final int    MIN_POTION_DISTANCE                       = 6; //TODO What should this value be?
 
     /**
      * Whether the guard is moving towards his target

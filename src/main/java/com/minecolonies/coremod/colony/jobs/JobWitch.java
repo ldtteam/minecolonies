@@ -12,7 +12,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_LEVEL_NAME;
 
-//TODO
+//TODO WITCH
 public class JobWitch extends AbstractJobGuard<JobWitch>
 {
     /**
@@ -54,9 +54,9 @@ public class JobWitch extends AbstractJobGuard<JobWitch>
     public void onLevelUp()
     {
         // Bonus Health for guards(gets reset upon Firing)
-        if (getCitizen().getCitizenEntity().isPresent())
+        if (getCitizen().getEntity().isPresent())
         {
-            final AbstractEntityCitizen citizen = getCitizen().getCitizenEntity().get();
+            final AbstractEntityCitizen citizen = getCitizen().getEntity().get();
 
             // +1 half heart every 7 level
             final AttributeModifier healthModLevel =
