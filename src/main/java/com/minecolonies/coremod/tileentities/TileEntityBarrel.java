@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
@@ -163,8 +164,12 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
      */
     public void updateBlock(final World worldIn)
     {
-        worldIn.setBlockState(pos, AbstractBlockBarrel.changeStateOverFullness(this, world.getBlockState(pos)));
-        markDirty();
+        final BlockState barrel = world.getBlockState(pos);
+        if (barrel.getBlock() == ModBlocks.blockBarrel)
+        {
+            worldIn.setBlockState(pos, AbstractBlockBarrel.changeStateOverFullness(this, barrel));
+            markDirty();
+        }
     }
 
     @Override
