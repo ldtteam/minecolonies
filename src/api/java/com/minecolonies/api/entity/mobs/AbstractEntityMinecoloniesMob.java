@@ -29,7 +29,6 @@ import java.util.Random;
 
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
-import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
@@ -447,6 +446,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
     {
         return LivingEntity.registerAttributes()
+                 .func_233814_a_(MOB_ATTACK_DAMAGE)
+                 .func_233814_a_(Attributes.MAX_HEALTH)
+                 .func_233814_a_(Attributes.ARMOR)
+                 .func_233815_a_(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
+                 .func_233815_a_(Attributes.FOLLOW_RANGE, FOLLOW_RANGE * 2)
                  .func_233815_a_(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue())
                  .func_233815_a_(MOB_ATTACK_DAMAGE, MOB_ATTACK_DAMAGE.getDefaultValue());
     }

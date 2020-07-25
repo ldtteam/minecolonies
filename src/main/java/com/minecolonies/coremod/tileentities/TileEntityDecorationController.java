@@ -132,7 +132,10 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     @Override
     public void markDirty()
     {
-        WorldUtil.markChunkDirty(world, pos);
+        if (world != null)
+        {
+            WorldUtil.markChunkDirty(world, pos);
+        }
     }
 
     @Override

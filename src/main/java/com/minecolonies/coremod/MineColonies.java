@@ -151,7 +151,7 @@ public class MineColonies
             GlobalEntityTypeAttributes.put(ModEntities.VISITOR, AbstractEntityCitizen.getDefaultAttributes().func_233813_a_());
             GlobalEntityTypeAttributes.put(ModEntities.MERCENARY, EntityMercenary.getDefaultAttributes().func_233813_a_());
             GlobalEntityTypeAttributes.put(ModEntities.MERCENARY, EntityMercenary.getDefaultAttributes().func_233813_a_());
-            GlobalEntityTypeAttributes.put(ModEntities.BARBARIAN, EntityMercenary.getDefaultAttributes().func_233813_a_());
+            GlobalEntityTypeAttributes.put(ModEntities.BARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().func_233813_a_());
             GlobalEntityTypeAttributes.put(ModEntities.ARCHERBARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().func_233813_a_());
             GlobalEntityTypeAttributes.put(ModEntities.CHIEFBARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().func_233813_a_());
             GlobalEntityTypeAttributes.put(ModEntities.PHARAO, AbstractEntityMinecoloniesMob.getDefaultAttributes().func_233813_a_());
