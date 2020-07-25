@@ -588,12 +588,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private void tryUnstuck()
     {
-        if (worker.getCurrentPosition() == null)
-        {
-            worker.setCurrentPosition(worker.getPosition());
-            return;
-        }
-
         if (!worker.getNavigator().noPath())
         {
             Path path = worker.getNavigator().getPath();
@@ -610,7 +604,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 }
 
                 // Block above the worker
-                checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 2, worker.getCurrentPosition().getZ()));
+                checkPositions.add(new BlockPos(worker.getPosition().getX(), worker.getPosition().getY() + 2, worker.getPosition().getZ()));
 
                 mineIfEqualsBlockTag(checkPositions, BlockTags.LEAVES);
                 return;
@@ -622,8 +616,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         for (Direction direction : Direction.Plane.HORIZONTAL)
         {
-            checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY(), worker.getCurrentPosition().getZ()).offset(direction));
-            checkPositions.add(new BlockPos(worker.getCurrentPosition().getX(), worker.getCurrentPosition().getY() + 1, worker.getCurrentPosition().getZ()).offset(direction));
+            checkPositions.add(new BlockPos(worker.getPosition().getX(), worker.getPosition().getY(), worker.getPosition().getZ()).offset(direction));
+            checkPositions.add(new BlockPos(worker.getPosition().getX(), worker.getPosition().getY() + 1, worker.getPosition().getZ()).offset(direction));
         }
 
         mineIfEqualsBlockTag(checkPositions, BlockTags.LEAVES);
