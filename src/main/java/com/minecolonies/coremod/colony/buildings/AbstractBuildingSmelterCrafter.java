@@ -107,13 +107,6 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     }
 
     @Override
-    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory)
-    {
-        localAlreadyKept.addAll(getAllowedFuel().stream().map(is -> new ItemStorage(is)).filter(i -> i.getItemStack().equals(stack)).collect(Collectors.toCollection(ArrayList::new)));
-        return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory);
-    }
-
-    @Override
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<ItemStorage, Tuple<Integer, Boolean>> recipeOutputs = new HashMap<>();
