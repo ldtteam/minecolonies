@@ -160,10 +160,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * The citizen inv handler.
      */
     private       ICitizenInventoryHandler  citizenInventoryHandler;
-    /**
-     * The citizen stuck handler.
-     */
-    private       ICitizenStuckHandler      citizenStuckHandler;
+
     /**
      * The citizen colony handler.
      */
@@ -233,7 +230,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.citizenColonyHandler = new CitizenColonyHandler(this);
         this.citizenJobHandler = new CitizenJobHandler(this);
         this.citizenSleepHandler = new CitizenSleepHandler(this);
-        this.citizenStuckHandler = new CitizenStuckHandler(this);
         this.citizenDiseaseHandler = new CitizenDiseaseHandler(this);
 
         this.moveController = new MovementHandler(this);
@@ -473,7 +469,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         citizenDiseaseHandler.tick();
         if (citizenJobHandler.getColonyJob() != null || !CompatibilityUtils.getWorldFromCitizen(this).isDaytime())
         {
-            citizenStuckHandler.tick();
         }
         else
         {
@@ -924,28 +919,6 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
-     * Getter for the current position. Only approximated position, used for stuck checking.
-     *
-     * @return the current position.
-     */
-    @Override
-    public BlockPos getCurrentPosition()
-    {
-        return currentPosition;
-    }
-
-    /**
-     * Setter for the current position.
-     *
-     * @param currentPosition the position to set.
-     */
-    @Override
-    public void setCurrentPosition(final BlockPos currentPosition)
-    {
-        this.currentPosition = currentPosition;
-    }
-
-    /**
      * Spawn eating particles for the citizen.
      */
     @Override
@@ -1052,17 +1025,6 @@ public class EntityCitizen extends AbstractEntityCitizen
     public ICitizenSleepHandler getCitizenSleepHandler()
     {
         return citizenSleepHandler;
-    }
-
-    /**
-     * The Handler to check if a citizen is stuck.
-     *
-     * @return the instance of the handler.
-     */
-    @Override
-    public ICitizenStuckHandler getCitizenStuckHandler()
-    {
-        return citizenStuckHandler;
     }
 
     /**
@@ -1250,12 +1212,6 @@ public class EntityCitizen extends AbstractEntityCitizen
     public boolean isDead()
     {
         return !isAlive();
-    }
-
-    @Override
-    public void setCitizenStuckHandler(final ICitizenStuckHandler citizenStuckHandler)
-    {
-        this.citizenStuckHandler = citizenStuckHandler;
     }
 
     @Override

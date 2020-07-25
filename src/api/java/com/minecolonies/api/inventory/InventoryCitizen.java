@@ -235,6 +235,10 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public ItemStack getStackInSlot(final int index)
     {
+        if (index == NO_SLOT)
+        {
+            return ItemStack.EMPTY;
+        }
         if (index >= mainInventory.size())
         {
             return ItemStack.EMPTY;

@@ -196,6 +196,10 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
      */
     public List<ItemStack> getAllowedFuel()
     {
+        if (!getCopyOfAllowedItems().containsKey(FUEL_LIST))
+        {
+            return new ArrayList<ItemStack>();
+        }
         return getCopyOfAllowedItems().get(FUEL_LIST).stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList());
     }
 

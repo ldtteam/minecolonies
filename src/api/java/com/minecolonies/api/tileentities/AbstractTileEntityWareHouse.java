@@ -17,6 +17,8 @@ public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuildi
 
     public abstract boolean hasMatchingItemStackInWarehouse(@NotNull Predicate<ItemStack> itemStackSelectionPredicate, int count);
 
+    public abstract boolean hasMatchingItemStackInWarehouse(@NotNull ItemStack itemStack);
+
     @NotNull
     public abstract List<ItemStack> getMatchingItemStacksInWarehouse(@NotNull Predicate<ItemStack> itemStackSelectionPredicate);
 

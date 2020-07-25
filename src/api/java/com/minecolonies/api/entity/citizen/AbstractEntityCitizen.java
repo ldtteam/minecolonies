@@ -9,6 +9,7 @@ import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
@@ -90,6 +91,16 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     private boolean textureDirty = true;
 
     private AbstractAdvancedPathNavigate pathNavigate;
+
+    /**
+     * Counts entity collisions
+     */
+    private int collisionCounter = 0;
+
+    /**
+     * The collision threshold
+     */
+    private final static int COLL_THRESHOLD = 30;
 
     /**
      * Constructor for a new citizen typed entity.
@@ -310,9 +321,34 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             this.pathNavigate.setCanSwim(true);
             this.pathNavigate.getPathingOptions().setEnterDoors(true);
             this.pathNavigate.getPathingOptions().setCanOpenDoors(true);
-            this.navigator.getNodeProcessor().setCanOpenDoors(true);
+            this.pathNavigate.setStuckHandler(PathingStuckHandler.createStuckHandler().withTeleportOnFullStuck().withTeleportSteps(5));
         }
         return pathNavigate;
+    }
+
+    /**
+     * Ignores entity collisions are colliding for a while, solves stuck e.g. for many trying to take the same door
+     *
+     * @param entityIn entity to collide with
+     */
+    @Override
+    public void applyEntityCollision(@NotNull final Entity entityIn)
+    {
+        if ((collisionCounter += 3) > COLL_THRESHOLD)
+        {
+            return;
+        }
+        super.applyEntityCollision(entityIn);
+    }
+
+    @Override
+    public void livingTick()
+    {
+        super.livingTick();
+        if (collisionCounter > 0)
+        {
+            collisionCounter--;
+        }
     }
 
     /**
@@ -538,20 +574,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract void decreaseSaturationForContinuousAction();
 
     /**
-     * Getter for the current position. Only approximated position, used for stuck checking.
-     *
-     * @return the current position.
-     */
-    public abstract BlockPos getCurrentPosition();
-
-    /**
-     * Setter for the current position.
-     *
-     * @param currentPosition the position to set.
-     */
-    public abstract void setCurrentPosition(BlockPos currentPosition);
-
-    /**
      * Spawn eating particles for the citizen.
      */
     public abstract void spawnEatingParticle();
@@ -617,13 +639,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract ICitizenSleepHandler getCitizenSleepHandler();
 
     /**
-     * The Handler to check if a citizen is stuck.
-     *
-     * @return the instance of the handler.
-     */
-    public abstract ICitizenStuckHandler getCitizenStuckHandler();
-
-    /**
      * The Handler to check if the citizen is sick.
      *
      * @return the instance of the handler.
@@ -672,8 +687,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract float getRotationPitch();
 
     public abstract boolean isDead();
-
-    public abstract void setCitizenStuckHandler(ICitizenStuckHandler citizenStuckHandler);
 
     public abstract void setCitizenSleepHandler(ICitizenSleepHandler citizenSleepHandler);
 
