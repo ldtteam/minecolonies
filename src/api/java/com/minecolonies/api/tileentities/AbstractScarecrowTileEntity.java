@@ -1,6 +1,7 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -74,6 +75,12 @@ public abstract class AbstractScarecrowTileEntity extends TileEntity implements 
      * @return true if so.
      */
     public abstract boolean needsWork();
+
+    @Override
+    public void markDirty()
+    {
+        WorldUtil.markChunkDirty(world, pos);
+    }
 
     /**
      * Sets that the field needs work.
