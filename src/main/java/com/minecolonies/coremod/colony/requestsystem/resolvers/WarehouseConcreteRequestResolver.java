@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractWarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -14,9 +15,9 @@ import java.util.Set;
 /**
  * ----------------------- Not Documented Object ---------------------
  */
-public class WarehouseRequestResolver extends AbstractWarehouseRequestResolver
+public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestResolver
 {
-    public WarehouseRequestResolver(
+    public WarehouseConcreteRequestResolver(
       @NotNull final ILocation location,
       @NotNull final IToken<?> token)
     {
@@ -26,12 +27,16 @@ public class WarehouseRequestResolver extends AbstractWarehouseRequestResolver
     @Override
     protected boolean internalCanResolve(final Set<TileEntityWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck)
     {
-        if(requestToCheck.getRequest() instanceof IConcreteDeliverable)
+        final IDeliverable deliverable = requestToCheck.getRequest();
+        if(deliverable instanceof IConcreteDeliverable)
         {
-            return false; 
+            for(final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
+            {
+                final ItemStack stack = possible.copy();
+                stack.setCount(requestToCheck.getRequest().getMinimumCount());
+                return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(stack));
+            }
         }
-        return wareHouses.stream()
-                .anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack),
-                requestToCheck.getRequest().getMinimumCount()));
+        return false;
     }
 }

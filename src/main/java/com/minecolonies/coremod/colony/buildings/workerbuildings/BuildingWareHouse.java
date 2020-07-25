@@ -21,6 +21,7 @@ import com.minecolonies.coremod.client.gui.WindowHutWareHouse;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseConcreteRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.block.AbstractChestBlock;
@@ -331,7 +332,10 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
         builder.addAll(supers);
         builder.add(new WarehouseRequestResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+          new WarehouseConcreteRequestResolver(getRequester().getLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN))
+          );
 
         return builder.build();
     }

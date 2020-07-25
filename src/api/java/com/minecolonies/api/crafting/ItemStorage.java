@@ -185,9 +185,8 @@ public class ItemStorage
     @Override
     public int hashCode()
     {
-        return Objects.hash(stack.getItem())
-                 + (this.shouldIgnoreDamageValue ? 0 : (this.stack.getDamage() * 31))
-                 + (this.shouldIgnoreNBTValue ? 0 : ((this.stack.getTag() == null) ? 0 : this.stack.getTag().hashCode()));
+        //Only use the stack itself for the has, equals will handle the broader attributes
+        return Objects.hash(stack.getItem());
     }
 
     @Override
