@@ -175,7 +175,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                             if (furnace.getStackInSlot(RESULT_SLOT).isItemEqual(storage.getPrimaryOutput()) ||
                                   furnace.getStackInSlot(SMELTABLE_SLOT).isItemEqual(storage.getCleanedInput().get(0).getItemStack()))
                             {
-                                setDelay(TICKS_SECOND * 5);
+                                //TODO: Scalable delay
                                 return CRAFT;
                             }
                         }
@@ -300,8 +300,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         Log.getLogger().info("Check: Furnaces are full, waiting");
         if(furnaceBurning)
         {
-            // About half a smeltable time
-            setDelay(TICKS_SECOND * 5);
+            //Todo: Scalable Delay 
         }
         return getState();
     }
