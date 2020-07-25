@@ -336,27 +336,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         this.citizenId = id;
     }
 
-    /**
-     * Getter for the current position. Only approximated position, used for stuck checking.
-     *
-     * @return the current position.
-     */
-    @Override
-    public BlockPos getCurrentPosition()
-    {
-        return getPosition();
-    }
-
-    /**
-     * Setter for the current position.
-     *
-     * @param currentPosition the position to set.
-     */
-    @Override
-    public void setCurrentPosition(final BlockPos currentPosition)
-    {
-    }
-
     @Override
     public void spawnEatingParticle()
     {

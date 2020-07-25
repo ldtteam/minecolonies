@@ -83,7 +83,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     public boolean hasItemStack(final ItemStack stack)
     {
         final ItemStorage checkItem = new ItemStorage(stack);
-        return content.containsKey(checkItem) && content.get(checkItem) >= stack.getCount();
+        return content.getOrDefault(checkItem, 0) >= stack.getCount();
     }
 
     /**
@@ -137,7 +137,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     {
         final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
 
-        return content.containsKey(checkItem) && content.get(checkItem) >= stack.getCount(); 
+        return content.getOrDefault(checkItem, 0) >= stack.getCount();
     }
 
     /**
@@ -276,8 +276,11 @@ public class TileEntityRack extends AbstractTileEntityRack
             content.put(storage, amount);
         }
 
-        updateBlockState();
-        markDirty();
+        if (world != null)
+        {
+            updateBlockState();
+            markDirty();
+        }
     }
 
     /**
@@ -490,7 +493,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return write(new CompoundNBT());
+        return this.write(new CompoundNBT());
     }
 
     @Override
@@ -507,6 +510,12 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             relativeNeighbor = relativeNeighbor.rotate(rotationIn);
         }
+    }
+
+    @Override
+    public void handleUpdateTag(final CompoundNBT tag)
+    {
+        this.read(tag);
     }
 
     @Nonnull
@@ -592,9 +601,15 @@ public class TileEntityRack extends AbstractTileEntityRack
         return false;
     }
 
+    @Override
+    public void markDirty()
+    {
+        WorldUtil.markChunkDirty(world, pos);
+    }
+
     @Nullable
     @Override
-    public Container createMenu(final int id, final PlayerInventory inv, final PlayerEntity player)
+    public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
     {
         final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         buffer.writeBlockPos(this.getPos());
@@ -603,6 +618,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         return new ContainerRack(id, inv, buffer);
     }
 
+    @NotNull
     @Override
     public ITextComponent getDisplayName()
     {
