@@ -176,7 +176,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         do
         {
             result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-              () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.and((info, pos, handler) -> false)), true);
+              () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> false)), false);
             progressPos = result.getIteratorPos();
 
             for (final ItemStack stack : result.getBlockResult().getRequiredItems())
@@ -193,10 +193,27 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
         while (result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
 
+
         for (final ItemStack stack : deco)
         {
             getOwnBuilding().addNeededResource(stack, stack.getCount());
         }
+
+        progressPos = NULL_POS;
+        do
+        {
+            result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+              () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0)), true);
+            progressPos = result.getIteratorPos();
+
+            for (final ItemStack stack : result.getBlockResult().getRequiredItems())
+            {
+                getOwnBuilding().addNeededResource(stack, stack.getCount());
+            }
+        }
+        while (result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
+
+
         getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources(), worker.getCitizenData(), true);
     }
 
