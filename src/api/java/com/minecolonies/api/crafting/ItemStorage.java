@@ -84,7 +84,7 @@ public class ItemStorage
     {
         this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
-        this.shouldIgnoreNBTValue = ignoreDamageValue;
+        this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
         this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
     }

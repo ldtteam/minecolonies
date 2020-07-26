@@ -136,18 +136,56 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
         }
     }
 
-    public abstract boolean hasItemStack(ItemStack stack);
-
+    /**
+     * Set the value for inWarehouse
+     *
+     * @param isInWarehouse is this rack in a warehouse?
+     */
     public abstract void setInWarehouse(Boolean isInWarehouse);
 
+    /**
+     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
+     *
+     * @return true if so.
+     */
     public abstract boolean freeStacks();
 
+    /**
+     * Get the amount of free slots in the inventory. This method checks the content list, it is therefore extremely fast.
+     *
+     * @return the amount of free slots (an integer).
+     */
     public abstract int getFreeSlots();
 
+    /**
+     * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
+     *
+     * @param stack             the stack to check.
+     * @param ignoreDamageValue ignore the damage value.
+     * @return true if so.
+     */
     public abstract boolean hasItemStack(ItemStack stack, boolean ignoreDamageValue);
 
+    /**
+     * Check if a similar/same item as the stack is in the inventory. And return the count if so.
+     *
+     * @param stack             the stack to check.
+     * @param ignoreDamageValue ignore the damage value.
+     * @return the quantity or 0.
+     */
+    public abstract int getCount(ItemStack stack, boolean ignoreDamageValue);
+
+    /**
+     * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
+     *
+     * @param itemStackSelectionPredicate the predicate to test the stack against.
+     * @return true if so.
+     */
     public abstract boolean hasItemStack(@NotNull Predicate<ItemStack> itemStackSelectionPredicate);
 
+    /**
+     * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
+     */
     public abstract void upgradeItemStorage();
 
     /**
@@ -166,12 +204,28 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      */
     public abstract int getItemCount(Predicate<ItemStack> predicate);
 
+    /**
+     * Scans through the whole storage and updates it.
+     */
     public abstract void updateItemStorage();
 
+    /**
+     * Update the blockState of the rack. Switch between connected, single, full and empty texture.
+     */
     protected abstract void updateBlockState();
 
+    /**
+     * Get the other double chest or null.
+     *
+     * @return the tileEntity of the other half or null.
+     */
     public abstract AbstractTileEntityRack getOtherChest();
 
+    /**
+     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
+     *
+     * @return true if so.
+     */
     public abstract boolean isEmpty();
 
     /**

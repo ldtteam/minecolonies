@@ -33,12 +33,6 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         super(MinecoloniesTileEntities.WAREHOUSE);
     }
 
-    /**
-     * Method used to check if this warehouse holds any of the requested itemstacks.
-     *
-     * @param itemStackSelectionPredicate The predicate to check with.
-     * @return True when the warehouse holds a stack, false when not.
-     */
     @Override
     public boolean hasMatchingItemStackInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate, int count)
     {
@@ -46,37 +40,34 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         return targetStacks.stream().mapToInt(ItemStackUtils::getSize).sum() >= count;
     }
 
-    /**
-     * Method used to check if this warehouse holds any of the requested itemstacks.
-     *
-     * @param itemStack The stack to check with to check with.
-     * @return True when the warehouse holds a stack, false when not.
-     */
     @Override
-    public boolean hasMatchingItemStackInWarehouse(@NotNull ItemStack itemStack)
+    public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count)
     {
+        int totalCountFound = 0;
         for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
             final TileEntity entity = getWorld().getTileEntity(pos);
-            if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).hasItemStack(itemStack, true))
+            if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty())
             {
-                return true;
+                totalCountFound+= ((AbstractTileEntityRack) entity).getCount(itemStack, true);
+                if (totalCountFound >= count)
+                {
+                    return true;
+                }
             }
 
-            if (entity instanceof ChestTileEntity && InventoryUtils.hasItemInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), item -> item.isItemEqualIgnoreDurability(itemStack) && item.getCount() >= itemStack.getCount()))
+            if (entity instanceof ChestTileEntity)
             {
-                return true;
+                totalCountFound += InventoryUtils.getItemCountInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), item -> item.isItemEqualIgnoreDurability(itemStack) && item.getCount() >= itemStack.getCount());
+                if (totalCountFound >= count)
+                {
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    /**
-     * Method to get the first matching ItemStack in the Warehouse.
-     *
-     * @param itemStackSelectionPredicate The predicate to select the ItemStack with.
-     * @return The first matching ItemStack.
-     */
     @Override
     @NotNull
     public List<ItemStack> getMatchingItemStacksInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
@@ -103,11 +94,6 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         return found;
     }
 
-    /**
-     * Dump the inventory of a citizen into the warehouse. Go through all items and search the right chest to dump it in.
-     *
-     * @param inventoryCitizen the inventory of the citizen
-     */
     @Override
     public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
     {
