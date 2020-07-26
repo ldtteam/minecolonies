@@ -69,6 +69,11 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
      * This blocks the auto-smelting of the cook
      */
     private boolean isCooking = false;
+
+    /**
+     * If there is an assistant working
+     */
+    private boolean hasAssistant = false;
     
     /**
      * Instantiates a new cook building.
@@ -90,7 +95,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
      */
     public boolean getIsCooking()
     {
-        return isCooking;
+        return isCooking && hasAssistant;
     }
 
     /**
@@ -119,13 +124,25 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     @Override
     public IJob<?> createJob(final ICitizenData citizen)
     {
-        for (final ICitizenData leadCitizen : getAssignedCitizen())    {
+        for (final ICitizenData leadCitizen : getAssignedCitizen())
+        {
             if (leadCitizen.getJob() instanceof JobCook)   
             {
+                hasAssistant = true;
                 return new JobCookAssistant(citizen);
             }
         }
         return new JobCook(citizen);
+    }
+
+    @Override
+    public void removeCitizen(final ICitizenData citizen)
+    {
+        if(citizen.getJob() instanceof JobCookAssistant)
+        {
+            hasAssistant = false;
+        }
+        super.removeCitizen(citizen);
     }
 
     @NotNull
