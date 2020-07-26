@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.reflect.TypeToken;
-import com.ldtteam.blockout.Log;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
@@ -61,6 +61,17 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
            */
           new AITarget(START_USING_FURNACE, this::fillUpFurnace, 1),
           new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, 1));
+    }
+    
+    
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        if(currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
+        {
+            return 32;
+        }
+        return super.getActionsDoneUntilDumping();
     }
     
     @NotNull
@@ -222,7 +233,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             stack.setCount(resultCount);
             currentRequest.addDelivery(stack);
 
-            incrementActionsDoneAndDecSaturation();
             job.setCraftCounter(job.getCraftCounter() + resultCount);
             job.setProgress(job.getProgress() - resultCount);
             if(job.getCraftCounter() >= job.getMaxCraftingCount())
@@ -454,6 +464,14 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             currentRecipeStorage = null;
             currentRequest = null;
             resetValues();
+            return START_WORKING;
+        }
+
+        if (currentRequest != null && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED))
+        {
+            currentRequest = null;
+            incrementActionsDone(getActionRewardForCraftingSuccess());
+            currentRecipeStorage = null;
             return START_WORKING;
         }
 
