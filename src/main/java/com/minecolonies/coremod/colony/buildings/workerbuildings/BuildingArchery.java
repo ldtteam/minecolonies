@@ -79,7 +79,7 @@ public class BuildingArchery extends AbstractBuildingWorker
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block == Blocks.HAY_BLOCK && world.getBlockState(pos.down()).getBlock() instanceof FenceBlock)
+        if (block == Blocks.TARGET)
         {
             shootingTargets.add(pos);
         }
