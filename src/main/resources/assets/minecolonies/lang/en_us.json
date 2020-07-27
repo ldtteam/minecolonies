@@ -312,10 +312,10 @@
 
   "entity.worker.inventoryfullchestfull": "Please make space in my chests/racks. I am not able to dump my inventory.",
 
-  "entity.builder.messagebuildstart": "Builder %s started building %s.",
-  "entity.builder.messagebuildcomplete": "Builder %s finished building %s.",
-  "entity.builder.messagebuildcomplete_generic": "Builder %s finished building %s.",
-  "entity.builder.messageremovalcomplete": "Builder %s finished deconstructing building %s.",
+  "entity.builder.messagebuildstart": " started building %s.",
+  "entity.builder.messagebuildcomplete": " finished building %s.",
+  "entity.builder.messagebuildcomplete_generic": " finished building %s.",
+  "entity.builder.messageremovalcomplete": " finished deconstructing building %s.",
   "entity.builder.messagebuildtoohigh": "%s is too high! Please lower the building below Y 256!",
   "entity.builder.messagebuildtoolow": "%s is too low! Please raise the building above Y 0!",
   "entity.builder.messageneedmaterial": "I need %s (amount: %d).",
