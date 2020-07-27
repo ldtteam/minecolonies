@@ -1185,7 +1185,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(req);
                 if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
                 {
-                    colony.getRequestManager().updateRequestState(req, RequestState.FAILED);
+                    colony.getRequestManager().reassignRequest(req, Collections.emptyList());
                 }
             }
             return false;
