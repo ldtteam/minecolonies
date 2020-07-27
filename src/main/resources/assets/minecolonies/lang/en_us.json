@@ -370,7 +370,8 @@
   "com.minecolonies.command.loadbackup.success": "Successfully loaded backup.",
   "com.minecolonies.command.deleteable.success": "Changed deletable flag of colony id %s. It is now set to %s.",
   "com.minecolonies.command.rsreset.success": "The request system for colony %s has been reinstated completely new.",
-
+  "com.minecolonies.command.rsresetall.success": "The request systems for all colonies have been reinstated completely new.",
+  
   "com.minecolonies.command.citizeninfo.desc": "§2ID: §f %d §2 Name: §f %s",
   "com.minecolonies.command.citizeninfo.skills": "§2Athletics: §f%s §2Dexterity: §f%s §2Strength: §f%s\n§2Agility: §f%s §2Stamina: §f%s §2Mana: §f%s\n§2Adaptability: §f%s §2Focus: §f%s §2Creativity: §f%s\n§2Knowledge: §f%s §2Intelligence: §f%s",
   "com.minecolonies.command.citizeninfo.job": "§2Job: §f%s",
