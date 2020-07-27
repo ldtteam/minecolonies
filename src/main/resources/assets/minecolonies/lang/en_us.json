@@ -707,7 +707,7 @@
   "tile.blockhut.tavern.limit": "The amount of Taverns is limited to 1 per colony. You cannot place any more in this colony.",
 
   "com.minecolonies.coremod.gui.workerhuts.baker": "Bakery",
-  "com.minecolonies.coremod.bakery.nofurnace": "My Bakery doesn't have any furnaces, please repair it!",
+  "com.minecolonies.coremod.bakery.nofurnace": "My work hut doesn't have any furnaces! Please repair it so I have some that I can use!",
 
   "com.minecolonies.coremod.gui.workerhuts.saplinglist": "Saplings",
 
