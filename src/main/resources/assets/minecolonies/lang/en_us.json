@@ -1101,7 +1101,7 @@
   "com.minecolonies.coremod.recipe.unable": "Unable to store the recipe. Either the %s has no space for any more recipes, or the recipe doesn't correspond with its profession.",
   "com.minecolonies.coremod.request.crafting": "Crafter",
   "entity.builder.messagebuilderstoofar": "There is no Builder close enough to work on this building! Assign a Builder to it manually in the build screen or build it closer to the existing Builders.",
-  "com.minecolonies.coremod.bakery.norecipe": "%s: Please tell me which recipe you want me to bake!",
+  "com.minecolonies.coremod.bakery.norecipe": "Please tell me which recipe you want me to bake!",
   "com.minecolonies.coremod.request.compostable": "Compostable",
   "com.minecolonies.coremod.request.fertilizer": "Fertilizer",
   "com.minecolonies.coremod.gui.workerhuts.composter": "Composter's Hut",
