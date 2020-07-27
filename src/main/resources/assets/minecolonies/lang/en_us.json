@@ -384,7 +384,7 @@
   "com.minecolonies.command.citizeninfo.pos": "§2Citizen position: §4x=§f%s §4y=§f%s §4z=§f%s",
   "com.minecolonies.command.citizeninfo.notloaded": "Citizen entity not loaded!",
   "com.minecolonies.command.citizeninfo.notfound": "Wrong citizen ID, no citizen found.",
-  "com.minecolonies.command.citizenkill.success": "Citizen %s has been killed.",
+  "com.minecolonies.command.citizenkill.success": "Has been killed.",
   "com.minecolonies.command.citizenlist.pagetop": "§2   ------------------ page %d of %d ------------------",
   "com.minecolonies.command.citizenlist.pageline": "§2 ----------------",
   "com.minecolonies.command.citizenlist.pagestyle": "§2 | ",
