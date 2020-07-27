@@ -886,7 +886,6 @@
   "com.minecolonies.coremod.gui.workerhuts.switchstyle": "Switch Style",
   "com.minecolonies.coremod.gui.townhall.toolow": "Town Hall level too low!",
   "com.minecolonies.coremod.gui.recipe.full": "Max number of recipes reached for hut level",
-  "com.minecolonies.coremod.cook.full": "I can't bring food to %s since their inventory is full!",
 
   "block.minecolonies.blocktimberframe_oak_plain": "Oak Plain Timber Frame",
   "block.minecolonies.blocktimberframe_oak_doublecrossed": "Oak Crossed Timber Frame",
