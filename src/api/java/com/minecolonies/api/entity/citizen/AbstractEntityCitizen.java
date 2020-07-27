@@ -574,20 +574,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract void decreaseSaturationForContinuousAction();
 
     /**
-     * Getter for the current position. Only approximated position, used for stuck checking.
-     *
-     * @return the current position.
-     */
-    public abstract BlockPos getCurrentPosition();
-
-    /**
-     * Setter for the current position.
-     *
-     * @param currentPosition the position to set.
-     */
-    public abstract void setCurrentPosition(BlockPos currentPosition);
-
-    /**
      * Spawn eating particles for the citizen.
      */
     public abstract void spawnEatingParticle();

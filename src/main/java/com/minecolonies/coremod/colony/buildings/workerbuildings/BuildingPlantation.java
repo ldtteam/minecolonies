@@ -164,7 +164,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
             for (final Map.Entry<BlockPos, List<String>> entry : tileEntity.getPositionedTags().entrySet())
             {
                 if ((entry.getValue().contains("bamboo") && currentPhase == Items.BAMBOO)
-                      || (entry.getValue().contains("sugarcane") && currentPhase == Items.SUGAR_CANE)
+                      || (entry.getValue().contains("sugar") && currentPhase == Items.SUGAR_CANE)
                       || (entry.getValue().contains("cactus") && currentPhase == Items.CACTUS))
                 {
                     filtered.add(getPosition().add(entry.getKey()));
