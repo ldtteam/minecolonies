@@ -74,6 +74,11 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
      * If there is an assistant working
      */
     private boolean hasAssistant = false;
+
+    /**
+     * Failsafe for isCooking. Number of Colony Ticks before setting isCooking false. 
+     */
+    private int isCookingTimeout = 0;
     
     /**
      * Instantiates a new cook building.
@@ -95,7 +100,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
      */
     public boolean getIsCooking()
     {
-        return isCooking && hasAssistant;
+        return isCooking && hasAssistant && isCookingTimeout > 0;
     }
 
     /**
@@ -105,6 +110,11 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     public void setIsCooking(final boolean cookingState)
     {
         isCooking = cookingState;
+        if(cookingState)
+        {
+            //Wait ~32 minutes before timing out. 
+            isCookingTimeout = 75;
+        }
     }
 
     @NotNull
@@ -384,6 +394,16 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.cook;
+    }
+
+    @Override
+    public void onColonyTick(final IColony colony)
+    {
+        super.onColonyTick(colony);
+        if(isCookingTimeout > 0)
+        {
+            isCookingTimeout = isCookingTimeout - 1;
+        }
     }
 
     /**
