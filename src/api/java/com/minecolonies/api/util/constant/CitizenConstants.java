@@ -115,6 +115,12 @@ public final class CitizenConstants
      * 20 ticks or also: once a second.
      */
     public static final int    TICKS_20                   = 20;
+
+    /**
+     * 20 0ticks or also: once every 10 seconds.
+     */
+    public static final int TICKS_200 = 200;
+
     /**
      * This times the citizen id is the personal offset of the citizen.
      */
