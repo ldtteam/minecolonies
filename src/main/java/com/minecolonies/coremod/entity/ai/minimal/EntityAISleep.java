@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -196,18 +197,21 @@ public class EntityAISleep extends Goal
                 {
                     for (final BlockPos pos : ((BuildingHome) hut).getBedList())
                     {
-                        final World world = citizen.world;
-                        BlockState state = world.getBlockState(pos);
-                        state = state.getBlock().getExtendedState(state, world, pos);
-                        if (state.getBlock().isIn(BlockTags.BEDS)
-                              && !state.get(BedBlock.OCCUPIED)
-                              && state.get(BedBlock.PART).equals(BedPart.HEAD)
-                              && !isBedOccupied((BuildingHome) hut, pos)
-                              && world.isAirBlock(pos.up()))
+                        if (WorldUtil.isBlockLoaded(citizen.world, pos))
                         {
-                            usedBed = pos;
-                            setBedOccupied((BuildingHome) hut, true);
-                            return;
+                            final World world = citizen.world;
+                            BlockState state = world.getBlockState(pos);
+                            state = state.getBlock().getExtendedState(state, world, pos);
+                            if (state.getBlock().isIn(BlockTags.BEDS)
+                                  && !state.get(BedBlock.OCCUPIED)
+                                  && state.get(BedBlock.PART).equals(BedPart.HEAD)
+                                  && !isBedOccupied((BuildingHome) hut, pos)
+                                  && !world.getBlockState(pos.up()).getMaterial().isSolid())
+                            {
+                                usedBed = pos;
+                                setBedOccupied((BuildingHome) hut, true);
+                                return;
+                            }
                         }
                     }
                 }

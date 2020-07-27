@@ -74,6 +74,6 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
     protected IAIState butcherAnimals()
     {
         worker.getCitizenData().setVisibleStatus(FIND_CHICKEN);
-        return super.breedAnimals();
+        return super.butcherAnimals();
     }
 }
