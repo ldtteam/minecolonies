@@ -1,4 +1,12 @@
 {
   "replace": false,
-  "values": []
+  "values": [
+      "#minecraft:fishes",
+      "minecraft:beef",
+      "minecraft:mutton",
+      "minecraft:chicken",
+      "minecraft:porkchop",
+      "minecraft:rabbit",
+      "minecraft:potato"
+  ]
 }
