@@ -692,7 +692,7 @@
   "com.minecolonies.coremod.saturation.0": "I'm starving, I can't work anymore!",
   "com.minecolonies.coremod.saturation.3": "I'm quite hungry, I feel very unproductive!",
   "com.minecolonies.coremod.saturation.5": "I'm hungry, I'm not that productive anymore.",
-  "com.minecolonies.coremod.saturation.7": "I'm quite saturated, but I'll have to eat again soon",
+  "com.minecolonies.coremod.saturation.7": "I'm quite saturated, but I'll have to eat again soon.",
 
   "item.minecolonies.scepterbeekeeper.removehive": "Hive removed successfully",
   "item.minecolonies.scepterbeekeeper.addhive": "Hive added successfully",
@@ -708,12 +708,12 @@
   "tile.blockhut.tavern.limit": "The amount of Taverns is limited to 1 per colony. You cannot place any more in this colony.",
 
   "com.minecolonies.coremod.gui.workerhuts.baker": "Bakery",
-  "com.minecolonies.coremod.bakery.nofurnace": "My work hut doesn't have any furnaces! Please repair it so I have some that I can use!",
+  "com.minecolonies.coremod.bakery.nofurnace": "My work hut doesn't have any furnaces! Please repair it so I have some I can use!",
 
   "com.minecolonies.coremod.gui.workerhuts.saplinglist": "Saplings",
 
   "com.minecolonies.coremod.gui.townhall.housing": "Housing Assignment Mode:",
-  "com.minecolonies.coremod.gui.townhall.movein": "Citizens can move in/be born:",
+  "com.minecolonies.coremod.gui.townhall.movein": "Children will be born (if there's space):",
   "com.minecolonies.coremod.gui.home.assign": "Assign %d citizens",
   "com.minecolonies.coremod.gui.workerhuts.unassign": "Remove Citizen",
   "block.minecolonies.blockminecoloniesrack": "Rack",
