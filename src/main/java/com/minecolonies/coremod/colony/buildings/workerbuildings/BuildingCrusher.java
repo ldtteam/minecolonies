@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
@@ -22,8 +23,11 @@ import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
+
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
@@ -121,6 +125,33 @@ public class BuildingCrusher extends AbstractBuildingCrafter
               Collections.singletonList(input), 2, mode.getValue().getItemStack(), ModBlocks.blockHutCrusher);
             crusherRecipes.put(mode.getKey(), recipe);
         }
+    }
+
+    /**
+     * Reload all of the current crusher recipes
+     */
+    private void loadCurrentRecipes()
+    {
+        if(!super.recipes.isEmpty())
+        {
+            super.recipes.clear();
+        }
+
+        for (final IRecipeStorage recipe : crusherRecipes.values())
+        {
+            final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
+            addRecipe(token);
+        }
+
+        final IRecipeStorage clayballStorage = StandardFactoryController.getInstance().getNewInstance(
+            TypeConstants.RECIPE,
+            StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+            ImmutableList.of(new ItemStack(Blocks.CLAY, 1)),
+            1,
+            new ItemStack(Items.CLAY_BALL, 4),
+            Blocks.AIR);
+  
+        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(clayballStorage));    
     }
 
     /**
@@ -260,11 +291,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
         if (super.recipes.isEmpty())
         {
-            for (final IRecipeStorage recipe : crusherRecipes.values())
-            {
-                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
-                addRecipe(token);
-            }
+            loadCurrentRecipes();
         }
     }
 
@@ -296,12 +323,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         {
             loadCrusherMode();
 
-            super.recipes.clear();
-            for (final IRecipeStorage recipe : crusherRecipes.values())
-            {
-                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
-                addRecipe(token);
-            }
+            loadCurrentRecipes();
         }
 
         if (crusherMode == null)
