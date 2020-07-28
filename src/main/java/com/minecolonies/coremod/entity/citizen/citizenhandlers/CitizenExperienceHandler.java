@@ -166,7 +166,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         }
 
         final AxisAlignedBB box = citizen.getBoundingBox().grow(2);
-        if (!WorldUtil.isBlockLoaded(citizen.world, new BlockPos(box.minX, box.minY, box.minZ)) || !WorldUtil.isBlockLoaded(citizen.world, new BlockPos(box.maxX, box.maxY, box.maxZ)))
+        if (!WorldUtil.isAABBLoaded(citizen.world, box))
         {
             return;
         }
