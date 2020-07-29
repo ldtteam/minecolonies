@@ -336,7 +336,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             getOwnBuilding().setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
             return true;
         }
-        return job.getWorkOrder() != null && (!world.isBlockPresent(job.getWorkOrder().getBuildingLocation())) && getState() != PICK_UP_RESIDUALS;
+        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getBuildingLocation())) && getState() != PICK_UP_RESIDUALS;
     }
 
     @Override

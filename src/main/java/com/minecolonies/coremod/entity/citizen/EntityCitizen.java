@@ -467,10 +467,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         citizenDiseaseHandler.tick();
-        if (citizenJobHandler.getColonyJob() != null || !CompatibilityUtils.getWorldFromCitizen(this).isDaytime())
-        {
-        }
-        else
+        if (citizenJobHandler.getColonyJob() == null && CompatibilityUtils.getWorldFromCitizen(this).isDaytime())
         {
             updateCitizenStatus();
         }
@@ -590,26 +587,29 @@ public class EntityCitizen extends AbstractEntityCitizen
         citizenItemHandler.pickupItems();
         citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
 
-        this.getNavigator().getPathingOptions().setCanUseRails(canPathOnRails());
-
         if (citizenData != null)
         {
             citizenData.setLastPosition(getPosition());
         }
 
-        final MultiplierModifierResearchEffect speedEffect =
-          getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(WALKING, MultiplierModifierResearchEffect.class);
-        if (speedEffect != null)
+        if (getOffsetTicks() % TICKS_200 == 0)
         {
-            this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED + (BASE_MOVEMENT_SPEED * speedEffect.getEffect()));
-        }
+            this.getNavigator().getPathingOptions().setCanUseRails(canPathOnRails());
 
-        final AdditionModifierResearchEffect healthEffect =
-          getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(HEALTH, AdditionModifierResearchEffect.class);
-        if (healthEffect != null)
-        {
-            final AttributeModifier healthModLevel = new AttributeModifier(HEALTH, healthEffect.getEffect(), AttributeModifier.Operation.ADDITION);
-            AttributeModifierUtils.addHealthModifier(this, healthModLevel);
+            final MultiplierModifierResearchEffect speedEffect =
+              getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(WALKING, MultiplierModifierResearchEffect.class);
+            if (speedEffect != null)
+            {
+                this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED + (BASE_MOVEMENT_SPEED * speedEffect.getEffect()));
+            }
+
+            final AdditionModifierResearchEffect healthEffect =
+              getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(HEALTH, AdditionModifierResearchEffect.class);
+            if (healthEffect != null)
+            {
+                final AttributeModifier healthModLevel = new AttributeModifier(HEALTH, healthEffect.getEffect(), AttributeModifier.Operation.ADDITION);
+                AttributeModifierUtils.addHealthModifier(this, healthModLevel);
+            }
         }
 
         getDataManager().set(DATA_STYLE, citizenColonyHandler.getColony().getStyle());
@@ -630,9 +630,9 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     private void onLivingSoundUpdate()
     {
-        if (CompatibilityUtils.getWorldFromCitizen(this).isDaytime() && !CompatibilityUtils.getWorldFromCitizen(this).isRaining() && citizenData != null)
+        if (world.isDaytime() && !world.isRaining() && citizenData != null)
         {
-            SoundUtils.playRandomSound(CompatibilityUtils.getWorldFromCitizen(this), this.getPosition(), citizenData);
+            SoundUtils.playRandomSound(world, this.getPosition(), citizenData);
         }
     }
 

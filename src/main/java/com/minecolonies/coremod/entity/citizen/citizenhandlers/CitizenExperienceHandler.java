@@ -6,9 +6,12 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import org.jetbrains.annotations.NotNull;
@@ -162,7 +165,13 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             return;
         }
 
-        for (@NotNull final ExperienceOrbEntity orb : citizen.world.getEntitiesWithinAABB(ExperienceOrbEntity.class, citizen.getBoundingBox().grow(2)))
+        final AxisAlignedBB box = citizen.getBoundingBox().grow(2);
+        if (!WorldUtil.isAABBLoaded(citizen.world, box))
+        {
+            return;
+        }
+
+        for (@NotNull final ExperienceOrbEntity orb : citizen.world.getEntitiesWithinAABB(ExperienceOrbEntity.class, box))
         {
             Vec3d vec3d = new Vec3d(citizen.posX - orb.getPosX(), citizen.posY + (double) this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
             double d1 = vec3d.lengthSquared();
