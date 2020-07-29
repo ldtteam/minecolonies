@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
+import com.ldtteam.blockout.controls.ItemIcon;
+import com.ldtteam.blockout.views.View;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.interactionhandling.*;
@@ -10,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.client.gui.WindowCitizen;
 import com.minecolonies.coremod.client.gui.WindowRequestDetail;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
@@ -124,6 +127,29 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     {
         super.deserializeNBT(compoundNBT);
         this.token = StandardFactoryController.getInstance().deserialize(compoundNBT.getCompound(TOKEN_TAG));
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void onWindowOpened(final Window window, final ICitizenDataView dataView)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyView(dataView.getColonyId(), Minecraft.getInstance().player.world.getDimension().getType().getId());
+
+        if (colony != null)
+        {
+            final IRequest<?> request = colony.getRequestManager().getRequestForToken(token);
+            if (request != null)
+            {
+                final View group = window.findPaneOfTypeByID("interactionView", View.class);
+                ItemIcon icon = new ItemIcon();
+                icon.setID("request_item");
+                icon.setSize(32, 32);
+                group.addChild(icon);
+                icon.setItem((request.getDisplayStacks().get(0)));
+                icon.setPosition(30, 60);
+                icon.setVisible(true);
+            }
+        }
     }
 
     @Override

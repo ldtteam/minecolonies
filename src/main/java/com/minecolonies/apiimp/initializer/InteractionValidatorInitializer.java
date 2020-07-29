@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
@@ -154,9 +156,11 @@ public class InteractionValidatorInitializer
               final IColony colony = citizen.getColony();
               if (colony != null)
               {
+                  final IRequest<?> request = citizen.getColony().getRequestManager().getRequestForToken(token);
                   final IRequestResolver<?> resolver =
-                    citizen.getColony().getRequestManager().getRequestForToken(token) == null ? null : citizen.getColony().getRequestManager().getResolverForRequest(token);
-                  return resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver;
+                    request == null ? null : citizen.getColony().getRequestManager().getResolverForRequest(token);
+                  return request != null && request.getState() == RequestState.IN_PROGRESS && (resolver instanceof IPlayerRequestResolver
+                                                                                                 || resolver instanceof IRetryingRequestResolver);
               }
               return false;
           });

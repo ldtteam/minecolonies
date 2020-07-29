@@ -102,7 +102,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Base Vision range per building level.
      */
-    private static final int BASE_VISION_RANGE = 17;
+    private static final int BASE_VISION_RANGE = 15;
 
     /**
      * Whether the guardType will be assigned manually.
@@ -158,6 +158,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * Indicates if in Follow mode what type of follow is use. True - tight grouping, false - lose grouping.
      */
     private boolean tightGrouping;
+
+    /**
+     * A temporary next patrol point, which gets consumed and used once
+     */
+    private BlockPos tempNextPatrolPoint = null;
 
     /**
      * The abstract constructor of the building.
@@ -493,6 +498,13 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             return lastPatrolPoint;
         }
 
+        if (tempNextPatrolPoint != null)
+        {
+            lastPatrolPoint = tempNextPatrolPoint;
+            tempNextPatrolPoint = null;
+            return lastPatrolPoint;
+        }
+
         if (lastPatrolPoint == null)
         {
             lastPatrolPoint = getAssignedCitizen().get(0).getLastPosition();
@@ -540,6 +552,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     public int getPatrolDistance()
     {
         return PATROL_BASE_DIST + this.getBuildingLevel() * PATROL_DISTANCE;
+    }
+
+    /**
+     * Sets a one time consumed temporary next position to patrol towards
+     *
+     * @param pos Position to set
+     */
+    public void setTempNextPatrolPoint(final BlockPos pos)
+    {
+        tempNextPatrolPoint = pos;
     }
 
     /**

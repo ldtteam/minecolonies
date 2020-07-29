@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
@@ -13,6 +14,7 @@ import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -42,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -81,6 +84,16 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      * After this amount of ticks not seeing an entity stop persecution.
      */
     private static final int STOP_PERSECUTION_AFTER = TICKS_SECOND * 10;
+
+    /**
+     * How far off patrols are alterated to match a raider attack point, sq dist
+     */
+    private static final double PATROL_DEVIATION_RAID_POINT = 200 * 200;
+
+    /**
+     * Max bonus target search range from attack range
+     */
+    private static final int TARGET_RANGE_ATTACK_RANGE_BONUS = 18;
 
     /**
      * How many more ticks we have until next attack.
@@ -156,6 +169,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      * Timer for the wakeup AI.
      */
     private int wakeTimer = 0;
+
+    /**
+     * Timer for fighting, goes down to 0 when hasnt been fighting for a while
+     */
+    private int fighttimer = 0;
 
     /**
      * The sleeping guard we found
@@ -248,7 +266,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private boolean shouldSleep()
     {
-        if (worker.getRevengeTarget() != null || target != null)
+        if (worker.getRevengeTarget() != null || target != null || fighttimer > 0)
         {
             return false;
         }
@@ -382,10 +400,32 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                         citizen.getEntity().get().setRevengeTarget(target);
                     }
                 }
+
+                if (target instanceof AbstractEntityMinecoloniesMob)
+                {
+                    for (final Map.Entry<BlockPos, IBuilding> entry : worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().entrySet())
+                    {
+                        if (entry.getValue() instanceof AbstractBuildingGuards &&
+                              worker.getPosition().distanceSq(entry.getKey()) < PATROL_DEVIATION_RAID_POINT)
+                        {
+                            final AbstractBuildingGuards building = (AbstractBuildingGuards) entry.getValue();
+                            building.setTempNextPatrolPoint(worker.getPosition());
+                        }
+                    }
+                }
+
+                fighttimer = 30;
+                updateArmor();
                 return getAttackState();
             }
             return START_WORKING;
         }
+
+        if (fighttimer > 0)
+        {
+            fighttimer--;
+        }
+
         return null;
     }
 
@@ -396,8 +436,16 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState guard()
     {
-        worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), GUARD_POS_RANGE);
+        guardMovement();
         return GUARD_GUARD;
+    }
+
+    /**
+     * Movement when guarding
+     */
+    public void guardMovement()
+    {
+        worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), GUARD_POS_RANGE);
     }
 
     /**
@@ -560,7 +608,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public boolean canHelp()
     {
-        return !isEntityValidTarget(target) && getState() == GUARD_PATROL;
+        return !isEntityValidTarget(target) && getState() == GUARD_PATROL && canBeInterrupted();
     }
 
     /**
@@ -590,6 +638,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         if (worker.getEntitySenses().canSee(target) && isWithinPersecutionDistance(target.getPosition()))
         {
             target.setRevengeTarget(worker);
+            fighttimer = 30;
             return getAttackState();
         }
 
@@ -653,6 +702,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         // Check Current target
         if (isEntityValidTarget(target))
         {
+            if (target != worker.getRevengeTarget() && isEntityValidTargetAndCanbeSeen(worker.getRevengeTarget())
+                  && worker.getDistanceSq(worker.getRevengeTarget()) < worker.getDistanceSq(target) - 15)
+            {
+                target = worker.getRevengeTarget();
+            }
+
             // Check sight
             if (!worker.canEntityBeSeen(target))
             {
@@ -920,21 +975,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Calculates the dmg increase per level
-     *
-     * @return the level damage.
-     */
-    public int getLevelDamage()
-    {
-        if (worker.getCitizenData() == null)
-        {
-            return 0;
-        }
-        // Level scaling damage, +1 on 6,12,19,28,38,50,66 ...
-        return worker.getCitizenData().getJobModifier() / (5 + worker.getCitizenData().getJobModifier() / 15);
-    }
-
-    /**
      * Get the reference point from which the guard comes.
      *
      * @return the position depending ont he task.
@@ -987,7 +1027,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private AxisAlignedBB getSearchArea()
     {
         final IGuardBuilding building = getOwnBuilding();
-        final int buildingBonus = building.getBonusVision();
+        final int buildingBonus = building.getBonusVision() + Math.max(TARGET_RANGE_ATTACK_RANGE_BONUS, getAttackRange());
 
         final Direction randomDirection = Direction.byIndex(worker.getRandom().nextInt(4) + 2);
 
@@ -1007,4 +1047,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      * @return the calculated range.
      */
     protected abstract int getAttackRange();
+
+    @Override
+    public boolean canBeInterrupted()
+    {
+        if (fighttimer > 0)
+        {
+            return false;
+        }
+        return super.canBeInterrupted();
+    }
 }

@@ -91,7 +91,7 @@ public class BuildingTavern extends BuildingHome
     /**
      * Penalty for not spawning visitors after a death
      */
-    private int noVisitorTime = 0;
+    private int noVisitorTime = 10000;
 
     /**
      * Instantiates a new citizen hut.

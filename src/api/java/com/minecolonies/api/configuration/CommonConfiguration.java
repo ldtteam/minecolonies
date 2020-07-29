@@ -355,6 +355,9 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> doubletrouble;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> hotboots;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> pavetheroad;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> arrowuse;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> arrowpierce;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> knockbackAoe;
 
     /**
      * Builds common configuration.
@@ -1335,6 +1338,15 @@ public class CommonConfiguration extends AbstractConfiguration
         tauntCosts.add("minecraft:spider_eye*8");
         taunt = defineList(builder, "taunt",
           tauntCosts,
+          s -> s instanceof String);
+        arrowuse = defineList(builder, "arrowuse",
+          Collections.singletonList("minecraft:arrow*64"),
+          s -> s instanceof String);
+        arrowpierce = defineList(builder, "arrowpierce",
+          Arrays.asList("minecraft:arrow*64", "minecraft:redstone*64"),
+          s -> s instanceof String);
+        knockbackAoe = defineList(builder, "knockbackaoe",
+          Arrays.asList("minecraft:redstone*64", "minecraft:gold_ingot*64", "minecraft:lapis_lazuli*128"),
           s -> s instanceof String);
 
         this.gildedhammer = defineList(builder, "gildedhammer",
