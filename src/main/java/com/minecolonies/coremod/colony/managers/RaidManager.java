@@ -286,7 +286,7 @@ public class RaidManager implements IRaiderManager
 
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            if (WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition()))
+            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), building.getPosition()))
             {
                 loadedBuildings.add(building);
                 amount++;

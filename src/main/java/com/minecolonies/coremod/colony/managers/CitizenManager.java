@@ -128,7 +128,7 @@ public class CitizenManager implements ICitizenManager
             return;
         }
 
-        if (!existingCitizen.get().isAlive() || !WorldUtil.isBlockLoaded(existingCitizen.get().world, existingCitizen.get().getPosition()))
+        if (!existingCitizen.get().isAlive() || !WorldUtil.isEntityBlockLoaded(existingCitizen.get().world, existingCitizen.get().getPosition()))
         {
             existingCitizen.get().remove();
             data.setEntity(entity);

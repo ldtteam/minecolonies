@@ -295,7 +295,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     {
         for (final BlockPos pos : getOwnBuilding().getPlantGround())
         {
-            if (WorldUtil.isBlockLoaded(world, pos))
+            if (WorldUtil.isEntityBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityCompostedDirt)

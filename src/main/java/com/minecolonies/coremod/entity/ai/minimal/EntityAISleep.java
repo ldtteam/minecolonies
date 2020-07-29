@@ -197,7 +197,7 @@ public class EntityAISleep extends Goal
                 {
                     for (final BlockPos pos : ((BuildingHome) hut).getBedList())
                     {
-                        if (WorldUtil.isBlockLoaded(citizen.world, pos))
+                        if (WorldUtil.isEntityBlockLoaded(citizen.world, pos))
                         {
                             final World world = citizen.world;
                             BlockState state = world.getBlockState(pos);

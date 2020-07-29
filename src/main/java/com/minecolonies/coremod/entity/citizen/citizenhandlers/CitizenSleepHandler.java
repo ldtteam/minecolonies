@@ -104,7 +104,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     @Override
     public boolean trySleep(final BlockPos bedLocation)
     {
-        final BlockState state = WorldUtil.isBlockLoaded(citizen.world, bedLocation) ? citizen.world.getBlockState(bedLocation) : null;
+        final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.world, bedLocation) ? citizen.world.getBlockState(bedLocation) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, bedLocation, citizen);
 
         if (!isBed)
@@ -226,7 +226,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return 0;
         }
 
-        final BlockState state = WorldUtil.isBlockLoaded(citizen.world, getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
+        final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.world, getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
         final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.get(HorizontalBlock.HORIZONTAL_FACING) : null;
 
@@ -251,7 +251,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return 0;
         }
 
-        final BlockState state = WorldUtil.isBlockLoaded(citizen.world, getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
+        final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.world, getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
         final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.get(HorizontalBlock.HORIZONTAL_FACING) : null;
 
