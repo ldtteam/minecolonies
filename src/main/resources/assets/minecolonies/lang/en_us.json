@@ -1039,7 +1039,7 @@
   "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now.",
   "com.minecolonies.coremod.progress.hirecitizen": "§6 Your recruitment package was accepted and a new citizen arrived!",
 
-  "com.minecolonies.coremod.gui.townhall.printprogress": "Print help messages:",
+  "com.minecolonies.coremod.gui.townhall.printprogress": "Show help messages:",
   "com.minecolonies.coremod.gui.townhall.on": "On",
   "com.minecolonies.coremod.gui.townhall.off": "Off",
 
