@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "minecraft:hay_block",
-    "#forge:seeds"
+    "#forge:seeds",
+    "minecolonies:composted_dirt"
   ]
 }

@@ -24,6 +24,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
@@ -1209,8 +1211,17 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return false;
         }
 
-        if (getOpenRequestsByRequestableType().containsKey(TypeConstants.PICKUP))
+        final List<IToken<?>> reqs = new ArrayList<>(getOpenRequestsByRequestableType().getOrDefault(TypeConstants.PICKUP, Collections.emptyList()));
+        if (!reqs.isEmpty())
         {
+            for (final IToken<?> req : reqs)
+            {
+                final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(req);
+                if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
+                {
+                    colony.getRequestManager().reassignRequest(req, Collections.emptyList());
+                }
+            }
             return false;
         }
 

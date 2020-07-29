@@ -3,6 +3,7 @@ package com.minecolonies.api.util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 
 /**
@@ -33,6 +34,19 @@ public class WorldUtil
     public static boolean isChunkLoaded(final IWorld world, final int x, final int z)
     {
         return world.getChunk(x, z, ChunkStatus.FULL, false) != null;
+    }
+
+    /**
+     * Mark a chunk at a position dirty if loaded.
+     * @param world the world to mark it dirty in.
+     * @param pos the position within the chunk.
+     */
+    public static void markChunkDirty(final IWorld world, final BlockPos pos)
+    {
+        if (WorldUtil.isBlockLoaded(world, pos))
+        {
+            ((Chunk) world.getChunk(pos)).markDirty();
+        }
     }
 
     /**

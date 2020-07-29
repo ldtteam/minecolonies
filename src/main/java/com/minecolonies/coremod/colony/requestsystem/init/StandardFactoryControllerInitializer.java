@@ -50,6 +50,7 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new DeliveryRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new PickupRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new WarehouseRequestResolverFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new WarehouseConcreteRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new PrivateWorkerCraftingRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new PublicWorkerCraftingRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new PrivateWorkerCraftingProductionResolverFactory());

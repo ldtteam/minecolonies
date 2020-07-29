@@ -42,6 +42,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.antlr.v4.runtime.misc.Triple;
@@ -89,7 +90,7 @@ public class ClientEventHandler
      *
      * @param event the catched event.
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
         if (MineColonies.getConfig().getCommon().pathfindingDebugDraw.get())

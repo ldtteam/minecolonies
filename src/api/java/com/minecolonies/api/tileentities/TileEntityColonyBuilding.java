@@ -11,6 +11,7 @@ import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -40,7 +41,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -95,6 +95,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * The name of the building location.
      */
     public ResourceLocation registryName;
+
+    /**
+     * Whether to keep the cached combined inventory
+     */
+    private boolean keepInv;
 
     /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
@@ -365,6 +370,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 colonyId = tempColony.getID();
             }
         }
+
+        if (!keepInv)
+        {
+            combinedInv = null;
+        }
     }
 
     public boolean isUsableByPlayer(@NotNull final PlayerEntity player)
@@ -454,16 +464,27 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 final World world = colony.getWorld();
                 if (world != null)
                 {
-                    //Add additional containers
-                    providers.addAll(building.getAdditionalCountainers().stream()
-                                       .map(world::getTileEntity)
-                                       .collect(Collectors.toSet()));
-                    providers.removeIf(Objects::isNull);
-                    building.getAdditionalCountainers()
-                      .stream()
-                      .map(world::getTileEntity)
-                      .filter(entity -> entity instanceof TileEntityRack)
-                      .forEach(entity -> ((TileEntityRack) entity).setBuildingPos(this.pos));
+                    keepInv = true;
+                    for (final BlockPos pos : building.getAdditionalCountainers())
+                    {
+                        if (WorldUtil.isBlockLoaded(world, pos))
+                        {
+                            final TileEntity te = world.getTileEntity(pos);
+                            if (te != null)
+                            {
+                                providers.add(te);
+
+                                if (te instanceof AbstractTileEntityRack)
+                                {
+                                    ((AbstractTileEntityRack) te).setBuildingPos(pos);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            keepInv = false;
+                        }
+                    }
                 }
 
                 final List<IItemHandler> handlers = providers.stream()
