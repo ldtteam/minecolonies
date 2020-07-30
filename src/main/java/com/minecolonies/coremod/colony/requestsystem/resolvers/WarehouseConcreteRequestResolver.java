@@ -33,8 +33,7 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
             for(final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
             {
                 final ItemStack stack = possible.copy();
-                stack.setCount(requestToCheck.getRequest().getMinimumCount());
-                return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(stack));
+                return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(stack, requestToCheck.getRequest().getMinimumCount()));
             }
         }
         return false;
