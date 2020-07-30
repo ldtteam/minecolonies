@@ -364,7 +364,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
               .map(entity -> (BeeEntity) entity)
               .filter(bee -> worker.getPositionVec().squareDistanceTo(bee.getPositionVec()) <= 16.0D)
               .forEach(bee -> {
-                  bee.func_230260_a__(400 + worker.getRandom().nextInt(400));
+                  bee.setAngerTime(400 + worker.getRandom().nextInt(400));
                   bee.setRevengeTarget(worker);
               });
         }

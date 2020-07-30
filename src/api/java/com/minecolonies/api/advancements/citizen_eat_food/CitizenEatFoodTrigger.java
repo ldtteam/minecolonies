@@ -28,10 +28,9 @@ public class CitizenEatFoodTrigger extends AbstractCriterionTrigger<CitizenEatFo
             }
         }
     }
-
-    @NotNull
+    
     @Override
-    public CitizenEatFoodCriterionInstance func_230307_a_(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
+    public CitizenEatFoodCriterionInstance deserialize(final JsonObject jsonObject, final ConditionArrayParser conditionArrayParser)
     {
         if (jsonObject.has("items"))
         {

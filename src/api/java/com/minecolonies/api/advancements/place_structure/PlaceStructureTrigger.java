@@ -28,7 +28,7 @@ public class PlaceStructureTrigger extends AbstractCriterionTrigger<PlaceStructu
 
     @NotNull
     @Override
-    public PlaceStructureCriterionInstance func_230307_a_(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
+    public PlaceStructureCriterionInstance deserialize(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
     {
         if (jsonObject.has("hut_name"))
         {

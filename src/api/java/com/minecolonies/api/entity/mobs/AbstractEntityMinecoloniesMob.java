@@ -269,10 +269,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
      * We override this method and execute no code to avoid citizens travelling to the nether.
      *
      */
+    @Nullable
     @Override
-    public Entity func_241206_a_(final ServerWorld p_241206_1_)
+    public Entity changeDimension(final ServerWorld p_241206_1_)
     {
-        return this;
+        return null;
     }
 
     @Override
@@ -446,13 +447,13 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
     {
         return LivingEntity.registerAttributes()
-                 .func_233814_a_(MOB_ATTACK_DAMAGE)
-                 .func_233814_a_(Attributes.MAX_HEALTH)
-                 .func_233814_a_(Attributes.ARMOR)
-                 .func_233815_a_(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
-                 .func_233815_a_(Attributes.FOLLOW_RANGE, FOLLOW_RANGE * 2)
-                 .func_233815_a_(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue())
-                 .func_233815_a_(MOB_ATTACK_DAMAGE, MOB_ATTACK_DAMAGE.getDefaultValue());
+                 .createMutableAttribute(MOB_ATTACK_DAMAGE)
+                 .createMutableAttribute(Attributes.MAX_HEALTH)
+                 .createMutableAttribute(Attributes.ARMOR)
+                 .createMutableAttribute(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
+                 .createMutableAttribute(Attributes.FOLLOW_RANGE, FOLLOW_RANGE * 2)
+                 .createMutableAttribute(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue())
+                 .createMutableAttribute(MOB_ATTACK_DAMAGE, MOB_ATTACK_DAMAGE.getDefaultValue());
     }
 
     /**

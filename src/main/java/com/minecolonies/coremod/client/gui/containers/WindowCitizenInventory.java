@@ -73,7 +73,7 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
-    protected void func_230451_b_(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
+    protected void drawGuiContainerForegroundLayer(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
     {
         this.font.drawString(stack, this.container.getDisplayName(), 8, 6, 4210752);
         this.font.drawString(stack, this.playerInventory.getDisplayName().getString(), 8, 20 + this.inventoryRows * SLOT_OFFSET, 4210752);
@@ -82,7 +82,7 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
     /**
      * Draws the background layer of this container (behind the items).
      */
-    protected void func_230450_a_(@NotNull final MatrixStack stack, float partialTicks, int mouseX, int mouseY)
+    protected void drawGuiContainerBackgroundLayer(@NotNull final MatrixStack stack, float partialTicks, int mouseX, int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 

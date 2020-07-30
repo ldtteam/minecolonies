@@ -119,7 +119,7 @@ public class WindowRack extends ContainerScreen<ContainerRack>
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void func_230451_b_(@NotNull final MatrixStack stack, int mouseX, int mouseY)
+    protected void drawGuiContainerForegroundLayer(@NotNull final MatrixStack stack, int mouseX, int mouseY)
     {
         this.font.drawString(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
         this.font.drawString(stack, this.playerInventory.getDisplayName().getString(), 8.0F, (float) (this.ySize - (inventoryRows > 6 ? 110 : 94)), 4210752);
@@ -129,7 +129,7 @@ public class WindowRack extends ContainerScreen<ContainerRack>
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void func_230450_a_(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void drawGuiContainerBackgroundLayer(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bindTexture(getCorrectTextureForSlots(inventoryRows));

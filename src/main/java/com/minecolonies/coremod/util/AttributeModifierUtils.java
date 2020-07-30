@@ -21,7 +21,7 @@ public abstract class AttributeModifierUtils
             return;
         }
 
-        for (final AttributeModifier mod : entity.getAttribute(Attributes.MAX_HEALTH).func_225505_c_())
+        for (final AttributeModifier mod : entity.getAttribute(Attributes.MAX_HEALTH).getModifierListCopy())
         {
             entity.getAttribute(Attributes.MAX_HEALTH).removeModifier(mod);
         }
@@ -45,7 +45,7 @@ public abstract class AttributeModifierUtils
             return;
         }
 
-        for (final AttributeModifier mod : entity.getAttribute(Attributes.MAX_HEALTH).func_225505_c_())
+        for (final AttributeModifier mod : entity.getAttribute(Attributes.MAX_HEALTH).getModifierListCopy())
         {
             if (mod.getName().equals(modifierName))
             {
@@ -74,7 +74,7 @@ public abstract class AttributeModifierUtils
         final float prevHealthPct = entity.getHealth() / entity.getMaxHealth();
 
         removeHealthModifier(entity, modifier.getName());
-        entity.getAttribute(Attributes.MAX_HEALTH).func_233767_b_(modifier);
+        entity.getAttribute(Attributes.MAX_HEALTH).applyNonPersistentModifier(modifier);
 
         entity.setHealth(entity.getMaxHealth() * prevHealthPct);
     }

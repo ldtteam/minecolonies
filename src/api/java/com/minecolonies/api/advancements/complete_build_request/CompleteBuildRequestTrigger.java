@@ -28,7 +28,7 @@ public class CompleteBuildRequestTrigger extends AbstractCriterionTrigger<Comple
 
     @NotNull
     @Override
-    public CompleteBuildRequestCriterionInstance func_230307_a_(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser jsonDeserializationContext)
+    public CompleteBuildRequestCriterionInstance deserialize(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser jsonDeserializationContext)
     {
         if (jsonObject.has("hut_name"))
         {

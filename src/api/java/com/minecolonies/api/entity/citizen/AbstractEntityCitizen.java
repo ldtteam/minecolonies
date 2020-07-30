@@ -121,9 +121,9 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
     {
         return LivingEntity.registerAttributes()
-                 .func_233815_a_(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
-                 .func_233815_a_(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED)
-                 .func_233815_a_(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
+                 .createMutableAttribute(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
+                 .createMutableAttribute(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED)
+                 .createMutableAttribute(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
     }
 
     public GoalSelector getTasks()
@@ -136,12 +136,9 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         return ticksExisted;
     }
 
-    /**
-     * We override this method and execute no code to avoid citizens travelling to the nether.
-     *
-     */
+    @Nullable
     @Override
-    public Entity func_241206_a_(final ServerWorld p_241206_1_)
+    public Entity changeDimension(final ServerWorld p_241206_1_)
     {
         return null;
     }

@@ -26,7 +26,7 @@ public class PlaceSupplyTrigger extends AbstractCriterionTrigger<PlaceSupplyList
 
     @NotNull
     @Override
-    public PlaceSupplyCriterionInstance func_230307_a_(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
+    public PlaceSupplyCriterionInstance deserialize(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
     {
         return new PlaceSupplyCriterionInstance();
     }
