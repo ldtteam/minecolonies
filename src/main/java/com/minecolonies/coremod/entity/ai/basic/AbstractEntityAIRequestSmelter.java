@@ -15,6 +15,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -26,6 +27,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -126,17 +128,25 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         return super.getRecipe();
     }
 
+    /**
+     * Check to see if any furnaces are still processing
+     * @return
+     */
     private boolean getIsFurnaceBurning()
     {
+        final World world = getOwnBuilding().getColony().getWorld();
         for (final BlockPos pos : getOwnBuilding().getFurnaces())
         {
-            final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof FurnaceTileEntity)
+            if (WorldUtil.isBlockLoaded(world, pos))
             {
-                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-                if (furnace.isBurning()) 
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof FurnaceTileEntity)
                 {
-                    return true;
+                    final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+                    if (furnace.isBurning()) 
+                    {
+                        return true;
+                    }
                 }
             }
         }
