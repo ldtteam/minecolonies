@@ -34,6 +34,7 @@ import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallSin
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallTownhallMessage;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.BlockPos;
@@ -168,6 +169,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
         registerButton(BUTTON_TOGGLE_MOVE_IN, this::toggleMoveIn);
         registerButton(BUTTON_TOGGLE_PRINT_PROGRESS, this::togglePrintProgress);
+        registerButton("bannerPicker", this::openBannerPicker);
 
         registerButton(NAME_LABEL, this::fillCitizenInfo);
         registerButton(RECALL_ONE, this::recallOneClicked);
@@ -1113,6 +1115,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             button.setLabel(LanguageHandler.format(OFF_STRING));
         }
         Network.getNetwork().sendToServer(new ToggleHelpMessage(this.building.getColony()));
+    }
+
+    private void openBannerPicker(@NotNull final Button button)
+    {
+        Screen window = new WindowBannerPicker(townHall.getColony());
+        Minecraft.getInstance().execute(() -> Minecraft.getInstance().displayGuiScreen(window));
     }
 
     /**
