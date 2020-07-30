@@ -6,9 +6,11 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.GameRules;
 import org.jetbrains.annotations.NotNull;
@@ -162,10 +164,16 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             return;
         }
 
-        for (@NotNull final ExperienceOrbEntity orb : citizen.world.getEntitiesWithinAABB(ExperienceOrbEntity.class, citizen.getBoundingBox().grow(2)))
+        final AxisAlignedBB box = citizen.getBoundingBox().grow(2);
+        if (!WorldUtil.isAABBLoaded(citizen.world, box))
         {
-            Vector3d Vector3d = new Vector3d(citizen.getPosX() - orb.getPosX(), citizen.getPosY() + (double) this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
-            double d1 = Vector3d.lengthSquared();
+            return;
+        }
+
+        for (@NotNull final ExperienceOrbEntity orb : citizen.world.getEntitiesWithinAABB(ExperienceOrbEntity.class, box))
+        {
+            Vector3d vec3d = new Vector3d(citizen.getPosX() - orb.getPosX(), citizen.getPosY() + (double) this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
+            double d1 = vec3d.lengthSquared();
 
             if (d1 < 1.0D)
             {
@@ -174,7 +182,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
                 return;
             }
             double d2 = 1.0D - Math.sqrt(d1) / 8.0D;
-            orb.setMotion(orb.getMotion().add(Vector3d.normalize().scale(d2 * d2 * 0.1D)));
+            orb.setMotion(orb.getMotion().add(vec3d.normalize().scale(d2 * d2 * 0.1D)));
         }
     }
 }
