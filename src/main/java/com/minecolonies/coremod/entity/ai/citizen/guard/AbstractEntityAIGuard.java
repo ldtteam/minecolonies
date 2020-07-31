@@ -398,7 +398,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState checkAndAttackTarget()
     {
-        if (getState() == GUARD_SLEEP)
+        if (getState() == GUARD_SLEEP || getState() == GUARD_REGEN)
         {
             return null;
         }
