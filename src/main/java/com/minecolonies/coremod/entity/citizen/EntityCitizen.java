@@ -86,7 +86,7 @@ import javax.annotation.Nonnull;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Objects;
+import java.util.*;
 
 import static com.minecolonies.api.entity.citizen.VisibleCitizenStatus.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
@@ -1434,8 +1434,8 @@ public class EntityCitizen extends AbstractEntityCitizen
         callForHelpCooldown = CALL_HELP_CD;
 
         long guardDistance = guardHelpRange;
-        AbstractEntityCitizen guard = null;
-        AbstractEntityCitizen secondGuard = null;
+
+        List<AbstractEntityCitizen> possibleGuards = new ArrayList<>();
 
         for (final ICitizenData entry : getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
         {
@@ -1447,21 +1447,21 @@ public class EntityCitizen extends AbstractEntityCitizen
                 if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId() && tdist < guardDistance && entry.getJob().getWorkerAI() != null
                       && ((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
                 {
-                    guardDistance = tdist;
-                    secondGuard = guard;
-                    guard = entry.getEntity().get();
+                    possibleGuards.add(entry.getEntity().get());
                 }
             }
         }
 
-        if (guard != null)
+        Collections.sort(possibleGuards, Comparator.comparingInt(guard -> (int) getPosition().distanceSq(guard.getPosition())));
+
+        if (possibleGuards.size() > 0)
         {
-            ((AbstractEntityAIGuard<?, ?>) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
+            ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(0).getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
         }
 
-        if (secondGuard != null)
+        if (possibleGuards.size() > 1)
         {
-            ((AbstractEntityAIGuard<?, ?>) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
+            ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(1).getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
         }
     }
 

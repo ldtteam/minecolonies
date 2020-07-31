@@ -357,7 +357,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> pavetheroad;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> arrowuse;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> arrowpierce;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> knockbackAoe;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> knockbackaoe;
 
     /**
      * Builds common configuration.
@@ -1345,7 +1345,7 @@ public class CommonConfiguration extends AbstractConfiguration
         arrowpierce = defineList(builder, "arrowpierce",
           Arrays.asList("minecraft:arrow*64", "minecraft:redstone*64"),
           s -> s instanceof String);
-        knockbackAoe = defineList(builder, "knockbackaoe",
+        knockbackaoe = defineList(builder, "knockbackaoe",
           Arrays.asList("minecraft:redstone*64", "minecraft:gold_ingot*64", "minecraft:lapis_lazuli*128"),
           s -> s instanceof String);
 
