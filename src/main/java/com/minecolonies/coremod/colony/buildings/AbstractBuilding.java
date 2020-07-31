@@ -1165,8 +1165,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public boolean hasOpenSyncRequest(@NotNull final ICitizenData citizen)
     {
-        final Map<Integer, Collection<IToken<?>>> requestIds = getOpenRequestsByCitizen();
-        if (!requestIds.containsKey(citizen.getId()))
+        if (!hasWorkerOpenRequests(citizen))
         {
             return false;
         }

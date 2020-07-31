@@ -46,6 +46,11 @@ public class PathJobCanSee extends AbstractPathJob
     @Override
     protected boolean isAtDestination(final Node n)
     {
+        if (Math.abs(start.getY() - n.pos.getY()) > 6)
+        {
+            return false;
+        }
+
         return canSeeTargetFromPos(n.pos);
     }
 

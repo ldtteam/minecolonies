@@ -522,8 +522,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
             if (firstDeliverableRequest != null)
             {
+                boolean async = false;
                 if (worker.getCitizenData().isRequestAsync(firstDeliverableRequest.getId()))
                 {
+                    async = true;
                     job.getAsyncRequests().remove(firstDeliverableRequest.getId());
                 }
 
@@ -547,6 +549,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                           niceToHave.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack))
                     );
                     return NEEDS_ITEM;
+                }
+                else
+                {
+                    //Seems like somebody else picked up our stack.
+                    //Lets try this again.
+                    if (async)
+                    {
+                        worker.getCitizenData().createRequestAsync(firstDeliverableRequest.getRequest());
+                    }
+                    else
+                    {
+                        worker.getCitizenData().createRequest(firstDeliverableRequest.getRequest());
+                    }
                 }
             }
         }
