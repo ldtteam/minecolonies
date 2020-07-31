@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGuardTower;
@@ -285,7 +286,7 @@ public class RaidManager implements IRaiderManager
 
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            if (colony.getWorld().isBlockPresent(building.getPosition()))
+            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), building.getPosition()))
             {
                 loadedBuildings.add(building);
                 amount++;
@@ -365,14 +366,14 @@ public class RaidManager implements IRaiderManager
         BlockPos tempPos = new BlockPos(spawnPos);
 
         // Check if loaded
-        if (colony.getWorld().isBlockPresent(spawnPos))
+        if (WorldUtil.isBlockLoaded(colony.getWorld(), spawnPos))
         {
             for (int i = 1; i <= random.nextInt(RAID_SPAWN_SEARCH_CHUNKS - 3) + 3; i++)
             {
                 // Choose random between our two directions
                 if (random.nextBoolean())
                 {
-                    if (colony.getWorld().isBlockPresent(tempPos.offset(dir1, 16)))
+                    if (WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir1, 16)))
                     {
                         if (isValidSpawnPoint(tempPos.offset(dir1, 16), loadedBuildings))
                         {
@@ -387,7 +388,7 @@ public class RaidManager implements IRaiderManager
                 }
                 else
                 {
-                    if (colony.getWorld().isBlockPresent(tempPos.offset(dir2, 16)))
+                    if (WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir2, 16)))
                     {
                         if (isValidSpawnPoint(tempPos.offset(dir2, 16), loadedBuildings))
                         {

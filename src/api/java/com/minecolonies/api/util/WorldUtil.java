@@ -1,8 +1,11 @@
 package com.minecolonies.api.util;
 
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 
 /**
@@ -33,6 +36,19 @@ public class WorldUtil
     public static boolean isChunkLoaded(final IWorld world, final int x, final int z)
     {
         return world.getChunk(x, z, ChunkStatus.FULL, false) != null;
+    }
+
+    /**
+     * Mark a chunk at a position dirty if loaded.
+     * @param world the world to mark it dirty in.
+     * @param pos the position within the chunk.
+     */
+    public static void markChunkDirty(final IWorld world, final BlockPos pos)
+    {
+        if (WorldUtil.isBlockLoaded(world, pos))
+        {
+            ((Chunk) world.getChunk(pos)).markDirty();
+        }
     }
 
     /**
@@ -82,5 +98,17 @@ public class WorldUtil
     public static boolean isEntityChunkLoaded(final IWorld world, final ChunkPos pos)
     {
         return world.getChunkProvider().isChunkLoaded(pos);
+    }
+
+    /**
+     * Returns whether an axis aligned bb is entirely loaded.
+     *
+     * @param world world to check on.
+     * @param box   the box.
+     * @return true if loaded.
+     */
+    public static boolean isAABBLoaded(final World world, final AxisAlignedBB box)
+    {
+        return isChunkLoaded(world, ((int) box.minX) >> 4, ((int) box.minZ) >> 4) && isChunkLoaded(world, ((int) box.maxX) >> 4, ((int) box.maxZ) >> 4);
     }
 }

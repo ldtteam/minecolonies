@@ -73,45 +73,18 @@ public class TileEntityRack extends AbstractTileEntityRack
         super(MinecoloniesTileEntities.RACK);
     }
 
-    /**
-     * Check if a certain itemstack is present in the inventory. This method checks the content list, it is therefore extremely fast.
-     *
-     * @param stack the stack to check.
-     * @return true if so.
-     */
-    @Override
-    public boolean hasItemStack(final ItemStack stack)
-    {
-        return content.containsKey(new ItemStorage(stack));
-    }
-
-    /**
-     * Set the value for inWarehouse
-     *
-     * @param isInWarehouse is this rack in a warehouse?
-     */
     @Override
     public void setInWarehouse(final Boolean isInWarehouse)
     {
         this.inWarehouse = isInWarehouse;
     }
 
-    /**
-     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
-     *
-     * @return true if so.
-     */
     @Override
     public boolean freeStacks()
     {
         return content.isEmpty();
     }
 
-    /**
-     * Get the amount of free slots in the inventory. This method checks the content list, it is therefore extremely fast.
-     *
-     * @return the amount of free slots (an integer).
-     */
     @Override
     public int getFreeSlots()
     {
@@ -124,33 +97,22 @@ public class TileEntityRack extends AbstractTileEntityRack
         return freeSlots;
     }
 
-    /**
-     * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
-     *
-     * @param stack             the stack to check.
-     * @param ignoreDamageValue ignore the damage value.
-     * @return true if so.
-     */
     @Override
     public boolean hasItemStack(final ItemStack stack, final boolean ignoreDamageValue)
     {
-        final ItemStorage compareStorage = new ItemStorage(stack, ignoreDamageValue);
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            if (compareStorage.equals(entry.getKey()))
-            {
-                return true;
-            }
-        }
-        return false;
+        final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
+
+        return content.getOrDefault(checkItem, 0) >= stack.getCount();
     }
 
-    /**
-     * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
-     *
-     * @param itemStackSelectionPredicate the predicate to test the stack against.
-     * @return true if so.
-     */
+    @Override
+    public int getCount(final ItemStack stack, final boolean ignoreDamageValue)
+    {
+        final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
+
+        return content.getOrDefault(checkItem, 0);
+    }
+
     @Override
     public boolean hasItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
@@ -171,9 +133,6 @@ public class TileEntityRack extends AbstractTileEntityRack
      */
     public Map<ItemStorage, Integer> getAllContent() {return content;}
 
-    /**
-     * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
-     */
     @Override
     public void upgradeItemStorage()
     {
@@ -239,10 +198,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         notifyParentAboutInvChange();
     }
 
-    /* Get the amount of items matching a predicate in the inventory.
-     * @param predicate the predicate.
-     * @return the total count.
-     */
     @Override
     public int getItemCount(final Predicate<ItemStack> predicate)
     {
@@ -256,9 +211,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         return 0;
     }
 
-    /**
-     * Scans through the whole storage and updates it.
-     */
     @Override
     public void updateItemStorage()
     {
@@ -281,13 +233,13 @@ public class TileEntityRack extends AbstractTileEntityRack
             content.put(storage, amount);
         }
 
-        updateBlockState();
-        markDirty();
+        if (world != null)
+        {
+            updateBlockState();
+            markDirty();
+        }
     }
 
-    /**
-     * Update the blockState of the rack. Switch between connected, single, full and empty texture.
-     */
     @Override
     protected void updateBlockState()
     {
@@ -351,11 +303,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         }
     }
 
-    /**
-     * Get the other double chest or null.
-     *
-     * @return the tileEntity of the other half or null.
-     */
     @Override
     public AbstractTileEntityRack getOtherChest()
     {
@@ -378,11 +325,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         return null;
     }
 
-    /**
-     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
-     *
-     * @return true if so.
-     */
     @Override
     public boolean isEmpty()
     {
@@ -495,7 +437,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return write(new CompoundNBT());
+        return this.write(new CompoundNBT());
     }
 
     @Override
@@ -512,6 +454,12 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             relativeNeighbor = relativeNeighbor.rotate(rotationIn);
         }
+    }
+
+    @Override
+    public void handleUpdateTag(final CompoundNBT tag)
+    {
+        this.read(tag);
     }
 
     @Nonnull
@@ -597,9 +545,15 @@ public class TileEntityRack extends AbstractTileEntityRack
         return false;
     }
 
+    @Override
+    public void markDirty()
+    {
+        WorldUtil.markChunkDirty(world, pos);
+    }
+
     @Nullable
     @Override
-    public Container createMenu(final int id, final PlayerInventory inv, final PlayerEntity player)
+    public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
     {
         final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         buffer.writeBlockPos(this.getPos());
@@ -608,6 +562,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         return new ContainerRack(id, inv, buffer);
     }
 
+    @NotNull
     @Override
     public ITextComponent getDisplayName()
     {
