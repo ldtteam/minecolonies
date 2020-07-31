@@ -645,6 +645,11 @@ public class VisitorCitizen extends AbstractEntityCitizen
         citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
         citizenId = compound.getInt(TAG_CITIZEN);
 
+        if (isServerWorld())
+        {
+            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+        }
+
         citizenDiseaseHandler.read(compound);
     }
 

@@ -105,15 +105,16 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Cooldown for calling help, in ticks.
      */
-    private static final int    CALL_HELP_CD       = 100;
+    private static final int    CALL_HELP_CD        = 100;
     /**
      * The amount of damage a guard takes on blocking.
      */
-    private static final float  GUARD_BLOCK_DAMAGE = 0.5f;
+    private static final float  GUARD_BLOCK_DAMAGE  = 0.5f;
     /**
      * Max speed factor.
      */
-    private static final double MAX_SPEED_FACTOR   = 0.5;
+    private static final double MAX_SPEED_FACTOR    = 0.5;
+    private static final int    CALL_TO_HELP_AMOUNT = 2;
 
     /**
      * The citizen status handler.
@@ -358,6 +359,11 @@ public class EntityCitizen extends AbstractEntityCitizen
         citizenStatusHandler.setStatus(Status.values()[compound.getInt(TAG_STATUS)]);
         citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
         citizenId = compound.getInt(TAG_CITIZEN);
+
+        if (isServerWorld())
+        {
+            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+        }
 
         isDay = compound.getBoolean(TAG_DAY);
 
@@ -1428,18 +1434,15 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         callForHelpCooldown = CALL_HELP_CD;
 
-        long guardDistance = guardHelpRange;
-
         List<AbstractEntityCitizen> possibleGuards = new ArrayList<>();
 
         for (final ICitizenData entry : getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
         {
             if (entry.getEntity().isPresent())
             {
-                final long tdist = BlockPosUtil.getDistanceSquared(entry.getEntity().get().getPosition(), getPosition());
-
                 // Checking for guard nearby
-                if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId() && tdist < guardDistance && entry.getJob().getWorkerAI() != null
+                if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId()
+                      && BlockPosUtil.getDistanceSquared(entry.getEntity().get().getPosition(), getPosition()) < guardHelpRange && entry.getJob().getWorkerAI() != null
                       && ((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
                 {
                     possibleGuards.add(entry.getEntity().get());
@@ -1449,14 +1452,9 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         Collections.sort(possibleGuards, Comparator.comparingInt(guard -> (int) getPosition().distanceSq(guard.getPosition())));
 
-        if (possibleGuards.size() > 0)
+        for (int i = 0; i < possibleGuards.size() && i <= CALL_TO_HELP_AMOUNT; i++)
         {
-            ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(0).getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
-        }
-
-        if (possibleGuards.size() > 1)
-        {
-            ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(1).getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
+            ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(i).getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
         }
     }
 
