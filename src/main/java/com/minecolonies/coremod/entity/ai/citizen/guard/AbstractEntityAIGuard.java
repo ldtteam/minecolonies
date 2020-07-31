@@ -423,7 +423,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                               worker.getPosition().distanceSq(entry.getKey()) < PATROL_DEVIATION_RAID_POINT)
                         {
                             final AbstractBuildingGuards building = (AbstractBuildingGuards) entry.getValue();
-                            building.setTempNextPatrolPoint(worker.getPosition());
+                            building.setTempNextPatrolPoint(target.getPosition());
                         }
                     }
                 }
