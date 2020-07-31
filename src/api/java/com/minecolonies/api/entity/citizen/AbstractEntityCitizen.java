@@ -100,7 +100,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     /**
      * The collision threshold
      */
-    private final static int COLL_THRESHOLD = 30;
+    private final static int COLL_THRESHOLD = 50;
 
     /**
      * Constructor for a new citizen typed entity.
@@ -334,8 +334,13 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @Override
     public void applyEntityCollision(@NotNull final Entity entityIn)
     {
-        if ((collisionCounter += 3) > COLL_THRESHOLD)
+        if ((collisionCounter += 2) > COLL_THRESHOLD)
         {
+            if (collisionCounter > COLL_THRESHOLD * 2)
+            {
+                collisionCounter = 0;
+            }
+
             return;
         }
         super.applyEntityCollision(entityIn);
