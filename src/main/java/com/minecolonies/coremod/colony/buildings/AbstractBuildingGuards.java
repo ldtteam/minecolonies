@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
+import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
@@ -30,6 +31,7 @@ import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.minecolonies.coremod.network.messages.client.colony.building.guard.GuardMobAttackListMessage;
+import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -37,6 +39,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArrowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -52,6 +55,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.research.util.ResearchConstants.ARROW_ITEMS;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -189,6 +193,18 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
                                  && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.FEET, new Tuple<>(1, true));
+
+        keepX.put(itemStack -> {
+            if (ItemStackUtils.isEmpty(itemStack) || !(itemStack.getItem() instanceof ArrowItem))
+            {
+                return false;
+            }
+
+            final UnlockAbilityResearchEffect arrowItemEffect =
+              getColony().getResearchManager().getResearchEffects().getEffect(ARROW_ITEMS, UnlockAbilityResearchEffect.class);
+
+            return arrowItemEffect != null && arrowItemEffect.getEffect() && getGuardType() == ModGuardTypes.ranger;
+        }, new Tuple<>(128, true));
 
         calculateMobs();
     }

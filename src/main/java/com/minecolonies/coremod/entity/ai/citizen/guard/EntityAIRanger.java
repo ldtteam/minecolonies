@@ -383,10 +383,6 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                                 damage += ARROW_EXTRA_DAMAGE;
                             }
                         }
-                        else
-                        {
-                            checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.ARROW), 64, 16);
-                        }
                     }
 
 
@@ -455,6 +451,23 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
         lastDistance = sqDistanceToEntity;
 
         return GUARD_ATTACK_RANGED;
+    }
+
+    @Override
+    protected void atBuildingActions()
+    {
+        super.atBuildingActions();
+
+        // Pickup arrows and request arrows
+        InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(),
+          item -> item.getItem() instanceof ArrowItem,
+          64,
+          worker.getInventoryCitizen());
+
+        if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem) < 16)
+        {
+            checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.ARROW), 64, 16);
+        }
     }
 
     /**

@@ -530,6 +530,19 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         return GUARD_RALLY;
     }
 
+    @Override
+    protected IAIState startWorkingAtOwnBuilding()
+    {
+        final ILocation rallyLocation = buildingGuards.getRallyLocation();
+        if (rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()) || !canBeInterrupted())
+        {
+            return PREPARING;
+        }
+
+        // Walks to our building, only when not busy with another task
+        return super.startWorkingAtOwnBuilding();
+    }
+
     /**
      * Decrease the saturation while rallying. Rallying is hard work for the guards, so make sure they suffer from it.
      *

@@ -71,7 +71,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, PREPARING, 1),
+          new AITarget(IDLE, START_WORKING, 1),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, 100),
           new AITarget(PREPARING, this::prepare, TICKS_SECOND)
         );
@@ -87,11 +87,11 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     protected abstract int getAttackRange();
 
     /**
-     * Redirects the herder to their building.
+     * Redirects the guard to their building.
      *
      * @return The next {@link IAIState}.
      */
-    private IAIState startWorkingAtOwnBuilding()
+    protected IAIState startWorkingAtOwnBuilding()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
         if (walkToBuilding())
@@ -110,7 +110,6 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     {
         setDelay(TICKS_SECOND * PREPARE_DELAY_SECONDS);
 
-        final IGuardBuilding building = getOwnBuilding();
         for (final ToolType tool : toolsNeeded)
         {
             if (checkForToolOrWeapon(tool))
@@ -135,6 +134,16 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             return DECIDE;
         }
 
+        atBuildingActions();
+        return DECIDE;
+    }
+
+    /**
+     * Task to do when at the own building, as guards only go there on requests and on dump
+     */
+    protected void atBuildingActions()
+    {
+        final IGuardBuilding building = getOwnBuilding();
         for (final List<GuardGear> itemList : itemsNeeded)
         {
             for (final GuardGear item : itemList)
@@ -209,8 +218,6 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
         }
 
         equipInventoryArmor();
-
-        return DECIDE;
     }
 
     /**
