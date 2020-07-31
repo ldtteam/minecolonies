@@ -16,6 +16,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
@@ -324,7 +325,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         final List<Map.Entry<BlockPos, BakingProduct>> copyOfList = new ArrayList<>(this.getFurnacesWithProduct().entrySet());
         for (final Map.Entry<BlockPos, BakingProduct> entry : copyOfList)
         {
-            if (!worldObj.isBlockPresent(entry.getKey()))
+            if (!WorldUtil.isBlockLoaded(worldObj, entry.getKey()))
             {
                 return;
             }
