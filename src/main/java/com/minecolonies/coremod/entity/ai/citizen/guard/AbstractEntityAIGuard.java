@@ -217,15 +217,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
           new AITarget(GUARD_SLEEP, this::sleepParticles, PARTICLE_INTERVAL),
           new AITarget(GUARD_WAKE, this::wakeUpGuard, TICKS_SECOND),
           new AITarget(GUARD_FOLLOW, this::decide, GUARD_TASK_INTERVAL),
-          //new AITarget(GUARD_FOLLOW, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
           new AITarget(GUARD_FOLLOW, () -> searchNearbyTarget() != null, this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
           new AITarget(GUARD_RALLY, this::decide, GUARD_TASK_INTERVAL),
-          // new AITarget(GUARD_RALLY, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
           new AITarget(GUARD_RALLY, () -> searchNearbyTarget() != null, this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
           new AITarget(GUARD_RALLY, this::decreaseSaturation, RALLY_SATURATION_LOSS_INTERVAL),
           new AITarget(GUARD_GUARD, this::shouldSleep, () -> GUARD_SLEEP, SHOULD_SLEEP_INTERVAL),
           new AITarget(GUARD_GUARD, this::decide, GUARD_TASK_INTERVAL),
-          // new AITarget(GUARD_GUARD, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
           new AITarget(GUARD_GUARD, () -> searchNearbyTarget() != null, this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
           new AITarget(GUARD_REGEN, this::regen, GUARD_REGEN_INTERVAL),
           new AITarget(HELP_CITIZEN, this::helping, GUARD_TASK_INTERVAL)
@@ -401,6 +398,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState checkAndAttackTarget()
     {
+        if (getState() == GUARD_SLEEP)
+        {
+            return null;
+        }
+
         if (checkForTarget())
         {
             if (hasTool())
@@ -490,6 +492,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             }
         }
         return GUARD_FOLLOW;
+    }
+
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return ACTIONS_UNTIL_DUMPING * getOwnBuilding().getBuildingLevel();
     }
 
     /**

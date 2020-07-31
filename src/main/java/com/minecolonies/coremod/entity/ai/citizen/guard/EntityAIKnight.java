@@ -132,7 +132,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
     {
         if (knockbackAoeCooldown > 0)
         {
-            knockbackAoeCooldown -= GUARD_ATTACK_INTERVAL;
+            knockbackAoeCooldown -= value;
         }
         super.reduceAttackDelay(value);
     }

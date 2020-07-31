@@ -134,7 +134,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
         {
             return DECIDE;
         }
-        
+
         for (final List<GuardGear> itemList : itemsNeeded)
         {
             for (final GuardGear item : itemList)
@@ -292,7 +292,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Removes currently equipped armor
+     * Removes currently equipped armor and shields
      */
     public void cleanArmor()
     {
@@ -300,5 +300,6 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
         worker.setItemStackToSlot(EquipmentSlotType.FEET, ItemStackUtils.EMPTY);
         worker.setItemStackToSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
         worker.setItemStackToSlot(EquipmentSlotType.LEGS, ItemStackUtils.EMPTY);
+        worker.setItemStackToSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
     }
 }

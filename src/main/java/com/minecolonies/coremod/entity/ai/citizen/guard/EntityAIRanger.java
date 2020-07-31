@@ -536,6 +536,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
             ((MinecoloniesAdvancedPathNavigate) worker.getNavigator()).setPathJob(new PathJobCanSee(worker, target, world, worker.getPosition(), 20),
               null,
               getCombatMovementSpeed());
+            return;
         }
 
         worker.getNavigator()
