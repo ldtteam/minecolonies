@@ -92,6 +92,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public ResourceLocation registryName;
 
     /**
+     * Create the combined inv wrapper for the building.
+     */
+    private CombinedItemHandler combinedInv;
+
+    /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
      */
     public TileEntityColonyBuilding()
@@ -352,6 +357,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public void tick()
     {
+        combinedInv = null;
         if (!getWorld().isRemote && colonyId == 0)
         {
             final IColony tempColony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), this.getPosition());
@@ -436,37 +442,41 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
         {
-            //Add additional containers
-            final Set<IItemHandlerModifiable> handlers = new HashSet<>();
-            final World world = colony.getWorld();
-            if (world != null)
+            if (combinedInv == null)
             {
-                for (final BlockPos pos : building.getAdditionalCountainers())
+                //Add additional containers
+                final Set<IItemHandlerModifiable> handlers = new HashSet<>();
+                final World world = colony.getWorld();
+                if (world != null)
                 {
-                    if (WorldUtil.isBlockLoaded(world, pos))
+                    for (final BlockPos pos : building.getAdditionalCountainers())
                     {
-                        final TileEntity te = world.getTileEntity(pos);
-                        if (te != null)
+                        if (WorldUtil.isBlockLoaded(world, pos))
                         {
-                            final LazyOptional<IItemHandler> cap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                            cap.ifPresent(theCap -> {
-                                if (theCap instanceof  IItemHandlerModifiable && theCap.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
-                                {
-                                    handlers.add((IItemHandlerModifiable) theCap);
-                                }
-                            });
-
-                            if (te instanceof AbstractTileEntityRack)
+                            final TileEntity te = world.getTileEntity(pos);
+                            if (te != null)
                             {
-                                ((AbstractTileEntityRack) te).setBuildingPos(pos);
+                                final LazyOptional<IItemHandler> cap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                                cap.ifPresent(theCap -> {
+                                    if (theCap instanceof IItemHandlerModifiable && theCap.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
+                                    {
+                                        handlers.add((IItemHandlerModifiable) theCap);
+                                    }
+                                });
+
+                                if (te instanceof AbstractTileEntityRack)
+                                {
+                                    ((AbstractTileEntityRack) te).setBuildingPos(pos);
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            handlers.add(getInventory());
-            return LazyOptional.of(() -> (T) new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0])));
+                handlers.add(getInventory());
+                combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0]));
+            }
+            return LazyOptional.of(() -> (T) combinedInv);
         }
         return super.getCapability(capability, side);
     }

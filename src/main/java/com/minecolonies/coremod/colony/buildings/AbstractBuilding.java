@@ -1525,7 +1525,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
         else
         {
-            request.setState(colony.getRequestManager(), RequestState.RECEIVED);
+            colony.getRequestManager().updateRequestState(request.getId(), RequestState.RECEIVED);
         }
 
         markDirty();
