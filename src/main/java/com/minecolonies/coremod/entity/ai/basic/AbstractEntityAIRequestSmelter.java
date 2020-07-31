@@ -132,7 +132,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      * Check to see if any furnaces are still processing
      * @return
      */
-    private boolean getIsFurnaceBurning()
+    private boolean checkIfAnyFurnaceIsBurning()
     {
         final World world = getOwnBuilding().getColony().getWorld();
         for (final BlockPos pos : getOwnBuilding().getFurnaces())
@@ -410,7 +410,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                     needsCurrently = new Tuple<>(smeltable, currentRequest.getRequest().getCount());
                     return GATHERING_REQUIRED_MATERIALS;
                 } 
-                else if (!getIsFurnaceBurning())
+                else if (!checkIfAnyFurnaceIsBurning())
                 {
                     //This is a safety net for the AI getting way out of sync with it's tracking. It shouldn't happen. 
                     job.finishRequest(false);
