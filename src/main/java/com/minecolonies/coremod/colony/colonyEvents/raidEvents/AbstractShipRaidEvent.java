@@ -13,6 +13,7 @@ import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
@@ -200,7 +201,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         }
 
         spawners.removeIf(spawner -> colony.getWorld() != null
-                                       && colony.getWorld().getChunkProvider().isChunkLoaded(new ChunkPos(spawner.getX() >> 4, spawner.getZ() >> 4))
+                                       && WorldUtil.isBlockLoaded(colony.getWorld(), spawner)
                                        && colony.getWorld().getBlockState(spawner).getBlock() != Blocks.SPAWNER);
 
         // Spawns landing troops.

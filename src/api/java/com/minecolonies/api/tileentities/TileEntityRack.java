@@ -2,8 +2,6 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -151,51 +149,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
         }
-    }
-
-    /**
-     * Notifies the parent building about inventory change.
-     */
-    private void notifyParentAboutInvChange()
-    {
-        if (!buildingPos.equals(BlockPos.ZERO))
-        {
-            if (WorldUtil.isBlockLoaded(world, buildingPos))
-            {
-                TileEntity building = world.getTileEntity(buildingPos);
-                if (building instanceof TileEntityColonyBuilding)
-                {
-                    ((TileEntityColonyBuilding) building).markInvDirty();
-                }
-            }
-        }
-        else if (inWarehouse && world != null)
-        {
-            final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
-            if (colony != null)
-            {
-                colony.getBuildingManager().getWareHouses().forEach(warehouse -> {
-                    if (WorldUtil.isBlockLoaded(world, warehouse.getPosition()))
-                    {
-                        warehouse.getTileEntity().markInvDirty();
-                    }
-                });
-            }
-        }
-    }
-
-    @Override
-    public void remove()
-    {
-        super.remove();
-        notifyParentAboutInvChange();
-    }
-
-    @Override
-    public void onChunkUnloaded()
-    {
-        super.onChunkUnloaded();
-        notifyParentAboutInvChange();
     }
 
     @Override
