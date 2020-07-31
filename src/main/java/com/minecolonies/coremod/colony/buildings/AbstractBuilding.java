@@ -607,7 +607,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         super.onColonyTick(colony);
 
-        if (colony.getWorld().getChunkProvider().isChunkLoaded(new ChunkPos(getPosition().getX() >> 4, getPosition().getZ() >> 4)))
+        if (WorldUtil.isBlockLoaded(colony.getWorld(), getPosition()))
         {
             final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
 
@@ -1523,6 +1523,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         if (citizenThatRequested >= 0)
         {
             getCompletedRequestsByCitizen().computeIfAbsent(citizenThatRequested, ArrayList::new).add(request.getId());
+        }
+        else
+        {
+            colony.getRequestManager().updateRequestState(request.getId(), RequestState.RECEIVED);
         }
 
         markDirty();

@@ -133,7 +133,6 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         if (!containerList.contains(pos))
         {
             containerList.add(pos);
-            getTileEntity().markInvDirty();
         }
     }
 
@@ -141,7 +140,6 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     public void removeContainerPosition(final BlockPos pos)
     {
         containerList.remove(pos);
-        getTileEntity().markInvDirty();
     }
 
     @Override

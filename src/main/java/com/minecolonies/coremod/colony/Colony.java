@@ -1000,7 +1000,7 @@ public class Colony implements IColony
             {
                 if (count++ == randomPos)
                 {
-                    if (world.getChunkProvider().isChunkLoaded(new ChunkPos(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4)))
+                    if (WorldUtil.isBlockLoaded(world, entry.getKey()))
                     {
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
                         if (
