@@ -16,6 +16,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
@@ -289,7 +290,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         // Chance to fall asleep every 10sec, Chance is 1 in (10 + level/2) = 1 in Level1:5,Level2:6 Level6:8 Level 12:11 etc
-        if (worker.getRandom().nextInt((int) (worker.getCitizenData().getJobModifier() * 0.5) + 20) == 1 && worker.getRandom().nextDouble() < chance)
+        if (worker.getRandom().nextInt((int) (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) * 0.5) + 20) == 1
+              && worker.getRandom().nextDouble() < chance)
         {
             // Sleep for 2500-3000 ticks
             sleepTimer = worker.getRandom().nextInt(500) + 2500;
@@ -521,7 +523,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 // when they're at half-max, so at about skill60. Therefore, divide the skill by 20.
                 worker.addPotionEffect(new EffectInstance(Effects.SPEED,
                   5 * TICKS_SECOND,
-                  MathHelper.clamp((citizenData.getJobModifier() / 20) + 2, 2, 5),
+                  MathHelper.clamp((citizenData.getCitizenSkillHandler().getLevel(Skill.Adaptability) / 20) + 2, 2, 5),
                   false,
                   false));
             }
