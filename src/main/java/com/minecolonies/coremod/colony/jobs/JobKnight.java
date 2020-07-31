@@ -58,10 +58,10 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
         {
             final AbstractEntityCitizen citizen = getCitizen().getEntity().get();
 
-            // +1 half Heart every 2 level
+            // +1 Heart every 2 level
             final AttributeModifier healthModLevel =
               new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
-                getCitizen().getCitizenSkillHandler().getLevel(Skill.Stamina) / 2 + KNIGHT_HP_BONUS,
+                getCitizen().getCitizenSkillHandler().getLevel(Skill.Stamina) + KNIGHT_HP_BONUS,
                 AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }

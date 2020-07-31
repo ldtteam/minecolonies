@@ -124,7 +124,8 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
     @Override
     protected int getAttackDelay()
     {
-        return KNIGHT_ATTACK_DELAY_BASE;
+        final int reload = KNIGHT_ATTACK_DELAY_BASE - worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 3;
+        return Math.max(reload, KNIGHT_ATTACK_DELAY_MIN);
     }
 
     @Override

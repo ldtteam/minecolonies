@@ -108,6 +108,11 @@ public final class GuardConstants
     public static final int KNIGHT_ATTACK_DELAY_BASE = 32;
 
     /**
+     * Minimum delay for the next Knight attack.
+     */
+    public static final int KNIGHT_ATTACK_DELAY_MIN = 16;
+
+    /**
      * Basic bonus hp for knights
      */
     public static final int KNIGHT_HP_BONUS = 15;
