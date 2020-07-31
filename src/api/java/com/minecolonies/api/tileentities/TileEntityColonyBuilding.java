@@ -87,19 +87,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     private String style = "";
 
     /**
-     * Create the combined inv wrapper for the building.
-     */
-    private CombinedItemHandler combinedInv;
-
-    /**
      * The name of the building location.
      */
     public ResourceLocation registryName;
-
-    /**
-     * Whether to keep the cached combined inventory
-     */
-    private boolean keepInv;
 
     /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
@@ -370,11 +360,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 colonyId = tempColony.getID();
             }
         }
-
-        if (!keepInv)
-        {
-            combinedInv = null;
-        }
     }
 
     public boolean isUsableByPlayer(@NotNull final PlayerEntity player)
@@ -445,61 +430,43 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         return registryName;
     }
 
-    @Override
-    public void markInvDirty()
-    {
-        combinedInv = null;
-    }
-
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @Nullable final Direction side)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
         {
-            if (this.combinedInv == null)
+            //Add additional containers
+            final Set<IItemHandlerModifiable> handlers = new HashSet<>();
+            final World world = colony.getWorld();
+            if (world != null)
             {
-                //Add additional containers
-                final Set<ICapabilityProvider> providers = new HashSet<>();
-                final World world = colony.getWorld();
-                if (world != null)
+                for (final BlockPos pos : building.getAdditionalCountainers())
                 {
-                    keepInv = true;
-                    for (final BlockPos pos : building.getAdditionalCountainers())
+                    if (WorldUtil.isBlockLoaded(world, pos))
                     {
-                        if (WorldUtil.isBlockLoaded(world, pos))
+                        final TileEntity te = world.getTileEntity(pos);
+                        if (te != null)
                         {
-                            final TileEntity te = world.getTileEntity(pos);
-                            if (te != null)
-                            {
-                                providers.add(te);
-
-                                if (te instanceof AbstractTileEntityRack)
+                            final LazyOptional<IItemHandler> cap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                            cap.ifPresent(theCap -> {
+                                if (theCap instanceof  IItemHandlerModifiable && theCap.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
                                 {
-                                    ((AbstractTileEntityRack) te).setBuildingPos(pos);
+                                    handlers.add((IItemHandlerModifiable) theCap);
                                 }
+                            });
+
+                            if (te instanceof AbstractTileEntityRack)
+                            {
+                                ((AbstractTileEntityRack) te).setBuildingPos(pos);
                             }
-                        }
-                        else
-                        {
-                            keepInv = false;
                         }
                     }
                 }
-
-                final List<IItemHandler> handlers = providers.stream()
-                                                      .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
-                                                      .collect(Collectors.toList());
-                handlers.add(getInventory());
-                this.combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.stream()
-                                                                                          .filter(handler -> handler instanceof IItemHandlerModifiable
-                                                                                                               && handler.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
-                                                                                          .map(handler -> (IItemHandlerModifiable) handler)
-                                                                                          .distinct()
-                                                                                          .toArray(IItemHandlerModifiable[]::new));
             }
 
-            return LazyOptional.of(() -> (T) this.combinedInv);
+            handlers.add(getInventory());
+            return LazyOptional.of(() -> (T) new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0])));
         }
         return super.getCapability(capability, side);
     }
