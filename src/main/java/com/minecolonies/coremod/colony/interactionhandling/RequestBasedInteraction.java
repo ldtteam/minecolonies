@@ -141,10 +141,15 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
             if (request != null)
             {
                 final View group = window.findPaneOfTypeByID("interactionView", View.class);
-                ItemIcon icon = new ItemIcon();
+                ItemIcon icon = window.findPaneOfTypeByID("request_item", ItemIcon.class);
+                if (icon == null)
+                {
+                    icon = new ItemIcon();
+                    group.addChild(icon);
+                }
+
                 icon.setID("request_item");
                 icon.setSize(32, 32);
-                group.addChild(icon);
                 icon.setItem((request.getDisplayStacks().get(0)));
                 icon.setPosition(30, 60);
                 icon.setVisible(true);

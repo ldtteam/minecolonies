@@ -10,8 +10,10 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
+import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
@@ -161,6 +163,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private static final int RALLY_SATURATION_LOSS_INTERVAL = TICKS_SECOND * 12;
 
     /**
+     * Amount of regular actions before the action counter is increased
+     */
+    private static final int ACTION_INCREASE_INTERVAL = 10;
+
+    /**
      * The timer for sleeping.
      */
     private int sleepTimer = 0;
@@ -186,6 +193,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private Random randomGenerator = new Random();
 
     /**
+     * Small timer for increasing actions done for continuous actions
+     */
+    private int regularActionTimer = 0;
+
+    /**
      * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill
@@ -198,22 +210,22 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
           new AITarget(DECIDE, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_DECIDE, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_PATROL, this::shouldSleep, () -> GUARD_SLEEP, SHOULD_SLEEP_INTERVAL),
-          new AITarget(GUARD_PATROL, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
+          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
           new AITarget(GUARD_PATROL, () -> searchNearbyTarget() != null, this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
           new AITarget(GUARD_PATROL, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_SLEEP, this::sleep, 1),
           new AITarget(GUARD_SLEEP, this::sleepParticles, PARTICLE_INTERVAL),
           new AITarget(GUARD_WAKE, this::wakeUpGuard, TICKS_SECOND),
           new AITarget(GUARD_FOLLOW, this::decide, GUARD_TASK_INTERVAL),
-          new AITarget(GUARD_FOLLOW, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
+          //new AITarget(GUARD_FOLLOW, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
           new AITarget(GUARD_FOLLOW, () -> searchNearbyTarget() != null, this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
           new AITarget(GUARD_RALLY, this::decide, GUARD_TASK_INTERVAL),
-          new AITarget(GUARD_RALLY, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
+          // new AITarget(GUARD_RALLY, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
           new AITarget(GUARD_RALLY, () -> searchNearbyTarget() != null, this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
           new AITarget(GUARD_RALLY, this::decreaseSaturation, RALLY_SATURATION_LOSS_INTERVAL),
           new AITarget(GUARD_GUARD, this::shouldSleep, () -> GUARD_SLEEP, SHOULD_SLEEP_INTERVAL),
           new AITarget(GUARD_GUARD, this::decide, GUARD_TASK_INTERVAL),
-          new AITarget(GUARD_GUARD, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
+          // new AITarget(GUARD_GUARD, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
           new AITarget(GUARD_GUARD, () -> searchNearbyTarget() != null, this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
           new AITarget(GUARD_REGEN, this::regen, GUARD_REGEN_INTERVAL),
           new AITarget(HELP_CITIZEN, this::helping, GUARD_TASK_INTERVAL)
@@ -415,7 +427,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 }
 
                 fighttimer = 30;
-                updateArmor();
+                equipInventoryArmor();
                 return getAttackState();
             }
             return START_WORKING;
@@ -560,14 +572,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
     }
 
-    @Override
-    protected int getActionsDoneUntilDumping()
-    {
-        return (target != null || buildingGuards.getRallyLocation() != null || buildingGuards.getTask() == GuardTask.FOLLOW)
-                 ? Integer.MAX_VALUE
-                 : ACTIONS_UNTIL_DUMPING * getOwnBuilding().getBuildingLevel();
-    }
-
     /**
      * Check if the worker has the required tool to fight.
      *
@@ -658,6 +662,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         reduceAttackDelay(GUARD_TASK_INTERVAL * getTickRate());
 
         final ILocation rallyLocation = buildingGuards.getRallyLocation();
+
+        if (regularActionTimer++ > ACTION_INCREASE_INTERVAL)
+        {
+            incrementActionsDone();
+            regularActionTimer = 0;
+        }
 
         if (rallyLocation != null || buildingGuards.getTask() == GuardTask.FOLLOW)
         {
@@ -1051,7 +1061,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     @Override
     public boolean canBeInterrupted()
     {
-        if (fighttimer > 0)
+        if (fighttimer > 0 || getState() == GUARD_RALLY || target != null || buildingGuards.getRallyLocation() != null || buildingGuards.getTask() == GuardTask.FOLLOW)
         {
             return false;
         }

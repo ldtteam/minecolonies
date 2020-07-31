@@ -84,7 +84,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
 
         for (final List<GuardGear> list : itemsNeeded)
         {
-            list.add(new GuardGear(ToolType.SHIELD, EquipmentSlotType.MAINHAND, 0, 0, SHIELD_LEVEL_RANGE, SHIELD_BUILDING_LEVEL_RANGE));
+            list.add(new GuardGear(ToolType.SHIELD, EquipmentSlotType.OFFHAND, 0, 0, SHIELD_LEVEL_RANGE, SHIELD_BUILDING_LEVEL_RANGE));
         }
     }
 
