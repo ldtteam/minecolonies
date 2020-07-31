@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceContext;
@@ -73,15 +71,5 @@ public class PathJobCanSee extends AbstractPathJob
         Vec3d vec3d1 = new Vec3d(lookTarget.getPosX(), lookTarget.getPosYEye(), lookTarget.getPosZ());
         return this.world.rayTraceBlocks(new RayTraceContext(vec3d, vec3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, searchingEntity)).getType()
                  == RayTraceResult.Type.MISS;
-    }
-
-    @Override
-    protected boolean isPassable(@NotNull final BlockState block)
-    {
-        if (block.getBlock() == Blocks.LADDER)
-        {
-            return false;
-        }
-        return super.isPassable(block);
     }
 }

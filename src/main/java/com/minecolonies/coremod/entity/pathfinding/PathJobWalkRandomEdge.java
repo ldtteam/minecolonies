@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -57,15 +55,5 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
     protected double getNodeResultScore(final Node n)
     {
         return entity.get().getPosition().manhattanDistance(n.pos);
-    }
-
-    @Override
-    protected boolean isPassable(@NotNull final BlockState block)
-    {
-        if (block.getBlock() == Blocks.LADDER)
-        {
-            return false;
-        }
-        return super.isPassable(block);
     }
 }
