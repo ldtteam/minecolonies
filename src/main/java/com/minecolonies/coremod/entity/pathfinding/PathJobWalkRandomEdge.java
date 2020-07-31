@@ -32,7 +32,7 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
     @Override
     protected boolean isAtDestination(final Node n)
     {
-        if (start.getY() - n.pos.getY() > 6)
+        if (start.getY() - n.pos.getY() > 3)
         {
             return false;
         }
