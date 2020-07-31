@@ -131,7 +131,6 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
         @Override
         public void serialize(IFactoryController controller, StandardRequestIdentitiesDataStore input, PacketBuffer packetBuffer)
         {
-            Log.getLogger().warn("size: " + input.getIdentities().values().size());
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.getIdentities().size());
             input.getIdentities().forEach((key, value) -> {
