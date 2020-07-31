@@ -13,8 +13,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PathJobWalkRandomEdge extends AbstractPathJob
 {
-    private static final Direction[] directions = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
-
     /**
      * The chance to check if the node is an edge, determines the random edge behaviour
      */
@@ -43,7 +41,7 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
 
         if (entity.get().getRNG().nextInt(NODE_EDGE_CHANCE) == 0)
         {
-            for (final Direction direction : Direction.Plane.HORIZONTAL.)
+            for (final Direction direction : Direction.Plane.HORIZONTAL)
             {
                 if (world.isAirBlock(n.pos.down().offset(direction)))
                 {
