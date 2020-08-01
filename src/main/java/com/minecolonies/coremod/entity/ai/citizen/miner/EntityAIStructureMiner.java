@@ -515,7 +515,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @Nullable
     private BlockPos getNextBlockInShaftToMine()
     {
-
         final BlockPos ladderPos = getOwnBuilding().getLadderLocation();
         final int lastLadder = getLastLadder(ladderPos, world);
         if (minerWorkingLocation == null)
@@ -523,12 +522,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             minerWorkingLocation = new BlockPos(ladderPos.getX(), lastLadder + 1, ladderPos.getZ());
         }
         Block block = getBlock(minerWorkingLocation);
-        if (block != null
-              && !(block instanceof AirBlock)
+        if (!(block instanceof AirBlock)
               && block != Blocks.LADDER
               && !(block.equals(Blocks.WATER)
                      || block.equals(Blocks.LAVA)))
         {
+            if (currentStandingPosition == null)
+            {
+                currentStandingPosition = minerWorkingLocation;
+            }
             return minerWorkingLocation;
         }
         currentStandingPosition = minerWorkingLocation;
