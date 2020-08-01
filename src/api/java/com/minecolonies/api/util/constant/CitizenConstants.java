@@ -150,9 +150,9 @@ public final class CitizenConstants
      */
     public static final double LATER_RUN_SPEED_AVOID      = 0.8D;
     /**
-     * The max squaredistance a citizen can call a guard to help.
+     * The max squaredistance a citizen can call a guard to help, 300 blocks
      */
-    public static final int    MAX_GUARD_CALL_RANGE       = 10000;
+    public static final int    MAX_GUARD_CALL_RANGE       = 90000;
     /**
      * Happiness penalty for citizen death.
      */

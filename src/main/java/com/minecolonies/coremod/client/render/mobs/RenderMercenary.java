@@ -17,7 +17,7 @@ public class RenderMercenary extends MobRenderer<CreatureEntity, BipedModel<Crea
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/entity/settlermale1.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/entity/citizen/default/settlermale1_b.png");
 
     /**
      * Renders the mercenary mobs, with an held item and armorset.

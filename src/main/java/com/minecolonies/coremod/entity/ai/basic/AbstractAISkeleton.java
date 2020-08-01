@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
-import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
@@ -164,6 +163,16 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     public int getTickRate()
     {
         return stateMachine.getTickRate();
+    }
+
+    /**
+     * Whether the AI is allowed to be interrupted
+     *
+     * @return true if can be interrupted
+     */
+    public boolean canBeInterrupted()
+    {
+        return getState().isOkayToEat();
     }
 
     /**

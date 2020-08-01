@@ -247,9 +247,9 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     @Override
-    public boolean isOkayToEat()
+    public boolean canAIBeInterrupted()
     {
-        return (workerAI.get() != null && workerAI.get().getState().isOkayToEat());
+        return (workerAI.get() != null && workerAI.get().canBeInterrupted());
     }
 
     @Override

@@ -87,7 +87,7 @@ public class VisitorManager implements IVisitorManager
             return;
         }
 
-        if (!existingCitizen.get().isAlive() || !WorldUtil.isEntityBlockLoaded(colony.getWorld(), existingCitizen.get().getPosition()))
+        if (!visitor.isAlive())
         {
             existingCitizen.get().remove();
             data.setEntity(visitor);

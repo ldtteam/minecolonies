@@ -641,8 +641,21 @@ public class ResearchInitializer
         avoidance.setRequirement(new BuildingResearchRequirement(3, "guardtower"));
         avoidance.setOnlyChild(true);
 
-        final GlobalResearch taunt = new GlobalResearch("taunt", "combat", "Taunt", 2, new UnlockAbilityResearchEffect(KNIGHT_TAUNT, true));
+        final GlobalResearch taunt = new GlobalResearch("taunt", "combat", "Taunt", 1, new UnlockAbilityResearchEffect(KNIGHT_TAUNT, true));
         taunt.setRequirement(new BuildingResearchRequirement(1, "guardtower"));
+
+        final GlobalResearch arrowUsage = new GlobalResearch("arrowuse", "combat", "Arrow usage", 2, new UnlockAbilityResearchEffect(ARROW_ITEMS, true));
+        arrowUsage.setRequirement(new BuildingResearchRequirement(2, "guardtower"));
+        taunt.addChild(arrowUsage);
+
+        final GlobalResearch arrowPiercing = new GlobalResearch("arrowpierce", "combat", "Arrow piercing", 3, new UnlockAbilityResearchEffect(ARROW_PIERCE, true));
+        arrowPiercing.setRequirement(new BuildingResearchRequirement(1, "archery"));
+        arrowUsage.addChild(arrowPiercing);
+
+        final GlobalResearch knockbackAoe =
+          new GlobalResearch("knockbackaoe", "combat", "Unlock whirlwind ability for knights", 4, new UnlockAbilityResearchEffect(KNIGHT_WHIRLWIND, true));
+        knockbackAoe.setRequirement(new BuildingResearchRequirement(4, "barracks"));
+        arrowPiercing.addChild(knockbackAoe);
 
         final GlobalResearch parry = new GlobalResearch("parry", "combat", "Parry", 2, new MultiplierModifierResearchEffect(MELEE_ARMOR, 0.05));
         parry.setRequirement(new BuildingResearchRequirement(1, "smeltery"));
@@ -804,6 +817,9 @@ public class ResearchInitializer
 
         researchTree.addResearch(avoidance.getBranch(), avoidance);
         researchTree.addResearch(taunt.getBranch(), taunt);
+        researchTree.addResearch(arrowPiercing.getBranch(), arrowPiercing);
+        researchTree.addResearch(arrowUsage.getBranch(), arrowUsage);
+        researchTree.addResearch(knockbackAoe.getBranch(), knockbackAoe);
 
         researchTree.addResearch(parry.getBranch(), parry);
         researchTree.addResearch(repost.getBranch(), repost);

@@ -143,7 +143,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      *
      * @return true if so.
      */
-    boolean isOkayToEat();
+    boolean canAIBeInterrupted();
 
     /**
      * Getter for the amount of actions done.
