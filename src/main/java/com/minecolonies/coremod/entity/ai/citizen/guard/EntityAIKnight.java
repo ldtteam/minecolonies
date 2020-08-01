@@ -24,6 +24,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -136,6 +137,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
             {
                 worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
                 worker.setActiveHand(Hand.OFF_HAND);
+
+                // Apply the colony Flag to the shield
+                ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(Hand.OFF_HAND);
+                CompoundNBT nbt = shieldStack.getOrCreateChildTag("BlockEntityTag");
+                nbt.put("Patterns", worker.getCitizenColonyHandler().getColony().getColonyFlag());
 
                 worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 worker.decreaseSaturationForContinuousAction();
