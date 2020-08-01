@@ -12,6 +12,7 @@ import com.minecolonies.coremod.MineColonies;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.NetherWartBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -29,6 +30,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -328,7 +330,6 @@ public class Tree
      */
     public static boolean checkTree(@NotNull final IWorldReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
     {
-
         //Is the first block a log?
         final BlockState state = world.getBlockState(pos);
         final Block block = state.getBlock();
@@ -438,7 +439,7 @@ public class Tree
                 for (int dy = -1; dy <= 1 + dynamicBonusY; dy++)
                 {
                     final BlockPos leafPos = pos.add(dx, dy, dz);
-                    if (world.getBlockState(leafPos).getMaterial().equals(Material.LEAVES))
+                    if (world.getBlockState(leafPos).getMaterial().equals(Material.LEAVES) || BlockTags.WART_BLOCKS.contains(world.getBlockState(leafPos).getBlock()))
                     {
                         if (!checkedLeaves && !supposedToCut(world, treesToNotCut, leafPos))
                         {

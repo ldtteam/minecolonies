@@ -8,6 +8,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
+import static com.minecolonies.api.util.constant.CitizenConstants.NOON;
+
 /**
  * Class which has world related util functions like chunk load checks
  */
@@ -110,5 +113,15 @@ public class WorldUtil
     public static boolean isAABBLoaded(final World world, final AxisAlignedBB box)
     {
         return isChunkLoaded(world, ((int) box.minX) >> 4, ((int) box.minZ) >> 4) && isChunkLoaded(world, ((int) box.maxX) >> 4, ((int) box.maxZ) >> 4);
+    }
+
+    /**
+     * Check if it's currently day inn the world.
+     * @param world the world to check.
+     * @return true if so.
+     */
+    public static boolean isDayTime(final World world)
+    {
+        return world.getDayTime() % 24000 <= NIGHT;
     }
 }

@@ -466,7 +466,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         citizenDiseaseHandler.tick();
-        if (citizenJobHandler.getColonyJob() == null && CompatibilityUtils.getWorldFromCitizen(this).isDaytime())
+        if (citizenJobHandler.getColonyJob() == null && WorldUtil.isDayTime(world))
         {
             updateCitizenStatus();
         }
@@ -629,7 +629,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     private void onLivingSoundUpdate()
     {
-        if (world.isDaytime() && !world.isRaining() && citizenData != null)
+        if (WorldUtil.isDayTime(world) && !world.isRaining() && citizenData != null)
         {
             SoundUtils.playRandomSound(world, this.getPosition(), citizenData);
         }
@@ -1106,7 +1106,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @NotNull
     private DesiredActivity determineTaskActivity()
     {
-        if (!CompatibilityUtils.getWorldFromCitizen(this).isDaytime())
+        if (!WorldUtil.isDayTime(world))
         {
             if (isDay && citizenData != null)
             {

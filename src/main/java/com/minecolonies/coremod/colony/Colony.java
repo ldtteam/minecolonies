@@ -21,6 +21,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -439,7 +440,7 @@ public class Colony implements IColony
      */
     private boolean checkDayTime()
     {
-        if (isDay && !world.isDaytime())
+        if (isDay && !WorldUtil.isDayTime(world))
         {
             isDay = false;
             eventManager.onNightFall();
@@ -457,7 +458,7 @@ public class Colony implements IColony
                 citizenManager.updateCitizenMourn(false);
             }
         }
-        else if (!isDay && world.isDaytime())
+        else if (!isDay && WorldUtil.isDayTime(world))
         {
             isDay = true;
             if (needToMourn)
@@ -1057,7 +1058,7 @@ public class Colony implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        if (w.func_234923_W_().func_240901_a_() != this.dimensionId)
+        if (!w.func_234923_W_().func_240901_a_().equals(this.dimensionId))
         {
             return false;
         }
