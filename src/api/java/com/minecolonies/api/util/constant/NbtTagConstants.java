@@ -233,6 +233,11 @@ public final class NbtTagConstants
     public static final String TAG_INVENTORY = "inventory";
 
     /**
+     * Tag to store an empty stack to nbt.
+     */
+    public static final String TAG_EMPTY = "empty";
+
+    /**
      * Tag to store the inventory to nbt.
      */
     public static final String TAG_LEVEL_MAP = "levelMap";
