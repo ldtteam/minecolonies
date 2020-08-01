@@ -69,6 +69,8 @@ public final class ModItemsInitializer
 
         ModItems.santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, EquipmentSlotType.HEAD, new Item.Properties());
 
+        ModItems.flagBanner = new ItemColonyFlagBanner("flag_banner", ModCreativeTabs.MINECOLONIES, new Item.Properties());
+
         ModItems.pirateHelmet_1 = new ItemPirateGear("pirate_hat", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlotType.HEAD, new Item.Properties());
         ModItems.pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlotType.CHEST, new Item.Properties());
         ModItems.pirateLegs_1 = new ItemPirateGear("pirate_leggins", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlotType.LEGS, new Item.Properties());
@@ -106,6 +108,7 @@ public final class ModItemsInitializer
         registry.register(ModItems.pirateBoots_2);
 
         registry.register(ModItems.santaHat);
+        registry.register(ModItems.flagBanner);
 
         registry.register(new SpawnEggItem(ModEntities.BARBARIAN,
           PRIMARY_COLOR_BARBARIAN,
