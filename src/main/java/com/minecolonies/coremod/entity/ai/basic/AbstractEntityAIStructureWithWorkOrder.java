@@ -260,6 +260,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
                     requestState = RequestStage.SOLID;
+                    requestProgress = null;
                     getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources(), worker.getCitizenData(), true);
                     return true;
                 }
