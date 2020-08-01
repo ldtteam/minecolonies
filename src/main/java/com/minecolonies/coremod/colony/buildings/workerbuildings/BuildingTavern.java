@@ -181,7 +181,7 @@ public class BuildingTavern extends BuildingHome
         if (getBuildingLevel() > 0 && externalCitizens.size() < 3 * getBuildingLevel() && noVisitorTime <= 0)
         {
             spawnVisitor();
-            noVisitorTime = colony.getWorld().getRandom().nextInt(3000) + 6000;
+            noVisitorTime = colony.getWorld().getRandom().nextInt(3000) + 6000 / getBuildingLevel();
         }
     }
 
