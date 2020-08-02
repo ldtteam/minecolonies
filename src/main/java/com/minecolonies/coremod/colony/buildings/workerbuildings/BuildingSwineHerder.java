@@ -7,12 +7,14 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
 import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -102,6 +104,16 @@ public class BuildingSwineHerder extends AbstractBuildingHerder
             return false;
         }
         return super.canEat(stack);
+    }
+
+    @Override
+    public void deserializeNBT(final CompoundNBT compound)
+    {
+        super.deserializeNBT(compound);
+        if (!isBreeding())
+        {
+            setBreeding(true);
+        }
     }
 
     /**

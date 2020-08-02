@@ -42,21 +42,6 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
         return stack;
     }
 
-    /**
-     * This here is a workaround we need to fix this mess.
-     * //todo don't add this to 1.16
-     * @return the super state.
-     */
-    @Override
-    public IAIState decideWhatToDo()
-    {
-        if (!getOwnBuilding().isBreeding())
-        {
-            getOwnBuilding().setBreeding(true);
-        }
-        return super.decideWhatToDo();
-    }
-
     @Override
     public int getMaxAnimalMultiplier()
     {
