@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSwineHerder;
 import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
 import net.minecraft.entity.passive.PigEntity;
@@ -39,6 +40,21 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
         final ItemStack stack = new ItemStack(Items.CARROT);
         stack.setCount(2);
         return stack;
+    }
+
+    /**
+     * This here is a workaround we need to fix this mess.
+     * //todo don't add this to 1.16
+     * @return the super state.
+     */
+    @Override
+    public IAIState decideWhatToDo()
+    {
+        if (!getOwnBuilding().isBreeding())
+        {
+            getOwnBuilding().setBreeding(true);
+        }
+        return super.decideWhatToDo();
     }
 
     @Override
