@@ -226,4 +226,11 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * @param id the id.
      */
     void markRequestSync(IToken<?> id);
+
+    /**
+     * If the worker can pick up the stack.
+     * @param pickedUpStack the stack to check.
+     * @return true if so.
+     */
+    boolean pickupSuccess(@NotNull ItemStack pickedUpStack);
 }
