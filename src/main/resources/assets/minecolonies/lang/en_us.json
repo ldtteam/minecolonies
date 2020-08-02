@@ -1436,12 +1436,10 @@
 
   "com.minecolonies.coremod.info.cook.0.name": "Introduction",
   "com.minecolonies.coremod.info.cook.0": "The Cook is part of the food production of your colony. The Cook supplies all your citizens with food and will cook meat and potatoes, as well as other cooked food that only needs a furnace.\n When a citizen gets hungry, they will go to the Cook to get something to eat.",
-  "com.minecolonies.coremod.info.cook.1.name": "Restrictions",
-  "com.minecolonies.coremod.info.cook.1": "The Cook cannot make any food with items that are not consumed in the making like pots and pans. These are usually from mods like Pam's.",
-  "com.minecolonies.coremod.info.cook.2.name": "FAQ",
-  "com.minecolonies.coremod.info.cook.2": "Now let's cover some frequently asked questions:\n\n Q 1. The Cook is asking for items that are already cooked, is this normal?\n   A 1. You can provide pre-cooked items for the Cook to distribute to your colonists.",
-  "com.minecolonies.coremod.info.cook.3.name": "Leveling",
-  "com.minecolonies.coremod.info.cook.3": "As all workers do, the Cook levels up while working.\n At higher levels, a Cook's speed increases. The higher their hut level and Intelligence skill, the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions, they will stop leveling unless you provide them with better housing.",
+  "com.minecolonies.coremod.info.cook.1.name": "FAQ",
+  "com.minecolonies.coremod.info.cook.1": "Now let's cover some frequently asked questions:\n\n Q 1. The Cook is asking for items that are already cooked, is this normal?\n   A 1. You can provide pre-cooked items for the Cook to distribute to your colonists.",
+  "com.minecolonies.coremod.info.cook.2.name": "Leveling",
+  "com.minecolonies.coremod.info.cook.2": "As all workers do, the Cook levels up while working.\n At higher levels, a Cook's speed increases. The higher their hut level and Intelligence skill, the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions, they will stop leveling unless you provide them with better housing.",
 
   "com.minecolonies.coremod.info.baker.0.name": "Introduction",
   "com.minecolonies.coremod.info.baker.0": "The Baker is part of the food production of your colony. They will bake bread, cookies, pumpkin pie, and/or cake. On page two of the Bakery GUI, you can select which items you want them to make.",
