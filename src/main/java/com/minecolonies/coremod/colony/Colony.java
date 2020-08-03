@@ -21,6 +21,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -997,7 +998,7 @@ public class Colony implements IColony
             {
                 if (count++ == randomPos)
                 {
-                    if (world.getChunkProvider().isChunkLoaded(new ChunkPos(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4)))
+                    if (WorldUtil.isBlockLoaded(world, entry.getKey()))
                     {
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
                         if (

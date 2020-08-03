@@ -724,7 +724,7 @@ public class InventoryUtils
 
         for (final BlockPos pos : provider.getAdditionalCountainers())
         {
-            if (world.getChunkProvider().isChunkLoaded(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4)))
+            if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityRack)
@@ -741,7 +741,7 @@ public class InventoryUtils
 
         for (final BlockPos pos : provider.getAdditionalCountainers())
         {
-            if (world.getChunkProvider().isChunkLoaded(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4)))
+            if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (!(entity instanceof TileEntityRack) && entity != null)
