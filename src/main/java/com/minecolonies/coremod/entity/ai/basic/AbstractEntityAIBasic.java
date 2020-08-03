@@ -177,7 +177,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             and wait for new items.
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> getState() != INVENTORY_FULL &&
-                                                                     this.getOwnBuilding().hasOpenSyncRequest(worker.getCitizenData()), NEEDS_ITEM, 20),
+                                                                     this.getOwnBuilding().hasOpenSyncRequest(worker.getCitizenData()) || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()), NEEDS_ITEM, 20),
 
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()) && this.cleanAsync(), NEEDS_ITEM, 200),
 
