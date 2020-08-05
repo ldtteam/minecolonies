@@ -494,7 +494,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                                                                                  TypeConstants.DELIVERABLE,
                                                                                  (IRequest<? extends IDeliverable> r) -> r.getRequest()
                                                                                                                            .matches(placedStack.getKey().getItemStack()));
-            if (requests.isEmpty())
+
+            final ImmutableList<IRequest<? extends IDeliverable>> completedRequests = placer.getOwnBuilding()
+                                                                                        .getCompletedRequestsOfTypeFiltered(
+                                                                                          placer.getWorker().getCitizenData(),
+                                                                                          TypeConstants.DELIVERABLE,
+                                                                                          (IRequest<? extends IDeliverable> r) -> r.getRequest()
+                                                                                                                                    .matches(placedStack.getKey().getItemStack()));
+
+            if (requests.isEmpty() && completedRequests.isEmpty())
             {
                 final com.minecolonies.api.colony.requestsystem.requestable.Stack stackRequest = new Stack(placedStack.getKey().getItemStack(), placedStack.getValue(), 1);
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
@@ -504,6 +512,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             else
             {
                 for (final IRequest<? extends IDeliverable> request : requests)
+                {
+                    if (placer.worker.getCitizenJobHandler().getColonyJob().getAsyncRequests().contains(request.getId()))
+                    {
+                        placer.worker.getCitizenJobHandler().getColonyJob().markRequestSync(request.getId());
+                    }
+                }
+
+                for (final IRequest<? extends IDeliverable> request : completedRequests)
                 {
                     if (placer.worker.getCitizenJobHandler().getColonyJob().getAsyncRequests().contains(request.getId()))
                     {

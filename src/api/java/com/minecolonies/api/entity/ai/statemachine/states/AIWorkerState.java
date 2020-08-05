@@ -326,6 +326,11 @@ public enum AIWorkerState implements IAIState
      */
     HERDER_PICKUP(true),
 
+    /**
+     * Pickup items within area.
+     */
+    HERDER_FEED(false),
+
     /*
 ### Cowboy ###
      */

@@ -2,10 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Alignment;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Image;
-import com.ldtteam.blockout.controls.Label;
-import com.ldtteam.blockout.controls.Text;
+import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -26,6 +23,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
+import com.minecolonies.coremod.network.messages.server.colony.citizen.AdjustSkillCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.TransferItemsToCitizenRequestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -38,6 +36,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -58,6 +57,11 @@ public class WindowCitizen extends AbstractWindowRequestTree
      * The citizenData.View object.
      */
     private final ICitizenDataView citizen;
+
+    /**
+     * Tick function for updating every second.
+     */
+    private int tick = 0;
 
     /**
      * Enum for the available hearts
@@ -143,6 +147,18 @@ public class WindowCitizen extends AbstractWindowRequestTree
     public boolean canFulFill()
     {
         return true;
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+
+        if (tick++ == 20)
+        {
+            tick = 0;
+            createSkillContent(citizen, this);
+        }
     }
 
     /**
@@ -327,17 +343,28 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Fills the citizen gui with it's skill values.
-     *
-     * @param citizen the citizen to use.
+     *  @param citizen the citizen to use.
      * @param window  the window to fill.
      */
     public static void createSkillContent(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
+        final boolean isCreative = Minecraft.getInstance().player.isCreative();
         for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
         {
             final Label label = window.findPaneOfTypeByID(entry.getKey().name().toLowerCase(Locale.US), Label.class);
             label.setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US), entry.getValue().getA()));
             label.setScale(0.8f);
+
+            if (isCreative)
+            {
+                final Button buttonPlus = window.findPaneOfTypeByID(PLUS_PREFIX + entry.getKey().name().toLowerCase(Locale.US), Button.class);
+                final Button buttonMinus = window.findPaneOfTypeByID(MINUS_PREFIX + entry.getKey().name().toLowerCase(Locale.US), Button.class);
+                if (buttonPlus != null && buttonMinus != null)
+                {
+                    buttonPlus.setVisible(true);
+                    buttonMinus.setVisible(true);
+                }
+            }
         }
     }
 
@@ -366,6 +393,21 @@ public class WindowCitizen extends AbstractWindowRequestTree
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
+        if (button.getID().contains(PLUS_PREFIX))
+        {
+            final String label = button.getID().replace(PLUS_PREFIX, "");
+            final Skill skill = Skill.valueOf(StringUtils.capitalize(label));
+
+            Network.getNetwork().sendToServer(new AdjustSkillCitizenMessage(colony, citizen, 1, skill));
+        }
+        else if (button.getID().contains(MINUS_PREFIX))
+        {
+            final String label = button.getID().replace(MINUS_PREFIX, "");
+            final Skill skill = Skill.valueOf(StringUtils.capitalize(label));
+
+            Network.getNetwork().sendToServer(new AdjustSkillCitizenMessage(colony, citizen, -1, skill));
+        }
+
         switch (button.getID())
         {
             case BUTTON_REQUESTS:

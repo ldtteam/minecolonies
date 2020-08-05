@@ -404,6 +404,7 @@
 
   "com.minecolonies.coremod.status.worker.goingtohut": "Going to Hut",
   "com.minecolonies.coremod.status.herder.breeding": "Breeding",
+  "com.minecolonies.coremod.status.herder.feeding": "Feeding",
   "com.minecolonies.coremod.status.herder.searching": "Searching",
   "com.minecolonies.coremod.status.herder.goingtoanimal": "Going to Animal",
   "com.minecolonies.coremod.status.herder.butchering": "Butchering",

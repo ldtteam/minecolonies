@@ -498,7 +498,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker, BuildingB
      */
     private IAIState createNewProduct()
     {
-        if (getOwnBuilding().getCopyOfAllowedItems().isEmpty())
+        if (getOwnBuilding().getCopyOfAllowedItems().isEmpty() || getOwnBuilding().getCopyOfAllowedItems().get("recipes").isEmpty())
         {
             if (worker.getCitizenData() != null)
             {
