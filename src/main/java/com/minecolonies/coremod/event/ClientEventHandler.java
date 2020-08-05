@@ -86,6 +86,9 @@ public class ClientEventHandler
      * Render buffers.
      */
     public static final RenderTypeBuffers renderBuffers = new RenderTypeBuffers();
+    private static final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.getBufferSource();
+    private static final Supplier<IVertexBuilder> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.getLines());
+    private static final Supplier<IVertexBuilder> linesWithoutCullAndDepth = () -> renderBuffer.getBuffer(RenderUtils.LINES_GLINT);
 
     /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
@@ -119,6 +122,8 @@ public class ClientEventHandler
         {
             handleRenderBuildTool(event, world, player);
         }
+
+        renderBuffer.finish();
     }
 
     /**
@@ -229,14 +234,7 @@ public class ClientEventHandler
                   event.getMatrixStack());
             }
 
-            final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.getBufferSource();
-            final Supplier<IVertexBuilder> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.getLines());
-
             RenderUtils.renderBox(buildingData.b, buildingData.c, 0, 0, 1, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
-
-            renderBuffer.finish(RenderType.getLines());
-            renderBuffer.finish(RenderUtils.LINES_GLINT);
-            renderBuffer.finish();
         }
     }
 
@@ -257,16 +255,12 @@ public class ClientEventHandler
             {
                 if (wayPointTemplate == null)
                 {
-                    if (wayPointTemplate == null)
-                    {
-                        wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
-                    }
-                    StructureClientHandler.renderStructureAtPosList(Settings.instance.getActiveStructure().hashCode() == wayPointTemplate.hashCode() ? Settings.instance.getActiveStructure() : wayPointTemplate,
-                      event.getPartialTicks(),
-                      new ArrayList<>(tempView.getWayPoints().keySet()),
-                      event.getMatrixStack());
+                    wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
                 }
-                StructureClientHandler.renderStructureAtPosList(wayPointTemplate, event.getPartialTicks(), new ArrayList<>(tempView.getWayPoints().keySet()), event.getMatrixStack());
+                StructureClientHandler.renderStructureAtPosList(Settings.instance.getActiveStructure().hashCode() == wayPointTemplate.hashCode() ? Settings.instance.getActiveStructure() : wayPointTemplate,
+                    event.getPartialTicks(),
+                    new ArrayList<>(tempView.getWayPoints().keySet()),
+                    event.getMatrixStack());
             }
         }
     }
@@ -323,19 +317,10 @@ public class ClientEventHandler
 
         for (final ILocation guardTower : guardTowers)
         {
-            if (world.getDimension().getType().getId() != guardTower.getDimension())
+            if (world.getDimension().getType().getId() == guardTower.getDimension())
             {
-                continue;
+                RenderUtils.renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), 0, 0, 0, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
             }
-
-            final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.getBufferSource();
-            final Supplier<IVertexBuilder> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.getLines());
-
-            RenderUtils.renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), 0, 0, 0, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
-
-            renderBuffer.finish(RenderType.getLines());
-            renderBuffer.finish(RenderUtils.LINES_GLINT);
-            renderBuffer.finish();
         }
     }
 }
