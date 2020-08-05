@@ -133,7 +133,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     @OnlyIn(Dist.CLIENT)
     public void onWindowOpened(final Window window, final ICitizenDataView dataView)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyView(dataView.getColonyId(), Minecraft.getInstance().player.world.getDimension().getType().getId());
+        final IColony colony = IColonyManager.getInstance().getColonyView(dataView.getColonyId(), Minecraft.getInstance().player.world.func_234923_W_().func_240901_a_());
 
         if (colony != null)
         {

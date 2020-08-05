@@ -241,10 +241,10 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
                     {
                         if (livingentity != worker && (!worker.isOnSameTeam(livingentity)) && (!(livingentity instanceof ArmorStandEntity)))
                         {
-                            livingentity.knockBack(worker,
+                            livingentity.applyKnockback(
                               2F,
-                              (double) MathHelper.sin(livingentity.rotationYaw * ((float) Math.PI)),
-                              (double) (-MathHelper.cos(livingentity.rotationYaw * ((float) Math.PI))));
+                              MathHelper.sin(livingentity.rotationYaw * ((float) Math.PI)),
+                              (-MathHelper.cos(livingentity.rotationYaw * ((float) Math.PI))));
                             livingentity.attackEntityFrom(source, (float) (damageToBeDealt / entities.size()));
                         }
                     }
