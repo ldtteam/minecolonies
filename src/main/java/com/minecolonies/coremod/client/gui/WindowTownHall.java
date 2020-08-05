@@ -1117,9 +1117,13 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         Network.getNetwork().sendToServer(new ToggleHelpMessage(this.building.getColony()));
     }
 
+    /**
+     * Opens the banner picker window. Window does not use BlockOut, so is started manually.
+     * @param button the trigger button
+     */
     private void openBannerPicker(@NotNull final Button button)
     {
-        Screen window = new WindowBannerPicker(townHall.getColony());
+        Screen window = new WindowBannerPicker(townHall.getColony(), this);
         Minecraft.getInstance().execute(() -> Minecraft.getInstance().displayGuiScreen(window));
     }
 

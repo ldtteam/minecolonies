@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.tileentities.TileEntityColonyFlag;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.*;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
@@ -14,7 +15,11 @@ import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.tileentity.BannerTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
-import org.apache.logging.log4j.LogManager;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemColonyFlagBanner extends BannerItem
 {
@@ -62,5 +67,14 @@ public class ItemColonyFlagBanner extends BannerItem
             return ActionResultType.SUCCESS;
         }
         return super.onItemUse(context);
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+    {
+        super.addInformation(stack, worldIn, tooltip, flagIn);
+
+        // Remove the base, as they have no translations (Mojang were lazy. Or maybe saving space?)
+        if (tooltip.size() > 1) tooltip.remove(1);
     }
 }

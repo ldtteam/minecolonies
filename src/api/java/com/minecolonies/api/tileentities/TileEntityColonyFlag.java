@@ -1,12 +1,9 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.block.AbstractBannerBlock;
-import net.minecraft.block.BlockState;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -14,79 +11,83 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.INameable;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.logging.log4j.LogManager;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static net.minecraft.tileentity.BannerTileEntity.func_230138_a_;
 
 public class TileEntityColonyFlag extends TileEntity
 {
-    /** A list of all the banner patterns. */
-    @Nullable
-    private ListNBT patterns;
+    /** The last known flag. Required for when the colony is not available. */
+    private ListNBT flag = new ListNBT();
 
-    private int colonyId;
+    /** A list of the default banner patterns, for colonies that have not chosen a flag */
+    private ListNBT patterns = new ListNBT();
+
+    /** The colony of the player that placed this banner */
+    public int colonyId = -1;
 
     public TileEntityColonyFlag () { super(MinecoloniesTileEntities.COLONY_FLAG); }
 
-    public void setColonyId(int colonyId)
-    {
-        this.colonyId = colonyId;
-        markDirty();
-    }
-
+    @Override
     public CompoundNBT write(CompoundNBT compound)
     {
         super.write(compound);
 
-        if (this.patterns != null)
-            compound.put("Patterns", this.patterns);
+        compound.put("Flag", this.flag);
+        compound.put("Patterns", this.patterns);
 
-        compound.putInt("Colony", this.colonyId);
+        compound.putInt("Colony", colonyId);
 
         return compound;
     }
 
+    @Override
     public void read(CompoundNBT compound)
     {
         super.read(compound);
 
+        this.flag = compound.getList("Flag", 10);
         this.patterns = compound.getList("Patterns", 10);
         this.colonyId = compound.getInt("Colony");
     }
 
-    @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
+    public SUpdateTileEntityPacket getUpdatePacket()
+    {
         return new SUpdateTileEntityPacket(this.pos, 6, this.getUpdateTag());
     }
 
-    public CompoundNBT getUpdateTag() {
-        return this.write(new CompoundNBT());
-    }
+    @Override
+    public CompoundNBT getUpdateTag() { return this.write(new CompoundNBT()); }
 
+    /**
+     * Retrieves the patterns for the renderer
+     * @return the list of pattern-color pairs
+     */
     @OnlyIn(Dist.CLIENT)
     public List<Pair<BannerPattern, DyeColor>> getPatternList()
     {
-        int dim = getWorld().dimension.getType().getId();
-        IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, dim);
-
-        boolean hasFlag = colony != null && !colony.getColonyFlag().isEmpty();
+        IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, world.dimension.getType().getId());
+        if (colony != null && this.flag != colony.getColonyFlag())
+        {
+            this.flag = colony.getColonyFlag();
+            markDirty();
+        }
 
         return func_230138_a_(
                 DyeColor.WHITE,
-                hasFlag ? colony.getColonyFlag() : this.patterns
+                this.flag.size() > 1 ? this.flag : this.patterns
         );
     }
 
+    public void setPatterns(ListNBT patterns) { this.patterns = patterns; }
+
+    /**
+     * Builds a mutable ItemStack from the information within the tile entity
+     * @return the ItemStack representing this banner
+     */
     @OnlyIn(Dist.CLIENT)
     public ItemStack getItem()
     {

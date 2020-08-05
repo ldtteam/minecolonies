@@ -3,10 +3,7 @@ package com.minecolonies.api.blocks.decorative;
 import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.TileEntityColonyFlag;
-import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
@@ -14,7 +11,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.BannerTileEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -24,6 +22,9 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
 
+/**
+ * Represents the common functions of both the wall and floor colony flag banner blocks
+ */
 public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> extends AbstractBannerBlock implements IBlockMinecolonies<AbstractColonyFlagBanner<B>>
 {
     public static final String REGISTRY_NAME = "colony_banner";
@@ -41,27 +42,29 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
     }
 
     @Override
-    public TileEntity createNewTileEntity(IBlockReader worldIn)
-    {
-        LogManager.getLogger().info("Creating new TileEntity");
-        return new TileEntityColonyFlag();
-    }
+    public TileEntity createNewTileEntity(IBlockReader worldIn) { return new TileEntityColonyFlag(); }
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack)
     {
         if (placer instanceof PlayerEntity)
         {
-            IColony colony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (PlayerEntity) placer);
-            if (colony != null)
+            TileEntity te = worldIn.getTileEntity(pos);
+            if (te instanceof TileEntityColonyFlag)
             {
-                TileEntity te = worldIn.getTileEntity(pos);
-                if (te instanceof TileEntityColonyFlag)
-                    ((TileEntityColonyFlag) te).setColonyId(colony.getID());
+                IColony colony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (PlayerEntity) placer);
+                if (colony != null)
+                    ((TileEntityColonyFlag) te).colonyId = colony.getID();
+
+                // Override the defaults so they appear immediately if no colony is found.
+                CompoundNBT nbt = stack.getChildTag("BlockEntityTag");
+                if (nbt != null)
+                    ((TileEntityColonyFlag) te).setPatterns(nbt.getList("Patterns", 10));
             }
         }
     }
 
+    @Override
     public ItemStack getItem(IBlockReader worldIn, BlockPos pos, BlockState state) {
         TileEntity tileentity = worldIn.getTileEntity(pos);
         return tileentity instanceof TileEntityColonyFlag ? ((TileEntityColonyFlag)tileentity).getItem() : super.getItem(worldIn, pos, state);
