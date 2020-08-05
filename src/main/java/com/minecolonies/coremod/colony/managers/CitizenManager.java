@@ -11,9 +11,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -128,7 +126,7 @@ public class CitizenManager implements ICitizenManager
             return;
         }
 
-        if (!existingCitizen.get().isAlive() || !WorldUtil.isEntityBlockLoaded(existingCitizen.get().world, existingCitizen.get().getPosition()))
+        if (entity.isAlive())
         {
             existingCitizen.get().remove();
             data.setEntity(entity);
@@ -146,14 +144,11 @@ public class CitizenManager implements ICitizenManager
         final ICitizenData data = citizens.get(entity.getCivilianID());
         if (data != null && data.getEntity().isPresent() && data.getEntity().get() == entity)
         {
-            try
+            if (colony.getWorld().getScoreboard().getPlayersTeam(entity.getScoreboardName()) == colony.getTeam())
             {
                 colony.getWorld().getScoreboard().removePlayerFromTeam(entity.getScoreboardName(), colony.getTeam());
             }
-            catch (final IllegalArgumentException e)
-            {
-                Log.getLogger().error("A citizen spent his life without joining the colony team, and now died.");
-            }
+
             citizens.get(entity.getCivilianID()).setEntity(null);
         }
     }

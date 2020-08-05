@@ -56,7 +56,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
             {
                 final int chunkX = xC + x;
                 final int chunkZ = zC + z;
-                if (!checkLoaded || WorldUtil.isChunkLoaded(world, new ChunkPos(chunkX, chunkZ)))
+                if (!checkLoaded || WorldUtil.isChunkLoaded(world, chunkX, chunkZ))
                 {
                     final Chunk chunk = world.getChunk(chunkX, chunkZ);
                     final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);

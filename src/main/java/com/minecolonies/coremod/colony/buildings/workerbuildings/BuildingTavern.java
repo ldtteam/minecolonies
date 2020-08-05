@@ -91,7 +91,7 @@ public class BuildingTavern extends BuildingHome
     /**
      * Penalty for not spawning visitors after a death
      */
-    private int noVisitorTime = 0;
+    private int noVisitorTime = 10000;
 
     /**
      * Instantiates a new citizen hut.
@@ -181,7 +181,7 @@ public class BuildingTavern extends BuildingHome
         if (getBuildingLevel() > 0 && externalCitizens.size() < 3 * getBuildingLevel() && noVisitorTime <= 0)
         {
             spawnVisitor();
-            noVisitorTime = colony.getWorld().getRandom().nextInt(3000) + 6000;
+            noVisitorTime = colony.getWorld().getRandom().nextInt(3000) + 6000 / getBuildingLevel();
         }
     }
 

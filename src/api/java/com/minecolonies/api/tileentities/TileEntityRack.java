@@ -325,13 +325,13 @@ public class TileEntityRack extends AbstractTileEntityRack
         for (int i = 0; i < inventoryTagList.size(); ++i)
         {
             final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
-            final ItemStack stack = ItemStack.read(inventoryCompound);
-            if (ItemStackUtils.getSize(stack) <= 0)
+            if (inventoryCompound.contains(TAG_EMPTY))
             {
                 inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
             }
             else
             {
+                final ItemStack stack = ItemStack.read(inventoryCompound);
                 inventory.setStackInSlot(i, stack);
             }
         }
@@ -362,9 +362,9 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             @NotNull final CompoundNBT inventoryCompound = new CompoundNBT();
             final ItemStack stack = inventory.getStackInSlot(slot);
-            if (stack == ItemStackUtils.EMPTY)
+            if (stack.isEmpty())
             {
-                new ItemStack(Blocks.AIR, 0).write(inventoryCompound);
+                inventoryCompound.putBoolean(TAG_EMPTY, true);
             }
             else
             {

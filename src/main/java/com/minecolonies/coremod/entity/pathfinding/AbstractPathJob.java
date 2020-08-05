@@ -88,7 +88,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * The entity this job belongs to.
      */
-    private WeakReference<LivingEntity> entity;
+    protected WeakReference<LivingEntity> entity;
 
     /**
      * AbstractPathJob constructor.

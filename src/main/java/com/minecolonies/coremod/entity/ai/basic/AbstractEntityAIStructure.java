@@ -108,6 +108,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
           /*
            * Select the appropriate State to do next.
            */
+          new AITarget(LOAD_STRUCTURE, this::loadRequirements, 5),
+          /*
+           * Select the appropriate State to do next.
+           */
           new AITarget(START_BUILDING, this::startBuilding, 1),
           /*
            * Check if we have to build something.
@@ -180,10 +184,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         if (structurePlacer == null || !structurePlacer.getB().hasBluePrint())
         {
-            onStartWithoutStructure();
-            return IDLE;
+            return LOAD_STRUCTURE;
         }
         return BUILDING_STEP;
+    }
+
+    /**
+     * The next state after structure loading.
+     * @return the next state.
+     */
+    public IAIState afterStructureLoading()
+    {
+        return START_BUILDING;
     }
 
     /**
@@ -482,7 +494,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                                                                                  TypeConstants.DELIVERABLE,
                                                                                  (IRequest<? extends IDeliverable> r) -> r.getRequest()
                                                                                                                            .matches(placedStack.getKey().getItemStack()));
-            if (requests.isEmpty())
+
+            final ImmutableList<IRequest<? extends IDeliverable>> completedRequests = placer.getOwnBuilding()
+                                                                                        .getCompletedRequestsOfTypeFiltered(
+                                                                                          placer.getWorker().getCitizenData(),
+                                                                                          TypeConstants.DELIVERABLE,
+                                                                                          (IRequest<? extends IDeliverable> r) -> r.getRequest()
+                                                                                                                                    .matches(placedStack.getKey().getItemStack()));
+
+            if (requests.isEmpty() && completedRequests.isEmpty())
             {
                 final com.minecolonies.api.colony.requestsystem.requestable.Stack stackRequest = new Stack(placedStack.getKey().getItemStack(), placedStack.getValue(), 1);
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
@@ -498,6 +518,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                         placer.worker.getCitizenJobHandler().getColonyJob().markRequestSync(request.getId());
                     }
                 }
+
+                for (final IRequest<? extends IDeliverable> request : completedRequests)
+                {
+                    if (placer.worker.getCitizenJobHandler().getColonyJob().getAsyncRequests().contains(request.getId()))
+                    {
+                        placer.worker.getCitizenJobHandler().getColonyJob().markRequestSync(request.getId());
+                    }
+                }
             }
             return false;
         }
@@ -505,13 +533,24 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     }
 
     /**
-     * Iterates through all the required resources and stores them in the building.
+     * Load all requirements of the structure.
+     * @return the next state to go to.
      */
-    public void requestMaterials()
+    public IAIState loadRequirements()
+    {
+        return START_WORKING;
+    }
+
+    /**
+     * Iterates through all the required resources and stores them in the building.
+     * @return true if finished.
+     */
+    public boolean requestMaterials()
     {
         /*
-         * Intentionally empty, Override if needed.
+         *  Override if needed.
          */
+        return true;
     }
 
     /**
@@ -726,9 +765,4 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @return true if reset to idle.
      */
     protected abstract boolean checkIfCanceled();
-
-    /**
-     * If is loaded without a structure.
-     */
-    protected abstract void onStartWithoutStructure();
 }

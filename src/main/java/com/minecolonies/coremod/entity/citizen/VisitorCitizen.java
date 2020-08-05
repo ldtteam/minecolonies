@@ -669,7 +669,10 @@ public class VisitorCitizen extends AbstractEntityCitizen
                     tavern.setNoVisitorTime(world.getRandom().nextInt(5000) + 30000);
                 }
 
-                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gui.tavern.visitordeath", getCitizenData().getName());
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
+                  "com.minecolonies.coremod.gui.tavern.visitordeath",
+                  cause.getDamageType(),
+                  getCitizenData().getName());
             }
         }
     }

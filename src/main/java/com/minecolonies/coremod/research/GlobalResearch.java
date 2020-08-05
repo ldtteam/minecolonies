@@ -80,18 +80,18 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * Create the new research.
      *
-     * @param id     it's id.
-     * @param desc   it's description text.
-     * @param effect it's effect.
-     * @param depth  the depth in the tree.
-     * @param branch the branch it is on.
+     * @param id              it's id.
+     * @param desc            it's description text.
+     * @param effect          it's effect.
+     * @param universityLevel the depth in the tree.
+     * @param branch          the branch it is on.
      */
-    public GlobalResearch(final String id, final String branch, final String desc, final int depth, final IResearchEffect<?> effect)
+    public GlobalResearch(final String id, final String branch, final String desc, final int universityLevel, final IResearchEffect<?> effect)
     {
         this.id = id;
         this.desc = desc;
         this.effect = effect;
-        this.depth = depth;
+        this.depth = universityLevel;
         this.branch = branch;
     }
 
@@ -120,6 +120,7 @@ public class GlobalResearch implements IGlobalResearch
         costList.clear();
         try
         {
+            // TODO: Add nbt parsing {tag,value;tag,value}
             final CommonConfiguration configuration = MinecoloniesAPIProxy.getInstance().getConfig().getCommon();
             final ForgeConfigSpec.ConfigValue<List<? extends String>> researchCost =
               (ForgeConfigSpec.ConfigValue<List<? extends String>>) configuration.getClass().getDeclaredField(id).get(configuration);

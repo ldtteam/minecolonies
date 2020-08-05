@@ -161,6 +161,11 @@ public final class NbtTagConstants
     public static final String TAG_RAIDABLE = "raidable";
 
     /**
+     * Tag to store nights since last raid
+     */
+    public static final String TAG_NIGHTS_SINCE_LAST_RAID = "nightsRaid";
+
+    /**
      * Tag on the ancient tome used to indicate if a raid will happen.
      */
     public static final String TAG_RAID_WILL_HAPPEN = "raidWillHappen";
@@ -231,6 +236,11 @@ public final class NbtTagConstants
      * Tag to store the inventory to nbt.
      */
     public static final String TAG_INVENTORY = "inventory";
+
+    /**
+     * Tag to store an empty stack to nbt.
+     */
+    public static final String TAG_EMPTY = "empty";
 
     /**
      * Tag to store the inventory to nbt.

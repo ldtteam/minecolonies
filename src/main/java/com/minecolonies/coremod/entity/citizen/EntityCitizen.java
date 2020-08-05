@@ -86,7 +86,7 @@ import javax.annotation.Nonnull;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Objects;
+import java.util.*;
 
 import static com.minecolonies.api.entity.citizen.VisibleCitizenStatus.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
@@ -105,15 +105,16 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Cooldown for calling help, in ticks.
      */
-    private static final int    CALL_HELP_CD       = 100;
+    private static final int    CALL_HELP_CD        = 100;
     /**
      * The amount of damage a guard takes on blocking.
      */
-    private static final float  GUARD_BLOCK_DAMAGE = 0.5f;
+    private static final float  GUARD_BLOCK_DAMAGE  = 0.5f;
     /**
      * Max speed factor.
      */
-    private static final double MAX_SPEED_FACTOR   = 0.5;
+    private static final double MAX_SPEED_FACTOR    = 0.5;
+    private static final int    CALL_TO_HELP_AMOUNT = 2;
 
     /**
      * The citizen status handler.
@@ -122,7 +123,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * It's citizen Id.
      */
-    private       int                       citizenId           = 0;
+    private       int                       citizenId       = 0;
     /**
      * The Walk to proxy (Shortest path through intermediate blocks).
      */
@@ -135,15 +136,15 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * The entities current Position.
      */
-    private       BlockPos                  currentPosition     = null;
+    private       BlockPos                  currentPosition = null;
     /**
      * Variable to check what time it is for the citizen.
      */
-    private       boolean                   isDay               = true;
+    private       boolean                   isDay           = true;
     /**
      * Backup of the citizen.
      */
-    private       CompoundNBT               dataBackup          = null;
+    private       CompoundNBT               dataBackup      = null;
     /**
      * The citizen experience handler.
      */
@@ -164,47 +165,47 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * The citizen colony handler.
      */
-    private       ICitizenColonyHandler     citizenColonyHandler;
+    private ICitizenColonyHandler  citizenColonyHandler;
     /**
      * The citizen job handler.
      */
-    private       ICitizenJobHandler        citizenJobHandler;
+    private ICitizenJobHandler     citizenJobHandler;
     /**
      * The citizen sleep handler.
      */
-    private       ICitizenSleepHandler      citizenSleepHandler;
+    private ICitizenSleepHandler   citizenSleepHandler;
     /**
      * The citizen sleep handler.
      */
-    private       ICitizenDiseaseHandler    citizenDiseaseHandler;
+    private ICitizenDiseaseHandler citizenDiseaseHandler;
     /**
      * The path-result of trying to move away
      */
-    private       PathResult                moveAwayPath;
+    private PathResult             moveAwayPath;
     /**
      * Indicate if the citizen is mourning or not.
      */
-    private       boolean                   mourning            = false;
+    private boolean                mourning            = false;
     /**
      * Indicates if the citizen is hiding from the rain or not.
      */
-    private       boolean                   hidingFromRain      = false;
+    private boolean                hidingFromRain      = false;
     /**
      * IsChild flag
      */
-    private       boolean                   child               = false;
+    private boolean                child               = false;
     /**
      * Whether the citizen is currently running away
      */
-    private       boolean                   currentlyFleeing    = false;
+    private boolean                currentlyFleeing    = false;
     /**
      * Timer for the call for help cd.
      */
-    private       int                       callForHelpCooldown = 0;
+    private int                    callForHelpCooldown = 0;
     /**
      * Citizen data view.
      */
-    private       ICitizenDataView          citizenDataView;
+    private ICitizenDataView       citizenDataView;
 
     /**
      * The location used for requests
@@ -715,7 +716,6 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @return the data.
      */
     @Override
-    @NotNull
     public ICitizenData getCitizenData()
     {
         return citizenData;
@@ -1053,7 +1053,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     public boolean isOkayToEat()
     {
         return !getCitizenSleepHandler().isAsleep() && getDesiredActivity() != DesiredActivity.SLEEP && (citizenJobHandler.getColonyJob() == null
-                                                                                                           || citizenJobHandler.getColonyJob().isOkayToEat());
+                                                                                                           || citizenJobHandler.getColonyJob().canAIBeInterrupted());
     }
 
     /**
@@ -1434,28 +1434,27 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         callForHelpCooldown = CALL_HELP_CD;
 
-        long guardDistance = guardHelpRange;
-        AbstractEntityCitizen guard = null;
+        List<AbstractEntityCitizen> possibleGuards = new ArrayList<>();
 
         for (final ICitizenData entry : getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
         {
             if (entry.getEntity().isPresent())
             {
-                final long tdist = BlockPosUtil.getDistanceSquared(entry.getEntity().get().getPosition(), getPosition());
-
                 // Checking for guard nearby
-                if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId() && tdist < guardDistance && entry.getJob().getWorkerAI() != null
+                if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId()
+                      && BlockPosUtil.getDistanceSquared(entry.getEntity().get().getPosition(), getPosition()) < guardHelpRange && entry.getJob().getWorkerAI() != null
                       && ((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
                 {
-                    guardDistance = tdist;
-                    guard = entry.getEntity().get();
+                    possibleGuards.add(entry.getEntity().get());
                 }
             }
         }
 
-        if (guard != null)
+        Collections.sort(possibleGuards, Comparator.comparingInt(guard -> (int) getPosition().distanceSq(guard.getPosition())));
+
+        for (int i = 0; i < possibleGuards.size() && i <= CALL_TO_HELP_AMOUNT; i++)
         {
-            ((AbstractEntityAIGuard<?, ?>) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
+            ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(i).getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
         }
     }
 

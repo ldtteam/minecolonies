@@ -260,7 +260,8 @@ public class EntityAICitizenAvoidEntity extends Goal
     @Override
     public boolean shouldExecute()
     {
-        if (citizen.isCurrentlyFleeing() && citizen.getCitizenJobHandler().shouldRunAvoidance())
+        if (citizen.isCurrentlyFleeing() && citizen.getCitizenJobHandler().shouldRunAvoidance() && (citizen.getCitizenJobHandler().getColonyJob() == null
+                                                                                                      || citizen.getCitizenJobHandler().getColonyJob().canAIBeInterrupted()))
         {
             startingPos = citizen.getPosition();
             fleeingCounter = 0;
