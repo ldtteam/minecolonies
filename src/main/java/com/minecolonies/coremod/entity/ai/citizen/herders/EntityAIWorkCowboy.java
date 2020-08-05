@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 
 /**
  * The AI behind the {@link JobCowboy} for Breeding, Killing and Milking Cows.
@@ -33,7 +34,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     /**
      * Herd cow icon
      */
-    private final static VisibleCitizenStatus HERD_COW =
+    private final static VisibleCitizenStatus HERD_COW               =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/cowboy.png"), "com.minecolonies.gui.visiblestatus.cowboy");
 
     /**
@@ -144,6 +145,18 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         }
 
         return DECIDE;
+    }
+
+    @Override
+    protected boolean canFeedChildren()
+    {
+        return getSecondarySKill() >= LIMIT_TO_FEED_CHILDREN;
+    }
+
+    @Override
+    public double getButcheringAttackDamage()
+    {
+        return Math.max(1.0, getPrimarySkillLevel() / 10.0);
     }
 
     @Override

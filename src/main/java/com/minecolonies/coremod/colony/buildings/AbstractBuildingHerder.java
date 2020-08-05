@@ -43,7 +43,10 @@ public abstract class AbstractBuildingHerder extends AbstractBuildingWorker
     public void deserializeNBT(CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        breeding = compound.getBoolean(TAG_BREEDING);
+        if (compound.contains(TAG_BREEDING))
+        {
+            breeding = compound.getBoolean(TAG_BREEDING);
+        }
     }
 
     @Override
@@ -54,11 +57,19 @@ public abstract class AbstractBuildingHerder extends AbstractBuildingWorker
         return compound;
     }
 
+    /**
+     * Check if the herder should be breeding.
+     * @return true if so.
+     */
     public boolean isBreeding()
     {
         return breeding;
     }
 
+    /**
+     * Set the herder to breed or not.
+     * @param breeding true if shall breed.
+     */
     public void setBreeding(final boolean breeding)
     {
         this.breeding = breeding;

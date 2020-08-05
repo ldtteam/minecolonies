@@ -21,6 +21,8 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.views.EmptyView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -148,6 +150,10 @@ public class ClientEventHandler
         final Map<BlockPos, Triple<Blueprint, BlockPos, BlockPos>> newCache = new HashMap<>();
         for (final IBuildingView buildingView : colony.getBuildings())
         {
+            if (buildingView instanceof PostBox.View || buildingView instanceof EmptyView)
+            {
+                continue;
+            }
             final BlockPos currentPosition = buildingView.getPosition();
 
             if (activePosition.withinDistance(currentPosition, PREVIEW_RANGE))
