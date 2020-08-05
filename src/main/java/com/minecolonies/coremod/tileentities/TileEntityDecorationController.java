@@ -77,7 +77,10 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     public void setSchematicName(final String schematicName)
     {
         this.schematicName = schematicName;
-        this.update();
+        if (world != null)
+        {
+            this.update();
+        }
     }
 
     /**

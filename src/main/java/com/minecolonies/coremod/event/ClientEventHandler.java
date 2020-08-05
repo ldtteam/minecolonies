@@ -24,9 +24,7 @@ import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeBuffers;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -241,8 +239,10 @@ public class ClientEventHandler
             {
                 if (wayPointTemplate == null)
                 {
-                    wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
-
+                    if (wayPointTemplate == null)
+                    {
+                        wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
+                    }
                     StructureClientHandler.renderStructureAtPosList(Settings.instance.getActiveStructure().hashCode() == wayPointTemplate.hashCode() ? Settings.instance.getActiveStructure() : wayPointTemplate,
                       event.getPartialTicks(),
                       new ArrayList<>(tempView.getWayPoints().keySet()),

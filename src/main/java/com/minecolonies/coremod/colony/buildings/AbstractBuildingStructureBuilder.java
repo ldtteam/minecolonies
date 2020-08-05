@@ -227,20 +227,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT neededResTagList = compound.getList(TAG_RESOURCE_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < neededResTagList.size(); ++i)
-        {
-            final CompoundNBT neededRes = neededResTagList.getCompound(i);
-            final ItemStack stack = ItemStack.read(neededRes);
-
-            if (!stack.isEmpty())
-            {
-                final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
-                final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
-                neededResources.put(stack.getTranslationKey() + "-" + hashCode, resource);
-            }
-        }
-
         if (compound.contains(TAG_PROGRESS_POS))
         {
             progressPos = BlockPosUtil.read(compound, TAG_PROGRESS_POS);
@@ -268,19 +254,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-
-        @NotNull final ListNBT neededResTagList = new ListNBT();
-        for (@NotNull final BuildingBuilderResource resource : neededResources.values())
-        {
-            @NotNull final CompoundNBT neededRes = new CompoundNBT();
-            final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount());
-            itemStack.setTag(resource.getItemStack().getTag());
-            itemStack.write(neededRes);
-
-            neededResTagList.add(neededRes);
-        }
-
-        compound.put(TAG_RESOURCE_LIST, neededResTagList);
         if (progressPos != null)
         {
             BlockPosUtil.write(compound, TAG_PROGRESS_POS, progressPos);
@@ -592,8 +565,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public void setProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
     {
         this.progressPos = blockPos;
-        this.progressStage = stage;
-        if (this.progressCounter > COUNT_TO_STORE_POS || blockPos == null)
+        if (this.progressCounter > COUNT_TO_STORE_POS || blockPos == null || stage != progressStage)
         {
             this.markDirty();
             this.progressCounter = 0;
@@ -602,6 +574,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             this.progressCounter++;
         }
+        this.progressStage = stage;
     }
 
     /**
