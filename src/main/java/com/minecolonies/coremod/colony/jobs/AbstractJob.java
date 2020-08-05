@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
@@ -89,6 +90,12 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     public String getExperienceTag()
     {
         return getName();
+    }
+
+    @Override
+    public boolean pickupSuccess(@NotNull ItemStack pickedUpStack)
+    {
+        return true;
     }
 
     @Override

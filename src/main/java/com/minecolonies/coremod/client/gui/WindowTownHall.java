@@ -22,8 +22,6 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;

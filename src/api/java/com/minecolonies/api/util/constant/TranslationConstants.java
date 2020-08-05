@@ -224,6 +224,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING                     = "com.minecolonies.coremod.status.herder.breeding";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_FEEDING                      = "com.minecolonies.coremod.status.herder.feeding";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_SEARCHING                    = "com.minecolonies.coremod.status.herder.searching";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL                = "com.minecolonies.coremod.status.herder.goingToAnimal";
