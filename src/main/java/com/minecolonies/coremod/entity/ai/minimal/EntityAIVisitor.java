@@ -266,7 +266,7 @@ public class EntityAIVisitor extends Goal
         }
 
         IBuilding building = citizen.getCitizenData().getHomeBuilding();
-        if (building != null)
+        if (building instanceof BuildingTavern)
         {
             tavern = (BuildingTavern) building;
         }

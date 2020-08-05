@@ -13,7 +13,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -128,7 +127,7 @@ public class CitizenManager implements ICitizenManager
             return;
         }
 
-        if (!existingCitizen.get().isAlive() || !WorldUtil.isEntityBlockLoaded(existingCitizen.get().world, existingCitizen.get().getPosition()))
+        if (entity.isAlive())
         {
             existingCitizen.get().remove();
             data.setEntity(entity);

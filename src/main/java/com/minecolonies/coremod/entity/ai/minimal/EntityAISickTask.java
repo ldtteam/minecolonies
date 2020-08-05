@@ -148,6 +148,11 @@ public class EntityAISickTask extends Goal
             return true;
         }
 
+        if (citizen.getCitizenJobHandler().getColonyJob() != null && !citizen.getCitizenJobHandler().getColonyJob().canAIBeInterrupted())
+        {
+            return false;
+        }
+
         return citizen.getCitizenDiseaseHandler().isSick();
     }
 

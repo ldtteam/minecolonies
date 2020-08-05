@@ -75,7 +75,7 @@ public class WorldUtil
      */
     public static boolean isEntityBlockLoaded(final IWorld world, final BlockPos pos)
     {
-        return isChunkLoaded(world, pos.getX() >> 4, pos.getZ() >> 4);
+        return isEntityChunkLoaded(world, pos.getX() >> 4, pos.getZ() >> 4);
     }
 
     /**
