@@ -69,7 +69,7 @@ public final class ModItemsInitializer
 
         ModItems.santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, EquipmentSlotType.HEAD, new Item.Properties());
 
-        ModItems.flagBanner = new ItemColonyFlagBanner("flag_banner", ModCreativeTabs.MINECOLONIES, new Item.Properties());
+        ModItems.flagBanner = new ItemColonyFlagBanner("colony_banner", ModCreativeTabs.MINECOLONIES, new Item.Properties());
 
         ModItems.pirateHelmet_1 = new ItemPirateGear("pirate_hat", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlotType.HEAD, new Item.Properties());
         ModItems.pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlotType.CHEST, new Item.Properties());
