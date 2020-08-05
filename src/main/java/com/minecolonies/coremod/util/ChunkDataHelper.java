@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
@@ -442,7 +443,7 @@ public final class ChunkDataHelper
      */
     public static boolean loadChunkAndAddData(final World world, final BlockPos pos, final boolean add, final int id, final IChunkmanagerCapability chunkManager)
     {
-        if (!world.isBlockPresent(pos))
+        if (!WorldUtil.isBlockLoaded(world, pos))
         {
             return false;
         }
@@ -508,7 +509,7 @@ public final class ChunkDataHelper
       final BlockPos buildingPos,
       final IChunkmanagerCapability chunkManager)
     {
-        if (!world.isBlockPresent(pos))
+        if (!WorldUtil.isBlockLoaded(world, pos))
         {
             return false;
         }

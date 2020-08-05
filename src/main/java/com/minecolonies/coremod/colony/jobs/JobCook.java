@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The cook job class.
  */
-public class JobCook extends AbstractJobCrafter<EntityAIWorkCook, JobCook>
+public class JobCook extends AbstractJob<EntityAIWorkCook, JobCook>
 {
     /**
      * Create a cook job.

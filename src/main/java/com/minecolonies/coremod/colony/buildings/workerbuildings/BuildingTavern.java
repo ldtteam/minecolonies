@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
-import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VISITORS;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
@@ -91,7 +91,7 @@ public class BuildingTavern extends BuildingHome
     /**
      * Penalty for not spawning visitors after a death
      */
-    private int noVisitorTime = 0;
+    private int noVisitorTime = 10000;
 
     /**
      * Instantiates a new citizen hut.
@@ -181,7 +181,7 @@ public class BuildingTavern extends BuildingHome
         if (getBuildingLevel() > 0 && externalCitizens.size() < 3 * getBuildingLevel() && noVisitorTime <= 0)
         {
             spawnVisitor();
-            noVisitorTime = colony.getWorld().getRandom().nextInt(3000) + 6000;
+            noVisitorTime = colony.getWorld().getRandom().nextInt(3000) + 6000 / getBuildingLevel();
         }
     }
 
@@ -219,6 +219,7 @@ public class BuildingTavern extends BuildingHome
             spawnPos = getPosition();
         }
 
+        spawnPos.add(HALF_BLOCK, SLIGHTLY_UP, HALF_BLOCK);
         colony.getVisitorManager().spawnOrCreateCivilian(newCitizen, colony.getWorld(), spawnPos, true);
 
         final AbstractEntityCitizen citizenEntity = newCitizen.getEntity().get();

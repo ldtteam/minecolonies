@@ -100,7 +100,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     /**
      * The collision threshold
      */
-    private final static int COLL_THRESHOLD = 30;
+    private final static int COLL_THRESHOLD = 50;
 
     /**
      * Constructor for a new citizen typed entity.
@@ -334,8 +334,13 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @Override
     public void applyEntityCollision(@NotNull final Entity entityIn)
     {
-        if ((collisionCounter += 3) > COLL_THRESHOLD)
+        if ((collisionCounter += 2) > COLL_THRESHOLD)
         {
+            if (collisionCounter > COLL_THRESHOLD * 2)
+            {
+                collisionCounter = 0;
+            }
+
             return;
         }
         super.applyEntityCollision(entityIn);
@@ -572,20 +577,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * Decrease the saturation of the citizen for 1 action.
      */
     public abstract void decreaseSaturationForContinuousAction();
-
-    /**
-     * Getter for the current position. Only approximated position, used for stuck checking.
-     *
-     * @return the current position.
-     */
-    public abstract BlockPos getCurrentPosition();
-
-    /**
-     * Setter for the current position.
-     *
-     * @param currentPosition the position to set.
-     */
-    public abstract void setCurrentPosition(BlockPos currentPosition);
 
     /**
      * Spawn eating particles for the citizen.

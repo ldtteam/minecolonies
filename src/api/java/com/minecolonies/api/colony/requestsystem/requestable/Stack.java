@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
+import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -9,11 +10,12 @@ import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Deliverable that can only be fulfilled by a single stack with a given minimal amount of items.
  */
-public class Stack implements IDeliverable
+public class Stack implements IConcreteDeliverable
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_STACK       = "Stack";
@@ -310,5 +312,11 @@ public class Stack implements IDeliverable
         result1 = 31 * result1 + (matchOreDic ? 1 : 0);
         result1 = 31 * result1 + getResult().hashCode();
         return result1;
+    }
+
+    @Override
+    public List<ItemStack> getRequestedItems()
+    {
+        return Lists.newArrayList(theStack);
     }
 }

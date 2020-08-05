@@ -336,27 +336,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         this.citizenId = id;
     }
 
-    /**
-     * Getter for the current position. Only approximated position, used for stuck checking.
-     *
-     * @return the current position.
-     */
-    @Override
-    public BlockPos getCurrentPosition()
-    {
-        return getPosition();
-    }
-
-    /**
-     * Setter for the current position.
-     *
-     * @param currentPosition the position to set.
-     */
-    @Override
-    public void setCurrentPosition(final BlockPos currentPosition)
-    {
-    }
-
     @Override
     public void spawnEatingParticle()
     {
@@ -690,7 +669,10 @@ public class VisitorCitizen extends AbstractEntityCitizen
                     tavern.setNoVisitorTime(world.getRandom().nextInt(5000) + 30000);
                 }
 
-                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gui.tavern.visitordeath", getCitizenData().getName());
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
+                  "com.minecolonies.coremod.gui.tavern.visitordeath",
+                  cause.getDamageType(),
+                  getCitizenData().getName());
             }
         }
     }
