@@ -209,6 +209,11 @@ public class CitizenData implements ICitizenData
     private VisibleCitizenStatus status;
 
     /**
+     * The citizen data random.
+     */
+    private Random random = new Random();
+
+    /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
      *
      * @param id     ID of the Citizen.
@@ -335,13 +340,12 @@ public class CitizenData implements ICitizenData
     @Override
     public void initForNewCivilian()
     {
-        final Random rand = new Random();
         //Assign the gender before name
-        female = rand.nextBoolean();
-        textureSuffix = SUFFIXES.get(rand.nextInt(SUFFIXES.size()));
+        female = random.nextBoolean();
+        textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
         paused = false;
-        name = generateName(rand);
-        textureId = rand.nextInt(255);
+        name = generateName(random);
+        textureId = random.nextInt(255);
 
         saturation = MAX_SATURATION;
         final int levelCap = (int) colony.getOverallHappiness();
@@ -458,7 +462,7 @@ public class CitizenData implements ICitizenData
     public void setIsFemale(@NotNull final boolean isFemale)
     {
         this.female = isFemale;
-        this.name = generateName(new Random());
+        this.name = generateName(random);
         markDirty();
     }
 
@@ -889,7 +893,7 @@ public class CitizenData implements ICitizenData
         }
         else
         {
-            textureSuffix = SUFFIXES.get(new Random().nextInt(SUFFIXES.size()));
+            textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
         }
 
         lastPosition = BlockPosUtil.read(nbtTagCompound, TAG_POS);
@@ -913,7 +917,7 @@ public class CitizenData implements ICitizenData
 
         if (name.isEmpty())
         {
-            name = generateName(new Random());
+            name = generateName(random);
         }
 
         if (nbtTagCompound.keySet().contains(TAG_ASLEEP))
@@ -956,7 +960,6 @@ public class CitizenData implements ICitizenData
                 levels.put(jobName, level);
             }
 
-            final Random random = new Random();
             for (final Map.Entry<String, Integer> entry : levels.entrySet())
             {
                 final Skill primary = Skill.values()[random.nextInt(Skill.values().length)];
@@ -1119,5 +1122,11 @@ public class CitizenData implements ICitizenData
         final CitizenData data = new CitizenData(nbt.getInt(TAG_ID), colony);
         data.deserializeNBT(nbt);
         return data;
+    }
+
+    @Override
+    public Random getRandom()
+    {
+        return random;
     }
 }

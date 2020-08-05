@@ -3,7 +3,6 @@ package com.minecolonies.coremod.network.messages.client;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.util.ChunkCapData;
 import com.minecolonies.coremod.util.ChunkClientDataHelper;
 import net.minecraft.client.Minecraft;

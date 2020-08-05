@@ -86,7 +86,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public IAIState loadRequirements()
     {
-        if (!job.hasBlueprint())
+        if (!job.hasBlueprint() || structurePlacer == null)
         {
             loadStructure();
             final WorkOrderBuildDecoration wo = job.getWorkOrder();
