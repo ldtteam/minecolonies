@@ -65,8 +65,8 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
            * Check if tasks should be executed.
            */
           new AITarget(START_USING_FURNACE, this::fillUpFurnace, 1),
-          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, 1),
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::accelerateFurnaces, 20)
+          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, 5),
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::accelerateFurnaces, TICKS_SECOND)
           );
     }
     
