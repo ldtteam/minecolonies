@@ -36,32 +36,47 @@ public class BlockColonyFlagBanner extends AbstractColonyFlagBanner<BlockColonyF
         this.setDefaultState(this.stateContainer.getBaseState().with(ROTATION, Integer.valueOf(0)));
     }
 
-    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
+    @Override
+    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos)
+    {
         return worldIn.getBlockState(pos.down()).getMaterial().isSolid();
     }
 
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
+    {
         return SHAPE;
     }
 
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(ROTATION, Integer.valueOf(MathHelper.floor((double)((180.0F + context.getPlacementYaw()) * 16.0F / 360.0F) + 0.5D) & 15));
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext context)
+    {
+        return this.getDefaultState()
+                .with(ROTATION, Integer.valueOf(MathHelper.floor((double)((180.0F + context.getPlacementYaw()) * 16.0F / 360.0F) + 0.5D) & 15));
     }
 
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-        return facing == Direction.DOWN && !stateIn.isValidPosition(worldIn, currentPos) ? Blocks.AIR.getDefaultState() : super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+    @Override
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos)
+    {
+        return facing == Direction.DOWN && !stateIn.isValidPosition(worldIn, currentPos)
+                ? Blocks.AIR.getDefaultState()
+                : super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
-    public BlockState rotate(BlockState state, Rotation rot) {
+    @Override
+    public BlockState rotate(BlockState state, Rotation rot)
+    {
         return state.with(ROTATION, Integer.valueOf(rot.rotate(state.get(ROTATION), 16)));
     }
 
-    public BlockState mirror(BlockState state, Mirror mirrorIn) {
+    @Override
+    public BlockState mirror(BlockState state, Mirror mirrorIn)
+    {
         return state.with(ROTATION, Integer.valueOf(mirrorIn.mirrorRotation(state.get(ROTATION), 16)));
     }
 
+    @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(ROTATION);
     }
-
 }

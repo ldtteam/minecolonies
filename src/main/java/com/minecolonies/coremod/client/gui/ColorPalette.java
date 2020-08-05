@@ -28,9 +28,9 @@ public class ColorPalette
      * @param x the x position of the top left button
      * @param y the y position of the top left button
      * @param col the number of columns to sort this palette into
-     * @param process a function to add each button to the calling screen. Call with this::addButton if unsure.
+     * @param adder a function to add each button to the calling screen. Call with this::addButton if unsure.
      */
-    public ColorPalette (int x, int y, int col, IWidgetAdder process)
+    public ColorPalette (int x, int y, int col, IWidgetAdder adder)
     {
         int topLeftX = x - col * BUTTON_SIZE / 2;
         int topLeftY = y - DYES.length / col * BUTTON_SIZE / 2;
@@ -42,10 +42,15 @@ public class ColorPalette
 
             PaletteButton button = new ColorPalette.PaletteButton(posX, posY, BUTTON_SIZE, color);
             buttons.add(button);
-            process.onBuild(button);
+            adder.onBuild(button);
         }
     }
 
+    /**
+     * A more generic form of the constructor
+     * @param gui the screen to interact with this color palette
+     * @param adder the function to add the buttons. Likely this::addButton from a Screen
+     */
     public ColorPalette (Screen gui, IWidgetAdder adder)
     {
         this(gui.width/2, gui.height/2, (int) Math.floor(Math.sqrt(DYES.length)), adder);
@@ -113,6 +118,11 @@ public class ColorPalette
 
         /**
          * A convenience method for filling the rectangles
+         * @param t the top offset
+         * @param l the left offset
+         * @param b the bottom offset
+         * @param r the right offset
+         * @param color the color to fill with, without alpha
          */
         private void fillButton(int t, int l, int b, int r, int color)
         {
@@ -124,6 +134,12 @@ public class ColorPalette
             );
         }
 
+        /**
+         * Adjusts the brightness of the color according to the factor
+         * @param color the color to brighten or dim
+         * @param factor a percentage factor to multiply the rgb values by
+         * @return the adjusted color
+         */
         private int brighten(int color, float factor)
         {
             int r = color >> 16;

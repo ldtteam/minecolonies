@@ -65,7 +65,8 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
     }
 
     @Override
-    public ItemStack getItem(IBlockReader worldIn, BlockPos pos, BlockState state) {
+    public ItemStack getItem(IBlockReader worldIn, BlockPos pos, BlockState state)
+    {
         TileEntity tileentity = worldIn.getTileEntity(pos);
         return tileentity instanceof TileEntityColonyFlag ? ((TileEntityColonyFlag)tileentity).getItem() : super.getItem(worldIn, pos, state);
     }

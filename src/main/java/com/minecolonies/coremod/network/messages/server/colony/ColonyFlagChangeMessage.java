@@ -43,6 +43,5 @@ public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
         CompoundNBT nbt = buf.readCompoundTag();
         if (nbt != null)
             this.patterns = nbt.getList("Patterns", Constants.TAG_COMPOUND);
-
     }
 }

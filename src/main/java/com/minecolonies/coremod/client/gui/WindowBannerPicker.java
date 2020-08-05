@@ -74,7 +74,8 @@ public class WindowBannerPicker extends Screen
      * @param colony the colony to make the flag for
      * @param hallWindow the calling town hall window to return to
      */
-    public WindowBannerPicker(IColonyView colony, WindowTownHall hallWindow) {
+    public WindowBannerPicker(IColonyView colony, WindowTownHall hallWindow)
+    {
         super(new StringTextComponent("Flag"));
 
         this.colony = colony;
@@ -203,7 +204,8 @@ public class WindowBannerPicker extends Screen
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks)
+    {
         this.renderBackground();
         super.render(mouseX, mouseY, partialTicks);
         drawFlag();
@@ -242,7 +244,8 @@ public class WindowBannerPicker extends Screen
      * @param x the left x position of the banner
      * @param y the top y position of the banner
      */
-    private void drawBannerPattern(BannerPattern pattern, int x, int y) {
+    private void drawBannerPattern(BannerPattern pattern, int x, int y)
+    {
         RenderHelper.setupGuiFlatDiffuseLighting();
 
         List<Pair<BannerPattern, DyeColor>> list = new ArrayList<>();
@@ -378,7 +381,6 @@ public class WindowBannerPicker extends Screen
                 else
                     fill(this.x, this.y, this.x+this.width, this.y+this.height, 0x33888888);
             }
-
         }
     }
 }

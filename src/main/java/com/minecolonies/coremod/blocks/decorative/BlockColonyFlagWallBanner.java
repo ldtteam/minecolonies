@@ -37,59 +37,60 @@ public class BlockColonyFlagWallBanner extends AbstractColonyFlagBanner<BlockCol
         this.setDefaultState(this.stateContainer.getBaseState().with(HORIZONTAL_FACING, Direction.NORTH));
     }
 
+    @Override
+    public String getTranslationKey() { return this.asItem().getTranslationKey(); }
 
-    /**
-     * Returns the unlocalized name of the block with "tile." appended to the front.
-     */
-    public String getTranslationKey() {
-        return this.asItem().getTranslationKey();
-    }
-
-    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
+    @Override
+    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos)
+    {
         return worldIn.getBlockState(pos.offset(state.get(HORIZONTAL_FACING).getOpposite())).getMaterial().isSolid();
     }
 
-    /**
-     * Update the provided state given the provided neighbor facing and neighbor state, returning a new state.
-     * For example, fences make their connections to the passed in state if possible, and wet concrete powder immediately
-     * returns its solidified counterpart.
-     * Note that this method should ideally consider only the specific face passed in.
-     */
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+    @Override
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos)
+    {
         return facing == stateIn.get(HORIZONTAL_FACING).getOpposite() && !stateIn.isValidPosition(worldIn, currentPos) ? Blocks.AIR.getDefaultState() : super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
+    {
         return BANNER_SHAPES.get(state.get(HORIZONTAL_FACING));
     }
 
+    @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         BlockState blockstate = this.getDefaultState();
         IWorldReader iworldreader = context.getWorld();
         BlockPos blockpos = context.getPos();
         Direction[] adirection = context.getNearestLookingDirections();
 
-        for(Direction direction : adirection) {
-            if (direction.getAxis().isHorizontal()) {
+        for(Direction direction : adirection)
+        {
+            if (direction.getAxis().isHorizontal())
+            {
                 Direction direction1 = direction.getOpposite();
                 blockstate = blockstate.with(HORIZONTAL_FACING, direction1);
-                if (blockstate.isValidPosition(iworldreader, blockpos)) {
+                if (blockstate.isValidPosition(iworldreader, blockpos))
                     return blockstate;
-                }
             }
         }
 
         return null;
     }
 
-    public BlockState rotate(BlockState state, Rotation rot) {
+    @Override
+    public BlockState rotate(BlockState state, Rotation rot)
+    {
         return state.with(HORIZONTAL_FACING, rot.rotate(state.get(HORIZONTAL_FACING)));
     }
-    public BlockState mirror(BlockState state, Mirror mirrorIn) {
+
+    @Override
+    public BlockState mirror(BlockState state, Mirror mirrorIn)
+    {
         return state.rotate(mirrorIn.toRotation(state.get(HORIZONTAL_FACING)));
     }
 
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(HORIZONTAL_FACING);
-    }
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) { builder.add(HORIZONTAL_FACING); }
 }
