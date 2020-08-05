@@ -305,7 +305,9 @@ public class WindowBannerPicker extends Screen
             super(
                     x - (layer == 0 ? width*2 : 0), y,
                     width * (layer == 0 ? 3 : 1), height,
-                    layer == 0? "Base" : String.valueOf(layer),
+                    layer == 0
+                            ? I18n.format("com.minecolonies.coremod.gui.flag.base_layer")
+                            : String.valueOf(layer),
                     pressed -> {}
             );
             this.layer = layer;

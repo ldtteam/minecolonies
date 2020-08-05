@@ -33,7 +33,7 @@
             </dropdown>
             <buttonimage id="nextColor" size="14 15" pos="317 42" label="&gt;" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
 
-            <button id="bannerPicker" label="Select colony flag" pos="201 64" size="80 20" />
+            <button id="bannerPicker" label="Select colony flag" pos="217 70" size="114 20" />
         </view>
     </switch>
 </window>
