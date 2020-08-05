@@ -1,3 +1,6 @@
+// Made with Blockbench 3.5.1
+// Exported for Minecraft version 1.15
+// Paste this class into your mod and generate all required imports
 package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
@@ -5,100 +8,65 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityChildFemale extends CitizenModel<AbstractEntityCitizen>
-{
-    //fields
+public class ModelEntityChildFemale extends CitizenModel<AbstractEntityCitizen> {
+	ModelRenderer overRightLeg;
+	ModelRenderer overLeftLeg;
+	ModelRenderer pouch;
+	ModelRenderer headDress;
 
-    public ModelEntityChildFemale()
-    {
-        ModelRenderer pouch;
-        ModelRenderer overLeftLeg;
-        ModelRenderer overRightLeg;
-        ModelRenderer headDress;
+	public ModelEntityChildFemale() {
+		textureWidth = 128;
+		textureHeight = 64;
 
-        textureWidth = 128;
-        textureHeight = 64;
+		bipedRightArm = new ModelRenderer(this);
+		bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
+		bipedRightArm.setTextureOffset(44, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        pouch = new ModelRenderer(this, 20, 33);
-        pouch.addBox(0F, 0F, 0F, 4, 3, 1);
-        pouch.setRotationPoint(-4F, 9.5F, -3.5F);
-        pouch.setTextureSize(128, 64);
-        pouch.mirror = true;
-        setRotation(pouch, 0F, 0F, 0F);
+		bipedLeftArm = new ModelRenderer(this);
+		bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
+		bipedLeftArm.setTextureOffset(44, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        overLeftLeg = new ModelRenderer(this, 0, 33);
-        overLeftLeg.addBox(-2F, -12F, 0F, 5, 12, 5);
-        overLeftLeg.setRotationPoint(-0.5F, 12F, -2.5F);
-        overLeftLeg.setTextureSize(128, 64);
-        overLeftLeg.mirror = true;
-        setRotation(overLeftLeg, 0F, 0F, 0F);
+		bipedRightLeg = new ModelRenderer(this);
+		bipedRightLeg.setRotationPoint(-2.0F, 12.0F, 0.0F);
+		bipedRightLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        overRightLeg = new ModelRenderer(this, 0, 33);
-        overRightLeg.addBox(2F, -12F, 0F, 5, 12, 5);
-        overRightLeg.setRotationPoint(-4.5F, 12F, -2.5F);
-        overRightLeg.setTextureSize(128, 64);
-        overRightLeg.mirror = true;
-        setRotation(overRightLeg, 0F, 0F, 0F);
+		overRightLeg = new ModelRenderer(this);
+		overRightLeg.setRotationPoint(-4.5F, 12.0F, -2.5F);
+		bipedRightLeg.addChild(overRightLeg);
+		overRightLeg.setTextureOffset(0, 33).addBox(2.0F, -12.0F, 0.0F, 5.0F, 12.0F, 5.0F, 0.0F, false);
 
-        bipedRightArm = new ModelRenderer(this, 44, 16);
-        bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
-        bipedRightArm.setRotationPoint(-5F, 2F, 0F);
-        bipedRightArm.setTextureSize(128, 64);
-        bipedRightArm.mirror = true;
-        setRotation(bipedRightArm, 0F, 0F, 0F);
+		bipedLeftLeg = new ModelRenderer(this);
+		bipedLeftLeg.setRotationPoint(2.0F, 12.0F, 0.0F);
+		bipedLeftLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        bipedLeftArm = new ModelRenderer(this, 44, 16);
-        bipedLeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
-        bipedLeftArm.setRotationPoint(5F, 2F, 0F);
-        bipedLeftArm.setTextureSize(128, 64);
-        bipedLeftArm.mirror = true;
-        setRotation(bipedLeftArm, 0F, 0F, 0F);
+		overLeftLeg = new ModelRenderer(this);
+		overLeftLeg.setRotationPoint(-0.5F, 12.0F, -2.5F);
+		bipedLeftLeg.addChild(overLeftLeg);
+		overLeftLeg.setTextureOffset(0, 33).addBox(-2.0F, -12.0F, 0.0F, 5.0F, 12.0F, 5.0F, 0.0F, true);
 
-        bipedRightLeg = new ModelRenderer(this, 0, 16);
-        bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        bipedRightLeg.setRotationPoint(-2F, 12F, 0F);
-        bipedRightLeg.setTextureSize(128, 64);
-        bipedRightLeg.mirror = true;
-        setRotation(bipedRightLeg, 0F, 0F, 0F);
+		bipedBody = new ModelRenderer(this);
+		bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedBody.setTextureOffset(16, 16).addBox(-4.5F, 0.0F, -2.5F, 9.0F, 12.0F, 5.0F, 0.0F, true);
 
-        bipedLeftLeg = new ModelRenderer(this, 0, 16);
-        bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
-        bipedLeftLeg.setTextureSize(128, 64);
-        bipedLeftLeg.mirror = true;
-        setRotation(bipedLeftLeg, 0F, 0F, 0F);
+		pouch = new ModelRenderer(this);
+		pouch.setRotationPoint(-4.0F, 9.5F, -3.5F);
+		bipedBody.addChild(pouch);
+		pouch.setTextureOffset(20, 33).addBox(0.0F, 0.0F, 0.0F, 4.0F, 3.0F, 1.0F, 0.0F, true);
 
-        bipedBody = new ModelRenderer(this, 16, 16);
-        bipedBody.addBox(-4.5F, 0F, -2.5F, 9, 12, 5);
-        bipedBody.setRotationPoint(0F, 0F, 0F);
-        bipedBody.setTextureSize(128, 64);
-        bipedBody.mirror = true;
-        setRotation(bipedBody, 0F, 0F, 0F);
+		bipedHead = new ModelRenderer(this);
+		bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, true);
 
-        bipedHead = new ModelRenderer(this, 0, 0);
-        bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8);
-        bipedHead.setRotationPoint(0F, 0F, 0F);
-        bipedHead.setTextureSize(128, 64);
-        bipedHead.mirror = true;
-        setRotation(bipedHead, 0F, 0F, 0F);
+		headDress = new ModelRenderer(this);
+		headDress.setRotationPoint(-4.5F, -8.5F, -2.0F);
+		bipedHead.addChild(headDress);
+		setRotationAngle(headDress, -0.5236F, 0.0F, 0.0F);
+		headDress.setTextureOffset(20, 37).addBox(0.0F, 0.0F, 0.0F, 9.0F, 1.0F, 8.0F, 0.0F, true);
+	}
 
-        headDress = new ModelRenderer(this, 20, 37);
-        headDress.addBox(0F, 0F, 0F, 9, 1, 8);
-        headDress.setRotationPoint(-4.5F, -8.5F, -2F);
-        headDress.setTextureSize(128, 64);
-        headDress.mirror = true;
-        setRotation(headDress, -0.5235988F, 0F, 0F);
-
-        bipedBody.addChild(pouch);
-        bipedLeftLeg.addChild(overLeftLeg);
-        bipedRightLeg.addChild(overRightLeg);
-        bipedHead.addChild(headDress);
-    }
-
-    private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
-    {
-        model.rotateAngleX = x;
-        model.rotateAngleY = y;
-        model.rotateAngleZ = z;
-    }
+	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
+		modelRenderer.rotateAngleX = x;
+		modelRenderer.rotateAngleY = y;
+		modelRenderer.rotateAngleZ = z;
+	}
 }

@@ -1,3 +1,6 @@
+// Made with Blockbench 3.5.1
+// Exported for Minecraft version 1.15
+// Paste this class into your mod and generate all required imports
 package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
@@ -5,117 +8,82 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityCowFarmerMale extends CitizenModel<AbstractEntityCitizen>
-{
-    public ModelEntityCowFarmerMale()
-    {
-        ModelRenderer bagR;
-        ModelRenderer bagL;
-        ModelRenderer bagBack;
-        ModelRenderer bagFront;
-        ModelRenderer bagWheat;
-        ModelRenderer bagBot;
+public class ModelEntityCowFarmerMale extends CitizenModel<AbstractEntityCitizen> {
+	ModelRenderer bagR;
+	ModelRenderer bagL;
+	ModelRenderer bagBack;
+	ModelRenderer bagFront;
+	ModelRenderer bagWheat;
+	ModelRenderer bagBot;
+	ModelRenderer headDetail;
 
-        textureWidth = 128;
-        textureHeight = 64;
+	public ModelEntityCowFarmerMale() {
+		textureWidth = 128;
+		textureHeight = 64;
 
-        bipedRightArm = new ModelRenderer(this, 40, 16);
-        bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
-        bipedRightArm.setRotationPoint(-5F, 2F, 0F);
-        bipedRightArm.setTextureSize(128, 64);
-        bipedRightArm.mirror = true;
-        setRotation(bipedRightArm, 0F, 0F, 0F);
+		bipedRightArm = new ModelRenderer(this);
+		bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
+		bipedRightArm.setTextureOffset(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        bipedLeftArm = new ModelRenderer(this, 40, 16);
-        bipedLeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
-        bipedLeftArm.setRotationPoint(5F, 2F, 0F);
-        bipedLeftArm.setTextureSize(128, 64);
-        bipedLeftArm.mirror = true;
-        setRotation(bipedLeftArm, 0F, 0F, 0F);
+		bipedLeftArm = new ModelRenderer(this);
+		bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
+		bipedLeftArm.setTextureOffset(40, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        bipedLeftArm.mirror = false;
-        bipedRightLeg = new ModelRenderer(this, 0, 16);
-        bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        bipedRightLeg.setRotationPoint(-2F, 12F, 0F);
-        bipedRightLeg.setTextureSize(128, 64);
-        bipedRightLeg.mirror = true;
-        setRotation(bipedRightLeg, 0F, 0F, 0F);
+		bipedRightLeg = new ModelRenderer(this);
+		bipedRightLeg.setRotationPoint(-2.0F, 12.0F, 0.0F);
+		bipedRightLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        bipedLeftLeg = new ModelRenderer(this, 0, 16);
-        bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
-        bipedLeftLeg.setTextureSize(128, 64);
-        bipedLeftLeg.mirror = true;
-        setRotation(bipedLeftLeg, 0F, 0F, 0F);
+		bipedLeftLeg = new ModelRenderer(this);
+		bipedLeftLeg.setRotationPoint(2.0F, 12.0F, 0.0F);
+		bipedLeftLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        bipedBody = new ModelRenderer(this, 16, 16);
-        bipedBody.addBox(-4F, 0F, -2F, 8, 12, 4);
-        bipedBody.setRotationPoint(0F, 0F, 0F);
-        bipedBody.setTextureSize(128, 64);
-        bipedBody.mirror = true;
-        setRotation(bipedBody, 0F, 0F, 0F);
+		bipedBody = new ModelRenderer(this);
+		bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, true);
 
-        bipedHead = new ModelRenderer(this, 0, 0);
-        bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8);
-        bipedHead.setRotationPoint(0F, 0F, 0F);
-        bipedHead.setTextureSize(128, 64);
-        bipedHead.mirror = true;
-        setRotation(bipedHead, 0F, 0F, 0F);
+		bagR = new ModelRenderer(this);
+		bagR.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedBody.addChild(bagR);
+		bagR.setTextureOffset(45, 39).addBox(3.0F, 0.0F, 3.0F, 1.0F, 9.0F, 3.0F, 0.0F, true);
 
-        bagR = new ModelRenderer(this, 0, 34);
-        bagR.addBox(3F, 0F, 3F, 1, 9, 3);
-        bagR.setRotationPoint(0F, 0F, 0F);
-        bagR.setTextureSize(128, 64);
-        bagR.mirror = true;
-        setRotation(bagR, 0F, 0F, 0F);
+		bagL = new ModelRenderer(this);
+		bagL.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedBody.addChild(bagL);
+		bagL.setTextureOffset(45, 51).addBox(-4.0F, 0.0F, 3.0F, 1.0F, 9.0F, 3.0F, 0.0F, true);
 
-        bagL = new ModelRenderer(this, 1, 38);
-        bagL.addBox(-4F, 0F, 3F, 1, 9, 3);
-        bagL.setRotationPoint(0F, 0F, 0F);
-        bagL.setTextureSize(128, 64);
-        bagL.mirror = true;
-        setRotation(bagL, 0F, 0F, 0F);
+		bagBack = new ModelRenderer(this);
+		bagBack.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedBody.addChild(bagBack);
+		bagBack.setTextureOffset(53, 48).addBox(-3.0F, 0.0F, 2.0F, 6.0F, 9.0F, 1.0F, 0.0F, true);
 
-        bagBack = new ModelRenderer(this, 2, 34);
-        bagBack.addBox(-3F, 0F, 2F, 6, 9, 1);
-        bagBack.setRotationPoint(0F, 0F, 0F);
-        bagBack.setTextureSize(128, 64);
-        bagBack.mirror = true;
-        setRotation(bagBack, 0F, 0F, 0F);
+		bagFront = new ModelRenderer(this);
+		bagFront.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedBody.addChild(bagFront);
+		bagFront.setTextureOffset(53, 39).addBox(-3.0F, 1.0F, 6.0F, 6.0F, 8.0F, 1.0F, 0.0F, true);
 
-        bagFront = new ModelRenderer(this, 2, 39);
-        bagFront.addBox(-3F, 1F, 6F, 6, 8, 1);
-        bagFront.setRotationPoint(0F, 0F, 0F);
-        bagFront.setTextureSize(128, 64);
-        bagFront.mirror = true;
-        setRotation(bagFront, 0F, 0F, 0F);
+		bagWheat = new ModelRenderer(this);
+		bagWheat.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedBody.addChild(bagWheat);
+		bagWheat.setTextureOffset(45, 35).addBox(-3.0F, 1.5F, 3.0F, 6.0F, 1.0F, 3.0F, 0.0F, true);
 
-        bagWheat = new ModelRenderer(this, 19, 37);
-        bagWheat.addBox(-3F, 1.5F, 3F, 6, 1, 3);
-        bagWheat.setRotationPoint(0F, 0F, 0F);
-        bagWheat.setTextureSize(128, 64);
-        bagWheat.mirror = true;
-        setRotation(bagWheat, 0F, 0F, 0F);
+		bagBot = new ModelRenderer(this);
+		bagBot.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedBody.addChild(bagBot);
+		bagBot.setTextureOffset(53, 58).addBox(-3.0F, 9.0F, 3.0F, 6.0F, 1.0F, 3.0F, 0.0F, true);
 
-        bagBot = new ModelRenderer(this, 0, 46);
-        bagBot.addBox(-3F, 9F, 3F, 6, 1, 3);
-        bagBot.setRotationPoint(0F, 0F, 0F);
-        bagBot.setTextureSize(128, 64);
-        bagBot.mirror = true;
-        setRotation(bagBot, 0F, 0F, 0F);
+		bipedHead = new ModelRenderer(this);
+		bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
+		bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, true);
 
-        this.bipedBody.addChild(bagR);
-        this.bipedBody.addChild(bagL);
-        this.bipedBody.addChild(bagBack);
-        this.bipedBody.addChild(bagFront);
-        this.bipedBody.addChild(bagWheat);
-        this.bipedBody.addChild(bagBot);
-    }
+		headDetail = new ModelRenderer(this);
+		headDetail.setRotationPoint(0.0F, 0.0F, 1.0F);
+		bipedHead.addChild(headDetail);
+		headDetail.setTextureOffset(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
+	}
 
-    private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
-    {
-        model.rotateAngleX = x;
-        model.rotateAngleY = y;
-        model.rotateAngleZ = z;
-    }
+	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
+		modelRenderer.rotateAngleX = x;
+		modelRenderer.rotateAngleY = y;
+		modelRenderer.rotateAngleZ = z;
+	}
 }
