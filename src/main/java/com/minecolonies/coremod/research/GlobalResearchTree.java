@@ -3,6 +3,7 @@ package com.minecolonies.coremod.research;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -42,6 +43,11 @@ public class GlobalResearchTree implements IGlobalResearchTree
         {
             branchMap = new HashMap<>();
         }
+        if (branchMap.containsKey(research.getId()))
+        {
+            Log.getLogger().error("Duplicate research key:" + research.getId());
+        }
+
         branchMap.put(research.getId(), research);
         researchTree.put(branch, branchMap);
     }

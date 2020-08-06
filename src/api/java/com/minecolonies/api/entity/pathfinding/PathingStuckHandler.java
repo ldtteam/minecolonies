@@ -223,7 +223,7 @@ public class PathingStuckHandler implements IStuckHandler
                 if (world.isAirBlock(desired.offset(dir)) && world.isAirBlock(desired.offset(dir).up()))
                 {
                     // Teleport
-                    entity.setPositionAndUpdate(desired.offset(dir).getX(), desired.offset(dir).getY(), desired.offset(dir).getZ());
+                    entity.setPositionAndUpdate(desired.offset(dir).getX() + 0.5d, desired.offset(dir).getY(), desired.offset(dir).getZ() + 0.5d);
                     break;
                 }
             }
@@ -290,7 +290,7 @@ public class PathingStuckHandler implements IStuckHandler
                 if (index < navigator.getPath().getCurrentPathLength())
                 {
                     final PathPoint togo = navigator.getPath().getPathPointFromIndex(index);
-                    navigator.getOurEntity().setPositionAndUpdate(togo.x, togo.y, togo.z);
+                    navigator.getOurEntity().setPositionAndUpdate(togo.x + 0.5d, togo.y, togo.z + 0.5d);
                     delayToNextUnstuckAction = 200;
                 }
             }

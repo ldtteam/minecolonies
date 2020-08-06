@@ -8,10 +8,8 @@
             <label size="148 11" id="name" color="black" pos="25 35"/>
             <label size="135 11" id="level" color="black" pos="38 69"/>
 
-            <button id="build" size="120 19" pos="38 84"
+            <button id="build" size="120 19" pos="38 107"
                     label="$(com.minecolonies.coremod.gui.townHall.build)"/>
-            <button id="hire" size="120 19" pos="38 107"
-                    label="$(com.minecolonies.coremod.gui.townHall.hire)"/>
             <button id="recall" size="120 19" pos="38 130"
                     label="$(com.minecolonies.coremod.gui.townHall.recall)"/>
             <button id="changeSpec" size="120 19" pos="38 153"

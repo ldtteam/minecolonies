@@ -2,8 +2,6 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -151,51 +149,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
         }
-    }
-
-    /**
-     * Notifies the parent building about inventory change.
-     */
-    private void notifyParentAboutInvChange()
-    {
-        if (!buildingPos.equals(BlockPos.ZERO))
-        {
-            if (WorldUtil.isBlockLoaded(world, buildingPos))
-            {
-                TileEntity building = world.getTileEntity(buildingPos);
-                if (building instanceof TileEntityColonyBuilding)
-                {
-                    ((TileEntityColonyBuilding) building).markInvDirty();
-                }
-            }
-        }
-        else if (inWarehouse && world != null)
-        {
-            final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
-            if (colony != null)
-            {
-                colony.getBuildingManager().getWareHouses().forEach(warehouse -> {
-                    if (WorldUtil.isBlockLoaded(world, warehouse.getPosition()))
-                    {
-                        warehouse.getTileEntity().markInvDirty();
-                    }
-                });
-            }
-        }
-    }
-
-    @Override
-    public void remove()
-    {
-        super.remove();
-        notifyParentAboutInvChange();
-    }
-
-    @Override
-    public void onChunkUnloaded()
-    {
-        super.onChunkUnloaded();
-        notifyParentAboutInvChange();
     }
 
     @Override
@@ -372,13 +325,13 @@ public class TileEntityRack extends AbstractTileEntityRack
         for (int i = 0; i < inventoryTagList.size(); ++i)
         {
             final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
-            final ItemStack stack = ItemStack.read(inventoryCompound);
-            if (ItemStackUtils.getSize(stack) <= 0)
+            if (inventoryCompound.contains(TAG_EMPTY))
             {
                 inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
             }
             else
             {
+                final ItemStack stack = ItemStack.read(inventoryCompound);
                 inventory.setStackInSlot(i, stack);
             }
         }
@@ -409,9 +362,9 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             @NotNull final CompoundNBT inventoryCompound = new CompoundNBT();
             final ItemStack stack = inventory.getStackInSlot(slot);
-            if (stack == ItemStackUtils.EMPTY)
+            if (stack.isEmpty())
             {
-                new ItemStack(Blocks.AIR, 0).write(inventoryCompound);
+                inventoryCompound.putBoolean(TAG_EMPTY, true);
             }
             else
             {

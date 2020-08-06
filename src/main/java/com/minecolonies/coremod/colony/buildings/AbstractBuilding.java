@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -23,6 +24,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
@@ -33,6 +36,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
@@ -82,6 +86,8 @@ import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+import static com.minecolonies.api.util.constant.TranslationConstants.ASYNC_REQUEST;
+import static com.minecolonies.api.util.constant.TranslationConstants.NORMAL_REQUEST;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
@@ -604,7 +610,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         super.onColonyTick(colony);
 
-        if (colony.getWorld().getChunkProvider().isChunkLoaded(new ChunkPos(getPosition().getX() >> 4, getPosition().getZ() >> 4)))
+        if (WorldUtil.isBlockLoaded(colony.getWorld(), getPosition()))
         {
             final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
 
@@ -1061,10 +1067,20 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public <R extends IRequestable> IToken<?> createRequest(@NotNull final ICitizenData citizenData, @NotNull final R requested, final boolean async)
     {
         final IToken<?> requestToken = colony.getRequestManager().createRequest(requester, requested);
+        final IRequest<?> request = colony.getRequestManager().getRequestForToken(requestToken);
+
         if (async)
         {
             citizenData.getJob().getAsyncRequests().add(requestToken);
+            citizenData.triggerInteraction(new RequestBasedInteraction(new TranslationTextComponent(ASYNC_REQUEST,
+              request.getShortDisplayString()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
         }
+        else
+        {
+            citizenData.triggerInteraction(new RequestBasedInteraction(new TranslationTextComponent(NORMAL_REQUEST,
+              request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+        }
+
         addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
 
         colony.getRequestManager().assignRequest(requestToken);
@@ -1122,7 +1138,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public boolean hasWorkerOpenRequests(@NotNull final ICitizenData citizen)
     {
-        return !getOpenRequests(citizen).isEmpty();
+        return getOpenRequestsByCitizen().containsKey(citizen.getId());
     }
 
     @Override
@@ -1144,6 +1160,25 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public boolean hasWorkerOpenRequestsFiltered(@NotNull final ICitizenData citizen, @NotNull final Predicate<IRequest<?>> selectionPredicate)
     {
         return getOpenRequests(citizen).stream().anyMatch(selectionPredicate);
+    }
+
+    @Override
+    public boolean hasOpenSyncRequest(@NotNull final ICitizenData citizen)
+    {
+        if (!hasWorkerOpenRequests(citizen))
+        {
+            return false;
+        }
+
+        for (final IToken<?> token : getOpenRequestsByCitizen().get(citizen.getId()))
+        {
+            if (!citizen.isRequestAsync(token))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -1175,8 +1210,17 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return false;
         }
 
-        if (getOpenRequestsByRequestableType().containsKey(TypeConstants.PICKUP))
+        final List<IToken<?>> reqs = new ArrayList<>(getOpenRequestsByRequestableType().getOrDefault(TypeConstants.PICKUP, Collections.emptyList()));
+        if (!reqs.isEmpty())
         {
+            for (final IToken<?> req : reqs)
+            {
+                final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(req);
+                if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
+                {
+                    colony.getRequestManager().reassignRequest(req, Collections.emptyList());
+                }
+            }
             return false;
         }
 
@@ -1187,7 +1231,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public boolean hasCitizenCompletedRequests(@NotNull final ICitizenData data)
     {
-        return !getCompletedRequests(data).isEmpty();
+        return getCompletedRequestsByCitizen().containsKey(data.getId());
     }
 
     @Override
@@ -1511,6 +1555,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         if (citizenThatRequested >= 0)
         {
             getCompletedRequestsByCitizen().computeIfAbsent(citizenThatRequested, ArrayList::new).add(request.getId());
+        }
+        else
+        {
+            colony.getRequestManager().updateRequestState(request.getId(), RequestState.RECEIVED);
         }
 
         markDirty();

@@ -21,6 +21,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -678,6 +679,11 @@ public class Colony implements IColony
             this.raidManager.setCanHaveRaiderEvents(true);
         }
 
+        if (compound.contains(TAG_NIGHTS_SINCE_LAST_RAID))
+        {
+            raidManager.setNightsSinceLastRaid(compound.getInt(TAG_NIGHTS_SINCE_LAST_RAID));
+        }
+
         if (compound.keySet().contains(TAG_AUTO_DELETE))
         {
             this.canColonyBeAutoDeleted = compound.getBoolean(TAG_AUTO_DELETE);
@@ -794,6 +800,7 @@ public class Colony implements IColony
         compound.put(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
         compound.putString(TAG_STYLE, style);
         compound.putBoolean(TAG_RAIDABLE, raidManager.canHaveRaiderEvents());
+        compound.putInt(TAG_NIGHTS_SINCE_LAST_RAID, raidManager.getNightsSinceLastRaid());
         compound.putBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
         compound.putInt(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         this.colonyTag = compound;
@@ -997,7 +1004,7 @@ public class Colony implements IColony
             {
                 if (count++ == randomPos)
                 {
-                    if (world.getChunkProvider().isChunkLoaded(new ChunkPos(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4)))
+                    if (WorldUtil.isBlockLoaded(world, entry.getKey()))
                     {
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
                         if (

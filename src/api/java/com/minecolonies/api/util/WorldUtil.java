@@ -1,8 +1,10 @@
 package com.minecolonies.api.util;
 
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 
@@ -70,7 +72,7 @@ public class WorldUtil
      */
     public static boolean isEntityBlockLoaded(final IWorld world, final BlockPos pos)
     {
-        return isChunkLoaded(world, pos.getX() >> 4, pos.getZ() >> 4);
+        return isEntityChunkLoaded(world, pos.getX() >> 4, pos.getZ() >> 4);
     }
 
     /**
@@ -96,5 +98,17 @@ public class WorldUtil
     public static boolean isEntityChunkLoaded(final IWorld world, final ChunkPos pos)
     {
         return world.getChunkProvider().isChunkLoaded(pos);
+    }
+
+    /**
+     * Returns whether an axis aligned bb is entirely loaded.
+     *
+     * @param world world to check on.
+     * @param box   the box.
+     * @return true if loaded.
+     */
+    public static boolean isAABBLoaded(final World world, final AxisAlignedBB box)
+    {
+        return isChunkLoaded(world, ((int) box.minX) >> 4, ((int) box.minZ) >> 4) && isChunkLoaded(world, ((int) box.maxX) >> 4, ((int) box.maxZ) >> 4);
     }
 }

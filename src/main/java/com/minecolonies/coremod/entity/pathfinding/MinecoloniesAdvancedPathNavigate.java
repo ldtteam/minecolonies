@@ -66,6 +66,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private BlockPos desiredPos;
 
     /**
+     * Timeout for the desired pos, resets when its no longer wanted
+     */
+    private int desiredPosTimeout = 0;
+
+    /**
      * The stuck handler to use
      */
     private IStuckHandler stuckHandler;
@@ -140,6 +145,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         if (dest != null)
         {
             desiredPos = dest;
+            desiredPosTimeout = 50 * 20;
         }
         this.walkSpeed = speed;
 
@@ -167,6 +173,14 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     public void tick()
     {
+        if (desiredPosTimeout > 0)
+        {
+            if (desiredPosTimeout-- <= 0)
+            {
+                desiredPos = null;
+            }
+        }
+
         if (calculationFuture != null)
         {
             if (!calculationFuture.isDone())

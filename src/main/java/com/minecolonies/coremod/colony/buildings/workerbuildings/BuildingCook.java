@@ -17,23 +17,40 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCook;
+import com.minecolonies.coremod.colony.jobs.JobCookAssistant;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.util.FurnaceRecipes;
+
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.items.IItemHandler;
+
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import io.netty.buffer.Unpooled;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -47,7 +64,7 @@ import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
  * Class of the cook building.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public class BuildingCook extends AbstractBuildingFurnaceUser
+public class BuildingCook extends AbstractBuildingSmelterCrafter
 {
     /**
      * The cook string.
@@ -60,6 +77,22 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
+     * If the assistant is fulfilling a recipe
+     * This blocks the auto-smelting of the cook
+     */
+    private boolean isCooking = false;
+
+    /**
+     * If there is an assistant working
+     */
+    private boolean hasAssistant = false;
+
+    /**
+     * Failsafe for isCooking. Number of Colony Ticks before setting isCooking false. 
+     */
+    private int isCookingTimeout = 0;
+    
+    /**
      * Instantiates a new cook building.
      *
      * @param c the colony.
@@ -71,6 +104,29 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         keepX.put(ItemStackUtils.ISFOOD, new Tuple<>(STACKSIZE, true));
         keepX.put(ItemStackUtils.ISCOOKABLE, new Tuple<>(STACKSIZE, true));
         keepX.put(FurnaceTileEntity::isFuel, new Tuple<>(STACKSIZE, true));
+    }
+
+    /**
+     * Get the status of the assistant processing requests
+     * @return true if currently crafting
+     */
+    public boolean getIsCooking()
+    {
+        return isCooking && hasAssistant && isCookingTimeout > 0;
+    }
+
+    /**
+     * Record the state of the assistant processing requests
+     * @param cookingState true if currently crafting
+     */
+    public void setIsCooking(final boolean cookingState)
+    {
+        isCooking = cookingState;
+        if(cookingState)
+        {
+            //Wait ~32 minutes before timing out. 
+            isCookingTimeout = 75;
+        }
     }
 
     @NotNull
@@ -90,7 +146,25 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     @Override
     public IJob<?> createJob(final ICitizenData citizen)
     {
+        for (final ICitizenData leadCitizen : getAssignedCitizen())
+        {
+            if (leadCitizen.getJob() instanceof JobCook)   
+            {
+                hasAssistant = true;
+                return new JobCookAssistant(citizen);
+            }
+        }
         return new JobCook(citizen);
+    }
+
+    @Override
+    public void removeCitizen(final ICitizenData citizen)
+    {
+        if(citizen.getJob() instanceof JobCookAssistant)
+        {
+            hasAssistant = false;
+        }
+        super.removeCitizen(citizen);
     }
 
     @NotNull
@@ -98,6 +172,26 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     public String getJobName()
     {
         return COOK_DESC;
+    }
+
+    @Override
+    public int getMaxInhabitants()
+    {
+        if(getBuildingLevel() < 3)
+        {
+            return 1;
+        }
+        return 2;
+    }
+
+    @Override
+    public boolean isRecipeAlterationAllowed()
+    {
+        if(getBuildingLevel() < 3)
+        {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -132,6 +226,55 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
           getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
+    }
+
+    @Override
+    @Nullable
+    public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
+    {
+        if (getBuildingLevel() < 3)
+        {
+            return null;
+        }
+
+        //First, do the normal check against taught recipes, and return those if found
+        IRecipeStorage storage = super.getFirstRecipe(stackPredicate);
+        if(storage != null)
+        {
+            return storage;
+        }
+
+        //If we didn't have a stored recipe, see if there is a smelting recipe that is also a food output, and use it. 
+        storage = FurnaceRecipes.getInstance().getFirstSmeltingRecipeByResult(stackPredicate);
+        if(storage != null && ISFOOD.test(storage.getPrimaryOutput().getStack()))
+        {
+            return storage;
+        }
+
+        return null;
+    }
+
+    @Override
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
+    {
+        //Try to fulfill normally
+        IRecipeStorage storage = super.getFirstFullFillableRecipe(stackPredicate, count);
+
+        //Couldn't fulfill normally, let's try to fulfill with a temporary smelting recipe. 
+        if(storage == null)
+        {
+            storage = getFirstRecipe(stackPredicate);
+            if (storage != null)
+            {
+                final List<IItemHandler> handlers = getHandlers();
+                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                {
+                    return storage;
+                }
+            }                
+        }
+
+        return null;
     }
 
     @Override
@@ -174,10 +317,15 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         toKeep.putAll(recipeOutputs.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
         return toKeep;
     }
-
+   
     @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
+        if(getBuildingLevel() < 3)
+        {
+            return false;
+        }
+
         Optional<Boolean> isRecipeAllowed;
 
         if (!super.canRecipeBeAdded(token))
@@ -269,6 +417,40 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     {
         return ModBuildings.cook;
     }
+
+    @Override
+    public void onColonyTick(final IColony colony)
+    {
+        super.onColonyTick(colony);
+        if(isCookingTimeout > 0)
+        {
+            isCookingTimeout = isCookingTimeout - 1;
+        }
+    }
+
+    @Override
+    public void openCraftingContainer(final ServerPlayerEntity player)
+    {
+        NetworkHooks.openGui(player, new INamedContainerProvider()
+        {
+            @Override
+            public ITextComponent getDisplayName()
+            {
+                return new StringTextComponent("Crafting GUI");
+            }
+
+            @NotNull
+            @Override
+            public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+            {
+                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+                buffer.writeBoolean(canCraftComplexRecipes());
+                buffer.writeBlockPos(getID());
+                return new ContainerCrafting(id, inv, buffer);
+            }
+        }, buffer -> new PacketBuffer(buffer.writeBoolean(canCraftComplexRecipes())).writeBlockPos(getID()));
+    }
+
 
     /**
      * BuildingCook View.

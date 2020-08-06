@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.Random;
 
 public interface ICitizenData extends ICivilianData
 {
@@ -226,4 +227,10 @@ public interface ICitizenData extends ICivilianData
      * @param status status to set
      */
     void setVisibleStatus(VisibleCitizenStatus status);
+
+    /**
+     * Get the random var of the citizen.
+     * @return the random.
+     */
+    Random getRandom();
 }
