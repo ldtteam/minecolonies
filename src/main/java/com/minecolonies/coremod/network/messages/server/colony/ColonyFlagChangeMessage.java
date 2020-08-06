@@ -10,12 +10,22 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.apache.logging.log4j.LogManager;
 
+/**
+ * Message to update the colony flag once set in the {@link com.minecolonies.coremod.client.gui.WindowBannerPicker}.
+ */
 public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
 {
+    /** The chosen list of patterns from the window */
     private ListNBT patterns;
 
+    /** Default constructor **/
     public ColonyFlagChangeMessage () { super(); }
 
+    /**
+     * Spawn a new change message
+     * @param colony the colony the player changed the banner in
+     * @param patternList the list of patterns they set in the banner picker
+     */
     public ColonyFlagChangeMessage (IColony colony, ListNBT patternList)
     {
         super(colony);

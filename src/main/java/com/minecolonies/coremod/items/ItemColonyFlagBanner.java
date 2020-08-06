@@ -21,6 +21,10 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
+/**
+ * This item represents the colony flag banner, both wall and floor blocks.
+ * Allows duplication of other banner pattern lists to its own default
+ */
 public class ItemColonyFlagBanner extends BannerItem
 {
     public ItemColonyFlagBanner(String name, ItemGroup tab, Properties properties)

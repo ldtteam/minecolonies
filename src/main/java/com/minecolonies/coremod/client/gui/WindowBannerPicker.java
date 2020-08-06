@@ -19,6 +19,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -195,7 +196,13 @@ public class WindowBannerPicker extends Screen
      */
     public void setLayer(@Nullable BannerPattern pattern, DyeColor color)
     {
-        if (pattern == null) pattern = activeLayer == 0 ? BannerPattern.BASE : this.layers.get(activeLayer).getFirst();
+        if (pattern == null)
+        {
+            // Drop out if only the color was selected.
+            if (activeLayer == layers.size()) return;
+            else if (activeLayer == 0) pattern = BannerPattern.BASE;
+            else pattern = layers.get(activeLayer).getFirst();
+        }
 
         if (activeLayer == layers.size())
             layers.add(new Pair<>(pattern, color));
@@ -273,6 +280,7 @@ public class WindowBannerPicker extends Screen
         this.modelRender.rotationPointY = -32.0F;
 
         IRenderTypeBuffer.Impl source = this.minecraft.getRenderTypeBuffers().getBufferSource();
+        LogManager.getLogger().info(layers);
         BannerTileEntityRenderer.func_230180_a_(
                 transform,
                 source, 15728880,

@@ -20,6 +20,10 @@ import net.minecraft.world.IWorldReader;
 
 import java.util.Map;
 
+/**
+ * A custom banner block to construct the associated tile entity that will render the colony flag.
+ * This is the wall version. For the floor version: {@link BlockColonyFlagBanner}
+ */
 public class BlockColonyFlagWallBanner extends AbstractColonyFlagBanner<BlockColonyFlagWallBanner>
 {
     public static final DirectionProperty          HORIZONTAL_FACING = HorizontalBlock.HORIZONTAL_FACING;
@@ -59,7 +63,8 @@ public class BlockColonyFlagWallBanner extends AbstractColonyFlagBanner<BlockCol
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    public BlockState getStateForPlacement(BlockItemUseContext context)
+    {
         BlockState blockstate = this.getDefaultState();
         IWorldReader iworldreader = context.getWorld();
         BlockPos blockpos = context.getPos();

@@ -28,6 +28,10 @@ import net.minecraft.world.GameType;
 
 import java.util.List;
 
+/**
+ * The custom renderer to render the colony flag patterns if they exist,
+ * and a placeholder marker if in Creative mode.
+ */
 public class TileEntityColonyFlagRenderer extends TileEntityRenderer<TileEntityColonyFlag>
 {
     private final ModelRenderer cloth     = BannerTileEntityRenderer.getModelRender();
