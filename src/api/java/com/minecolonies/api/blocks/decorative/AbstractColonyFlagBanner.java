@@ -11,14 +11,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistry;
-import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
 
@@ -47,21 +44,21 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack)
     {
-        if (placer instanceof PlayerEntity)
-        {
-            TileEntity te = worldIn.getTileEntity(pos);
-            if (te instanceof TileEntityColonyFlag)
-            {
-                IColony colony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (PlayerEntity) placer);
-                if (colony != null)
-                    ((TileEntityColonyFlag) te).colonyId = colony.getID();
+        if (worldIn.isRemote) return;
 
-                // Override the defaults so they appear immediately if no colony is found.
-                CompoundNBT nbt = stack.getChildTag("BlockEntityTag");
-                if (nbt != null)
-                    ((TileEntityColonyFlag) te).setPatterns(nbt.getList("Patterns", 10));
-            }
+        TileEntity te = worldIn.getTileEntity(pos);
+        if (te instanceof TileEntityColonyFlag)
+        {
+            IColony colony = IColonyManager.getInstance().getIColony(worldIn, pos);
+
+            // Allow the player to place their own beyond the colony
+            if (colony == null && placer instanceof PlayerEntity)
+                IColonyManager.getInstance().getIColonyByOwner(worldIn, (PlayerEntity) placer);
+
+            if (colony != null)
+                ((TileEntityColonyFlag) te).colonyId = colony.getID();
         }
+
     }
 
     @Override

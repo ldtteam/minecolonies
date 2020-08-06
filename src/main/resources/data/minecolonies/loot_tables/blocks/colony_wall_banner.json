@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecolonies:colony_wall_banner"
+          "name": "minecolonies:colony_banner"
         }
       ]
     }

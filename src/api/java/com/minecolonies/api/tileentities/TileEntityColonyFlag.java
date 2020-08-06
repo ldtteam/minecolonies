@@ -8,6 +8,7 @@ import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.tileentity.TileEntity;
@@ -61,6 +62,13 @@ public class TileEntityColonyFlag extends TileEntity
 
     @Override
     public CompoundNBT getUpdateTag() { return this.write(new CompoundNBT()); }
+
+    @Override
+    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
+    {
+        final CompoundNBT compound = packet.getNbtCompound();
+        this.read(compound);
+    }
 
     /**
      * Retrieves the patterns for the renderer
