@@ -121,7 +121,7 @@
   "minecolonies.config.oplevelforserver": "OP Level for Servers",
   "minecolonies.config.oplevelforserver.comment": "Which level counts as OP on a server. [Default: 3]",
   "minecolonies.config.autodeletecoloniesinhours": "Auto Delete Colonies in Hours",
-  "minecolonies.config.autodeletecoloniesinhours.comment": "Sets the amount of hours until a colony will be deleted after not seeing its mayor. Set to zero to disable this. [Default: 0]",
+  "minecolonies.config.autodeletecoloniesinhours.comment": "Sets the amount of hours until a colony will be deleted after not seeing its governor. Set to zero to disable this. [Default: 0]",
   "minecolonies.config.autodestroycolonyblocks": "Auto Destroy Colony Blocks",
   "minecolonies.config.autodestroycolonyblocks.comment": "Sets whether or not colony structures are destroyed automatically when a colony is deleted. [Default: true]",
   "minecolonies.config.canplayerusertpcommand": "Can a Player use RTP Command",
@@ -1017,7 +1017,7 @@
   "com.minecolonies.coremod.gui.workerhuts.gettool": "Get Guard Tool",
 
   "com.minecolonies.coremod.progress.supplies_placed": "§6 Welcome to MineColonies. Now that you have your supplies, how about searching a nice location to place your Town Hall to create your colony...though far away from a vanilla village, if possible.",
-  "com.minecolonies.coremod.progress.colony_founded": "§6 Word is out about a newly founded colony. Soon the first settlers will join your colony, if there is enough space around the Town Hall. (Experienced mayors can turn off these helpful messages in the Town Hall block.)",
+  "com.minecolonies.coremod.progress.colony_founded": "§6 Word is out about a newly founded colony. Soon the first settlers will join your colony, if there is enough space around the Town Hall. (Experienced governors can turn off these helpful messages in the Town Hall block.)",
   "com.minecolonies.coremod.progress.first_citizen_spawned": "§6 The first settler arrived at your colony! You should place a Builder's Hut to start your settlement.",
   "com.minecolonies.coremod.progress.builder_placed": "§6 Great job on the placement of the Builder's Hut! However, that's not enough. You need to access it and click the Build Building button! Soon your citizen will be creating new structures for the village.",
   "com.minecolonies.coremod.progress.built_enqueued": "§6 While your Builder is working, you can check on the resources he needs on the second page of the building GUI.",
