@@ -1688,7 +1688,7 @@
   "com.minecolonies.coremod.gui.workerhuts.guide.arrow": "Make sure to check out all the building's pages!",
   "com.minecolonies.coremod.gui.workerhuts.guide.chest": "Here you can have an overview of the combined building inventory.",
 
-  "com.minecolonies.coremod.gui.tavern.visitordeath": "The visitor %s died from %s, word spreads around that your Tavern is a dangerous place. You are likely to see less visitors in the future now!",
+  "com.minecolonies.coremod.gui.tavern.visitordeath": "The visitor %s died from %s and word spreads around that your Tavern is a dangerous place. You are likely to see less visitors in the future!",
   "com.minecolonies.coremod.gui.chat.showstats": "Show citizen stats",
   "com.minecolonies.coremod.gui.chat.recruit": "Recruit for ",
   "com.minecolonies.coremod.recruit.message": "%s has decided to stay in your colony as a citizen!",
