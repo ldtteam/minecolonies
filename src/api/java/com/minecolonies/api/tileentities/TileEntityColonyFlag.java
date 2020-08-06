@@ -90,8 +90,6 @@ public class TileEntityColonyFlag extends TileEntity
         );
     }
 
-    public void setPatterns(ListNBT patterns) { this.patterns = patterns; }
-
     /**
      * Builds a mutable ItemStack from the information within the tile entity
      * @return the ItemStack representing this banner
