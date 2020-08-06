@@ -33,7 +33,6 @@ public class ModelEntityPigFarmerFemale extends CitizenModel<AbstractEntityCitiz
         ModelRenderer hairfrontTop_1;
         ModelRenderer hairfrontTop_2;
         ModelRenderer hairfrontTop_3;
-        ModelRenderer bipedRightLeg;
         ModelRenderer carrot1;
         ModelRenderer carrot2;
         ModelRenderer carrot3;
