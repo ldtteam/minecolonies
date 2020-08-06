@@ -162,6 +162,8 @@ public class ModelEntityBakerFemale extends CitizenModel<AbstractEntityCitizen>
         botL.setRotationPoint(0.0F, 0.0F, 0.0F);
         hat.addChild(botL);
         botL.setTextureOffset(64, 14).addBox(1.5F, -5.5F, -1.5F, 3.0F, 2.0F, 1.0F, 0.0F, true);
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

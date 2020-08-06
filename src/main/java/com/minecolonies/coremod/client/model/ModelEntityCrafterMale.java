@@ -293,6 +293,8 @@ public class ModelEntityCrafterMale extends CitizenModel<AbstractEntityCitizen>
         bipedHead.addChild(SpecRB);
         setRotationAngle(SpecRB, -0.3346F, 0.0F, 0.0F);
         SpecRB.setTextureOffset(23, 44).addBox(-2.8F, -9.5F, -6.6F, 2.0F, 2.0F, 1.0F, 0.0F, true);
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

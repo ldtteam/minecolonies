@@ -21,7 +21,6 @@ public class ModelEntityFishermanMale extends CitizenModel<AbstractEntityCitizen
         ModelRenderer shape3;
         ModelRenderer shape2;
         ModelRenderer shape1;
-
         ModelRenderer string;
         ModelRenderer pole;
         ModelRenderer reel;

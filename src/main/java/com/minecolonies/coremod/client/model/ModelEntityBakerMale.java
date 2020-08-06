@@ -72,6 +72,8 @@ public class ModelEntityBakerMale extends CitizenModel<AbstractEntityCitizen>
         hat.addChild(top);
         setRotationAngle(top, -0.1859F, 0.0F, 0.0F);
         top.setTextureOffset(0, 53).addBox(-2.5F, -11.0F, -4.6F, 5.0F, 1.0F, 7.0F, 0.0F, true);
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

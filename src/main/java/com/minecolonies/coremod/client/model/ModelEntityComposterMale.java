@@ -69,6 +69,8 @@ public class ModelEntityComposterMale extends CitizenModel<AbstractEntityCitizen
         bipedBody = new ModelRenderer(this);
         bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
         bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, true);
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

@@ -143,6 +143,8 @@ public class ModelEntityFarmerFemale extends CitizenModel<AbstractEntityCitizen>
         bipedHead.addChild(ponytailTail);
         setRotationAngle(ponytailTail, 0.2269F, 0.0F, 0.0F);
         ponytailTail.setTextureOffset(24, 0).addBox(-1.0F, -2.2F, 3.5F, 2.0F, 5.0F, 1.0F, 0.0F, true);
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

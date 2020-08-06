@@ -139,6 +139,8 @@ public class ModelEntityBuilderFemale extends CitizenModel<AbstractEntityCitizen
         ponytailBase.addChild(ponytailTail);
         setRotationAngle(ponytailTail, -0.1222F, 0.0F, 0.0F);
         ponytailTail.setTextureOffset(30, 0).addBox(-0.5F, 2.2F, 3.8F, 1.0F, 5.0F, 1.0F, 0.0F, true);
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

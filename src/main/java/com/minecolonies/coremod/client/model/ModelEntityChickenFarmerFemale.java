@@ -206,6 +206,8 @@ public class ModelEntityChickenFarmerFemale extends CitizenModel<AbstractEntityC
         baseBag.setRotationPoint(0.0F, 0.0F, 0.0F);
         bipedBody.addChild(baseBag);
         baseBag.setTextureOffset(88, 40).addBox(2.4667F, 10.0F, -3.0F, 2.0F, 2.0F, 6.0F, 0.0F, true);
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

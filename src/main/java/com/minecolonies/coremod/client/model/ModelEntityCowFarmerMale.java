@@ -80,6 +80,8 @@ public class ModelEntityCowFarmerMale extends CitizenModel<AbstractEntityCitizen
         headDetail.setRotationPoint(0.0F, 0.0F, 1.0F);
         bipedHead.addChild(headDetail);
         headDetail.setTextureOffset(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

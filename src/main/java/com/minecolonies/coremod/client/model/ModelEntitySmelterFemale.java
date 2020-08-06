@@ -83,6 +83,8 @@ public class ModelEntitySmelterFemale extends CitizenModel<AbstractEntityCitizen
         bipedHead.addChild(ponytailT);
         setRotationAngle(ponytailT, 0.2269F, 0.0F, 0.0F);
         ponytailT.setTextureOffset(79, 33).addBox(-1.0F, -2.0F, 3.4F, 2.0F, 5.0F, 1.0F, 0.0F, true);
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

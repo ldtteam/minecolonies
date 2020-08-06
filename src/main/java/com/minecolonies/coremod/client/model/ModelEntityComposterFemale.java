@@ -204,6 +204,8 @@ public class ModelEntityComposterFemale extends CitizenModel<AbstractEntityCitiz
         gloveR.setRotationPoint(-5.0F, 2.0F, 0.0F);
         bipedRightArm.addChild(gloveR);
         gloveR.setTextureOffset(76, 0).addBox(2.5F, 3.0F, -2.5F, 4.0F, 1.0F, 5.0F, 0.0F, true);
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

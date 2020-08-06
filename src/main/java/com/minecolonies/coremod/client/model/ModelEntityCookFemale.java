@@ -71,6 +71,8 @@ public class ModelEntityCookFemale extends CitizenModel<AbstractEntityCitizen>
         hair.setRotationPoint(-4.5F, -9.2F, 0.0F);
         setRotationAngle(hair, -0.8551F, 0.0F, 0.0F);
         hair.setTextureOffset(0, 39).addBox(0.0F, 0.0F, 0.0F, 9.0F, 2.0F, 8.0F, 0.0F, true);
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

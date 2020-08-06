@@ -222,6 +222,8 @@ public class ModelEntityCowFarmerFemale extends CitizenModel<AbstractEntityCitiz
         bipedLeftArm = new ModelRenderer(this);
         bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
         bipedLeftArm.setTextureOffset(40, 16).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, false);
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
