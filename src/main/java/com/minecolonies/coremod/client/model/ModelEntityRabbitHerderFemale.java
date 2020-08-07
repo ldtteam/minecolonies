@@ -66,7 +66,7 @@ public class ModelEntityRabbitHerderFemale extends CitizenModel<AbstractEntityCi
         bipedLeftArm = new ModelRenderer(this);
         bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
         bipedLeftArm.setTextureOffset(40, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
-        bipedLeftArm.setTextureOffset(21, 32).addBox(-0.5F, 5.0F, -2.25F, 4.0F, 0.75F, 4.5F, 0.0F, false);
+        bipedLeftArm.setTextureOffset(21, 32).addBox(-1.5F, 5.0F, -2.25F, 4.0F, 0.75F, 4.5F, 0.0F, false);
 
         bipedRightArm = new ModelRenderer(this);
         bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
