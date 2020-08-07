@@ -400,42 +400,44 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState checkAndAttackTarget()
     {
-        if (getState() == GUARD_SLEEP || getState() == GUARD_REGEN)
+        if (getState() == GUARD_SLEEP || getState() == GUARD_REGEN || getState() == GUARD_ATTACK_PROTECT || getState() == GUARD_ATTACK_PHYSICAL
+              || getState() == GUARD_ATTACK_RANGED)
         {
             return null;
         }
 
         if (checkForTarget())
         {
-            if (hasTool())
+            if (!hasTool())
             {
-                for (final ICitizenData citizen : getOwnBuilding().getAssignedCitizen())
-                {
-                    if (citizen.getEntity().isPresent() && citizen.getEntity().get().getRevengeTarget() == null)
-                    {
-                        citizen.getEntity().get().setRevengeTarget(target);
-                    }
-                }
-
-                if (target instanceof AbstractEntityMinecoloniesMob)
-                {
-                    for (final Map.Entry<BlockPos, IBuilding> entry : worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().entrySet())
-                    {
-                        if (entry.getValue() instanceof AbstractBuildingGuards &&
-                              worker.getPosition().distanceSq(entry.getKey()) < PATROL_DEVIATION_RAID_POINT)
-                        {
-                            final AbstractBuildingGuards building = (AbstractBuildingGuards) entry.getValue();
-                            building.setTempNextPatrolPoint(target.getPosition());
-                        }
-                    }
-                }
-
-                fighttimer = 30;
-                equipInventoryArmor();
-                worker.getNavigator().clearPath();
-                return getAttackState();
+                return START_WORKING;
             }
-            return START_WORKING;
+
+            for (final ICitizenData citizen : getOwnBuilding().getAssignedCitizen())
+            {
+                if (citizen.getEntity().isPresent() && citizen.getEntity().get().getRevengeTarget() == null)
+                {
+                    citizen.getEntity().get().setRevengeTarget(target);
+                }
+            }
+
+            if (target instanceof AbstractEntityMinecoloniesMob)
+            {
+                for (final Map.Entry<BlockPos, IBuilding> entry : worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().entrySet())
+                {
+                    if (entry.getValue() instanceof AbstractBuildingGuards &&
+                          worker.getPosition().distanceSq(entry.getKey()) < PATROL_DEVIATION_RAID_POINT)
+                    {
+                        final AbstractBuildingGuards building = (AbstractBuildingGuards) entry.getValue();
+                        building.setTempNextPatrolPoint(target.getPosition());
+                    }
+                }
+            }
+
+            fighttimer = 30;
+            equipInventoryArmor();
+            moveInAttackPosition();
+            return getAttackState();
         }
 
         if (fighttimer > 0)
@@ -666,9 +668,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         if (worker.getEntitySenses().canSee(target) && isWithinPersecutionDistance(target.getPosition()))
         {
             target.setRevengeTarget(worker);
-            fighttimer = 30;
-            worker.getNavigator().clearPath();
-            return getAttackState();
+            return checkAndAttackTarget();
         }
 
         // Move towards the target
@@ -757,15 +757,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             {
                 resetTarget();
                 return false;
-            }
-
-            // Move into range
-            if (!isInAttackDistance(target.getPosition()))
-            {
-                if (worker.getNavigator().noPath())
-                {
-                    moveInAttackPosition();
-                }
             }
 
             return true;
