@@ -395,6 +395,12 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
+    public void handleUpdateTag(final CompoundNBT tag)
+    {
+        this.read(tag);
+    }
+
+    @Override
     public void rotate(final Rotation rotationIn)
     {
         super.rotate(rotationIn);
@@ -402,12 +408,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             relativeNeighbor = relativeNeighbor.rotate(rotationIn);
         }
-    }
-
-    @Override
-    public void handleUpdateTag(final CompoundNBT tag)
-    {
-        this.read(tag);
     }
 
     @Nonnull
