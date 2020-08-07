@@ -432,6 +432,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
                 fighttimer = 30;
                 equipInventoryArmor();
+                worker.getNavigator().clearPath();
                 return getAttackState();
             }
             return START_WORKING;
@@ -666,6 +667,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         {
             target.setRevengeTarget(worker);
             fighttimer = 30;
+            worker.getNavigator().clearPath();
             return getAttackState();
         }
 
