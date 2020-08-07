@@ -1215,10 +1215,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             for (final IToken<?> req : reqs)
             {
-                final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(req);
-                if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
+                if (colony.getRequestManager().getRequestForToken(req).getState() == RequestState.IN_PROGRESS)
                 {
-                    colony.getRequestManager().reassignRequest(req, Collections.emptyList());
+                    final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(req);
+                    if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
+                    {
+                        colony.getRequestManager().reassignRequest(req, Collections.emptyList());
+                    }
                 }
             }
             return false;
