@@ -381,8 +381,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
 
         seeds.setCount(seeds.getMaxStackSize());
-        checkIfRequestForItemExistOrCreateAsynch(seeds);
-
+        checkIfRequestForItemExistOrCreateAsynch(seeds, seeds.getMaxStackSize(), 1);
         currentField.nextState();
         return PREPARING;
     }
