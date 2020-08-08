@@ -22719,6 +22719,45 @@
       }
     ]
   },
+  "mob.amazon.death": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/death",
+        "stream": false
+      }
+    ]
+  },
+  "mob.amazon.say": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/say",
+        "stream": false
+      }
+    ]
+  },
+  "mob.amazon.hurt": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/hurt1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt3",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt4",
+        "stream": false
+      }
+    ]
+  },
   "mob.barbarian.death": {
     "category": "hostile",
     "sounds": [
@@ -22738,6 +22777,123 @@
     ]
   },
   "mob.barbarian.hurt": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/hurt1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt3",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt4",
+        "stream": false
+      }
+    ]
+  },
+  "mob.egyptian.death": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/death",
+        "stream": false
+      }
+    ]
+  },
+  "mob.egyptian.say": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/say",
+        "stream": false
+      }
+    ]
+  },
+  "mob.egyptian.hurt": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/hurt1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt3",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt4",
+        "stream": false
+      }
+    ]
+  },
+  "mob.norseman.death": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/death",
+        "stream": false
+      }
+    ]
+  },
+  "mob.norseman.say": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/say",
+        "stream": false
+      }
+    ]
+  },
+  "mob.norseman.hurt": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/hurt1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt3",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt4",
+        "stream": false
+      }
+    ]
+  },
+  "mob.pirate.death": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/death",
+        "stream": false
+      }
+    ]
+  },
+  "mob.pirate.say": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/say",
+        "stream": false
+      }
+    ]
+  },
+  "mob.pirate.hurt": {
     "category": "hostile",
     "sounds": [
       {
