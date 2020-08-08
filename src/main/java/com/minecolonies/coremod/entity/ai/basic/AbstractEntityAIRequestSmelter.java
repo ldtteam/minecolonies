@@ -493,8 +493,15 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     @Override
     protected IAIState craft()
     {
-
         final List<ItemStack> possibleFuels = getOwnBuilding().getAllowedFuel();
+        if (possibleFuels.isEmpty())
+        {
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(FURNACE_USER_NO_FUEL), ChatPriority.BLOCKING));
+            }
+            return getState();
+        }
 
         final int amountOfFuelInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> item.isItemEqual(candidate)));
         final int amountOfFuelInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> item.isItemEqual(candidate)));
