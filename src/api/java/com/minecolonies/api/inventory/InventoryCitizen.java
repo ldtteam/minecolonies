@@ -254,17 +254,18 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
     {
         markDirty();
+        final ItemStack copy = stack.copy();
         final ItemStack inSlot = mainInventory.get(slot);
-        if (inSlot.getCount() >= inSlot.getMaxStackSize() || (!inSlot.isEmpty() && !inSlot.isItemEqual(stack)))
+        if (inSlot.getCount() >= inSlot.getMaxStackSize() || (!inSlot.isEmpty() && !inSlot.isItemEqual(copy)))
         {
-            return stack;
+            return copy;
         }
 
         if (inSlot.isEmpty())
         {
             if (!simulate)
             {
-                mainInventory.set(slot, stack);
+                mainInventory.set(slot, copy);
                 return ItemStack.EMPTY;
             }
             else
@@ -274,11 +275,11 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         }
 
         final int avail = inSlot.getMaxStackSize() - inSlot.getCount();
-        if (avail >= stack.getCount())
+        if (avail >= copy.getCount())
         {
             if (!simulate)
             {
-                inSlot.setCount(inSlot.getCount() + stack.getCount());
+                inSlot.setCount(inSlot.getCount() + copy.getCount());
             }
             return ItemStack.EMPTY;
         }
@@ -288,8 +289,8 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
             {
                 inSlot.setCount(inSlot.getCount() + avail);
             }
-            stack.setCount(stack.getCount() - avail);
-            return stack;
+            copy.setCount(copy.getCount() - avail);
+            return copy;
         }
     }
 
