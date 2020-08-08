@@ -3,6 +3,8 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -115,7 +117,18 @@ public class VisitorData extends CitizenData implements IVisitorData
             return;
         }
 
-        getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), getLastPosition(), true);
+        if (WorldUtil.isEntityBlockLoaded(getColony().getWorld(), getLastPosition()))
+        {
+            getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), getLastPosition(), true);
+        }
+        else if (getHomeBuilding() != null)
+        {
+            final BlockPos spawnPos = BlockPosUtil.findAround(getColony().getWorld(), getHomeBuilding().getID(), 1, 1, bs -> bs.getMaterial() == Material.AIR);
+            if (spawnPos != null)
+            {
+                getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), spawnPos, true);
+            }
+        }
     }
 
 }

@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VISITORS;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
@@ -219,7 +219,6 @@ public class BuildingTavern extends BuildingHome
             spawnPos = getPosition();
         }
 
-        spawnPos.add(HALF_BLOCK, SLIGHTLY_UP, HALF_BLOCK);
         colony.getVisitorManager().spawnOrCreateCivilian(newCitizen, colony.getWorld(), spawnPos, true);
 
         final AbstractEntityCitizen citizenEntity = newCitizen.getEntity().get();
