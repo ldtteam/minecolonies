@@ -377,6 +377,26 @@ public final class NbtTagConstants
     public static final String TAG_TEAM_COLOR = "teamcolor";
 
     /**
+     * Tag used to store the colony flag
+     */
+    public static final String TAG_FLAG_PATTERNS = "colonyflag";
+
+    /**
+     * Tag used by vanilla to store banner patterns
+     */
+    public static final String TAG_BANNER_PATTERNS = "Patterns";
+
+    /**
+     * Tag used by vanilla to store a single pattern in banner pattern-color pairs
+     */
+    public static final String TAG_SINGLE_PATTERN = "Pattern";
+
+    /**
+     * Tag used by vanilla to store single color in banner pattern-color pairs
+     */
+    public static final String TAG_PATTERN_COLOR = "Color";
+
+    /**
      * Citizen data Tags.
      */
     public static final String TAG_FEMALE             = "female";

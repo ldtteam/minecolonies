@@ -1744,5 +1744,10 @@
   "com.minecolonies.coremod.gui.field.near": "Nearest to you",
   "com.minecolonies.coremod.gui.field.worker": "Farmer: %s",
 
-  "com.minecolonies.coremod.gui.chat.skipchitchat": "Skip the Chit-Chat"
+  "com.minecolonies.coremod.gui.chat.skipchitchat": "Skip the Chit-Chat",
+
+  "com.minecolonies.coremod.gui.flag.choose": "Choose a color and pattern for up to 6 layers",
+  "com.minecolonies.coremod.gui.flag.base_layer": "Base",
+  "com.minecolonies.coremod.gui.townhall.edit_flag": "Edit colony flag",
+  "block.minecolonies.colony_banner": "Colony Flag Banner"
 }
