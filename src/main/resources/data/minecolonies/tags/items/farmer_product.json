@@ -3,7 +3,6 @@
   "values": [
     "minecraft:hay_block",
     "#forge:seeds",
-    "minecolonies:composted_dirt",
-    "minecraft:nether_wart_block"
+    "minecolonies:composted_dirt"
   ]
 }
