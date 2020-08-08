@@ -22,6 +22,7 @@ import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -32,16 +33,21 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.tileentity.BannerTileEntityRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.tileentity.BannerPattern;
+import net.minecraft.tileentity.BannerTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -246,6 +252,13 @@ public class Colony implements IColony
      * The colony team color.
      */
     private TextFormatting colonyTeamColor = TextFormatting.WHITE;
+
+    /**
+     * The colony flag, as a list of patterns.
+     */
+    private ListNBT colonyFlag = new BannerPattern.Builder()
+            .setPatternWithColor(BannerPattern.BASE, DyeColor.WHITE)
+            .func_222476_a();
 
     /**
      * The last time the mercenaries were used.
@@ -539,6 +552,18 @@ public class Colony implements IColony
     }
 
     /**
+     * Set up the colony flag patterns for use in decorations etc
+     *
+     * @param colonyFlag the list of pattern-color pairs
+     */
+    @Override
+    public void setColonyFlag(ListNBT colonyFlag)
+    {
+        this.colonyFlag = colonyFlag;
+        markDirty();
+    }
+
+    /**
      * Load a saved colony.
      *
      * @param compound The NBT compound containing the colony's data.
@@ -700,6 +725,11 @@ public class Colony implements IColony
             this.setColonyColor(TextFormatting.values()[compound.getInt(TAG_TEAM_COLOR)]);
         }
 
+        if (compound.keySet().contains(TAG_FLAG_PATTERNS))
+        {
+            this.setColonyFlag(compound.getList(TAG_FLAG_PATTERNS, Constants.TAG_COMPOUND));
+        }
+
         this.requestManager.reset();
         if (compound.keySet().contains(TAG_REQUESTMANAGER))
         {
@@ -805,6 +835,7 @@ public class Colony implements IColony
         compound.putInt(TAG_NIGHTS_SINCE_LAST_RAID, raidManager.getNightsSinceLastRaid());
         compound.putBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
         compound.putInt(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
+        compound.put(TAG_FLAG_PATTERNS, colonyFlag);
         this.colonyTag = compound;
 
         isActive = false;
@@ -1620,6 +1651,14 @@ public class Colony implements IColony
     {
         return colonyTeamColor;
     }
+
+    /**
+     * Getter for the colony flag patterns
+     *
+     * @return the list of pattern-color pairs
+     */
+    @Override
+    public ListNBT getColonyFlag() { return colonyFlag; }
 
     /**
      * Set the colony to be active.

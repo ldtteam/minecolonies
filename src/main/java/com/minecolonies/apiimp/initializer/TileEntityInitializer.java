@@ -47,6 +47,9 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.STASH = TileEntityType.Builder.create(TileEntityStash::new, ModBlocks.blockStash).build(null);
         MinecoloniesTileEntities.STASH.setRegistryName(Constants.MOD_ID, "stash");
 
+        MinecoloniesTileEntities.COLONY_FLAG = TileEntityType.Builder.create(TileEntityColonyFlag::new, ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner).build(null);
+        MinecoloniesTileEntities.COLONY_FLAG.setRegistryName(Constants.MOD_ID, "colony_flag");
+
 
         event.getRegistry().registerAll(
           MinecoloniesTileEntities.SCARECROW,
@@ -57,6 +60,7 @@ public class TileEntityInitializer
           MinecoloniesTileEntities.WAREHOUSE,
           MinecoloniesTileEntities.COMPOSTED_DIRT,
           MinecoloniesTileEntities.ENCHANTER,
-          MinecoloniesTileEntities.STASH);
+          MinecoloniesTileEntities.STASH,
+          MinecoloniesTileEntities.COLONY_FLAG);
     }
 }

@@ -153,6 +153,7 @@ public class NetworkChannel
         registerMessage(++idx, RecallSingleCitizenMessage.class, RecallSingleCitizenMessage::new);
         registerMessage(++idx, AssignFilterableItemMessage.class, AssignFilterableItemMessage::new);
         registerMessage(++idx, TeamColonyColorChangeMessage.class, TeamColonyColorChangeMessage::new);
+        registerMessage(++idx, ColonyFlagChangeMessage.class, ColonyFlagChangeMessage::new);
         registerMessage(++idx, ToggleHelpMessage.class, ToggleHelpMessage::new);
         registerMessage(++idx, PauseCitizenMessage.class, PauseCitizenMessage::new);
         registerMessage(++idx, RestartCitizenMessage.class, RestartCitizenMessage::new);
