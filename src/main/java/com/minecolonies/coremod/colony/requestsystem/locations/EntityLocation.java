@@ -112,7 +112,7 @@ public class EntityLocation implements ILocation
     public boolean isReachableFromLocation(@NotNull final ILocation location)
     {
         checkEntity();
-        return !(entity == null || entity.get() == null) && location.getDimension() == getDimension();
+        return !(entity == null || entity.get() == null) && location.getDimension().equals(getDimension());
     }
 
     /**

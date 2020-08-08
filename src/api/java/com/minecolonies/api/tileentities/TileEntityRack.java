@@ -395,9 +395,9 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public void handleUpdateTag(final CompoundNBT tag)
+    public void handleUpdateTag(final BlockState state, final CompoundNBT tag)
     {
-        this.read(tag);
+        this.read(state, tag);
     }
 
     @Override
