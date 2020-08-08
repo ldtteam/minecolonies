@@ -178,7 +178,8 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
             job.getWorkOrder().setRequested(true);
 
-            if (job.getWorkOrder().getAmountOfRes() == 0)
+            if (job.getWorkOrder().getAmountOfRes() == 0 || buildingWorker.getNeededResources().values().stream()
+                                                              .mapToInt(ItemStorage::getAmount).sum() > job.getWorkOrder().getAmountOfRes())
             {
                 job.getWorkOrder().setAmountOfRes(buildingWorker.getNeededResources().values().stream()
                                                     .mapToInt(ItemStorage::getAmount).sum());
