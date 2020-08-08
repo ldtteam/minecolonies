@@ -1,11 +1,11 @@
 package com.minecolonies.api.util;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
@@ -46,11 +46,13 @@ public class WorldUtil
      * @param world the world to mark it dirty in.
      * @param pos the position within the chunk.
      */
-    public static void markChunkDirty(final IWorld world, final BlockPos pos)
+    public static void markChunkDirty(final World world, final BlockPos pos)
     {
         if (WorldUtil.isBlockLoaded(world, pos))
         {
-            ((Chunk) world.getChunk(pos)).markDirty();
+            world.getChunk(pos.getX() >> 4, pos.getZ() >> 4).markDirty();
+            final BlockState state = world.getBlockState(pos);
+            world.notifyBlockUpdate(pos, state, state, 3);
         }
     }
 
