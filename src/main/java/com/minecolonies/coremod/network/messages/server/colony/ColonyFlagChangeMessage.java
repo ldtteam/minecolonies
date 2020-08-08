@@ -10,6 +10,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.apache.logging.log4j.LogManager;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
+
 /**
  * Message to update the colony flag once set in the {@link com.minecolonies.coremod.client.gui.WindowBannerPicker}.
  */
@@ -43,7 +45,7 @@ public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
     protected void toBytesOverride(PacketBuffer buf)
     {
         CompoundNBT nbt = new CompoundNBT();
-        nbt.put("Patterns", this.patterns);
+        nbt.put(TAG_BANNER_PATTERNS, this.patterns);
         buf.writeCompoundTag(nbt);
     }
 
@@ -52,6 +54,6 @@ public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
     {
         CompoundNBT nbt = buf.readCompoundTag();
         if (nbt != null)
-            this.patterns = nbt.getList("Patterns", Constants.TAG_COMPOUND);
+            this.patterns = nbt.getList(TAG_BANNER_PATTERNS, Constants.TAG_COMPOUND);
     }
 }

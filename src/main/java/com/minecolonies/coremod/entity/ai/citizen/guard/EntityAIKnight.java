@@ -43,6 +43,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.G
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBuildingGuards>
@@ -169,7 +170,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
                 // Apply the colony Flag to the shield
                 ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(Hand.OFF_HAND);
                 CompoundNBT nbt = shieldStack.getOrCreateChildTag("BlockEntityTag");
-                nbt.put("Patterns", worker.getCitizenColonyHandler().getColony().getColonyFlag());
+                nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColony().getColonyFlag());
 
                 worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 worker.decreaseSaturationForContinuousAction();

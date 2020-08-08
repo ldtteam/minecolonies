@@ -21,6 +21,8 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+
 /**
  * This item represents the colony flag banner, both wall and floor blocks.
  * Allows duplication of other banner pattern lists to its own default
@@ -53,20 +55,20 @@ public class ItemColonyFlagBanner extends BannerItem
                     : ((TileEntityColonyFlag) te).getItem())
                 .getTag()
                 .getCompound("BlockEntityTag");
-            ListNBT patternList = source.getList("Patterns", 10);
+            ListNBT patternList = source.getList(TAG_BANNER_PATTERNS, 10);
 
             // Set the base pattern, if there wasn't one set.
             // This saves us attempting to alter the item itself to change the base color.
-            if (!patternList.getCompound(0).getString("Pattern").equals(BannerPattern.BASE.getHashname()))
+            if (!patternList.getCompound(0).getString(TAG_SINGLE_PATTERN).equals(BannerPattern.BASE.getHashname()))
             {
                 CompoundNBT nbt = new CompoundNBT();
-                nbt.putString("Pattern", BannerPattern.BASE.getHashname());
-                nbt.putInt("Color", ((AbstractBannerBlock) state.getBlock()).getColor().getId());
+                nbt.putString(TAG_SINGLE_PATTERN, BannerPattern.BASE.getHashname());
+                nbt.putInt(TAG_PATTERN_COLOR, ((AbstractBannerBlock) state.getBlock()).getColor().getId());
                 patternList.add(0, nbt);
             }
 
             CompoundNBT tag = stack.getOrCreateChildTag("BlockEntityTag");
-            tag.put("Patterns", patternList);
+            tag.put(TAG_BANNER_PATTERNS, patternList);
 
             return ActionResultType.SUCCESS;
         }

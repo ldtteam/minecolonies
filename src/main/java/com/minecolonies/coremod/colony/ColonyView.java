@@ -54,6 +54,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
@@ -305,7 +306,7 @@ public final class ColonyView implements IColonyView
         buf.writeInt(colony.getTeamColonyColor().ordinal());
 
         CompoundNBT flagNBT = new CompoundNBT();
-        flagNBT.put("Patterns", colony.getColonyFlag());
+        flagNBT.put(TAG_BANNER_PATTERNS, colony.getColonyFlag());
         buf.writeCompoundTag(flagNBT);
 
         buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
@@ -809,7 +810,7 @@ public final class ColonyView implements IColonyView
         Collections.reverse(lastSpawnPoints);
 
         this.teamColonyColor = TextFormatting.values()[buf.readInt()];
-        this.colonyFlag = buf.readCompoundTag().getList("Patterns", Constants.TAG_COMPOUND);
+        this.colonyFlag = buf.readCompoundTag().getList(TAG_BANNER_PATTERNS, Constants.TAG_COMPOUND);
 
         this.printProgress = buf.readBoolean();
 

@@ -16,6 +16,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static net.minecraft.tileentity.BannerTileEntity.func_230138_a_;
 
 public class TileEntityColonyFlag extends TileEntity
@@ -36,10 +37,10 @@ public class TileEntityColonyFlag extends TileEntity
     {
         super.write(compound);
 
-        compound.put("Flag", this.flag);
-        compound.put("Patterns", this.patterns);
+        compound.put(TAG_FLAG_PATTERNS, this.flag);
+        compound.put(TAG_BANNER_PATTERNS, this.patterns);
 
-        compound.putInt("Colony", colonyId);
+        compound.putInt(TAG_COLONY_ID, colonyId);
 
         return compound;
     }
@@ -49,9 +50,9 @@ public class TileEntityColonyFlag extends TileEntity
     {
         super.read(compound);
 
-        this.flag = compound.getList("Flag", 10);
-        this.patterns = compound.getList("Patterns", 10);
-        this.colonyId = compound.getInt("Colony");
+        this.flag = compound.getList(TAG_FLAG_PATTERNS, 10);
+        this.patterns = compound.getList(TAG_BANNER_PATTERNS, 10);
+        this.colonyId = compound.getInt(TAG_COLONY_ID);
     }
 
     @Override
@@ -104,13 +105,13 @@ public class TileEntityColonyFlag extends TileEntity
         for (Pair<BannerPattern, DyeColor> pair : list)
         {
             CompoundNBT pairNBT = new CompoundNBT();
-            pairNBT.putString("Pattern", pair.getFirst().getHashname());
-            pairNBT.putInt("Color", pair.getSecond().getId());
+            pairNBT.putString(TAG_SINGLE_PATTERN, pair.getFirst().getHashname());
+            pairNBT.putInt(TAG_PATTERN_COLOR, pair.getSecond().getId());
             nbt.add(pairNBT);
         }
 
         if (!nbt.isEmpty())
-            itemstack.getOrCreateChildTag("BlockEntityTag").put("Patterns", nbt);
+            itemstack.getOrCreateChildTag("BlockEntityTag").put(TAG_BANNER_PATTERNS, nbt);
 
         return itemstack;
     }
