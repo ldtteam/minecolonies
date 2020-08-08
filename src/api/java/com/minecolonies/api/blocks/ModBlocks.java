@@ -1,6 +1,7 @@
 package com.minecolonies.api.blocks;
 
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
+import com.minecolonies.api.blocks.decorative.AbstractColonyFlagBanner;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,6 +74,8 @@ public final class ModBlocks
     public static AbstractBlockMinecoloniesDefault<? extends AbstractBlockMinecoloniesDefault<?>>                   blockScarecrow;
     public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                                 blockBarracksTowerSubstitution;
     public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                                 blockCompostedDirt;
+    public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                                   blockColonyBanner;
+    public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                                   blockColonyWallBanner;
 
     /**
      * Private constructor to hide the implicit public one.

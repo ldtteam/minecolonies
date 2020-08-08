@@ -458,15 +458,22 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     {
         super.atBuildingActions();
 
-        // Pickup arrows and request arrows
-        InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(),
-          item -> item.getItem() instanceof ArrowItem,
-          64,
-          worker.getInventoryCitizen());
 
-        if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem) < 16)
+        final UnlockAbilityResearchEffect arrowItemEffect =
+          worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARROW_ITEMS, UnlockAbilityResearchEffect.class);
+
+        if (arrowItemEffect != null && arrowItemEffect.getEffect())
         {
-            checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.ARROW), 64, 16);
+            // Pickup arrows and request arrows
+            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(),
+              item -> item.getItem() instanceof ArrowItem,
+              64,
+              worker.getInventoryCitizen());
+
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem) < 16)
+            {
+                checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.ARROW), 64, 16);
+            }
         }
     }
 

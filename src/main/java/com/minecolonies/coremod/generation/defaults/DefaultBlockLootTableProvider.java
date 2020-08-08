@@ -49,6 +49,7 @@ public class DefaultBlockLootTableProvider implements IDataProvider
         saveBlock(ModBlocks.blockDecorationPlaceholder, cache);
         saveBlock(ModBlocks.blockScarecrow, cache);
         saveBlock(ModBlocks.blockBarracksTowerSubstitution, cache);
+        saveBlock(ModBlocks.blockColonyBanner, cache);
     }
 
     private <T extends Block> void saveBlocks(final List<T> blocks, final DirectoryCache cache) throws IOException

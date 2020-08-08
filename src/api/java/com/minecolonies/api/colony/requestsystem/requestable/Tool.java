@@ -188,7 +188,7 @@ public class Tool implements IDeliverable
 
         if (!toolTypeResult)
         {
-            return stack.getItem() instanceof HoeItem && toolClass.equals(ToolType.HOE) || stack.getItem() instanceof ShieldItem && toolClass.equals(ToolType.SHIELD);
+            return (stack.getItem() instanceof HoeItem && toolClass.equals(ToolType.HOE)) || (stack.getItem() instanceof ShieldItem && toolClass.equals(ToolType.SHIELD));
         }
 
         return toolTypeResult;
