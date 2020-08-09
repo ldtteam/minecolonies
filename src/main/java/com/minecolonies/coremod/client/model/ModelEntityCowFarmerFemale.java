@@ -1,47 +1,49 @@
 // Made with Blockbench 3.5.1
 // Exported for Minecraft version 1.15
 // Paste this class into your mod and generate all required imports
+package com.minecolonies.coremod.client.model;
 
+import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.client.renderer.model.ModelRenderer;
 
-public class custom_model extends EntityModel<Entity> {
-	private final ModelRenderer bipedRightLeg;
-	private final ModelRenderer bipedRightArm;
-	private final ModelRenderer bipedHead;
-	private final ModelRenderer headDetail;
-	private final ModelRenderer hair;
-	private final ModelRenderer left_top_1;
-	private final ModelRenderer backhair;
-	private final ModelRenderer hairbackTop_2;
-	private final ModelRenderer hairbackTop_3;
-	private final ModelRenderer hairBackTop_4;
-	private final ModelRenderer hairTop_1;
-	private final ModelRenderer hairTop_2;
-	private final ModelRenderer hairLeftTop_1;
-	private final ModelRenderer hairLeftTop_2;
-	private final ModelRenderer hairLeftTop_3;
-	private final ModelRenderer hairLeftTop_4;
-	private final ModelRenderer hairLeftTop_5;
-	private final ModelRenderer hairbackbuttom1;
-	private final ModelRenderer ponytail_1;
-	private final ModelRenderer ponytail_2;
-	private final ModelRenderer ponytail_3;
-	private final ModelRenderer hairRightTop_1;
-	private final ModelRenderer hairfrontTop_1;
-	private final ModelRenderer hairfrontTop_2;
-	private final ModelRenderer hairfrontTop_3;
-	private final ModelRenderer bipedBody;
-	private final ModelRenderer backpack;
-	private final ModelRenderer bagR;
-	private final ModelRenderer bagL;
-	private final ModelRenderer bagBack;
-	private final ModelRenderer bagFront;
-	private final ModelRenderer bagWheat;
-	private final ModelRenderer bagBot;
-	private final ModelRenderer bipedChest;
-	private final ModelRenderer bipedLeftLeg;
-	private final ModelRenderer bipedLeftArm;
+public class ModelEntityCowFarmerFemale extends CitizenModel<AbstractEntityCitizen>
+{
+	
 
-	public custom_model() {
+	public ModelEntityCowFarmerFemale()
+	{
+		ModelRenderer headDetail;
+		ModelRenderer hair;
+		ModelRenderer left_top_1;
+		ModelRenderer backhair;
+		ModelRenderer hairbackTop_2;
+		ModelRenderer hairbackTop_3;
+		ModelRenderer hairBackTop_4;
+		ModelRenderer hairTop_1;
+		ModelRenderer hairTop_2;
+		ModelRenderer hairLeftTop_1;
+		ModelRenderer hairLeftTop_2;
+		ModelRenderer hairLeftTop_3;
+		ModelRenderer hairLeftTop_4;
+		ModelRenderer hairLeftTop_5;
+		ModelRenderer hairbackbuttom1;
+		ModelRenderer ponytail_1;
+		ModelRenderer ponytail_2;
+		ModelRenderer ponytail_3;
+		ModelRenderer hairRightTop_1;
+		ModelRenderer hairfrontTop_1;
+		ModelRenderer hairfrontTop_2;
+		ModelRenderer hairfrontTop_3;
+		ModelRenderer backpack;
+		ModelRenderer bagR;
+		ModelRenderer bagL;
+		ModelRenderer bagBack;
+		ModelRenderer bagFront;
+		ModelRenderer bagWheat;
+		ModelRenderer bagBot;
+		ModelRenderer bipedChest;
+		
 		textureWidth = 128;
 		textureHeight = 64;
 
@@ -222,53 +224,9 @@ public class custom_model extends EntityModel<Entity> {
 		bipedLeftArm = new ModelRenderer(this);
 		bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
 		bipedLeftArm.setTextureOffset(40, 16).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, false);
+		
+		bipedHeadwear.showModel = false;
 	}
-
-	@Override
-	public void setRotationAngles(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-		//previously the render function, render code was moved to a method below
-	}
-
-	@Override
-	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
-		bipedRightLeg.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedRightArm.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedHead.render(matrixStack, buffer, packedLight, packedOverlay);
-		headDetail.render(matrixStack, buffer, packedLight, packedOverlay);
-		hair.render(matrixStack, buffer, packedLight, packedOverlay);
-		left_top_1.render(matrixStack, buffer, packedLight, packedOverlay);
-		backhair.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairbackTop_2.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairbackTop_3.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairBackTop_4.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairTop_1.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairTop_2.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairLeftTop_1.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairLeftTop_2.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairLeftTop_3.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairLeftTop_4.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairLeftTop_5.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairbackbuttom1.render(matrixStack, buffer, packedLight, packedOverlay);
-		ponytail_1.render(matrixStack, buffer, packedLight, packedOverlay);
-		ponytail_2.render(matrixStack, buffer, packedLight, packedOverlay);
-		ponytail_3.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairRightTop_1.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairfrontTop_1.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairfrontTop_2.render(matrixStack, buffer, packedLight, packedOverlay);
-		hairfrontTop_3.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedBody.render(matrixStack, buffer, packedLight, packedOverlay);
-		backpack.render(matrixStack, buffer, packedLight, packedOverlay);
-		bagR.render(matrixStack, buffer, packedLight, packedOverlay);
-		bagL.render(matrixStack, buffer, packedLight, packedOverlay);
-		bagBack.render(matrixStack, buffer, packedLight, packedOverlay);
-		bagFront.render(matrixStack, buffer, packedLight, packedOverlay);
-		bagWheat.render(matrixStack, buffer, packedLight, packedOverlay);
-		bagBot.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedChest.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedLeftLeg.render(matrixStack, buffer, packedLight, packedOverlay);
-		bipedLeftArm.render(matrixStack, buffer, packedLight, packedOverlay);
-	}
-
 	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
 		modelRenderer.rotateAngleX = x;
 		modelRenderer.rotateAngleY = y;
