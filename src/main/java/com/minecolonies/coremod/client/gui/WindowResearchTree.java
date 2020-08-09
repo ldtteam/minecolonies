@@ -5,6 +5,7 @@ import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ZoomDragView;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
@@ -15,6 +16,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
+import com.minecolonies.coremod.research.BuildingResearchRequirement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
@@ -82,6 +84,27 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             timeLabel.setColor(Color.rgbaToInt(218, 202, 171, 255));
             view.addChild(timeLabel);
         }
+    }
+
+    private boolean isResearchFulfilled(final BuildingResearchRequirement researchRequirement)
+    {
+        List<IBuildingView> buildings = building.getColony().getBuildings();
+        int levels = 0;
+
+        if (researchRequirement == null)
+        {
+            return true;
+        }
+
+        for (IBuildingView building : buildings)
+        {
+            if (building.getSchematicName().equals(researchRequirement.getBuilding()))
+            {
+                levels += building.getBuildingLevel();
+            }
+        }
+
+        return levels >= researchRequirement.getBuildingLevel();
     }
 
     @Override
@@ -255,6 +278,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                     buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.toomanyinprogress"));
+                }
+                else if (!isResearchFulfilled((BuildingResearchRequirement) research.getResearchRequirement()))
+                {
+                    buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
+                    buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.missingrequirements"));
                 }
                 else if (!research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
                 {

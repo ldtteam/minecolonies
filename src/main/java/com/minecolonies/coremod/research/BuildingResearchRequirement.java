@@ -13,8 +13,7 @@ public class BuildingResearchRequirement implements IResearchRequirement
     /**
      * The building level.
      */
-    private final int buildingLevel;
-
+    private final int    buildingLevel;
     /**
      * The building desc.
      */
@@ -30,6 +29,16 @@ public class BuildingResearchRequirement implements IResearchRequirement
     {
         this.buildingLevel = buildingLevel;
         this.building = building;
+    }
+
+    public String getBuilding()
+    {
+        return building;
+    }
+
+    public int getBuildingLevel()
+    {
+        return buildingLevel;
     }
 
     @Override
