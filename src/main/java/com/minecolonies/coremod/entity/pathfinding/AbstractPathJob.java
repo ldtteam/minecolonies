@@ -1014,9 +1014,18 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             final VoxelShape bb1 = world.getBlockState(pos.down()).getCollisionShape(world, pos.down());
             final VoxelShape bb2 = world.getBlockState(pos.up()).getCollisionShape(world, pos.up());
-            if ((pos.up().getY() + bb2.getStart(Direction.Axis.Y)) - (pos.down().getY() + bb1.getEnd(Direction.Axis.Y) )< 2)
+            if ((pos.up().getY() + bb2.getStart(Direction.Axis.Y)) - (pos.down().getY() + (bb1.isEmpty() ? 0 : bb1.getEnd(Direction.Axis.Y))) < 2)
             {
                 return true;
+            }
+            if (parent != null)
+            {
+                final VoxelShape bb3 = world.getBlockState(parent.pos.down()).getCollisionShape(world, pos.down());
+
+                if ((pos.up().getY() + bb2.getStart(Direction.Axis.Y)) - (parent.pos.down().getY() + (bb3.isEmpty() ? 0 : bb3.getEnd(Direction.Axis.Y))) < 1.75)
+                {
+                    return true;
+                }
             }
         }
 
