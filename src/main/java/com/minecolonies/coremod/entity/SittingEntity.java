@@ -18,6 +18,11 @@ public class SittingEntity extends Entity
      */
     int maxLifeTime = 100;
 
+    /**
+     * The last passenger riding this entity
+     */
+    private Entity lastPassenger;
+
     public SittingEntity(final EntityType<?> type, final World worldIn)
     {
         super(type, worldIn);
@@ -97,8 +102,23 @@ public class SittingEntity extends Entity
                 this.removePassengers();
                 e.setPosition(this.getPosX(), this.getPosY() + 1, this.getPosZ());
             }
+            // Upsizes entity again
+            if (lastPassenger != null)
+            {
+                lastPassenger.size = lastPassenger.size.scale(2.0f);
+            }
             this.remove();
         }
+    }
+
+    @Override
+    protected void addPassenger(Entity passenger)
+    {
+        super.addPassenger(passenger);
+
+        // Resizes entity and keeps a reference to it
+        lastPassenger = passenger;
+        lastPassenger.size = lastPassenger.size.scale(0.5f);
     }
 
     /**
