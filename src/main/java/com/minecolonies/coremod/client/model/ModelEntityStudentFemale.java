@@ -131,7 +131,7 @@ public class ModelEntityStudentFemale extends CitizenModel<AbstractEntityCitizen
         chest.addBox(0F, 0F, 0F, 7, 3, 4);
         chest.setRotationPoint(-3.5F, 1.7F, -2.7F);
         chest.setTextureSize(128, 64);
-        chest.mirror = true;
+        chest.mirror = false;
         setRotation(chest, -0.4537856F, 0F, 0F);
 
         ponytailBase = new ModelRenderer(this, 32, 49);
