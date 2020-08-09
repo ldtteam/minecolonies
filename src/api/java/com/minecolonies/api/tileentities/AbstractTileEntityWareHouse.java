@@ -1,8 +1,10 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.util.Tuple;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -39,7 +41,7 @@ public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuildi
      * @return True when the warehouse holds a stack, false when not.
      */
     @NotNull
-    public abstract List<ItemStack> getMatchingItemStacksInWarehouse(@NotNull Predicate<ItemStack> itemStackSelectionPredicate);
+    public abstract List<Tuple<ItemStack, BlockPos>> getMatchingItemStacksInWarehouse(@NotNull Predicate<ItemStack> itemStackSelectionPredicate);
 
     /**
      * Dump the inventory of a citizen into the warehouse. Go through all items and search the right chest to dump it in.

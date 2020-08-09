@@ -39,6 +39,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -200,17 +201,20 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
         if (theBuilding != null)
         {
-            if (isInTileEntity(theBuilding.getTileEntity(), notEmptyPredicate))
-            {
-                return theBuilding.getPosition();
-            }
+            final List<BlockPos> containers = new ArrayList<>(theBuilding.getAdditionalCountainers());
+            containers.add(getBuilding().getPosition());
 
-            for (final BlockPos pos : theBuilding.getAdditionalCountainers())
+            for (final BlockPos pos : containers)
             {
                 final TileEntity entity = getWorld().getTileEntity(pos);
-                if ((entity instanceof AbstractTileEntityRack
-                       && ((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
-                      || (isInTileEntity(entity, notEmptyPredicate)))
+                if (entity instanceof AbstractTileEntityRack)
+                {
+                    if (((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
+                    {
+                        return pos;
+                    }
+                }
+                else if (isInTileEntity(entity, notEmptyPredicate))
                 {
                     return pos;
                 }
