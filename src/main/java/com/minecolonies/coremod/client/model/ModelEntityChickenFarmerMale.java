@@ -23,7 +23,7 @@ public class ModelEntityChickenFarmerMale extends CitizenModel<AbstractEntityCit
 
         bipedBody = new ModelRenderer(this);
         bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, true);
+        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
         feed = new ModelRenderer(this);
         feed.setRotationPoint(0.0F, 0.0F, 0.0F);
@@ -43,7 +43,7 @@ public class ModelEntityChickenFarmerMale extends CitizenModel<AbstractEntityCit
 
         bipedRightArm = new ModelRenderer(this);
         bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
-        bipedRightArm.setTextureOffset(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
+        bipedRightArm.setTextureOffset(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
         bipedLeftArm = new ModelRenderer(this);
         bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
@@ -51,7 +51,7 @@ public class ModelEntityChickenFarmerMale extends CitizenModel<AbstractEntityCit
 
         bipedRightLeg = new ModelRenderer(this);
         bipedRightLeg.setRotationPoint(-2.0F, 12.0F, 0.0F);
-        bipedRightLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
+        bipedRightLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
         bipedLeftLeg = new ModelRenderer(this);
         bipedLeftLeg.setRotationPoint(2.0F, 12.0F, 0.0F);
@@ -59,7 +59,7 @@ public class ModelEntityChickenFarmerMale extends CitizenModel<AbstractEntityCit
 
         bipedHead = new ModelRenderer(this);
         bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, true);
+        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
         headDetail = new ModelRenderer(this);
         headDetail.setRotationPoint(0.0F, 0.0F, 1.0F);

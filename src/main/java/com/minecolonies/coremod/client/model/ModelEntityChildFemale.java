@@ -56,7 +56,7 @@ public class ModelEntityChildFemale extends CitizenModel<AbstractEntityCitizen>
 
         bipedHead = new ModelRenderer(this);
         bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, true);
+        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
         headDress = new ModelRenderer(this);
         headDress.setRotationPoint(-4.5F, -8.5F, -2.0F);

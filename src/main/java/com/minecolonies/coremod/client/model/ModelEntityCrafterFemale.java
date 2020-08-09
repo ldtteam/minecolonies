@@ -47,7 +47,7 @@ public class ModelEntityCrafterFemale extends CitizenModel<AbstractEntityCitizen
 
         bipedHead = new ModelRenderer(this);
         bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, true);
+        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
         headdetail = new ModelRenderer(this);
         headdetail.setRotationPoint(0.0F, 24.0F, 0.0F);
@@ -160,7 +160,7 @@ public class ModelEntityCrafterFemale extends CitizenModel<AbstractEntityCitizen
 
         bipedBody = new ModelRenderer(this);
         bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, true);
+        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
         skirtBa = new ModelRenderer(this);
         skirtBa.setRotationPoint(0.0F, 0.0F, 0.0F);

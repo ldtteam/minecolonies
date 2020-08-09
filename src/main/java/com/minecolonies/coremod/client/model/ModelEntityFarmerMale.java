@@ -50,7 +50,7 @@ public class ModelEntityFarmerMale extends CitizenModel<AbstractEntityCitizen>
 
         bipedBody = new ModelRenderer(this);
         bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, true);
+        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
         boxBottom = new ModelRenderer(this);
         boxBottom.setRotationPoint(0.0F, 9.0F, -4.0F);
@@ -96,7 +96,7 @@ public class ModelEntityFarmerMale extends CitizenModel<AbstractEntityCitizen>
 
         bipedHead = new ModelRenderer(this);
         bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, true);
+        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
         headDetail = new ModelRenderer(this);
         headDetail.setRotationPoint(0.0F, 0.0F, 1.0F);
@@ -118,7 +118,7 @@ public class ModelEntityFarmerMale extends CitizenModel<AbstractEntityCitizen>
         hatTop = new ModelRenderer(this);
         hatTop.setRotationPoint(0.0F, 0.0F, 0.0F);
         hatBottom.addChild(hatTop);
-        hatTop.setTextureOffset(60, 2).addBox(-4.5F, -10.5F, -5.0F, 9.0F, 1.0F, 7.0F, 0.0F, true);
+        hatTop.setTextureOffset(64, 2).addBox(-4.5F, -10.5F, -5.0F, 9.0F, 1.0F, 7.0F, 0.0F, true);
 
         hatFrillBottom = new ModelRenderer(this);
         hatFrillBottom.setRotationPoint(0.0F, 0.0F, 0.0F);

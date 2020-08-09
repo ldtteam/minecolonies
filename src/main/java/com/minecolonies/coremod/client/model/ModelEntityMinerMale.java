@@ -98,7 +98,7 @@ public class ModelEntityMinerMale extends CitizenModel<AbstractEntityCitizen>
 
         bipedBody = new ModelRenderer(this);
         bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, true);
+        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
         backpack = new ModelRenderer(this);
         backpack.setRotationPoint(0.0F, 24.0F, 0.0F);

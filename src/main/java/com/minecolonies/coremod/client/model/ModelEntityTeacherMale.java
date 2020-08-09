@@ -43,7 +43,7 @@ public class ModelEntityTeacherMale extends CitizenModel<AbstractEntityCitizen>
 
         bipedHead = new ModelRenderer(this);
         bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, true);
+        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
         hair = new ModelRenderer(this);
         hair.setRotationPoint(0.0F, 0.0F, 0.0F);

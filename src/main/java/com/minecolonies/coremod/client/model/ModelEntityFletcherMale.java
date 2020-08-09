@@ -24,7 +24,7 @@ public class ModelEntityFletcherMale extends CitizenModel<AbstractEntityCitizen>
         bipedBody.setTextureOffset(5, 38).addBox(-2.5F, 8.5F, -2.75F, 0.5F, 2.5F, 0.5F, 0.0F, true);
         bipedBody.setTextureOffset(8, 39).addBox(-0.5F, 8.5F, -2.75F, 0.5F, 2.5F, 0.5F, 0.0F, true);
         bipedBody.setTextureOffset(12, 39).addBox(2.0F, 8.5F, -2.75F, 0.5F, 2.5F, 0.5F, 0.0F, false);
-        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, true);
+        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
         knifeblade = new ModelRenderer(this);
         knifeblade.setRotationPoint(2.5F, 26.0F, 0.5F);
@@ -60,7 +60,7 @@ public class ModelEntityFletcherMale extends CitizenModel<AbstractEntityCitizen>
 
         bipedHead = new ModelRenderer(this);
         bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, true);
+        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
         hair = new ModelRenderer(this);
         hair.setRotationPoint(0.0F, 24.0F, 0.0F);
