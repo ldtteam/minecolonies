@@ -85,9 +85,9 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
-    public float getPlayerRelativeBlockHardness(final BlockState state, final PlayerEntity player, final IBlockReader world, final BlockPos pos)
+    public float getPlayerRelativeBlockHardness(final BlockState state, @NotNull final PlayerEntity player, @NotNull final IBlockReader world, @NotNull final BlockPos pos)
     {
-        return MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pvp_mode.get() ? HARDNESS * HARDNESS_PVP_FACTOR : HARDNESS;
+        return MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pvp_mode.get() ? 1/(HARDNESS * HARDNESS_PVP_FACTOR) : 1/HARDNESS;
     }
 
     /**
@@ -140,6 +140,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         return SHAPE;
     }
 
+    @NotNull
     @Override
     public ActionResultType onBlockActivated(
       final BlockState state,
@@ -187,6 +188,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         return this.getDefaultState().with(FACING, facing);
     }
 
+    @NotNull
     @Override
     public BlockState rotate(final BlockState state, final Rotation rot)
     {

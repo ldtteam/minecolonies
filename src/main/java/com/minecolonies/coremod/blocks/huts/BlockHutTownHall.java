@@ -36,7 +36,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     }
 
     @Override
-    public float getPlayerRelativeBlockHardness(final BlockState state, final PlayerEntity player, final IBlockReader world, final BlockPos pos)
+    public float getPlayerRelativeBlockHardness(final BlockState state, @NotNull final PlayerEntity player, @NotNull final IBlockReader world, @NotNull final BlockPos pos)
     {
         return MineColonies.getConfig().getCommon().pvp_mode.get() ? PVP_MODE_HARDNESS : HARDNESS;
     }
@@ -65,6 +65,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
      * @param ray     the raytraceresult.
      * @return the result type.
      */
+    @NotNull
     @Override
     public ActionResultType onBlockActivated(
       final BlockState state,

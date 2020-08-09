@@ -1511,8 +1511,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return ImmutableList.copyOf(requestManager.getProviderHandler().getRegisteredResolvers(this)
                                           .stream()
                                           .map(token -> requestManager.getResolverHandler().getResolver(token))
-                                          .collect(
-                                            Collectors.toList()));
+                                          .collect(Collectors.toList()));
         }
 
         return createResolvers();

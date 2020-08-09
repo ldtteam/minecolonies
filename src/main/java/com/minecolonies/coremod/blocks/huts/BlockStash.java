@@ -77,6 +77,7 @@ public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSCompo
         }
     }
 
+    @NotNull
     @Override
     public ActionResultType onBlockActivated(
       final BlockState state,
