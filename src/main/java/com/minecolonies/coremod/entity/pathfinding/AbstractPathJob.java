@@ -962,13 +962,23 @@ public abstract class AbstractPathJob implements Callable<Path>
         //  Check for headroom in the target space
         if (!isPassable(pos.up(2), false))
         {
-            return -1;
+            final VoxelShape bb1 = world.getBlockState(pos).getCollisionShape(world, pos);
+            final VoxelShape bb2 = world.getBlockState(pos.up(2)).getCollisionShape(world, pos.up(2));
+            if ((pos.up(2).getY() + bb2.getStart(Direction.Axis.Y)) - (pos.getY() + bb1.getEnd(Direction.Axis.Y) ) < 2)
+            {
+                return -1;
+            }
         }
 
         //  Check for jump room from the origin space
         if (!isPassable(parent.pos.up(2), false))
         {
-            return -1;
+            final VoxelShape bb1 = world.getBlockState(pos).getCollisionShape(world, pos);
+            final VoxelShape bb2 = world.getBlockState(parent.pos.up(2)).getCollisionShape(world, parent.pos.up(2));
+            if ((parent.pos.up(2).getY() + bb2.getStart(Direction.Axis.Y)) - (pos.getY() + bb1.getEnd(Direction.Axis.Y) ) < 2)
+            {
+                return -1;
+            }
         }
 
         final BlockState parentBelow = world.getBlockState(parent.pos.down());
@@ -1002,12 +1012,24 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if (!isPassable(pos.up(), true))
         {
-            return true;
+            final VoxelShape bb1 = world.getBlockState(pos.down()).getCollisionShape(world, pos.down());
+            final VoxelShape bb2 = world.getBlockState(pos.up()).getCollisionShape(world, pos.up());
+            if ((pos.up().getY() + bb2.getStart(Direction.Axis.Y)) - (pos.down().getY() + bb1.getEnd(Direction.Axis.Y) )< 2)
+            {
+                return true;
+            }
         }
 
         if (parent != null)
         {
             final BlockState hereState = world.getBlockState(localPos.down());
+            final VoxelShape bb1 = world.getBlockState(pos).getCollisionShape(world, pos);
+            final VoxelShape bb2 = world.getBlockState(localPos.up()).getCollisionShape(world, localPos.up());
+            if ((localPos.up().getY() + bb2.getStart(Direction.Axis.Y)) - (pos.getY() + bb1.getEnd(Direction.Axis.Y) ) >= 2)
+            {
+                return false;
+            }
+
             return hereState.getMaterial().isLiquid() && !isPassable(pos, false);
         }
         return false;
