@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.DyeColor;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -74,37 +76,37 @@ public class ColorPalette
 
         public PaletteButton(int posX, int posY, int sideLength, DyeColor color)
         {
-            super(posX, posY, sideLength, sideLength, "", pressed -> {});
+            super(posX, posY, sideLength, sideLength, new StringTextComponent(""), pressed -> {});
             this.color = color;
         }
 
         @Override
-        public void render(int mouseX, int mouseY, float partialTicks)
+        public void render(final MatrixStack stack, int mouseX, int mouseY, float partialTicks)
         {
             this.active = selected != this.color;
 
-            super.render(mouseX, mouseY, partialTicks);
+            super.render(stack, mouseX, mouseY, partialTicks);
         }
 
         @Override
-        public void renderButton(int mouseX, int mouseY, float partialTicks)
+        public void renderButton(final MatrixStack stack, int mouseX, int mouseY, float partialTicks)
         {
             int color = this.color.getColorValue();
             boolean pressed = selected == this.color;
 
-            this.fillButton(0, 0, 0, 0, isHovered() ? 0xFFFFFF : pressed ? brighten(color, 0.5F) : 0x0);
-            this.fillButton(1, 1, 1, 1, brighten(color, 0.8F));
+            this.fillButton(stack, 0, 0, 0, 0, isHovered() ? 0xFFFFFF : pressed ? brighten(color, 0.5F) : 0x0);
+            this.fillButton(stack,1, 1, 1, 1, brighten(color, 0.8F));
 
             if (pressed)
             {
-                this.fillButton(2, 2, 1, 1, brighten(color, 1.2F));
-                this.fillButton(2, 2, 2, 2, color);
-                this.fillButton(7, 7, 7, 7, -0xCCFFFFFF);
+                this.fillButton(stack,2, 2, 1, 1, brighten(color, 1.2F));
+                this.fillButton(stack,2, 2, 2, 2, color);
+                this.fillButton(stack,7, 7, 7, 7, -0xCCFFFFFF);
             }
             else
             {
-                this.fillButton(1, 1, 3, 2, brighten(color, 1.2F));
-                this.fillButton(2, 2, 3, 2, color);
+                this.fillButton(stack,1, 1, 3, 2, brighten(color, 1.2F));
+                this.fillButton(stack,2, 2, 3, 2, color);
             }
 
         }
@@ -124,10 +126,10 @@ public class ColorPalette
          * @param r the right offset
          * @param color the color to fill with, without alpha
          */
-        private void fillButton(int t, int l, int b, int r, int color)
+        private void fillButton(final MatrixStack stack, int t, int l, int b, int r, int color)
         {
             color += 255 << 24;
-            fill(
+            fill(stack,
                     this.x+l, this.y+t,
                     this.x+this.width-r, this.y+this.height-b,
                     color

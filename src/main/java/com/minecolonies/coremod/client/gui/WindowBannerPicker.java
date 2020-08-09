@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyView;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
@@ -17,6 +18,7 @@ import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.tileentity.BannerTileEntity;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.LogManager;
@@ -118,14 +120,14 @@ public class WindowBannerPicker extends Screen
         this.addButton(new Button(
                 center(this.width, 6, SIDE, 7, 0), GUI_Y,
                 SIDE, SIDE,
-                TextFormatting.RED + "X",
+                new StringTextComponent(TextFormatting.RED + "X"),
                 pressed -> layers.remove(activeLayer))
         {
             @Override
-            public void render(int mouseX, int mouseY, float partialTicks)
+            public void render(final MatrixStack stack, int mouseX, int mouseY, float partialTicks)
             {
                 this.active = activeLayer < layers.size();
-                super.render(mouseX, mouseY, partialTicks);
+                super.render(stack, mouseX, mouseY, partialTicks);
             }
         });
     }
@@ -155,13 +157,13 @@ public class WindowBannerPicker extends Screen
                 center(this.width, 2, 80, 1, 10),
                 this.height - 40,
                 80, SIDE,
-                I18n.format("gui.done"),
+                new TranslationTextComponent("gui.done"),
                 pressed -> {
                     BannerPattern.Builder builder = new BannerPattern.Builder();
                     for (Pair<BannerPattern, DyeColor> pair : layers)
                         builder.setPatternWithColor(pair.getFirst(), pair.getSecond());
 
-                    colony.setColonyFlag(builder.func_222476_a());
+                    colony.setColonyFlag(builder.buildNBT());
                     window.open();
                 }
         ));
@@ -169,7 +171,7 @@ public class WindowBannerPicker extends Screen
                 center(this.width, 2, 80, 0, 10),
                 this.height - 40,
                 80, SIDE,
-                I18n.format("gui.cancel"),
+                new TranslationTextComponent("gui.cancel"),
                 pressed -> window.open()
         ));
     }
@@ -211,14 +213,14 @@ public class WindowBannerPicker extends Screen
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks)
+    public void render(final MatrixStack stack, int mouseX, int mouseY, float partialTicks)
     {
-        this.renderBackground();
-        super.render(mouseX, mouseY, partialTicks);
+        this.renderBackground(stack);
+        super.render(stack, mouseX, mouseY, partialTicks);
         drawFlag();
 
         // Render the instructions
-        this.drawCenteredString(
+        this.drawCenteredString(stack,
                 this.font,
                 I18n.format("com.minecolonies.coremod.gui.flag.choose"),
                 this.width /2,
@@ -314,8 +316,8 @@ public class WindowBannerPicker extends Screen
                     x - (layer == 0 ? width*2 : 0), y,
                     width * (layer == 0 ? 3 : 1), height,
                     layer == 0
-                            ? I18n.format("com.minecolonies.coremod.gui.flag.base_layer")
-                            : String.valueOf(layer),
+                            ? new TranslationTextComponent("com.minecolonies.coremod.gui.flag.base_layer")
+                            : new StringTextComponent(String.valueOf(layer)),
                     pressed -> {}
             );
             this.layer = layer;
@@ -333,13 +335,13 @@ public class WindowBannerPicker extends Screen
         }
 
         @Override
-        public void render(int p_render_1_, int p_render_2_, float p_render_3_)
+        public void render(final MatrixStack stack, int p_render_1_, int p_render_2_, float p_render_3_)
         {
             this.active = this.layer <= layers.size();
-            super.render(p_render_1_, p_render_2_, p_render_3_);
+            super.render(stack, p_render_1_, p_render_2_, p_render_3_);
 
             if (activeLayer == this.layer)
-                fill(this.x, this.y, this.x+this.width, this.y+this.height, 0x66DD99FF);
+                fill(stack, this.x, this.y, this.x+this.width, this.y+this.height, 0x66DD99FF);
         }
     }
 
@@ -358,7 +360,7 @@ public class WindowBannerPicker extends Screen
          */
         public PatternButton(int x, int y, int height, BannerPattern pattern)
         {
-            super(x, y, height/2, height, "", btn -> {});
+            super(x, y, height/2, height, new StringTextComponent(""), btn -> {});
             this.pattern = pattern;
         }
 
@@ -366,30 +368,30 @@ public class WindowBannerPicker extends Screen
         public void onPress() { setLayer(this.pattern, colors.getSelected()); }
 
         @Override
-        public void render(int p_render_1_, int p_render_2_, float p_render_3_)
+        public void render(final MatrixStack stack, int p_render_1_, int p_render_2_, float p_render_3_)
         {
             this.active = activeLayer != 0;
 
             if (!this.active) return;
 
-            super.render(p_render_1_, p_render_2_, p_render_3_);
+            super.render(stack, p_render_1_, p_render_2_, p_render_3_);
 
             drawBannerPattern(this.pattern, this.x, this.y);
         }
 
         @Override
-        public void renderButton(int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_)
+        public void renderButton(final MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_)
         {
             if (this.visible)
             {
                 if (this.isHovered() && this.active)
-                    fill(this.x, this.y, this.x+this.width, this.y+this.height, 0xDDFFFFFF);
+                    fill(stack, this.x, this.y, this.x+this.width, this.y+this.height, 0xDDFFFFFF);
 
                 if (activeLayer < layers.size() && layers.get(activeLayer).getFirst() == this.pattern)
-                    fill(this.x, this.y, this.x+this.width, this.y+this.height, 0xFFDD88FF);
+                    fill(stack, this.x, this.y, this.x+this.width, this.y+this.height, 0xFFDD88FF);
 
                 else
-                    fill(this.x, this.y, this.x+this.width, this.y+this.height, 0x33888888);
+                    fill(stack, this.x, this.y, this.x+this.width, this.y+this.height, 0x33888888);
             }
         }
     }

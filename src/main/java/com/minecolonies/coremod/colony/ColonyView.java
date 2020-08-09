@@ -93,7 +93,7 @@ public final class ColonyView implements IColonyView
      */
     private ListNBT        colonyFlag      = new BannerPattern.Builder()
         .setPatternWithColor(BannerPattern.BASE, DyeColor.WHITE)
-        .func_222476_a();
+        .buildNBT();
 
     private BlockPos       center          = BlockPos.ZERO;
 

@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -46,9 +47,9 @@ public class TileEntityColonyFlag extends TileEntity
     }
 
     @Override
-    public void read(CompoundNBT compound)
+    public void read(final BlockState state, CompoundNBT compound)
     {
-        super.read(compound);
+        super.read(state, compound);
 
         this.flag = compound.getList(TAG_FLAG_PATTERNS, 10);
         this.patterns = compound.getList(TAG_BANNER_PATTERNS, 10);
@@ -68,7 +69,7 @@ public class TileEntityColonyFlag extends TileEntity
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
         final CompoundNBT compound = packet.getNbtCompound();
-        this.read(compound);
+        this.read(getBlockState(), compound);
     }
 
     /**
@@ -78,7 +79,7 @@ public class TileEntityColonyFlag extends TileEntity
     @OnlyIn(Dist.CLIENT)
     public List<Pair<BannerPattern, DyeColor>> getPatternList()
     {
-        IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, world.dimension.getType().getId());
+        IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, world.func_234923_W_().func_240901_a_());
         if (colony != null && this.flag != colony.getColonyFlag())
         {
             this.flag = colony.getColonyFlag();
