@@ -161,11 +161,10 @@ public final class GuardConstants
     public static final Tuple<Integer, Integer> IRON_LEVEL_RANGE    = new Tuple<>(5, 99);
     public static final Tuple<Integer, Integer> DIA_LEVEL_RANGE     = new Tuple<>(15, 99);
 
-    public static final Tuple<Integer, Integer> LEATHER_BUILDING_LEVEL_RANGE = new Tuple<>(1, 5);
-    public static final Tuple<Integer, Integer> GOLD_BUILDING_LEVEL_RANGE    = new Tuple<>(1, 5);
-    public static final Tuple<Integer, Integer> CHAIN_BUILDING_LEVEL_RANGE   = new Tuple<>(2, 5);
-    public static final Tuple<Integer, Integer> IRON_BUILDING_LEVEL_RANGE    = new Tuple<>(3, 5);
-    public static final Tuple<Integer, Integer> DIA_BUILDING_LEVEL_RANGE     = new Tuple<>(4, 5);
+    public static final Tuple<Integer, Integer> GOLD_BUILDING_LEVEL_RANGE  = new Tuple<>(1, 2);
+    public static final Tuple<Integer, Integer> CHAIN_BUILDING_LEVEL_RANGE = new Tuple<>(2, 3);
+    public static final Tuple<Integer, Integer> IRON_BUILDING_LEVEL_RANGE  = new Tuple<>(3, 4);
+    public static final Tuple<Integer, Integer> DIA_BUILDING_LEVEL_RANGE   = new Tuple<>(4, 5);
 
     public static final Tuple<Integer, Integer> SHIELD_LEVEL_RANGE          = new Tuple<>(0, 99);
     public static final Tuple<Integer, Integer> SHIELD_BUILDING_LEVEL_RANGE = new Tuple<>(1, 5);

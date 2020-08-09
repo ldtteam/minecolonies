@@ -61,7 +61,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      */
     public WindowResearchTree(final String branch, final BuildingUniversity.View building, final WindowHutUniversity last)
     {
-        super(Constants.MOD_ID + R_TREE_RESOURCE_SUFFIX);
+        super(Constants.MOD_ID + R_TREE_RESOURCE_SUFFIX, last);
         this.branch = branch;
         this.building = building;
         this.last = last;
