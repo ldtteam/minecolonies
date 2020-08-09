@@ -86,6 +86,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
     }
 
+    /**
+     *
+     * @param researchRequirement requirement to start research
+     * @return whether the requirement has been satisfied for research
+     */
     private boolean isResearchFulfilled(final BuildingResearchRequirement researchRequirement)
     {
         List<IBuildingView> buildings = building.getColony().getBuildings();

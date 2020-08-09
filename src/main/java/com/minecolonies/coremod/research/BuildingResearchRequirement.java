@@ -31,11 +31,17 @@ public class BuildingResearchRequirement implements IResearchRequirement
         this.building = building;
     }
 
+    /**
+     * @return the building description
+     */
     public String getBuilding()
     {
         return building;
     }
 
+    /**
+     * @return the building level
+     */
     public int getBuildingLevel()
     {
         return buildingLevel;
