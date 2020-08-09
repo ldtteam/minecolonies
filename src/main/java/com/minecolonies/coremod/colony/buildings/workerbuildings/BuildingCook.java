@@ -232,7 +232,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     @Nullable
     public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
     {
-        if (getBuildingLevel() < 3)
+        if (getBuildingLevel() < 3 || !hasAssistant)
         {
             return null;
         }
