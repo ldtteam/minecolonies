@@ -9,6 +9,7 @@ import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -47,22 +48,26 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         int totalCountFound = 0;
         for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
-            final TileEntity entity = getWorld().getTileEntity(pos);
-            if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty())
+            if (WorldUtil.isBlockLoaded(world, pos))
             {
-                totalCountFound+= ((AbstractTileEntityRack) entity).getCount(itemStack, true);
-                if (totalCountFound >= count)
+                final TileEntity entity = getWorld().getTileEntity(pos);
+                if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty())
                 {
-                    return true;
+                    totalCountFound += ((AbstractTileEntityRack) entity).getCount(itemStack, true);
+                    if (totalCountFound >= count)
+                    {
+                        return true;
+                    }
                 }
-            }
 
-            if (entity instanceof ChestTileEntity)
-            {
-                totalCountFound += InventoryUtils.getItemCountInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), item -> item.isItemEqualIgnoreDurability(itemStack) && item.getCount() >= itemStack.getCount());
-                if (totalCountFound >= count)
+                if (entity instanceof ChestTileEntity)
                 {
-                    return true;
+                    totalCountFound += InventoryUtils.getItemCountInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
+                      item -> item.isItemEqualIgnoreDurability(itemStack) && item.getCount() >= itemStack.getCount());
+                    if (totalCountFound >= count)
+                    {
+                        return true;
+                    }
                 }
             }
         }

@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
@@ -31,7 +30,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -44,7 +42,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MIN_SLOTS_FOR_RECOGNITION;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
@@ -206,17 +203,20 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
             for (final BlockPos pos : containers)
             {
-                final TileEntity entity = getWorld().getTileEntity(pos);
-                if (entity instanceof AbstractTileEntityRack)
+                if (WorldUtil.isBlockLoaded(world, pos))
                 {
-                    if (((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
+                    final TileEntity entity = getWorld().getTileEntity(pos);
+                    if (entity instanceof AbstractTileEntityRack)
+                    {
+                        if (((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
+                        {
+                            return pos;
+                        }
+                    }
+                    else if (isInTileEntity(entity, notEmptyPredicate))
                     {
                         return pos;
                     }
-                }
-                else if (isInTileEntity(entity, notEmptyPredicate))
-                {
-                    return pos;
                 }
             }
         }
