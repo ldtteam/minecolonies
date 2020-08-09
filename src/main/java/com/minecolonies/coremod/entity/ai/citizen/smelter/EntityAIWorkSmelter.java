@@ -341,7 +341,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     {
         if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(getSmeltAbleClass().getClass())) &&
               !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
-                req -> req.getShortDisplayString().getString().equals(LanguageHandler.format(COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE))))
+                req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE))))
         {
             final Map<String, List<ItemStorage>> allowedItems = getOwnBuilding().getCopyOfAllowedItems();
             if (allowedItems.containsKey(ORE_LIST))
