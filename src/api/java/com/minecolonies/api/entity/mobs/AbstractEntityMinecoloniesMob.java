@@ -189,12 +189,18 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
             this.newNavigator.setCanSwim(true);
             this.newNavigator.getNodeProcessor().setCanEnterDoors(true);
             newNavigator.getPathingOptions().withJumpDropCost(1.1D);
-            newNavigator.setStuckHandler(PathingStuckHandler.createStuckHandler()
-                                           .withTakeDamageOnStuck(0.4f)
-                                           .withBlockBreaks()
-                                           .withCompleteStuckBlockBreak(6)
-                                           .withBuildLeafBridges()
-                                           .withPlaceLadders());
+            PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
+                                                 .withTakeDamageOnStuck(0.4f)
+                                                 .withBuildLeafBridges()
+                                                 .withPlaceLadders();
+
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().doBarbariansBreakThroughWalls.get())
+            {
+                stuckHandler.withBlockBreaks();
+                stuckHandler.withCompleteStuckBlockBreak(6);
+            }
+
+            newNavigator.setStuckHandler(stuckHandler);
         }
         return newNavigator;
     }
