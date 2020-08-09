@@ -46,6 +46,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue fixOrphanedChunks;
     public final ForgeConfigSpec.BooleanValue restrictBuilderUnderground;
     public final ForgeConfigSpec.DoubleValue  fisherSpongeChance;
+    public final ForgeConfigSpec.DoubleValue  fisherPrismarineChance;
     public final ForgeConfigSpec.IntValue     minThLevelToTeleport;
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
     public final ForgeConfigSpec.DoubleValue  foodModifier;
@@ -396,6 +397,7 @@ public class CommonConfiguration extends AbstractConfiguration
         fixOrphanedChunks = defineBoolean(builder, "fixorphanedchunks", false);
         restrictBuilderUnderground = defineBoolean(builder, "restrictbuilderunderground", true);
         fisherSpongeChance = defineDouble(builder, "fisherspongechance", 0.1, 0, 100);
+        fisherPrismarineChance = defineDouble(builder, "fisherprismarinechance", 2.5, 0, 100);
         minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
         suggestBuildToolPlacement = defineBoolean(builder, "suggestbuildtoolplacement", true);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);

@@ -3,6 +3,7 @@
   "values": [
     "#structurize:shingles",
     "#structurize:shingle_slabs",
-    "#structurize:timber_frames"
+    "#structurize:timber_frames",
+    "minecolonies:barrel_block"
   ]
 }

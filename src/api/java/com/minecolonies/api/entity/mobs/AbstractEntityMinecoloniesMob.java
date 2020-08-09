@@ -8,7 +8,7 @@ import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
-import com.minecolonies.api.sounds.BarbarianSounds;
+import com.minecolonies.api.sounds.RaiderSounds;
 import net.minecraft.entity.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
@@ -155,18 +155,17 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         }
     }
 
-    @Nullable
-    @Override
-    protected SoundEvent getAmbientSound()
-    {
-        return BarbarianSounds.barbarianSay;
-    }
-
     @Override
     public boolean canDespawn(final double distanceToClosestPlayer)
     {
         return shouldDespawn() || (world != null && world.isAreaLoaded(this.getPosition(), 3) && getColony() == null);
     }
+
+    /**
+     * Get the specific raider type of this raider.
+     * @return the type enum.
+     */
+    public abstract RaiderType getRaiderType();
 
     /**
      * Should the barbs despawn.
@@ -248,16 +247,22 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     @Override
     protected SoundEvent getHurtSound(final DamageSource damageSourceIn)
     {
-        return BarbarianSounds.barbarianHurt;
+        return RaiderSounds.raiderSounds.get(getRaiderType()).get(RaiderSounds.RaiderSoundTypes.HURT);
     }
 
     @Override
     protected SoundEvent getDeathSound()
     {
-        return BarbarianSounds.barbarianDeath;
+        return RaiderSounds.raiderSounds.get(getRaiderType()).get(RaiderSounds.RaiderSoundTypes.DEATH);
     }
 
-    @NotNull
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound()
+    {
+        return RaiderSounds.raiderSounds.get(getRaiderType()).get(RaiderSounds.RaiderSoundTypes.SAY);
+    }
+
     @Override
     public void writeAdditional(final CompoundNBT compound)
     {
