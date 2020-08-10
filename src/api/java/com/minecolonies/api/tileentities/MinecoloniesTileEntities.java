@@ -34,4 +34,7 @@ public class MinecoloniesTileEntities
 
     @ObjectHolder("stash")
     public static TileEntityType<TileEntityStash> STASH;
+
+    @ObjectHolder("colony_flag")
+    public static TileEntityType<TileEntityColonyFlag> COLONY_FLAG;
 }

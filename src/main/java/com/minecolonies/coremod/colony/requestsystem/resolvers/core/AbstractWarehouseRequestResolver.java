@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
@@ -163,12 +164,12 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         int totalAvailable = 0;
         for (final TileEntityWareHouse tile : wareHouses)
         {
-            final List<ItemStack> inv = tile.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
-            for (final ItemStack stack : inv)
+            final List<Tuple<ItemStack, BlockPos>> inv = tile.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
+            for (final Tuple<ItemStack, BlockPos> stack : inv)
             {
-                if (!stack.isEmpty())
+                if (!stack.getA().isEmpty())
                 {
-                    totalAvailable += stack.getCount();
+                    totalAvailable += stack.getA().getCount();
                 }
             }
         }
@@ -207,31 +208,28 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         tileentities:
         for (final TileEntityWareHouse wareHouse : wareHouses)
         {
-            final List<ItemStack> targetStacks = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> completedRequest.getRequest().matches(itemStack));
-            for (final ItemStack stack :
-              targetStacks)
+            final List<Tuple<ItemStack, BlockPos>> targetStacks = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> completedRequest.getRequest().matches(itemStack));
+            for (final Tuple<ItemStack, BlockPos> tuple : targetStacks)
             {
-                if (ItemStackUtils.isEmpty(stack))
+                if (ItemStackUtils.isEmpty(tuple.getA()))
                 {
                     continue;
                 }
 
-                final ItemStack matchingStack = stack.copy();
+                final ItemStack matchingStack = tuple.getA().copy();
                 matchingStack.setCount(Math.min(remainingCount, matchingStack.getCount()));
 
                 final ItemStack deliveryStack = matchingStack.copy();
                 completedRequest.addDelivery(deliveryStack.copy());
 
-                //todo This works okay for now. In the future we want something better here though.
+                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, tuple.getB(), wareHouse.getWorld().getDimension().getType().getId());
 
-                final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> stack == itemStack);
-                final ILocation itemStackLocation =
-                  manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().getDimension().getType().getId());
-
-                final Delivery delivery = new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy(), getDefaultDeliveryPriority(true));
+                final Delivery delivery =
+                  new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy(), getDefaultDeliveryPriority(true));
 
                 final IToken<?> requestToken =
-                  manager.createRequest(manager.getFactoryController().getNewInstance(TypeToken.of(this.getClass()), completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
+                  manager.createRequest(manager.getFactoryController()
+                                          .getNewInstance(TypeToken.of(this.getClass()), completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
                 deliveries.add(manager.getRequestForToken(requestToken));
                 remainingCount -= ItemStackUtils.getSize(matchingStack);
 

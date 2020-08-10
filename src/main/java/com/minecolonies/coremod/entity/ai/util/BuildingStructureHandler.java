@@ -319,6 +319,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         CLEAR,
         BUILD_SOLID,
         CLEAR_WATER,
+        CLEAR_NON_SOLIDS,
         DECORATE,
         SPAWN,
         REMOVE,

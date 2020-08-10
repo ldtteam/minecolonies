@@ -39,6 +39,8 @@ public final class ModItems
 
     public static Item santaHat;
 
+    public static Item flagBanner;
+
     /**
      * Private constructor to hide the implicit public one.
      */

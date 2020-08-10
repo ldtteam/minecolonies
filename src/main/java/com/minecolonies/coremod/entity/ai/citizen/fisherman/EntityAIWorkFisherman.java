@@ -110,9 +110,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     private static final int FISHING_TIMEOUT = 5;
 
     /**
-     * Required level for sponge drop.
+     * Required level for sponge/prismarine drop.
      */
-    private static final int LEVEL_FOR_SPONGE = 4;
+    private static final int LEVEL_FOR_BONUS = 3;
 
     /**
      * Per level lure speed.
@@ -419,10 +419,32 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         if (caughtFish())
         {
             playCaughtFishSound();
-            if (getOwnBuilding().getBuildingLevel() > LEVEL_FOR_SPONGE && worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < MineColonies.getConfig()
-                                                                                                                              .getCommon().fisherSpongeChance.get())
+
+            if(getOwnBuilding().getBuildingLevel() > LEVEL_FOR_BONUS)
             {
-                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.SPONGE));
+                final double primarySkillFactor = worker.getCitizenData().getCitizenSkillHandler().getSkills().get(getOwnBuilding().getPrimarySkill()).getB() / 10;
+                final double rollResult = worker.getRandom().nextDouble() * ONE_HUNDRED_PERCENT;
+                final double spongeTarget = MineColonies.getConfig().getCommon().fisherSpongeChance.get() + primarySkillFactor; 
+                final double shardTarget = spongeTarget + MineColonies.getConfig().getCommon().fisherPrismarineChance.get() + primarySkillFactor;
+                final double crystalTarget = shardTarget + MineColonies.getConfig().getCommon().fisherPrismarineChance.get() + primarySkillFactor;
+                ItemStack bonusItemStack = null;
+                if (rollResult < spongeTarget)
+                {
+                    bonusItemStack = new ItemStack(Blocks.SPONGE);
+                }
+                else if (rollResult < shardTarget)
+                {
+                    bonusItemStack = new ItemStack(Items.PRISMARINE_SHARD);
+                }
+                else if (rollResult < crystalTarget)
+                {
+                    bonusItemStack = new ItemStack(Items.PRISMARINE_CRYSTALS);
+                }
+
+                if (bonusItemStack != null)
+                {
+                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), bonusItemStack);
+                }
             }
 
             if (worker.getRandom().nextDouble() < CHANCE_NEW_POND)

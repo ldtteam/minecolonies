@@ -35,6 +35,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -86,6 +87,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     protected BlockPos workFrom;
 
     /**
+     * Block to mine.
+     */
+    private BlockPos blockToMine;
+
+    /**
      * Creates this ai base class and set's up important things.
      * <p>
      * Always use this constructor!
@@ -113,6 +119,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
            * Select the appropriate State to do next.
            */
           new AITarget(START_BUILDING, this::startBuilding, 1),
+          /*
+           * Select the appropriate State to do next.
+           */
+          new AITarget(MINE_BLOCK, this::doMining, 10),
           /*
            * Check if we have to build something.
            */
@@ -229,6 +239,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             return PICK_UP_RESIDUALS;
         }
 
+        if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
+        {
+            return INVENTORY_FULL;
+        }
+
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.building"));
 
         checkForExtraBuildingActions();
@@ -270,6 +285,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 //water
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.WATER_REMOVAL,
                   () -> placer.getIterator().decrement((info, pos, handler) -> handler.getWorld().getBlockState(pos).getFluidState().isEmpty()), false);
+                break;
+            case CLEAR_NON_SOLIDS:
+                // clear air
+                result = placer.executeStructureStep(world,
+                  null,
+                  progress,
+                  StructurePlacer.Operation.BLOCK_PLACEMENT,
+                  () -> placer.getIterator()
+                          .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !(info.getBlockInfo().getState().getBlock() instanceof AirBlock))),
+                  false);
                 break;
             case DECORATE:
 
@@ -320,7 +345,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
         {
-
             if (!structurePlacer.getB().nextStage())
             {
                 getOwnBuilding().setProgressPos(null, null);
@@ -337,14 +361,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.BREAK_BLOCK)
         {
-            if (!mineBlock(result.getBlockResult().getWorldPos(), getCurrentWorkingPosition()))
-            {
-                return getState();
-            }
-            else
-            {
-                worker.decreaseSaturationForContinuousAction();
-            }
+            blockToMine = result.getBlockResult().getWorldPos();
+            return MINE_BLOCK;
         }
 
         if (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() > 0)
@@ -362,6 +380,26 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 * decrease));
         }
         return getState();
+    }
+
+    /**
+     * Separate step for mining.
+     * @return the next state to go to.
+     */
+    private IAIState doMining()
+    {
+        if (blockToMine == null || world.getBlockState(blockToMine).getBlock() instanceof AirBlock)
+        {
+            return BUILDING_STEP;
+        }
+
+        if (!mineBlock(blockToMine, getCurrentWorkingPosition()))
+        {
+            worker.swingArm(Hand.MAIN_HAND);
+            return getState();
+        }
+        worker.decreaseSaturationForContinuousAction();
+        return BUILDING_STEP;
     }
 
     /**
@@ -394,7 +432,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
               position,
               name,
               new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
-              this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, CLEAR_WATER, DECORATE, SPAWN});
+              this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
         }
         else
         {
@@ -402,7 +440,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
               position,
               name,
               new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
-              this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, CLEAR_WATER, DECORATE, SPAWN});
+              this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS,DECORATE, SPAWN});
         }
 
         if (!structure.hasBluePrint())

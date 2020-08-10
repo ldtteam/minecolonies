@@ -9,7 +9,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -325,11 +324,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         for (int i = 0; i < inventoryTagList.size(); ++i)
         {
             final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
-            if (inventoryCompound.contains(TAG_EMPTY))
-            {
-                inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
-            }
-            else
+            if (!inventoryCompound.contains(TAG_EMPTY))
             {
                 final ItemStack stack = ItemStack.read(inventoryCompound);
                 inventory.setStackInSlot(i, stack);
@@ -400,6 +395,12 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
+    public void handleUpdateTag(final CompoundNBT tag)
+    {
+        this.read(tag);
+    }
+
+    @Override
     public void rotate(final Rotation rotationIn)
     {
         super.rotate(rotationIn);
@@ -407,12 +408,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             relativeNeighbor = relativeNeighbor.rotate(rotationIn);
         }
-    }
-
-    @Override
-    public void handleUpdateTag(final CompoundNBT tag)
-    {
-        this.read(tag);
     }
 
     @Nonnull

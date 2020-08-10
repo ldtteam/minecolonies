@@ -11,8 +11,9 @@ public class ModelEntityConcreteMixerMale extends CitizenModel<AbstractEntityCit
 {
     public ModelEntityConcreteMixerMale()
     {
-        final ModelRenderer mask;
-        final ModelRenderer headDetail;
+        ModelRenderer hair;
+        ModelRenderer mask;
+        ModelRenderer headDetail;
 
         textureWidth = 128;
         textureHeight = 64;
@@ -23,22 +24,26 @@ public class ModelEntityConcreteMixerMale extends CitizenModel<AbstractEntityCit
 
         bipedHead = new ModelRenderer(this);
         bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, true);
-        bipedHead.setTextureOffset(16, 56).addBox(-4.45F, -2.0F, 1.02F, 0.45F, 1.1F, 1.0F, 0.0F, false);
-        bipedHead.setTextureOffset(12, 56).addBox(4.0F, -2.0F, 1.02F, 0.45F, 1.1F, 1.0F, 0.0F, false);
-        bipedHead.setTextureOffset(51, 46).addBox(4.0F, -8.25F, 0.02F, 0.35F, 6.25F, 4.0F, 0.0F, false);
-        bipedHead.setTextureOffset(12, 60).addBox(2.75F, -8.25F, -4.48F, 1.6F, 2.75F, 1.0F, 0.0F, false);
-        bipedHead.setTextureOffset(18, 58).addBox(4.0F, -8.25F, -3.48F, 0.35F, 3.5F, 1.75F, 0.0F, false);
-        bipedHead.setTextureOffset(23, 57).addBox(4.0F, -8.25F, -1.73F, 0.35F, 4.25F, 1.75F, 0.0F, false);
-        bipedHead.setTextureOffset(26, 46).addBox(4.0F, -2.0F, 2.02F, 0.35F, 1.1F, 2.0F, 0.0F, false);
-        bipedHead.setTextureOffset(24, 49).addBox(-4.35F, -2.0F, 2.02F, 0.35F, 1.1F, 2.0F, 0.0F, true);
-        bipedHead.setTextureOffset(0, 46).addBox(-4.35F, -8.25F, -1.73F, 0.35F, 4.25F, 1.75F, 0.0F, true);
-        bipedHead.setTextureOffset(0, 55).addBox(-4.35F, -8.25F, -3.48F, 0.35F, 3.5F, 1.75F, 0.0F, true);
-        bipedHead.setTextureOffset(6, 59).addBox(-4.35F, -8.25F, -4.48F, 1.6F, 2.75F, 1.0F, 0.0F, true);
-        bipedHead.setTextureOffset(51, 58).addBox(-2.75F, -8.25F, -4.48F, 5.5F, 2.25F, 1.0F, 0.0F, true);
-        bipedHead.setTextureOffset(0, 46).addBox(-4.0F, -8.25F, -3.48F, 8.0F, 2.25F, 7.5F, 0.0F, true);
-        bipedHead.setTextureOffset(33, 46).addBox(-4.25F, -8.25F, 4.02F, 8.5F, 7.35F, 0.25F, 0.0F, true);
-        bipedHead.setTextureOffset(61, 46).addBox(-4.35F, -8.25F, 0.02F, 0.35F, 6.25F, 4.0F, 0.0F, true);
+        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+
+        hair = new ModelRenderer(this);
+        hair.setRotationPoint(0.0F, 24.0F, 0.0F);
+        bipedHead.addChild(hair);
+        hair.setTextureOffset(61, 46).addBox(-4.35F, -32.25F, 0.02F, 0.35F, 6.25F, 4.0F, 0.0F, true);
+        hair.setTextureOffset(33, 46).addBox(-4.25F, -32.25F, 4.02F, 8.5F, 7.35F, 0.25F, 0.0F, true);
+        hair.setTextureOffset(0, 46).addBox(-4.0F, -32.25F, -3.48F, 8.0F, 2.25F, 7.5F, 0.0F, true);
+        hair.setTextureOffset(51, 58).addBox(-2.75F, -32.25F, -4.48F, 5.5F, 2.25F, 1.0F, 0.0F, true);
+        hair.setTextureOffset(6, 59).addBox(-4.35F, -32.25F, -4.48F, 1.6F, 2.75F, 1.0F, 0.0F, true);
+        hair.setTextureOffset(0, 55).addBox(-4.35F, -32.25F, -3.48F, 0.35F, 3.5F, 1.75F, 0.0F, true);
+        hair.setTextureOffset(0, 46).addBox(-4.35F, -32.25F, -1.73F, 0.35F, 4.25F, 1.75F, 0.0F, true);
+        hair.setTextureOffset(16, 56).addBox(-4.45F, -26.0F, 1.02F, 0.45F, 1.1F, 1.0F, 0.0F, false);
+        hair.setTextureOffset(12, 56).addBox(4.0F, -26.0F, 1.02F, 0.45F, 1.1F, 1.0F, 0.0F, false);
+        hair.setTextureOffset(51, 46).addBox(4.0F, -32.25F, 0.02F, 0.35F, 6.25F, 4.0F, 0.0F, false);
+        hair.setTextureOffset(12, 60).addBox(2.75F, -32.25F, -4.48F, 1.6F, 2.75F, 1.0F, 0.0F, false);
+        hair.setTextureOffset(18, 58).addBox(4.0F, -32.25F, -3.48F, 0.35F, 3.5F, 1.75F, 0.0F, false);
+        hair.setTextureOffset(23, 57).addBox(4.0F, -32.25F, -1.73F, 0.35F, 4.25F, 1.75F, 0.0F, false);
+        hair.setTextureOffset(26, 46).addBox(4.0F, -26.0F, 2.02F, 0.35F, 1.1F, 2.0F, 0.0F, false);
+        hair.setTextureOffset(24, 49).addBox(-4.35F, -26.0F, 2.02F, 0.35F, 1.1F, 2.0F, 0.0F, true);
 
         mask = new ModelRenderer(this);
         mask.setRotationPoint(6.0F, -0.5F, -5.0F);
@@ -72,9 +77,9 @@ public class ModelEntityConcreteMixerMale extends CitizenModel<AbstractEntityCit
 
         bipedBody = new ModelRenderer(this);
         bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, true);
-
-        this.bipedHeadwear.showModel = false;
+        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
