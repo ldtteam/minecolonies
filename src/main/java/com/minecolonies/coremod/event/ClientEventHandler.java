@@ -216,7 +216,7 @@ public class ClientEventHandler
             final BlockPos position = nearbyBuilding.getKey();
             if (buildingData.a != null)
             {
-                StructureClientHandler.renderStructure(buildingData.a,
+                StructureClientHandler.renderStructureAtPos(buildingData.a,
                   event.getPartialTicks(),
                   position,
                   event.getMatrixStack());
