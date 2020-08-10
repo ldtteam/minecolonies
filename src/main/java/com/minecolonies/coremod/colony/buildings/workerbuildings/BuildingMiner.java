@@ -262,7 +262,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         if (oldNode != null)
         {
             final CompoundNBT nodeCompound = new CompoundNBT();
-            oldNode.write(new CompoundNBT());
+            oldNode.write(nodeCompound);
             compound.put(TAG_OLD, nodeCompound);
         }
         compound.putInt(TAG_CURRENT_LEVEL, currentLevel);
