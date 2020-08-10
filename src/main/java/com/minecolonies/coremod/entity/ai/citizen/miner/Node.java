@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.MathHelper;
@@ -106,7 +107,17 @@ public class Node
             z = compound.getInt(TAG_Z);
         }
 
-        final NodeType style = NodeType.valueOf(compound.getString(TAG_STYLE));
+        final String nodeType = compound.getString(TAG_STYLE);
+        NodeType style;
+        try
+        {
+            style = NodeType.valueOf(nodeType);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            style = NodeType.TUNNEL;
+            Log.getLogger().error("Miner node failed loading: " + nodeType + " . Please report this to the mod authors!", ex);
+        }
 
         final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 

@@ -1541,11 +1541,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
-        getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
 
-        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
+        if (getOpenRequestsByCitizen().containsKey(citizenThatRequested))
         {
-            getOpenRequestsByCitizen().remove(citizenThatRequested);
+            getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
+            if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
+            {
+                getOpenRequestsByCitizen().remove(citizenThatRequested);
+            }
         }
 
         getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).remove(request.getId());
