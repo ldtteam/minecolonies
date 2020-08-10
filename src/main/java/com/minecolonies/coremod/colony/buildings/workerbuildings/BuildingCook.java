@@ -293,7 +293,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
                 }
             }                
         }
-        
+
         return storage;
     }
 
