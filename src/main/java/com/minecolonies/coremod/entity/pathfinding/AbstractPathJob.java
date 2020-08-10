@@ -962,13 +962,23 @@ public abstract class AbstractPathJob implements Callable<Path>
         //  Check for headroom in the target space
         if (!isPassable(pos.up(2), false))
         {
-            return -1;
+            final VoxelShape bb1 = world.getBlockState(pos).getCollisionShape(world, pos);
+            final VoxelShape bb2 = world.getBlockState(pos.up(2)).getCollisionShape(world, pos.up(2));
+            if ((pos.up(2).getY() + getStartY(bb2, 1)) - (pos.getY() + getEndY(bb1, 0)) < 2)
+            {
+                return -1;
+            }
         }
 
         //  Check for jump room from the origin space
         if (!isPassable(parent.pos.up(2), false))
         {
-            return -1;
+            final VoxelShape bb1 = world.getBlockState(pos).getCollisionShape(world, pos);
+            final VoxelShape bb2 = world.getBlockState(parent.pos.up(2)).getCollisionShape(world, parent.pos.up(2));
+            if ((parent.pos.up(2).getY() + getStartY(bb2, 1)) - (pos.getY() + getEndY(bb1, 0)) < 2)
+            {
+                return -1;
+            }
         }
 
         final BlockState parentBelow = world.getBlockState(parent.pos.down());
@@ -1002,15 +1012,57 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if (!isPassable(pos.up(), true))
         {
-            return true;
+            final VoxelShape bb1 = world.getBlockState(pos.down()).getCollisionShape(world, pos.down());
+            final VoxelShape bb2 = world.getBlockState(pos.up()).getCollisionShape(world, pos.up());
+            if ((pos.up().getY() + getStartY(bb2, 1)) - (pos.down().getY() + getEndY(bb1, 0)) < 2)
+            {
+                return true;
+            }
+            if (parent != null)
+            {
+                final VoxelShape bb3 = world.getBlockState(parent.pos.down()).getCollisionShape(world, pos.down());
+                if ((pos.up().getY() + getStartY(bb2, 1)) - (parent.pos.down().getY() + getEndY(bb3, 0)) < 1.75)
+                {
+                    return true;
+                }
+            }
         }
 
         if (parent != null)
         {
             final BlockState hereState = world.getBlockState(localPos.down());
+            final VoxelShape bb1 = world.getBlockState(pos).getCollisionShape(world, pos);
+            final VoxelShape bb2 = world.getBlockState(localPos.up()).getCollisionShape(world, localPos.up());
+            if ((localPos.up().getY() + getStartY(bb2, 1)) - (pos.getY() + getEndY(bb1, 0) ) >= 2)
+            {
+                return false;
+            }
+
             return hereState.getMaterial().isLiquid() && !isPassable(pos, false);
         }
         return false;
+    }
+
+    /**
+     * Get the start y of a voxelshape.
+     * @param bb the voxelshape.
+     * @param def the default if empty.
+     * @return the start y.
+     */
+    private double getStartY(final VoxelShape bb, final int def)
+    {
+        return bb.isEmpty() ? def : bb.getStart(Direction.Axis.Y);
+    }
+
+    /**
+     * Get the end y of a voxelshape.
+     * @param bb the voxelshape.
+     * @param def the default if empty.
+     * @return the end y.
+     */
+    private double getEndY(final VoxelShape bb, final int def)
+    {
+        return bb.isEmpty() ? def : bb.getEnd(Direction.Axis.Y);
     }
 
     /**
