@@ -17,9 +17,12 @@ import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 import java.util.Optional;
 
@@ -44,6 +47,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     public BuildingStoneSmeltery(final IColony c, final BlockPos l)
     {
         super(c, l);
+        keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
     }
 
     @NotNull
