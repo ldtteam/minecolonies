@@ -1,10 +1,5 @@
-[![CLA assistant](https://cla-assistant.io/readme/badge/Minecolonies/minecolonies)](https://cla-assistant.io/Minecolonies/minecolonies)
-[![Build Status](https://teamcity.minecolonies.com/app/rest/builds/buildType:Minecolonies_Alpha/statusIcon)](http://teamcity.minecolonies.com/)
-[![Quality Gate](https://sonar.minecolonies.com/api/badges/gate?key=Minecolonies%3Aversion%2F1.11&blinking=true)](https://sonar.minecolonies.com/overview?id=Minecolonies%3Aversion%2F1.11)
-[![Comment Lines](https://sonar.minecolonies.com/api/badges/measure?key=Minecolonies%3Aversion%2F1.11&blinking=true&metric=comment_lines_density)](https://sonar.minecolonies.com/overview?id=Minecolonies%3Aversion%2F1.11)
-[![Lines of Code](https://sonar.minecolonies.com/api/badges/measure?key=Minecolonies%3Aversion%2F1.11&blinking=true&metric=ncloc)](https://sonar.minecolonies.com/overview?id=Minecolonies%3Aversion%2F1.11)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3f8479027286436bbb6add73d309e054)](https://www.codacy.com/app/Minecolonies/minecolonies?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Minecolonies/minecolonies&amp;utm_campaign=Badge_Grade)
-[![Stories in Ready](https://badge.waffle.io/Minecolonies/minecolonies.png?label=help%20wanted&title=Help%20Wanted)](http://waffle.io/Minecolonies/minecolonies)
+[![CLA assistant](https://cla-assistant.io/readme/badge/ldtteam/minecolonies)](https://cla-assistant.io/ldtteam/minecolonies)
+[![Build Status](https://buildsystem.ldtteam.com/app/rest/builds/buildType:LetSDevTogether_Minecolonies_Alpha_Release/statusIcon)](http://buildsystem.ldtteam.com/)
 
 ![alt tag](resources/minecolonies.png)
 
