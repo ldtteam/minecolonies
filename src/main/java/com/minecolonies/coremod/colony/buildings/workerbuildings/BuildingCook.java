@@ -132,7 +132,8 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     /**
      * Get the citizen that is currently assigned as the Assistant Cook
      */
-    public ICitizenData getAssistant() {
+    public ICitizenData getAssistant()
+    {
 
         if(getBuildingLevel() <3)
         {
