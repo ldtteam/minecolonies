@@ -471,7 +471,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
                                 if (te instanceof AbstractTileEntityRack)
                                 {
-                                    ((AbstractTileEntityRack) te).setBuildingPos(pos);
+                                    ((AbstractTileEntityRack) te).setBuildingPos(this.getPos());
                                 }
                             }
                         }
