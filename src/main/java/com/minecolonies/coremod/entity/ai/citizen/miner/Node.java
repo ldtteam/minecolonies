@@ -107,18 +107,7 @@ public class Node
             z = compound.getInt(TAG_Z);
         }
 
-        final String nodeType = compound.getString(TAG_STYLE);
-        NodeType style;
-        try
-        {
-            style = NodeType.valueOf(nodeType);
-        }
-        catch (IllegalArgumentException ex)
-        {
-            style = NodeType.TUNNEL;
-            Log.getLogger().error("Miner node failed loading: " + nodeType + " . Please report this to the mod authors!", ex);
-        }
-
+        final NodeType style = NodeType.valueOf(compound.getString(TAG_STYLE));
         final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
         Vec2i parent = null;
