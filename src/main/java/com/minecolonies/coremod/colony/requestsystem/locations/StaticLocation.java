@@ -79,7 +79,7 @@ public class StaticLocation implements ILocation
 
         final StaticLocation that = (StaticLocation) o;
 
-        if (getDimension() != that.getDimension())
+        if (!getDimension().equals(that.getDimension()))
         {
             return false;
         }

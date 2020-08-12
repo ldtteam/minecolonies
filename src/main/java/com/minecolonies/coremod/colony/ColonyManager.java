@@ -535,7 +535,7 @@ public final class ColonyManager implements IColonyManager
         {
             for (@NotNull final IColonyView c : colonyViews.get(w.func_234923_W_().func_240901_a_()))
             {
-                if (c.getDimension() == w.func_234923_W_().func_240901_a_() && c.getCenter() != null)
+                if (c.getDimension().equals(w.func_234923_W_().func_240901_a_()) && c.getCenter() != null)
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -574,7 +574,7 @@ public final class ColonyManager implements IColonyManager
             for (final int cId : cap.getAllCloseColonies())
             {
                 final IColony c = getColonyByWorld(cId, w);
-                if (c != null && c.getDimension() == w.func_234923_W_().func_240901_a_())
+                if (c != null && c.getDimension().equals(w.func_234923_W_().func_240901_a_()))
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -592,7 +592,7 @@ public final class ColonyManager implements IColonyManager
 
         for (@NotNull final IColony c : getColonies(w))
         {
-            if (c.getDimension() == w.func_234923_W_().func_240901_a_())
+            if (c.getDimension().equals(w.func_234923_W_().func_240901_a_()))
             {
                 final long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
