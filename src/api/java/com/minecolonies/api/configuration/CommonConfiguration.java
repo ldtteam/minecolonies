@@ -391,7 +391,7 @@ public class CommonConfiguration extends AbstractConfiguration
         allowPlayerSchematics = defineBoolean(builder, "allowplayerschematics", false);
         allowGlobalNameChanges = defineInteger(builder, "allowglobalnamechanges", 1, -1, 1);
         holidayFeatures = defineBoolean(builder, "holidayfeatures", true);
-        updateRate = defineInteger(builder, "updaterate", 1, 0, 100);
+        updateRate = defineInteger(builder, "updaterate", 1, 1, 100);
         dirtFromCompost = defineInteger(builder, "dirtfromcompost", 1, 0, 100);
         luckyBlockChance = defineInteger(builder, "luckyblockchance", 1, 0, 100);
         fixOrphanedChunks = defineBoolean(builder, "fixorphanedchunks", false);

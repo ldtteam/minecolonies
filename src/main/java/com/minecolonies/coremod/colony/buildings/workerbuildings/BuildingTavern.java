@@ -63,8 +63,8 @@ public class BuildingTavern extends BuildingHome
     /**
      * Music interval
      */
-    private static final int    FOUR_MINUTES_TICKS = 4800;
-    private static final String TAG_NOVISITTIME    = "novisit";
+    private static final int    TWENTY_MINUTES  = 20 * 60 * 20;
+    private static final String TAG_NOVISITTIME = "novisit";
 
     /**
      * Cooldown for the music, to not play it too much/not overlap with itself
@@ -137,7 +137,7 @@ public class BuildingTavern extends BuildingHome
     @Override
     public void onPlayerEnterBuilding(final PlayerEntity player)
     {
-        if (musicCooldown <= 0 && getBuildingLevel() > 0)
+        if (musicCooldown <= 0 && getBuildingLevel() > 0 && !colony.isDay())
         {
             net.minecraft.util.Tuple<Integer, Integer> corner1 = getCorners().getA();
             net.minecraft.util.Tuple<Integer, Integer> corner2 = getCorners().getB();
@@ -150,7 +150,7 @@ public class BuildingTavern extends BuildingHome
             {
                 Network.getNetwork().sendToPlayer(message, curPlayer);
             }
-            musicCooldown = FOUR_MINUTES_TICKS;
+            musicCooldown = TWENTY_MINUTES;
         }
     }
 
