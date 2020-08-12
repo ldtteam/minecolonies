@@ -105,7 +105,7 @@ public class SittingEntity extends Entity
             // Upsizes entity again
             if (lastPassenger != null)
             {
-                lastPassenger.size = lastPassenger.size.scale(2.0f);
+                lastPassenger.size = lastPassenger.size.scale(1.0f, 2.0f);
             }
             this.remove();
         }
@@ -116,9 +116,14 @@ public class SittingEntity extends Entity
     {
         super.addPassenger(passenger);
 
+        if (this.world.isRemote)
+        {
+            return;
+        }
+
         // Resizes entity and keeps a reference to it
         lastPassenger = passenger;
-        lastPassenger.size = lastPassenger.size.scale(0.5f);
+        lastPassenger.size = lastPassenger.size.scale(1.0f, 0.5f);
     }
 
     /**
