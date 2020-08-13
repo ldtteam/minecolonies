@@ -108,17 +108,24 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             return false;
         }
 
-        //If this building is resolving a generic food request, then only allow it to resolve non-smeltables. 
-        if(building instanceof AbstractBuildingWorker && request.getRequest() instanceof Food)
+        // As long as we're not resolving food, fast resolve
+        if(!(request.getRequest() instanceof Food))
+        {
+            return building instanceof AbstractBuildingWorker && canBuildingCraftStack((AbstractBuildingWorker) building, itemStack -> request.getRequest().matches(itemStack));
+        }
+
+        // If this building is resolving a generic food request, then only allow it to resolve non-smeltables. 
+        if(building instanceof AbstractBuildingWorker)
         {
             final IRecipeStorage recipe = ((AbstractBuildingWorker) building).getFirstRecipe(itemStack -> request.getRequest().matches(itemStack));
-            if( recipe != null && recipe.getIntermediate() == Blocks.FURNACE)
+            if( recipe != null && recipe.getIntermediate() != Blocks.FURNACE)
             {
-                return false;
+                return canBuildingCraftStack((AbstractBuildingWorker) building, itemStack -> request.getRequest().matches(itemStack));
             }
         }
 
-        return building instanceof AbstractBuildingWorker && canBuildingCraftStack((AbstractBuildingWorker) building, itemStack -> request.getRequest().matches(itemStack));
+        // It's both a Food request and smeltable
+        return false;
     }
 
     /**
