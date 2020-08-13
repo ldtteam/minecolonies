@@ -159,7 +159,7 @@ public class WindowBannerPicker extends Screen
         for (int i = 0; i < patterns.size(); i++)
         {
             int posX = center(this.width, PATTERN_COLUMNS, PATTERN_WIDTH, i % PATTERN_COLUMNS, PATTERN_MARGIN);
-            int posY = center(this.height+30, PATTERN_ROWS, PATTERN_HEIGHT, Math.floorDiv(i, PATTERN_COLUMNS) - scrollRow, PATTERN_MARGIN);
+            int posY = center(this.height+30, PATTERN_ROWS, PATTERN_HEIGHT, Math.floorDiv(i, PATTERN_COLUMNS), PATTERN_MARGIN);
 
             this.addButton(new PatternButton(posX, posY, PATTERN_HEIGHT, patterns.get(i)));
         }
