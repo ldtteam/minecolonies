@@ -21,7 +21,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -57,8 +56,21 @@ public class WindowBannerPicker extends Screen
     /** The number of rows the patterns are arranged in */
     private static final int PATTERN_ROWS = 4;
 
-    /** The list of patterns made unavailable to the player, mainly things without hard edges */
-    private static final BannerPattern[] EXCLUDED = {BannerPattern.GRADIENT, BannerPattern.GRADIENT_UP};
+    /**
+     * The list of patterns made unavailable to the player, mainly things without hard edges
+     * Must be done manually due to insufficient public variables in BannerPattern enum */
+    private static final BannerPattern[] EXCLUDED = {
+            BannerPattern.BASE,
+            BannerPattern.GRADIENT,
+            BannerPattern.GRADIENT_UP,
+            BannerPattern.BRICKS,
+            BannerPattern.GLOBE,
+            BannerPattern.CREEPER,
+            BannerPattern.SKULL,
+            BannerPattern.FLOWER,
+            BannerPattern.MOJANG,
+            BannerPattern.PIGLIN
+    };
 
     /** The list of banner patterns, to be excluded and cached */
     private final List<BannerPattern> patterns;
@@ -100,8 +112,7 @@ public class WindowBannerPicker extends Screen
         this.modelRender = BannerTileEntityRenderer.getModelRender();
 
         /* Get all patterns, then remove excluded and item-required patterns */
-        List<BannerPattern> patternsList = new LinkedList<>(Arrays.asList(BannerPattern.values()));
-        this.patterns = patternsList.subList(1, BannerPattern.PATTERN_ITEM_INDEX - EXCLUDED.length);
+        this.patterns = new LinkedList<>(Arrays.asList(BannerPattern.values()));
         this.patterns.removeAll(Arrays.asList(EXCLUDED));
 
         // Fetch the patterns as a List and not ListNBT
