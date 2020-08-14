@@ -283,19 +283,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         final double actualChance = Math.min(5.0, (baseChance * count) + (baseChance * citizen.getCitizenSkillHandler().getLevel(getPrimarySkill())));
         final double roll = citizen.getRandom().nextDouble() * 100;
 
-        Log.getLogger().info(this.getJobName() + ": for " + recipe.getPrimaryOutput().getItem() + " improvement roll is " + roll + " with an actual chance of: " + actualChance);
         if(roll <= actualChance && !ItemTags.getCollection().getOrCreate(reducableProductExclusions).contains(recipe.getPrimaryOutput().getItem()))
         {
             final ArrayList<ItemStack> newRecipe = new ArrayList<>();
             boolean didReduction = false;
-            Log.getLogger().info(this.getJobName() + ": attempting to improve recipe for: " + recipe.getPrimaryOutput().getItem());
             for(ItemStorage input : inputs)
             {
                 // Check against excluded products
                 if (input.getAmount() > 1 && ItemTags.getCollection().getOrCreate(reducableIngredients).contains(input.getItem()))
                 {
                     ItemStack updated = input.getItemStack();
-                    Log.getLogger().info("Reducing required " + input.getItem() + " from " + input.getAmount() + " to " + (input.getAmount() -1 ) + " for " + recipe.getPrimaryOutput().getItem());   
                     updated.setCount(input.getAmount() - 1);
                     newRecipe.add(updated);
                     didReduction = true;
