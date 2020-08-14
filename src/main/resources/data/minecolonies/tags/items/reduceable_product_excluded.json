@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:stone",
+    "#forge:cobblestone",
+    "#forge:gravel",
+    "#forge:sand",
+    "#forge:ingots",
+    "#forge:storage_blocks"
+  ]
+}

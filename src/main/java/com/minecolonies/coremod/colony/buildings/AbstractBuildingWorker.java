@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.InventoryUtils;
@@ -29,6 +30,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraf
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import io.netty.buffer.Unpooled;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -265,6 +267,59 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         return Optional.empty();
     }
 
+    /**
+     * Has a chance to reduce the resource requirements for the recipe in this building
+     * @param recipe the recipe we're possibly improving
+     * @param count the number of items (chances) 
+     * @param citizen The citizen, as the primary skill can improve the chances
+     */
+    public void improveRecipe(IRecipeStorage recipe, int count, ICitizenData citizen)
+    {
+        final double baseChance = 0.0625;
+        final ResourceLocation reducableIngredients = new ResourceLocation("minecolonies", "reduceable_ingredient");
+        final ResourceLocation reducableProductExclusions = new ResourceLocation("minecolonies", "reduceable_product_excluded");
+        final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
+
+        final double actualChance = Math.min(5.0, (baseChance * count) + (baseChance * citizen.getCitizenSkillHandler().getLevel(getPrimarySkill())));
+        final double roll = citizen.getRandom().nextDouble() * 100;
+
+        Log.getLogger().info(this.getJobName() + ": for " + recipe.getPrimaryOutput().getItem() + " improvement roll is " + roll + " with an actual chance of: " + actualChance);
+        if(roll <= actualChance && !ItemTags.getCollection().getOrCreate(reducableProductExclusions).contains(recipe.getPrimaryOutput().getItem()))
+        {
+            ArrayList<ItemStack> newRecipe = new ArrayList<>();
+            boolean didReduction = false;
+            Log.getLogger().info(this.getJobName() + ": attempting to improve recipe for: " + recipe.getPrimaryOutput().getItem());
+            for(ItemStorage input : inputs)
+            {
+                // Check against excluded products
+                if (input.getAmount() > 1 && ItemTags.getCollection().getOrCreate(reducableIngredients).contains(input.getItem()))
+                {
+                    ItemStack updated = input.getItemStack();
+                    Log.getLogger().info("Reducing required " + input.getItem() + " from " + input.getAmount() + " to " + (input.getAmount() -1 ) + " for " + recipe.getPrimaryOutput().getItem());   
+                    updated.setCount(input.getAmount() - 1);
+                    newRecipe.add(updated);
+                    didReduction = true;
+                } else
+                {
+                    newRecipe.add(input.getItemStack());
+                }
+            }
+            
+            if (didReduction)
+            {
+                final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    newRecipe,
+                    1,
+                    recipe.getPrimaryOutput(),
+                    Blocks.AIR);
+
+                replaceRecipe(recipe.getToken(), IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+            }
+        }
+    }
+
     @Override
     public boolean isRecipeAlterationAllowed()
     {
@@ -468,6 +523,22 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     {
         recipes.remove(token);
         markDirty();
+    }
+
+    /**
+     * Replace one current recipe with a new one
+     * @param oldRecipe the recipe to replace
+     * @param newRecipe the new version
+     */
+    public void replaceRecipe(final IToken<?> oldRecipe, final IToken<?> newRecipe)
+    {
+        if (recipes.contains(oldRecipe))
+        {
+            int oldIndex = recipes.indexOf(oldRecipe);
+            recipes.add(oldIndex, newRecipe);
+            recipes.remove(oldRecipe);
+            markDirty();
+        }
     }
 
     @Override
