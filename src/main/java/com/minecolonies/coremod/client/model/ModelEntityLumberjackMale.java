@@ -7,26 +7,25 @@ import org.jetbrains.annotations.NotNull;
 
 public class ModelEntityLumberjackMale extends CitizenModel<AbstractEntityCitizen>
 {
-    // fields
-    ModelRenderer Log1;
-    ModelRenderer Log2;
-    ModelRenderer Log3;
-    ModelRenderer Basket1;
-    ModelRenderer Basket2;
-    ModelRenderer Basket3;
-    ModelRenderer Basket4;
-    ModelRenderer Basket5;
-    ModelRenderer Basket6;
-    ModelRenderer Basket7;
-    ModelRenderer Basket8;
-    ModelRenderer Basket9;
-    ModelRenderer Basket10;
-    ModelRenderer Basket11;
-    ModelRenderer BasketE1;
-    ModelRenderer BasketE2;
-
     public ModelEntityLumberjackMale()
     {
+        ModelRenderer Log1;
+        ModelRenderer Log2;
+        ModelRenderer Log3;
+        ModelRenderer Basket1;
+        ModelRenderer Basket2;
+        ModelRenderer Basket3;
+        ModelRenderer Basket4;
+        ModelRenderer Basket5;
+        ModelRenderer Basket6;
+        ModelRenderer Basket7;
+        ModelRenderer Basket8;
+        ModelRenderer Basket9;
+        ModelRenderer Basket10;
+        ModelRenderer Basket11;
+        ModelRenderer BasketE1;
+        ModelRenderer BasketE2;
+
         textureWidth = 64;
         textureHeight = 64;
 

@@ -305,6 +305,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 if (job.getCraftCounter() >= job.getMaxCraftingCount())
                 {
                     incrementActionsDone(getActionRewardForCraftingSuccess());
+                    getOwnBuilding().improveRecipe(currentRecipeStorage, job.getCraftCounter(), worker.getCitizenData());
                     currentRecipeStorage = null;
                     resetValues();
 

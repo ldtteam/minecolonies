@@ -1,210 +1,156 @@
+// Made with Blockbench 3.5.1
+// Exported for Minecraft version 1.15
+// Paste this class into your mod and generate all required imports
 package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import org.jetbrains.annotations.NotNull;
 
 public class ModelEntityFarmerFemale extends CitizenModel<AbstractEntityCitizen>
 {
-    ModelRenderer chest;
-    ModelRenderer ponytailBase;
-    ModelRenderer ponytailTail;
-    ModelRenderer boxBottom;
-    ModelRenderer boxFront;
-    ModelRenderer boxBack;
-    ModelRenderer boxLeft;
-    ModelRenderer boxRight;
-    ModelRenderer seeds;
-    ModelRenderer strapLeft;
-    ModelRenderer strapRight;
-    ModelRenderer hatStrap;
-    ModelRenderer hatFrill;
-    ModelRenderer hatTop;
-    ModelRenderer hatBottom;
-
     public ModelEntityFarmerFemale()
     {
+        ModelRenderer chest;
+        ModelRenderer boxBottom;
+        ModelRenderer boxFront;
+        ModelRenderer boxBack;
+        ModelRenderer boxLeft;
+        ModelRenderer boxRight;
+        ModelRenderer seeds;
+        ModelRenderer strapLeft;
+        ModelRenderer strapRight;
+        ModelRenderer headDetail;
+        ModelRenderer hatFrill;
+        ModelRenderer hatBottom;
+        ModelRenderer hatTop;
+        ModelRenderer hatStrap;
+        ModelRenderer ponytailBase;
+        ModelRenderer ponytailTail;
+
         textureWidth = 128;
         textureHeight = 64;
 
-        bipedRightArm = new ModelRenderer(this, 40, 16);
-        bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
-        bipedRightArm.setRotationPoint(-5F, 2F, 0F);
-        bipedRightArm.setTextureSize(128, 64);
-        bipedRightArm.mirror = true;
-        setRotation(bipedRightArm, 0F, 0F, 0F);
+        bipedRightArm = new ModelRenderer(this);
+        bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
+        bipedRightArm.setTextureOffset(40, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, true);
 
-        bipedLeftArm = new ModelRenderer(this, 40, 16);
-        bipedLeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
-        bipedLeftArm.setRotationPoint(5F, 2F, 0F);
-        bipedLeftArm.setTextureSize(128, 64);
-        bipedLeftArm.mirror = true;
-        setRotation(bipedLeftArm, 0F, 0F, 0F);
-        bipedLeftArm.mirror = false;
+        bipedLeftArm = new ModelRenderer(this);
+        bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
+        bipedLeftArm.setTextureOffset(40, 16).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, false);
 
-        chest = new ModelRenderer(this, 17, 32);
-        chest.addBox(-3.5F, 2.7F, -0.6F, 7, 3, 4);
-        chest.setRotationPoint(0F, 0F, 0F);
-        chest.setTextureSize(128, 64);
-        chest.mirror = true;
-        setRotation(chest, -0.5934119F, 0F, 0F);
+        bipedRightLeg = new ModelRenderer(this);
+        bipedRightLeg.setRotationPoint(-2.0F, 12.0F, 0.0F);
+        bipedRightLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        bipedRightLeg = new ModelRenderer(this, 0, 16);
-        bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        bipedRightLeg.setRotationPoint(-2F, 12F, 0F);
-        bipedRightLeg.setTextureSize(128, 64);
-        bipedRightLeg.mirror = true;
-        setRotation(bipedRightLeg, 0F, 0F, 0F);
+        bipedLeftLeg = new ModelRenderer(this);
+        bipedLeftLeg.setRotationPoint(2.0F, 12.0F, 0.0F);
+        bipedLeftLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        bipedLeftLeg = new ModelRenderer(this, 0, 16);
-        bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
-        bipedLeftLeg.setTextureSize(128, 64);
-        bipedLeftLeg.mirror = true;
-        setRotation(bipedLeftLeg, 0F, 0F, 0F);
-        bipedLeftLeg.mirror = false;
+        bipedBody = new ModelRenderer(this);
+        bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
-        bipedBody = new ModelRenderer(this, 16, 16);
-        bipedBody.addBox(-4F, 0F, -2F, 8, 12, 4);
-        bipedBody.setRotationPoint(0F, 0F, 0F);
-        bipedBody.setTextureSize(128, 64);
-        bipedBody.mirror = true;
-        setRotation(bipedBody, 0F, 0F, 0F);
-
-        bipedHead = new ModelRenderer(this, 0, 0);
-        bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8);
-        bipedHead.setRotationPoint(0F, 0F, 0F);
-        bipedHead.setTextureSize(128, 64);
-        bipedHead.mirror = true;
-        setRotation(bipedHead, 0F, 0F, 0F);
-
-        ponytailBase = new ModelRenderer(this, 33, 6);
-        ponytailBase.addBox(-0.5F, 2.2F, 3.8F, 1, 5, 1);
-        ponytailBase.setRotationPoint(0F, 0F, 0F);
-        ponytailBase.setTextureSize(128, 64);
-        ponytailBase.mirror = true;
-        setRotation(ponytailBase, 0.1047198F, 0F, 0F);
-
-        ponytailTail = new ModelRenderer(this, 32, 0);
-        ponytailTail.addBox(-1F, -2.2F, 3.5F, 2, 5, 1);
-        ponytailTail.setRotationPoint(0F, 0F, 0F);
-        ponytailTail.setTextureSize(128, 64);
-        ponytailTail.mirror = true;
-        setRotation(ponytailTail, 0.2268928F, 0F, 0F);
-
-        boxBottom = new ModelRenderer(this, 19, 50);
-        boxBottom.addBox(-3F, 0F, -2F, 6, 1, 3);
-        boxBottom.setRotationPoint(0F, 9F, -4F);
-        boxBottom.setTextureSize(128, 64);
-        boxBottom.mirror = true;
-        setRotation(boxBottom, 0F, 0F, 0F);
-
-        boxFront = new ModelRenderer(this, 21, 55);
-        boxFront.addBox(-3F, -2F, -3F, 6, 3, 1);
-        boxFront.setRotationPoint(0F, 9F, -4F);
-        boxFront.setTextureSize(128, 64);
-        boxFront.mirror = true;
-        setRotation(boxFront, 0F, 0F, 0F);
-
-        seeds = new ModelRenderer(this, 19, 45);
-        seeds.addBox(-3F, -2F, -2F, 6, 1, 3);
-        seeds.setRotationPoint(0F, 9F, -4F);
-        seeds.setTextureSize(128, 64);
-        seeds.mirror = true;
-        setRotation(seeds, 0F, 0F, 0F);
-
-        boxLeft = new ModelRenderer(this, 42, 43);
-        boxLeft.addBox(3F, -2F, -3F, 1, 3, 6);
-        boxLeft.setRotationPoint(0F, 9F, -4F);
-        boxLeft.setTextureSize(128, 64);
-        boxLeft.mirror = true;
-        setRotation(boxLeft, 0F, 0F, 0F);
-
-        strapLeft = new ModelRenderer(this, 0, 55);
-        strapLeft.addBox(0F, 0F, -4F, 1, 1, 8);
-        strapLeft.setRotationPoint(3F, 4F, -4F);
-        strapLeft.setTextureSize(128, 64);
-        strapLeft.mirror = true;
-        setRotation(strapLeft, 1.047198F, 0F, 0F);
-
-        boxRight = new ModelRenderer(this, 0, 43);
-        boxRight.addBox(-4F, -2F, -3F, 1, 3, 6);
-        boxRight.setRotationPoint(0F, 9F, -4F);
-        boxRight.setTextureSize(128, 64);
-        boxRight.mirror = true;
-        setRotation(boxRight, 0F, 0F, 0F);
-
-        strapRight = new ModelRenderer(this, 0, 55);
-        strapRight.addBox(0F, 0F, -4F, 1, 1, 8);
-        strapRight.setRotationPoint(-4F, 4F, -4F);
-        strapRight.setTextureSize(128, 64);
-        strapRight.mirror = true;
-        setRotation(strapRight, 1.047198F, 0F, 0F);
-
-        boxBack = new ModelRenderer(this, 21, 40);
-        boxBack.addBox(-3F, -2F, -3F, 6, 3, 1);
-        boxBack.setRotationPoint(0F, 9F, 0F);
-        boxBack.setTextureSize(128, 64);
-        boxBack.mirror = true;
-        setRotation(boxBack, 0F, 0F, 0F);
-
-        hatBottom = new ModelRenderer(this, 61, 9);
-        hatBottom.addBox(-5F, -7.8F, -7F, 10, 3, 8);
-        hatBottom.setRotationPoint(0F, 0F, 0F);
-        hatBottom.setTextureSize(128, 64);
-        hatBottom.mirror = true;
-        setRotation(hatBottom, -0.7853982F, 0F, 0F);
-
-        hatStrap = new ModelRenderer(this, 68, 33);
-        hatStrap.addBox(-4.5F, -6.7F, -2.7F, 9, 8, 1);
-        hatStrap.setRotationPoint(0F, 0F, 0F);
-        hatStrap.setTextureSize(128, 64);
-        hatStrap.mirror = true;
-        setRotation(hatStrap, -0.3490659F, 0F, 0F);
-
-        hatFrill = new ModelRenderer(this, 57, 21);
-        hatFrill.addBox(-5.5F, -5.7F, -8F, 11, 1, 10);
-        hatFrill.setRotationPoint(0F, 0F, 0F);
-        hatFrill.setTextureSize(128, 64);
-        hatFrill.mirror = true;
-        setRotation(hatFrill, -0.6981317F, 0F, 0F);
-
-        hatTop = new ModelRenderer(this, 64, 1);
-        hatTop.addBox(-4.5F, -8.5F, -6F, 9, 1, 6);
-        hatTop.setRotationPoint(0F, 0F, 0F);
-        hatTop.setTextureSize(128, 64);
-        hatTop.mirror = true;
-        setRotation(hatTop, -0.7853982F, 0F, 0F);
-
+        chest = new ModelRenderer(this);
+        chest.setRotationPoint(0.0F, 0.0F, 0.0F);
         bipedBody.addChild(chest);
+        setRotationAngle(chest, -0.5934F, 0.0F, 0.0F);
+        chest.setTextureOffset(17, 32).addBox(-3.5F, 2.7F, -0.6F, 7.0F, 3.0F, 4.0F, 0.0F, true);
 
-        bipedHead.addChild(hatFrill);
-        bipedHead.addChild(hatBottom);
-        bipedHead.addChild(hatTop);
-
-        bipedHead.addChild(hatStrap);
-
-        bipedHead.addChild(ponytailBase);
-        bipedHead.addChild(ponytailTail);
-
+        boxBottom = new ModelRenderer(this);
+        boxBottom.setRotationPoint(0.0F, 9.0F, -4.0F);
         bipedBody.addChild(boxBottom);
+        boxBottom.setTextureOffset(19, 50).addBox(-3.0F, 0.0F, -2.0F, 6.0F, 1.0F, 3.0F, 0.0F, true);
+
+        boxFront = new ModelRenderer(this);
+        boxFront.setRotationPoint(0.0F, 9.0F, -4.0F);
         bipedBody.addChild(boxFront);
+        boxFront.setTextureOffset(21, 55).addBox(-3.0F, -2.0F, -3.0F, 6.0F, 3.0F, 1.0F, 0.0F, true);
+
+        boxBack = new ModelRenderer(this);
+        boxBack.setRotationPoint(0.0F, 9.0F, 0.0F);
         bipedBody.addChild(boxBack);
+        boxBack.setTextureOffset(21, 40).addBox(-3.0F, -2.0F, -3.0F, 6.0F, 3.0F, 1.0F, 0.0F, true);
+
+        boxLeft = new ModelRenderer(this);
+        boxLeft.setRotationPoint(0.0F, 9.0F, -4.0F);
         bipedBody.addChild(boxLeft);
+        boxLeft.setTextureOffset(42, 43).addBox(3.0F, -2.0F, -3.0F, 1.0F, 3.0F, 6.0F, 0.0F, true);
+
+        boxRight = new ModelRenderer(this);
+        boxRight.setRotationPoint(0.0F, 9.0F, -4.0F);
         bipedBody.addChild(boxRight);
+        boxRight.setTextureOffset(0, 43).addBox(-4.0F, -2.0F, -3.0F, 1.0F, 3.0F, 6.0F, 0.0F, true);
+
+        seeds = new ModelRenderer(this);
+        seeds.setRotationPoint(0.0F, 9.0F, -4.0F);
         bipedBody.addChild(seeds);
+        seeds.setTextureOffset(19, 45).addBox(-3.0F, -2.0F, -2.0F, 6.0F, 1.0F, 3.0F, 0.0F, true);
 
+        strapLeft = new ModelRenderer(this);
+        strapLeft.setRotationPoint(3.0F, 4.0F, -4.0F);
         bipedBody.addChild(strapLeft);
-        bipedBody.addChild(strapRight);
+        setRotationAngle(strapLeft, 1.0472F, 0.0F, 0.0F);
+        strapLeft.setTextureOffset(0, 55).addBox(0.0F, 0.0F, -4.0F, 1.0F, 1.0F, 8.0F, 0.0F, true);
 
-        bipedHeadwear.showModel = false;
+        strapRight = new ModelRenderer(this);
+        strapRight.setRotationPoint(-4.0F, 4.0F, -4.0F);
+        bipedBody.addChild(strapRight);
+        setRotationAngle(strapRight, 1.0472F, 0.0F, 0.0F);
+        strapRight.setTextureOffset(0, 55).addBox(0.0F, 0.0F, -4.0F, 1.0F, 1.0F, 8.0F, 0.0F, true);
+
+        bipedHead = new ModelRenderer(this);
+        bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+
+        headDetail = new ModelRenderer(this);
+        headDetail.setRotationPoint(0.0F, 0.0F, 1.0F);
+        bipedHead.addChild(headDetail);
+        headDetail.setTextureOffset(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
+
+        hatFrill = new ModelRenderer(this);
+        hatFrill.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bipedHead.addChild(hatFrill);
+        setRotationAngle(hatFrill, -0.6981F, 0.0F, 0.0F);
+        hatFrill.setTextureOffset(57, 21).addBox(-5.5F, -5.7F, -8.0F, 11.0F, 1.0F, 10.0F, 0.0F, true);
+
+        hatBottom = new ModelRenderer(this);
+        hatBottom.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bipedHead.addChild(hatBottom);
+        setRotationAngle(hatBottom, -0.7854F, 0.0F, 0.0F);
+        hatBottom.setTextureOffset(61, 9).addBox(-5.0F, -7.8F, -7.0F, 10.0F, 3.0F, 8.0F, 0.0F, true);
+
+        hatTop = new ModelRenderer(this);
+        hatTop.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bipedHead.addChild(hatTop);
+        setRotationAngle(hatTop, -0.7854F, 0.0F, 0.0F);
+        hatTop.setTextureOffset(64, 1).addBox(-4.5F, -8.5F, -6.0F, 9.0F, 1.0F, 6.0F, 0.0F, true);
+
+        hatStrap = new ModelRenderer(this);
+        hatStrap.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bipedHead.addChild(hatStrap);
+        setRotationAngle(hatStrap, -0.3491F, 0.0F, 0.0F);
+        hatStrap.setTextureOffset(68, 33).addBox(-4.5F, -6.7F, -2.7F, 9.0F, 8.0F, 1.0F, 0.0F, true);
+
+        ponytailBase = new ModelRenderer(this);
+        ponytailBase.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bipedHead.addChild(ponytailBase);
+        setRotationAngle(ponytailBase, 0.1047F, 0.0F, 0.0F);
+        ponytailBase.setTextureOffset(30, 0).addBox(-0.5F, 2.2F, 3.8F, 1.0F, 5.0F, 1.0F, 0.0F, true);
+
+        ponytailTail = new ModelRenderer(this);
+        ponytailTail.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bipedHead.addChild(ponytailTail);
+        setRotationAngle(ponytailTail, 0.2269F, 0.0F, 0.0F);
+        ponytailTail.setTextureOffset(24, 0).addBox(-1.0F, -2.2F, 3.5F, 2.0F, 5.0F, 1.0F, 0.0F, true);
+		
+		bipedHeadwear.showModel = false;
     }
 
-    private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
+    public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
     {
-        model.rotateAngleX = x;
-        model.rotateAngleY = y;
-        model.rotateAngleZ = z;
+        modelRenderer.rotateAngleX = x;
+        modelRenderer.rotateAngleY = y;
+        modelRenderer.rotateAngleZ = z;
     }
 }

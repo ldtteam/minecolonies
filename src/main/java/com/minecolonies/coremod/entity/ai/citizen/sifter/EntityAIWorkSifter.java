@@ -131,7 +131,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
 
         if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
         {
-            return DUMPING;
+            return INVENTORY_FULL;
         }
 
         if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity())

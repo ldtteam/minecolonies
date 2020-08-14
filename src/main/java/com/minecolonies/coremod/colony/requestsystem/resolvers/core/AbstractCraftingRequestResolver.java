@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -13,7 +14,10 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
+
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,7 +108,24 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             return false;
         }
 
-        return building instanceof AbstractBuildingWorker && canBuildingCraftStack((AbstractBuildingWorker) building, itemStack -> request.getRequest().matches(itemStack));
+        // As long as we're not resolving food, fast resolve
+        if(!(request.getRequest() instanceof Food))
+        {
+            return building instanceof AbstractBuildingWorker && canBuildingCraftStack((AbstractBuildingWorker) building, itemStack -> request.getRequest().matches(itemStack));
+        }
+
+        // If this building is resolving a generic food request, then only allow it to resolve non-smeltables. 
+        if(building instanceof AbstractBuildingWorker)
+        {
+            final IRecipeStorage recipe = ((AbstractBuildingWorker) building).getFirstRecipe(itemStack -> request.getRequest().matches(itemStack));
+            if( recipe != null && recipe.getIntermediate() != Blocks.FURNACE)
+            {
+                return canBuildingCraftStack((AbstractBuildingWorker) building, itemStack -> request.getRequest().matches(itemStack));
+            }
+        }
+
+        // It's both a Food request and smeltable
+        return false;
     }
 
     /**

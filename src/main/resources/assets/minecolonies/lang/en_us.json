@@ -109,7 +109,9 @@
   "minecolonies.config.restrictbuilderunderground": "Builder Underground",
   "minecolonies.config.restrictbuilderunderground.comment": "If the builder should be slower underground or as fast as anywhere else. [Default: true]",
   "minecolonies.config.fisherspongechance": "Sponge Chance",
-  "minecolonies.config.fisherspongechance.comment": "Chance to get a sponge drop for the fisherman starting at level 4. [Default: 0.1]",
+  "minecolonies.config.fisherspongechance.comment": "Chance to get a sponge drop for the fisherman starting at level 3. [Default: 0.1]",
+  "minecolonies.config.fisherprismarinechance": "Prismarine Chance",
+  "minecolonies.config.fisherprismarinechance.comment": "Chance to get a prismarine shard or crystal drop for the fisherman starting at level 3. Overall chance of prismarine is 2x this number [Default: 2.5]",
   "minecolonies.config.minthleveltoteleport": "TH-Teleport",
   "minecolonies.config.minthleveltoteleport.comment": "The minimum level a townhall has to have to allow teleportation to other colonies. [Default: 3]",
   "minecolonies.config.suggestbuildtoolplacement": "BuildTool Placement",
@@ -1579,6 +1581,7 @@
 
   "com.minecolonies.coremod.worker.ai.exception": "My AI has run into an issue, please checkout the latest.log file(or contact the server owner when on a server) and let the minecolonies authors know.",
   "com.minecolonies.coremod.research.research.toomanyinprogress": "Too many in progress",
+  "com.minecolonies.coremod.research.research.missingrequirements": "Missing Requirements",
   "com.minecolonies.coremod.research.research.notenoughresources": "Missing Resources",
   "com.minecolonies.coremod.research.research.buildingleveltoolow": "Too low building level",
 
@@ -1744,5 +1747,10 @@
   "com.minecolonies.coremod.gui.field.near": "Nearest to you",
   "com.minecolonies.coremod.gui.field.worker": "Farmer: %s",
 
-  "com.minecolonies.coremod.gui.chat.skipchitchat": "Skip the Chit-Chat"
+  "com.minecolonies.coremod.gui.chat.skipchitchat": "Skip the Chit-Chat",
+
+  "com.minecolonies.coremod.gui.flag.choose": "Choose a color and pattern for up to 6 layers",
+  "com.minecolonies.coremod.gui.flag.base_layer": "Base",
+  "com.minecolonies.coremod.gui.townhall.edit_flag": "Edit colony flag",
+  "block.minecolonies.colony_banner": "Colony Flag Banner"
 }
