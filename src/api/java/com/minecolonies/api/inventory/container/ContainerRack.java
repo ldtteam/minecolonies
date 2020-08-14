@@ -161,11 +161,6 @@ public class ContainerRack extends Container
             slot.onSlotChanged();
         }
 
-        rack.updateItemStorage();
-        if (neighborRack != null)
-        {
-            neighborRack.updateItemStorage();
-        }
         return stackCopy;
     }
 
