@@ -426,6 +426,8 @@ public final class TranslationConstants
     @NonNls
     public static final String RESEARCH_CONCLUDED                                                  = "com.minecolonies.coremod.university.researchconcluded.";
     @NonNls
+    public static final String RECIPE_IMPROVED                                                     = "com.minecolonies.coremod.crafters.recipeimproved.";
+    @NonNls
     public static final String OUT_OF_COLONY                                                       = "com.minecolonies.coremod.workorder.outofcolony";
     @NonNls
     public static final String NO                                                                  = "com.minecolonies.coremod.entity.citizen.no.";
