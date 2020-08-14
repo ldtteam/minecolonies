@@ -6,6 +6,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
@@ -128,7 +129,10 @@ public class TileEntityRack extends AbstractTileEntityRack
      *
      * @return the map of content.
      */
-    public Map<ItemStorage, Integer> getAllContent() {return content;}
+    public Map<ItemStorage, Integer> getAllContent()
+    {
+        return content;
+    }
 
     @Override
     public void upgradeItemStorage()
@@ -166,29 +170,34 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public void updateItemStorage()
     {
-        content.clear();
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
+        if (world != null && !world.isRemote)
         {
-            final ItemStack stack = inventory.getStackInSlot(slot);
+            Log.getLogger().warn("changed");
 
-            if (ItemStackUtils.isEmpty(stack))
+            content.clear();
+            for (int slot = 0; slot < inventory.getSlots(); slot++)
             {
-                continue;
+                final ItemStack stack = inventory.getStackInSlot(slot);
+
+                if (ItemStackUtils.isEmpty(stack))
+                {
+                    continue;
+                }
+
+                final ItemStorage storage = new ItemStorage(stack.copy());
+                int amount = ItemStackUtils.getSize(stack);
+                if (content.containsKey(storage))
+                {
+                    amount += content.remove(storage);
+                }
+                content.put(storage, amount);
             }
 
-            final ItemStorage storage = new ItemStorage(stack.copy());
-            int amount = ItemStackUtils.getSize(stack);
-            if (content.containsKey(storage))
+            if (world != null)
             {
-                amount += content.remove(storage);
+                updateBlockState();
+                markDirty();
             }
-            content.put(storage, amount);
-        }
-
-        if (world != null)
-        {
-            updateBlockState();
-            markDirty();
         }
     }
 
@@ -242,10 +251,16 @@ public class TileEntityRack extends AbstractTileEntityRack
                     getOtherChest().setMain(false);
                 }
 
-                world.setBlockState(pos, typeHere);
+                if (!world.getBlockState(pos).equals(typeHere))
+                {
+                    world.setBlockState(pos, typeHere);
+                }
                 if (typeNeighbor != null)
                 {
-                    world.setBlockState(this.pos.subtract(relativeNeighbor), typeNeighbor);
+                    if (!world.getBlockState(this.pos.subtract(relativeNeighbor)).equals(typeHere))
+                    {
+                        world.setBlockState(this.pos.subtract(relativeNeighbor), typeNeighbor);
+                    }
                 }
             }
             else
