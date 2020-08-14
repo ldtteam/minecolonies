@@ -219,17 +219,24 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     @Override
     public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack)
     {
-        if (getCitizen().getWorkBuilding() != null)
+        try
         {
-            if (getCitizen().getWorkBuilding().overruleNextOpenRequestOfCitizenWithStack(getCitizen(), pickedUpStack.copy()))
+            if (getCitizen().getWorkBuilding() != null)
             {
-                return true;
+                if (getCitizen().getWorkBuilding().overruleNextOpenRequestOfCitizenWithStack(getCitizen(), pickedUpStack.copy()))
+                {
+                    return true;
+                }
+            }
+
+            if (getCitizen().getHomeBuilding() != null)
+            {
+                return getCitizen().getHomeBuilding().overruleNextOpenRequestOfCitizenWithStack(getCitizen(), pickedUpStack.copy());
             }
         }
-
-        if (getCitizen().getHomeBuilding() != null)
+        catch (final Exception ex)
         {
-            return getCitizen().getHomeBuilding().overruleNextOpenRequestOfCitizenWithStack(getCitizen(), pickedUpStack.copy());
+            Log.getLogger().error("Error during overruling", ex);
         }
 
         return false;

@@ -172,8 +172,6 @@ public class TileEntityRack extends AbstractTileEntityRack
     {
         if (world != null && !world.isRemote)
         {
-            Log.getLogger().warn("changed");
-
             content.clear();
             for (int slot = 0; slot < inventory.getSlots(); slot++)
             {
