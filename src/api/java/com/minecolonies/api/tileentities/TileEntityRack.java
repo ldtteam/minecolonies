@@ -172,30 +172,39 @@ public class TileEntityRack extends AbstractTileEntityRack
     {
         if (world != null && !world.isRemote)
         {
-            content.clear();
-            for (int slot = 0; slot < inventory.getSlots(); slot++)
-            {
-                final ItemStack stack = inventory.getStackInSlot(slot);
+            final boolean empty = content.isEmpty();
+            updateContent();
 
-                if (ItemStackUtils.isEmpty(stack))
-                {
-                    continue;
-                }
-
-                final ItemStorage storage = new ItemStorage(stack.copy());
-                int amount = ItemStackUtils.getSize(stack);
-                if (content.containsKey(storage))
-                {
-                    amount += content.remove(storage);
-                }
-                content.put(storage, amount);
-            }
-
-            if (world != null)
+            if ((empty && !content.isEmpty()) || !empty && content.isEmpty())
             {
                 updateBlockState();
                 markDirty();
             }
+        }
+    }
+
+    /**
+     * Just do the content update.
+     */
+    private void updateContent()
+    {
+        content.clear();
+        for (int slot = 0; slot < inventory.getSlots(); slot++)
+        {
+            final ItemStack stack = inventory.getStackInSlot(slot);
+
+            if (ItemStackUtils.isEmpty(stack))
+            {
+                continue;
+            }
+
+            final ItemStorage storage = new ItemStorage(stack.copy());
+            int amount = ItemStackUtils.getSize(stack);
+            if (content.containsKey(storage))
+            {
+                amount += content.remove(storage);
+            }
+            content.put(storage, amount);
         }
     }
 
@@ -345,7 +354,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         }
 
         main = compound.getBoolean(TAG_MAIN);
-        updateItemStorage();
+        updateContent();
 
         this.inWarehouse = compound.getBoolean(TAG_IN_WAREHOUSE);
         if (compound.contains(TAG_POS))
