@@ -286,7 +286,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         Log.getLogger().info(this.getJobName() + ": for " + recipe.getPrimaryOutput().getItem() + " improvement roll is " + roll + " with an actual chance of: " + actualChance);
         if(roll <= actualChance && !ItemTags.getCollection().getOrCreate(reducableProductExclusions).contains(recipe.getPrimaryOutput().getItem()))
         {
-            ArrayList<ItemStack> newRecipe = new ArrayList<>();
+            final ArrayList<ItemStack> newRecipe = new ArrayList<>();
             boolean didReduction = false;
             Log.getLogger().info(this.getJobName() + ": attempting to improve recipe for: " + recipe.getPrimaryOutput().getItem());
             for(ItemStorage input : inputs)
