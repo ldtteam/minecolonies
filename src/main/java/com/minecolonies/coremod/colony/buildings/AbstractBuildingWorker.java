@@ -62,12 +62,18 @@ import static com.minecolonies.api.util.constant.CitizenConstants.BONUS_BUILDING
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 /**
  * The abstract class for each worker building.
  */
 public abstract class AbstractBuildingWorker extends AbstractBuilding implements IBuildingWorker
 {
+
+    /**
+     * The base chance for a recipe to be improved. This is modified by worker skill and the number of items crafted
+     */
+    private static final double BASE_CHANCE = 0.0625;
 
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
@@ -223,10 +229,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
     {
 
-        ResourceLocation products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
-        ResourceLocation ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
-        ResourceLocation productsExcluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
-        ResourceLocation ingredientsExcluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+        ResourceLocation products = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat("_product"));
+        ResourceLocation ingredients = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat("_ingredient"));
+        ResourceLocation productsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat("_product_excluded"));
+        ResourceLocation ingredientsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat("_ingredient_excluded"));
 
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
         if (storage == null)
@@ -275,12 +281,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     public void improveRecipe(IRecipeStorage recipe, int count, ICitizenData citizen)
     {
-        final double baseChance = 0.0625;
-        final ResourceLocation reducableIngredients = new ResourceLocation("minecolonies", "reduceable_ingredient");
-        final ResourceLocation reducableProductExclusions = new ResourceLocation("minecolonies", "reduceable_product_excluded");
+        final ResourceLocation reducableIngredients = new ResourceLocation(MOD_ID, "reduceable_ingredient");
+        final ResourceLocation reducableProductExclusions = new ResourceLocation(MOD_ID, "reduceable_product_excluded");
         final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
 
-        final double actualChance = Math.min(5.0, (baseChance * count) + (baseChance * citizen.getCitizenSkillHandler().getLevel(getPrimarySkill())));
+        final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(getPrimarySkill())));
         final double roll = citizen.getRandom().nextDouble() * 100;
 
         if(roll <= actualChance && !ItemTags.getCollection().getOrCreate(reducableProductExclusions).contains(recipe.getPrimaryOutput().getItem()))
