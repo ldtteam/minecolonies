@@ -76,6 +76,31 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     private static final double BASE_CHANCE = 0.0625;
 
     /**
+     * The name of the tag for improving recipes
+     */
+    private static final String REDUCEABLE = "reduceable";
+
+    /**
+     * Tag specifier for Products to Include
+     */
+    private static final String PRODUCT = "_product";
+
+    /**
+     * Tag specifier for Products to Exclude
+     */
+    private static final String PRODUCT_EXCLUDED = "_product_excluded";
+
+    /**
+     * Tag specifier for Ingredients to include
+     */
+    private static final String INGREDIENT = "_ingredient";
+
+    /**
+     * Tag specifier for Ingredients to exclude
+     */
+    private static final String INGREDIENT_EXCLUDED = "_ingredient_excluded";
+
+    /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
      */
     protected final List<IToken<?>> recipes = new ArrayList<>();
@@ -229,10 +254,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
     {
 
-        ResourceLocation products = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat("_product"));
-        ResourceLocation ingredients = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat("_ingredient"));
-        ResourceLocation productsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat("_product_excluded"));
-        ResourceLocation ingredientsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+        ResourceLocation products = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(PRODUCT));
+        ResourceLocation ingredients = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(INGREDIENT));
+        ResourceLocation productsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(PRODUCT_EXCLUDED));
+        ResourceLocation ingredientsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(INGREDIENT_EXCLUDED));
 
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
         if (storage == null)
@@ -281,8 +306,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     public void improveRecipe(IRecipeStorage recipe, int count, ICitizenData citizen)
     {
-        final ResourceLocation reducableIngredients = new ResourceLocation(MOD_ID, "reduceable_ingredient");
-        final ResourceLocation reducableProductExclusions = new ResourceLocation(MOD_ID, "reduceable_product_excluded");
+        final ResourceLocation reducableIngredients = new ResourceLocation(MOD_ID, REDUCEABLE.concat(INGREDIENT));
+        final ResourceLocation reducableProductExclusions = new ResourceLocation(MOD_ID, REDUCEABLE.concat(PRODUCT_EXCLUDED));
         final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
 
         final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(getPrimarySkill())));
