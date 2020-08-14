@@ -6,7 +6,7 @@
 
 ### About the mod ###
 
-**MineColonies** is an interactive Town building mod that allows you to create your own thriving Town within Minecraft. It depicts real-life scenarios by providing you with different craftable options to build your own Town and enhance your gaming experience. Featuring many NPC workers such as: Builders, Crafters, Farmers, Fishermen, Guards, Barracks, Miners, Smeltery, Baker, Cook/Restuarant, Deliveryman, Animal Herders and many more planned for development. As well as a specialized buildings such as: Warehouse, Citizen Huts and a Townhall. Minecolonies gives you the ability to create a colony as rich and unique as every player.
+**MineColonies** is an interactive Town building mod that allows you to create your own thriving Town within Minecraft. It depicts real-life scenarios by providing you with different craftable options to build your own Town and enhance your gaming experience. Featuring many NPC workers such as: Builders, Crafters, Farmers, Fishermen, Guards, Barracks, Miners, Smeltery, Baker, Cook/Restuarant, Deliveryman, Animal Herders and many more planned for development. As well as specialized buildings such as: Warehouse, Citizen Huts and a Townhall. Minecolonies gives you the ability to create a colony as rich and unique as every player.
 
 ##### Website:
 https://www.minecolonies.com/
@@ -98,9 +98,9 @@ If you decide to go with a GUI client like Gitkraken:
 
 
 #### Compile MineColonies (Command-line)
-1. Execute `gradlew setupDecompWorkspace`. This sets up Forge and downloads the necessary libraries to build MineColonies.  This might take some time, be patient.
-    * You will generally only have to do this once until the Forge version in `build.properties` changes.
-2. Execute `gradlew build`. If you did everything right, `BUILD SUCCESSFUL` will be displayed after it finishes.  This should be relatively quick.
+1. Navigate to the MineColonies folder, and run a `dir` to make sure the build.gradle file is where you expect it to be.
+2. Execute `gradlew build`. This first sets up Forge and downloads the necessary libraries to build MineColonies, be patient as this may take a while.
+    * If you did everything right, `BUILD SUCCESSFUL` will be displayed after it finishes.
     * If you see `BUILD FAILED`, check the error output (it should be right around `BUILD FAILED`), fix everything (if possible), and try again.
 3. Go to `basefolder\MineColonies\build\libs`.
     *  You should see a `.jar` file named `MineColonies-universal-null.jar`.
@@ -108,27 +108,26 @@ If you decide to go with a GUI client like Gitkraken:
 5. Alternatively, you can also run `./gradlew runClient` to start Minecraft with this jar.
 
 #### Compile MineColonies (Intellij)
-1. Right click the build.gradle file and select open with Intellij.
+1. Right click the build.gradle file, or the background of the folder it's in, and select Open Folder as Intellij Project.
 2. Select auto import and make sure a valid gradle and jvm is selected.
 
 ![](https://i.imgur.com/ewccjDZ.png)
 
-3. This will load already most imports.
+3. This will prepare some of the libraries used by Forge.
 4. Click View -> Tool Windows -> Gradle
-5. In the Gradle View go to Tasks -> forgegradle
+5. In the Gradle View, expand the options to Tasks -> fg_runs
 
 ![](https://i.imgur.com/34H45Tb.png)
 
-6. Execute setupDecompWorkspace. This sets up Forge and downloads the necessary libraries to build MineColonies.  This might take some time, be patient.
-7. Click the small refresh symbol in the upper left of the gradle view.
-8. Execute genIntellijRuns and restart intellij.
-9. You will see a Minecraft Client and Server startup configuration.
-10. Execute it with your username as a program argument to have always the same name ingame.
+6. Click the small refresh symbol in the upper left of the gradle view. This sets up Forge and downloads the necessary libraries to build MineColonies. 
+7. Execute genIntellijRuns and restart intellij.
+8. You will see a Minecraft Client and Server startup configuration in the top right, next to the green "start" button.
+9. Execute it with your username as a program argument to have always the same name ingame.
 
 ![](https://i.imgur.com/vDvyNN5.png)
 
-11. If it doesn't start and throw a lot of errors try another setupDecompWorkspace which often does wonders.
-12. If you want to produce a running jar execute build in the build subfolder. Which will result in a runnable jar in basefolder\MineColonies\build\libs.
+10. If it doesn't start and throw a lot of errors, try another refresh, this often does wonders.
+11. If you want to produce a running jar, execute the `build` task. This will result in a runnable jar file in basefolder\MineColonies\build\libs.
 
 ##### Trouble shooting
 If gradle synchronization fails make sure:
@@ -147,7 +146,7 @@ In order to get the most up-to-date builds, you'll have to periodically update y
 
 #### Trouble shooting
 - Sometimes gradle tasks fail because of missing memory, for that you can find system wide settings in the .gradle folder in your HOME directory (~/.gradle/gradle.properties or on Windows in C:\Users\username\.gradle\gradle.properties).
-- Sometimes after a branch change if libraries can not be resolved running another setupDecompWorkspace or clicking the refresh button in the intellij gradle view solves many issues.
+- Sometimes, after a branch change if libraries can not be resolved, running another refresh in IntelliJ or the command line solves many issues.
 
 ### Contributing
 ***
