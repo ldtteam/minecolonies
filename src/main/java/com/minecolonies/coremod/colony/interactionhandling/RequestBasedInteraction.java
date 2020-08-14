@@ -150,7 +150,10 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
 
                 icon.setID("request_item");
                 icon.setSize(32, 32);
-                icon.setItem((request.getDisplayStacks().get(0)));
+                if (!request.getDisplayStacks().isEmpty())
+                {
+                    icon.setItem((request.getDisplayStacks().get(0)));
+                }
                 icon.setPosition(30, 60);
                 icon.setVisible(true);
             }
