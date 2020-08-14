@@ -370,6 +370,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 colonyId = tempColony.getID();
             }
         }
+
+        if (!getWorld().isRemote && colonyId != 0 && colony == null)
+        {
+            updateColonyReferences();
+        }
     }
 
     public boolean isUsableByPlayer(@NotNull final PlayerEntity player)
@@ -470,7 +475,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
                                 if (te instanceof AbstractTileEntityRack)
                                 {
-                                    ((AbstractTileEntityRack) te).setBuildingPos(pos);
+                                    ((AbstractTileEntityRack) te).setBuildingPos(this.getPos());
                                 }
                             }
                         }

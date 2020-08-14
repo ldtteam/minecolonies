@@ -19,7 +19,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -280,7 +279,6 @@ public class WindowBannerPicker extends Screen
         this.modelRender.rotationPointY = -32.0F;
 
         IRenderTypeBuffer.Impl source = this.minecraft.getRenderTypeBuffers().getBufferSource();
-        LogManager.getLogger().info(layers);
         BannerTileEntityRenderer.func_230180_a_(
                 transform,
                 source, 15728880,

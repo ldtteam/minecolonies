@@ -39,7 +39,6 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -83,9 +82,9 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     private boolean isCooking = false;
 
     /**
-     * If there is an assistant working
+     * Current Assistant If there is an assistant working
      */
-    private boolean hasAssistant = false;
+    private ICitizenData assistant = null;
 
     /**
      * Failsafe for isCooking. Number of Colony Ticks before setting isCooking false. 
@@ -103,7 +102,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         super(c, l);
         keepX.put(ItemStackUtils.ISFOOD, new Tuple<>(STACKSIZE, true));
         keepX.put(ItemStackUtils.ISCOOKABLE, new Tuple<>(STACKSIZE, true));
-        keepX.put(FurnaceTileEntity::isFuel, new Tuple<>(STACKSIZE, true));
+        keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
     }
 
     /**
@@ -112,7 +111,8 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
      */
     public boolean getIsCooking()
     {
-        return isCooking && hasAssistant && isCookingTimeout > 0;
+        ICitizenData citizen = getAssistant();
+        return citizen != null && isCooking && isCookingTimeout > 0;
     }
 
     /**
@@ -127,6 +127,30 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             //Wait ~32 minutes before timing out. 
             isCookingTimeout = 75;
         }
+    }
+
+    /**
+     * Get the citizen that is currently assigned as the Assistant Cook
+     */
+    public ICitizenData getAssistant()
+    {
+
+        if(getBuildingLevel() <3)
+        {
+            return null; 
+        }
+
+        if(assistant == null)
+        {
+            for (final ICitizenData citizen : getAssignedCitizen())
+            {
+                if (citizen.getJob() instanceof JobCookAssistant)   
+                {
+                    assistant = citizen;
+                }
+            }
+        }
+        return assistant;
     }
 
     @NotNull
@@ -150,7 +174,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         {
             if (leadCitizen.getJob() instanceof JobCook)   
             {
-                hasAssistant = true;
+                assistant = citizen;
                 return new JobCookAssistant(citizen);
             }
         }
@@ -162,7 +186,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     {
         if(citizen.getJob() instanceof JobCookAssistant)
         {
-            hasAssistant = false;
+            assistant = null;
         }
         super.removeCitizen(citizen);
     }
@@ -232,7 +256,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     @Nullable
     public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
     {
-        if (getBuildingLevel() < 3 || !hasAssistant)
+        if (getBuildingLevel() < 3 || getAssistant() == null)
         {
             return null;
         }
@@ -274,7 +298,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             }                
         }
 
-        return null;
+        return storage;
     }
 
     @Override
