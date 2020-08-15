@@ -703,7 +703,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             if (InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost))
             {
                 Network.getNetwork().sendToPosition(new CompostParticleMessage(position.up()),
-                  new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.func_234923_W_()));
+                  new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.getDimensionKey()));
                 crop.grow(world, position.up(), state);
                 state = world.getBlockState(position.up());
                 block = state.getBlock();
@@ -777,7 +777,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         state.getDrops(new LootContext.Builder((ServerWorld) world).withLuck(fortune)
                          .withLuck(fortune)
                          .withParameter(LootParameters.TOOL, tool)
-                         .withParameter(LootParameters.POSITION, pos));
+                         .withParameter(LootParameters.THIS_ENTITY, getCitizen()));
         for (final ItemStack item : drops)
         {
             final ItemStack drop = item.copy();

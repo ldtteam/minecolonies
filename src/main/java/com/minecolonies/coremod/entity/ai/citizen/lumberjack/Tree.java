@@ -282,7 +282,7 @@ public class Tree
 
         for (int i = 1; i < 100; i++)
         {
-            list.addAll(state.getDrops(new LootContext.Builder(world).withParameter(LootParameters.POSITION, position)
+            list.addAll(state.getDrops(new LootContext.Builder(world)
                                          .withParameter(LootParameters.TOOL,
                                            new ItemStack(Items.WOODEN_AXE))
                                          .withLuck(100)));

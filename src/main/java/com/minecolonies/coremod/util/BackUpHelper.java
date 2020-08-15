@@ -61,7 +61,7 @@ public final class BackUpHelper
         try (FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
         {
             @NotNull final File saveDir =
-              new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.field_237245_a_).toFile(), FILENAME_MINECOLONIES_PATH);
+              new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
 
@@ -109,7 +109,7 @@ public final class BackUpHelper
      */
     public static void loadMissingColonies()
     {
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.field_237245_a_).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
 
         ServerLifecycleHooks.getCurrentServer().worlds.keySet().forEach(dimensionType -> {
             int missingFilesInRow = 0;
@@ -144,7 +144,7 @@ public final class BackUpHelper
     private static File getBackupSaveLocation(final Date date)
     {
         @NotNull final File saveDir =
-          new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.field_237245_a_).toFile(), FILENAME_MINECOLONIES_PATH);
+          new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
     }
 
@@ -180,7 +180,7 @@ public final class BackUpHelper
     @NotNull
     public static File getSaveLocation()
     {
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.field_237245_a_).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, FILENAME_MINECOLONIES);
     }
 
@@ -193,7 +193,7 @@ public final class BackUpHelper
     @NotNull
     public static File getSaveLocation(final ServerWorld world)
     {
-        @NotNull final File saveDir = new File(world.getServer().func_240776_a_(FolderName.field_237245_a_).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(world.getServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, FILENAME_MINECOLONIES);
     }
 
@@ -251,7 +251,7 @@ public final class BackUpHelper
 
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.field_237245_a_).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             final CompoundNBT colonyCompound = new CompoundNBT();
@@ -269,7 +269,7 @@ public final class BackUpHelper
     public static void markColonyDeleted(final int colonyID, final ResourceLocation dimensionID)
     {
         @NotNull final File saveDir =
-          new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.field_237245_a_).toFile(), FILENAME_MINECOLONIES_PATH);
+          new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
         final File todelete = new File(saveDir, String.format(FILENAME_COLONY, colonyID, dimensionID));
         if (todelete.exists())
         {
@@ -283,7 +283,7 @@ public final class BackUpHelper
      */
     public static void loadAllBackups()
     {
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.field_237245_a_).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
 
         ServerLifecycleHooks.getCurrentServer().worlds.keySet().forEach(dimensionType -> {
             for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
@@ -307,7 +307,7 @@ public final class BackUpHelper
      */
     public static void loadColonyBackup(final int colonyId, final ResourceLocation dimension, boolean loadDeleted, boolean claimChunks)
     {
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.field_237245_a_).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
         CompoundNBT compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));
         if (compound == null)
         {

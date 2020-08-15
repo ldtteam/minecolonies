@@ -19,6 +19,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -375,9 +376,14 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         super.livingTick();
     }
 
+    @org.jetbrains.annotations.Nullable
     @Override
     public ILivingEntityData onInitialSpawn(
-      final IWorld worldIn, final DifficultyInstance difficultyIn, final SpawnReason reason, @Nullable final ILivingEntityData spawnDataIn, @Nullable final CompoundNBT dataTag)
+      final IServerWorld worldIn,
+      final DifficultyInstance difficultyIn,
+      final SpawnReason reason,
+      @org.jetbrains.annotations.Nullable final ILivingEntityData spawnDataIn,
+      @org.jetbrains.annotations.Nullable final CompoundNBT dataTag)
     {
         RaiderMobUtils.setEquipment(this);
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);

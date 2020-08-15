@@ -42,7 +42,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
 
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().func_234923_W_().func_240901_a_());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey().func_240901_a_());
         if (colony == null)
         {
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
@@ -52,7 +52,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
         final boolean deleteBuildings = BoolArgumentType.getBool(context, DELETE_BUILDNGS_ARG);
 
         BackUpHelper.backupColonyData();
-        IColonyManager.getInstance().deleteColonyByDimension(colonyID, deleteBuildings, context.getSource().getWorld().func_234923_W_().func_240901_a_());
+        IColonyManager.getInstance().deleteColonyByDimension(colonyID, deleteBuildings, context.getSource().getWorld().getDimensionKey().func_240901_a_());
         context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.delete.success", colony.getName()), true);
         return 1;
     }

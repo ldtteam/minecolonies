@@ -220,7 +220,7 @@ public class Tag implements IDeliverable
 
     public static Tag deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
-        final ITag<Item> theTag = ItemTags.getCollection().getOrCreate(ResourceLocation.tryCreate(buffer.readString(32767)));
+        final ITag<Item> theTag = ItemTags.getCollection().get(ResourceLocation.tryCreate(buffer.readString(32767)));
         final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
         final int count = buffer.readInt();
         final int minCount = buffer.readInt();
@@ -237,7 +237,7 @@ public class Tag implements IDeliverable
      */
     public static Tag deserialize(final IFactoryController controller, final CompoundNBT compound)
     {
-        final ITag<Item> theTag = ItemTags.getCollection().getOrCreate(ResourceLocation.tryCreate(compound.getString(NBT_TAG)));
+        final ITag<Item> theTag = ItemTags.makeWrapperTag(compound.getString(NBT_TAG));
         final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         int count = compound.getInt("size");

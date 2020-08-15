@@ -84,7 +84,7 @@ public class RenderFishHook extends EntityRenderer<Entity>
             double d5;
             double d6;
             float f3;
-            if ((this.renderManager.options == null || this.renderManager.options.thirdPersonView <= 0))
+            if ((this.renderManager.options == null || this.renderManager.options.func_243230_g().func_243192_a()))
             {
                 double d7 = this.renderManager.options.fov;
                 d7 = d7 / 100.0D;

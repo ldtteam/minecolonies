@@ -194,7 +194,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 Network.getNetwork().sendToPosition(
                   new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
                   new PacketDistributor.TargetPoint(
-                    blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE, citizen.world.func_234923_W_()));
+                    blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE, citizen.world.getDimensionKey()));
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,
@@ -216,7 +216,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 Network.getNetwork().sendToPosition(
                   new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal()),
                   new PacketDistributor.TargetPoint(blockPos.getX(),
-                    blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, citizen.world.func_234923_W_()));
+                    blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, citizen.world.getDimensionKey()));
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,

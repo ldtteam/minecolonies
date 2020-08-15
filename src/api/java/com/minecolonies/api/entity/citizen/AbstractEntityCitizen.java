@@ -272,12 +272,11 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     /**
      * For the time being we don't want any childrens of our colonists.
      *
-     * @param child the ageable entity.
      * @return the child.
      */
     @Nullable
     @Override
-    public AgeableEntity createChild(@NotNull final AgeableEntity child)
+    public AgeableEntity func_241840_a(final ServerWorld world, final AgeableEntity parent)
     {
         return null;
     }

@@ -111,7 +111,7 @@ public class CreateColonyMessage implements IMessage
 
         if (MineColonies.getConfig().getCommon().restrictColonyPlacement.get())
         {
-            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, ((ServerWorld) world).func_241135_u_()));
+            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, ((ServerWorld) world).getSpawnPoint()));
             if (spawnDistance < MineColonies.getConfig().getCommon().minDistanceFromWorldSpawn.get())
             {
                 if (!world.isRemote)

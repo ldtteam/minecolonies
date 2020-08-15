@@ -79,7 +79,7 @@ public final class BlockPosUtil
      */
     private static Tuple<Direction, Direction> getRandomDirectionTuple(final Random random)
     {
-        return new Tuple<>(Direction.func_239631_a_(random), Direction.func_239631_a_(random));
+        return new Tuple<>(Direction.getRandomDirection(random), Direction.getRandomDirection(random));
     }
 
     /**
@@ -398,8 +398,7 @@ public final class BlockPosUtil
     {
         return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerWorld) world)
                                                       .withLuck(fortune)
-                                                      .withParameter(LootParameters.TOOL, stack)
-                                                      .withParameter(LootParameters.POSITION, coords));
+                                                      .withParameter(LootParameters.TOOL, stack));
     }
 
     /**

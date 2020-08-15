@@ -264,13 +264,6 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         return ActionResultType.FAIL;
     }
 
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBox(@NotNull final Entity entityIn)
-    {
-        return null;
-    }
-
     @Override
     public boolean canBeCollidedWith()
     {

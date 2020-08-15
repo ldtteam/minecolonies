@@ -12,13 +12,13 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.BannerPattern;
+import net.minecraft.tileentity.BannerTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static net.minecraft.tileentity.BannerTileEntity.func_230138_a_;
 
 public class TileEntityColonyFlag extends TileEntity
 {
@@ -79,14 +79,14 @@ public class TileEntityColonyFlag extends TileEntity
     @OnlyIn(Dist.CLIENT)
     public List<Pair<BannerPattern, DyeColor>> getPatternList()
     {
-        IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, world.func_234923_W_().func_240901_a_());
+        IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, world.getDimensionKey().func_240901_a_());
         if (colony != null && this.flag != colony.getColonyFlag())
         {
             this.flag = colony.getColonyFlag();
             markDirty();
         }
 
-        return func_230138_a_(
+        return BannerTileEntity.getPatternColorData(
                 DyeColor.WHITE,
                 this.flag.size() > 1 ? this.flag : this.patterns
         );

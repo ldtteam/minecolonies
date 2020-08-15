@@ -17,7 +17,6 @@ import java.util.Map;
  */
 public class ColonyStylesMessage implements IMessage
 {
-    private boolean             allowPlayerSchematics;
     private Map<String, String> md5Map;
 
     /**
@@ -31,7 +30,6 @@ public class ColonyStylesMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        allowPlayerSchematics = buf.readBoolean();
         md5Map = readMD5MapFromByteBuf(buf);
     }
 
@@ -53,7 +51,6 @@ public class ColonyStylesMessage implements IMessage
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeBoolean(MineColonies.getConfig().getCommon().allowPlayerSchematics.get());
         writeMD5MapToByteBuf(buf);
     }
 
@@ -78,7 +75,6 @@ public class ColonyStylesMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        Structures.setAllowPlayerSchematics(allowPlayerSchematics);
         Structures.setMD5s(md5Map);
     }
 }

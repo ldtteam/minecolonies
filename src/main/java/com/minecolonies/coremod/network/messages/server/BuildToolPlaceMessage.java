@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.*;
@@ -332,7 +333,10 @@ public class BuildToolPlaceMessage implements IMessage
 
         if (building == null)
         {
-            Log.getLogger().error("BuildTool: building is null!", new Exception());
+            if (!sn.getHutName().equals(ModBuildings.TOWNHALL_ID))
+            {
+                Log.getLogger().error("BuildTool: building is null!", new Exception());
+            }
         }
         else
         {

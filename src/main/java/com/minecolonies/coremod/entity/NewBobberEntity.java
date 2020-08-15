@@ -333,7 +333,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     private void checkCollision()
     {
         final RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this,
-          (entity) -> !entity.isSpectator() && (entity.canBeCollidedWith() || entity instanceof ItemEntity) && (entity != this.angler || this.ticksInAir >= 5), RayTraceContext.BlockMode.COLLIDER);
+          (entity) -> !entity.isSpectator() && (entity.canBeCollidedWith() || entity instanceof ItemEntity) && (entity != this.angler || this.ticksInAir >= 5));
         if (raytraceresult.getType() != RayTraceResult.Type.MISS)
         {
             if (raytraceresult.getType() == RayTraceResult.Type.ENTITY)
@@ -492,7 +492,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             }
             else if (this.ticksCatchable > 0)
             {
-                final LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld) this.world)).withParameter(LootParameters.POSITION, new BlockPos(this.getPositionVec()))
+                final LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld) this.world))
                                                                   .withParameter(LootParameters.TOOL, this.getAngler().getHeldItemMainhand())
                                                                   .withRandom(this.rand)
                                                                   .withLuck((float) this.luck);

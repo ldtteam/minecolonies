@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.Lists;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -13,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.TagUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
@@ -30,7 +32,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -92,7 +93,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         input.add(new ItemStack(Items.SAND, 4));
         input.add(new ItemStack(Items.GRAVEL, 4));
 
-        for (final Item item : ItemTags.getCollection().getOrCreate(CONCRETE_POWDER).getAllElements())
+        for (final Item item : TagUtils.getItem(CONCRETE_POWDER).map(tag -> tag.getAllElements()).orElse(Lists.newArrayList()))
         {
             final List<ItemStack> customInput = new ArrayList<>();
             customInput.addAll(input);
@@ -274,7 +275,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         {
             for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
             {
-                if (BlockTags.getCollection().getOrCreate(CONCRETE_BLOCK).contains(colony.getWorld().getBlockState(pos).getBlock()))
+                if (TagUtils.getBlock(CONCRETE_BLOCK).map(tag -> tag.contains(colony.getWorld().getBlockState(pos).getBlock())).orElse(false))
                 {
                     return pos;
                 }

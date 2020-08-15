@@ -83,7 +83,7 @@ public class CommandRTP implements IMCCommand
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.notallowed");
             return false;
         }
-        else if (!context.getSource().getWorld().func_234923_W_().func_240901_a_().equals(World.field_234918_g_.func_240901_a_()))
+        else if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && !context.getSource().getWorld().getDimensionKey().func_240901_a_().equals(World.OVERWORLD.func_240901_a_()))
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.wrongdim");
             return false;
@@ -104,7 +104,7 @@ public class CommandRTP implements IMCCommand
             /* this math is to get negative numbers */
             final int x = getRandCoordinate();
             final int z = getRandCoordinate();
-            final BlockPos spawnPoint = ((ServerWorld) player.getEntityWorld()).func_241135_u_();
+            final BlockPos spawnPoint = ((ServerWorld) player.getEntityWorld()).getSpawnPoint();
             if (player.getEntityWorld().getWorldBorder().getSize()
                   < BlockPosUtil.getDistance2D(spawnPoint, spawnPoint.add(x, 0, z)))
             {

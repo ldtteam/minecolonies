@@ -37,7 +37,6 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.DoubleValue  growthModifier;
     public final ForgeConfigSpec.BooleanValue workersAlwaysWorkInRain;
     public final ForgeConfigSpec.BooleanValue sendEnteringLeavingMessages;
-    public final ForgeConfigSpec.BooleanValue allowPlayerSchematics;
     public final ForgeConfigSpec.IntValue     allowGlobalNameChanges;
     public final ForgeConfigSpec.BooleanValue holidayFeatures;
     public final ForgeConfigSpec.IntValue     updateRate;
@@ -388,7 +387,6 @@ public class CommonConfiguration extends AbstractConfiguration
         growthModifier = defineDouble(builder, "growthmodifier", 1, 1, 100);
         workersAlwaysWorkInRain = defineBoolean(builder, "workersalwaysworkinrain", false);
         sendEnteringLeavingMessages = defineBoolean(builder, "sendenteringleavingmessages", true);
-        allowPlayerSchematics = defineBoolean(builder, "allowplayerschematics", false);
         allowGlobalNameChanges = defineInteger(builder, "allowglobalnamechanges", 1, -1, 1);
         holidayFeatures = defineBoolean(builder, "holidayfeatures", true);
         updateRate = defineInteger(builder, "updaterate", 1, 1, 100);

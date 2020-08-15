@@ -11,6 +11,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -124,13 +125,6 @@ public class ChunkCache implements IWorldReader
     public FluidState getFluidState(final BlockPos pos)
     {
         return null;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public Biome getBiome(BlockPos pos)
-    {
-        return Biomes.PLAINS;
     }
 
     @Override

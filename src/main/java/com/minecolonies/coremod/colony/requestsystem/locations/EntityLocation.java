@@ -94,11 +94,11 @@ public class EntityLocation implements ILocation
         checkEntity();
         if (entity == null || entity.get() == null)
         {
-            return World.field_234918_g_.func_240901_a_();
+            return World.OVERWORLD.func_240901_a_();
         }
         else
         {
-            return entity.get().world.func_234923_W_().func_240901_a_();
+            return entity.get().world.getDimensionKey().func_240901_a_();
         }
     }
 

@@ -221,7 +221,7 @@ public class RaidManager implements IRaiderManager
 
             // No rotation till spawners are moved into schematics
             final int shipRotation = new Random().nextInt(3);
-            final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath();
+            final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getCategory().getName().toLowerCase();
 
             if (homeBiomePath.contains(TAIGA_BIOME_ID) && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, new NorsemenShipRaidEvent(colony)))
             {
@@ -241,7 +241,7 @@ public class RaidManager implements IRaiderManager
             }
             else
             {
-                final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getRegistryName().getPath();
+                final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getCategory().getName().toLowerCase();
                 final HordeRaidEvent event;
                 if (biomePath.contains(DESERT_BIOME_ID))
                 {
@@ -562,7 +562,7 @@ public class RaidManager implements IRaiderManager
                 }
                 colony.getRaiderManager().setWillRaidTonight(raid);
 
-                if (colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath().contains("desert") && colony.getWorld().isRaining())
+                if (colony.getWorld().getBiome(colony.getCenter()).getCategory().getName().toLowerCase().contains("desert") && colony.getWorld().isRaining())
                 {
                     return true;
                 }

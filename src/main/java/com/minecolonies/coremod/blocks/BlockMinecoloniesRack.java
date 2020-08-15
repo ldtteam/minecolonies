@@ -30,6 +30,7 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -201,7 +202,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     }
 
     @Override
-    public void spawnAdditionalDrops(final BlockState state, final World worldIn, final BlockPos pos, final ItemStack stack)
+    public void spawnAdditionalDrops(final BlockState state, final ServerWorld worldIn, final BlockPos pos, final ItemStack stack)
     {
         final TileEntity tileentity = worldIn.getTileEntity(pos);
         if (tileentity instanceof TileEntityRack)
@@ -289,11 +290,11 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
             {
                 TileEntityRack tileEntityRack = (TileEntityRack) tileEntity;
                 InventoryUtils.dropItemHandler(tileEntityRack.getInventory(),
-                  worldIn.getWorld(),
+                  worldIn,
                   tileEntityRack.getPos().getX(),
                   tileEntityRack.getPos().getY(),
                   tileEntityRack.getPos().getZ());
-                worldIn.getWorld().updateComparatorOutputLevel(pos, this);
+                worldIn.updateComparatorOutputLevel(pos, this);
             }
 
             super.onReplaced(state, worldIn, pos, newState, isMoving);
