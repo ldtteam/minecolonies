@@ -1603,7 +1603,7 @@
   "com.minecolonies.coremod.university.researchconcluded.1": "The researchers in your colony just unravelled the mystery of: %s",
   "com.minecolonies.coremod.university.researchconcluded.2": "The Research about %s was successfully demystified by your researchers",
   "com.minecolonies.coremod.crafters.recipeimproved.0": "Your %s just successfully improved their recipe for %s by reducing the need for %s",
-  "com.minecolonies.coremod.crafters.recipeimproved.1": "%4$s just successfully reducing the need for %3$s when they are making %2$s",
+  "com.minecolonies.coremod.crafters.recipeimproved.1": "%4$s just successfully reduced the need for %3$s when they make %2$s.",
   "com.minecolonies.coremod.crafters.recipeimproved.2": "%4$s the %1$s just successfully improved their recipe for %2$s and no longer needs as much %1$s to make it.",
   
   "com.minecolonies.coremod.workorder.outofcolony": "The Workorder for %s at x: %d, z: %d is outside of the colony and thus cannot be built!",
