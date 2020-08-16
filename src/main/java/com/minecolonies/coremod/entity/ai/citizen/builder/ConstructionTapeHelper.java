@@ -58,7 +58,7 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(final BlockPos pos, final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
     {
-        if (!MineColonies.getConfig().getCommon().builderPlaceConstructionTape.get())
+        if (!MineColonies.getConfig().getServer().builderPlaceConstructionTape.get())
         {
             return;
         }

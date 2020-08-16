@@ -62,7 +62,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         else
         {
             // Close colony
-            int closeClonyID = findNextNearbyColony(world, pos, MineColonies.getConfig().getCommon().minColonyDistance.get());
+            int closeClonyID = findNextNearbyColony(world, pos, MineColonies.getConfig().getServer().minColonyDistance.get());
 
             if (closeClonyID != 0)
             {
@@ -81,7 +81,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
             findPaneOfTypeByID(BUTTON_DELETE, ButtonImage.class).enable();
             findPaneOfTypeByID(TEXT_OWN, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.own", ownerColony.getCenter()));
 
-            if (MineColonies.getConfig().getCommon().allowInfiniteColonies.get())
+            if (MineColonies.getConfig().getServer().allowInfiniteColonies.get())
             {
                 findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.denied.existingandabandon"));
             }
@@ -100,18 +100,18 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
             }
         }
 
-        if (MineColonies.getConfig().getCommon().restrictColonyPlacement.get())
+        if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())
         {
             final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, new BlockPos(world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnY(), world.getWorldInfo().getSpawnZ())));
-            if (spawnDistance < MineColonies.getConfig().getCommon().minDistanceFromWorldSpawn.get())
+            if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
             {
                 findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN,
-                  MineColonies.getConfig().getCommon().minDistanceFromWorldSpawn.get()));
+                  MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()));
             }
-            else if (spawnDistance > MineColonies.getConfig().getCommon().maxDistanceFromWorldSpawn.get())
+            else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
             {
                 findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN,
-                  MineColonies.getConfig().getCommon().maxDistanceFromWorldSpawn.get()));
+                  MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()));
             }
         }
 

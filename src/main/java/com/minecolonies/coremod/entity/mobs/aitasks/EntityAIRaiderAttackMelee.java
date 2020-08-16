@@ -126,6 +126,6 @@ public class EntityAIRaiderAttackMelee extends Goal
      */
     protected int getAttackDelay()
     {
-        return MAX_ATTACK_DELAY - MineColonies.getConfig().getCommon().barbarianHordeDifficulty.get() * 4;
+        return MAX_ATTACK_DELAY - MineColonies.getConfig().getServer().barbarianHordeDifficulty.get() * 4;
     }
 }

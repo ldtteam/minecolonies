@@ -100,31 +100,31 @@ public class CreateColonyMessage implements IMessage
             style = ((AbstractTileEntityColonyBuilding) tileEntity).getStyle();
         }
 
-        final int distance = MineColonies.getConfig().getCommon().minColonyDistance.get() * BLOCKS_PER_CHUNK;
+        final int distance = MineColonies.getConfig().getServer().minColonyDistance.get() * BLOCKS_PER_CHUNK;
         BlockPos blockpos = ((ServerWorld) world).func_241117_a_(Structure.field_236381_q_, townHall, distance, false);
-        if (MineColonies.getConfig().getCommon().protectVillages.get() && blockpos != null && blockpos.withinDistance(townHall, distance))
+        if (MineColonies.getConfig().getServer().protectVillages.get() && blockpos != null && blockpos.withinDistance(townHall, distance))
         {
             Log.getLogger().warn("Village close by!");
             LanguageHandler.sendPlayerMessage(sender, "block.blockhuttownhall.messagetooclosetovillage");
             return;
         }
 
-        if (MineColonies.getConfig().getCommon().restrictColonyPlacement.get())
+        if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())
         {
             final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, ((ServerWorld) world).getSpawnPoint()));
-            if (spawnDistance < MineColonies.getConfig().getCommon().minDistanceFromWorldSpawn.get())
+            if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
             {
                 if (!world.isRemote)
                 {
-                    LanguageHandler.sendPlayerMessage(sender, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getCommon().minDistanceFromWorldSpawn.get());
+                    LanguageHandler.sendPlayerMessage(sender, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get());
                 }
                 return;
             }
-            else if (spawnDistance > MineColonies.getConfig().getCommon().maxDistanceFromWorldSpawn.get())
+            else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
             {
                 if (!world.isRemote)
                 {
-                    LanguageHandler.sendPlayerMessage(sender, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getCommon().maxDistanceFromWorldSpawn.get());
+                    LanguageHandler.sendPlayerMessage(sender, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get());
                 }
                 return;
             }

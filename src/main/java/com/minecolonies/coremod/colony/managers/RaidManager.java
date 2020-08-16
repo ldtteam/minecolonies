@@ -194,7 +194,7 @@ public class RaidManager implements IRaiderManager
         for (int i = 0; i < raidCount; i++)
         {
             final BlockPos targetSpawnPoint = calculateSpawnLocation();
-            if (targetSpawnPoint == null || targetSpawnPoint.equals(colony.getCenter()) || targetSpawnPoint.getY() > MineColonies.getConfig().getCommon().maxYForBarbarians.get())
+            if (targetSpawnPoint == null || targetSpawnPoint.equals(colony.getCenter()) || targetSpawnPoint.getY() > MineColonies.getConfig().getServer().maxYForBarbarians.get())
             {
                 continue;
             }
@@ -212,7 +212,7 @@ public class RaidManager implements IRaiderManager
 
         for (final BlockPos targetSpawnPoint : spawnPoints)
         {
-            if (MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get())
+            if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
             {
                 LanguageHandler.sendPlayersMessage(
                   colony.getMessagePlayerEntities(),
@@ -475,8 +475,8 @@ public class RaidManager implements IRaiderManager
     @Override
     public int calcBarbarianAmount()
     {
-        return Math.min(MineColonies.getConfig().getCommon().maxBarbarianSize.get(),
-          (int) ((getColonyRaidLevel() / SPAWN_MODIFIER) * ((double) MineColonies.getConfig().getCommon().spawnBarbarianSize.get() * 0.2)));
+        return Math.min(MineColonies.getConfig().getServer().maxBarbarianSize.get(),
+          (int) ((getColonyRaidLevel() / SPAWN_MODIFIER) * ((double) MineColonies.getConfig().getServer().spawnBarbarianSize.get() * 0.2)));
     }
 
     @Override
@@ -535,7 +535,7 @@ public class RaidManager implements IRaiderManager
     public boolean canRaid()
     {
         return colony.getWorld().getDifficulty() != Difficulty.PEACEFUL
-                 && MineColonies.getConfig().getCommon().doBarbariansSpawn.get()
+                 && MineColonies.getConfig().getServer().doBarbariansSpawn.get()
                  && colony.getRaiderManager().canHaveRaiderEvents()
                  && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();
     }
@@ -554,7 +554,7 @@ public class RaidManager implements IRaiderManager
             if (!colony.getRaiderManager().willRaidTonight())
             {
                 final boolean raid = raidThisNight(colony.getWorld(), colony);
-                if (MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get())
+                if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
                 {
                     LanguageHandler.sendPlayersMessage(
                       colony.getImportantMessageEntityPlayers(),
@@ -573,7 +573,7 @@ public class RaidManager implements IRaiderManager
         {
             colony.getRaiderManager().setHasRaidBeenCalculated(false);
             colony.getRaiderManager().setWillRaidTonight(false);
-            if (MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get())
+            if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
             {
                 LanguageHandler.sendPlayersMessage(
                   colony.getMessagePlayerEntities(),
@@ -622,18 +622,18 @@ public class RaidManager implements IRaiderManager
      */
     private boolean raidThisNight(final World world, final IColony colony)
     {
-        if (nightsSinceLastRaid < MineColonies.getConfig().getCommon().minimumNumberOfNightsBetweenRaids.get())
+        if (nightsSinceLastRaid < MineColonies.getConfig().getServer().minimumNumberOfNightsBetweenRaids.get())
         {
             return false;
         }
 
-        if (nightsSinceLastRaid > MineColonies.getConfig().getCommon().averageNumberOfNightsBetweenRaids.get() + 2)
+        if (nightsSinceLastRaid > MineColonies.getConfig().getServer().averageNumberOfNightsBetweenRaids.get() + 2)
         {
             return true;
         }
 
-        return world.rand.nextDouble() < 1.0 / (MineColonies.getConfig().getCommon().averageNumberOfNightsBetweenRaids.get() - MineColonies.getConfig()
-                                                                                                                                 .getCommon().minimumNumberOfNightsBetweenRaids.get());
+        return world.rand.nextDouble() < 1.0 / (MineColonies.getConfig().getServer().averageNumberOfNightsBetweenRaids.get() - MineColonies.getConfig()
+                                                                                                                                 .getServer().minimumNumberOfNightsBetweenRaids.get());
     }
 
     @Override

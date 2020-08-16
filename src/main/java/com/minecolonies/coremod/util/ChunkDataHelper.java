@@ -39,6 +39,7 @@ public final class ChunkDataHelper
     /**
      * If colony is farther away from a capability then this times the default colony distance it will delete the capability.
      */
+    // TODO: supplier? inline?
     private static final int DISTANCE_TO_DELETE = MineColonies.getConfig().getCommon().maxColonySize.get() * BLOCKS_PER_CHUNK * 2 * 5;
 
     /**
@@ -81,7 +82,7 @@ public final class ChunkDataHelper
             }
             else
             {
-                if (MineColonies.getConfig().getCommon().fixOrphanedChunks.get())
+                if (MineColonies.getConfig().getServer().fixOrphanedChunks.get())
                 {
                     final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                     if (closeCap != null)
@@ -210,8 +211,8 @@ public final class ChunkDataHelper
      */
     public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final ResourceLocation dimension)
     {
-        final int range = getConfig().getCommon().initialColonySize.get();
-        final int buffer = getConfig().getCommon().minColonyDistance.get();
+        final int range = getConfig().getServer().initialColonySize.get();
+        final int buffer = getConfig().getServer().minColonyDistance.get();
 
         claimChunksInRange(id, dimension, add, center, range, buffer, world);
     }
@@ -315,6 +316,7 @@ public final class ChunkDataHelper
             for (int j = chunkZ - range; j <= chunkZ + range; j++)
             {
                 // Initial chunk unclaim not allowed for dynamic(building removal)
+                // TODO: move out from for loops
                 if (!force && !add
                       && (Math.abs(chunkColonyCenterX - i) <= getConfig().getCommon().initialColonySize.get() + 1
                             && Math.abs(chunkColonyCenterZ - j) <= getConfig().getCommon().initialColonySize.get() + 1))

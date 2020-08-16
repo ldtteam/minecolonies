@@ -212,7 +212,7 @@ public class BuildToolPasteMessage implements IMessage
         }
         else if (structureName.contains("supply"))
         {
-            if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getCommon().allowInfiniteSupplyChests.get()
+            if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getServer().allowInfiniteSupplyChests.get()
                   && !isFreeInstantPlacementMH(player))
             {
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");

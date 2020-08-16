@@ -702,7 +702,7 @@ public class CitizenData implements ICitizenData
     {
         if (colony != null && colony.isActive())
         {
-            this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation * MineColonies.getConfig().getCommon().foodModifier.get()));
+            this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation * MineColonies.getConfig().getServer().foodModifier.get()));
             this.justAte = false;
         }
     }

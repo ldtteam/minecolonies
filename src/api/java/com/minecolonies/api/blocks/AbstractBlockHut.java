@@ -87,7 +87,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public float getPlayerRelativeBlockHardness(final BlockState state, @NotNull final PlayerEntity player, @NotNull final IBlockReader world, @NotNull final BlockPos pos)
     {
-        return MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pvp_mode.get() ? 1/(HARDNESS * HARDNESS_PVP_FACTOR) : 1/HARDNESS;
+        return MinecoloniesAPIProxy.getInstance().getConfig().getServer().pvp_mode.get() ? 1/(HARDNESS * HARDNESS_PVP_FACTOR) : 1/HARDNESS;
     }
 
     /**

@@ -78,12 +78,12 @@ public class CommandRTP implements IMCCommand
             return false;
         }
 
-        if (!MineColonies.getConfig().getCommon().canPlayerUseRTPCommand.get())
+        if (!MineColonies.getConfig().getServer().canPlayerUseRTPCommand.get())
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.notallowed");
             return false;
         }
-        else if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && !context.getSource().getWorld().getDimensionKey().func_240901_a_().equals(World.OVERWORLD.func_240901_a_()))
+        else if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !context.getSource().getWorld().getDimensionKey().func_240901_a_().equals(World.OVERWORLD.func_240901_a_()))
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.wrongdim");
             return false;
@@ -99,7 +99,7 @@ public class CommandRTP implements IMCCommand
     private void rtp(final PlayerEntity player)
     {
         //Now the position will be calculated, we will try up to 4 times to find a save position.
-        for (int attCounter = 0; attCounter <= MineColonies.getConfig().getCommon().numberOfAttemptsForSafeTP.get(); attCounter++)
+        for (int attCounter = 0; attCounter <= MineColonies.getConfig().getServer().numberOfAttemptsForSafeTP.get(); attCounter++)
         {
             /* this math is to get negative numbers */
             final int x = getRandCoordinate();
@@ -116,7 +116,7 @@ public class CommandRTP implements IMCCommand
             final IColony colony = IColonyManager.getInstance().getClosestColony(player.getEntityWorld(), tpPos);
             /* Check for a close by colony*/
             if (colony != null
-                  && BlockPosUtil.getDistance2D(colony.getCenter(), tpPos) < MineColonies.getConfig().getCommon().maxColonySize.get() * 32)
+                  && BlockPosUtil.getDistance2D(colony.getCenter(), tpPos) < MineColonies.getConfig().getServer().maxColonySize.get() * 32)
             {
                 continue;
             }
@@ -157,9 +157,9 @@ public class CommandRTP implements IMCCommand
         int x = 0;
 
         /* keeping X out of the spawn radius */
-        while (x > -MineColonies.getConfig().getCommon().minDistanceFromWorldSpawn.get() && x < MineColonies.getConfig().getCommon().minDistanceFromWorldSpawn.get())
+        while (x > -MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get() && x < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
         {
-            x = rnd.nextInt(MineColonies.getConfig().getCommon().maxDistanceFromWorldSpawn.get() * 2) - MineColonies.getConfig().getCommon().maxDistanceFromWorldSpawn.get();
+            x = rnd.nextInt(MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get() * 2) - MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get();
         }
         return x;
     }

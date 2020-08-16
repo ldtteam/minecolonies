@@ -145,7 +145,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
 
         this.moveController = new MovementHandler(this);
         this.enablePersistence();
-        this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
+        this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
         initTasks();
     }
 

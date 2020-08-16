@@ -146,10 +146,10 @@ public class EntityAICitizenChild extends Goal
         // Timer used for delays on actions
         if (actionTimer > 0)
         {
-            actionTimer -= MineColonies.getConfig().getCommon().updateRate.get();
+            actionTimer -= MineColonies.getConfig().getServer().updateRate.get();
         }
 
-        aiActiveTime += MineColonies.getConfig().getCommon().updateRate.get() * (child.getCitizenJobHandler().getColonyJob() instanceof JobPupil ? 2 : 1);
+        aiActiveTime += MineColonies.getConfig().getServer().updateRate.get() * (child.getCitizenJobHandler().getColonyJob() instanceof JobPupil ? 2 : 1);
 
         return false;
     }
@@ -299,7 +299,7 @@ public class EntityAICitizenChild extends Goal
                 return true;
             }
 
-            double growthModifier = MineColonies.getConfig().getCommon().growthModifier.get();
+            double growthModifier = MineColonies.getConfig().getServer().growthModifier.get();
             final MultiplierModifierResearchEffect effect =
               child.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(GROWTH, MultiplierModifierResearchEffect.class);
             if (effect != null)

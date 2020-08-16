@@ -304,7 +304,7 @@ public class Colony implements IColony
         }
         this.permissions = new Permissions(this);
 
-        for (final String s : MineColonies.getConfig().getCommon().freeToInteractBlocks.get())
+        for (final String s : MineColonies.getConfig().getServer().freeToInteractBlocks.get())
         {
             try
             {
@@ -1473,7 +1473,7 @@ public class Colony implements IColony
     public void addVisitingPlayer(final PlayerEntity player)
     {
         final Rank rank = getPermissions().getRank(player);
-        if (rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && MineColonies.getConfig().getCommon().sendEnteringLeavingMessages.get())
+        if (rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && MineColonies.getConfig().getServer().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
@@ -1484,7 +1484,7 @@ public class Colony implements IColony
     @Override
     public void removeVisitingPlayer(final PlayerEntity player)
     {
-        if (!getMessagePlayerEntities().contains(player) && MineColonies.getConfig().getCommon().sendEnteringLeavingMessages.get())
+        if (!getMessagePlayerEntities().contains(player) && MineColonies.getConfig().getServer().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());

@@ -100,7 +100,7 @@ public class ColonyPermissionEventHandler
     public void on(final BlockEvent.EntityPlaceEvent event)
     {
         final Action action = event.getPlacedBlock().getBlock() instanceof AbstractBlockHut ? Action.PLACE_HUTS : Action.PLACE_BLOCKS;
-        if (MineColonies.getConfig().getCommon().enableColonyProtection.get() && checkBlockEventDenied(event.getWorld(),
+        if (MineColonies.getConfig().getServer().enableColonyProtection.get() && checkBlockEventDenied(event.getWorld(),
           event.getPos(),
           event.getEntity(),
           event.getPlacedBlock(),
@@ -187,7 +187,7 @@ public class ColonyPermissionEventHandler
 
             final long worldTime = entity.world.getGameTime();
             if (!lastPlayerNotificationTick.containsKey(entity.getUniqueID())
-                  || lastPlayerNotificationTick.get(entity.getUniqueID()) + (Constants.TICKS_SECOND * MineColonies.getConfig().getCommon().secondsBetweenPermissionMessages.get())
+                  || lastPlayerNotificationTick.get(entity.getUniqueID()) + (Constants.TICKS_SECOND * MineColonies.getConfig().getServer().secondsBetweenPermissionMessages.get())
                        < worldTime)
             {
                 LanguageHandler.sendPlayerMessage((PlayerEntity) entity, "com.minecolonies.coremod.permission.no");
@@ -205,7 +205,7 @@ public class ColonyPermissionEventHandler
     public void on(final BlockEvent.BreakEvent event)
     {
         final IWorld world = event.getWorld();
-        if (!MineColonies.getConfig().getCommon().enableColonyProtection.get() || world.isRemote())
+        if (!MineColonies.getConfig().getServer().enableColonyProtection.get() || world.isRemote())
         {
             return;
         }
@@ -234,7 +234,7 @@ public class ColonyPermissionEventHandler
 
             building.destroy();
 
-            if (MineColonies.getConfig().getCommon().pvp_mode.get() && event.getState().getBlock() == ModBlocks.blockHutTownHall)
+            if (MineColonies.getConfig().getServer().pvp_mode.get() && event.getState().getBlock() == ModBlocks.blockHutTownHall)
             {
                 IColonyManager.getInstance().deleteColonyByWorld(building.getColony().getID(), false, event.getPlayer().world);
             }
@@ -253,7 +253,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final ExplosionEvent.Detonate event)
     {
-        if (!MineColonies.getConfig().getCommon().turnOffExplosionsInColonies.get())
+        if (!MineColonies.getConfig().getServer().turnOffExplosionsInColonies.get())
         {
             return;
         }
@@ -282,8 +282,8 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final ExplosionEvent.Start event)
     {
-        if (MineColonies.getConfig().getCommon().enableColonyProtection.get()
-              && MineColonies.getConfig().getCommon().turnOffExplosionsInColonies.get()
+        if (MineColonies.getConfig().getServer().enableColonyProtection.get()
+              && MineColonies.getConfig().getServer().turnOffExplosionsInColonies.get()
               && colony.isCoordInColony(event.getWorld(), new BlockPos(event.getExplosion().getPosition())))
         {
             cancelEvent(event, null, colony, Action.EXPLODE, new BlockPos(event.getExplosion().getPosition()));
@@ -321,7 +321,7 @@ public class ColonyPermissionEventHandler
                 return;
             }
 
-            if (MineColonies.getConfig().getCommon().enableColonyProtection.get())
+            if (MineColonies.getConfig().getServer().enableColonyProtection.get())
             {
                 if (!perms.hasPermission(event.getPlayer(), Action.RIGHTCLICK_BLOCK) && !(block instanceof AirBlock))
                 {
@@ -405,7 +405,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerEvent.BreakSpeed event)
     {
-        if (colony.isCoordInColony(event.getEntity().world, event.getPos()) && MineColonies.getConfig().getCommon().pvp_mode.get()
+        if (colony.isCoordInColony(event.getEntity().world, event.getPos()) && MineColonies.getConfig().getServer().pvp_mode.get()
               && event.getState().getBlock() == ModBlocks.blockHutTownHall
               && event.getPlayer().world instanceof ServerWorld)
         {
@@ -449,7 +449,7 @@ public class ColonyPermissionEventHandler
             }
             lastTownHallBreakingTick = world.getGameTime();
         }
-        else if (!MineColonies.getConfig().getCommon().pvp_mode.get())
+        else if (!MineColonies.getConfig().getServer().pvp_mode.get())
         {
             validTownHallBreak = true;
         }
@@ -476,11 +476,11 @@ public class ColonyPermissionEventHandler
         {
             positionToCheck = new BlockPos(player.getPositionVec());
         }
-        if (MineColonies.getConfig().getCommon().enableColonyProtection.get()
+        if (MineColonies.getConfig().getServer().enableColonyProtection.get()
               && colony.isCoordInColony(player.getEntityWorld(), positionToCheck)
               && !colony.getPermissions().hasPermission(player, action))
         {
-            if (MineColonies.getConfig().getCommon().pvp_mode.get())
+            if (MineColonies.getConfig().getServer().pvp_mode.get())
             {
                 if (!world.isRemote && colony.isValidAttackingPlayer(playerIn))
                 {
@@ -595,7 +595,7 @@ public class ColonyPermissionEventHandler
 
         @NotNull final PlayerEntity player = EntityUtils.getPlayerOfFakePlayer(event.getPlayer(), event.getPlayer().getEntityWorld());
 
-        if (MineColonies.getConfig().getCommon().enableColonyProtection.get()
+        if (MineColonies.getConfig().getServer().enableColonyProtection.get()
               && colony.isCoordInColony(player.getEntityWorld(), new BlockPos(player.getPositionVec())))
         {
             final Permissions perms = colony.getPermissions();

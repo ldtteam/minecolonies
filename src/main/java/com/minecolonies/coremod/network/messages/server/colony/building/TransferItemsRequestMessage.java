@@ -105,7 +105,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         }
         else
         {
-            if (MineColonies.getConfig().getCommon().debugInventories.get())
+            if (MineColonies.getConfig().getServer().debugInventories.get())
             {
                 previousContent = InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.inventory));
             }
@@ -158,7 +158,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
             }
         }
 
-        if (!isCreative && previousContent != null && MineColonies.getConfig().getCommon().debugInventories.get())
+        if (!isCreative && previousContent != null && MineColonies.getConfig().getServer().debugInventories.get())
         {
             InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.inventory)), true);
         }

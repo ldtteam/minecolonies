@@ -86,7 +86,7 @@ public final class RaiderMobUtils
      */
     public static void setMobAttributes(final AbstractEntityMinecoloniesMob mob, final IColony colony)
     {
-        final double difficultyModifier = (mob.world.getDifficulty().getId() / 2d) * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
+        final double difficultyModifier = (mob.world.getDifficulty().getId() / 2d) * (MinecoloniesAPIProxy.getInstance().getConfig().getServer().barbarianHordeDifficulty.get()
                                                                                         / (double) DEFAULT_BARBARIAN_DIFFICULTY);
         final int raidLevel = colony.getRaiderManager().getColonyRaidLevel();
 

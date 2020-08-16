@@ -139,7 +139,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
 
         final AbstractEntityCitizen citizen = optionalEntityCitizen.get();
 
-        if (!isCreative && MineColonies.getConfig().getCommon().debugInventories.get())
+        if (!isCreative && MineColonies.getConfig().getServer().debugInventories.get())
         {
             previousContent = InventoryUtils.getAllItemsForProviders(citizen.getInventoryCitizen(), new InvWrapper(player.inventory));
         }
@@ -168,7 +168,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
             }
         }
 
-        if (!isCreative && previousContent != null && MineColonies.getConfig().getCommon().debugInventories.get())
+        if (!isCreative && previousContent != null && MineColonies.getConfig().getServer().debugInventories.get())
         {
             InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(citizen.getInventoryCitizen(), new InvWrapper(player.inventory)), true);
         }

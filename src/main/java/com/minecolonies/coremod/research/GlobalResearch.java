@@ -2,7 +2,6 @@ package com.minecolonies.coremod.research;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.effects.IResearchEffect;
@@ -121,6 +120,7 @@ public class GlobalResearch implements IGlobalResearch
         try
         {
             // TODO: Add nbt parsing {tag,value;tag,value}
+            // TODO: wtf rework
             final CommonConfiguration configuration = MinecoloniesAPIProxy.getInstance().getConfig().getCommon();
             final ForgeConfigSpec.ConfigValue<List<? extends String>> researchCost =
               (ForgeConfigSpec.ConfigValue<List<? extends String>>) configuration.getClass().getDeclaredField(id).get(configuration);

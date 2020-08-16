@@ -629,7 +629,7 @@ public class BuildingManager implements IBuildingManager
     {
         if (block instanceof BlockHutWareHouse)
         {
-            if (colony != null && (!MineColonies.getConfig().getCommon().limitToOneWareHousePerColony.get() || !colony.hasWarehouse()))
+            if (colony != null && (!MineColonies.getConfig().getServer().limitToOneWareHousePerColony.get() || !colony.hasWarehouse()))
             {
                 return true;
             }

@@ -349,7 +349,7 @@ public final class ColonyManager implements IColonyManager
     {
         return !ChunkDataHelper.canClaimChunksInRange(w,
           pos,
-          Math.max(MineColonies.getConfig().getCommon().minColonyDistance.get(), getConfig().getCommon().initialColonySize.get()));
+          Math.max(MineColonies.getConfig().getServer().minColonyDistance.get(), getConfig().getServer().initialColonySize.get()));
     }
 
     /**
@@ -691,7 +691,7 @@ public final class ColonyManager implements IColonyManager
     public int getMinimumDistanceBetweenTownHalls()
     {
         //  [TownHall](Radius)+(Padding)+(Radius)[TownHall]
-        return getConfig().getCommon().minColonyDistance.get() * BLOCKS_PER_CHUNK;
+        return getConfig().getServer().minColonyDistance.get() * BLOCKS_PER_CHUNK;
     }
 
     @Override

@@ -102,7 +102,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     {
         super.serializeToView(buf);
 
-        buf.writeBoolean(MineColonies.getConfig().getCommon().canPlayerUseAllyTHTeleport.get());
+        buf.writeBoolean(MineColonies.getConfig().getServer().canPlayerUseAllyTHTeleport.get());
         buf.writeInt(permissionEvents.size());
         for (final PermissionEvent event : permissionEvents)
         {

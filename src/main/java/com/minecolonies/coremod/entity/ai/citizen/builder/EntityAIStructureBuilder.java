@@ -329,7 +329,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         final int initialDelay = super.getBlockMiningDelay(block, pos);
 
-        if (pos.getY() > DEPTH_LEVEL_0 || !MineColonies.getConfig().getCommon().restrictBuilderUnderground.get())
+        if (pos.getY() > DEPTH_LEVEL_0 || !MineColonies.getConfig().getServer().restrictBuilderUnderground.get())
         {
             return (int) (initialDelay * SPEED_BUFF_0);
         }

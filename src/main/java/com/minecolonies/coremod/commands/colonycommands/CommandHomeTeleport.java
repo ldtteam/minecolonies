@@ -22,7 +22,7 @@ public class CommandHomeTeleport implements IMCCommand
     {
         final Entity sender = context.getSource().getEntity();
 
-        if (!MineColonies.getConfig().getCommon().canPlayerUseHomeTPCommand.get())
+        if (!MineColonies.getConfig().getServer().canPlayerUseHomeTPCommand.get())
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
             return 0;

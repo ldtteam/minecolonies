@@ -60,10 +60,10 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
                                                                                                                          .getColonyJob() instanceof JobHealer)
               && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > IMinecoloniesAPI.getInstance()
                                                                                                                 .getConfig()
-                                                                                                                .getCommon().initialCitizenAmount.get())
+                                                                                                                .getServer().initialCitizenAmount.get())
         {
             final int citizenModifier = citizen.getCitizenJobHandler().getColonyJob() == null ? 1 : citizen.getCitizenJobHandler().getColonyJob().getDiseaseModifier();
-            final int configModifier = MineColonies.getConfig().getCommon().diseaseModifier.get();
+            final int configModifier = MineColonies.getConfig().getServer().diseaseModifier.get();
             if (citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR / citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount())
                   < citizenModifier)
             {

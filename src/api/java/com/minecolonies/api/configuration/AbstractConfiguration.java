@@ -7,11 +7,11 @@ import net.minecraftforge.common.ForgeConfigSpec.*;
 import java.util.List;
 import java.util.function.Predicate;
 
+// TODO: add needs world restart helper
 public abstract class AbstractConfiguration
 {
     protected void createCategory(final Builder builder, final String key)
     {
-        // TODO: missing name, translation not allowed for now
         builder.comment(LanguageHandler.translateKey(commentTKey(key))).push(key);
     }
 

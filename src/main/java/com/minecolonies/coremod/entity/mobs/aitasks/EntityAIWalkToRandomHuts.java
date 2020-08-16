@@ -368,7 +368,7 @@ public class EntityAIWalkToRandomHuts extends Goal
         {
             handleBarbarianLadderPlacement();
         }
-        else if (MineColonies.getConfig().getCommon().doBarbariansBreakThroughWalls.get())
+        else if (MineColonies.getConfig().getServer().doBarbariansBreakThroughWalls.get())
         {
             handleBarbarianBlockBreakment();
         }

@@ -34,7 +34,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        if (!context.getSource().hasPermissionLevel(OP_PERM_LEVEL) && !MineColonies.getConfig().getCommon().canPlayerUseDeleteColonyCommand.get())
+        if (!context.getSource().hasPermissionLevel(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseDeleteColonyCommand.get())
         {
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.notenabledinconfig"), true);
             return 0;

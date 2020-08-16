@@ -243,7 +243,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public boolean isCreative()
     {
-        return MineColonies.getConfig().getCommon().builderInfiniteResources.get();
+        return MineColonies.getConfig().getServer().builderInfiniteResources.get();
     }
 
     @Override

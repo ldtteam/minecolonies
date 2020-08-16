@@ -196,7 +196,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
                                                  .withBuildLeafBridges()
                                                  .withPlaceLadders();
 
-            if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().doBarbariansBreakThroughWalls.get())
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().doBarbariansBreakThroughWalls.get())
             {
                 stuckHandler.withBlockBreaks();
                 stuckHandler.withCompleteStuckBlockBreak(6);
@@ -359,7 +359,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
                 currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
 
                 if (!this.getHeldItemMainhand().isEmpty() && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof IChiefSwordItem
-                      && MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get() >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
+                      && MinecoloniesAPIProxy.getInstance().getConfig().getServer().barbarianHordeDifficulty.get() >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
                 {
                     RaiderMobUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
                       .stream().filter(entity -> !entity.isPotionActive(Effects.SPEED))

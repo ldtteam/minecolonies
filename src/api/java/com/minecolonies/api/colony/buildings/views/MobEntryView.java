@@ -171,7 +171,7 @@ public class MobEntryView
      */
     public String getName()
     {
-        if (IMinecoloniesAPI.getInstance().getConfig().getCommon().enableInDevelopmentFeatures.get())
+        if (IMinecoloniesAPI.getInstance().getConfig().getServer().enableInDevelopmentFeatures.get())
         {
             return String.format("%s:%d", ForgeRegistries.ENTITIES.getValue(this.location).getTranslationKey(), this.priority);
         }

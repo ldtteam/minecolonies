@@ -87,6 +87,7 @@ public class SupplyLoot
      */
     public void addLootToEvent(LootTableLoadEvent event)
     {
+        // TODO: rework
         if (MineColonies.getConfig().getCommon().generateSupplyLoot.get() && lootTables.containsKey(event.getName()))
         {
             event.getTable().addPool(LootPool.builder().addEntry(TableLootEntry.builder(lootTables.get(event.getName()))).name(MOD_ID + ":loot:" + event.getName()).build());

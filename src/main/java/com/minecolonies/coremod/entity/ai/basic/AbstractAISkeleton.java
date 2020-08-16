@@ -57,7 +57,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
         this.worker = this.job.getCitizen().getEntity().get();
         this.world = CompatibilityUtils.getWorldFromCitizen(this.worker);
         stateMachine = new TickRateStateMachine<>(AIWorkerState.INIT, this::onException);
-        stateMachine.setTickRate(MineColonies.getConfig().getCommon().updateRate.get());
+        stateMachine.setTickRate(MineColonies.getConfig().getServer().updateRate.get());
     }
 
     /**

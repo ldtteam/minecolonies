@@ -95,6 +95,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The health modifier which changes the HP
      */
+    // TODO: create supplier
     private final AttributeModifier healthModConfig =
       new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, MineColonies.getConfig().getCommon().guardHealthMult.get() - 1.0, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
@@ -1116,7 +1117,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             }
             else
             {
-                for (final String location : MineColonies.getConfig().getCommon().guardResourceLocations.get())
+                for (final String location : MineColonies.getConfig().getServer().guardResourceLocations.get())
                 {
                     if (entry.getKey() != null && entry.getKey().toString().equals(location))
                     {

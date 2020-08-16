@@ -365,7 +365,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             return MINE_BLOCK;
         }
 
-        if (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() > 0)
+        if (MineColonies.getConfig().getServer().builderBuildBlockDelay.get() > 0)
         {
             double decrease = 1;
             final MultiplierModifierResearchEffect
@@ -376,7 +376,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             }
 
             setDelay((int) (
-              (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (worker.getCitizenData().getJobModifier() + PROGRESS_MULTIPLIER))
+              (MineColonies.getConfig().getServer().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (worker.getCitizenData().getJobModifier() + PROGRESS_MULTIPLIER))
                 * decrease));
         }
         return getState();

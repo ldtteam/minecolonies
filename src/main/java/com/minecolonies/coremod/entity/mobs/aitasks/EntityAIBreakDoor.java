@@ -20,7 +20,7 @@ public class EntityAIBreakDoor extends BreakDoorGoal
     @Override
     public void tick()
     {
-        if (entity.getEntityWorld().getDifficulty().getId() < 2 || !MineColonies.getConfig().getCommon().shouldRaidersBreakDoors.get())
+        if (entity.getEntityWorld().getDifficulty().getId() < 2 || !MineColonies.getConfig().getServer().shouldRaidersBreakDoors.get())
         {
             breakingTime = 0;
         }

@@ -432,7 +432,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             totalNodesVisited++;
 
             // Limiting max amount of nodes mapped
-            if (totalNodesVisited > MineColonies.getConfig().getCommon().pathfindingMaxNodes.get() || totalNodesVisited > maxRange * maxRange)
+            if (totalNodesVisited > MineColonies.getConfig().getServer().pathfindingMaxNodes.get() || totalNodesVisited > maxRange * maxRange)
             {
                 break;
             }
@@ -631,7 +631,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
 
             @NotNull final PathPointExtended p = new PathPointExtended(pos);
-            if (railsLength >= MineColonies.getConfig().getCommon().minimumRailsToPath.get())
+            if (railsLength >= MineColonies.getConfig().getServer().minimumRailsToPath.get())
             {
                 p.setOnRails(node.isOnRails());
                 if (p.isOnRails() && (!node.parent.isOnRails() || node.parent.parent == null))

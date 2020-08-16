@@ -38,7 +38,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     @Override
     public float getPlayerRelativeBlockHardness(final BlockState state, @NotNull final PlayerEntity player, @NotNull final IBlockReader world, @NotNull final BlockPos pos)
     {
-        return MineColonies.getConfig().getCommon().pvp_mode.get() ? PVP_MODE_HARDNESS : HARDNESS;
+        return MineColonies.getConfig().getServer().pvp_mode.get() ? PVP_MODE_HARDNESS : HARDNESS;
     }
 
     @NotNull

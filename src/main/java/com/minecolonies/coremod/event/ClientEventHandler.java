@@ -96,7 +96,7 @@ public class ClientEventHandler
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
-        if (MineColonies.getConfig().getCommon().pathfindingDebugDraw.get())
+        if (MineColonies.getConfig().getClient().pathfindingDebugDraw.get())
         {
             Pathfinding.debugDraw(event.getPartialTicks(), event.getMatrixStack());
         }

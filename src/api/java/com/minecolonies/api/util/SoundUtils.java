@@ -159,6 +159,7 @@ public final class SoundUtils
 
         if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().disableCitizenVoices.get())
         {
+            // TODO: rework to client side
             return;
         }
 

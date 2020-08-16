@@ -268,7 +268,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
             if (getOwnBuilding().shouldRetrieveDirtFromCompostBin())
             {
-                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.DIRT, MineColonies.getConfig().getCommon().dirtFromCompost.get()));
+                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.DIRT, MineColonies.getConfig().getServer().dirtFromCompost.get()));
             }
             else
             {

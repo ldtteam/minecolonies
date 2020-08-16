@@ -18,8 +18,8 @@
   "minecolonies.config.requestSystem.comment": "All configurations related to the request system",
   "minecolonies.config.commands": "Command Settings",
   "minecolonies.config.commands.comment": "All configurations related to the Minecolonies commands",
-  "minecolonies.config.disablecitizenvoices": "Citizen Sounds",
-  "minecolonies.config.disablecitizenvoices.comment": "Disable citizen voices. [Default: false]",
+  "minecolonies.config.citizenvoices": "Citizen Sounds",
+  "minecolonies.config.citizenvoices.comment": "Should play citizen voices? [Default: true]",
 
   "minecolonies.config.diseasemodifier": "Disease Modifier",
   "minecolonies.config.diseasemodifier.comment": "How common diseases are. 1 = Very common, 100 = extremely rare. [Default: 5]",

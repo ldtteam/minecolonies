@@ -98,7 +98,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * The days the event lasts
      */
-    private int daysToGo = MineColonies.getConfig().getCommon().daysUntilPirateshipsDespawn.get();
+    private int daysToGo = MineColonies.getConfig().getServer().daysUntilPirateshipsDespawn.get();
 
     /**
      * Reference to the currently active pirates for this event.
@@ -145,7 +145,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     public void onStart()
     {
         status = EventStatus.PREPARING;
-        daysToGo = MineColonies.getConfig().getCommon().daysUntilPirateshipsDespawn.get();
+        daysToGo = MineColonies.getConfig().getServer().daysUntilPirateshipsDespawn.get();
 
         final CreativeBuildingStructureHandler structure =
           new CreativeBuildingStructureHandler(colony.getWorld(),

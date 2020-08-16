@@ -424,9 +424,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             {
                 final double primarySkillFactor = worker.getCitizenData().getCitizenSkillHandler().getSkills().get(getOwnBuilding().getPrimarySkill()).getB() / 10;
                 final double rollResult = worker.getRandom().nextDouble() * ONE_HUNDRED_PERCENT;
-                final double spongeTarget = MineColonies.getConfig().getCommon().fisherSpongeChance.get() + primarySkillFactor; 
-                final double shardTarget = spongeTarget + MineColonies.getConfig().getCommon().fisherPrismarineChance.get() + primarySkillFactor;
-                final double crystalTarget = shardTarget + MineColonies.getConfig().getCommon().fisherPrismarineChance.get() + primarySkillFactor;
+                final double spongeTarget = MineColonies.getConfig().getServer().fisherSpongeChance.get() + primarySkillFactor; 
+                final double shardTarget = spongeTarget + MineColonies.getConfig().getServer().fisherPrismarineChance.get() + primarySkillFactor;
+                final double crystalTarget = shardTarget + MineColonies.getConfig().getServer().fisherPrismarineChance.get() + primarySkillFactor;
                 ItemStack bonusItemStack = null;
                 if (rollResult < spongeTarget)
                 {
