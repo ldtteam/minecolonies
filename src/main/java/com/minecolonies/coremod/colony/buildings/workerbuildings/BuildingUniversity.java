@@ -212,6 +212,11 @@ public class BuildingUniversity extends AbstractBuildingWorker
                   .getResearch(research.getBranch(), research.getId())
                   .research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree()))
             {
+                for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
+                {
+                    citizen.applyResearchEffects();
+                }
+
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                   RESEARCH_CONCLUDED + random.nextInt(3),
                   IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc());

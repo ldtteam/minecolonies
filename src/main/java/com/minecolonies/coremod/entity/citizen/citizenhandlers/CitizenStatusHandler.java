@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenStatusHandler;
+import com.minecolonies.coremod.MineColonies;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.Objects;
@@ -23,6 +24,11 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
      * The Current Status.
      */
     protected Status status = Status.IDLE;
+
+    /**
+     * Whether the status display is enabled
+     */
+    private boolean enabled = MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get();
 
     /**
      * The 4 lines of the latest status.
@@ -58,6 +64,11 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
     @Override
     public void setLatestStatus(final ITextComponent... status)
     {
+        if (!enabled)
+        {
+            return;
+        }
+
         boolean hasChanged = false;
         for (int i = 0; i < latestStatus.length; i++)
         {

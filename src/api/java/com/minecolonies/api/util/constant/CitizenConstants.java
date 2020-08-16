@@ -264,6 +264,11 @@ public final class CitizenConstants
     public static final int NOON = 6000;
 
     /**
+     * Noon day time.
+     */
+    public static final int NIGHT = 13000;
+
+    /**
      * The minimum range to keep from the current building place.
      */
     public static final int MIN_ADDITIONAL_RANGE_TO_BUILD = 3;
