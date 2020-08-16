@@ -10,6 +10,7 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +26,7 @@ public class EntityAIGateInteract extends Goal
      * Number of blocks to check for the fence gate - height.
      */
     private static final int HEIGHT_TO_CHECK = 2;
+
     /**
      * Number of blocks to check for the fence gate - length.
      */
@@ -33,32 +35,38 @@ public class EntityAIGateInteract extends Goal
     /**
      * The min distance the gate has to be from the citizen.
      */
-    private static final double         MIN_DISTANCE = 2.25D;
+    private static final double MIN_DISTANCE = 2.25D;
+
     /**
      * Our citizen.
      */
-    protected            MobEntity      theEntity;
+    protected MobEntity theEntity;
+
     /**
      * The gate position.
      */
-    protected            BlockPos       gatePosition;
+    protected BlockPos gatePosition;
+
     /**
      * The gate block.
      */
     @Nullable
-    protected            FenceGateBlock gateBlock;
+    protected FenceGateBlock gateBlock;
+
     /**
      * Check if the interaction with the fenceGate stopped already.
      */
-    private              boolean        hasStoppedFenceInteraction;
+    private boolean hasStoppedFenceInteraction;
+
     /**
      * The entities x position.
      */
-    private              double         entityPositionX;
+    private double entityPositionX;
+
     /**
      * The entities z position.
      */
-    private              double         entityPositionZ;
+    private double entityPositionZ;
 
     /**
      * Constructor called to register the AI class with an entity.
@@ -108,7 +116,7 @@ public class EntityAIGateInteract extends Goal
     private boolean checkFenceGate(@NotNull final Path path)
     {
         final int maxLengthToCheck = Math.min(path.getCurrentPathIndex() + LENGTH_TO_CHECK, path.getCurrentPathLength());
-        for (int i = 0; i < maxLengthToCheck; ++i)
+        for (int i = Math.max(0, path.getCurrentPathIndex() - 1); i < maxLengthToCheck; ++i)
         {
             final PathPoint pathpoint = path.getPathPointFromIndex(i);
             for (int level = 0; level < HEIGHT_TO_CHECK; level++)
@@ -176,10 +184,10 @@ public class EntityAIGateInteract extends Goal
     @Override
     public void tick()
     {
-        final double entityDistX = this.gatePosition.getX() + HALF_BLOCK - this.theEntity.getPosX();
-        final double entityDistZ = this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.getPosZ();
-        final double totalDist = this.entityPositionX * entityDistX + this.entityPositionZ * entityDistZ;
-        if (totalDist < 0.0D)
+        final Direction dir = this.theEntity.getHorizontalFacing();
+        final double entityDistX = Math.abs(this.gatePosition.getX() + HALF_BLOCK - this.theEntity.getPosX() + dir.getXOffset());
+        final double entityDistZ = Math.abs(this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.getPosZ() + dir.getZOffset());
+        if ((entityDistX > HALF_BLOCK && entityDistX < 1.0 ) || (entityDistZ > HALF_BLOCK && entityDistZ < 1.0))
         {
             this.hasStoppedFenceInteraction = true;
         }
