@@ -1450,8 +1450,18 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return false;
         }
 
-        target.overrideCurrentDeliveries(ImmutableList.of(stack));
-        getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
+        try
+        {
+            target.overrideCurrentDeliveries(ImmutableList.of(stack));
+            getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
+        }
+        catch (final Exception ex)
+        {
+            Log.getLogger().error("Error during overruling", ex);
+            Log.getLogger().error(target.getId().toString() + " " + target.getState().name() + " " + target.getShortDisplayString().toString());
+            return false;
+        }
+
         return true;
     }
 

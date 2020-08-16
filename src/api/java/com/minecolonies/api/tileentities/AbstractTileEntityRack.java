@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -78,7 +79,13 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
         @Override
         public void setStackInSlot(final int slot, final @Nonnull ItemStack stack)
         {
-            super.setStackInSlot(slot, stack);
+            validateSlotIndex(slot);
+            final boolean changed = !stack.equals(this.stacks.get(slot));
+            this.stacks.set(slot, stack);
+            if (changed)
+            {
+                onContentsChanged(slot);
+            }
             updateWarehouseIfAvailable(stack);
         }
 
@@ -87,19 +94,10 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
         public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
         {
             final ItemStack result = super.insertItem(slot, stack, simulate);
-            if (result.isEmpty() || result.getCount() < stack.getCount())
+            if (result.isEmpty() || result.getCount() < stack.getCount() && !simulate)
             {
                 updateWarehouseIfAvailable(stack);
             }
-            return result;
-        }
-
-        @NotNull
-        @Override
-        public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
-        {
-            final ItemStack result = super.extractItem(slot, amount, simulate);
-            updateItemStorage();
             return result;
         }
     }

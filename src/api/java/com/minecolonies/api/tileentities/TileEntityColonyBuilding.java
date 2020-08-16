@@ -272,6 +272,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         final CompoundNBT compound = packet.getNbtCompound();
         colonyId = compound.getInt(TAG_COLONY);
+        super.onDataPacket(net, packet);
     }
 
     @Override
@@ -369,6 +370,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             {
                 colonyId = tempColony.getID();
             }
+        }
+
+        if (!getWorld().isRemote && colonyId != 0 && colony == null)
+        {
+            updateColonyReferences();
         }
     }
 
