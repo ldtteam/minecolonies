@@ -634,7 +634,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         for (BlockPos currentPos : blockPositions)
         {
-            if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() > 0)
+            if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > 0)
             {
                 Log.getLogger()
                   .info(String.format("Check Leaves Pos(%d, %d, %d) is %s: %s",

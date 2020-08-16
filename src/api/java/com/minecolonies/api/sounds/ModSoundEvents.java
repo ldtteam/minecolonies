@@ -21,7 +21,7 @@ public final class ModSoundEvents
     /**
      * Map of sound events.
      */
-    public static Map<String, Map<EventType, Tuple<SoundEvent, SoundEvent>>> SOUND_EVENTS = new HashMap<>();
+    public static Map<String, Map<EventType, Tuple<SoundEvent, SoundEvent>>> CITIZEN_SOUND_EVENTS = new HashMap<>();
 
     /**
      * Private constructor to hide the implicit public one.
@@ -56,7 +56,7 @@ public final class ModSoundEvents
                     registry.register(femaleSoundEvent);
                     map.put(soundEvents, new Tuple<>(maleSoundEvent, femaleSoundEvent));
                 }
-                SOUND_EVENTS.put(job.getRegistryName().getPath(), map);
+                CITIZEN_SOUND_EVENTS.put(job.getRegistryName().getPath(), map);
             }
         }
 
@@ -70,7 +70,7 @@ public final class ModSoundEvents
             registry.register(femaleSoundEvent);
             citizenMap.put(soundEvents, new Tuple<>(maleSoundEvent, femaleSoundEvent));
         }
-        SOUND_EVENTS.put("citizen", citizenMap);
+        CITIZEN_SOUND_EVENTS.put("citizen", citizenMap);
 
         final Map<EventType, Tuple<SoundEvent, SoundEvent>> childMap = new HashMap<>();
         for (final EventType soundEvents : EventType.values())
@@ -82,7 +82,7 @@ public final class ModSoundEvents
             registry.register(femaleSoundEvent);
             childMap.put(soundEvents, new Tuple<>(maleSoundEvent, femaleSoundEvent));
         }
-        SOUND_EVENTS.put("child", childMap);
+        CITIZEN_SOUND_EVENTS.put("child", childMap);
 
         registry.register(TavernSounds.tavernTheme);
 

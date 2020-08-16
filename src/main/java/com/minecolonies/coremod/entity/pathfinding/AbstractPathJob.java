@@ -131,7 +131,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         allowJumpPointSearchTypeWalk = false;
 
-        if (MineColonies.getConfig().getCommon().pathfindingDebugDraw.get())
+        if (MineColonies.getConfig().getClient().pathfindingDebugDraw.get())
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -172,7 +172,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         allowJumpPointSearchTypeWalk = false;
 
-        if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pathfindingDebugDraw.get())
+        if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().pathfindingDebugDraw.get())
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -477,7 +477,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             addNodeToDebug(currentNode);
         }
 
-        if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() == DEBUG_VERBOSITY_FULL)
+        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() == DEBUG_VERBOSITY_FULL)
         {
             Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
               currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.getCost(), currentNode.getScore()));
@@ -682,7 +682,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     private void doDebugPrinting(@NotNull final PathPoint[] points)
     {
-        if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
+        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
         {
             Log.getLogger().info("Path found:");
 

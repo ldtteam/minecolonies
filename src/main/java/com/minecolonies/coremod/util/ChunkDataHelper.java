@@ -37,12 +37,6 @@ import static com.minecolonies.coremod.MineColonies.*;
 public final class ChunkDataHelper
 {
     /**
-     * If colony is farther away from a capability then this times the default colony distance it will delete the capability.
-     */
-    // TODO: supplier? inline?
-    private static final int DISTANCE_TO_DELETE = MineColonies.getConfig().getCommon().maxColonySize.get() * BLOCKS_PER_CHUNK * 2 * 5;
-
-    /**
      * Private constructor to hide implicit one.
      */
     private ChunkDataHelper()
@@ -60,6 +54,9 @@ public final class ChunkDataHelper
      */
     public static void loadChunk(final Chunk chunk, final World world)
     {
+        // If colony is farther away from a capability then this times the default colony distance it will delete the capability.
+        final int distanceToDelete = MineColonies.getConfig().getServer().maxColonySize.get() * BLOCKS_PER_CHUNK * 2 * 5;
+
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (chunkManager == null)
         {
@@ -92,7 +89,7 @@ public final class ChunkDataHelper
                         {
                             if (colony != 0 && (cap.getColony(colony) == null
                                                   || BlockPosUtil.getDistance2D(cap.getColony(colony).getCenter(),
-                              new BlockPos(chunk.getPos().x * BLOCKS_PER_CHUNK, 0, chunk.getPos().z * BLOCKS_PER_CHUNK)) > DISTANCE_TO_DELETE))
+                              new BlockPos(chunk.getPos().x * BLOCKS_PER_CHUNK, 0, chunk.getPos().z * BLOCKS_PER_CHUNK)) > distanceToDelete))
                             {
                                 Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.getPos().x * BLOCKS_PER_CHUNK + " 100 " + chunk.getPos().z * BLOCKS_PER_CHUNK);
                                 closeCap.removeColony(colony, chunk);
@@ -311,23 +308,23 @@ public final class ChunkDataHelper
         final int chunkX = center.getX() >> 4;
         final int chunkZ = center.getZ() >> 4;
 
+        final int initialColonySize = getConfig().getServer().initialColonySize.get();
+        final int maxColonySize = getConfig().getServer().maxColonySize.get();
+
         for (int i = chunkX - range; i <= chunkX + range; i++)
         {
             for (int j = chunkZ - range; j <= chunkZ + range; j++)
             {
                 // Initial chunk unclaim not allowed for dynamic(building removal)
                 // TODO: move out from for loops
-                if (!force && !add
-                      && (Math.abs(chunkColonyCenterX - i) <= getConfig().getCommon().initialColonySize.get() + 1
-                            && Math.abs(chunkColonyCenterZ - j) <= getConfig().getCommon().initialColonySize.get() + 1))
+                if (!force && !add && (Math.abs(chunkColonyCenterX - i) <= initialColonySize + 1 && Math.abs(chunkColonyCenterZ - j) <= initialColonySize + 1))
                 {
                     Log.getLogger().debug("Unclaim of initial chunk prevented");
                     continue;
                 }
 
                 final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
-                if (!force && getConfig().getCommon().maxColonySize.get() != 0
-                      && pos.distanceSq(colonyCenterCompare) > Math.pow(getConfig().getCommon().maxColonySize.get() * BLOCKS_PER_CHUNK, 2))
+                if (!force && maxColonySize != 0 && pos.distanceSq(colonyCenterCompare) > Math.pow(maxColonySize * BLOCKS_PER_CHUNK, 2))
                 {
                     Log.getLogger()
                       .debug(

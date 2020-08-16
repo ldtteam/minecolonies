@@ -11,13 +11,16 @@ import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.RenderUtils;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
@@ -36,6 +39,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -59,6 +63,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 @OnlyIn(Dist.CLIENT)
 public class ClientEventHandler
 {
+    private static final String MOB_SOUND_EVENT_PREFIX = "mob.";
 
     /**
      * The distance in which previews of nearby buildings are rendered
@@ -122,6 +127,35 @@ public class ClientEventHandler
         }
 
         renderBuffer.finish();
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onPlaySoundEvent(final PlaySoundEvent event)
+    {
+        if (event.getSound() == null)
+        {
+            return;
+        }
+
+        if (event.getSound().getSoundLocation().getNamespace().equals(Constants.MOD_ID)
+            && !MinecoloniesAPIProxy.getInstance().getConfig().getClient().citizenVoices.get())
+        {
+            final String path = event.getSound().getSoundLocation().getPath();
+            if (!path.startsWith(MOB_SOUND_EVENT_PREFIX))
+            {
+                return;
+            }
+            final int secondDotPos = path.indexOf('.', MOB_SOUND_EVENT_PREFIX.length());
+            if (secondDotPos == -1)
+            {
+                return;
+            }
+            final String mobName = path.substring(MOB_SOUND_EVENT_PREFIX.length(), secondDotPos);
+            if (ModSoundEvents.CITIZEN_SOUND_EVENTS.containsKey(mobName))
+            {
+                event.setResultSound(null);
+            }
+        }
     }
 
     /**

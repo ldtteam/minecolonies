@@ -147,6 +147,7 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
      *  ------------------------------------------------------------------------------ */
 
+    public final ForgeConfigSpec.IntValue     pathfindingDebugVerbosity;
     public final ForgeConfigSpec.IntValue     pathfindingMaxThreadCount;
     public final ForgeConfigSpec.IntValue     pathfindingMaxNodes;
     public final ForgeConfigSpec.IntValue     minimumRailsToPath;
@@ -835,10 +836,10 @@ public class ServerConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "pathfinding");
 
+        pathfindingDebugVerbosity = defineInteger(builder, "pathfindingdebugverbosity", 0, 0, 10);
         minimumRailsToPath = defineInteger(builder, "minimumrailstopath", 5, 5, 100);
         pathfindingMaxThreadCount = defineInteger(builder, "pathfindingmaxthreadcount", 2, 1, 10);
         pathfindingMaxNodes = defineInteger(builder, "pathfindingmaxnodes", 5000, 1, 10000);
-
 
         swapToCategory(builder, "requestSystem");
 

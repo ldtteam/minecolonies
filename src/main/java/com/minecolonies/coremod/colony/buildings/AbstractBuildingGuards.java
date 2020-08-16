@@ -93,13 +93,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private static final int BONUS_HEALTH_PER_LEVEL = 2;
 
     /**
-     * The health modifier which changes the HP
-     */
-    // TODO: create supplier
-    private final AttributeModifier healthModConfig =
-      new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, MineColonies.getConfig().getCommon().guardHealthMult.get() - 1.0, AttributeModifier.Operation.MULTIPLY_TOTAL);
-
-    /**
      * Vision range per building level.
      */
     private static final int VISION_RANGE_PER_LEVEL = 3;
@@ -247,9 +240,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             if (optCitizen.isPresent())
             {
                 final AbstractEntityCitizen citizenEntity = optCitizen.get();
-                final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADDITION);
-                AttributeModifierUtils.addHealthModifier(citizenEntity, healthModBuildingHP);
-                AttributeModifierUtils.addHealthModifier(citizenEntity, healthModConfig);
+                AttributeModifierUtils.addHealthModifier(citizenEntity,
+                    new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADDITION));
+                AttributeModifierUtils.addHealthModifier(citizenEntity,
+                    new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME,
+                        MineColonies.getConfig().getServer().guardHealthMult.get() - 1.0,
+                        AttributeModifier.Operation.MULTIPLY_TOTAL));
             }
 
             // Set new home, since guards are housed at their workerbuilding.
