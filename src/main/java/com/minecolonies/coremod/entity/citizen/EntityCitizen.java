@@ -22,6 +22,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.inventory.InventoryCitizen;
@@ -1050,14 +1051,14 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
         {
-            getCitizenData().setVisibleStatus(RAIDED);
+            setVisibleStatusIfNone(RAIDED);
             desiredActivity = DesiredActivity.SLEEP;
             return false;
         }
 
         if (getCitizenColonyHandler().getColony().isMourning() && mourning)
         {
-            getCitizenData().setVisibleStatus(MOURNING);
+            setVisibleStatusIfNone(MOURNING);
             desiredActivity = DesiredActivity.MOURN;
             return false;
         }
@@ -1067,6 +1068,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (desiredActivity == DesiredActivity.SLEEP)
             {
+                setVisibleStatusIfNone(SLEEP);
                 return false;
             }
 
@@ -1075,7 +1077,6 @@ public class EntityCitizen extends AbstractEntityCitizen
                 citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() * 2);
                 citizenData.markDirty();
                 citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.sleeping"));
-                getCitizenData().setVisibleStatus(SLEEP);
                 desiredActivity = DesiredActivity.SLEEP;
                 return false;
             }
@@ -1091,23 +1092,40 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"),
               new TranslationTextComponent("com.minecolonies.coremod.status.rainStop"));
-            getCitizenData().setVisibleStatus(BAD_WEATHER);
+            setVisibleStatusIfNone(BAD_WEATHER);
             desiredActivity = DesiredActivity.IDLE;
             return false;
         }
 
         if (isChild() && getCitizenJobHandler().getColonyJob() instanceof JobPupil && world.getDayTime() % 24000 > NOON)
         {
-            if (getCitizenData().getStatus() == null)
-            {
-                getCitizenData().setVisibleStatus(HOUSE);
-            }
+            setVisibleStatusIfNone(HOUSE);
             desiredActivity = DesiredActivity.IDLE;
             return false;
         }
 
-        desiredActivity = DesiredActivity.WORK;
+        if (getCitizenJobHandler().getColonyJob() != null)
+        {
+            desiredActivity = DesiredActivity.WORK;
+            return false;
+        }
+
+        setVisibleStatusIfNone(HOUSE);
+        desiredActivity = DesiredActivity.IDLE;
         return false;
+    }
+
+    /**
+     * Sets the visible status if there is none
+     *
+     * @param status status to set
+     */
+    private void setVisibleStatusIfNone(final VisibleCitizenStatus status)
+    {
+        if (getCitizenData().getStatus() == null)
+        {
+            getCitizenData().setVisibleStatus(status);
+        }
     }
 
     @Override
