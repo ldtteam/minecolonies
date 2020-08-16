@@ -12,8 +12,8 @@
                     label="$(com.minecolonies.coremod.gui.townHall.build)"/>
             <button id="recall" size="120 19" pos="38 130"
                     label="$(com.minecolonies.coremod.gui.townHall.recall)"/>
-            <button id="changeSpec" size="120 19" pos="38 153"
-                    label="$(com.minecolonies.coremod.gui.townHall.togglespec)"/>
+<!--        <button id="changeSpec" size="120 19" pos="38 153"
+                    label="$(com.minecolonies.coremod.gui.townHall.togglespec)"/> -->
             <button id="rename" size="120 19" pos="38 176"
                     label="$(com.minecolonies.coremod.gui.townHall.rename)"/>
             <button id="mercenaries" size="120 19" pos="38 199"
