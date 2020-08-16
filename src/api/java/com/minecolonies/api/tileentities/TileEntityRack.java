@@ -178,8 +178,8 @@ public class TileEntityRack extends AbstractTileEntityRack
             if ((empty && !content.isEmpty()) || !empty && content.isEmpty())
             {
                 updateBlockState();
-                markDirty();
             }
+            markDirty();
         }
     }
 
