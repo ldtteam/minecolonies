@@ -349,13 +349,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 replaceRecipe(recipe.getToken(), IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
 
                 // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
-                for(PlayerEntity player :colony.getMessagePlayerEntities())
-                {
-                    player.sendMessage(new TranslationTextComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
+
+                final TranslationTextComponent message = new TranslationTextComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
                         new TranslationTextComponent(citizen.getJob().getName().toLowerCase()),
                         recipe.getPrimaryOutput().getDisplayName(),
                         reducedItem.getDisplayName(),
-                        citizen.getName()));
+                        citizen.getName());
+                for(PlayerEntity player :colony.getMessagePlayerEntities())
+                {
+                    player.sendMessage(message);
                 }
             }
         }
