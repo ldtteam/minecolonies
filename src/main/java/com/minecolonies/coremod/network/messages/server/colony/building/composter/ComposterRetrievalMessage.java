@@ -15,14 +15,15 @@ public class ComposterRetrievalMessage extends AbstractBuildingServerMessage<Bui
     /**
      * Whether the composter should retrieve dirt or not.
      */
-    private boolean retrieveDirt;
+    private final boolean retrieveDirt;
 
     /**
      * Empty standard constructor.
      */
-    public ComposterRetrievalMessage()
+    public ComposterRetrievalMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.retrieveDirt = buf.readBoolean();
     }
 
     /**
@@ -38,16 +39,8 @@ public class ComposterRetrievalMessage extends AbstractBuildingServerMessage<Bui
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        retrieveDirt = buf.readBoolean();
-    }
-
-    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeBoolean(retrieveDirt);
     }
 

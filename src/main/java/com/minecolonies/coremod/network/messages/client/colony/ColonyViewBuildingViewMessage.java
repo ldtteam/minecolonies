@@ -17,21 +17,25 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ColonyViewBuildingViewMessage implements IMessage
 {
-    private int          colonyId;
-    private BlockPos     buildingId;
-    private PacketBuffer buildingData;
+    private final int          colonyId;
+    private final BlockPos     buildingId;
+    private final PacketBuffer buildingData;
 
     /**
      * Dimension of the colony.
      */
-    private ResourceLocation dimension;
+    private final ResourceLocation dimension;
 
     /**
      * Empty constructor used when registering the
      */
-    public ColonyViewBuildingViewMessage()
+    public ColonyViewBuildingViewMessage(final PacketBuffer buf)
     {
-        super();
+        this.colonyId = buf.readInt();
+        this.buildingId = buf.readBlockPos();
+        this.dimension = new ResourceLocation(buf.readString(32767));
+        this.buildingData = new PacketBuffer(Unpooled.buffer(buf.readableBytes()));
+        buf.readBytes(buildingData, buf.readableBytes());
     }
 
     /**
@@ -41,22 +45,11 @@ public class ColonyViewBuildingViewMessage implements IMessage
      */
     public ColonyViewBuildingViewMessage(@NotNull final IBuilding building)
     {
-        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.buildingData = new PacketBuffer(Unpooled.buffer());
         building.serializeToView(this.buildingData);
         this.dimension = building.getColony().getDimension();
-    }
-
-    @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
-    {
-        colonyId = buf.readInt();
-        buildingId = buf.readBlockPos();
-        dimension = new ResourceLocation(buf.readString(32767));
-        buildingData = new PacketBuffer(Unpooled.buffer(buf.readableBytes()));
-        buf.readBytes(buildingData, buf.readableBytes());
     }
 
     @Override

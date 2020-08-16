@@ -16,26 +16,25 @@ import java.util.UUID;
  */
 public class ServerUUIDMessage implements IMessage
 {
-    private UUID serverUUID;
+    private final UUID serverUUID;
+
+    public ServerUUIDMessage()
+    {
+        this.serverUUID = IColonyManager.getInstance().getServerUUID();
+    }
 
     /**
      * Empty constructor used when registering the message.
      */
-    public ServerUUIDMessage()
+    public ServerUUIDMessage(final PacketBuffer buf)
     {
-        super();
-    }
-
-    @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
-    {
-        serverUUID = PacketUtils.readUUID(buf);
+        this.serverUUID = PacketUtils.readUUID(buf);
     }
 
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        PacketUtils.writeUUID(buf, IColonyManager.getInstance().getServerUUID());
+        PacketUtils.writeUUID(buf, serverUUID);
     }
 
     @Nullable

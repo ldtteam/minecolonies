@@ -18,13 +18,15 @@ public class SleepingParticleMessage implements IMessage
     /**
      * Position the particles spawn at
      */
-    private double x;
-    private double y;
-    private double z;
+    private final double x;
+    private final double y;
+    private final double z;
 
-    public SleepingParticleMessage()
+    public SleepingParticleMessage(final PacketBuffer buf)
     {
-        super();
+        this.x = buf.readDouble();
+        this.y = buf.readDouble();
+        this.z = buf.readDouble();
     }
 
     public SleepingParticleMessage(final double x, final double y, final double z)
@@ -32,14 +34,6 @@ public class SleepingParticleMessage implements IMessage
         this.x = x;
         this.y = y;
         this.z = z;
-    }
-
-    @Override
-    public void fromBytes(final PacketBuffer byteBuf)
-    {
-        x = byteBuf.readDouble();
-        y = byteBuf.readDouble();
-        z = byteBuf.readDouble();
     }
 
     @Override

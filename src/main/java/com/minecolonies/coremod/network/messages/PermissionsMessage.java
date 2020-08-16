@@ -48,20 +48,23 @@ public class PermissionsMessage
      */
     public static class View implements IMessage
     {
-        private int          colonyID;
-        private PacketBuffer data;
+        private final int          colonyID;
+        private final PacketBuffer data;
 
         /**
          * The dimension of the
          */
-        private ResourceLocation dimension;
+        private final ResourceLocation dimension;
 
         /**
          * Empty constructor used when registering the
          */
-        public View()
+        public View(final PacketBuffer buf)
         {
-            super();
+            final PacketBuffer newBuf = new PacketBuffer(buf.retain());
+            this.colonyID = newBuf.readInt();
+            this.dimension = new ResourceLocation(newBuf.readString(32767));
+            this.data = newBuf;
         }
 
         /**
@@ -76,15 +79,6 @@ public class PermissionsMessage
             this.data = new PacketBuffer(Unpooled.buffer());
             colony.getPermissions().serializeViewNetworkData(this.data, viewerRank);
             this.dimension = colony.getDimension();
-        }
-
-        @Override
-        public void fromBytes(@NotNull final PacketBuffer buf)
-        {
-            final PacketBuffer newBuf = new PacketBuffer(buf.retain());
-            colonyID = newBuf.readInt();
-            dimension = new ResourceLocation(newBuf.readString(32767));
-            data = newBuf;
         }
 
         @Nullable
@@ -116,22 +110,26 @@ public class PermissionsMessage
      */
     public static class Permission implements IMessage
     {
-        private int         colonyID;
-        private MessageType type;
-        private Rank        rank;
-        private Action      action;
+        private final int         colonyID;
+        private final MessageType type;
+        private final Rank        rank;
+        private final Action      action;
 
         /**
          * The dimension of the
          */
-        private ResourceLocation dimension;
+        private final ResourceLocation dimension;
 
         /**
          * Empty public constructor.
          */
-        public Permission()
+        public Permission(final PacketBuffer buf)
         {
-            super();
+            this.colonyID = buf.readInt();
+            this.type = MessageType.valueOf(buf.readString(32767));
+            this.rank = Rank.valueOf(buf.readString(32767));
+            this.action = Action.valueOf(buf.readString(32767));
+            this.dimension = new ResourceLocation(buf.readString(32767));
         }
 
         /**
@@ -144,7 +142,6 @@ public class PermissionsMessage
          */
         public Permission(@NotNull final IColonyView colony, final MessageType type, final Rank rank, final Action action)
         {
-            super();
             this.colonyID = colony.getID();
             this.type = type;
             this.rank = rank;
@@ -200,16 +197,6 @@ public class PermissionsMessage
             buf.writeString(action.name());
             buf.writeString(dimension.toString());
         }
-
-        @Override
-        public void fromBytes(@NotNull final PacketBuffer buf)
-        {
-            colonyID = buf.readInt();
-            type = MessageType.valueOf(buf.readString(32767));
-            rank = Rank.valueOf(buf.readString(32767));
-            action = Action.valueOf(buf.readString(32767));
-            dimension = new ResourceLocation(buf.readString(32767));
-        }
     }
 
     /**
@@ -217,20 +204,22 @@ public class PermissionsMessage
      */
     public static class AddPlayer implements IMessage
     {
-        private int    colonyID;
-        private String playerName;
+        private final int    colonyID;
+        private final String playerName;
 
         /**
          * The dimension of the
          */
-        private ResourceLocation dimension;
+        private final ResourceLocation dimension;
 
         /**
          * Empty public constructor.
          */
-        public AddPlayer()
+        public AddPlayer(final PacketBuffer buf)
         {
-            super();
+            this.colonyID = buf.readInt();
+            this.playerName = buf.readString(32767);
+            this.dimension = new ResourceLocation(buf.readString(32767));
         }
 
         /**
@@ -241,7 +230,6 @@ public class PermissionsMessage
          */
         public AddPlayer(@NotNull final IColonyView colony, final String player)
         {
-            super();
             this.colonyID = colony.getID();
             this.playerName = player;
             this.dimension = colony.getDimension();
@@ -253,14 +241,6 @@ public class PermissionsMessage
             buf.writeInt(colonyID);
             buf.writeString(playerName);
             buf.writeString(dimension.toString());
-        }
-
-        @Override
-        public void fromBytes(@NotNull final PacketBuffer buf)
-        {
-            colonyID = buf.readInt();
-            playerName = buf.readString(32767);
-            dimension = new ResourceLocation(buf.readString(32767));
         }
 
         @Nullable
@@ -291,21 +271,24 @@ public class PermissionsMessage
      */
     public static class AddPlayerOrFakePlayer implements IMessage
     {
-        private int    colonyID;
-        private String playerName;
-        private UUID   id;
+        private final int    colonyID;
+        private final String playerName;
+        private final UUID   id;
 
         /**
          * The dimension of the
          */
-        private ResourceLocation dimension;
+        private final ResourceLocation dimension;
 
         /**
          * Empty public constructor.
          */
-        public AddPlayerOrFakePlayer()
+        public AddPlayerOrFakePlayer(final PacketBuffer buf)
         {
-            super();
+            this.colonyID = buf.readInt();
+            this.playerName = buf.readString(32767);
+            this.id = PacketUtils.readUUID(buf);
+            this.dimension = new ResourceLocation(buf.readString(32767));
         }
 
         /**
@@ -317,7 +300,6 @@ public class PermissionsMessage
          */
         public AddPlayerOrFakePlayer(@NotNull final IColonyView colony, final String playerName, final UUID id)
         {
-            super();
             this.colonyID = colony.getID();
             this.playerName = playerName;
             this.id = id;
@@ -331,15 +313,6 @@ public class PermissionsMessage
             buf.writeString(playerName);
             PacketUtils.writeUUID(buf, id);
             buf.writeString(dimension.toString());
-        }
-
-        @Override
-        public void fromBytes(@NotNull final PacketBuffer buf)
-        {
-            colonyID = buf.readInt();
-            playerName = buf.readString(32767);
-            id = PacketUtils.readUUID(buf);
-            dimension = new ResourceLocation(buf.readString(32767));
         }
 
         @Nullable
@@ -370,21 +343,24 @@ public class PermissionsMessage
      */
     public static class ChangePlayerRank implements IMessage
     {
-        private int  colonyID;
-        private UUID playerID;
-        private Type type;
+        private final int  colonyID;
+        private final UUID playerID;
+        private final Type type;
 
         /**
          * The dimension of the
          */
-        private ResourceLocation dimension;
+        private final ResourceLocation dimension;
 
         /**
          * Empty public constructor.
          */
-        public ChangePlayerRank()
+        public ChangePlayerRank(final PacketBuffer buf)
         {
-            super();
+            this.colonyID = buf.readInt();
+            this.playerID = PacketUtils.readUUID(buf);
+            this.type = Type.valueOf(buf.readString(32767));
+            this.dimension = new ResourceLocation(buf.readString(32767));
         }
 
         /**
@@ -396,7 +372,6 @@ public class PermissionsMessage
          */
         public ChangePlayerRank(@NotNull final IColonyView colony, final UUID player, final Type type)
         {
-            super();
             this.colonyID = colony.getID();
             this.playerID = player;
             this.type = type;
@@ -419,15 +394,6 @@ public class PermissionsMessage
             PacketUtils.writeUUID(buf, playerID);
             buf.writeString(type.name());
             buf.writeString(dimension.toString());
-        }
-
-        @Override
-        public void fromBytes(@NotNull final PacketBuffer buf)
-        {
-            colonyID = buf.readInt();
-            playerID = PacketUtils.readUUID(buf);
-            type = Type.valueOf(buf.readString(32767));
-            dimension = new ResourceLocation(buf.readString(32767));
         }
 
         @Nullable
@@ -469,20 +435,22 @@ public class PermissionsMessage
      */
     public static class RemovePlayer implements IMessage
     {
-        private int  colonyID;
-        private UUID playerID;
+        private final int  colonyID;
+        private final UUID playerID;
 
         /**
          * The dimension of the
          */
-        private ResourceLocation dimension;
+        private final ResourceLocation dimension;
 
         /**
          * Empty public constructor.
          */
-        public RemovePlayer()
+        public RemovePlayer(final PacketBuffer buf)
         {
-            super();
+            this.colonyID = buf.readInt();
+            this.playerID = PacketUtils.readUUID(buf);
+            this.dimension = new ResourceLocation(buf.readString(32767));
         }
 
         /**
@@ -493,7 +461,6 @@ public class PermissionsMessage
          */
         public RemovePlayer(@NotNull final IColonyView colony, final UUID player)
         {
-            super();
             this.colonyID = colony.getID();
             this.playerID = player;
             this.dimension = colony.getDimension();
@@ -505,14 +472,6 @@ public class PermissionsMessage
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
             buf.writeString(dimension.toString());
-        }
-
-        @Override
-        public void fromBytes(@NotNull final PacketBuffer buf)
-        {
-            colonyID = buf.readInt();
-            playerID = PacketUtils.readUUID(buf);
-            dimension = new ResourceLocation(buf.readString(32767));
         }
 
         @Nullable

@@ -17,21 +17,14 @@ public class MarkBuildingDirtyMessage extends AbstractBuildingServerMessage<IBui
     /**
      * Empty constructor used when registering the
      */
-    public MarkBuildingDirtyMessage()
+    public MarkBuildingDirtyMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
     }
 
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
-
-    }
-
-    @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
-    {
-
     }
 
     public MarkBuildingDirtyMessage(final IBuildingView building)

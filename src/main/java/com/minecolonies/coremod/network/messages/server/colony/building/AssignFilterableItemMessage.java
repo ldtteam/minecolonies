@@ -17,24 +17,27 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
     /**
      * True if assign, false if remove.
      */
-    private boolean assign;
+    private final boolean assign;
 
     /**
      * The item in question.
      */
-    private ItemStorage item;
+    private final ItemStorage item;
 
     /**
      * The id of the list.
      */
-    private String id;
+    private final String id;
 
     /**
      * Empty standard constructor.
      */
-    public AssignFilterableItemMessage()
+    public AssignFilterableItemMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.assign = buf.readBoolean();
+        this.item = new ItemStorage(buf.readItemStack());
+        this.id = buf.readString(32767);
     }
 
     /**
@@ -54,18 +57,8 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        this.assign = buf.readBoolean();
-        this.item = new ItemStorage(buf.readItemStack());
-        this.id = buf.readString(32767);
-    }
-
-    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeBoolean(this.assign);
         buf.writeItemStack(this.item.getItemStack());
         buf.writeString(this.id);

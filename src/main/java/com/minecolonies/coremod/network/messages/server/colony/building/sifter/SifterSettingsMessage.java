@@ -21,29 +21,33 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
     /**
      * The quantity to produce.
      */
-    private int quantity;
+    private final int quantity;
 
     /**
      * The sifter mode.
      */
-    private ItemStack block;
+    private final ItemStack block;
 
     /**
      * The sifter mode.
      */
-    private ItemStack mesh;
+    private final ItemStack mesh;
 
     /**
      * If this includes the buy action.
      */
-    private boolean buy;
+    private final boolean buy;
 
     /**
      * Empty constructor used when registering the
      */
-    public SifterSettingsMessage()
+    public SifterSettingsMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.quantity = buf.readInt();
+        this.block = buf.readItemStack();
+        this.mesh = buf.readItemStack();
+        this.buy = buf.readBoolean();
     }
 
     /**
@@ -65,19 +69,8 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        quantity = buf.readInt();
-        block = buf.readItemStack();
-        mesh = buf.readItemStack();
-        buy = buf.readBoolean();
-    }
-
-    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeInt(quantity);
         buf.writeItemStack(block);
         buf.writeItemStack(mesh);

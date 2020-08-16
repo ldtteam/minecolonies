@@ -19,19 +19,21 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
     /**
      * The quantity to produce.
      */
-    private int quantity;
+    private final int quantity;
 
     /**
      * The crusher mode.
      */
-    private ItemStack crusherMode;
+    private final ItemStack crusherMode;
 
     /**
      * Empty constructor used when registering the
      */
-    public CrusherSetModeMessage()
+    public CrusherSetModeMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.quantity = buf.readInt();
+        this.crusherMode = buf.readItemStack();
     }
 
     /**
@@ -49,17 +51,8 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        quantity = buf.readInt();
-        crusherMode = buf.readItemStack();
-    }
-
-    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeInt(quantity);
         buf.writeItemStack(crusherMode);
     }

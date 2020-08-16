@@ -11,14 +11,15 @@ import net.minecraftforge.fml.network.NetworkEvent;
  */
 public class BeekeeperSetHarvestHoneycombsMessage extends AbstractBuildingServerMessage<BuildingBeekeeper>
 {
-    private boolean harvestHoneycombs;
+    private final boolean harvestHoneycombs;
 
     /**
      * Empty standard constructor.
      */
-    public BeekeeperSetHarvestHoneycombsMessage()
+    public BeekeeperSetHarvestHoneycombsMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.harvestHoneycombs = buf.readBoolean();
     }
 
     /**
@@ -39,25 +40,9 @@ public class BeekeeperSetHarvestHoneycombsMessage extends AbstractBuildingServer
         building.setHarvestHoneycombs(harvestHoneycombs);
     }
 
-    /**
-     * Transformation to a byteStream.
-     *
-     * @param buf the used byteBuffer.
-     */
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
         buf.writeBoolean(this.harvestHoneycombs);
-    }
-
-    /**
-     * Transformation from a byteStream to the variables.
-     *
-     * @param buf the used byteBuffer.
-     */
-    @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
-    {
-        this.harvestHoneycombs = buf.readBoolean();
     }
 }

@@ -9,14 +9,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class HerderSetBreedingMessage extends AbstractBuildingServerMessage<AbstractBuildingHerder>
 {
-    private boolean breeding;
+    private final boolean breeding;
 
     /**
      * Empty standard constructor.
      */
-    public HerderSetBreedingMessage()
+    public HerderSetBreedingMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.breeding = buf.readBoolean();
     }
 
     /**
@@ -29,12 +30,6 @@ public class HerderSetBreedingMessage extends AbstractBuildingServerMessage<Abst
     {
         super(building);
         this.breeding = breeding;
-    }
-
-    @Override
-    public void fromBytesOverride(final PacketBuffer buf)
-    {
-        breeding = buf.readBoolean();
     }
 
     @Override

@@ -13,19 +13,18 @@ public class OpenGuiWindowTriggerMessage implements IMessage
     /**
      * The window's Resource
      */
-    private String resource;
+    private final String resource;
 
     /**
      * Empty constructor used when registering the message.
      */
-    public OpenGuiWindowTriggerMessage()
+    public OpenGuiWindowTriggerMessage(final PacketBuffer buf)
     {
-        super();
+        this.resource = buf.readString(32767);
     }
 
     public OpenGuiWindowTriggerMessage(final String resource)
     {
-        super();
         this.resource = resource;
     }
 
@@ -33,12 +32,6 @@ public class OpenGuiWindowTriggerMessage implements IMessage
     public void toBytes(final PacketBuffer buf)
     {
         buf.writeString(this.resource);
-    }
-
-    @Override
-    public void fromBytes(final PacketBuffer buf)
-    {
-        this.resource = buf.readString(32767);
     }
 
     @Nullable

@@ -17,19 +17,21 @@ public class AddMinimumStockToBuildingMessage extends AbstractBuildingServerMess
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private ItemStack itemStack;
+    private final ItemStack itemStack;
 
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private int quantity;
+    private final int quantity;
 
     /**
      * Empty constructor used when registering the
      */
-    public AddMinimumStockToBuildingMessage()
+    public AddMinimumStockToBuildingMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.itemStack = buf.readItemStack();
+        this.quantity = buf.readInt();
     }
 
     /**
@@ -44,14 +46,6 @@ public class AddMinimumStockToBuildingMessage extends AbstractBuildingServerMess
         super(building);
         this.itemStack = itemStack;
         this.quantity = quantity;
-    }
-
-    @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        itemStack = buf.readItemStack();
-        quantity = buf.readInt();
     }
 
     @Override

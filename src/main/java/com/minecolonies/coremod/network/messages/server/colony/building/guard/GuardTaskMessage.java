@@ -16,23 +16,29 @@ import org.jetbrains.annotations.NotNull;
  */
 public class GuardTaskMessage extends AbstractBuildingServerMessage<AbstractBuildingGuards>
 {
-    private ResourceLocation job;
-    private boolean          assignmentMode;
-    private boolean          patrollingMode;
-    private boolean          retrieval;
-    private int              task;
+    private final ResourceLocation job;
+    private final boolean          assignmentMode;
+    private final boolean          patrollingMode;
+    private final boolean          retrieval;
+    private final int              task;
 
     /**
      * Indicates whether tight grouping is used in mode Follow.
      */
-    private boolean tightGrouping;
+    private final boolean tightGrouping;
 
     /**
      * Empty standard constructor.
      */
-    public GuardTaskMessage()
+    public GuardTaskMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.job = buf.readResourceLocation();
+        this.assignmentMode = buf.readBoolean();
+        this.patrollingMode = buf.readBoolean();
+        this.tightGrouping = buf.readBoolean();
+        this.retrieval = buf.readBoolean();
+        this.task = buf.readInt();
     }
 
     /**
@@ -66,21 +72,8 @@ public class GuardTaskMessage extends AbstractBuildingServerMessage<AbstractBuil
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        job = buf.readResourceLocation();
-        assignmentMode = buf.readBoolean();
-        patrollingMode = buf.readBoolean();
-        tightGrouping = buf.readBoolean();
-        retrieval = buf.readBoolean();
-        task = buf.readInt();
-    }
-
-    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeResourceLocation(job);
         buf.writeBoolean(assignmentMode);
         buf.writeBoolean(patrollingMode);

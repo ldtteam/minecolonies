@@ -12,14 +12,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ShepherdSetDyeSheepsMessage extends AbstractBuildingServerMessage<BuildingShepherd>
 {
-    private boolean dyeSheeps;
+    private final boolean dyeSheeps;
 
     /**
      * Empty standard constructor.
      */
-    public ShepherdSetDyeSheepsMessage()
+    public ShepherdSetDyeSheepsMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.dyeSheeps = buf.readBoolean();
     }
 
     /**
@@ -34,16 +35,8 @@ public class ShepherdSetDyeSheepsMessage extends AbstractBuildingServerMessage<B
     }
 
     @Override
-    public void fromBytesOverride(final PacketBuffer buf)
-    {
-
-        dyeSheeps = buf.readBoolean();
-    }
-
-    @Override
     public void toBytesOverride(final PacketBuffer buf)
     {
-
         buf.writeBoolean(dyeSheeps);
     }
 

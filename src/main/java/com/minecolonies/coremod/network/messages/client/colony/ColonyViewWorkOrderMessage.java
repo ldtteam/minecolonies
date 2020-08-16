@@ -20,16 +20,19 @@ import java.util.List;
  */
 public class ColonyViewWorkOrderMessage implements IMessage
 {
-    private int              colonyId;
-    private ResourceLocation dimension;
-    private PacketBuffer     workOrderBuffer;
+    private final int              colonyId;
+    private final ResourceLocation dimension;
+    private final PacketBuffer     workOrderBuffer;
 
     /**
      * Empty constructor used when registering the
      */
-    public ColonyViewWorkOrderMessage()
+    public ColonyViewWorkOrderMessage(final PacketBuffer buf)
     {
-        super();
+        final PacketBuffer newbuf = new PacketBuffer(buf.retain());
+        this.colonyId = newbuf.readInt();
+        this.dimension = new ResourceLocation(newbuf.readString(32767));
+        this.workOrderBuffer = newbuf;
     }
 
     /**
@@ -49,15 +52,6 @@ public class ColonyViewWorkOrderMessage implements IMessage
         {
             workOrder.serializeViewNetworkData(workOrderBuffer);
         }
-    }
-
-    @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
-    {
-        final PacketBuffer newbuf = new PacketBuffer(buf.retain());
-        colonyId = newbuf.readInt();
-        dimension = new ResourceLocation(newbuf.readString(32767));
-        workOrderBuffer = newbuf;
     }
 
     @Override

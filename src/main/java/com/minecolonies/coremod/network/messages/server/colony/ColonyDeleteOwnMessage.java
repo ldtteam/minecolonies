@@ -15,16 +15,17 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ColonyDeleteOwnMessage implements IMessage
 {
-    @Override
-    public void toBytes(final PacketBuffer buf)
+    public ColonyDeleteOwnMessage(final PacketBuffer buf)
     {
+    }
 
+    public ColonyDeleteOwnMessage()
+    {
     }
 
     @Override
-    public void fromBytes(final PacketBuffer buf)
+    public void toBytes(final PacketBuffer buf)
     {
-
     }
 
     @Nullable

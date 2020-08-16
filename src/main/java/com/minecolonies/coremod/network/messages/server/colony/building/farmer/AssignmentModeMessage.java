@@ -12,14 +12,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AssignmentModeMessage extends AbstractBuildingServerMessage<BuildingFarmer>
 {
-    private boolean assignmentMode;
+    private final boolean assignmentMode;
 
     /**
      * Empty standard constructor.
      */
-    public AssignmentModeMessage()
+    public AssignmentModeMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.assignmentMode = buf.readBoolean();
     }
 
     /**
@@ -35,16 +36,8 @@ public class AssignmentModeMessage extends AbstractBuildingServerMessage<Buildin
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        assignmentMode = buf.readBoolean();
-    }
-
-    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeBoolean(assignmentMode);
     }
 

@@ -17,19 +17,21 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Buildin
     /**
      * If assigning (true) else unassigning.
      */
-    private boolean assign;
+    private final boolean assign;
 
     /**
      * The citizen to assign/unassigning.
      */
-    private int citizenID;
+    private final int citizenID;
 
     /**
      * Empty public constructor.
      */
-    public AssignUnassignMessage()
+    public AssignUnassignMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.assign = buf.readBoolean();
+        this.citizenID = buf.readInt();
     }
 
     /**
@@ -46,28 +48,9 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Buildin
         this.citizenID = citizenID;
     }
 
-    /**
-     * Transformation from a byteStream to the variables.
-     *
-     * @param buf the used byteBuffer.
-     */
-    @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        assign = buf.readBoolean();
-        citizenID = buf.readInt();
-    }
-
-    /**
-     * Transformation to a byteStream.
-     *
-     * @param buf the used byteBuffer.
-     */
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeBoolean(assign);
         buf.writeInt(citizenID);
     }

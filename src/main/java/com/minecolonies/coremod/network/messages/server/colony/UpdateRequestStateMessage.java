@@ -19,24 +19,34 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
     /**
      * The requestId
      */
-    private IToken<?> token;
+    private final IToken<?> token;
 
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private ItemStack itemStack = ItemStackUtils.EMPTY;
+    private final ItemStack itemStack;
 
     /**
      * The request state to set.
      */
-    private RequestState state;
+    private final RequestState state;
 
     /**
      * Empty constructor used when registering the
      */
-    public UpdateRequestStateMessage()
+    public UpdateRequestStateMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.token = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
+        this.state = RequestState.values()[buf.readInt()];
+        if (state == RequestState.OVERRULED)
+        {
+            this.itemStack = buf.readItemStack();
+        }
+        else
+        {
+            this.itemStack = ItemStackUtils.EMPTY;
+        }
     }
 
     /**
@@ -53,17 +63,6 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
         this.token = requestId;
         this.state = state;
         this.itemStack = itemStack;
-    }
-
-    @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-        token = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
-        state = RequestState.values()[buf.readInt()];
-        if (state == RequestState.OVERRULED)
-        {
-            itemStack = buf.readItemStack();
-        }
     }
 
     @Override

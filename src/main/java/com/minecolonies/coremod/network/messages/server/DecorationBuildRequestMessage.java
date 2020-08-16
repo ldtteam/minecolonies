@@ -31,29 +31,32 @@ public class DecorationBuildRequestMessage implements IMessage
     /**
      * The id of the building.
      */
-    private BlockPos pos;
+    private final BlockPos pos;
 
     /**
      * The name of the decoration.
      */
-    private String name;
+    private final String name;
 
     /**
      * The level of the decoration.
      */
-    private int level;
+    private final int level;
 
     /**
      * The dimension.
      */
-    private ResourceLocation dimension;
+    private final ResourceLocation dimension;
 
     /**
      * Empty constructor used when registering the
      */
-    public DecorationBuildRequestMessage()
+    public DecorationBuildRequestMessage(final PacketBuffer buf)
     {
-        super();
+        this.pos = buf.readBlockPos();
+        this.name = buf.readString(32767);
+        this.level = buf.readInt();
+        this.dimension = new ResourceLocation(buf.readString(32767));
     }
 
     /**
@@ -66,20 +69,10 @@ public class DecorationBuildRequestMessage implements IMessage
      */
     public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String name, final int level, final ResourceLocation dimension)
     {
-        super();
         this.pos = pos;
         this.name = name;
         this.level = level;
         this.dimension = dimension;
-    }
-
-    @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
-    {
-        this.pos = buf.readBlockPos();
-        this.name = buf.readString(32767);
-        this.level = buf.readInt();
-        this.dimension = new ResourceLocation(buf.readString(32767));
     }
 
     @Override

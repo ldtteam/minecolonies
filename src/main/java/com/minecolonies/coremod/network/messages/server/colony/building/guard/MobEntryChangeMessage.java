@@ -16,14 +16,21 @@ import java.util.List;
  */
 public class MobEntryChangeMessage extends AbstractBuildingServerMessage<AbstractBuildingGuards>
 {
-    private List<MobEntryView> mobsToAttack = new ArrayList<>();
+    private final List<MobEntryView> mobsToAttack;
 
     /**
      * Empty standard constructor.
      */
-    public MobEntryChangeMessage()
+    public MobEntryChangeMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        final int mobSize = buf.readInt();
+        this.mobsToAttack = new ArrayList<>(mobSize);
+        for (int i = 0; i < mobSize; i++)
+        {
+            final MobEntryView mobEntry = MobEntryView.readFromByteBuf(buf);
+            mobsToAttack.add(mobEntry);
+        }
     }
 
     public MobEntryChangeMessage(
@@ -38,25 +45,10 @@ public class MobEntryChangeMessage extends AbstractBuildingServerMessage<Abstrac
     @Override
     public void toBytesOverride(final PacketBuffer buf)
     {
-
-
         buf.writeInt(this.mobsToAttack.size());
         for (final MobEntryView entry : this.mobsToAttack)
         {
             MobEntryView.writeToByteBuf(buf, entry);
-        }
-    }
-
-    @Override
-    public void fromBytesOverride(final PacketBuffer buf)
-    {
-
-
-        final int mobSize = buf.readInt();
-        for (int i = 0; i < mobSize; i++)
-        {
-            final MobEntryView mobEntry = MobEntryView.readFromByteBuf(buf);
-            mobsToAttack.add(mobEntry);
         }
     }
 

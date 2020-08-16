@@ -30,14 +30,19 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
     /**
      * The colonies tags to send over.
      */
-    private final List<ChunkCapData> caps = new ArrayList<>();
+    private final List<ChunkCapData> caps;
 
     /**
      * Empty constructor used when registering the
      */
-    public UpdateChunkRangeCapabilityMessage()
+    public UpdateChunkRangeCapabilityMessage(final PacketBuffer buf)
     {
-        super();
+        final int size = buf.readInt();
+        this.caps = new ArrayList<>(size);
+        for (int i = 0; i < size; i++)
+        {
+            caps.add(ChunkCapData.fromBytes(buf));
+        }
     }
 
     /**
@@ -51,6 +56,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
      */
     public UpdateChunkRangeCapabilityMessage(@NotNull final World world, final int xC, final int zC, final int range, boolean checkLoaded)
     {
+        this.caps = new ArrayList<>(4 * range * range);
         for (int x = -range; x <= range; x++)
         {
             for (int z = -range; z <= range; z++)
@@ -67,16 +73,6 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
                     }
                 }
             }
-        }
-    }
-
-    @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
-    {
-        final int size = buf.readInt();
-        for (int i = 0; i < size; i++)
-        {
-            caps.add(ChunkCapData.fromBytes(buf));
         }
     }
 

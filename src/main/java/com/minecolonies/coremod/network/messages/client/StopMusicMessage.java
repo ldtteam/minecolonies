@@ -14,19 +14,15 @@ public class StopMusicMessage implements IMessage
 {
     public StopMusicMessage()
     {
-        super();
+    }
+
+    public StopMusicMessage(final PacketBuffer byteBuf)
+    {
     }
 
     @Override
     public void toBytes(final PacketBuffer buf)
     {
-
-    }
-
-    @Override
-    public void fromBytes(final PacketBuffer buf)
-    {
-
     }
 
     @Nullable

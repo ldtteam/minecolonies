@@ -59,21 +59,27 @@ public class BuildToolPlaceMessage implements IMessage
     /**
      * The state at the offset position.
      */
-    private BlockState state;
+    private final BlockState state;
 
-    private String   structureName;
-    private String   workOrderName;
-    private int      rotation;
-    private BlockPos pos;
-    private boolean  isHut;
-    private boolean  mirror;
+    private final String   structureName;
+    private final String   workOrderName;
+    private final int      rotation;
+    private final BlockPos pos;
+    private final boolean  isHut;
+    private final boolean  mirror;
 
     /**
      * Empty constructor used when registering the
      */
-    public BuildToolPlaceMessage()
+    public BuildToolPlaceMessage(final PacketBuffer buf)
     {
-        super();
+        this.structureName = buf.readString(32767);
+        this.workOrderName = buf.readString(32767);
+        this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+        this.rotation = buf.readInt();
+        this.isHut = buf.readBoolean();
+        this.mirror = buf.readBoolean();
+        this.state = Block.getStateById(buf.readInt());
     }
 
     /**
@@ -96,7 +102,6 @@ public class BuildToolPlaceMessage implements IMessage
       final Mirror mirror,
       final BlockState state)
     {
-        super();
         this.structureName = structureName;
         this.workOrderName = workOrderName;
         this.pos = pos;
@@ -106,33 +111,6 @@ public class BuildToolPlaceMessage implements IMessage
         this.state = state;
     }
 
-    /**
-     * Reads this packet from a {@link PacketBuffer}.
-     *
-     * @param buf The buffer begin read from.
-     */
-    @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
-    {
-        structureName = buf.readString(32767);
-        workOrderName = buf.readString(32767);
-
-        pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-
-        rotation = buf.readInt();
-
-        isHut = buf.readBoolean();
-
-        mirror = buf.readBoolean();
-
-        state = Block.getStateById(buf.readInt());
-    }
-
-    /**
-     * Writes this packet to a {@link PacketBuffer}.
-     *
-     * @param buf The buffer being written to.
-     */
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {

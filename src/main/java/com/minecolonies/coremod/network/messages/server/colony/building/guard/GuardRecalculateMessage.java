@@ -9,20 +9,14 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 public class GuardRecalculateMessage extends AbstractBuildingServerMessage<AbstractBuildingGuards>
 {
-    public GuardRecalculateMessage()
+    public GuardRecalculateMessage(final PacketBuffer buf)
     {
+        super(buf);
     }
 
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
-
-    }
-
-    @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
-    {
-
     }
 
     public GuardRecalculateMessage(final IBuildingView building)

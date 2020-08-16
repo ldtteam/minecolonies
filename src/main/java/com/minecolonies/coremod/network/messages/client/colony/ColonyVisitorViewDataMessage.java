@@ -22,34 +22,56 @@ public class ColonyVisitorViewDataMessage implements IMessage
     /**
      * The colony id
      */
-    private int colonyId;
+    private final int colonyId;
 
     /**
      * Whether to refresh data clientside
      */
-    private boolean refresh = false;
+    private final boolean refresh;
 
     /**
      * The dimension the citizen is in.
      */
-    private ResourceLocation dimension;
+    private final ResourceLocation dimension;
 
     /**
      * Visiting entity data
      */
-    private Set<IVisitorData> visitors;
+    private final Set<IVisitorData> visitors;
 
     /**
      * Visiting entity views
      */
-    private Set<IVisitorViewData> visitorViews = new HashSet<>();
+    private final Set<IVisitorViewData> visitorViews;
 
     /**
      * Empty constructor used when registering the
      */
-    public ColonyVisitorViewDataMessage()
+    public ColonyVisitorViewDataMessage(final PacketBuffer buf)
     {
-        super();
+        this.colonyId = buf.readInt();
+        this.dimension = new ResourceLocation(buf.readString(32767));
+        this.refresh = buf.readBoolean();
+        this.visitors = null;
+
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, dimension);
+
+        if (colony == null)
+        {
+            this.visitorViews = null;
+            return;
+        }
+
+
+        int visitorsSize = buf.readInt();
+        this.visitorViews = new HashSet<>(visitorsSize);
+        for (int j = 0; j < visitorsSize; j++)
+        {
+            final int id = buf.readInt();
+            final IVisitorViewData dataView = new VisitorDataView(id, colony);
+            dataView.deserialize(buf);
+            visitorViews.add(dataView);
+        }
     }
 
     /**
@@ -59,37 +81,11 @@ public class ColonyVisitorViewDataMessage implements IMessage
      */
     public ColonyVisitorViewDataMessage(@NotNull final IColony colony, @NotNull final Set<IVisitorData> visitors, final boolean refresh)
     {
-        super();
         this.colonyId = colony.getID();
         this.dimension = colony.getDimension();
         this.visitors = visitors;
         this.refresh = refresh;
-    }
-
-    @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
-    {
-        colonyId = buf.readInt();
-        dimension = new ResourceLocation(buf.readString(32767));
-        refresh = buf.readBoolean();
-
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, dimension);
-
-        if (colony == null)
-        {
-            Log.getLogger().warn("Received visitor data for nonexisting colony:" + colonyId + " dim:" + dimension);
-            return;
-        }
-
-        visitors = new HashSet<>();
-        int i = buf.readInt();
-        for (int j = 0; j < i; j++)
-        {
-            final int id = buf.readInt();
-            final IVisitorViewData dataView = new VisitorDataView(id, colony);
-            dataView.deserialize(buf);
-            visitorViews.add(dataView);
-        }
+        this.visitorViews = null;
     }
 
     @Override

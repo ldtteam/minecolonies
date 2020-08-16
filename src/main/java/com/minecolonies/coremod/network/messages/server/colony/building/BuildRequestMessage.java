@@ -30,19 +30,21 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
     /**
      * The mode id.
      */
-    private Mode mode;
+    private final Mode mode;
 
     /**
      * The id of the building.
      */
-    private BlockPos builder;
+    private final BlockPos builder;
 
     /**
      * Empty constructor used when registering the
      */
-    public BuildRequestMessage()
+    public BuildRequestMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.mode = Mode.values()[buf.readInt()];
+        this.builder = buf.readBlockPos();
     }
 
     /**
@@ -57,13 +59,6 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
         super(building);
         this.mode = mode;
         this.builder = builder;
-    }
-
-    @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-        mode = Mode.values()[buf.readInt()];
-        builder = buf.readBlockPos();
     }
 
     @Override

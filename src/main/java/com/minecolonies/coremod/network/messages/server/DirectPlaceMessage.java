@@ -27,24 +27,26 @@ public class DirectPlaceMessage implements IMessage
     /**
      * The state to be placed..
      */
-    private BlockState state;
+    private final BlockState state;
 
     /**
      * The position to place it at.
      */
-    private BlockPos pos;
+    private final BlockPos pos;
 
     /**
      * The stack which is going to be placed.
      */
-    private ItemStack stack;
+    private final ItemStack stack;
 
     /**
      * Empty constructor used when registering the
      */
-    public DirectPlaceMessage()
+    public DirectPlaceMessage(final PacketBuffer buf)
     {
-        super();
+        this.state = Block.getStateById(buf.readInt());
+        this.pos = buf.readBlockPos();
+        this.stack = buf.readItemStack();
     }
 
     /**
@@ -62,24 +64,6 @@ public class DirectPlaceMessage implements IMessage
         this.stack = stack;
     }
 
-    /**
-     * Reads this packet from a {@link PacketBuffer}.
-     *
-     * @param buf The buffer begin read from.
-     */
-    @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
-    {
-        state = Block.getStateById(buf.readInt());
-        pos = buf.readBlockPos();
-        stack = buf.readItemStack();
-    }
-
-    /**
-     * Writes this packet to a {@link PacketBuffer}.
-     *
-     * @param buf The buffer being written to.
-     */
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {

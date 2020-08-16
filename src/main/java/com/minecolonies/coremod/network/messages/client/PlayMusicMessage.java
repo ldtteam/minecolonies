@@ -20,14 +20,14 @@ public class PlayMusicMessage implements IMessage
     /**
      * The sound event to play.
      */
-    private SoundEvent soundEvent;
+    private final SoundEvent soundEvent;
 
     /**
      * Default constructor.
      */
-    public PlayMusicMessage()
+    public PlayMusicMessage(final PacketBuffer buf)
     {
-        super();
+        this.soundEvent = Registry.SOUND_EVENT.getByValue(buf.readVarInt());
     }
 
     /**
@@ -37,7 +37,6 @@ public class PlayMusicMessage implements IMessage
      */
     public PlayMusicMessage(final SoundEvent event)
     {
-        super();
         this.soundEvent = event;
     }
 
@@ -46,12 +45,6 @@ public class PlayMusicMessage implements IMessage
     {
         // TODO: switch to proper registry
         buf.writeVarInt(Registry.SOUND_EVENT.getId(this.soundEvent));
-    }
-
-    @Override
-    public void fromBytes(final PacketBuffer buf)
-    {
-        this.soundEvent = Registry.SOUND_EVENT.getByValue(buf.readVarInt());
     }
 
     @Nullable

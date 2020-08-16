@@ -24,14 +24,14 @@ public class ToggleBannerRallyGuardsMessage implements IMessage
     /**
      * The banner to be toggled.
      */
-    private ItemStack banner;
+    private final ItemStack banner;
 
     /**
      * Empty constructor used when registering the message
      */
-    public ToggleBannerRallyGuardsMessage()
+    public ToggleBannerRallyGuardsMessage(final PacketBuffer buf)
     {
-        super();
+        this.banner = buf.readItemStack();
     }
 
     /**
@@ -41,14 +41,7 @@ public class ToggleBannerRallyGuardsMessage implements IMessage
      */
     public ToggleBannerRallyGuardsMessage(final ItemStack banner)
     {
-        super();
         this.banner = banner;
-    }
-
-    @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
-    {
-        banner = buf.readItemStack();
     }
 
     @Override

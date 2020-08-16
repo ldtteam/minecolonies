@@ -41,6 +41,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.worker.R
 import com.minecolonies.coremod.network.messages.server.colony.citizen.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
@@ -51,7 +52,7 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.PacketDistributor.TargetPoint;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -59,7 +60,7 @@ import java.util.function.Supplier;
  */
 public class NetworkChannel
 {
-    private static final String        LATEST_PROTO_VER    = "1.0";
+    private static final String        LATEST_PROTO_VER    = "1.1";
     private static final String        ACCEPTED_PROTO_VERS = LATEST_PROTO_VER;
     /**
      * Forge network channel
@@ -217,13 +218,9 @@ public class NetworkChannel
      * @param msgClazz   message class
      * @param msgCreator supplier with new instance of msgClazz
      */
-    private <MSG extends IMessage> void registerMessage(final int id, final Class<MSG> msgClazz, final Supplier<MSG> msgCreator)
+    private <MSG extends IMessage> void registerMessage(final int id, final Class<MSG> msgClazz, final Function<PacketBuffer, MSG> msgCreator)
     {
-        rawChannel.registerMessage(id, msgClazz, (msg, buf) -> msg.toBytes(buf), (buf) -> {
-            final MSG msg = msgCreator.get();
-            msg.fromBytes(buf);
-            return msg;
-        }, (msg, ctxIn) -> {
+        rawChannel.registerMessage(id, msgClazz, IMessage::toBytes, msgCreator, (msg, ctxIn) -> {
             final Context ctx = ctxIn.get();
             final LogicalSide packetOrigin = ctx.getDirection().getOriginationSide();
             ctx.setPacketHandled(true);

@@ -13,24 +13,24 @@ public class ClickGuiButtonTriggerMessage implements IMessage
     /**
      * The ID of the button clicked;
      */
-    private String buttonId;
+    private final String buttonId;
 
     /**
      * The window's Resource
      */
-    private String resource;
+    private final String resource;
 
     /**
      * Empty constructor used when registering the message.
      */
-    public ClickGuiButtonTriggerMessage()
+    public ClickGuiButtonTriggerMessage(final PacketBuffer buf)
     {
-        super();
+        this.resource = buf.readString(32767);
+        this.buttonId = buf.readString(32767);
     }
 
     public ClickGuiButtonTriggerMessage(final String buttonId, final String resource)
     {
-        super();
         this.resource = resource;
         this.buttonId = buttonId;
     }
@@ -40,13 +40,6 @@ public class ClickGuiButtonTriggerMessage implements IMessage
     {
         buf.writeString(this.resource);
         buf.writeString(this.buttonId);
-    }
-
-    @Override
-    public void fromBytes(final PacketBuffer buf)
-    {
-        this.resource = buf.readString(32767);
-        this.buttonId = buf.readString(32767);
     }
 
     @Nullable

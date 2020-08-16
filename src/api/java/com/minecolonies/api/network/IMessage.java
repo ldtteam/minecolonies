@@ -18,13 +18,6 @@ public interface IMessage
     void toBytes(final PacketBuffer buf);
 
     /**
-     * Reads message data from buffer.
-     *
-     * @param buf network data byte buffer
-     */
-    void fromBytes(final PacketBuffer buf);
-
-    /**
      * Which sides is message able to be executed at.
      *
      * @return CLIENT or SERVER or null (for both)

@@ -17,8 +17,9 @@ import static com.minecolonies.coremod.colony.buildings.workerbuildings.Building
  */
 public class HireSpiesMessage extends AbstractColonyServerMessage
 {
-    public HireSpiesMessage()
+    public HireSpiesMessage(final PacketBuffer buf)
     {
+        super(buf);
     }
 
     public HireSpiesMessage(final IColony colony)
@@ -46,13 +47,5 @@ public class HireSpiesMessage extends AbstractColonyServerMessage
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
-
-
-    }
-
-    @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
-    {
-
     }
 }

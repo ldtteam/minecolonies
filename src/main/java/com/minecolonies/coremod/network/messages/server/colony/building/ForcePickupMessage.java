@@ -21,9 +21,9 @@ public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
     /**
      * Empty public constructor.
      */
-    public ForcePickupMessage()
+    public ForcePickupMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
     }
 
     /**
@@ -37,15 +37,8 @@ public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-        // Noop
-    }
-
-    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-        // Noop
     }
 
     @Override

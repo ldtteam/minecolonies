@@ -20,46 +20,40 @@ public class GuardMobAttackListMessage implements IMessage
     /**
      * The position of the building.
      */
-    private BlockPos buildingId;
+    private final BlockPos buildingId;
 
     /**
      * The colony the building is within.
      */
-    private int colonyId;
+    private final int colonyId;
 
     /**
      * List of mobsToAttack.
      */
-    private List<MobEntryView> mobsToAttack = new ArrayList<>();
+    private final List<MobEntryView> mobsToAttack;
 
     /**
      * Empty standard constructor.
      */
-    public GuardMobAttackListMessage()
+    public GuardMobAttackListMessage(final PacketBuffer buf)
     {
-        super();
+        this.colonyId = buf.readInt();
+        this.buildingId = buf.readBlockPos();
+
+        final int mobSize = buf.readInt();
+        this.mobsToAttack = new ArrayList<>(mobSize);
+        for (int i = 0; i < mobSize; i++)
+        {
+            final MobEntryView mobEntry = MobEntryView.readFromByteBuf(buf);
+            this.mobsToAttack.add(mobEntry);
+        }
     }
 
     public GuardMobAttackListMessage(final int colonyId, final BlockPos buildingId, final List<MobEntryView> mobsToAttack)
     {
-        super();
         this.colonyId = colonyId;
         this.buildingId = buildingId;
         this.mobsToAttack = new ArrayList<>(mobsToAttack);
-    }
-
-    @Override
-    public void fromBytes(final PacketBuffer byteBuf)
-    {
-        this.colonyId = byteBuf.readInt();
-        this.buildingId = byteBuf.readBlockPos();
-
-        final int mobSize = byteBuf.readInt();
-        for (int i = 0; i < mobSize; i++)
-        {
-            final MobEntryView mobEntry = MobEntryView.readFromByteBuf(byteBuf);
-            mobsToAttack.add(mobEntry);
-        }
     }
 
     @Override

@@ -16,14 +16,15 @@ public class TeamColonyColorChangeMessage extends AbstractColonyServerMessage
     /**
      * The color to set.
      */
-    private int colorOrdinal;
+    private final int colorOrdinal;
 
     /**
      * Empty public constructor.
      */
-    public TeamColonyColorChangeMessage()
+    public TeamColonyColorChangeMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        colorOrdinal = buf.readInt();
     }
 
     /**
@@ -38,27 +39,9 @@ public class TeamColonyColorChangeMessage extends AbstractColonyServerMessage
         this.colorOrdinal = colorOrdinal;
     }
 
-    /**
-     * Transformation from a byteStream to the variables.
-     *
-     * @param buf the used byteBuffer.
-     */
-    @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        colorOrdinal = buf.readInt();
-    }
-
-    /**
-     * Transformation to a byteStream.
-     *
-     * @param buf the used byteBuffer.
-     */
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeInt(colorOrdinal);
     }
 

@@ -23,14 +23,21 @@ public class UpdateClientWithRecipesMessage implements IMessage
     /**
      * The dimension of the
      */
-    private Map<ItemStorage, RecipeStorage> recipes;
+    private final Map<ItemStorage, RecipeStorage> recipes;
 
     /**
      * Empty public constructor.
      */
-    public UpdateClientWithRecipesMessage()
+    public UpdateClientWithRecipesMessage(final PacketBuffer buf)
     {
-        super();
+        final int size = buf.readInt();
+        this.recipes = new HashMap<>(size);
+        for (int i = 0; i < size; i++)
+        {
+            final ItemStack result = buf.readItemStack();
+            final RecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
+            recipes.put(new ItemStorage(result), storage);
+        }
     }
 
     /**
@@ -40,21 +47,7 @@ public class UpdateClientWithRecipesMessage implements IMessage
      */
     public UpdateClientWithRecipesMessage(@NotNull final Map<ItemStorage, RecipeStorage> recipes)
     {
-        super();
         this.recipes = recipes;
-    }
-
-    @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
-    {
-        recipes = new HashMap<>();
-        final int size = buf.readInt();
-        for (int i = 0; i < size; i++)
-        {
-            final ItemStack result = buf.readItemStack();
-            final RecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
-            recipes.put(new ItemStorage(result), storage);
-        }
     }
 
     @Override

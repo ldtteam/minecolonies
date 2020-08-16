@@ -17,14 +17,15 @@ public class RemoveMinimumStockFromBuildingMessage extends AbstractBuildingServe
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private ItemStack itemStack;
+    private final ItemStack itemStack;
 
     /**
      * Empty constructor used when registering the
      */
-    public RemoveMinimumStockFromBuildingMessage()
+    public RemoveMinimumStockFromBuildingMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.itemStack = buf.readItemStack();
     }
 
     /**
@@ -40,16 +41,8 @@ public class RemoveMinimumStockFromBuildingMessage extends AbstractBuildingServe
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        itemStack = buf.readItemStack();
-    }
-
-    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeItemStack(itemStack);
     }
 

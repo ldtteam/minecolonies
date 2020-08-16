@@ -22,24 +22,27 @@ public class AdjustSkillCitizenMessage extends AbstractColonyServerMessage
     /**
      * The id of the citizen.
      */
-    private int citizenId;
+    private final int citizenId;
 
     /**
      * The skill quantity.
      */
-    private int quantity;
+    private final int quantity;
 
     /**
      * The skill to alter.
      */
-    private Skill skill;
+    private final Skill skill;
 
     /**
      * Empty constructor used when registering the
      */
-    public AdjustSkillCitizenMessage()
+    public AdjustSkillCitizenMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.citizenId = buf.readInt();
+        this.quantity = buf.readInt();
+        this.skill = Skill.values()[buf.readInt()];
     }
 
     /**
@@ -56,14 +59,6 @@ public class AdjustSkillCitizenMessage extends AbstractColonyServerMessage
         this.citizenId = citizenDataView.getId();
         this.quantity = quantity;
         this.skill = skill;
-    }
-
-    @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-        citizenId = buf.readInt();
-        quantity = buf.readInt();
-        skill = Skill.values()[buf.readInt()];
     }
 
     @Override

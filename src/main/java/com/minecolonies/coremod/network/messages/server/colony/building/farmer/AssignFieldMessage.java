@@ -14,15 +14,17 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AssignFieldMessage extends AbstractBuildingServerMessage<BuildingFarmer>
 {
-    private boolean  assign;
-    private BlockPos field;
+    private final boolean  assign;
+    private final BlockPos field;
 
     /**
      * Empty standard constructor.
      */
-    public AssignFieldMessage()
+    public AssignFieldMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.assign = buf.readBoolean();
+        this.field = buf.readBlockPos();
     }
 
     /**
@@ -40,17 +42,8 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<BuildingFa
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        assign = buf.readBoolean();
-        field = buf.readBlockPos();
-    }
-
-    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeBoolean(assign);
         buf.writeBlockPos(field);
     }

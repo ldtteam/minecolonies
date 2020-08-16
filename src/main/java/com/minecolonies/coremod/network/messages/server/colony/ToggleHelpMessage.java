@@ -15,9 +15,9 @@ public class ToggleHelpMessage extends AbstractColonyServerMessage
     /**
      * Empty public constructor.
      */
-    public ToggleHelpMessage()
+    public ToggleHelpMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
     }
 
     /**
@@ -39,12 +39,5 @@ public class ToggleHelpMessage extends AbstractColonyServerMessage
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
-
-    }
-
-    @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
-    {
-
     }
 }

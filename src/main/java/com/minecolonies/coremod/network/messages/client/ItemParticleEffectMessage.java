@@ -29,36 +29,42 @@ public class ItemParticleEffectMessage implements IMessage
     /**
      * The itemStack for the particles.
      */
-    private ItemStack stack;
+    private final ItemStack stack;
 
     /**
      * The entity rotation pitch.
      */
-    private double rotationPitch;
+    private final double rotationPitch;
 
     /**
      * The entity rotation yaw.
      */
-    private double rotationYaw;
+    private final double rotationYaw;
 
     /**
      * The entity eye height.
      */
-    private double eyeHeight;
+    private final double eyeHeight;
 
     /**
      * The entity position.
      */
-    private double posX;
-    private double posY;
-    private double posZ;
+    private final double posX;
+    private final double posY;
+    private final double posZ;
 
     /**
      * Empty constructor used when registering the
      */
-    public ItemParticleEffectMessage()
+    public ItemParticleEffectMessage(final PacketBuffer buf)
     {
-        super();
+        this.stack = buf.readItemStack();
+        this.posX = buf.readDouble();
+        this.posY = buf.readDouble();
+        this.posZ = buf.readDouble();
+        this.rotationPitch = buf.readDouble();
+        this.rotationYaw = buf.readDouble();
+        this.eyeHeight = buf.readDouble();
     }
 
     /**
@@ -88,18 +94,6 @@ public class ItemParticleEffectMessage implements IMessage
         this.rotationPitch = rotationPitch;
         this.rotationYaw = rotationYaw;
         this.eyeHeight = eyeHeight;
-    }
-
-    @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
-    {
-        stack = buf.readItemStack();
-        posX = buf.readDouble();
-        posY = buf.readDouble();
-        posZ = buf.readDouble();
-        rotationPitch = buf.readDouble();
-        rotationYaw = buf.readDouble();
-        eyeHeight = buf.readDouble();
     }
 
     @Override

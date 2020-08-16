@@ -17,19 +17,21 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuildingWork
     /**
      * If hiring (true) else firing.
      */
-    private boolean hire;
+    private final boolean hire;
 
     /**
      * The citizen to hire/fire.
      */
-    private int citizenID;
+    private final int citizenID;
 
     /**
      * Empty public constructor.
      */
-    public HireFireMessage()
+    public HireFireMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.hire = buf.readBoolean();
+        this.citizenID = buf.readInt();
     }
 
     /**
@@ -46,28 +48,9 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuildingWork
         this.citizenID = citizenID;
     }
 
-    /**
-     * Transformation from a byteStream to the variables.
-     *
-     * @param buf the used byteBuffer.
-     */
-    @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        hire = buf.readBoolean();
-        citizenID = buf.readInt();
-    }
-
-    /**
-     * Transformation to a byteStream.
-     *
-     * @param buf the used byteBuffer.
-     */
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeBoolean(hire);
         buf.writeInt(citizenID);
     }

@@ -18,19 +18,21 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private ItemStack itemStack;
+    private final ItemStack itemStack;
 
     /*
      * Whether to deliver what's currently available or entire request
      */
-    private boolean deliverAvailable;
+    private final boolean deliverAvailable;
 
     /**
      * Empty constructor used when registering the
      */
-    public PostBoxRequestMessage()
+    public PostBoxRequestMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.itemStack = buf.readItemStack();
+        this.deliverAvailable = buf.readBoolean();
     }
 
     /**
@@ -51,17 +53,8 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeItemStack(itemStack);
         buf.writeBoolean(deliverAvailable);
-    }
-
-    @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        itemStack = buf.readItemStack();
-        deliverAvailable = buf.readBoolean();
     }
 
     @Override

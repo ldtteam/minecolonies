@@ -15,14 +15,15 @@ public class ToggleHousingMessage extends AbstractColonyServerMessage
     /**
      * Toggle the housing allocation to true or false.
      */
-    private boolean toggle;
+    private final boolean toggle;
 
     /**
      * Empty public constructor.
      */
-    public ToggleHousingMessage()
+    public ToggleHousingMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.toggle = buf.readBoolean();
     }
 
     /**
@@ -37,27 +38,9 @@ public class ToggleHousingMessage extends AbstractColonyServerMessage
         this.toggle = toggle;
     }
 
-    /**
-     * Transformation from a byteStream.
-     *
-     * @param buf the used byteBuffer.
-     */
-    @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        toggle = buf.readBoolean();
-    }
-
-    /**
-     * Transformation to a byteStream.
-     *
-     * @param buf the used byteBuffer.
-     */
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeBoolean(toggle);
     }
 

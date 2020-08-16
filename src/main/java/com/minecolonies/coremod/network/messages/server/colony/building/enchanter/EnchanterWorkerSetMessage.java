@@ -16,19 +16,21 @@ public class EnchanterWorkerSetMessage extends AbstractBuildingServerMessage<Bui
     /**
      * The worker to add/remove.
      */
-    private BlockPos worker;
+    private final BlockPos worker;
 
     /**
      * true if add, false if remove.
      */
-    private boolean add;
+    private final boolean add;
 
     /**
      * Empty constructor used when registering the
      */
-    public EnchanterWorkerSetMessage()
+    public EnchanterWorkerSetMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.worker = buf.readBlockPos();
+        this.add = buf.readBoolean();
     }
 
     /**
@@ -46,17 +48,8 @@ public class EnchanterWorkerSetMessage extends AbstractBuildingServerMessage<Bui
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        worker = buf.readBlockPos();
-        add = buf.readBoolean();
-    }
-
-    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeBlockPos(worker);
         buf.writeBoolean(add);
     }

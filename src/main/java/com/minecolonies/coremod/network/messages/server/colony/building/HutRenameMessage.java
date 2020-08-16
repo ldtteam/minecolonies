@@ -16,14 +16,15 @@ public class HutRenameMessage extends AbstractBuildingServerMessage<IBuilding>
     /**
      * The custom name to set.
      */
-    private String name;
+    private final String name;
 
     /**
      * Empty public constructor.
      */
-    public HutRenameMessage()
+    public HutRenameMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.name = buf.readString(32767);
     }
 
     /**
@@ -39,16 +40,8 @@ public class HutRenameMessage extends AbstractBuildingServerMessage<IBuilding>
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-
-        name = buf.readString(32767);
-    }
-
-    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeString(name);
     }
 

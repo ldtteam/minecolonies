@@ -27,21 +27,14 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
     /**
      * Empty public constructor.
      */
-    public RecallCitizenMessage()
+    public RecallCitizenMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
     }
 
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
-
-    }
-
-    @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
-    {
-
     }
 
     public RecallCitizenMessage(final IBuildingView building)

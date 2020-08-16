@@ -14,15 +14,15 @@ import org.jetbrains.annotations.NotNull;
 public class TownHallRenameMessage extends AbstractColonyServerMessage
 {
     private static final int    MAX_NAME_LENGTH  = 25;
-    private static final int    SUBSTRING_LENGTH = MAX_NAME_LENGTH - 1;
-    private              String name;
+    private        final String name;
 
     /**
      * Empty public constructor.
      */
-    public TownHallRenameMessage()
+    public TownHallRenameMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.name = buf.readString(32767);
     }
 
     /**
@@ -34,13 +34,7 @@ public class TownHallRenameMessage extends AbstractColonyServerMessage
     public TownHallRenameMessage(@NotNull final IColonyView colony, final String name)
     {
         super(colony);
-        this.name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
-    }
-
-    @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-        name = buf.readString(32767);
+        this.name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, MAX_NAME_LENGTH);
     }
 
     @Override
@@ -52,11 +46,11 @@ public class TownHallRenameMessage extends AbstractColonyServerMessage
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
-        colony.setName(name);
+        colony.setName(name.length() <= MAX_NAME_LENGTH ? name : name.substring(0, MAX_NAME_LENGTH));
 
         if (ctxIn.getSender() != null)
         {
+            // TODO: delete? this is server sided message
             Network.getNetwork().sendToEveryone(this);
         }
     }

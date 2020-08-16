@@ -17,21 +17,24 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ColonyViewCitizenViewMessage implements IMessage
 {
-    private int          colonyId;
-    private int          citizenId;
-    private PacketBuffer citizenBuffer;
+    private final int          colonyId;
+    private final int          citizenId;
+    private final PacketBuffer citizenBuffer;
 
     /**
      * The dimension the citizen is in.
      */
-    private ResourceLocation dimension;
+    private final ResourceLocation dimension;
 
     /**
      * Empty constructor used when registering the
      */
-    public ColonyViewCitizenViewMessage()
+    public ColonyViewCitizenViewMessage(final PacketBuffer buf)
     {
-        super();
+        this.colonyId = buf.readInt();
+        this.citizenId = buf.readInt();
+        this.dimension = new ResourceLocation(buf.readString(32767));
+        this.citizenBuffer = new PacketBuffer(buf.retain());
     }
 
     /**
@@ -42,21 +45,11 @@ public class ColonyViewCitizenViewMessage implements IMessage
      */
     public ColonyViewCitizenViewMessage(@NotNull final Colony colony, @NotNull final ICitizenData citizen)
     {
-        super();
         this.colonyId = colony.getID();
         this.citizenId = citizen.getId();
         this.citizenBuffer = new PacketBuffer(Unpooled.buffer());
         this.dimension = citizen.getColony().getDimension();
         citizen.serializeViewNetworkData(citizenBuffer);
-    }
-
-    @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
-    {
-        colonyId = buf.readInt();
-        citizenId = buf.readInt();
-        dimension = new ResourceLocation(buf.readString(32767));
-        this.citizenBuffer = new PacketBuffer(buf.retain());
     }
 
     @Override

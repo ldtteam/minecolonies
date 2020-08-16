@@ -17,24 +17,27 @@ public class InteractionResponse extends AbstractColonyServerMessage
     /**
      * Id of the citizen.
      */
-    private int citizenId;
+    private final int citizenId;
 
     /**
      * The key of the handler to trigger.
      */
-    private ITextComponent key;
+    private final ITextComponent key;
 
     /**
      * The chosen response.
      */
-    private ITextComponent response;
+    private final ITextComponent response;
 
     /**
      * Empty public constructor.
      */
-    public InteractionResponse()
+    public InteractionResponse(final PacketBuffer buf)
     {
-        super();
+        super(buf);
+        this.citizenId = buf.readInt();
+        this.key = buf.readTextComponent();
+        this.response = buf.readTextComponent();
     }
 
     /**
@@ -59,24 +62,6 @@ public class InteractionResponse extends AbstractColonyServerMessage
         this.response = response;
     }
 
-    /**
-     * Transformation from a byteStream to the variables.
-     *
-     * @param buf the used byteBuffer.
-     */
-    @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-        this.citizenId = buf.readInt();
-        this.key = buf.readTextComponent();
-        this.response = buf.readTextComponent();
-    }
-
-    /**
-     * Transformation to a byteStream.
-     *
-     * @param buf the used byteBuffer.
-     */
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {

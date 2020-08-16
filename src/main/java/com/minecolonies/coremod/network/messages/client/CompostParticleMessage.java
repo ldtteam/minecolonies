@@ -28,14 +28,14 @@ public class CompostParticleMessage implements IMessage
     /**
      * The position.
      */
-    private BlockPos pos;
+    private final BlockPos pos;
 
     /**
      * Empty constructor used when registering the
      */
-    public CompostParticleMessage()
+    public CompostParticleMessage(final PacketBuffer buf)
     {
-        super();
+        this.pos = buf.readBlockPos();
     }
 
     /**
@@ -45,14 +45,7 @@ public class CompostParticleMessage implements IMessage
      */
     public CompostParticleMessage(final BlockPos pos)
     {
-        super();
         this.pos = pos;
-    }
-
-    @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
-    {
-        pos = buf.readBlockPos();
     }
 
     @Override

@@ -26,17 +26,22 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
     /**
      * Id of research to try research.
      */
-    private String researchId;
+    private final String researchId;
 
     /**
      * Id of research to try research.
      */
-    private String branch;
+    private final String branch;
 
     /**
      * Default constructor for forge
      */
-    public TryResearchMessage() {super();}
+    public TryResearchMessage(final PacketBuffer buf)
+    {
+        super(buf);
+        this.researchId = buf.readString(32767);
+        this.branch = buf.readString(32767);
+    }
 
     /**
      * Construct a message to attempt to research.
@@ -50,13 +55,6 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
         super(building);
         this.researchId = researchId;
         this.branch = branch;
-    }
-
-    @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
-    {
-        researchId = buf.readString(32767);
-        branch = buf.readString(32767);
     }
 
     @Override

@@ -15,9 +15,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class TeleportToColonyMessage extends AbstractColonyServerMessage
 {
-    public TeleportToColonyMessage()
+    public TeleportToColonyMessage(final PacketBuffer buf)
     {
-        super();
+        super(buf);
     }
 
     public TeleportToColonyMessage(final ResourceLocation dimensionId, final int colonyId)
@@ -49,12 +49,5 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
-
-    }
-
-    @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
-    {
-
     }
 }

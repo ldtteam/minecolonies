@@ -36,11 +36,11 @@ public class CreateColonyMessage implements IMessage
     /**
      * Townhall position to create building on
      */
-    BlockPos townHall;
+    private final BlockPos townHall;
 
-    public CreateColonyMessage()
+    public CreateColonyMessage(final PacketBuffer buf)
     {
-        super();
+        this.townHall = buf.readBlockPos();
     }
 
     public CreateColonyMessage(final BlockPos townHall)
@@ -52,12 +52,6 @@ public class CreateColonyMessage implements IMessage
     public void toBytes(final PacketBuffer buf)
     {
         buf.writeBlockPos(townHall);
-    }
-
-    @Override
-    public void fromBytes(final PacketBuffer buf)
-    {
-        townHall = buf.readBlockPos();
     }
 
     @Nullable
