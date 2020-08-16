@@ -131,7 +131,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         allowJumpPointSearchTypeWalk = false;
 
-        if (MineColonies.getConfig().getClient().pathfindingDebugDraw.get())
+        if (MineColonies.getConfig().getClient().pathfindingDebugDraw.get()) // this is automatically false when on server
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -172,7 +172,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         allowJumpPointSearchTypeWalk = false;
 
-        if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().pathfindingDebugDraw.get())
+        if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().pathfindingDebugDraw.get()) // this is automatically false when on server
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
