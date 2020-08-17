@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VISITORS;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
@@ -63,8 +63,8 @@ public class BuildingTavern extends BuildingHome
     /**
      * Music interval
      */
-    private static final int    FOUR_MINUTES_TICKS = 4800;
-    private static final String TAG_NOVISITTIME    = "novisit";
+    private static final int    TWENTY_MINUTES  = 20 * 60 * 20;
+    private static final String TAG_NOVISITTIME = "novisit";
 
     /**
      * Cooldown for the music, to not play it too much/not overlap with itself
@@ -137,7 +137,7 @@ public class BuildingTavern extends BuildingHome
     @Override
     public void onPlayerEnterBuilding(final PlayerEntity player)
     {
-        if (musicCooldown <= 0 && getBuildingLevel() > 0)
+        if (musicCooldown <= 0 && getBuildingLevel() > 0 && !colony.isDay())
         {
             net.minecraft.util.Tuple<Integer, Integer> corner1 = getCorners().getA();
             net.minecraft.util.Tuple<Integer, Integer> corner2 = getCorners().getB();
@@ -145,12 +145,12 @@ public class BuildingTavern extends BuildingHome
             final int x = (int) ((corner1.getA() + corner1.getB()) * 0.5);
             final int z = (int) ((corner2.getA() + corner2.getB()) * 0.5);
 
-            final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, new BlockPos(x, getPosition().getY(), z), colony.getWorld(), 0.8f, 1.0f);
+            final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, new BlockPos(x, getPosition().getY(), z), colony.getWorld(), 0.7f, 1.0f);
             for (final ServerPlayerEntity curPlayer : colony.getPackageManager().getCloseSubscribers())
             {
                 Network.getNetwork().sendToPlayer(message, curPlayer);
             }
-            musicCooldown = FOUR_MINUTES_TICKS;
+            musicCooldown = TWENTY_MINUTES;
         }
     }
 
@@ -219,39 +219,42 @@ public class BuildingTavern extends BuildingHome
             spawnPos = getPosition();
         }
 
-        spawnPos.add(HALF_BLOCK, SLIGHTLY_UP, HALF_BLOCK);
         colony.getVisitorManager().spawnOrCreateCivilian(newCitizen, colony.getWorld(), spawnPos, true);
-
-        final AbstractEntityCitizen citizenEntity = newCitizen.getEntity().get();
-
         Tuple<Item, Integer> cost = recruitCosts.get(colony.getWorld().rand.nextInt(recruitCosts.size()));
-        if (recruitLevel > LEATHER_SKILL_LEVEL)
+
+
+        if (newCitizen.getEntity().isPresent())
         {
-            // Leather
-            citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.LEATHER_BOOTS));
-        }
-        if (recruitLevel > GOLD_SKILL_LEVEL)
-        {
-            // Gold
-            citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.GOLDEN_BOOTS));
-        }
-        if (recruitLevel > IRON_SKILL_LEVEL)
-        {
-            if (cost.getB() <= 2)
+            final AbstractEntityCitizen citizenEntity = newCitizen.getEntity().get();
+
+            if (recruitLevel > LEATHER_SKILL_LEVEL)
             {
-                cost = recruitCosts.get(colony.getWorld().rand.nextInt(recruitCosts.size()));
+                // Leather
+                citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.LEATHER_BOOTS));
             }
-            // Iron
-            citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.IRON_BOOTS));
-        }
-        if (recruitLevel > DIAMOND_SKILL_LEVEL)
-        {
-            if (cost.getB() <= 3)
+            if (recruitLevel > GOLD_SKILL_LEVEL)
             {
-                cost = recruitCosts.get(colony.getWorld().rand.nextInt(recruitCosts.size()));
+                // Gold
+                citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.GOLDEN_BOOTS));
             }
-            // Diamond
-            citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.DIAMOND_BOOTS));
+            if (recruitLevel > IRON_SKILL_LEVEL)
+            {
+                if (cost.getB() <= 2)
+                {
+                    cost = recruitCosts.get(colony.getWorld().rand.nextInt(recruitCosts.size()));
+                }
+                // Iron
+                citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.IRON_BOOTS));
+            }
+            if (recruitLevel > DIAMOND_SKILL_LEVEL)
+            {
+                if (cost.getB() <= 3)
+                {
+                    cost = recruitCosts.get(colony.getWorld().rand.nextInt(recruitCosts.size()));
+                }
+                // Diamond
+                citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.DIAMOND_BOOTS));
+            }
         }
 
         newCitizen.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));

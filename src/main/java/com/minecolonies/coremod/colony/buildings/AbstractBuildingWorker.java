@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.InventoryUtils;
@@ -29,6 +30,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraf
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import io.netty.buffer.Unpooled;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -60,12 +62,43 @@ import static com.minecolonies.api.util.constant.CitizenConstants.BONUS_BUILDING
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 /**
  * The abstract class for each worker building.
  */
 public abstract class AbstractBuildingWorker extends AbstractBuilding implements IBuildingWorker
 {
+
+    /**
+     * The base chance for a recipe to be improved. This is modified by worker skill and the number of items crafted
+     */
+    private static final double BASE_CHANCE = 0.0625;
+
+    /**
+     * The name of the tag for improving recipes
+     */
+    private static final String REDUCEABLE = "reduceable";
+
+    /**
+     * Tag specifier for Products to Include
+     */
+    private static final String PRODUCT = "_product";
+
+    /**
+     * Tag specifier for Products to Exclude
+     */
+    private static final String PRODUCT_EXCLUDED = "_product_excluded";
+
+    /**
+     * Tag specifier for Ingredients to include
+     */
+    private static final String INGREDIENT = "_ingredient";
+
+    /**
+     * Tag specifier for Ingredients to exclude
+     */
+    private static final String INGREDIENT_EXCLUDED = "_ingredient_excluded";
 
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
@@ -221,10 +254,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
     {
 
-        ResourceLocation products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
-        ResourceLocation ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
-        ResourceLocation productsExcluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
-        ResourceLocation ingredientsExcluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+        ResourceLocation products = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(PRODUCT));
+        ResourceLocation ingredients = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(INGREDIENT));
+        ResourceLocation productsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(PRODUCT_EXCLUDED));
+        ResourceLocation ingredientsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(INGREDIENT_EXCLUDED));
 
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
         if (storage == null)
@@ -263,6 +296,55 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Has a chance to reduce the resource requirements for the recipe in this building
+     * @param recipe the recipe we're possibly improving
+     * @param count the number of items (chances) 
+     * @param citizen The citizen, as the primary skill can improve the chances
+     */
+    public void improveRecipe(IRecipeStorage recipe, int count, ICitizenData citizen)
+    {
+        final ResourceLocation reducableIngredients = new ResourceLocation(MOD_ID, REDUCEABLE.concat(INGREDIENT));
+        final ResourceLocation reducableProductExclusions = new ResourceLocation(MOD_ID, REDUCEABLE.concat(PRODUCT_EXCLUDED));
+        final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
+
+        final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(getPrimarySkill())));
+        final double roll = citizen.getRandom().nextDouble() * 100;
+
+        if(roll <= actualChance && !ItemTags.getCollection().getOrCreate(reducableProductExclusions).contains(recipe.getPrimaryOutput().getItem()))
+        {
+            final ArrayList<ItemStack> newRecipe = new ArrayList<>();
+            boolean didReduction = false;
+            for(ItemStorage input : inputs)
+            {
+                // Check against excluded products
+                if (input.getAmount() > 1 && ItemTags.getCollection().getOrCreate(reducableIngredients).contains(input.getItem()))
+                {
+                    ItemStack updated = input.getItemStack();
+                    updated.setCount(input.getAmount() - 1);
+                    newRecipe.add(updated);
+                    didReduction = true;
+                } else
+                {
+                    newRecipe.add(input.getItemStack());
+                }
+            }
+            
+            if (didReduction)
+            {
+                final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    newRecipe,
+                    1,
+                    recipe.getPrimaryOutput(),
+                    Blocks.AIR);
+
+                replaceRecipe(recipe.getToken(), IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+            }
+        }
     }
 
     @Override
@@ -468,6 +550,22 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     {
         recipes.remove(token);
         markDirty();
+    }
+
+    /**
+     * Replace one current recipe with a new one
+     * @param oldRecipe the recipe to replace
+     * @param newRecipe the new version
+     */
+    public void replaceRecipe(final IToken<?> oldRecipe, final IToken<?> newRecipe)
+    {
+        if (recipes.contains(oldRecipe))
+        {
+            int oldIndex = recipes.indexOf(oldRecipe);
+            recipes.add(oldIndex, newRecipe);
+            recipes.remove(oldRecipe);
+            markDirty();
+        }
     }
 
     @Override

@@ -8,6 +8,8 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -36,8 +38,8 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     @Override
     public boolean hasMatchingItemStackInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate, int count)
     {
-        final List<ItemStack> targetStacks = getMatchingItemStacksInWarehouse(itemStackSelectionPredicate);
-        return targetStacks.stream().mapToInt(ItemStackUtils::getSize).sum() >= count;
+        final List<Tuple<ItemStack, BlockPos>> targetStacks = getMatchingItemStacksInWarehouse(itemStackSelectionPredicate);
+        return targetStacks.stream().mapToInt(tuple -> ItemStackUtils.getSize(tuple.getA())).sum() >= count;
     }
 
     @Override
@@ -46,22 +48,26 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         int totalCountFound = 0;
         for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
-            final TileEntity entity = getWorld().getTileEntity(pos);
-            if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty())
+            if (WorldUtil.isBlockLoaded(world, pos))
             {
-                totalCountFound+= ((AbstractTileEntityRack) entity).getCount(itemStack, true);
-                if (totalCountFound >= count)
+                final TileEntity entity = getWorld().getTileEntity(pos);
+                if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty())
                 {
-                    return true;
+                    totalCountFound += ((AbstractTileEntityRack) entity).getCount(itemStack, true);
+                    if (totalCountFound >= count)
+                    {
+                        return true;
+                    }
                 }
-            }
 
-            if (entity instanceof ChestTileEntity)
-            {
-                totalCountFound += InventoryUtils.getItemCountInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), item -> item.isItemEqualIgnoreDurability(itemStack) && item.getCount() >= itemStack.getCount());
-                if (totalCountFound >= count)
+                if (entity instanceof ChestTileEntity)
                 {
-                    return true;
+                    totalCountFound += InventoryUtils.getItemCountInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
+                      item -> item.isItemEqualIgnoreDurability(itemStack) && item.getCount() >= itemStack.getCount());
+                    if (totalCountFound >= count)
+                    {
+                        return true;
+                    }
                 }
             }
         }
@@ -70,24 +76,32 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
 
     @Override
     @NotNull
-    public List<ItemStack> getMatchingItemStacksInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public List<Tuple<ItemStack, BlockPos>> getMatchingItemStacksInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        ArrayList<ItemStack> found = new ArrayList<ItemStack>();
+        List<Tuple<ItemStack, BlockPos>> found = new ArrayList<>();
         
         if (getBuilding() != null)
         {
-            for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+            final List<BlockPos> containers = new ArrayList<>(getBuilding().getAdditionalCountainers());
+            containers.add(getBuilding().getPosition());
+            for (@NotNull final BlockPos pos : containers)
             {
                 final TileEntity entity = getWorld().getTileEntity(pos);
                 if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).getItemCount(itemStackSelectionPredicate) > 0)
                 {
                     final TileEntityRack rack = (TileEntityRack) entity;
-                    found.addAll(InventoryUtils.filterItemHandler(rack.getInventory(), itemStackSelectionPredicate));
+                    for (final ItemStack stack : (InventoryUtils.filterItemHandler(rack.getInventory(), itemStackSelectionPredicate)))
+                    {
+                        found.add(new Tuple<>(stack, pos));
+                    }
                 }
 
                 if (entity instanceof ChestTileEntity && InventoryUtils.hasItemInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), itemStackSelectionPredicate))
                 {
-                    found.addAll(InventoryUtils.filterItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), itemStackSelectionPredicate));
+                    for (final ItemStack stack : InventoryUtils.filterItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), itemStackSelectionPredicate))
+                    {
+                        found.add(new Tuple<>(stack, pos));
+                    }
                 }
             }
         }

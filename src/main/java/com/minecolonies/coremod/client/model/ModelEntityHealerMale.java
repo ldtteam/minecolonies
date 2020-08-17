@@ -93,7 +93,7 @@ public class ModelEntityHealerMale extends CitizenModel<AbstractEntityCitizen>
 
         bipedRightLeg = new ModelRenderer(this);
         bipedRightLeg.setRotationPoint(-2.0F, 12.0F, 0.0F);
-        bipedRightLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
+        bipedRightLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
         rightlegshoe = new ModelRenderer(this);
         rightlegshoe.setRotationPoint(-1.0F, 17.0F, 0.0F);
@@ -111,7 +111,7 @@ public class ModelEntityHealerMale extends CitizenModel<AbstractEntityCitizen>
 
         bipedHead = new ModelRenderer(this);
         bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, true);
+        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
         MaskL2 = new ModelRenderer(this);
         MaskL2.setRotationPoint(0.0F, 0.0F, 0.0F);
@@ -273,14 +273,14 @@ public class ModelEntityHealerMale extends CitizenModel<AbstractEntityCitizen>
 
         bipedRightArm = new ModelRenderer(this);
         bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
-        bipedRightArm.setTextureOffset(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
+        bipedRightArm.setTextureOffset(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
         rightarmGlove = new ModelRenderer(this);
         rightarmGlove.setRotationPoint(-5.0F, 6.0F, 0.0F);
         bipedRightArm.addChild(rightarmGlove);
         rightarmGlove.setTextureOffset(90, 30).addBox(1.5F, 1.0F, -2.5F, 5.0F, 4.0F, 5.0F, 0.0F, true);
-
-        bipedHeadwear.showModel = false;
+		
+		bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

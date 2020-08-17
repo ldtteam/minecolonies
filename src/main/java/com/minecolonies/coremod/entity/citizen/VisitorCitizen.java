@@ -671,8 +671,8 @@ public class VisitorCitizen extends AbstractEntityCitizen
 
                 LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
                   "com.minecolonies.coremod.gui.tavern.visitordeath",
-                  cause.getDamageType(),
-                  getCitizenData().getName());
+                  getCitizenData().getName(),
+                  cause.getDamageType());
             }
         }
     }

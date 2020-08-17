@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSwineHerder;
 import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
 import net.minecraft.entity.passive.PigEntity;
@@ -45,6 +46,18 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     public int getMaxAnimalMultiplier()
     {
         return MAX_ANIMALS_PER_LEVEL;
+    }
+
+    @Override
+    public double getButcheringAttackDamage()
+    {
+        return Math.max(1.0, getPrimarySkillLevel() / 10.0);
+    }
+
+    @Override
+    protected boolean canFeedChildren()
+    {
+        return getSecondarySKill() >= LIMIT_TO_FEED_CHILDREN;
     }
 
     @Override

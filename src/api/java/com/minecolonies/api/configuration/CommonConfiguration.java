@@ -46,6 +46,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue fixOrphanedChunks;
     public final ForgeConfigSpec.BooleanValue restrictBuilderUnderground;
     public final ForgeConfigSpec.DoubleValue  fisherSpongeChance;
+    public final ForgeConfigSpec.DoubleValue  fisherPrismarineChance;
     public final ForgeConfigSpec.IntValue     minThLevelToTeleport;
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
     public final ForgeConfigSpec.DoubleValue  foodModifier;
@@ -390,12 +391,13 @@ public class CommonConfiguration extends AbstractConfiguration
         allowPlayerSchematics = defineBoolean(builder, "allowplayerschematics", false);
         allowGlobalNameChanges = defineInteger(builder, "allowglobalnamechanges", 1, -1, 1);
         holidayFeatures = defineBoolean(builder, "holidayfeatures", true);
-        updateRate = defineInteger(builder, "updaterate", 1, 0, 100);
+        updateRate = defineInteger(builder, "updaterate", 1, 1, 100);
         dirtFromCompost = defineInteger(builder, "dirtfromcompost", 1, 0, 100);
         luckyBlockChance = defineInteger(builder, "luckyblockchance", 1, 0, 100);
         fixOrphanedChunks = defineBoolean(builder, "fixorphanedchunks", false);
         restrictBuilderUnderground = defineBoolean(builder, "restrictbuilderunderground", true);
         fisherSpongeChance = defineDouble(builder, "fisherspongechance", 0.1, 0, 100);
+        fisherPrismarineChance = defineDouble(builder, "fisherprismarinechance", 2.5, 0, 100);
         minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
         suggestBuildToolPlacement = defineBoolean(builder, "suggestbuildtoolplacement", true);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
@@ -481,20 +483,23 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         configListStudyItems = defineList(builder, "configliststudyitems",
           Arrays.asList
-                   ("minecraft:paper;400;100"),
+                   ("minecraft:paper;400;100", "minecraft:book;600;10"),
           s -> s instanceof String);
         configListRecruitmentItems = defineList(builder, "configlistrecruitmentitems",
           Arrays.asList
                    ("minecraft:hay_block;2",
                      "minecraft:book;2",
-                     "minecraft:diamond;7",
-                     "minecraft:emerald;10",
+                     "minecraft:enchanted_book;9",
+                     "minecraft:diamond;9",
+                     "minecraft:emerald;8",
                      "minecraft:baked_potato;1",
-                     "minecraft:gold;3",
+                     "minecraft:gold;2",
                      "minecraft:redstone;2",
+                     "minecraft:lapis_lazuli;2",
+                     "minecraft:cake;7",
                      "minecraft:sunflower;5",
                      "minecraft:honeycomb;6",
-                     "minecraft:quartz;4"),
+                     "minecraft:quartz;3"),
           s -> s instanceof String);
         listOfCompostableItems = defineList(builder, "listOfCompostableItems",
           Arrays.asList

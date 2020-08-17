@@ -134,6 +134,12 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'info'
 
+            // OPTIFINE GUIDE
+            // find and download/compile latest OptiFineDevTweaker, classifier "all"
+            // put this and (unpacked) optifine into mods in runClient folder
+            // alternate or comment out (if you have default gradle cache location) next property to target "caches/forge_gradle/minecraft_repo/versions/{mcVersion}/client.jar"
+            // property 'ofdev.mcjar', 'P:\\apps\\common\\gradle-cache\\caches\\forge_gradle\\minecraft_repo\\versions\\1.15.2\\client.jar'
+
             mods {
                 minecolonies {
                     source sourceSets.main

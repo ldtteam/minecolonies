@@ -65,7 +65,6 @@ import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -1215,10 +1214,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             for (final IToken<?> req : reqs)
             {
-                final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(req);
-                if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
+                if (colony.getRequestManager().getRequestForToken(req).getState() == RequestState.IN_PROGRESS)
                 {
-                    colony.getRequestManager().reassignRequest(req, Collections.emptyList());
+                    final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(req);
+                    if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
+                    {
+                        colony.getRequestManager().reassignRequest(req, Collections.emptyList());
+                    }
                 }
             }
             return false;
@@ -1448,8 +1450,18 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return false;
         }
 
-        target.overrideCurrentDeliveries(ImmutableList.of(stack));
-        getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
+        try
+        {
+            target.overrideCurrentDeliveries(ImmutableList.of(stack));
+            getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
+        }
+        catch (final Exception ex)
+        {
+            Log.getLogger().error("Error during overruling", ex);
+            Log.getLogger().error(target.getId().toString() + " " + target.getState().name() + " " + target.getShortDisplayString().toString());
+            return false;
+        }
+
         return true;
     }
 
@@ -1538,11 +1550,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
-        getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
 
-        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
+        if (getOpenRequestsByCitizen().containsKey(citizenThatRequested))
         {
-            getOpenRequestsByCitizen().remove(citizenThatRequested);
+            getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
+            if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
+            {
+                getOpenRequestsByCitizen().remove(citizenThatRequested);
+            }
         }
 
         getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).remove(request.getId());

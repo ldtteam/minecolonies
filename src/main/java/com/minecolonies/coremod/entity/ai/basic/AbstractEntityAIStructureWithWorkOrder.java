@@ -86,7 +86,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public IAIState loadRequirements()
     {
-        if (!job.hasBlueprint())
+        if (!job.hasBlueprint() || structurePlacer == null)
         {
             loadStructure();
             final WorkOrderBuildDecoration wo = job.getWorkOrder();
@@ -178,10 +178,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
             job.getWorkOrder().setRequested(true);
 
-            if (job.getWorkOrder().getAmountOfRes() == 0)
+            int newQuantity = buildingWorker.getNeededResources().values().stream().mapToInt(ItemStorage::getAmount).sum();
+            if (job.getWorkOrder().getAmountOfRes() == 0 || newQuantity > job.getWorkOrder().getAmountOfRes())
             {
-                job.getWorkOrder().setAmountOfRes(buildingWorker.getNeededResources().values().stream()
-                                                    .mapToInt(ItemStorage::getAmount).sum());
+                job.getWorkOrder().setAmountOfRes(newQuantity);
             }
         }
     }
