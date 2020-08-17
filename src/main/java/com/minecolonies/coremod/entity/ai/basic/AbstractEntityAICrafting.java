@@ -379,7 +379,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     private int getRequiredProgressForMakingRawMaterial()
     {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL) * HITTING_TIME;
+        final int jobModifier = worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getCraftSpeedSkill()) / 2;
+        return PROGRESS_MULTIPLIER / Math.min(jobModifier + 1, MAX_LEVEL) * HITTING_TIME;
     }
 
     @Override

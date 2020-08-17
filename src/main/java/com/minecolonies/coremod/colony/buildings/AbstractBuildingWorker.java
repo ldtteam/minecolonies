@@ -310,7 +310,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         final ResourceLocation reducableProductExclusions = new ResourceLocation(MOD_ID, REDUCEABLE.concat(PRODUCT_EXCLUDED));
         final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
 
-        final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(getPrimarySkill())));
+        final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(getRecipeImprovementSkill())));
         final double roll = citizen.getRandom().nextDouble() * 100;
 
         if(roll <= actualChance && !ItemTags.getCollection().getOrCreate(reducableProductExclusions).contains(recipe.getPrimaryOutput().getItem()))
@@ -345,6 +345,20 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 replaceRecipe(recipe.getToken(), IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
             }
         }
+    }
+
+    @Override
+    @NotNull
+    public Skill getCraftSpeedSkill()
+    {
+        return getSecondarySkill();
+    }
+
+    @Override
+    @NotNull
+    public Skill getRecipeImprovementSkill()
+    {
+        return getPrimarySkill();
     }
 
     @Override
