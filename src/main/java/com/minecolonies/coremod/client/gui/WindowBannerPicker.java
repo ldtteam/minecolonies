@@ -115,16 +115,21 @@ public class WindowBannerPicker extends Screen
             this.addButton(new LayerButton(posX, GUI_Y, SIDE, SIDE, layer));
         }
 
+        // The remove layer button
         this.addButton(new Button(
                 center(this.width, 6, SIDE, 7, 0), GUI_Y,
                 SIDE, SIDE,
                 TextFormatting.RED + "X",
-                pressed -> layers.remove(activeLayer))
+                pressed ->
+                {
+                    if (activeLayer > 0) layers.remove(activeLayer);
+                    activeLayer--;
+                })
         {
             @Override
             public void render(int mouseX, int mouseY, float partialTicks)
             {
-                this.active = activeLayer < layers.size();
+                this.active = activeLayer < layers.size() && activeLayer != 0;
                 super.render(mouseX, mouseY, partialTicks);
             }
         });
@@ -156,7 +161,8 @@ public class WindowBannerPicker extends Screen
                 this.height - 40,
                 80, SIDE,
                 I18n.format("gui.done"),
-                pressed -> {
+                pressed ->
+                {
                     BannerPattern.Builder builder = new BannerPattern.Builder();
                     for (Pair<BannerPattern, DyeColor> pair : layers)
                         builder.setPatternWithColor(pair.getFirst(), pair.getSecond());
