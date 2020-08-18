@@ -51,6 +51,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure.ItemCheckResult.*;
 import static com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler.Stage.*;
 
 /**
@@ -68,6 +69,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * The current structure task to be build.
      */
     protected Tuple<StructurePlacer, BuildingStructureHandler<J, B>> structurePlacer;
+
+    /**
+     * Different item check result possibilities.
+     */
+    public enum ItemCheckResult
+    {
+        FAIL,
+        SUCCESS,
+        RECALC
+    }
 
     /**
      * Predicate defining things we don't want the builders to ever touch.
@@ -345,6 +356,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
         {
+            getOwnBuilding().nextStage();
             if (!structurePlacer.getB().nextStage())
             {
                 getOwnBuilding().setProgressPos(null, null);
@@ -355,7 +367,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.MISSING_ITEMS)
         {
-            hasListOfResInInvOrRequest(this, result.getBlockResult().getRequiredItems(), result.getBlockResult().getRequiredItems().size() > 1);
+            if (hasListOfResInInvOrRequest(this, result.getBlockResult().getRequiredItems(), result.getBlockResult().getRequiredItems().size() > 1) == RECALC)
+            {
+                job.getWorkOrder().setRequested(false);
+                return LOAD_STRUCTURE;
+            }
             return NEEDS_ITEM;
         }
 
@@ -424,6 +440,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
               name,
               new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
               this, new BuildingStructureHandler.Stage[] {REMOVE_WATER, REMOVE});
+            getOwnBuilding().setTotalStages(2);
         }
         else if ((colonyBuilding != null && colonyBuilding.getBuildingLevel() > 0) ||
                    (entity instanceof TileEntityDecorationController && ((TileEntityDecorationController) entity).getLevel() > 0))
@@ -433,6 +450,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
               name,
               new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
               this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
+            getOwnBuilding().setTotalStages(5);
         }
         else
         {
@@ -440,7 +458,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
               position,
               name,
               new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
-              this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS,DECORATE, SPAWN});
+              this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
+            getOwnBuilding().setTotalStages(6);
         }
 
         if (!structure.hasBluePrint())
@@ -468,7 +487,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @param force    if force insertion.
      * @return true if need to request.
      */
-    public static <J extends AbstractJobStructure<?, J>, B extends AbstractBuildingStructureBuilder> boolean hasListOfResInInvOrRequest(
+    public static <J extends AbstractJobStructure<?, J>, B extends AbstractBuildingStructureBuilder> ItemCheckResult hasListOfResInInvOrRequest(
       @NotNull final AbstractEntityAIStructure<J, B> placer,
       final List<ItemStack> itemList,
       final boolean force)
@@ -477,8 +496,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         {
             if (!InventoryUtils.hasItemInItemHandler(placer.getInventory(), stack1 -> stack.isItemEqual(stack1)) && !placer.getOwnBuilding().hasResourceInBucket(stack))
             {
-                placer.requestMaterials();
-                return false;
+                return RECALC;
             }
         }
 
@@ -523,7 +541,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         {
             if (ItemStackUtils.isEmpty(placedStack.getKey().getItemStack()))
             {
-                return false;
+                return FAIL;
             }
 
             final ImmutableList<IRequest<? extends IDeliverable>> requests = placer.getOwnBuilding()
@@ -545,7 +563,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 final com.minecolonies.api.colony.requestsystem.requestable.Stack stackRequest = new Stack(placedStack.getKey().getItemStack(), placedStack.getValue(), 1);
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
                 placer.registerBlockAsNeeded(placedStack.getKey().getItemStack());
-                return false;
+                return FAIL;
             }
             else
             {
@@ -565,9 +583,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                     }
                 }
             }
-            return false;
+            return FAIL;
         }
-        return true;
+        return SUCCESS;
     }
 
     /**

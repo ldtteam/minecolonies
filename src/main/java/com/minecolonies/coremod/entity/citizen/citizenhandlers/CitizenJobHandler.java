@@ -10,6 +10,8 @@ import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_MODEL;
 
 /**
@@ -94,13 +96,15 @@ public class CitizenJobHandler implements ICitizenJobHandler
         setModelDependingOnJob(job);
 
         //  AI Tasks
-        for (@NotNull final PrioritizedGoal task : citizen.getTasks().goals)
+        for (@NotNull final PrioritizedGoal task : new ArrayList<>(citizen.getTasks().goals))
         {
             if (task.getGoal() instanceof AbstractAISkeleton)
             {
                 citizen.getTasks().removeGoal(task.getGoal());
             }
         }
+
+        citizen.getCitizenData().setIdleAtJob(false);
 
         if (job != null)
         {
