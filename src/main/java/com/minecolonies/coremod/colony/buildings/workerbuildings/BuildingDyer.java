@@ -215,28 +215,29 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
 
         if(recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
         {
-            final Set<IBuilding> wareHouses = colony.getBuildingManager().getBuildings().values().stream()
-            .filter(building -> building instanceof BuildingWareHouse)
-            .collect(Collectors.toSet());
-            
             final ResourceLocation wool = new ResourceLocation("minecraft", "wool");
-            final List<ItemStorage> woolItems = ItemTags.getCollection().getOrCreate(wool).getAllElements().stream()
-                                                .filter(item -> !item.equals(Items.WHITE_WOOL))
-                                                .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
             final HashMap<ItemStorage, Integer> inventoryCounts = new HashMap<>();
+
+            final Set<IBuilding> wareHouses = colony.getBuildingManager().getBuildings().values().stream()
+                                                    .filter(building -> building instanceof BuildingWareHouse)
+                                                    .collect(Collectors.toSet());
+            
+            final List<ItemStorage> woolItems = ItemTags.getCollection().getOrCreate(wool).getAllElements().stream()
+                                                        .filter(item -> !item.equals(Items.WHITE_WOOL))
+                                                        .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
 
             for(ItemStorage color : woolItems)
             {
                 for(IBuilding wareHouse: wareHouses)
                 {
                     final int colorCount = InventoryUtils.hasBuildingEnoughElseCount(wareHouse, color, 1);
-                    inventoryCounts.put(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
+                    inventoryCounts.replace(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
                 }
             }
 
             ItemStorage woolToUse = inventoryCounts.entrySet().stream()
-                .sorted(Comparator.comparing(itemEntry -> itemEntry.getValue(), Comparator.reverseOrder()))
-                .findFirst().get().getKey();
+                                                .sorted(Comparator.comparing(itemEntry -> itemEntry.getValue(), Comparator.reverseOrder()))
+                                                .findFirst().get().getKey();
 
             recipe = StandardFactoryController.getInstance().getNewInstance(
                 TypeConstants.RECIPE,
