@@ -590,6 +590,12 @@ public final class NbtTagConstants
     public static final String TAG_FLUIDS_REMOVE = "fluidsToRemove";
 
     /**
+     * Tags to store the stages
+     */
+    public static final String TAG_TOTAL_STAGES = "totalStages";
+    public static final String TAG_CURR_STAGE = "currStage";
+
+    /**
      * Tags to store the needed resources to nbt.
      */
     public static final String TAG_FLUIDS_REMOVE_POSITIONS = "positions";

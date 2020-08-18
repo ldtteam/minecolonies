@@ -5,6 +5,7 @@ import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.*;
@@ -55,7 +56,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     /**
      * Request progress pos.
      */
-    private BlockPos requestProgress;
+    private BlockPos requestProgress = null;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -199,9 +200,11 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
             buildingWorker.resetNeededResources();
             requestProgress = NULL_POS;
+            requestState = RequestStage.SOLID;
         }
 
-        switch (requestState)
+        final RequestStage currState = requestState;
+        switch (currState)
         {
             case SOLID:
                 result = placer.executeStructureStep(world,
@@ -224,7 +227,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 {
                     requestState = RequestStage.DECO;
                 }
-            return false;
+                return false;
             case DECO:
                 result = placer.executeStructureStep(world,
                   null,
