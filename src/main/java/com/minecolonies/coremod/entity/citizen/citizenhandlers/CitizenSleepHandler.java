@@ -1,10 +1,13 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSleepHandler;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.coremod.colony.interactionhandling.SimpleNotificationInteraction;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
@@ -21,6 +24,7 @@ import java.util.Optional;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_BED_POS;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_IS_ASLEEP;
+import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
 import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
@@ -28,6 +32,17 @@ import static com.minecolonies.api.util.constant.Constants.*;
  */
 public class CitizenSleepHandler implements ICitizenSleepHandler
 {
+    /**
+     * The additional weight for Y diff
+     */
+    private static final double Y_DIFF_WEIGHT = 1.5;
+
+    /**
+     * The rough time traveling one block takes, in ticks
+     */
+    private static final double TIME_PER_BLOCK           = 6;
+    private static final double MAX_NO_COMPLAIN_DISTANCE = 160;
+
     /**
      * The citizen assigned to this manager.
      */
@@ -202,6 +217,23 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         citizen.getDataManager().set(DATA_BED_POS, new BlockPos(0, 0, 0));
     }
 
+    @Override
+    public BlockPos findHomePos()
+    {
+        final BlockPos pos = citizen.getHomePosition();
+        if (pos.equals(BlockPos.ZERO))
+        {
+            if (citizen.getCitizenColonyHandler().getColony().hasTownHall())
+            {
+                return citizen.getCitizenColonyHandler().getColony().getBuildingManager().getTownHall().getPosition();
+            }
+
+            return citizen.getCitizenColonyHandler().getColony().getCenter();
+        }
+
+        return pos;
+    }
+
     /**
      * Get the bed location of the citizen.
      *
@@ -262,4 +294,37 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         return SLEEPING_RENDER_OFFSET * (float) Direction.getZOffset();
     }
+
+    @Override
+    public boolean shouldGoSleep()
+    {
+        final BlockPos homePos = findHomePos();
+        final BlockPos citizenPos = citizen.getPosition();
+
+        // Calc distance with some y weight
+        final int xDiff = Math.abs(homePos.getX() - citizenPos.getX());
+        final int zDiff = Math.abs(homePos.getZ() - citizenPos.getZ());
+        final int yDiff = (int) (Math.abs(homePos.getY() - citizenPos.getY()) * Y_DIFF_WEIGHT);
+
+        final double timeNeeded = Math.sqrt(xDiff * xDiff + zDiff * zDiff + yDiff * yDiff) * TIME_PER_BLOCK;
+
+        // Estimated arrival is 1hour past night
+        final double timeLeft = NIGHT - (citizen.world.getDayTime() % 24000);
+        if (timeLeft <= 0 || (timeLeft - timeNeeded <= 0))
+        {
+            if (citizen.getCitizenData().getWorkBuilding() != null)
+            {
+                final double workHomeDistance = Math.sqrt(BlockPosUtil.getDistanceSquared(homePos, citizen.getCitizenData().getWorkBuilding().getID()));
+                if (workHomeDistance > MAX_NO_COMPLAIN_DISTANCE)
+                {
+                    citizen.getCitizenData()
+                      .triggerInteraction(new SimpleNotificationInteraction(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.hometoofar"), ChatPriority.IMPORTANT));
+                }
+            }
+            return true;
+        }
+
+        return false;
+    }
+
 }

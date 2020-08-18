@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiPredicate;
 
+import static com.minecolonies.coremod.colony.interactionhandling.StandardInteraction.*;
+
 /**
  * The position based interaction response handler.
  */
@@ -27,10 +29,10 @@ public class PosBasedInteraction extends ServerCitizenInteraction
 
     @SuppressWarnings("unchecked")
     private static final Tuple<ITextComponent, ITextComponent>[] responses = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.skipchitchat"), null)};
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_OKAY), null),
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_IGNORE), null),
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_REMIND), null),
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_SKIP), null)};
 
     /**
      * The position this is related to.

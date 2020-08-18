@@ -233,4 +233,9 @@ public interface ICitizenData extends ICivilianData
      * @return the random.
      */
     Random getRandom();
+
+    /**
+     * Applies the effects of research to the data's entity
+     */
+    void applyResearchEffects();
 }
