@@ -127,20 +127,29 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         }
     }
 
+    @Override
+    public void checkForWorkerSpecificRecipes()
+    {
+        loadCurrentRecipes();
+    }
+
     /**
      * Reload all of the current crusher recipes
      */
     private void loadCurrentRecipes()
     {
-        if(!super.recipes.isEmpty())
-        {
-            super.recipes.clear();
-        }
-
         for (final IRecipeStorage recipe : crusherRecipes.values())
         {
             final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
-            addRecipe(token);
+            final IRecipeStorage oldRecipe = getFirstRecipe(recipe.getPrimaryOutput());
+            if(oldRecipe != null && !oldRecipe.getToken().equals(token))
+            {
+                replaceRecipe(oldRecipe.getToken(), token);
+            }
+            else
+            {
+                addRecipe(token);
+            }
         }
 
         final IRecipeStorage clayballStorage = StandardFactoryController.getInstance().getNewInstance(
@@ -151,7 +160,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             new ItemStack(Items.CLAY_BALL, 4),
             Blocks.AIR);
   
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(clayballStorage));    
+        addRecipe(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(clayballStorage));    
     }
 
     /**
@@ -342,36 +351,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         {
             buf.writeItemStack(storage.getItemStack());
         }
-    }
-
-    @Override
-    public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
-    {
-        for (final IRecipeStorage storage : crusherRecipes.values())
-        {
-            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
-            {
-                return storage;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
-    {
-        for (final IRecipeStorage storage : crusherRecipes.values())
-        {
-            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
-            {
-                final List<IItemHandler> handlers = getHandlers();
-                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
-                {
-                    return storage;
-                }
-            }
-        }
-        return null;
     }
 
     @Override

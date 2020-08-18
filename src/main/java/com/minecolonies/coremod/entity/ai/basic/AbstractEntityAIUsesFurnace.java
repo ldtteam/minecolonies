@@ -4,12 +4,15 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
+import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -20,6 +23,7 @@ import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,6 +66,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
           new AITarget(IDLE, START_WORKING, STANDARD_DELAY),
           new AITarget(START_WORKING, this::startWorking, TICKS_SECOND),
           new AITarget(START_USING_FURNACE, this::fillUpFurnace, STANDARD_DELAY),
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::accelerateFurnaces, TICKS_SECOND),
           new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, STANDARD_DELAY));
     }
 
@@ -198,6 +203,34 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         }
 
         return checkIfAbleToSmelt(amountOfFuelInBuilding + amountOfFuelInInv, amountOfSmeltableInBuilding + amountOfSmeltableInInv);
+    }
+
+    /**
+     * Actually accelerate the furnaces
+     */
+    private IAIState accelerateFurnaces()
+    {
+        final int accelerationTicks = (worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getPrimarySkill()) / 10) * 2;
+        final World world = getOwnBuilding().getColony().getWorld();
+        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof FurnaceTileEntity)
+                {
+                    final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+                    for(int i = 0; i < accelerationTicks; i++)
+                    {
+                        if (furnace.isBurning()) 
+                        {
+                            furnace.tick();
+                        }
+                    }
+                }
+            }
+        }
+        return getState();
     }
 
     /**

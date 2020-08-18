@@ -14,6 +14,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 
 import net.minecraft.block.Blocks;
@@ -379,7 +380,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     private int getRequiredProgressForMakingRawMaterial()
     {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL) * HITTING_TIME;
+        final int jobModifier = worker.getCitizenData().getCitizenSkillHandler().getLevel(((AbstractBuildingCrafter) getOwnBuilding()).getCraftSpeedSkill()) / 2;
+        return PROGRESS_MULTIPLIER / Math.min(jobModifier + 1, MAX_LEVEL) * HITTING_TIME;
     }
 
     @Override
