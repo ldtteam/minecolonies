@@ -208,6 +208,13 @@ public interface IBuildingWorker extends IBuilding
     Skill getSecondarySkill();
 
     /**
+     *  Recipe Improvement skill getter
+     * @return the recipe improvement skill
+     */
+    @NotNull
+    Skill getRecipeImprovementSkill();
+
+    /**
      * Check if the worker is allowed to eat the following stack.
      *
      * @param stack the stack to test.

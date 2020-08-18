@@ -24,6 +24,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
@@ -183,15 +184,56 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Nullable
     public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
     {
+        IRecipeStorage firstFound = null;
+        HashMap<IRecipeStorage, Integer> candidates = new HashMap<>();
+
+        //Scan through and collect all possible recipes that could fulfill this, taking special note of the first one
         for (final IToken<?> token : recipes)
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
             {
-                return storage;
+                if(firstFound == null)
+                {
+                    firstFound = storage;
+                }
+                candidates.put(storage, 0);
             }
         }
-        return null;
+
+        //If we have more than one possible recipe, let's choose the one with the most stock in the warehouses
+        if(candidates.size() > 1)
+        {
+            for(Map.Entry<IRecipeStorage, Integer> foo : candidates.entrySet())
+            {
+                final ItemStorage checkItem = foo.getKey().getCleanedInput().stream()
+                                                .sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed())
+                                                .findFirst().get();
+                candidates.replace(foo.getKey(), getWarehouseCount(checkItem));
+            }
+            return candidates.entrySet().stream()
+                            .sorted(Comparator.comparing(itemEntry -> itemEntry.getValue(), Comparator.reverseOrder()))
+                            .findFirst().get().getKey();
+        }
+
+        return firstFound;
+    }
+
+    /**
+     * Get the count of items in all the warehouses
+     */
+    private int getWarehouseCount(ItemStorage item)
+    {
+        int count = 0;
+        final Set<IBuilding> wareHouses = colony.getBuildingManager().getBuildings().values().stream()
+                                                .filter(building -> building instanceof BuildingWareHouse)
+                                                .collect(Collectors.toSet());
+
+        for(IBuilding wareHouse: wareHouses)
+        {
+            count += InventoryUtils.hasBuildingEnoughElseCount(wareHouse, item, 1);
+        }
+        return count;
     }
 
     @Override
@@ -311,7 +353,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         final ResourceLocation reducableProductExclusions = new ResourceLocation(MOD_ID, REDUCEABLE.concat(PRODUCT_EXCLUDED));
         final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
 
-        final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(getPrimarySkill())));
+        final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(getRecipeImprovementSkill())));
         final double roll = citizen.getRandom().nextDouble() * 100;
 
         ItemStack reducedItem = null;
@@ -360,6 +402,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 }
             }
         }
+    }
+
+    @Override
+    @NotNull
+    public Skill getRecipeImprovementSkill()
+    {
+        return getSecondarySkill();
     }
 
     @Override
