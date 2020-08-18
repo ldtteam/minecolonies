@@ -186,6 +186,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         IRecipeStorage firstFound = null;
         HashMap<IRecipeStorage, Integer> candidates = new HashMap<>();
 
+        //Scan through and collect all possible recipes that could fulfill this, taking special note of the first one
         for (final IToken<?> token : recipes)
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
@@ -195,15 +196,20 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 {
                     firstFound = storage;
                 }
-                final ItemStorage checkItem = storage.getCleanedInput().stream()
-                                                .sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed())
-                                                .findFirst().get();
-                candidates.put(storage, getWarehouseCount(checkItem));
+                candidates.put(storage, 0);
             }
         }
 
+        //If we have more than one possible recipe, let's choose the one with the most stock in the warehouses
         if(candidates.size() > 1)
         {
+            for(Map.Entry<IRecipeStorage, Integer> foo : candidates.entrySet())
+            {
+                final ItemStorage checkItem = foo.getKey().getCleanedInput().stream()
+                                                .sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed())
+                                                .findFirst().get();
+                candidates.replace(foo.getKey(), getWarehouseCount(checkItem));
+            }
             return candidates.entrySet().stream()
                             .sorted(Comparator.comparing(itemEntry -> itemEntry.getValue(), Comparator.reverseOrder()))
                             .findFirst().get().getKey();
