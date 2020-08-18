@@ -391,16 +391,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
     @Override
     @NotNull
-    public Skill getCraftSpeedSkill()
-    {
-        return getSecondarySkill();
-    }
-
-    @Override
-    @NotNull
     public Skill getRecipeImprovementSkill()
     {
-        return getPrimarySkill();
+        return getSecondarySkill();
     }
 
     @Override

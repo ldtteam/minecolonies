@@ -208,13 +208,6 @@ public interface IBuildingWorker extends IBuilding
     Skill getSecondarySkill();
 
     /**
-     * Crafting Speed skill
-     * @return the crafting speed skill
-     */
-    @NotNull
-    Skill getCraftSpeedSkill();
-
-    /**
      *  Recipe Improvement skill getter
      * @return the recipe improvement skill
      */
