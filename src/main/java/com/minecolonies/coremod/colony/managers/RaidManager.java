@@ -548,7 +548,7 @@ public class RaidManager implements IRaiderManager
             return false;
         }
 
-        if (colony.getWorld().isDaytime() && !colony.getRaiderManager().hasRaidBeenCalculated())
+        if (WorldUtil.isDayTime(colony.getWorld()) && !colony.getRaiderManager().hasRaidBeenCalculated())
         {
             colony.getRaiderManager().setHasRaidBeenCalculated(true);
             if (!colony.getRaiderManager().willRaidTonight())
@@ -569,7 +569,7 @@ public class RaidManager implements IRaiderManager
             }
             return false;
         }
-        else if (colony.getRaiderManager().willRaidTonight() && !colony.getWorld().isDaytime() && colony.getRaiderManager().hasRaidBeenCalculated())
+        else if (colony.getRaiderManager().willRaidTonight() && !WorldUtil.isDayTime(colony.getWorld()) && colony.getRaiderManager().hasRaidBeenCalculated())
         {
             colony.getRaiderManager().setHasRaidBeenCalculated(false);
             colony.getRaiderManager().setWillRaidTonight(false);
@@ -581,7 +581,7 @@ public class RaidManager implements IRaiderManager
             }
             return true;
         }
-        else if (!colony.getWorld().isDaytime() && colony.getRaiderManager().hasRaidBeenCalculated())
+        else if (!WorldUtil.isDayTime(colony.getWorld()) && colony.getRaiderManager().hasRaidBeenCalculated())
         {
             colony.getRaiderManager().setHasRaidBeenCalculated(false);
         }

@@ -1602,7 +1602,10 @@
   "com.minecolonies.coremod.university.researchconcluded.0": "Your researchers just successfully concluded: %s",
   "com.minecolonies.coremod.university.researchconcluded.1": "The researchers in your colony just unravelled the mystery of: %s",
   "com.minecolonies.coremod.university.researchconcluded.2": "The Research about %s was successfully demystified by your researchers",
-
+  "com.minecolonies.coremod.crafters.recipeimproved.0": "Your %s just successfully improved their recipe for %s by reducing the need for %s.",
+  "com.minecolonies.coremod.crafters.recipeimproved.1": "%4$s just successfully reduced the need for %3$s when they make %2$s.",
+  "com.minecolonies.coremod.crafters.recipeimproved.2": "%4$s the %1$s just successfully improved their recipe for %2$s and no longer needs as much %1$s to make it.",
+  
   "com.minecolonies.coremod.workorder.outofcolony": "The Workorder for %s at x: %d, z: %d is outside of the colony and thus cannot be built!",
 
   "com.minecolonies.coremod.entity.citizen.no.unemployment": "Having a job would really be great.",
@@ -1730,6 +1733,8 @@
   "com.minecolonies.coremod.gui.chat.recruitstory18": "is a treasure hunter. But digging in someone elses trash in search for some gold or iron is very tiring. Now %s looks for another task.",
   "com.minecolonies.coremod.gui.chat.recruitstory19": "seems adapt at using swords and says 'if by my life or death I can protect you, I will. You have my sword'",
   "com.minecolonies.coremod.gui.chat.recruitstory20": "is never late, nor early, %s arrives precisely when meant to.",
+
+  "com.minecolonies.coremod.gui.chat.hometoofar": "I have to walk a long way home from work every day, it would be nice if I could live somewhere closer.",
 
   "com.minecolonies.coremod.gui.beekeeper.notcollect": "Collect honey",
   "com.minecolonies.coremod.gui.beekeeper.collect": "Collect honeycomb",
