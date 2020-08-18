@@ -1139,7 +1139,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public boolean hasWorkerOpenRequests(@NotNull final ICitizenData citizen)
     {
-        return getOpenRequestsByCitizen().containsKey(citizen.getId());
+        return getOpenRequestsByCitizen().containsKey(citizen.getId()) && !getOpenRequestsByCitizen().get(citizen.getId()).isEmpty();
     }
 
     @Override
@@ -1235,7 +1235,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public boolean hasCitizenCompletedRequests(@NotNull final ICitizenData data)
     {
-        return getCompletedRequestsByCitizen().containsKey(data.getId());
+        return getCompletedRequestsByCitizen().containsKey(data.getId()) && !getCompletedRequestsByCitizen().get(data.getId()).isEmpty();
     }
 
     @Override

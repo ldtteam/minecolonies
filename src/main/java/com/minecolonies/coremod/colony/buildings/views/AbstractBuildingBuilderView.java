@@ -43,6 +43,13 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
     private double progress;
 
     /**
+     * Information on the phases.
+     */
+    private int finishedStages = 0;
+    private int totalStages    = 1;
+
+
+    /**
      * Public constructor of the view, creates an instance of it.
      *
      * @param c the colony.
@@ -73,6 +80,8 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
         constructionName = buf.readString(32767);
         constructionPos = buf.readString(32767);
         progress = buf.readDouble();
+        totalStages = buf.readInt();
+        finishedStages = buf.readInt();
         workerName = buf.readString(32767);
     }
 
@@ -124,7 +133,16 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
      */
     public String getProgress()
     {
-        return 100 - (int) (progress * 100) + "%";
+        int localProgress = 100 - (int) (progress * 100);
+        if (finishedStages == 0)
+        {
+            if (totalStages == finishedStages)
+            {
+                return "0%";
+            }
+            return localProgress/2 + "%";
+        }
+        return localProgress/2 + Math.round( (double) finishedStages / totalStages * 50.0) + "%";
     }
 }
 

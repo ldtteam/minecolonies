@@ -133,6 +133,7 @@ public class BuildingBarracks extends AbstractBuilding
                 final TileEntity tile = world.getTileEntity(pos);
                 if (tile instanceof TileEntityColonyBuilding)
                 {
+                    ((TileEntityColonyBuilding) tile).setMirror(this.isMirrored());
                     ((TileEntityColonyBuilding) tile).setStyle(this.getStyle());
                 }
                 getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(pos), world);
