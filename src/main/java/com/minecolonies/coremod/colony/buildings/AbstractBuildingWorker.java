@@ -47,6 +47,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
@@ -63,6 +64,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
+import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMPROVED;;
 
 /**
  * The abstract class for each worker building.
@@ -313,6 +315,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(getPrimarySkill())));
         final double roll = citizen.getRandom().nextDouble() * 100;
 
+        ItemStack reducedItem = null;
+
         if(roll <= actualChance && !ItemTags.getCollection().getOrCreate(reducableProductExclusions).contains(recipe.getPrimaryOutput().getItem()))
         {
             final ArrayList<ItemStack> newRecipe = new ArrayList<>();
@@ -322,9 +326,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 // Check against excluded products
                 if (input.getAmount() > 1 && ItemTags.getCollection().getOrCreate(reducableIngredients).contains(input.getItem()))
                 {
-                    ItemStack updated = input.getItemStack();
-                    updated.setCount(input.getAmount() - 1);
-                    newRecipe.add(updated);
+                    reducedItem = input.getItemStack();
+                    reducedItem.setCount(input.getAmount() - 1);
+                    newRecipe.add(reducedItem);
                     didReduction = true;
                 } else
                 {
@@ -343,6 +347,18 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                     Blocks.AIR);
 
                 replaceRecipe(recipe.getToken(), IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+
+                // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
+                final TranslationTextComponent message = new TranslationTextComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
+                        new TranslationTextComponent(citizen.getJob().getName().toLowerCase()),
+                        recipe.getPrimaryOutput().getDisplayName(),
+                        reducedItem.getDisplayName(),
+                        citizen.getName());
+
+                for(PlayerEntity player :colony.getMessagePlayerEntities())
+                {
+                    player.sendMessage(message);
+                }
             }
         }
     }
