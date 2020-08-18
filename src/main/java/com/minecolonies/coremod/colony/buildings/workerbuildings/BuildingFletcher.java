@@ -92,6 +92,20 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     }
 
     @Override
+    @NotNull
+    public Skill getCraftSpeedSkill()
+    {
+        return getPrimarySkill();
+    }
+
+    @Override
+    @NotNull
+    public Skill getRecipeImprovementSkill()
+    {
+        return getSecondarySkill();
+    }
+    
+    @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
         Optional<Boolean> isRecipeAllowed;
