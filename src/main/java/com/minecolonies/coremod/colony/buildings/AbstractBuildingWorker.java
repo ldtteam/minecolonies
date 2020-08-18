@@ -24,6 +24,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
@@ -182,15 +183,50 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Nullable
     public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
     {
+        IRecipeStorage firstFound = null;
+        HashMap<IRecipeStorage, Integer> candidates = new HashMap<>();
+
         for (final IToken<?> token : recipes)
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
             {
-                return storage;
+                if(firstFound == null)
+                {
+                    firstFound = storage;
+                }
+                final ItemStorage checkItem = storage.getCleanedInput().stream()
+                                                .sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed())
+                                                .findFirst().get();
+                candidates.put(storage, getWarehouseCount(checkItem));
             }
         }
-        return null;
+
+        if(candidates.size() > 1)
+        {
+            return candidates.entrySet().stream()
+                            .sorted(Comparator.comparing(itemEntry -> itemEntry.getValue(), Comparator.reverseOrder()))
+                            .findFirst().get().getKey();
+        }
+
+        return firstFound;
+    }
+
+    /**
+     * Get the count of items in all the warehouses
+     */
+    private int getWarehouseCount(ItemStorage item)
+    {
+        int count = 0;
+        final Set<IBuilding> wareHouses = colony.getBuildingManager().getBuildings().values().stream()
+                                                .filter(building -> building instanceof BuildingWareHouse)
+                                                .collect(Collectors.toSet());
+
+        for(IBuilding wareHouse: wareHouses)
+        {
+            count += InventoryUtils.hasBuildingEnoughElseCount(wareHouse, item, 1);
+        }
+        return count;
     }
 
     @Override
