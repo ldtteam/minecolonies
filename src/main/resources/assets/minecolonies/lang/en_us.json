@@ -1734,6 +1734,8 @@
   "com.minecolonies.coremod.gui.chat.recruitstory19": "seems adapt at using swords and says 'if by my life or death I can protect you, I will. You have my sword'",
   "com.minecolonies.coremod.gui.chat.recruitstory20": "is never late, nor early, %s arrives precisely when meant to.",
 
+  "com.minecolonies.coremod.gui.chat.hometoofar": "I have to walk a long way home from work every day, it would be nice if I could live somewhere closer.",
+
   "com.minecolonies.coremod.gui.beekeeper.notcollect": "Collect honey",
   "com.minecolonies.coremod.gui.beekeeper.collect": "Collect honeycomb",
   "com.minecolonies.coremod.gui.beekeeper.addhives": "Get hive tool",

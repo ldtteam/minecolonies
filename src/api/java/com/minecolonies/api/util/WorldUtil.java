@@ -9,7 +9,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkStatus;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
-import static com.minecolonies.api.util.constant.CitizenConstants.NOON;
 
 /**
  * Class which has world related util functions like chunk load checks
@@ -119,11 +118,23 @@ public class WorldUtil
 
     /**
      * Check if it's currently day inn the world.
+     *
      * @param world the world to check.
      * @return true if so.
      */
     public static boolean isDayTime(final World world)
     {
         return world.getDayTime() % 24000 <= NIGHT;
+    }
+
+    /**
+     * Check if it's currently day inn the world.
+     *
+     * @param world the world to check.
+     * @return true if so.
+     */
+    public static boolean isPastTime(final World world, final int pastTime)
+    {
+        return world.getDayTime() % 24000 <= pastTime;
     }
 }

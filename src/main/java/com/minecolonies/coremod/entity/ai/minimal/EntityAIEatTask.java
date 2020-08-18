@@ -527,6 +527,14 @@ public class EntityAIEatTask extends Goal
     }
 
     @Override
+    public void resetTask()
+    {
+        reset();
+        currentState = IDLE;
+        citizen.getCitizenData().setVisibleStatus(null);
+    }
+
+    @Override
     public void startExecuting()
     {
         citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.EAT);
