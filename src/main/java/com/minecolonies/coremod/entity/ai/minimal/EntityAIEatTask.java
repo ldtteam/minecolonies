@@ -530,6 +530,7 @@ public class EntityAIEatTask extends Goal
     public void resetTask()
     {
         reset();
+        currentState = IDLE;
         citizen.getCitizenData().setVisibleStatus(null);
     }
 
