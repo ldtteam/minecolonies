@@ -384,6 +384,10 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public void setRenderMetadata(final String renderMetadata)
     {
+        if (renderMetadata.equals(getRenderMetadata()))
+        {
+            return;
+        }
         this.renderMetadata = renderMetadata;
         dataManager.set(DATA_RENDER_METADATA, getRenderMetadata());
     }
@@ -577,11 +581,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * Decrease the saturation of the citizen for 1 action.
      */
     public abstract void decreaseSaturationForContinuousAction();
-
-    /**
-     * Spawn eating particles for the citizen.
-     */
-    public abstract void spawnEatingParticle();
 
     /**
      * The Handler for all experience related methods.

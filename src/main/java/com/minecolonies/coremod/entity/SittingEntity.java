@@ -96,17 +96,19 @@ public class SittingEntity extends Entity
 
         if (!this.isBeingRidden() || maxLifeTime-- < 0)
         {
+            // Upsizes entity again
+            if (lastPassenger != null)
+            {
+                lastPassenger.size = lastPassenger.size.scale(1.0f, 2.0f);
+            }
+
             if (getPassengers().size() > 0)
             {
                 Entity e = getPassengers().get(0);
                 this.removePassengers();
                 e.setPosition(this.posX, this.posY + 1, this.posZ);
             }
-            // Upsizes entity again
-            if (lastPassenger != null)
-            {
-                lastPassenger.size = lastPassenger.size.scale(1.0f, 2.0f);
-            }
+
             this.remove();
         }
     }

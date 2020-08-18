@@ -35,6 +35,13 @@ public interface ICitizenSleepHandler
     void onWakeUp();
 
     /**
+     * Determines the home position
+     *
+     * @return home pos or null
+     */
+    BlockPos findHomePos();
+
+    /**
      * Get the bed location of the citizen.
      *
      * @return the bed location.
@@ -54,4 +61,11 @@ public interface ICitizenSleepHandler
      * @return the offset.
      */
     float getRenderOffsetZ();
+
+    /**
+     * Whether we should start to go sleeping
+     *
+     * @return true if should sleep
+     */
+    boolean shouldGoSleep();
 }

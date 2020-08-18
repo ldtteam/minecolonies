@@ -58,7 +58,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
-import static com.minecolonies.api.util.constant.CitizenConstants.BONUS_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -655,7 +654,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public boolean canWorkDuringTheRain()
     {
-        return getBuildingLevel() >= BONUS_BUILDING_LEVEL;
+        return false;
     }
 
     @Override
