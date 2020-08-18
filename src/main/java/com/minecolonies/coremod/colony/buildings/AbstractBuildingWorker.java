@@ -400,7 +400,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
                 for(PlayerEntity player :colony.getMessagePlayerEntities())
                 {
-                    player.sendMessage(message);
+                    player.sendMessage(message, player.getUniqueID());
                 }
             }
         }
