@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
+import com.google.common.collect.Sets;
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -9,6 +10,8 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_MODEL;
 
@@ -94,7 +97,8 @@ public class CitizenJobHandler implements ICitizenJobHandler
         setModelDependingOnJob(job);
 
         //  AI Tasks
-        for (@NotNull final PrioritizedGoal task : citizen.getTasks().goals)
+        final Set<PrioritizedGoal> goals = Sets.newHashSet(citizen.getTasks().goals);
+        for (@NotNull final PrioritizedGoal task : goals)
         {
             if (task.getGoal() instanceof AbstractAISkeleton)
             {
