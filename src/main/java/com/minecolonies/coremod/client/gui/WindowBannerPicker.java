@@ -56,20 +56,29 @@ public class WindowBannerPicker extends Screen
     /** The number of rows the patterns are arranged in */
     private static final int PATTERN_ROWS = 4;
 
+
     /**
-     * The list of patterns made unavailable to the player, mainly things without hard edges
-     * Must be done manually due to insufficient public variables in BannerPattern enum */
-    private static final BannerPattern[] EXCLUDED = {
-            BannerPattern.BASE,
-            BannerPattern.GRADIENT,
-            BannerPattern.GRADIENT_UP,
-            BannerPattern.BRICKS,
-            BannerPattern.GLOBE,
-            BannerPattern.CREEPER,
-            BannerPattern.SKULL,
-            BannerPattern.FLOWER,
-            BannerPattern.MOJANG,
-            BannerPattern.PIGLIN
+     * The list of patterns that usually require charges, or are to be made more valuable
+     * by excluding them from lower TH levels. Sorted by the TH level they are first introduced at
+     */
+    private static final BannerPattern[][] EXCLUSION = {
+            {    // 1
+                BannerPattern.GRADIENT,
+                BannerPattern.GRADIENT_UP
+            }, { // 2
+                BannerPattern.BRICKS,
+                BannerPattern.FLOWER
+            }, { // 3
+                BannerPattern.SKULL,
+                BannerPattern.CREEPER
+            }, { // 4
+                BannerPattern.GLOBE
+                // TODO: 1.16 port - add BannerPattern.PIGLIN here
+            }, { // 5
+                BannerPattern.MOJANG
+            }, { // Excluded completely
+                BannerPattern.BASE
+            }
     };
 
     /** The list of banner patterns, to be excluded and cached */
@@ -112,8 +121,11 @@ public class WindowBannerPicker extends Screen
         this.modelRender = BannerTileEntityRenderer.getModelRender();
 
         /* Get all patterns, then remove excluded and item-required patterns */
+        List<BannerPattern> exclusion = new ArrayList<>();
+        for (int i = hallWindow.building.getBuildingLevel(); i <= hallWindow.building.getBuildingMaxLevel(); i++)
+            exclusion.addAll(Arrays.asList(EXCLUSION[i]));
         this.patterns = new LinkedList<>(Arrays.asList(BannerPattern.values()));
-        this.patterns.removeAll(Arrays.asList(EXCLUDED));
+        this.patterns.removeAll(exclusion);
 
         // Fetch the patterns as a List and not ListNBT
         this.layers = BannerTileEntity.getPatternColorData(DyeColor.WHITE, colony.getColonyFlag());
@@ -156,7 +168,7 @@ public class WindowBannerPicker extends Screen
             @Override
             public void render(final MatrixStack stack, int mouseX, int mouseY, float partialTicks)
             {
-                this.active = activeLayer < layers.size();
+                this.active = activeLayer < layers.size() && activeLayer != 0; // TODO: port this last vital condition
                 super.render(stack, mouseX, mouseY, partialTicks);
             }
         });
