@@ -13,7 +13,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.TAG_DISEASE;
-import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 
 /**
  * Handler taking care of citizens getting stuck.
@@ -56,7 +55,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public void tick()
     {
-        if (citizen.getTicksExisted() % TICKS_20 == 0 && citizen.getCitizenColonyHandler().getColony().isActive() && !(citizen.getCitizenJobHandler()
+        if (citizen.getCitizenColonyHandler().getColony().isActive() && !(citizen.getCitizenJobHandler()
                                                                                                                          .getColonyJob() instanceof JobHealer)
               && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > IMinecoloniesAPI.getInstance()
                                                                                                                 .getConfig()
