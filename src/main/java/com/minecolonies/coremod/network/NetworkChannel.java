@@ -51,7 +51,7 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.PacketDistributor.TargetPoint;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Our wrapper for Forge network layer
