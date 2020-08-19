@@ -222,7 +222,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
                                                     .filter(building -> building instanceof BuildingWareHouse)
                                                     .collect(Collectors.toSet());
             
-            final List<ItemStorage> woolItems = ItemTags.getCollection().getOrCreate(wool).getAllElements().stream()
+            final List<ItemStorage> woolItems = ItemTags.getCollection().func_241834_b(wool).getAllElements().stream()
                                                         .filter(item -> !item.equals(Items.WHITE_WOOL))
                                                         .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
 
