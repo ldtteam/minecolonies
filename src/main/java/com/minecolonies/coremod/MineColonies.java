@@ -11,6 +11,7 @@ import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.Log;
@@ -46,6 +47,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
 import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -176,6 +178,13 @@ public class MineColonies
         StandardFactoryControllerInitializer.onPreInit();
 
         ResearchInitializer.fillResearchTree(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree());
+    }
+
+    @SubscribeEvent
+    public static void registerAttributes(RegistryEvent.Register<Attribute> event)
+    {
+        RaiderMobUtils.MOB_ATTACK_DAMAGE.setRegistryName(Constants.MOD_ID, RaiderMobUtils.MOB_ATTACK_DAMAGE.func_233754_c_());
+        event.getRegistry().register(RaiderMobUtils.MOB_ATTACK_DAMAGE);
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -130,7 +129,7 @@ public class EntityAIAttackArcher extends Goal
                     arrowEntity = ((BowItem) bow.getItem()).customArrow(arrowEntity);
                 }
 
-                arrowEntity.setPosition(entity.getPosX(), entity.getPosY() + 1, entity.getPosY());
+                arrowEntity.setPosition(entity.getPosX(), entity.getPosY() + 1, entity.getPosZ());
                 final double xVector = target.getPosX() - entity.getPosX();
                 final double yVector = target.getBoundingBox().minY + target.getHeight() / AIM_HEIGHT - arrowEntity.getPosY();
                 final double zVector = target.getPosZ() - entity.getPosZ();
@@ -142,7 +141,7 @@ public class EntityAIAttackArcher extends Goal
                 entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
                 entity.getLookController().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
 
-                CompatibilityUtils.addEntity(CompatibilityUtils.getWorldFromEntity(entity), arrowEntity);
+                target.world.addEntity(arrowEntity);
                 entity.swingArm(Hand.MAIN_HAND);
                 entity.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) 1.0D, (float) getRandomPitch());
                 lastAttack = getAttackDelay();

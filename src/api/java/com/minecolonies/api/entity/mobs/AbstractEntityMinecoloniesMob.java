@@ -469,8 +469,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
                  .createMutableAttribute(Attributes.ARMOR)
                  .createMutableAttribute(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
                  .createMutableAttribute(Attributes.FOLLOW_RANGE, FOLLOW_RANGE * 2)
-                 .createMutableAttribute(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue())
-                 .createMutableAttribute(MOB_ATTACK_DAMAGE, MOB_ATTACK_DAMAGE.getDefaultValue());
+                 .createMutableAttribute(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue());
     }
 
     /**
