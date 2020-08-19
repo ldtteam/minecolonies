@@ -32,21 +32,19 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     /**
      * Toggle the recipe allocation to remove or add.
      */
-    private final boolean remove;
+    private boolean remove;
 
     /**
      * The RecipeStorage to add/remove.
      */
-    private final IRecipeStorage storage;
+    private IRecipeStorage storage;
 
     /**
      * Empty default constructor.
      */
-    public AddRemoveRecipeMessage(final PacketBuffer buf)
+    public AddRemoveRecipeMessage()
     {
-        super(buf);
-        this.storage = StandardFactoryController.getInstance().deserialize(buf);
-        this.remove = buf.readBoolean();
+        super();
     }
 
     /**
@@ -96,9 +94,28 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
         }
     }
 
+    /**
+     * Transformation from a byteStream.
+     *
+     * @param buf the used byteBuffer.
+     */
+    @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+
+        storage = StandardFactoryController.getInstance().deserialize(buf);
+        remove = buf.readBoolean();
+    }
+
+    /**
+     * Transformation to a byteStream.
+     *
+     * @param buf the used byteBuffer.
+     */
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
+
         StandardFactoryController.getInstance().serialize(buf, storage);
         buf.writeBoolean(remove);
     }

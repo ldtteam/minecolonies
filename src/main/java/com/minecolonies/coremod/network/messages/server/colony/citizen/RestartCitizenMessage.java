@@ -18,15 +18,14 @@ public class RestartCitizenMessage extends AbstractColonyServerMessage
     /**
      * The citizen to restart.
      */
-    private final int citizenID;
+    private int citizenID;
 
     /**
      * Empty public constructor.
      */
-    public RestartCitizenMessage(final PacketBuffer buf)
+    public RestartCitizenMessage()
     {
-        super(buf);
-        this.citizenID = buf.readInt();
+        super();
     }
 
     /**
@@ -41,9 +40,27 @@ public class RestartCitizenMessage extends AbstractColonyServerMessage
         this.citizenID = citizenID;
     }
 
+    /**
+     * Transformation from a byteStream to the variables.
+     *
+     * @param buf the used byteBuffer.
+     */
+    @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+
+        citizenID = buf.readInt();
+    }
+
+    /**
+     * Transformation to a byteStream.
+     *
+     * @param buf the used byteBuffer.
+     */
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
+
         buf.writeInt(citizenID);
     }
 

@@ -12,18 +12,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public class LumberjackRestrictionToggleMessage extends AbstractBuildingServerMessage<BuildingLumberjack>
 {
+
     /**
      * Whether the lumberjack shouldbe restricted.
      */
-    private final boolean shouldRestrict;
+    private boolean shouldRestrict;
 
     /**
      * Empty standard constructor.
      */
-    public LumberjackRestrictionToggleMessage(final PacketBuffer buf)
+    public LumberjackRestrictionToggleMessage()
     {
-        super(buf);
-        this.shouldRestrict = buf.readBoolean();
+        super();
     }
 
     /**
@@ -39,8 +39,16 @@ public class LumberjackRestrictionToggleMessage extends AbstractBuildingServerMe
     }
 
     @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+
+        shouldRestrict = buf.readBoolean();
+    }
+
+    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
+
         buf.writeBoolean(shouldRestrict);
     }
 

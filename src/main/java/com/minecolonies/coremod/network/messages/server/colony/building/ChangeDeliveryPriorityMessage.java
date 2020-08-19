@@ -15,15 +15,14 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
     /**
      * If up true, if down false.
      */
-    private final boolean up;
+    private boolean up;
 
     /**
      * Empty public constructor.
      */
-    public ChangeDeliveryPriorityMessage(final PacketBuffer buf)
+    public ChangeDeliveryPriorityMessage()
     {
-        super(buf);
-        this.up = buf.readBoolean();
+        super();
     }
 
     /**
@@ -38,9 +37,27 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
         this.up = up;
     }
 
+    /**
+     * Transformation from a byteStream to the variables.
+     *
+     * @param buf the used byteBuffer.
+     */
+    @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+
+        this.up = buf.readBoolean();
+    }
+
+    /**
+     * Transformation to a byteStream.
+     *
+     * @param buf the used byteBuffer.
+     */
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
+
         buf.writeBoolean(this.up);
     }
 

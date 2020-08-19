@@ -15,34 +15,29 @@ public class FieldPlotResizeMessage implements IMessage
     /**
      * The new radius of the field plot
      */
-    public final int size;
+    public int size;
 
     /**
      * The specified direction for the new radius
      */
-    public final Direction direction;
+    public Direction direction;
 
     /**
      * The position of the scarecrow tile entity
      */
-    public final BlockPos pos;
+    public BlockPos pos;
 
     /**
      * Forge default constructor
      */
-    public FieldPlotResizeMessage(final PacketBuffer buf)
-    {
-        this.size = buf.readInt();
-        this.direction = Direction.byHorizontalIndex(buf.readInt());
-        this.pos = buf.readBlockPos();
-    }
+    public FieldPlotResizeMessage () { super(); }
 
     /**
-     * @param size      the new radius of the field plot
+     * @param size the new radius of the field plot
      * @param direction the specified direction for the new radius
-     * @param pos       the position of the scarecrow tile entity
+     * @param pos the position of the scarecrow tile entity
      */
-    public FieldPlotResizeMessage(final int size, final Direction direction, final BlockPos pos)
+    public FieldPlotResizeMessage (int size, Direction direction, BlockPos pos)
     {
         this.size = size;
         this.direction = direction;
@@ -50,22 +45,27 @@ public class FieldPlotResizeMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final PacketBuffer buf)
+    public void toBytes(PacketBuffer buf)
     {
         buf.writeInt(this.size);
         buf.writeInt(this.direction.getHorizontalIndex());
         buf.writeBlockPos(this.pos);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
+    public void fromBytes(PacketBuffer buf)
     {
-        return LogicalSide.SERVER;
+        this.size = buf.readInt();
+        this.direction = Direction.byHorizontalIndex(buf.readInt());
+        this.pos = buf.readBlockPos();
     }
 
+    @Nullable
     @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    public LogicalSide getExecutionSide() { return LogicalSide.SERVER; }
+
+    @Override
+    public void onExecute(NetworkEvent.Context ctxIn, boolean isLogicalServer)
     {
         final TileEntity te = ctxIn.getSender().getEntityWorld().getTileEntity(this.pos);
         if (te instanceof AbstractScarecrowTileEntity)

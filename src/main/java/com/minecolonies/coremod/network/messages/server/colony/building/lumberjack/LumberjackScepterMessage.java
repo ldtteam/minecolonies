@@ -23,14 +23,21 @@ public class LumberjackScepterMessage extends AbstractBuildingServerMessage<Buil
     /**
      * Empty standard constructor.
      */
-    public LumberjackScepterMessage(final PacketBuffer buf)
+    public LumberjackScepterMessage()
     {
-        super(buf);
+        super();
     }
 
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
+
+    }
+
+    @Override
+    protected void fromBytesOverride(final PacketBuffer buf)
+    {
+
     }
 
     public LumberjackScepterMessage(final IBuildingView building)

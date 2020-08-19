@@ -14,15 +14,13 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
     /**
      * The buildingID this message originates from
      */
-    private final BlockPos buildingId;
+    private BlockPos buildingId;
 
     /**
      * Empty standard constructor.
      */
-    public AbstractBuildingServerMessage(final PacketBuffer buf)
+    public AbstractBuildingServerMessage()
     {
-        super(buf);
-        this.buildingId = buf.readBlockPos();
     }
 
     /**
@@ -53,13 +51,19 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
         return true;
     }
 
+    protected abstract void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final T building);
+
     @Override
     protected final void toBytesAbstractOverride(final PacketBuffer buf)
     {
         buf.writeBlockPos(buildingId);
     }
 
-    protected abstract void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final T building);
+    @Override
+    protected final void fromBytesAbstractOverride(final PacketBuffer buf)
+    {
+        this.buildingId = buf.readBlockPos();
+    }
 
     @Override
     @SuppressWarnings("unchecked")

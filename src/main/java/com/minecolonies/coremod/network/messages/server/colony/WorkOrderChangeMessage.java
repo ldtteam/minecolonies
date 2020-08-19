@@ -15,27 +15,24 @@ public class WorkOrderChangeMessage extends AbstractColonyServerMessage
     /**
      * The workOrder to remove or change priority.
      */
-    private final int workOrderId;
+    private int workOrderId;
 
     /**
      * The priority.
      */
-    private final int priority;
+    private int priority;
 
     /**
      * Remove the workOrder or not.
      */
-    private final boolean removeWorkOrder;
+    private boolean removeWorkOrder;
 
     /**
      * Empty public constructor.
      */
-    public WorkOrderChangeMessage(final PacketBuffer buf)
+    public WorkOrderChangeMessage()
     {
-        super(buf);
-        this.workOrderId = buf.readInt();
-        this.priority = buf.readInt();
-        this.removeWorkOrder = buf.readBoolean();
+        super();
     }
 
     /**
@@ -54,6 +51,24 @@ public class WorkOrderChangeMessage extends AbstractColonyServerMessage
         this.priority = priority;
     }
 
+    /**
+     * Transformation from a byteStream to the variables.
+     *
+     * @param buf the used byteBuffer.
+     */
+    @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+        workOrderId = buf.readInt();
+        priority = buf.readInt();
+        removeWorkOrder = buf.readBoolean();
+    }
+
+    /**
+     * Transformation to a byteStream.
+     *
+     * @param buf the used byteBuffer.
+     */
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
@@ -75,3 +90,5 @@ public class WorkOrderChangeMessage extends AbstractColonyServerMessage
         }
     }
 }
+
+

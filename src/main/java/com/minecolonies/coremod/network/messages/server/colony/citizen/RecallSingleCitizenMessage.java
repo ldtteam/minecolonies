@@ -24,15 +24,14 @@ public class RecallSingleCitizenMessage extends AbstractBuildingServerMessage<IB
     /**
      * The citizen id.
      */
-    private final int citizenId;
+    private int citizenId;
 
     /**
      * Empty public constructor.
      */
-    public RecallSingleCitizenMessage(final PacketBuffer buf)
+    public RecallSingleCitizenMessage()
     {
-        super(buf);
-        this.citizenId = buf.readInt();
+        super();
     }
 
     /**
@@ -48,8 +47,16 @@ public class RecallSingleCitizenMessage extends AbstractBuildingServerMessage<IB
     }
 
     @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+
+        citizenId = buf.readInt();
+    }
+
+    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
+
         buf.writeInt(citizenId);
     }
 

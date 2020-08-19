@@ -24,21 +24,19 @@ public class GuardScepterMessage extends AbstractColonyServerMessage
     /**
      * The id of the task.
      */
-    private final int taskId;
+    private int taskId;
 
     /**
      * The position of the building.
      */
-    private final BlockPos buildingId;
+    private BlockPos buildingId;
 
     /**
      * Empty standard constructor.
      */
-    public GuardScepterMessage(final PacketBuffer buf)
+    public GuardScepterMessage()
     {
-        super(buf);
-        this.taskId = buf.readInt();
-        this.buildingId = buf.readBlockPos();
+        super();
     }
 
     /**
@@ -55,8 +53,17 @@ public class GuardScepterMessage extends AbstractColonyServerMessage
     }
 
     @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+
+        this.taskId = buf.readInt();
+        this.buildingId = buf.readBlockPos();
+    }
+
+    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
+
         buf.writeInt(taskId);
         buf.writeBlockPos(buildingId);
     }

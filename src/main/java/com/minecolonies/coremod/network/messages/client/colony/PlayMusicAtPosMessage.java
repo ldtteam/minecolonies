@@ -23,38 +23,34 @@ public class PlayMusicAtPosMessage implements IMessage
     /**
      * The sound event to play.
      */
-    private final SoundEvent soundEvent;
+    private SoundEvent soundEvent;
 
     /**
      * The position to play at
      */
-    private final BlockPos pos;
+    private BlockPos pos;
 
     /**
      * The dimension id to play in
      */
-    private final ResourceLocation dimensionID;
+    private ResourceLocation dimensionID;
 
     /**
      * The volume to use
      */
-    private final float volume;
+    private float volume;
 
     /**
      * pitch to use
      */
-    private final float pitch;
+    private float pitch;
 
     /**
      * Default constructor.
      */
-    public PlayMusicAtPosMessage(final PacketBuffer buf)
+    public PlayMusicAtPosMessage()
     {
-        this.soundEvent = Registry.SOUND_EVENT.getByValue(buf.readVarInt());
-        this.pos = buf.readBlockPos();
-        this.dimensionID = new ResourceLocation(buf.readString(32767));
-        this.volume = buf.readFloat();
-        this.pitch = buf.readFloat();
+        super();
     }
 
     /**
@@ -64,6 +60,7 @@ public class PlayMusicAtPosMessage implements IMessage
      */
     public PlayMusicAtPosMessage(final SoundEvent event, final BlockPos pos, final World world, final float volume, final float pitch)
     {
+        super();
         this.soundEvent = event;
         this.pos = pos;
         this.dimensionID = world.getDimensionKey().func_240901_a_();
@@ -79,6 +76,16 @@ public class PlayMusicAtPosMessage implements IMessage
         buf.writeString(dimensionID.toString());
         buf.writeFloat(volume);
         buf.writeFloat(pitch);
+    }
+
+    @Override
+    public void fromBytes(final PacketBuffer buf)
+    {
+        this.soundEvent = Registry.SOUND_EVENT.getByValue(buf.readVarInt());
+        this.pos = buf.readBlockPos();
+        this.dimensionID = new ResourceLocation(buf.readString(32767));
+        this.volume = buf.readFloat();
+        this.pitch = buf.readFloat();
     }
 
     @Nullable

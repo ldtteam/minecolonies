@@ -12,15 +12,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MinerSetLevelMessage extends AbstractBuildingServerMessage<BuildingMiner>
 {
-    private final int level;
+    private int level;
 
     /**
      * Empty constructor used when registering the
      */
-    public MinerSetLevelMessage(final PacketBuffer buf)
+    public MinerSetLevelMessage()
     {
-        super(buf);
-        this.level = buf.readInt();
+        super();
     }
 
     /**
@@ -36,8 +35,16 @@ public class MinerSetLevelMessage extends AbstractBuildingServerMessage<Building
     }
 
     @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+
+        level = buf.readInt();
+    }
+
+    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
+
         buf.writeInt(level);
     }
 

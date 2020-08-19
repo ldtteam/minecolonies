@@ -20,14 +20,21 @@ public class UpgradeWarehouseMessage extends AbstractBuildingServerMessage<Build
     /**
      * Empty constructor used when registering the
      */
-    public UpgradeWarehouseMessage(final PacketBuffer buf)
+    public UpgradeWarehouseMessage()
     {
-        super(buf);
+        super();
     }
 
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
+
+    }
+
+    @Override
+    protected void fromBytesOverride(final PacketBuffer buf)
+    {
+
     }
 
     public UpgradeWarehouseMessage(final IBuildingView building)
@@ -50,7 +57,8 @@ public class UpgradeWarehouseMessage extends AbstractBuildingServerMessage<Build
         final boolean isCreative = player.isCreative();
         if (!isCreative)
         {
-            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
+            final int slot = InventoryUtils.
+                                             findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
                                                itemStack -> itemStack.isItemEqual(new ItemStack(Blocks.EMERALD_BLOCK)));
             player.inventory.decrStackSize(slot, 1);
         }

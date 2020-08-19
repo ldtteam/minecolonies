@@ -13,13 +13,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ColonyViewRemoveMessage implements IMessage
 {
-    private final int id;
-    private final ResourceLocation dimension;
+    private int id;
+    private ResourceLocation dimension;
 
-    public ColonyViewRemoveMessage(final PacketBuffer buf)
+    public ColonyViewRemoveMessage()
     {
-        this.id = buf.readInt();
-        this.dimension = new ResourceLocation(buf.readString(32767));
+        super();
     }
 
     public ColonyViewRemoveMessage(final int id, final ResourceLocation dimension)
@@ -33,6 +32,13 @@ public class ColonyViewRemoveMessage implements IMessage
     {
         buf.writeInt(id);
         buf.writeString(dimension.toString());
+    }
+
+    @Override
+    public void fromBytes(final PacketBuffer buf)
+    {
+        id = buf.readInt();
+        dimension = new ResourceLocation(buf.readString(32767));
     }
 
     @Nullable

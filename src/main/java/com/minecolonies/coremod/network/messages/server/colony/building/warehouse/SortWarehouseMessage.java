@@ -23,9 +23,9 @@ public class SortWarehouseMessage extends AbstractBuildingServerMessage<Building
     /**
      * Empty constructor used when registering the
      */
-    public SortWarehouseMessage(final PacketBuffer buf)
+    public SortWarehouseMessage()
     {
-        super(buf);
+        super();
     }
 
     public SortWarehouseMessage(final IBuildingView building)
@@ -36,8 +36,14 @@ public class SortWarehouseMessage extends AbstractBuildingServerMessage<Building
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
+
     }
 
+    @Override
+    protected void fromBytesOverride(final PacketBuffer buf)
+    {
+
+    }
 
     @Override
     protected void onExecute(

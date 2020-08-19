@@ -25,9 +25,9 @@ public class RecallTownhallMessage extends AbstractColonyServerMessage
     /**
      * Empty public constructor.
      */
-    public RecallTownhallMessage(final PacketBuffer buf)
+    public RecallTownhallMessage()
     {
-        super(buf);
+        super();
     }
 
     public RecallTownhallMessage(final IColony colony)
@@ -70,5 +70,12 @@ public class RecallTownhallMessage extends AbstractColonyServerMessage
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
+
+    }
+
+    @Override
+    protected void fromBytesOverride(final PacketBuffer buf)
+    {
+
     }
 }

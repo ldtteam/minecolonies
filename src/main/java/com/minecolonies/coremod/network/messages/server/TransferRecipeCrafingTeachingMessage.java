@@ -21,25 +21,19 @@ public class TransferRecipeCrafingTeachingMessage implements IMessage
     /**
      * if the recipe is complete.
      */
-    private final boolean complete;
+    private boolean complete;
 
     /**
      * Recipes to transfer.
      */
-    private final Map<Integer, ItemStack> itemStacks;
+    private Map<Integer, ItemStack> itemStacks = new HashMap<>();
 
     /**
      * Empty constructor used when registering the
      */
-    public TransferRecipeCrafingTeachingMessage(final PacketBuffer buf)
+    public TransferRecipeCrafingTeachingMessage()
     {
-        final int count = buf.readInt();
-        this.itemStacks = new HashMap<>(count);
-        for (int i = 0; i < count; i++)
-        {
-            itemStacks.put(buf.readInt(), buf.readItemStack());
-        }
-        this.complete = buf.readBoolean();
+        super();
     }
 
     /**
@@ -50,8 +44,21 @@ public class TransferRecipeCrafingTeachingMessage implements IMessage
      */
     public TransferRecipeCrafingTeachingMessage(final Map<Integer, ItemStack> itemStacks, final boolean complete)
     {
+        super();
         this.itemStacks = itemStacks;
         this.complete = complete;
+    }
+
+    @Override
+    public void fromBytes(final PacketBuffer buf)
+    {
+        itemStacks.clear();
+        final int count = buf.readInt();
+        for (int i = 0; i < count; i++)
+        {
+            itemStacks.put(buf.readInt(), buf.readItemStack());
+        }
+        complete = buf.readBoolean();
     }
 
     @Override

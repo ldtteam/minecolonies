@@ -16,15 +16,14 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
     /**
      * The style to set.
      */
-    private final String style;
+    private String style;
 
     /**
      * Empty constructor used when registering the
      */
-    public BuildingSetStyleMessage(final PacketBuffer buf)
+    public BuildingSetStyleMessage()
     {
-        super(buf);
-        this.style = buf.readString(32767);
+        super();
     }
 
     /**
@@ -40,8 +39,16 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
     }
 
     @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+
+        style = buf.readString(32767);
+    }
+
+    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
+
         buf.writeString(style);
     }
 

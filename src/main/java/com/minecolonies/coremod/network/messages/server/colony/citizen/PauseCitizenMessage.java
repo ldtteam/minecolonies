@@ -21,10 +21,9 @@ public class PauseCitizenMessage extends AbstractColonyServerMessage
     /**
      * Empty public constructor.
      */
-    public PauseCitizenMessage(final PacketBuffer buf)
+    public PauseCitizenMessage()
     {
-        super(buf);
-        this.citizenID = buf.readInt();
+        super();
     }
 
     /**
@@ -39,9 +38,27 @@ public class PauseCitizenMessage extends AbstractColonyServerMessage
         this.citizenID = citizenID;
     }
 
+    /**
+     * Transformation from a byteStream to the variables.
+     *
+     * @param buf the used byteBuffer.
+     */
+    @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+
+        citizenID = buf.readInt();
+    }
+
+    /**
+     * Transformation to a byteStream.
+     *
+     * @param buf the used byteBuffer.
+     */
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
+
         buf.writeInt(citizenID);
     }
 

@@ -29,24 +29,21 @@ public class LocalizedParticleEffectMessage implements IMessage
     /**
      * The itemStack for the particles.
      */
-    private final ItemStack stack;
+    private ItemStack stack;
 
     /**
      * The entity position.
      */
-    private final double posX;
-    private final double posY;
-    private final double posZ;
+    private double posX;
+    private double posY;
+    private double posZ;
 
     /**
      * Empty constructor used when registering the
      */
-    public LocalizedParticleEffectMessage(final PacketBuffer buf)
+    public LocalizedParticleEffectMessage()
     {
-        this.stack = buf.readItemStack();
-        this.posX = buf.readDouble();
-        this.posY = buf.readDouble();
-        this.posZ = buf.readDouble();
+        super();
     }
 
     /**
@@ -57,10 +54,20 @@ public class LocalizedParticleEffectMessage implements IMessage
      */
     public LocalizedParticleEffectMessage(final ItemStack stack, final BlockPos pos)
     {
+        super();
         this.stack = stack;
         this.posX = pos.getX() + 0.5;
         this.posY = pos.getY() + 0.5;
         this.posZ = pos.getZ() + 0.5;
+    }
+
+    @Override
+    public void fromBytes(@NotNull final PacketBuffer buf)
+    {
+        stack = buf.readItemStack();
+        posX = buf.readDouble();
+        posY = buf.readDouble();
+        posZ = buf.readDouble();
     }
 
     @Override

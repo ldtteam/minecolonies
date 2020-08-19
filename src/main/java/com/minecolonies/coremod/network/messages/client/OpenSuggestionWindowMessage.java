@@ -20,26 +20,24 @@ public class OpenSuggestionWindowMessage implements IMessage
     /**
      * The state to be placed..
      */
-    private final BlockState state;
+    private BlockState state;
 
     /**
      * The position to place it at.
      */
-    private final BlockPos pos;
+    private BlockPos pos;
 
     /**
      * The stack which is going to be placed.
      */
-    private final ItemStack stack;
+    private ItemStack stack;
 
     /**
      * Empty constructor used when registering the
      */
-    public OpenSuggestionWindowMessage(final PacketBuffer buf)
+    public OpenSuggestionWindowMessage()
     {
-        this.state = Block.getStateById(buf.readInt());
-        this.pos = buf.readBlockPos();
-        this.stack = buf.readItemStack();
+        super();
     }
 
     /**
@@ -51,9 +49,18 @@ public class OpenSuggestionWindowMessage implements IMessage
      */
     public OpenSuggestionWindowMessage(final BlockState state, final BlockPos pos, final ItemStack stack)
     {
+        super();
         this.state = state;
         this.pos = pos;
         this.stack = stack;
+    }
+
+    @Override
+    public void fromBytes(@NotNull final PacketBuffer buf)
+    {
+        state = Block.getStateById(buf.readInt());
+        pos = buf.readBlockPos();
+        stack = buf.readItemStack();
     }
 
     @Override

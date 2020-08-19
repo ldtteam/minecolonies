@@ -18,15 +18,14 @@ public class PlantationSetPhaseMessage extends AbstractBuildingServerMessage<Bui
     /**
      * The phase.
      */
-    private final ItemStack phase;
+    private ItemStack phase;
 
     /**
      * Empty constructor used when registering the
      */
-    public PlantationSetPhaseMessage(final PacketBuffer buf)
+    public PlantationSetPhaseMessage()
     {
-        super(buf);
-        this.phase = buf.readItemStack();
+        super();
     }
 
     /**
@@ -39,6 +38,12 @@ public class PlantationSetPhaseMessage extends AbstractBuildingServerMessage<Bui
     {
         super(building);
         this.phase = new ItemStack(phase);
+    }
+
+    @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+        phase = buf.readItemStack();
     }
 
     @Override

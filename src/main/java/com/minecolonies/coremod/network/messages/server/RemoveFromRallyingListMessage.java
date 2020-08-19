@@ -26,20 +26,19 @@ public class RemoveFromRallyingListMessage implements IMessage
     /**
      * The banner to be modified.
      */
-    private final ItemStack banner;
+    private ItemStack banner;
 
     /**
      * The position of the guard tower that should be removed.
      */
-    private final ILocation location;
+    private ILocation location;
 
     /**
      * Empty constructor used when registering the message
      */
-    public RemoveFromRallyingListMessage(final PacketBuffer buf)
+    public RemoveFromRallyingListMessage()
     {
-        this.banner = buf.readItemStack();
-        this.location = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
+        super();
     }
 
     /**
@@ -50,8 +49,16 @@ public class RemoveFromRallyingListMessage implements IMessage
      */
     public RemoveFromRallyingListMessage(final ItemStack banner, final ILocation location)
     {
+        super();
         this.banner = banner;
         this.location = location;
+    }
+
+    @Override
+    public void fromBytes(@NotNull final PacketBuffer buf)
+    {
+        banner = buf.readItemStack();
+        location = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
     }
 
     @Override

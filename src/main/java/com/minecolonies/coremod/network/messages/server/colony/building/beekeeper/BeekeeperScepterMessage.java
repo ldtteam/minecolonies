@@ -23,20 +23,26 @@ public class BeekeeperScepterMessage extends AbstractBuildingServerMessage<Build
     /**
      * Empty standard constructor.
      */
-    public BeekeeperScepterMessage(final PacketBuffer buf)
+    public BeekeeperScepterMessage()
     {
-        super(buf);
-    }
-
-    public BeekeeperScepterMessage(final IBuildingView building)
-    {
-        super(building);
+        super();
     }
 
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
 
+    }
+
+    @Override
+    protected void fromBytesOverride(final PacketBuffer buf)
+    {
+
+    }
+
+    public BeekeeperScepterMessage(final IBuildingView building)
+    {
+        super(building);
     }
 
     @Override

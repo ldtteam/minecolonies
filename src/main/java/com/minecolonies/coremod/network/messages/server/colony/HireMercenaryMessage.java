@@ -15,9 +15,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class HireMercenaryMessage extends AbstractColonyServerMessage
 {
-    public HireMercenaryMessage(final PacketBuffer buf)
+    public HireMercenaryMessage()
     {
-        super(buf);
     }
 
     public HireMercenaryMessage(final IColony colony)
@@ -49,5 +48,12 @@ public class HireMercenaryMessage extends AbstractColonyServerMessage
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
+
+    }
+
+    @Override
+    protected void fromBytesOverride(final PacketBuffer buf)
+    {
+
     }
 }

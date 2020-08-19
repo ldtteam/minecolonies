@@ -30,27 +30,24 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
     /**
      * The id of the building.
      */
-    private final int citizenId;
+    private int citizenId;
 
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private final ItemStack itemStack;
+    private ItemStack itemStack;
 
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private final int quantity;
+    private int quantity;
 
     /**
      * Empty constructor used when registering the
      */
-    public TransferItemsToCitizenRequestMessage(final PacketBuffer buf)
+    public TransferItemsToCitizenRequestMessage()
     {
-        super(buf);
-        this.citizenId = buf.readInt();
-        this.itemStack = buf.readItemStack();
-        this.quantity = buf.readInt();
+        super();
     }
 
     /**
@@ -67,6 +64,14 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
         this.citizenId = citizenDataView.getId();
         this.itemStack = itemStack;
         this.quantity = quantity;
+    }
+
+    @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+        citizenId = buf.readInt();
+        itemStack = buf.readItemStack();
+        quantity = buf.readInt();
     }
 
     @Override
@@ -125,8 +130,8 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
 
         while (tempAmount > 0)
         {
-            final int count = Math.min(itemStack.getMaxStackSize(), tempAmount);
-            final ItemStack stack = itemStack.copy();
+            int count = Math.min(itemStack.getMaxStackSize(), tempAmount);
+            ItemStack stack = itemStack.copy();
             stack.setCount(count);
             itemsToPut.add(stack);
             tempAmount -= count;

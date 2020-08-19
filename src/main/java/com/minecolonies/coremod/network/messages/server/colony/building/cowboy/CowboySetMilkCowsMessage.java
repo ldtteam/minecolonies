@@ -9,15 +9,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class CowboySetMilkCowsMessage extends AbstractBuildingServerMessage<BuildingCowboy>
 {
-    private final boolean milkCows;
+    private boolean milkCows;
 
     /**
      * Empty standard constructor.
      */
-    public CowboySetMilkCowsMessage(final PacketBuffer buf)
+    public CowboySetMilkCowsMessage()
     {
-        super(buf);
-        this.milkCows = buf.readBoolean();
+        super();
     }
 
     /**
@@ -33,8 +32,16 @@ public class CowboySetMilkCowsMessage extends AbstractBuildingServerMessage<Buil
     }
 
     @Override
+    public void fromBytesOverride(final PacketBuffer buf)
+    {
+
+        milkCows = buf.readBoolean();
+    }
+
+    @Override
     public void toBytesOverride(final PacketBuffer buf)
     {
+
         buf.writeBoolean(milkCows);
     }
 

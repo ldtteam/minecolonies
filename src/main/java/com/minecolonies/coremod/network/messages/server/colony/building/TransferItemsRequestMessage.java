@@ -28,27 +28,24 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private final ItemStack itemStack;
+    private ItemStack itemStack;
 
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private final int quantity;
+    private int quantity;
 
     /**
      * Attempt a resolve or not.
      */
-    private final boolean attemptResolve;
+    private boolean attemptResolve;
 
     /**
      * Empty constructor used when registering the
      */
-    public TransferItemsRequestMessage(final PacketBuffer buf)
+    public TransferItemsRequestMessage()
     {
-        super(buf);
-        this.itemStack = buf.readItemStack();
-        this.quantity = buf.readInt();
-        this.attemptResolve = buf.readBoolean();
+        super();
     }
 
     /**
@@ -68,6 +65,14 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
     }
 
     @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+        itemStack = buf.readItemStack();
+        quantity = buf.readInt();
+        attemptResolve = buf.readBoolean();
+    }
+
+    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
         buf.writeItemStack(itemStack);
@@ -76,10 +81,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn,
-        final boolean isLogicalServer,
-        final IColony colony,
-        final IBuilding building)
+    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
         if (quantity <= 0)
         {
@@ -117,7 +119,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         for (int i = 0; i < Math.max(1, Math.ceil((double) amountToTake/itemStack.getMaxStackSize())); i++)
         {
             final ItemStack itemStackToTake = itemStack.copy();
-            final int insertAmount = Math.min(itemStack.getMaxStackSize(), tempAmount);
+            int insertAmount = Math.min(itemStack.getMaxStackSize(), tempAmount);
             itemStackToTake.setCount(insertAmount);
             tempAmount -= insertAmount;
 

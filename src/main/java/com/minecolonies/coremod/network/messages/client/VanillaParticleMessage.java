@@ -26,22 +26,16 @@ public class VanillaParticleMessage implements IMessage
     /**
      * Citizen Position
      */
-    private final double x;
-    private final double y;
-    private final double z;
+    private double x;
+    private double y;
+    private double z;
 
     /**
      * Particle id
      */
-    private final BasicParticleType type;
+    private BasicParticleType type;
 
-    public VanillaParticleMessage(final PacketBuffer buf)
-    {
-        this.x = buf.readDouble();
-        this.y = buf.readDouble();
-        this.z = buf.readDouble();
-        this.type = (BasicParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(buf.readResourceLocation());
-    }
+    public VanillaParticleMessage() {super();}
 
     public VanillaParticleMessage(final double x, final double y, final double z, final BasicParticleType type)
     {
@@ -49,6 +43,15 @@ public class VanillaParticleMessage implements IMessage
         this.y = y;
         this.z = z;
         this.type = type;
+    }
+
+    @Override
+    public void fromBytes(final PacketBuffer byteBuf)
+    {
+        x = byteBuf.readDouble();
+        y = byteBuf.readDouble();
+        z = byteBuf.readDouble();
+        this.type = (BasicParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(byteBuf.readResourceLocation());
     }
 
     @Override
@@ -85,14 +88,14 @@ public class VanillaParticleMessage implements IMessage
      * @param y            y pos
      * @param z            z pos
      */
-    private void spawnParticles(final BasicParticleType particleType, final World world, final double x, final double y, final double z)
+    private void spawnParticles(BasicParticleType particleType, World world, double x, double y, double z)
     {
         final Random rand = new Random();
         for (int i = 0; i < 5; ++i)
         {
-            final double d0 = rand.nextGaussian() * 0.02D;
-            final double d1 = rand.nextGaussian() * 0.02D;
-            final double d2 = rand.nextGaussian() * 0.02D;
+            double d0 = rand.nextGaussian() * 0.02D;
+            double d1 = rand.nextGaussian() * 0.02D;
+            double d2 = rand.nextGaussian() * 0.02D;
             world.addParticle(particleType,
               x + (rand.nextFloat() * CITIZEN_WIDTH * 2.0F) - CITIZEN_WIDTH,
               y + 1.0D + (rand.nextFloat() * CITIZEN_HEIGHT),

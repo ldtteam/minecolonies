@@ -22,27 +22,22 @@ public class DecorationControllerUpdateMessage implements IMessage
     /**
      * The position of the block.
      */
-    private final BlockPos pos;
+    private BlockPos pos;
 
     /**
      * The name to set.
      */
-    private final String name;
+    private String name;
 
     /**
      * The level to set.
      */
-    private final int level;
+    private int level;
 
     /**
      * Default constructor for forge
      */
-    public DecorationControllerUpdateMessage(final PacketBuffer buf)
-    {
-        this.name = buf.readString(32767);
-        this.pos = buf.readBlockPos();
-        this.level = buf.readInt();
-    }
+    public DecorationControllerUpdateMessage() {super();}
 
     /**
      * Constructor for the decoration controller update
@@ -53,9 +48,18 @@ public class DecorationControllerUpdateMessage implements IMessage
      */
     public DecorationControllerUpdateMessage(@NotNull final BlockPos pos, final String name, final int level)
     {
+        super();
         this.pos = pos;
         this.name = name;
         this.level = level;
+    }
+
+    @Override
+    public void fromBytes(@NotNull final PacketBuffer buf)
+    {
+        this.name = buf.readString(32767);
+        this.pos = buf.readBlockPos();
+        this.level = buf.readInt();
     }
 
     @Override

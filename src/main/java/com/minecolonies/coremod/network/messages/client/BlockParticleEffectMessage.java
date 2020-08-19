@@ -21,18 +21,16 @@ public class BlockParticleEffectMessage implements IMessage
 {
     public static final int BREAK_BLOCK = -1;
 
-    private final BlockPos   pos;
-    private final BlockState block;
-    private final int        side;
+    private BlockPos   pos;
+    private BlockState block;
+    private int        side;
 
     /**
      * Empty constructor used when registering the
      */
-    public BlockParticleEffectMessage(final PacketBuffer buf)
+    public BlockParticleEffectMessage()
     {
-        this.pos = buf.readBlockPos();
-        this.block = Block.getStateById(buf.readInt());
-        this.side = buf.readInt();
+        super();
     }
 
     /**
@@ -47,6 +45,14 @@ public class BlockParticleEffectMessage implements IMessage
         this.pos = pos;
         this.block = state;
         this.side = side;
+    }
+
+    @Override
+    public void fromBytes(@NotNull final PacketBuffer buf)
+    {
+        pos = buf.readBlockPos();
+        block = Block.getStateById(buf.readInt());
+        side = buf.readInt();
     }
 
     @Override

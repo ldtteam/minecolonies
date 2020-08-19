@@ -26,47 +26,29 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     /***
      * The inventory name.
      */
-    private final String name;
+    private String name;
 
     /**
      * The inventory type.
      */
-    private final InventoryType inventoryType;
+    private InventoryType inventoryType;
 
     /**
      * The entities id.
      */
-    private final int entityID;
+    private int entityID;
 
     /**
      * The position of the inventory block/entity.
      */
-    private final BlockPos tePos;
+    private BlockPos tePos;
 
     /**
      * Empty public constructor.
      */
-    public OpenInventoryMessage(final PacketBuffer buf)
+    public OpenInventoryMessage()
     {
-        super(buf);
-        this.inventoryType = InventoryType.values()[buf.readInt()];
-        this.name = buf.readString(32767);
-        switch (inventoryType)
-        {
-            case INVENTORY_CITIZEN:
-                this.entityID = buf.readInt();
-                this.tePos = null;
-                break;
-
-            case INVENTORY_CHEST:
-            case INVENTORY_FIELD:
-                this.tePos = buf.readBlockPos();
-                this.entityID = -1;
-                break;
-
-            default:
-                throw new RuntimeException("Failed reading OpenInventoryMessage!");
-        }
+        super();
     }
 
     /**
@@ -76,13 +58,12 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
      * @param id     its id.
      * @param colony the colony of the network message
      */
-    public OpenInventoryMessage(final IColonyView colony, @NotNull final String name, final int id)
+    public OpenInventoryMessage(IColonyView colony, @NotNull final String name, final int id)
     {
         super(colony);
-        this.inventoryType = InventoryType.INVENTORY_CITIZEN;
+        inventoryType = InventoryType.INVENTORY_CITIZEN;
         this.name = name;
         this.entityID = id;
-        this.tePos = null;
     }
 
     /**
@@ -93,15 +74,33 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     public OpenInventoryMessage(final IBuildingView building)
     {
         super(building.getColony());
-        this.inventoryType = InventoryType.INVENTORY_CHEST;
-        this.name = "";
-        this.entityID = -1;
-        this.tePos = building.getID();
+        inventoryType = InventoryType.INVENTORY_CHEST;
+        name = "";
+        tePos = building.getID();
+    }
+
+    @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+
+        inventoryType = InventoryType.values()[buf.readInt()];
+        name = buf.readString(32767);
+        switch (inventoryType)
+        {
+            case INVENTORY_CITIZEN:
+                entityID = buf.readInt();
+                break;
+            case INVENTORY_CHEST:
+            case INVENTORY_FIELD:
+                tePos = buf.readBlockPos();
+                break;
+        }
     }
 
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
+
         buf.writeInt(inventoryType.ordinal());
         buf.writeString(name);
         switch (inventoryType)

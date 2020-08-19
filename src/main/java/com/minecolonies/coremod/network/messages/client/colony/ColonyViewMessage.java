@@ -21,33 +21,29 @@ public class ColonyViewMessage implements IMessage
     /**
      * The colony id.
      */
-    private final int colonyId;
+    private int colonyId;
 
     /**
      * If this is a new subscription.
      */
-    private final boolean isNewSubscription;
+    private boolean isNewSubscription;
 
     /**
      * The buffer with the data.
      */
-    private final PacketBuffer colonyBuffer;
+    private PacketBuffer colonyBuffer;
 
     /**
      * The dimension of the colony.
      */
-    private final ResourceLocation dim;
+    private ResourceLocation dim;
 
     /**
      * Empty constructor used when registering the
      */
-    public ColonyViewMessage(final PacketBuffer buf)
+    public ColonyViewMessage()
     {
-        final PacketBuffer newBuf = new PacketBuffer(buf.retain());
-        this.colonyId = newBuf.readInt();
-        this.isNewSubscription = newBuf.readBoolean();
-        this.dim = new ResourceLocation(newBuf.readString(32767));
-        this.colonyBuffer = newBuf;
+        super();
     }
 
     /**
@@ -63,6 +59,16 @@ public class ColonyViewMessage implements IMessage
         this.isNewSubscription = isNewSubscription;
         this.dim = colony.getDimension();
         this.colonyBuffer = new PacketBuffer(buf.copy());
+    }
+
+    @Override
+    public void fromBytes(@NotNull final PacketBuffer buf)
+    {
+        final PacketBuffer newBuf = new PacketBuffer(buf.retain());
+        colonyId = newBuf.readInt();
+        isNewSubscription = newBuf.readBoolean();
+        dim = new ResourceLocation(newBuf.readString(32767));
+        colonyBuffer = newBuf;
     }
 
     @Override

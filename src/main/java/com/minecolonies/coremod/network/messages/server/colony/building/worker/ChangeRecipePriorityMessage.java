@@ -16,21 +16,19 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
     /**
      * The workOrder to remove or change priority.
      */
-    private final int recipeLocation;
+    private int recipeLocation;
 
     /**
      * If up true, if down false.
      */
-    private final boolean up;
+    private boolean up;
 
     /**
      * Empty public constructor.
      */
-    public ChangeRecipePriorityMessage(final PacketBuffer buf)
+    public ChangeRecipePriorityMessage()
     {
-        super(buf);
-        this.recipeLocation = buf.readInt();
-        this.up = buf.readBoolean();
+        super();
     }
 
     /**
@@ -47,9 +45,28 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
         this.up = up;
     }
 
+    /**
+     * Transformation from a byteStream to the variables.
+     *
+     * @param buf the used byteBuffer.
+     */
+    @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+
+        this.recipeLocation = buf.readInt();
+        this.up = buf.readBoolean();
+    }
+
+    /**
+     * Transformation to a byteStream.
+     *
+     * @param buf the used byteBuffer.
+     */
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
+
         buf.writeInt(this.recipeLocation);
         buf.writeBoolean(this.up);
     }

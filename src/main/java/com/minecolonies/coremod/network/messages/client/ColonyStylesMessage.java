@@ -2,9 +2,12 @@ package com.minecolonies.coremod.network.messages.client;
 
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.coremod.MineColonies;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,39 +17,55 @@ import java.util.Map;
  */
 public class ColonyStylesMessage implements IMessage
 {
-    private final Map<String, String> md5Map;
+    private Map<String, String> md5Map;
 
     /**
      * Empty constructor used when registering the
      */
-    public ColonyStylesMessage(final PacketBuffer buf)
+    public ColonyStylesMessage()
     {
+        super();
+    }
+
+    @Override
+    public void fromBytes(@NotNull final PacketBuffer buf)
+    {
+        md5Map = readMD5MapFromByteBuf(buf);
+    }
+
+    @NotNull
+    private static Map<String, String> readMD5MapFromByteBuf(@NotNull final PacketBuffer buf)
+    {
+        @NotNull final Map<String, String> map = new HashMap<>();
+
         final int count = buf.readInt();
-        md5Map = new HashMap<>(count);
         for (int i = 0; i < count; i++)
         {
             final String filename = buf.readString(32767);
             final String md5 = buf.readString(32767);
-            md5Map.put(filename, md5);
+            map.put(filename, md5);
         }
-    }
-
-    public ColonyStylesMessage()
-    {
-        this.md5Map = Structures.getMD5s();
+        return map;
     }
 
     @Override
-    public void toBytes(final PacketBuffer buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeInt(md5Map.size());
-        for (final Map.Entry<String, String> entry : md5Map.entrySet())
+        writeMD5MapToByteBuf(buf);
+    }
+
+    private static void writeMD5MapToByteBuf(@NotNull final PacketBuffer buf)
+    {
+        final Map<String, String> md5s = Structures.getMD5s();
+        buf.writeInt(md5s.size());
+        for (final Map.Entry<String, String> entry : md5s.entrySet())
         {
             buf.writeString(entry.getKey());
             buf.writeString(entry.getValue());
         }
     }
 
+    @Nullable
     @Override
     public LogicalSide getExecutionSide()
     {

@@ -17,9 +17,9 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
     /**
      * Empty public constructor.
      */
-    public OpenCraftingGUIMessage(final PacketBuffer buf)
+    public OpenCraftingGUIMessage()
     {
-        super(buf);
+        super();
     }
 
     /**
@@ -30,6 +30,11 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
     public OpenCraftingGUIMessage(@NotNull final AbstractBuildingView building)
     {
         super(building);
+    }
+
+    @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
     }
 
     @Override

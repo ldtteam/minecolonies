@@ -15,16 +15,15 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ColonyViewRemoveCitizenMessage implements IMessage
 {
-    private final int colonyId;
-    private final int citizenId;
+    private int colonyId;
+    private int citizenId;
 
     /**
      * Empty constructor used when registering the
      */
-    public ColonyViewRemoveCitizenMessage(final PacketBuffer buf)
+    public ColonyViewRemoveCitizenMessage()
     {
-        this.colonyId = buf.readInt();
-        this.citizenId = buf.readInt();
+        super();
     }
 
     /**
@@ -37,6 +36,13 @@ public class ColonyViewRemoveCitizenMessage implements IMessage
     {
         this.colonyId = colony.getID();
         this.citizenId = citizen;
+    }
+
+    @Override
+    public void fromBytes(@NotNull final PacketBuffer buf)
+    {
+        colonyId = buf.readInt();
+        citizenId = buf.readInt();
     }
 
     @Override

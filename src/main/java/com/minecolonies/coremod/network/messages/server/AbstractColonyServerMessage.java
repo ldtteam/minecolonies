@@ -17,20 +17,18 @@ public abstract class AbstractColonyServerMessage implements IMessage
     /**
      * The dimensionId this message originates from
      */
-    private final ResourceLocation dimensionId;
+    private ResourceLocation dimensionId;
 
     /**
      * The colonyId this message originates from
      */
-    private final int colonyId;
+    private int colonyId;
 
     /**
      * Empty standard constructor.
      */
-    public AbstractColonyServerMessage(final PacketBuffer buf)
+    public AbstractColonyServerMessage()
     {
-        this.dimensionId = new ResourceLocation(buf.readString(32767));
-        this.colonyId = buf.readInt();
     }
 
     /**
@@ -66,6 +64,8 @@ public abstract class AbstractColonyServerMessage implements IMessage
         return false;
     }
 
+    protected abstract void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony);
+
     /**
      * Transformation to a byteStream.
      *
@@ -84,13 +84,29 @@ public abstract class AbstractColonyServerMessage implements IMessage
         toBytesOverride(buf);
     }
 
+    /**
+     * Transformation from a byteStream to the variables.
+     *
+     * @param buf the used byteBuffer.
+     */
+    protected abstract void fromBytesOverride(final PacketBuffer buf);
+
+    protected void fromBytesAbstractOverride(final PacketBuffer buf) {}
+
+    @Override
+    public final void fromBytes(final PacketBuffer buf)
+    {
+        this.dimensionId = new ResourceLocation(buf.readString(32767));
+        this.colonyId = buf.readInt();
+        fromBytesAbstractOverride(buf);
+        fromBytesOverride(buf);
+    }
+
     @Override
     public final LogicalSide getExecutionSide()
     {
         return LogicalSide.SERVER;
     }
-
-    protected abstract void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony);
 
     @Override
     public final void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)

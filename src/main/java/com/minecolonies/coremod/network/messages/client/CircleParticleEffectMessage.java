@@ -27,30 +27,26 @@ public class CircleParticleEffectMessage implements IMessage
     /**
      * The itemStack for the particles.
      */
-    private final BasicParticleType type;
+    private BasicParticleType type;
 
     /**
      * The start position.
      */
-    private final double posX;
-    private final double posY;
-    private final double posZ;
+    private double posX;
+    private double posY;
+    private double posZ;
 
     /**
      * The current stage of the circle.
      */
-    private final int stage;
+    private int stage;
 
     /**
      * Empty constructor used when registering the
      */
-    public CircleParticleEffectMessage(final PacketBuffer buf)
+    public CircleParticleEffectMessage()
     {
-        this.posX = buf.readDouble();
-        this.posY = buf.readDouble();
-        this.posZ = buf.readDouble();
-        this.stage = buf.readInt();
-        this.type = (BasicParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(buf.readResourceLocation());
+        super();
     }
 
     /**
@@ -62,11 +58,22 @@ public class CircleParticleEffectMessage implements IMessage
      */
     public CircleParticleEffectMessage(final Vector3d pos, final BasicParticleType type, final int stage)
     {
+        super();
         this.posX = pos.x;
         this.posY = pos.y - 0.5;
         this.posZ = pos.z;
         this.stage = stage;
         this.type = type;
+    }
+
+    @Override
+    public void fromBytes(@NotNull final PacketBuffer buf)
+    {
+        this.posX = buf.readDouble();
+        this.posY = buf.readDouble();
+        this.posZ = buf.readDouble();
+        this.stage = buf.readInt();
+        this.type = (BasicParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(buf.readResourceLocation());
     }
 
     @Override
@@ -91,8 +98,8 @@ public class CircleParticleEffectMessage implements IMessage
     {
         final ClientWorld world = Minecraft.getInstance().world;
 
-        final double x = 1.0 * Math.cos(stage * 45.0) + posX;
-        final double z = 1.0 * Math.sin(stage * 45.0) + posZ;
+        double x = 1.0 * Math.cos(stage * 45.0) + posX;
+        double z = 1.0 * Math.sin(stage * 45.0) + posZ;
 
         for (int i = 0; i < 5; ++i)
         {

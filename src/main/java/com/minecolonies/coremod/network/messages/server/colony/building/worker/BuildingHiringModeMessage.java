@@ -17,15 +17,14 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
     /**
      * The Hiring mode to set.
      */
-    private final HiringMode mode;
+    private HiringMode mode;
 
     /**
      * Empty constructor used when registering the
      */
-    public BuildingHiringModeMessage(final PacketBuffer buf)
+    public BuildingHiringModeMessage()
     {
-        super(buf);
-        this.mode = HiringMode.values()[buf.readInt()];
+        super();
     }
 
     /**
@@ -41,8 +40,16 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
     }
 
     @Override
+    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    {
+
+        mode = HiringMode.values()[buf.readInt()];
+    }
+
+    @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
+
         buf.writeInt(mode.ordinal());
     }
 

@@ -27,48 +27,38 @@ public class StreamParticleEffectMessage implements IMessage
     /**
      * The itemStack for the particles.
      */
-    private final BasicParticleType type;
+    private BasicParticleType type;
 
     /**
      * The start position.
      */
-    private final double sPosX;
-    private final double sPosY;
-    private final double sPosZ;
+    private double sPosX;
+    private double sPosY;
+    private double sPosZ;
 
     /**
      * The end position.
      */
-    private final double ePosX;
-    private final double ePosY;
-    private final double ePosZ;
+    private double ePosX;
+    private double ePosY;
+    private double ePosZ;
 
     /**
      * The stage of the transfer.
      */
-    private final int stage;
+    private int stage;
 
     /**
      * The max stage of the transfer.
      */
-    private final int maxStage;
+    private int maxStage;
 
     /**
      * Empty constructor used when registering the
      */
-    public StreamParticleEffectMessage(final PacketBuffer buf)
+    public StreamParticleEffectMessage()
     {
-        this.sPosX = buf.readDouble();
-        this.sPosY = buf.readDouble();
-        this.sPosZ = buf.readDouble();
-
-        this.ePosX = buf.readDouble();
-        this.ePosY = buf.readDouble();
-        this.ePosZ = buf.readDouble();
-
-        this.stage = buf.readInt();
-        this.maxStage = buf.readInt();
-        this.type = (BasicParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(buf.readResourceLocation());
+        super();
     }
 
     /**
@@ -82,6 +72,7 @@ public class StreamParticleEffectMessage implements IMessage
      */
     public StreamParticleEffectMessage(final Vector3d start, final Vector3d end, final BasicParticleType type, final int stage, final int maxStage)
     {
+        super();
         this.sPosX = start.x;
         this.sPosY = start.y - 0.5;
         this.sPosZ = start.z;
@@ -94,6 +85,22 @@ public class StreamParticleEffectMessage implements IMessage
         this.maxStage = maxStage;
 
         this.type = type;
+    }
+
+    @Override
+    public void fromBytes(@NotNull final PacketBuffer buf)
+    {
+        this.sPosX = buf.readDouble();
+        this.sPosY = buf.readDouble();
+        this.sPosZ = buf.readDouble();
+
+        this.ePosX = buf.readDouble();
+        this.ePosY = buf.readDouble();
+        this.ePosZ = buf.readDouble();
+
+        this.stage = buf.readInt();
+        this.maxStage = buf.readInt();
+        this.type = (BasicParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(buf.readResourceLocation());
     }
 
     @Override
@@ -126,15 +133,15 @@ public class StreamParticleEffectMessage implements IMessage
 
         final Vector3d end = new Vector3d(ePosX, ePosY, ePosZ);
 
-        final double xDif = (sPosX - ePosX) / maxStage;
-        final double yDif = (sPosY - ePosY) / maxStage;
-        final double zDif = (sPosZ - ePosZ) / maxStage;
+        double xDif = (sPosX - ePosX) / maxStage;
+        double yDif = (sPosY - ePosY) / maxStage;
+        double zDif = (sPosZ - ePosZ) / maxStage;
 
         final double curve = maxStage / 3.0;
 
         for (int step = Math.max(0, stage - 1); step <= Math.min(maxStage, stage + 1); step++)
         {
-            final double minDif = Math.min(step, Math.abs(step - maxStage)) / curve;
+            double minDif = Math.min(step, Math.abs(step - maxStage)) / curve;
 
             for (int i = 0; i < 10; ++i)
             {

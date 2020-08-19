@@ -25,14 +25,14 @@ public class UpdateChunkCapabilityMessage implements IMessage
     /**
      * The chunk cap data
      */
-    private final ChunkCapData chunkCapData;
+    private ChunkCapData chunkCapData;
 
     /**
      * Empty constructor used when registering the
      */
-    public UpdateChunkCapabilityMessage(final PacketBuffer buf)
+    public UpdateChunkCapabilityMessage()
     {
-        this.chunkCapData = ChunkCapData.fromBytes(buf);
+        super();
     }
 
     /**
@@ -44,7 +44,13 @@ public class UpdateChunkCapabilityMessage implements IMessage
      */
     public UpdateChunkCapabilityMessage(@NotNull final IColonyTagCapability tagCapability, final int x, final int z)
     {
-        this.chunkCapData = new ChunkCapData(x, z, tagCapability.getOwningColony(), tagCapability.getAllCloseColonies());
+        chunkCapData = new ChunkCapData(x, z, tagCapability.getOwningColony(), tagCapability.getAllCloseColonies());
+    }
+
+    @Override
+    public void fromBytes(@NotNull final PacketBuffer buf)
+    {
+        chunkCapData = ChunkCapData.fromBytes(buf);
     }
 
     @Override
