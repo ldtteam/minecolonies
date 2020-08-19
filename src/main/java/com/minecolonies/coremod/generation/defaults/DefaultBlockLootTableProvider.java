@@ -10,6 +10,7 @@ import com.ldtteam.datagenerators.loot_table.pool.entry.functions.copy_name.Copy
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
+import com.minecolonies.coremod.blocks.huts.BlockHutBarracksTower;
 import com.minecolonies.coremod.generation.DataGeneratorConstants;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -56,6 +57,8 @@ public class DefaultBlockLootTableProvider implements IDataProvider
     {
         for (Block block : blocks)
         {
+            if (block instanceOf BlockHutBarracksTower)
+                continue;
             saveBlock(block, cache);
         }
     }
