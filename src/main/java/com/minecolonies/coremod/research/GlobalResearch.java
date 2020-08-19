@@ -120,8 +120,7 @@ public class GlobalResearch implements IGlobalResearch
         costList.clear();
         try
         {
-            // TODO: Add nbt parsing {tag,value;tag,value}
-            // TODO: Ray, why? :sad_and_angry:
+            // TODO: Migrate to datapacks eventually.
             final ServerConfiguration configuration = MinecoloniesAPIProxy.getInstance().getConfig().getServer();
             final ForgeConfigSpec.ConfigValue<List<? extends String>> researchCost =
               (ForgeConfigSpec.ConfigValue<List<? extends String>>) configuration.getClass().getDeclaredField(id).get(configuration);
