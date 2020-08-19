@@ -17,6 +17,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.TagUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutDyer;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
@@ -215,14 +216,13 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
 
         if(recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
         {
-            final ResourceLocation wool = new ResourceLocation("minecraft", "wool");
             final HashMap<ItemStorage, Integer> inventoryCounts = new HashMap<>();
 
             final Set<IBuilding> wareHouses = colony.getBuildingManager().getBuildings().values().stream()
                                                     .filter(building -> building instanceof BuildingWareHouse)
                                                     .collect(Collectors.toSet());
-            
-            final List<ItemStorage> woolItems = ItemTags.getCollection().func_241834_b(wool).getAllElements().stream()
+
+            final List<ItemStorage> woolItems = ItemTags.WOOL.getAllElements().stream()
                                                         .filter(item -> !item.equals(Items.WHITE_WOOL))
                                                         .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
 
