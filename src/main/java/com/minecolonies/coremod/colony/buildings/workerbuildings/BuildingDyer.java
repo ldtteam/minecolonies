@@ -267,7 +267,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
                 }
             }
         }
-        return null;        
+        return recipe;        
     }
 
     /**
