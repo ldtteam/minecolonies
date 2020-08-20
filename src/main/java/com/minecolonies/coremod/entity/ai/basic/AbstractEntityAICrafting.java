@@ -375,6 +375,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
 
     /**
      * Get the required progress to execute a recipe.
+     * 
+     * AbstractBuildingCrafter based buildings will use getCraftSpeedSkill
+     * Other buildings (smeltercrafters etc) will use old getJobModifier
      *
      * @return the amount of hits required.
      */
