@@ -20,7 +20,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import org.jetbrains.annotations.NotNull;
+ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -380,8 +380,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     private int getRequiredProgressForMakingRawMaterial()
     {
-        final int jobModifier = worker.getCitizenData().getCitizenSkillHandler().getLevel(((AbstractBuildingCrafter) getOwnBuilding()).getCraftSpeedSkill()) / 2;
-        return PROGRESS_MULTIPLIER / Math.min(jobModifier + 1, MAX_LEVEL) * HITTING_TIME;
+        //This won't work for smeltercrafters
+        if(getOwnBuilding() instanceof AbstractBuildingCrafter)
+        {
+            final int jobModifier = worker.getCitizenData().getCitizenSkillHandler().getLevel(((AbstractBuildingCrafter) getOwnBuilding()).getCraftSpeedSkill()) / 2;
+            return PROGRESS_MULTIPLIER / Math.min(jobModifier + 1, MAX_LEVEL) * HITTING_TIME;
+        }
+        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL) * HITTING_TIME;
     }
 
     @Override
