@@ -17,12 +17,20 @@ import java.util.List;
  */
 public class StandardInteraction extends ServerCitizenInteraction
 {
+    /**
+     * Standard responses
+     */
+    public static final String INTERACTION_R_OKAY   = "com.minecolonies.coremod.gui.chat.okay";
+    public static final String INTERACTION_R_IGNORE = "com.minecolonies.coremod.gui.chat.ignore";
+    public static final String INTERACTION_R_REMIND = "com.minecolonies.coremod.gui.chat.remindmelater";
+    public static final String INTERACTION_R_SKIP   = "com.minecolonies.coremod.gui.chat.skipchitchat";
+
     @SuppressWarnings("unchecked")
     private static final Tuple<ITextComponent, ITextComponent>[] tuples = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.skipchitchat"), null)};
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_OKAY), null),
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_IGNORE), null),
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_REMIND), null),
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_SKIP), null)};
 
     /**
      * The server interaction response handler with custom validator.

@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
@@ -183,5 +184,20 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
     {
         return super.canRecipeBeAddedBasedOnTags(token);
+    }
+
+    /**
+     * Crafting Speed skill
+     * @return the crafting speed skill
+     */
+    public Skill getCraftSpeedSkill()
+    {
+        return getSecondarySkill();
+    }
+
+    @Override
+    public Skill getRecipeImprovementSkill()
+    {
+        return getPrimarySkill();
     }
 }

@@ -1137,7 +1137,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public boolean hasWorkerOpenRequests(@NotNull final ICitizenData citizen)
     {
-        return getOpenRequestsByCitizen().containsKey(citizen.getId());
+        return getOpenRequestsByCitizen().containsKey(citizen.getId()) && !getOpenRequestsByCitizen().get(citizen.getId()).isEmpty();
     }
 
     @Override
@@ -1233,7 +1233,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public boolean hasCitizenCompletedRequests(@NotNull final ICitizenData data)
     {
-        return getCompletedRequestsByCitizen().containsKey(data.getId());
+        return getCompletedRequestsByCitizen().containsKey(data.getId()) && !getCompletedRequestsByCitizen().get(data.getId()).isEmpty();
     }
 
     @Override
@@ -1450,8 +1450,18 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return false;
         }
 
-        target.overrideCurrentDeliveries(ImmutableList.of(stack));
-        getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
+        try
+        {
+            target.overrideCurrentDeliveries(ImmutableList.of(stack));
+            getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
+        }
+        catch (final Exception ex)
+        {
+            Log.getLogger().error("Error during overruling", ex);
+            Log.getLogger().error(target.getId().toString() + " " + target.getState().name() + " " + target.getShortDisplayString().toString());
+            return false;
+        }
+
         return true;
     }
 

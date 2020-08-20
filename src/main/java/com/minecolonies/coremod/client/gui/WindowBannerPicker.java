@@ -15,6 +15,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.DyeColor;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.tileentity.BannerTileEntity;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,6 +23,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -46,11 +49,40 @@ public class WindowBannerPicker extends Screen
     /** The margin after each pattern button */
     private static final int PATTERN_MARGIN = 3;
 
-    /** The number of columns the patterns are arrange in */
+    /** The number of columns the patterns are arranged in */
     private static final int PATTERN_COLUMNS = 8;
 
-    /** The list of banner patterns, cached */
-    private static final BannerPattern[] PATTERNS = BannerPattern.values();
+    /** The number of rows the patterns are arranged in */
+    private static final int PATTERN_ROWS = 4;
+
+
+    /**
+     * TODO: Port this object to 1.16
+     * The list of patterns that usually require charges, or are to be made more valuable
+     * by excluding them from lower TH levels. Sorted by the TH level they are first introduced at
+     */
+    private static final BannerPattern[][] EXCLUSION = {
+            {    // 1
+                BannerPattern.GRADIENT,
+                BannerPattern.GRADIENT_UP
+            }, { // 2
+                BannerPattern.BRICKS,
+                BannerPattern.FLOWER
+            }, { // 3
+                BannerPattern.SKULL,
+                BannerPattern.CREEPER
+            }, { // 4
+                BannerPattern.GLOBE
+                // TODO: 1.16 port - add BannerPattern.PIGLIN here
+            }, { // 5
+                BannerPattern.MOJANG
+            }, { // Excluded completely
+                BannerPattern.BASE
+            }
+    };
+
+    /** The list of banner patterns, to be excluded and cached */
+    private final List<BannerPattern> patterns;
 
     /** The final list of patterns and colors of the flag */
     private final List<Pair<BannerPattern, DyeColor>> layers;
@@ -70,6 +102,12 @@ public class WindowBannerPicker extends Screen
     /** The currently selected layer. Zero is the base. */
     private int activeLayer = 0;
 
+    /** Whether or not the player is dragging the scrollbar */
+    private boolean scrolling = false;
+
+    /** The number of rows scrolled past */
+    private int scrollRow = 0;
+
     /**
      * @param colony the colony to make the flag for
      * @param hallWindow the calling town hall window to return to
@@ -81,6 +119,15 @@ public class WindowBannerPicker extends Screen
         this.colony = colony;
         this.window = hallWindow;
         this.modelRender = BannerTileEntityRenderer.getModelRender();
+
+        // TODO: Port the next few lines to 1.16
+        /* Get all patterns, then remove excluded and item-required patterns */
+        List<BannerPattern> exclusion = new ArrayList<>();
+        for (int i = hallWindow.building.getBuildingLevel(); i <= hallWindow.building.getBuildingMaxLevel(); i++)
+            exclusion.addAll(Arrays.asList(EXCLUSION[i]));
+        this.patterns = new LinkedList<>(Arrays.asList(BannerPattern.values()));
+        this.patterns.removeAll(exclusion);
+
 
         // Fetch the patterns as a List and not ListNBT
         this.layers = BannerTileEntity.func_230138_a_(DyeColor.WHITE, colony.getColonyFlag());
@@ -123,7 +170,7 @@ public class WindowBannerPicker extends Screen
             @Override
             public void render(int mouseX, int mouseY, float partialTicks)
             {
-                this.active = activeLayer < layers.size();
+                this.active = activeLayer < layers.size() && activeLayer != 0; // TODO: port this last vital condition
                 super.render(mouseX, mouseY, partialTicks);
             }
         });
@@ -134,14 +181,12 @@ public class WindowBannerPicker extends Screen
      */
     protected void createPatternButtons()
     {
-        /* Draw each of the patterns. Omit the last 8, which includes gradients and special banners */
-        for (int i = 0; i < PATTERNS.length - 8; i++)
+        for (int i = 0; i < patterns.size(); i++)
         {
-            int rows = (int) Math.ceil(PATTERNS.length / PATTERN_COLUMNS);
             int posX = center(this.width, PATTERN_COLUMNS, PATTERN_WIDTH, i % PATTERN_COLUMNS, PATTERN_MARGIN);
-            int posY = center(this.height+30, rows, PATTERN_HEIGHT, Math.floorDiv(i, PATTERN_COLUMNS), PATTERN_MARGIN);
+            int posY = center(this.height+30, PATTERN_ROWS, PATTERN_HEIGHT, Math.floorDiv(i, PATTERN_COLUMNS), PATTERN_MARGIN);
 
-            this.addButton(new PatternButton(posX, posY, PATTERN_HEIGHT, PATTERNS[i]));
+            this.addButton(new PatternButton(posX, posY, PATTERN_HEIGHT, patterns.get(i)));
         }
     }
 
@@ -155,7 +200,8 @@ public class WindowBannerPicker extends Screen
                 this.height - 40,
                 80, SIDE,
                 I18n.format("gui.done"),
-                pressed -> {
+                pressed ->
+                {
                     BannerPattern.Builder builder = new BannerPattern.Builder();
                     for (Pair<BannerPattern, DyeColor> pair : layers)
                         builder.setPatternWithColor(pair.getFirst(), pair.getSecond());
@@ -215,6 +261,20 @@ public class WindowBannerPicker extends Screen
         this.renderBackground();
         super.render(mouseX, mouseY, partialTicks);
         drawFlag();
+
+        // Draw the scrollbar
+        int scrollRows = (int) (Math.ceil(this.patterns.size() / (float) PATTERN_COLUMNS) - PATTERN_ROWS);
+        if (scrollRows > 0 && activeLayer > 0)
+        {
+            int trackHeight = (PATTERN_HEIGHT + PATTERN_MARGIN) * PATTERN_ROWS;
+            double barHeight = trackHeight * (PATTERN_ROWS / (float)(scrollRows + PATTERN_ROWS));
+            int trackX = center(this.width, PATTERN_COLUMNS, PATTERN_WIDTH, PATTERN_COLUMNS, PATTERN_MARGIN);
+            int trackY = (int) (center(this.height, PATTERN_ROWS, PATTERN_HEIGHT, 0, PATTERN_MARGIN)
+                    + this.scrollRow * (trackHeight / (float)(scrollRows + PATTERN_ROWS)));
+
+            fill(trackX+2, trackY, trackX+6, trackY+ (int) barHeight, 0xBBFFFFFF);
+        }
+
 
         // Render the instructions
         this.drawCenteredString(
@@ -292,6 +352,54 @@ public class WindowBannerPicker extends Screen
         source.finish();
     }
 
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scroll)
+    {
+        if (activeLayer > 0) {
+            this.scrollRow = (int) MathHelper.clamp(
+                    this.scrollRow - scroll,
+                    0,
+                    Math.ceil(this.patterns.size() / PATTERN_COLUMNS) - PATTERN_ROWS + 1 // Extra 1 so it is inclusive
+            );
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int p_231044_5_)
+    {
+        this.scrolling = false;
+
+        int trackX = center(this.width, PATTERN_COLUMNS, PATTERN_WIDTH, PATTERN_COLUMNS, PATTERN_MARGIN);
+        int trackY = center(this.height, PATTERN_ROWS, PATTERN_HEIGHT, 0, PATTERN_MARGIN);
+        int trackEnd = trackY + PATTERN_ROWS*(PATTERN_HEIGHT + PATTERN_MARGIN);
+        if (mouseX > trackX + 2 && mouseX < trackX + 8 && mouseY > trackY && mouseY < trackEnd)
+            this.scrolling = true;
+
+        return super.mouseClicked(mouseX, mouseY, p_231044_5_);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY)
+    {
+        if (this.scrolling && this.activeLayer > 0) {
+
+            int trackStart = center(this.height, PATTERN_ROWS, PATTERN_HEIGHT, 0, PATTERN_MARGIN);
+            int trackLength = PATTERN_ROWS*(PATTERN_HEIGHT + PATTERN_MARGIN);
+
+            double scrollRatio = MathHelper.clamp(
+                    (mouseY - trackStart) / trackLength,
+                    0, 1
+            );
+            this.scrollRow = (int) Math.round(scrollRatio * (Math.ceil(this.patterns.size() / PATTERN_COLUMNS) - PATTERN_ROWS + 1));
+
+            return true;
+        } else {
+            return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        }
+    }
+
     /**
      * A custom button for each layer, to override click and render logic
      */
@@ -347,6 +455,7 @@ public class WindowBannerPicker extends Screen
     public class PatternButton extends Button
     {
         private final BannerPattern pattern;
+        private final int index;
 
         /**
          * @param x the left x position of the button
@@ -358,6 +467,7 @@ public class WindowBannerPicker extends Screen
         {
             super(x, y, height/2, height, "", btn -> {});
             this.pattern = pattern;
+            this.index = WindowBannerPicker.this.patterns.indexOf(pattern);
         }
 
         @Override
@@ -366,9 +476,13 @@ public class WindowBannerPicker extends Screen
         @Override
         public void render(int p_render_1_, int p_render_2_, float p_render_3_)
         {
+            this.visible = scrollRow * PATTERN_COLUMNS <= this.index && this.index < PATTERN_COLUMNS * (scrollRow + PATTERN_ROWS);
             this.active = activeLayer != 0;
 
-            if (!this.active) return;
+            if (!this.active || !this.visible) return;
+
+            int position = Math.floorDiv(this.index - scrollRow*PATTERN_COLUMNS, PATTERN_COLUMNS);
+            this.y = center(WindowBannerPicker.this.height, PATTERN_ROWS, PATTERN_HEIGHT, position, PATTERN_MARGIN);
 
             super.render(p_render_1_, p_render_2_, p_render_3_);
 

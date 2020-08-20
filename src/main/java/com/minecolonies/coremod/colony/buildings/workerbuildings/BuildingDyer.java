@@ -6,14 +6,17 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutDyer;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
@@ -29,14 +32,23 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
@@ -194,6 +206,68 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
             return;
         }
         super.requestUpgrade(player, builder);
+    }
+
+    @Override
+    public IRecipeStorage getFirstRecipe(Predicate<ItemStack> stackPredicate)
+    {
+        IRecipeStorage recipe = super.getFirstRecipe(stackPredicate);
+
+        if(recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
+        {
+            final ResourceLocation wool = new ResourceLocation("minecraft", "wool");
+            final HashMap<ItemStorage, Integer> inventoryCounts = new HashMap<>();
+
+            final Set<IBuilding> wareHouses = colony.getBuildingManager().getBuildings().values().stream()
+                                                    .filter(building -> building instanceof BuildingWareHouse)
+                                                    .collect(Collectors.toSet());
+            
+            final List<ItemStorage> woolItems = ItemTags.getCollection().getOrCreate(wool).getAllElements().stream()
+                                                        .filter(item -> !item.equals(Items.WHITE_WOOL))
+                                                        .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
+
+            for(ItemStorage color : woolItems)
+            {
+                for(IBuilding wareHouse: wareHouses)
+                {
+                    final int colorCount = InventoryUtils.hasBuildingEnoughElseCount(wareHouse, color, 1);
+                    inventoryCounts.replace(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
+                }
+            }
+
+            ItemStorage woolToUse = inventoryCounts.entrySet().stream()
+                                                .sorted(Comparator.comparing(itemEntry -> itemEntry.getValue(), Comparator.reverseOrder()))
+                                                .findFirst().get().getKey();
+
+            recipe = StandardFactoryController.getInstance().getNewInstance(
+                TypeConstants.RECIPE,
+                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                ImmutableList.of(woolToUse.getItemStack(), new ItemStack(Items.WHITE_DYE, 1)),
+                1,
+                new ItemStack(Items.WHITE_WOOL, 1),
+                Blocks.AIR);
+        }
+        return recipe;
+    }
+
+    @Override
+    public IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, int count)
+    {
+        IRecipeStorage recipe =  super.getFirstFullFillableRecipe(stackPredicate, count);
+
+        if(recipe == null)
+        {
+            final IRecipeStorage storage = getFirstRecipe(stackPredicate);
+            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            {
+                final List<IItemHandler> handlers = getHandlers();
+                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                {
+                    return storage;
+                }
+            }
+        }
+        return recipe;        
     }
 
     /**

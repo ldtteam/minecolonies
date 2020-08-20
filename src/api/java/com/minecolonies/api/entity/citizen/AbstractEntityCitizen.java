@@ -37,6 +37,8 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
@@ -47,6 +49,11 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
 public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements INamedContainerProvider
 {
+    /**
+     * Used texture mapping.
+     */
+    private Map<String, String> textureMapping = new HashMap<>();
+
     public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
     public static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
     public static final DataParameter<Integer>  DATA_IS_FEMALE       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
@@ -232,10 +239,11 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @NotNull
     public ResourceLocation getTexture()
     {
+        final String renderMeta = getRenderMetadata();
         if (texture == null
               || textureDirty
-              || !texture.getPath().contains(getRenderMetadata())
-              || !texture.getPath().contains(getDataManager().get(DATA_STYLE))
+              || !texture.getPath().contains(renderMeta)
+              || !texture.getPath().contains(textureMapping.getOrDefault(getDataManager().get(DATA_STYLE), "default"))
               || !texture.getPath().contains(getDataManager().get(DATA_TEXTURE_SUFFIX)))
         {
             setTexture();
@@ -249,6 +257,16 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public void setTextureDirty()
     {
         this.textureDirty = true;
+    }
+
+    /**
+     * Set the used texture mapping (from style to actual folder).
+     * @param style the colony style.
+     * @param used the actual folder.
+     */
+    public void setTextureMapping(final String style, final String used)
+    {
+        this.textureMapping.put(style, used);
     }
 
     /**
@@ -384,6 +402,10 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public void setRenderMetadata(final String renderMetadata)
     {
+        if (renderMetadata.equals(getRenderMetadata()))
+        {
+            return;
+        }
         this.renderMetadata = renderMetadata;
         dataManager.set(DATA_RENDER_METADATA, getRenderMetadata());
     }
@@ -577,11 +599,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * Decrease the saturation of the citizen for 1 action.
      */
     public abstract void decreaseSaturationForContinuousAction();
-
-    /**
-     * Spawn eating particles for the citizen.
-     */
-    public abstract void spawnEatingParticle();
 
     /**
      * The Handler for all experience related methods.
