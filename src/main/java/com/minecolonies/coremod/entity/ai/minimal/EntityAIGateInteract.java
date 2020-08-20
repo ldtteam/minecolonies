@@ -175,7 +175,7 @@ public class EntityAIGateInteract extends Goal
     @Override
     public boolean shouldContinueExecuting()
     {
-        return !this.hasStoppedFenceInteraction;
+        return !this.hasStoppedFenceInteraction && direction != null;
     }
 
     /**
@@ -195,11 +195,14 @@ public class EntityAIGateInteract extends Goal
     @Override
     public void tick()
     {
-        final double entityDistX = Math.abs(this.gatePosition.getX() + HALF_BLOCK - this.theEntity.getPosX() + direction.getXOffset());
-        final double entityDistZ = Math.abs(this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.getPosZ() + direction.getZOffset());
-        if ((entityDistX > HALF_BLOCK && entityDistX < 1.0 ) || (entityDistZ > HALF_BLOCK && entityDistZ < 1.0))
+        if (direction != null)
         {
-            this.hasStoppedFenceInteraction = true;
+            final double entityDistX = Math.abs(this.gatePosition.getX() + HALF_BLOCK - this.theEntity.getPosX() + direction.getXOffset());
+            final double entityDistZ = Math.abs(this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.getPosZ() + direction.getZOffset());
+            if ((entityDistX > HALF_BLOCK && entityDistX < 1.0) || (entityDistZ > HALF_BLOCK && entityDistZ < 1.0))
+            {
+                this.hasStoppedFenceInteraction = true;
+            }
         }
     }
 }
