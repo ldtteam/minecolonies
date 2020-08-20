@@ -53,7 +53,7 @@ public class EntityAIWorkRabbitHerder extends AbstractEntityAIHerder<JobRabbitHe
     @Override
     protected boolean canFeedChildren()
     {
-        return getSecondarySKill() >= LIMIT_TO_FEED_CHILDREN;
+        return getSecondarySkillLevel() >= LIMIT_TO_FEED_CHILDREN;
     }
 
     @Override
