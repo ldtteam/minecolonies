@@ -125,6 +125,19 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         return PICK_UP;
     }
 
+    @Override
+    public int getBreakSpeedLevel()
+    {
+        return getSecondarySkillLevel();
+    }
+
+    @Override
+    public int getPlaceSpeedLevel()
+    {
+        return getPrimarySkillLevel();
+    }
+
+
     /**
      * State to pick up material before going back to work.
      *

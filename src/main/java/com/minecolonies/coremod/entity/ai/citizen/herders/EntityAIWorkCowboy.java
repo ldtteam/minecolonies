@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 
 /**
  * The AI behind the {@link JobCowboy} for Breeding, Killing and Milking Cows.
@@ -150,7 +149,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     @Override
     protected boolean canFeedChildren()
     {
-        return getSecondarySKill() >= LIMIT_TO_FEED_CHILDREN;
+        return getSecondarySkillLevel() >= LIMIT_TO_FEED_CHILDREN;
     }
 
     @Override

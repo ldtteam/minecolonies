@@ -163,6 +163,18 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return PREPARING;
     }
 
+    @Override
+    public int getBreakSpeedLevel()
+    {
+        return getPrimarySkillLevel();
+    }
+
+    @Override
+    public int getPlaceSpeedLevel()
+    {
+        return getSecondarySkillLevel();
+    }
+
     /**
      * Calculates after how many actions the ai should dump it's inventory.
      * <p>

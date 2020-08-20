@@ -173,13 +173,21 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public ItemStack getRandomSieveResultForMeshAndBlock(final ItemStorage mesh, final ItemStorage block)
+    public ItemStack getRandomSieveResultForMeshAndBlock(final ItemStorage mesh, final ItemStorage block, final int attempts)
     {
         if (this.sieveResult.containsKey(mesh) && this.sieveResult.get(mesh).containsKey(block))
         {
             final List<ItemStorage> drops = this.sieveResult.get(mesh).get(block);
             Collections.shuffle(drops);
-            return drops.get(0).getItemStack();
+
+            for (int i = 0; i < attempts; i++)
+            {
+                final ItemStack result = drops.get(0).getItemStack();
+                if (!result.isEmpty())
+                {
+                    return result.copy();
+                }
+            }
         }
         return ItemStack.EMPTY;
     }
