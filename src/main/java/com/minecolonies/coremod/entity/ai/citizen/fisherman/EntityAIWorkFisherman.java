@@ -511,7 +511,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             this.entityFishHook = (NewBobberEntity) ModEntities.FISHHOOK.create(world);
             this.entityFishHook.setAngler((EntityCitizen) worker,
               EnchantmentHelper.getFishingLuckBonus(worker.getHeldItemMainhand()),
-              worker.getCitizenData().getJobModifier() / LURE_SPEED_DIVIDER + EnchantmentHelper.getFishingSpeedBonus(worker.getHeldItemMainhand()));
+              (int) ((getPrimarySkillLevel() / 2.0) / LURE_SPEED_DIVIDER + EnchantmentHelper.getFishingSpeedBonus(worker.getHeldItemMainhand())));
             world.addEntity(this.entityFishHook);
         }
 
@@ -540,7 +540,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     {
         //+1 since the level may be 0
         setDelay(FISHING_TIMEOUT);
-        final double chance = worker.getRandom().nextInt(FISHING_DELAY) / (double) (worker.getCitizenData().getJobModifier() + 1);
+        final double chance = worker.getRandom().nextInt(FISHING_DELAY) / ((getSecondarySkillLevel() / 2.0) + 1);
         return chance >= CHANCE;
     }
 

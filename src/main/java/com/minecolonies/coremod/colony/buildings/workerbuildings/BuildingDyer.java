@@ -235,9 +235,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
                 }
             }
 
-            ItemStorage woolToUse = inventoryCounts.entrySet().stream()
-                                                .sorted(Comparator.comparing(itemEntry -> itemEntry.getValue(), Comparator.reverseOrder()))
-                                                .findFirst().get().getKey();
+            ItemStorage woolToUse = inventoryCounts.entrySet().stream().min(java.util.Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
 
             recipe = StandardFactoryController.getInstance().getNewInstance(
                 TypeConstants.RECIPE,

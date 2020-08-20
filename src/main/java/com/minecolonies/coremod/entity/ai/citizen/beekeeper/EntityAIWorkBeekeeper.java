@@ -173,7 +173,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      */
     private IAIState decideWhatToDo()
     {
-        setDelay(DECIDING_DELAY + (99 / worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getSecondarySkill())) - 1);
+        setDelay(DECIDING_DELAY + (99 / getSecondarySkillLevel() - 1));
 
         final Set<BlockPos> hives = getOwnBuilding().getHives();
 
@@ -365,7 +365,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             }
         }
 
-        final int dex = worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getPrimarySkill());
+        final int dex = getPrimarySkillLevel();
         if ((50 - (dex / 99. * 50.)) / 100 > worker.getRandom().nextDouble())
         {
             final List<Entity> bees = ((BeehiveTileEntity) world.getTileEntity(hive)).tryReleaseBee(world.getBlockState(hive), BeehiveTileEntity.State.EMERGENCY);

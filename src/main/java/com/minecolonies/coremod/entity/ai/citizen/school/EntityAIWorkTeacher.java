@@ -132,7 +132,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
         if (maxSittingTicks == 0 || worker.ridingEntity == null)
         {
             // Sit for 2-100 seconds.
-            final int jobModifier = 100 / Math.max(1, worker.getCitizenData().getJobModifier());
+            final int jobModifier = (int) (100 / Math.max(1, getSecondarySkillLevel() / 2.0));
             maxSittingTicks = worker.getRandom().nextInt(jobModifier / 2) + jobModifier / 2;
 
             final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(world);
@@ -171,6 +171,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
         if (effect != null)
         {
             xp *= (1 + effect.getEffect());
+            xp *= (1 + (getPrimarySkillLevel() / 10.0));
         }
 
         pupilToTeach.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, xp, pupilToTeach.getCitizenData());
