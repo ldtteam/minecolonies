@@ -22,7 +22,7 @@ import com.minecolonies.coremod.entity.ai.citizen.healer.Patient;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -219,7 +219,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
         if (citizen != null)
         {
             final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
-            optCitizen.ifPresent(entityCitizen -> entityCitizen.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+            optCitizen.ifPresent(entityCitizen -> entityCitizen.getAttribute(Attributes.MOVEMENT_SPEED)
                                                     .setBaseValue(BASE_MOVEMENT_SPEED));
         }
         super.removeCitizen(citizen);
