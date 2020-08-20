@@ -180,7 +180,7 @@ public class CompatibilityManager implements ICompatibilityManager
             final List<ItemStorage> drops = this.sieveResult.get(mesh).get(block);
             Collections.shuffle(drops);
 
-            for (int i = 0; i < attempts && drops.size() > attempts; i++)
+            for (int i = 0; i < attempts && drops.size() > i; i++)
             {
                 final ItemStack result = drops.get(i).getItemStack();
                 if (!result.isEmpty())
