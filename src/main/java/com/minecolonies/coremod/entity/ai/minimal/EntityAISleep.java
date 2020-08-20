@@ -96,7 +96,10 @@ public class EntityAISleep extends Goal
         }, 20));
 
         stateMachine.addTransition(new TickingTransition<>(WALKING_HOME, () -> true, this::walkHome, 30));
-
+        stateMachine.addTransition(new TickingTransition<>(FIND_BED, () -> !wantSleep(), () -> {
+            resetAI();
+            return AWAKE;
+        }, 20));
         stateMachine.addTransition(new TickingTransition<>(FIND_BED, this::findBed, () -> SLEEPING, 30));
 
         stateMachine.addTransition(new TickingTransition<>(SLEEPING, () -> !wantSleep(), () -> {
@@ -168,7 +171,7 @@ public class EntityAISleep extends Goal
     @Override
     public boolean shouldContinueExecuting()
     {
-        return stateMachine.getState() != AWAKE;
+        return stateMachine.getState() != AWAKE && wantSleep();
     }
 
     /**
