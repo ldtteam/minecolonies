@@ -513,7 +513,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      */
     private boolean testRandomCureChance()
     {
-        return worker.getRandom().nextInt(60 * 60) <= Math.max(1, worker.getCitizenData().getJobModifier() / 10);
+        return worker.getRandom().nextInt(60 * 60) <= Math.max(1, getSecondarySkillLevel() / 20);
     }
 
     /**
