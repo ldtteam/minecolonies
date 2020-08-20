@@ -94,7 +94,7 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
         {
             worker.swingArm(Hand.MAIN_HAND);
 
-            if (worker.getRandom().nextInt((ONE_HUNDRED_PERCENT - getSecondarySKill()) / 5) <= 1)
+            if (worker.getRandom().nextInt((ONE_HUNDRED_PERCENT - getSecondarySkillLevel()) / 5) <= 1)
             {
                 animal.attackEntityFrom(new NamedDamageSource(worker.getName().getFormattedText(), worker), (float) getButcheringAttackDamage());
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);

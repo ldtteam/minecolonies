@@ -5,12 +5,14 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
@@ -33,7 +35,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
  * <p>
  * TODO: The crafter logic is just a copypaste from {@link AbstractBuildingCrafter} to avoid diamond inheritance. This should be fixed at some point.
  */
-public abstract class AbstractFilterableListCrafter extends AbstractFilterableListBuilding
+public abstract class AbstractFilterableListCrafter extends AbstractFilterableListBuilding implements IBuildingPublicCrafter
 {
     /**
      * Extra amount of recipes the crafters can learn.
@@ -136,6 +138,12 @@ public abstract class AbstractFilterableListCrafter extends AbstractFilterableLi
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
         return AbstractFilterableListCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
+    }
+
+    @Override
+    public Skill getCraftSpeedSkill()
+    {
+        return getPrimarySkill();
     }
 
     /**
