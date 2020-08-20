@@ -492,8 +492,14 @@ public class ResearchInitializer
         final GlobalResearch festival = new GlobalResearch("festival", "civilian", "Festival", 3, new MultiplierModifierResearchEffect("Happiness", 0.1));
         festival.setRequirement(new BuildingResearchRequirement(3, "cook"));
 
+        final GlobalResearch nightowl = new GlobalResearch("nightowl", "civilian", "Nightowl", 3, new AdditionModifierResearchEffect(WORK_LONGER, 1));
+        nightowl.setRequirement(new BuildingResearchRequirement(2, "library"));
+
         final GlobalResearch spectacle = new GlobalResearch("spectacle", "civilian", "Spectacle", 4, new MultiplierModifierResearchEffect("Happiness", 0.15));
-        spectacle.setRequirement(new BuildingResearchRequirement(4, "cook"));
+        spectacle.setRequirement(new BuildingResearchRequirement(3, "townhall"));
+
+        final GlobalResearch nightowl2 = new GlobalResearch("nightowl2", "civilian", "Nightowl II", 4, new AdditionModifierResearchEffect(WORK_LONGER, 2));
+        nightowl.setRequirement(new BuildingResearchRequirement(1, "library"));
 
         final GlobalResearch opera = new GlobalResearch("opera", "civilian", "Opera", 5, new MultiplierModifierResearchEffect("Happiness", 0.2));
         opera.setRequirement(new BuildingResearchRequirement(5, "cook"));
@@ -502,7 +508,9 @@ public class ResearchInitializer
 
         firstaid.addChild(circus);
         circus.addChild(festival);
+        circus.addChild(nightowl);
         festival.addChild(spectacle);
+        festival.addChild(nightowl2);
         spectacle.addChild(opera);
         opera.addChild(theater);
 
@@ -548,6 +556,8 @@ public class ResearchInitializer
 
         researchTree.addResearch(circus.getBranch(), circus);
         researchTree.addResearch(festival.getBranch(), festival);
+        researchTree.addResearch(nightowl.getBranch(), nightowl);
+        researchTree.addResearch(nightowl2.getBranch(), nightowl2);
         researchTree.addResearch(spectacle.getBranch(), spectacle);
         researchTree.addResearch(opera.getBranch(), opera);
         researchTree.addResearch(theater.getBranch(), theater);
