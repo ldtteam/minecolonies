@@ -79,11 +79,15 @@ public class TileEntityColonyFlag extends TileEntity
     @OnlyIn(Dist.CLIENT)
     public List<Pair<BannerPattern, DyeColor>> getPatternList()
     {
-        IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, world.func_234923_W_().func_240901_a_());
-        if (colony != null && this.flag != colony.getColonyFlag())
+        // Structurize will cause the second condition to be false
+        if (world != null && world.func_234923_W_() != null)
         {
-            this.flag = colony.getColonyFlag();
-            markDirty();
+            IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, world.func_234923_W_().func_240901_a_());
+            if (colony != null && this.flag != colony.getColonyFlag())
+            {
+                this.flag = colony.getColonyFlag();
+                markDirty();
+            }
         }
 
         return func_230138_a_(
