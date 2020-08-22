@@ -333,7 +333,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     {
         for (final IToken<?> t : getTaskQueue())
         {
-             getColony().getRequestManager().updateRequestState(t, RequestState.FAILED);
+            getColony().getRequestManager().updateRequestState(t, RequestState.FAILED);
             getTaskQueueFromDataStore().remove(t);
         }
     }
