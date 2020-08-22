@@ -264,7 +264,11 @@ public class BuildingFarmer extends AbstractBuildingCrafter
             farmerFields.add(fieldLocation);
         }
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
-        shouldRequestFertilizer = compound.getBoolean(TAG_REQUEST_FERTILIZER);
+
+        if (compound.keySet().contains(TAG_REQUEST_FERTILIZER))
+        {
+            shouldRequestFertilizer = compound.getBoolean(TAG_REQUEST_FERTILIZER);
+        }
 
         if (compound.keySet().contains(LAST_FIELD_TAG))
         {
