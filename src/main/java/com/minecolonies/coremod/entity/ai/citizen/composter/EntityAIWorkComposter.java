@@ -290,8 +290,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private double getLootMultiplier(final Random random)
     {
-        final int citizenLevel = worker.getCitizenData().getJobModifier();
-
+        final int citizenLevel = (int) (getSecondarySkillLevel() / 2.0);
         final int diceResult = random.nextInt(100);
 
         if (diceResult <= citizenLevel * 2)

@@ -108,7 +108,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     @Override
     public double getButcheringAttackDamage()
     {
-        return Math.max(1.0, getSecondarySKill() / 10.0);
+        return Math.max(1.0, getSecondarySkillLevel() / 10.0);
     }
 
     @Override
