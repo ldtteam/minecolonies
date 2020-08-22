@@ -8,6 +8,8 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSleepHandler;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.interactionhandling.SimpleNotificationInteraction;
+import com.minecolonies.coremod.colony.jobs.JobMiner;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
@@ -24,6 +26,7 @@ import java.util.Optional;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_BED_POS;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_IS_ASLEEP;
+import static com.minecolonies.api.research.util.ResearchConstants.WORK_LONGER;
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
 import static com.minecolonies.api.util.constant.Constants.*;
 
@@ -299,17 +302,30 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     public boolean shouldGoSleep()
     {
         final BlockPos homePos = findHomePos();
-        final BlockPos citizenPos = citizen.getPosition();
+        BlockPos citizenPos = citizen.getPosition();
+
+        int additionalDist = 0;
+
+        // Additional distance for miners
+        if (citizen.getCitizenData().getJob() instanceof JobMiner && citizen.getCitizenData().getWorkBuilding().getPosition().getY() - 20 > citizenPos.getY())
+        {
+            final BlockPos workPos = citizen.getCitizenData().getWorkBuilding().getID();
+            additionalDist = (int) BlockPosUtil.getDistance2D(citizenPos, workPos) + Math.abs(citizenPos.getY() - workPos.getY()) * 3;
+            citizenPos = workPos;
+        }
 
         // Calc distance with some y weight
         final int xDiff = Math.abs(homePos.getX() - citizenPos.getX());
         final int zDiff = Math.abs(homePos.getZ() - citizenPos.getZ());
         final int yDiff = (int) (Math.abs(homePos.getY() - citizenPos.getY()) * Y_DIFF_WEIGHT);
 
-        final double timeNeeded = Math.sqrt(xDiff * xDiff + zDiff * zDiff + yDiff * yDiff) * TIME_PER_BLOCK;
+        final double timeNeeded = (Math.sqrt(xDiff * xDiff + zDiff * zDiff + yDiff * yDiff) + additionalDist) * TIME_PER_BLOCK;
+
+        final AdditionModifierResearchEffect effect =
+          citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(WORK_LONGER, AdditionModifierResearchEffect.class);
 
         // Estimated arrival is 1hour past night
-        final double timeLeft = NIGHT - (citizen.world.getDayTime() % 24000);
+        final double timeLeft = (effect == null ? NIGHT : NIGHT + effect.getEffect() * 1000) - (citizen.world.getDayTime() % 24000);
         if (timeLeft <= 0 || (timeLeft - timeNeeded <= 0))
         {
             if (citizen.getCitizenData().getWorkBuilding() != null)
@@ -326,5 +342,4 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         return false;
     }
-
 }
