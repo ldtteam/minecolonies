@@ -1757,5 +1757,7 @@
   "com.minecolonies.coremod.gui.flag.choose": "Choose a color and pattern for up to 6 layers",
   "com.minecolonies.coremod.gui.flag.base_layer": "Base",
   "com.minecolonies.coremod.gui.townhall.edit_flag": "Edit colony flag",
-  "block.minecolonies.colony_banner": "Colony Flag Banner"
+  "block.minecolonies.colony_banner": "Colony Flag Banner",
+  "com.minecolonies.coremod.gui.locate": "Locate",
+  "com.minecolonies.coremod.locating": "Successfully located rack with respective Stack..."
 }
