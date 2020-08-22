@@ -26,6 +26,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -284,8 +285,8 @@ public class Tree
         {
             list.addAll(state.getDrops(new LootContext.Builder(world)
                                          .withParameter(LootParameters.TOOL,
-                                           new ItemStack(Items.WOODEN_AXE))
-                                         .withLuck(100)));
+                                           new ItemStack(Items.WOODEN_AXE)).withLuck(100)
+                                         .withParameter(LootParameters.field_237457_g_, new Vector3d(position.getX(), position.getY(), position.getZ()))));
             if (!list.isEmpty())
             {
                 for (ItemStack stack : list)

@@ -494,6 +494,8 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             {
                 final LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld) this.world))
                                                                   .withParameter(LootParameters.TOOL, this.getAngler().getHeldItemMainhand())
+                                                                  .withParameter(LootParameters.field_237457_g_, getAngler().getPositionVec())
+
                                                                   .withRandom(this.rand)
                                                                   .withLuck((float) this.luck);
                 lootcontext$builder.withParameter(LootParameters.KILLER_ENTITY, this.angler).withParameter(LootParameters.THIS_ENTITY, this);

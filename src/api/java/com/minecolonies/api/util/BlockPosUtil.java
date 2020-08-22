@@ -394,10 +394,11 @@ public final class BlockPosUtil
      * @param stack   the tool.
      * @return List of {@link ItemStack} with possible drops.
      */
-    public static List<ItemStack> getBlockDrops(@NotNull final World world, @NotNull final BlockPos coords, final int fortune, final ItemStack stack)
+    public static List<ItemStack> getBlockDrops(@NotNull final World world, @NotNull final BlockPos coords, final int fortune, final ItemStack stack, final LivingEntity entity)
     {
         return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerWorld) world)
                                                       .withLuck(fortune)
+                                                      .withParameter(LootParameters.field_237457_g_, entity.getPositionVec())
                                                       .withParameter(LootParameters.TOOL, stack));
     }
 

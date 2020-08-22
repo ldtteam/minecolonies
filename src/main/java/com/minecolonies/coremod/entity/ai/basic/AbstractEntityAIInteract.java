@@ -185,7 +185,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             //If Silk Touch doesn't work, get blocks with Fortune value as normal.
             else
             {
-                localItems.addAll(BlockPosUtil.getBlockDrops(world, blockToMine, fortune, tool));
+                localItems.addAll(BlockPosUtil.getBlockDrops(world, blockToMine, fortune, tool, worker));
             }
 
             localItems = increaseBlockDrops(localItems);
