@@ -301,7 +301,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             reduction = 1 - effect.getEffect();
         }
 
-        return (int) (((MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() * Math.pow(LEVEL_MODIFIER, getBreakSpeedLevel() / 2.0))
+        return (int) (((MineColonies.getConfig().getServer().blockMiningDelayModifier.get() * Math.pow(LEVEL_MODIFIER, getBreakSpeedLevel() / 2.0))
                          * (double) world.getBlockState(pos).getBlockHardness(world, pos) / (double) (worker.getHeldItemMainhand()
                                                                                                         .getItem()
                                                                                                         .getDestroySpeed(worker.getHeldItemMainhand(), block.getDefaultState())))
