@@ -38,7 +38,7 @@ public class CommandRSReset implements IMCCommand
         }
 
         colony.getRequestManager().reset();
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.rsreset.success"), true);
+        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.rsreset.success", colony.getName()), true);
 
         return 1;
     }
