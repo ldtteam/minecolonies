@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.healer.EntityAIWorkHealer;
+import net.minecraft.entity.ai.attributes.Attributes;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -62,6 +63,18 @@ public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
     public EntityAIWorkHealer generateAI()
     {
         return new EntityAIWorkHealer(this);
+    }
+
+    @Override
+    public void onLevelUp()
+    {
+        if (getCitizen().getEntity().isPresent())
+        {
+            final AbstractEntityCitizen worker = getCitizen().getEntity().get();
+            worker.getAttribute(Attributes.MOVEMENT_SPEED)
+              .setBaseValue(
+                BASE_MOVEMENT_SPEED + (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill())) * BONUS_SPEED_PER_LEVEL);
+        }
     }
 
     @Override

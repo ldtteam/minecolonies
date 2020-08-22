@@ -21,6 +21,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractFilterableListCrafter;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -401,6 +402,18 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     public BlockPos getEndRestriction()
     {
         return this.endRestriction;
+    }
+
+    @Override
+    public void removeCitizen(final ICitizenData citizen)
+    {
+        if (citizen != null)
+        {
+            final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
+            optCitizen.ifPresent(entityCitizen -> entityCitizen.getAttribute(Attributes.MOVEMENT_SPEED)
+                                                    .setBaseValue(BASE_MOVEMENT_SPEED));
+        }
+        super.removeCitizen(citizen);
     }
 
     /**

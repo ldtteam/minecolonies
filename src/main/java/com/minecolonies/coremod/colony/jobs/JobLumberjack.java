@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,6 +81,17 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
         }
 
         compound.put(TAG_TREE, treeTag);
+    }
+
+    @Override
+    public void onLevelUp()
+    {
+        if (getCitizen().getEntity().isPresent())
+        {
+            final AbstractEntityCitizen worker = getCitizen().getEntity().get();
+            worker.getAttribute(Attributes.MOVEMENT_SPEED)
+              .setBaseValue(BASE_MOVEMENT_SPEED + (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getSecondarySkill()) / 2.0 ) * BONUS_SPEED_PER_LEVEL);
+        }
     }
 
     /**
