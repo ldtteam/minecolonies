@@ -1,17 +1,22 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.ButtonImage;
-import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
-import com.ldtteam.blockout.controls.TextField;
+import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.event.ClientEventHandler;
+import com.minecolonies.coremod.event.HighlightManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -40,10 +45,12 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
      * Resource scrolling list.
      */
     private final ScrollingList stackList;
+
     /**
      * The filter for the resource list.
      */
     private       String        filter         = "";
+
     /**
      * The sortDescriptor so how we want to sort
      */
@@ -73,7 +80,30 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         registerButton(BUTTON_BACK, this::back);
         this.stackList = findPaneOfTypeByID(LIST_ALLINVENTORY, ScrollingList.class);
         updateResources();
+        registerButton(LOCATE, this::locate);
         this.prev = prev;
+    }
+
+    private void locate(final Button button)
+    {
+        final int row = stackList.getListElementIndexByPane(button);
+        final ItemStorage storage = allItems.get(row);
+        final List<BlockPos> containerList = building.getContainerList();
+
+        for (BlockPos blockPos : containerList)
+        {
+            final TileEntity rack = Minecraft.getInstance().world.getTileEntity(blockPos);
+            if (rack instanceof TileEntityRack)
+            {
+                if (((TileEntityRack) rack).hasItemStack(storage.getItemStack(), false))
+                {
+                    HighlightManager.HIGHLIGHT_MAP.put("inventoryHighlight", new Tuple<>(blockPos, Minecraft.getInstance().world.getGameTime() + 120 * 20));
+                    Minecraft.getInstance().player.sendChatMessage(LanguageHandler.format("com.minecolonies.coremod.locating"));
+                    close();
+                    return;
+                }
+            }
+        }
     }
 
     /**
@@ -85,15 +115,14 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         this.prev.open();
     }
 
-    @Override
-    public void onOpened()
-    {
-
-    }
-
     /**
-     * Increments the sortDescriptor and sets the GUI Button accordingly Valid Stages 0 - 4 NO_SORT         0   No Sorting, like wysiwyg ASC_SORT        1   Name Ascending
-     * DESC_SORT       2   Name Descending COUNT_ASC_SORT  3   Itemcount Ascending COUNT_DESC_SORT 4   Itemcount Descending
+     * Increments the sortDescriptor and sets the GUI Button accordingly Valid Stages
+     * 0 - 4 NO_SORT
+     * 0   No Sorting, like wysiwyg ASC_SORT
+     * 1   Name Ascending DESC_SORT
+     * 2   Name Descending COUNT_ASC_SORT
+     * 3   Itemcount Ascending COUNT_DESC_SORT
+     * 4   Itemcount Descending
      **/
     private void setSortFlag()
     {
@@ -135,23 +164,9 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
         final Map<ItemStorage, Integer> storedItems = new HashMap<>();
         final World world = building.getColony().getWorld();
+        containerList.add(building.getPosition());
 
-        TileEntityRack hut = (TileEntityRack) world.getTileEntity(building.getPosition());
-        Map<ItemStorage, Integer> hutStorage =  hut.getAllContent();
-
-        for (final Map.Entry<ItemStorage, Integer> entry : hutStorage.entrySet())
-        {
-            if (storedItems.containsKey(entry.getKey()))
-            {
-                storedItems.put(entry.getKey(), storedItems.get(entry.getKey()) + entry.getValue());
-            }
-            else
-            {
-                storedItems.put(entry.getKey(), entry.getValue());
-            }
-        }
-
-        for (BlockPos blockPos : containerList)
+        for (final BlockPos blockPos : containerList)
         {
             final TileEntity rack = world.getTileEntity(blockPos);
             if (rack instanceof TileEntityRack)

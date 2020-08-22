@@ -99,8 +99,9 @@ public class InteractionValidatorInitializer
                           return false;
                       }
                   }
+                  return true;
               }
-              return true;
+              return false;
           });
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_FREE_FIELDS),

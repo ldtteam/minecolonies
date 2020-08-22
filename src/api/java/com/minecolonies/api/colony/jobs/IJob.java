@@ -233,4 +233,10 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * @return true if so.
      */
     boolean pickupSuccess(@NotNull ItemStack pickedUpStack);
+
+    /**
+     * Check if the job is actually set as active.
+     * @return true if so.
+     */
+    boolean isActive();
 }
