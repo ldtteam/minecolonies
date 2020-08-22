@@ -1,18 +1,29 @@
 package com.minecolonies.api.colony.requestsystem.requestable.deliveryman;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Class used to represent deliveries inside the request system. This class can be used to request a getDelivery of a given ItemStack from a source to a target.
  */
 public class Delivery extends AbstractDeliverymanRequestable
 {
+    /**
+     * Set of type tokens belonging to this class.
+     */
+    private final static Set<TypeToken<?>>
+      TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Delivery.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_START  = "Start";
@@ -165,5 +176,11 @@ public class Delivery extends AbstractDeliverymanRequestable
                  ", stack=" + stack +
                  ", priority=" + priority +
                  '}';
+    }
+
+    @Override
+    public Set<TypeToken<?>> getSuperClasses()
+    {
+        return TYPE_TOKENS;
     }
 }

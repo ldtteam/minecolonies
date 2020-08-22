@@ -471,7 +471,7 @@ public class EntityAIEatTask extends Goal
         }
 
         final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-        if (job != null)
+        if (job != null && job.isActive())
         {
             job.setActive(false);
         }

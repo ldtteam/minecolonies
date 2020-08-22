@@ -237,7 +237,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     {
         final ItemStack heldItem = citizen.getCitizenData().getInventory().getHeldItem(hand);
         //If we hit with bare hands, ignore
-        if (heldItem == null)
+        if (heldItem == null || heldItem.isEmpty())
         {
             return;
         }
@@ -260,7 +260,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
         });
 
         //check if tool breaks
-        if (ItemStackUtils.isEmpty(heldItem))
+        if (ItemStackUtils.isEmpty(heldItem) && citizen.getInventoryCitizen().getHeldItemSlot(hand) != -1)
         {
             citizen.getInventoryCitizen().insertItem(citizen.getInventoryCitizen().getHeldItemSlot(hand), ItemStackUtils.EMPTY, false);
             citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
