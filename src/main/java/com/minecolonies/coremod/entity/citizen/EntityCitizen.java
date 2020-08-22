@@ -174,27 +174,31 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Indicate if the citizen is mourning or not.
      */
-    private boolean                mourning            = false;
+    private boolean          mourning            = false;
     /**
      * Indicates if the citizen is hiding from the rain or not.
      */
-    private boolean                hidingFromRain      = false;
+    private boolean          hidingFromRain      = false;
     /**
      * IsChild flag
      */
-    private boolean                child               = false;
+    private boolean          child               = false;
     /**
      * Whether the citizen is currently running away
      */
-    private boolean                currentlyFleeing    = false;
+    private boolean          currentlyFleeing    = false;
     /**
      * Timer for the call for help cd.
      */
-    private int                    callForHelpCooldown = 0;
+    private int              callForHelpCooldown = 0;
+    /**
+     * Distance walked for consuming food
+     */
+    private float            lastDistanceWalked  = 0;
     /**
      * Citizen data view.
      */
-    private ICitizenDataView       citizenDataView;
+    private ICitizenDataView citizenDataView;
 
     /**
      * The location used for requests
@@ -598,8 +602,9 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     private void decreaseWalkingSaturation()
     {
-        if (((int) (distanceWalkedModified + 1.0) % ACTIONS_EACH_BLOCKS_WALKED) == 0)
+        if (distanceWalkedModified - lastDistanceWalked > ACTIONS_EACH_BLOCKS_WALKED)
         {
+            lastDistanceWalked = distanceWalkedModified;
             decreaseSaturationForContinuousAction();
         }
     }
