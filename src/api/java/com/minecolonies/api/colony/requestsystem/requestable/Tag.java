@@ -1,7 +1,10 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -10,11 +13,19 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * Deliverable that can only be fulfilled by a stack whos item is contained in a given tag with a given minimal amount of items.
  */
 public class Tag implements IDeliverable
 {
+    /**
+     * Set of type tokens belonging to this class.
+     */
+    private final static Set<TypeToken<?>> TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Tag.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
+
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TAG      = "Tag";
     private static final String NBT_RESULT   = "Result";
@@ -247,5 +258,11 @@ public class Tag implements IDeliverable
             minCount = compound.getInt(NBT_MINCOUNT);
         }
         return new Tag(theTag, result, count, minCount);
+    }
+
+    @Override
+    public Set<TypeToken<?>> getSuperClasses()
+    {
+        return TYPE_TOKENS;
     }
 }

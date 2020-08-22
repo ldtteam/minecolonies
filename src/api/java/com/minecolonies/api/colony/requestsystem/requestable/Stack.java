@@ -1,9 +1,12 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -11,12 +14,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Deliverable that can only be fulfilled by a single stack with a given minimal amount of items.
  */
 public class Stack implements IConcreteDeliverable
 {
+    /**
+     * Set of type tokens belonging to this class.
+     */
+    private final static Set<TypeToken<?>>
+      TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Stack.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
+
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_STACK       = "Stack";
     private static final String NBT_MATCHMETA   = "MatchMeta";
@@ -318,5 +329,11 @@ public class Stack implements IConcreteDeliverable
     public List<ItemStack> getRequestedItems()
     {
         return Lists.newArrayList(theStack);
+    }
+
+    @Override
+    public Set<TypeToken<?>> getSuperClasses()
+    {
+        return TYPE_TOKENS;
     }
 }
