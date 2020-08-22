@@ -1,10 +1,14 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
@@ -20,6 +24,11 @@ import java.util.stream.Collectors;
  */
 public class Tool implements IDeliverable
 {
+    /**
+     * Set of type tokens belonging to this class.
+     */
+    private final static Set<TypeToken<?>>
+      TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Tool.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TYPE      = "Type";
@@ -329,5 +338,11 @@ public class Tool implements IDeliverable
         result1 = 31 * result1 + getMaxLevel().hashCode();
         result1 = 31 * result1 + getResult().hashCode();
         return result1;
+    }
+
+    @Override
+    public Set<TypeToken<?>> getSuperClasses()
+    {
+        return TYPE_TOKENS;
     }
 }
