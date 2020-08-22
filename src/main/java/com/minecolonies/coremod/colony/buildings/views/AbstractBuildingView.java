@@ -325,7 +325,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public List<BlockPos> getContainerList()
     {
-        return containerlist;
+        return new ArrayList<>(containerlist);
     }
 
     /**
@@ -463,10 +463,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull final ICitizenDataView citizenData, final Class<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                      .filter(request -> {
-                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
-                                          return requestTypes.contains(TypeToken.of(requestType));
-                                      })
+                                      .filter(request ->  request.getType().isSubtypeOf(requestType))
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
     }
@@ -525,10 +522,7 @@ public abstract class AbstractBuildingView implements IBuildingView
       final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                      .filter(request -> {
-                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
-                                          return requestTypes.contains(TypeToken.of(requestType));
-                                      })
+                                      .filter(request ->  request.getType().isSubtypeOf(requestType))
                                       .map(request -> (IRequest<? extends R>) request)
                                       .filter(filter)
                                       .iterator());

@@ -1,15 +1,26 @@
 package com.minecolonies.api.colony.requestsystem.requestable.deliveryman;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Class used to represent pickups inside the request system. This class can be used to request a pickup of
  */
 public class Pickup extends AbstractDeliverymanRequestable
 {
+    /**
+     * Set of type tokens belonging to this class.
+     */
+    private final static Set<TypeToken<?>>
+      TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Pickup.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
     /**
      * Constructor for Delivery requests
@@ -83,5 +94,11 @@ public class Pickup extends AbstractDeliverymanRequestable
         return "Pickup{" +
                  "priority=" + priority +
                  '}';
+    }
+
+    @Override
+    public Set<TypeToken<?>> getSuperClasses()
+    {
+        return TYPE_TOKENS;
     }
 }

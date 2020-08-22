@@ -15,7 +15,6 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 
 import net.minecraft.block.Blocks;
@@ -36,7 +35,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     /**
      * Time the worker delays until the next hit.
      */
-    protected static final int HIT_DELAY = 20;
+    protected static final int HIT_DELAY = 10;
 
     /**
      * Increase this value to make the product creation progress way slower.

@@ -509,4 +509,10 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         result1 = 31 * result1 + (itemExamples != null ? itemExamples.hashCode() : 0);
         return result1;
     }
+
+    @Override
+    public Set<TypeToken<?>> getSuperClasses()
+    {
+        return requested.getSuperClasses();
+    }
 }

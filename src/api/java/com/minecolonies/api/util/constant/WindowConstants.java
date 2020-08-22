@@ -1166,6 +1166,8 @@ public final class WindowConstants
     public static final String PLUS_PREFIX = "plus_";
     public static final String MINUS_PREFIX = "minus_";
 
+    public static final String LOCATE = "locate";
+
     /**
      * public constructor to hide implicit public one.
      */
