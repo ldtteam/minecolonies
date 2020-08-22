@@ -140,7 +140,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
         }
 
         final IAIState check = checkForSievableBlock(sifterBuilding.getSievableBlock(), sifterBuilding);
-        if (progress > MAX_LEVEL - Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL))
+        if (progress > MAX_LEVEL - Math.min((getSecondarySkillLevel()/2) + 1, MAX_LEVEL))
         {
             progress = 0;
             if (check == SIFT)
@@ -152,7 +152,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
                 }
 
                 final ItemStack result =
-                  IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock()).copy();
+                  IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock(), 1 +  (int) Math.round(getPrimarySkillLevel()/10.0));
                 if (!result.isEmpty())
                 {
                     InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), result);

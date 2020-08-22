@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSwineHerder;
 import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
 import net.minecraft.entity.passive.PigEntity;
@@ -57,7 +56,7 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     @Override
     protected boolean canFeedChildren()
     {
-        return getSecondarySKill() >= LIMIT_TO_FEED_CHILDREN;
+        return getSecondarySkillLevel() >= LIMIT_TO_FEED_CHILDREN;
     }
 
     @Override

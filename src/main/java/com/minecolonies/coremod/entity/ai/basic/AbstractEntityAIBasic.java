@@ -594,7 +594,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * Get the secondary skill of this worker.
      * @return the secondary skill.
      */
-    protected int getSecondarySKill()
+    protected int getSecondarySkillLevel()
     {
         return worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getSecondarySkill());
     }

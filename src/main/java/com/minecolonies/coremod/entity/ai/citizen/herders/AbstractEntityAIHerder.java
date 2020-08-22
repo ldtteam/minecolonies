@@ -172,7 +172,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             {
                 numOfBreedableAnimals++;
             }
-            else if (MAX_ENTITY_AGE / entity.getGrowingAge() <= 1 + getSecondarySKill()/100.0)
+            else if (MAX_ENTITY_AGE / entity.getGrowingAge() <= 1 + getSecondarySkillLevel()/100.0)
             {
                 numOfFeedableAnimals++;
             }
@@ -349,7 +349,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         final AnimalEntity animalOne = animals
                                          .stream()
-                                         .filter(entity -> entity.isChild() && MAX_ENTITY_AGE / entity.getGrowingAge() <= 1 + getSecondarySKill()/100.0)
+                                         .filter(entity -> entity.isChild() && MAX_ENTITY_AGE / entity.getGrowingAge() <= 1 + getSecondarySkillLevel()/100.0)
                                          .findAny()
                                          .orElse(null);
 

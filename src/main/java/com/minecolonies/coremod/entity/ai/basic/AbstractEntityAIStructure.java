@@ -392,11 +392,17 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             }
 
             setDelay((int) (
-              (MineColonies.getConfig().getServer().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (worker.getCitizenData().getJobModifier() + PROGRESS_MULTIPLIER))
+              (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (getPlaceSpeedLevel() / 2 + PROGRESS_MULTIPLIER))
                 * decrease));
         }
         return getState();
     }
+
+    /**
+     * Get the level that affects the place speed.
+     * @return the level.
+     */
+    public abstract int getPlaceSpeedLevel();
 
     /**
      * Separate step for mining.

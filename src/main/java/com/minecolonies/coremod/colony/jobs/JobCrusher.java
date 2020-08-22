@@ -28,6 +28,13 @@ public class JobCrusher extends AbstractJobCrafter<EntityAIWorkCrusher, JobCrush
         return ModJobs.crusher;
     }
 
+    @Override
+    public int getDiseaseModifier()
+    {
+        final int skill = getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill());
+        return (int) ((100 - skill)/25.0);
+    }
+
     /**
      * Return a Localization textContent for the Job.
      *
