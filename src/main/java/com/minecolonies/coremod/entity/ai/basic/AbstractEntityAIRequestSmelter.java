@@ -300,12 +300,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
-        if (walkToBlock(walkTo))
-        {
-            setDelay(2);
-            return getState();
-        }
-
         final TileEntity entity = world.getTileEntity(walkTo);
         if (!(entity instanceof FurnaceTileEntity) || (isEmpty(((FurnaceTileEntity) entity).getStackInSlot(RESULT_SLOT))))
         {
@@ -322,6 +316,11 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         final int resultCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> currentRequest.getRequest().getStack().isItemEqual(stack)) - preExtractCount;
         if (resultCount > 0)
         {
+            if (walkToBlock(walkTo))
+            {
+                setDelay(2);
+                return getState();
+            }
             final ItemStack stack = currentRequest.getRequest().getStack().copy();
             stack.setCount(resultCount);
             currentRequest.addDelivery(stack);
@@ -424,12 +423,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
-        if (walkToBlock(walkTo))
-        {
-            setDelay(2);
-            return getState();
-        }
-
         final TileEntity entity = world.getTileEntity(walkTo);
         if (entity instanceof FurnaceTileEntity)
         {
@@ -458,7 +451,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                 {
                     worker.setHeldItem(Hand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(0).getItemStack().copy());
                 }
-                
                 if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), smeltable))
                 {
                     if (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace))
@@ -482,6 +474,12 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                         }
                         if(toTransfer > 0)
                         {
+
+                            if (walkToBlock(walkTo))
+                            {
+                                setDelay(2);
+                                return getState();
+                            }
                             worker.getCitizenItemHandler().hitBlockWithToolInHand(walkTo);
                             job.setProgress(job.getProgress() + toTransfer);
                             InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
