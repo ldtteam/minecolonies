@@ -120,7 +120,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
         if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorViewData)
         {
             if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), ((IVisitorViewData) data).getRecruitCost().getItem())
-                  > ((IVisitorViewData) data).getRecruitCost().getCount())
+                  >= ((IVisitorViewData) data).getRecruitCost().getCount())
             {
                 return super.onClientResponseTriggered(response, player, data, window);
             }

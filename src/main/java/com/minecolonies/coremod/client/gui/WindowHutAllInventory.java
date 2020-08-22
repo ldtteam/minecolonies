@@ -137,7 +137,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         final World world = building.getColony().getWorld();
 
         TileEntityRack hut = (TileEntityRack) world.getTileEntity(building.getPosition());
-        Map<ItemStorage, Integer> hutStorage = ((TileEntityRack) hut).getAllContent();
+        Map<ItemStorage, Integer> hutStorage =  hut.getAllContent();
 
         for (final Map.Entry<ItemStorage, Integer> entry : hutStorage.entrySet())
         {

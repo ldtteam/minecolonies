@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -78,7 +79,13 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
         @Override
         public void setStackInSlot(final int slot, final @Nonnull ItemStack stack)
         {
-            super.setStackInSlot(slot, stack);
+            validateSlotIndex(slot);
+            final boolean changed = !stack.equals(this.stacks.get(slot));
+            this.stacks.set(slot, stack);
+            if (changed)
+            {
+                onContentsChanged(slot);
+            }
             updateWarehouseIfAvailable(stack);
         }
 
@@ -87,19 +94,10 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
         public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
         {
             final ItemStack result = super.insertItem(slot, stack, simulate);
-            if (result.isEmpty() || result.getCount() < stack.getCount())
+            if (result.isEmpty() || result.getCount() < stack.getCount() && !simulate)
             {
                 updateWarehouseIfAvailable(stack);
             }
-            return result;
-        }
-
-        @NotNull
-        @Override
-        public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
-        {
-            final ItemStack result = super.extractItem(slot, amount, simulate);
-            updateItemStorage();
             return result;
         }
     }
@@ -136,18 +134,56 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
         }
     }
 
-    public abstract boolean hasItemStack(ItemStack stack);
-
+    /**
+     * Set the value for inWarehouse
+     *
+     * @param isInWarehouse is this rack in a warehouse?
+     */
     public abstract void setInWarehouse(Boolean isInWarehouse);
 
+    /**
+     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
+     *
+     * @return true if so.
+     */
     public abstract boolean freeStacks();
 
+    /**
+     * Get the amount of free slots in the inventory. This method checks the content list, it is therefore extremely fast.
+     *
+     * @return the amount of free slots (an integer).
+     */
     public abstract int getFreeSlots();
 
+    /**
+     * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
+     *
+     * @param stack             the stack to check.
+     * @param ignoreDamageValue ignore the damage value.
+     * @return true if so.
+     */
     public abstract boolean hasItemStack(ItemStack stack, boolean ignoreDamageValue);
 
+    /**
+     * Check if a similar/same item as the stack is in the inventory. And return the count if so.
+     *
+     * @param stack             the stack to check.
+     * @param ignoreDamageValue ignore the damage value.
+     * @return the quantity or 0.
+     */
+    public abstract int getCount(ItemStack stack, boolean ignoreDamageValue);
+
+    /**
+     * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
+     *
+     * @param itemStackSelectionPredicate the predicate to test the stack against.
+     * @return true if so.
+     */
     public abstract boolean hasItemStack(@NotNull Predicate<ItemStack> itemStackSelectionPredicate);
 
+    /**
+     * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
+     */
     public abstract void upgradeItemStorage();
 
     /**
@@ -158,6 +194,10 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
     public void setBuildingPos(final BlockPos pos)
     {
         this.buildingPos = pos;
+        if (world != null)
+        {
+            markDirty();
+        }
     }
 
     /* Get the amount of items matching a predicate in the inventory.
@@ -166,12 +206,28 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      */
     public abstract int getItemCount(Predicate<ItemStack> predicate);
 
+    /**
+     * Scans through the whole storage and updates it.
+     */
     public abstract void updateItemStorage();
 
+    /**
+     * Update the blockState of the rack. Switch between connected, single, full and empty texture.
+     */
     protected abstract void updateBlockState();
 
+    /**
+     * Get the other double chest or null.
+     *
+     * @return the tileEntity of the other half or null.
+     */
     public abstract AbstractTileEntityRack getOtherChest();
 
+    /**
+     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
+     *
+     * @return true if so.
+     */
     public abstract boolean isEmpty();
 
     /**

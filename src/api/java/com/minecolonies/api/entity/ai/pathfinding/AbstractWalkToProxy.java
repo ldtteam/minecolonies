@@ -204,7 +204,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
 
         if (onMove)
         {
-            final int targetY = careAboutY() ? pos.getY() : target.getY();
+            final int targetY = careAboutY() ? target.getY() : entity.getPosition().getY();
             arrived = isLivingAtSiteWithMove(entity, target.getX(), target.getY(), target.getZ(), range)
                         || EntityUtils.isLivingAtSite(entity, target.getX(), targetY, target.getZ(), range + 1);
         }

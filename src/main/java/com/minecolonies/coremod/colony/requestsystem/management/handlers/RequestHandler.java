@@ -428,26 +428,35 @@ public class RequestHandler implements IRequestHandler
     @Override
     public void processDirectCancellationOf(final IRequest<?> request)
     {
-        final IRequestResolver resolver = manager.getResolverForRequest(request.getId());
-        resolver.onAssignedRequestBeingCancelled(new WrappedStaticStateRequestManager(manager), request);
+        final boolean assigned = this.isAssigned(request.getId());
+        IRequestResolver resolver = null;
 
-        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolver.getId()))
+        if (assigned)
         {
-            manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).remove(request.getId());
-            if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).isEmpty())
+            resolver = manager.getResolverForRequest(request.getId());
+            resolver.onAssignedRequestBeingCancelled(new WrappedStaticStateRequestManager(manager), request);
+
+            if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolver.getId()))
             {
-                manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolver.getId());
+                manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).remove(request.getId());
+                if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).isEmpty())
+                {
+                    manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolver.getId());
+                }
             }
         }
 
-        if (request.hasParent())
+                if (request.hasParent())
         {
             getRequest(request.getParent()).removeChild(request.getId());
         }
         request.setParent(null);
         request.setState(manager, RequestState.CANCELLED);
 
-        resolver.onAssignedRequestCancelled(new WrappedStaticStateRequestManager(manager), request);
+        if (assigned)
+        {
+            resolver.onAssignedRequestCancelled(new WrappedStaticStateRequestManager(manager), request);
+        }
     }
 
     /**

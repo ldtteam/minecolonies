@@ -95,7 +95,7 @@ public final class BuildingUtils
           item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock()
                                                                                                                                   .getRegistryName()
                                                                                                                                   .getPath()
-                                                                                                                                  .contains(hut));
+                                                                                                                                  .endsWith(hut));
 
         if (slot != -1)
         {

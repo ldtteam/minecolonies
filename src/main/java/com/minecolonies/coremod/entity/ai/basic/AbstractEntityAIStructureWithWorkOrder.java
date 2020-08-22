@@ -5,11 +5,10 @@ import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
@@ -19,15 +18,15 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
+import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
+import net.minecraft.block.CoralBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.PICK_UP_RESIDUALS;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
@@ -39,6 +38,26 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJobStructure<?, J>, B extends AbstractBuildingStructureBuilder>
   extends AbstractEntityAIStructure<J, B>
 {
+    /**
+     * Possible request stages
+     */
+    private enum RequestStage
+    {
+        SOLID,
+        DECO,
+        ENTITIES
+    }
+
+    /**
+     * The current request state (0 is solid
+     */
+    private RequestStage requestState = RequestStage.SOLID;
+
+    /**
+     * Request progress pos.
+     */
+    private BlockPos requestProgress = null;
+
     /**
      * Initialize the builder and add all his tasks.
      *
@@ -65,9 +84,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     /**
      * Takes the existing workorder, loads the structure and tests the worker order if it is valid.
      */
-    public void initiate()
+    @Override
+    public IAIState loadRequirements()
     {
-        if (!job.hasBlueprint())
+        if (!job.hasBlueprint() || structurePlacer == null)
         {
             loadStructure();
             final WorkOrderBuildDecoration wo = job.getWorkOrder();
@@ -77,7 +97,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   String.format("Worker (%d:%d) ERROR - Starting and missing work order(%d)",
                     worker.getCitizenColonyHandler().getColony().getID(),
                     worker.getCitizenData().getId(), job.getWorkOrderId()), new Exception());
-                return;
+                return IDLE;
             }
 
             if (wo instanceof WorkOrderBuildBuilding)
@@ -88,7 +108,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     Log.getLogger().error(
                       String.format("Worker (%d:%d) ERROR - Starting and missing building(%s)",
                         worker.getCitizenColonyHandler().getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingLocation()), new Exception());
-                    return;
+                    return IDLE;
                 }
 
                 worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, job.getBlueprint().getName());
@@ -103,7 +123,17 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             {
                 worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, wo.getName());
             }
+            return getState();
         }
+
+        if (job.getWorkOrder().isRequested())
+        {
+            return afterStructureLoading();
+        }
+
+        //We need to deal with materials
+        requestMaterialsState();
+        return getState();
     }
 
     /**
@@ -132,9 +162,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         super.loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
         workOrder.setCleared(false);
         workOrder.setRequested(false);
-
-        //We need to deal with materials
-        requestMaterialsState();
     }
 
     /**
@@ -146,60 +173,104 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         {
             return;
         }
-        requestMaterials();
 
-        final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
-        job.getWorkOrder().setRequested(true);
-
-        if (job.getWorkOrder().getAmountOfRes() == 0)
+        if (requestMaterials())
         {
-            job.getWorkOrder().setAmountOfRes(buildingWorker.getNeededResources().values().stream()
-                                                .mapToInt(ItemStorage::getAmount).sum());
+            final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
+            job.getWorkOrder().setRequested(true);
+
+            int newQuantity = buildingWorker.getNeededResources().values().stream().mapToInt(ItemStorage::getAmount).sum();
+            if (job.getWorkOrder().getAmountOfRes() == 0 || newQuantity > job.getWorkOrder().getAmountOfRes())
+            {
+                job.getWorkOrder().setAmountOfRes(newQuantity);
+            }
         }
     }
 
-    /**
-     * Iterates through all the required resources and stores them in the building.
-     */
     @Override
-    public void requestMaterials()
+    public boolean requestMaterials()
     {
-        final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
-        buildingWorker.resetNeededResources();
-
         StructurePhasePlacementResult result;
-        final LoadOnlyStructureHandler structure =
-          new LoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true);
+        final WorkerLoadOnlyStructureHandler structure =
+          new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
         final StructurePlacer placer = new StructurePlacer(structure);
-        BlockPos progressPos = NULL_POS;
 
-        final List<ItemStack> deco = new ArrayList<>();
-
-        do
+        if (requestProgress == null)
         {
-            result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-              () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.and((info, pos, handler) -> false)), true);
-            progressPos = result.getIteratorPos();
+            final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
+            buildingWorker.resetNeededResources();
+            requestProgress = NULL_POS;
+            requestState = RequestStage.SOLID;
+        }
 
-            for (final ItemStack stack : result.getBlockResult().getRequiredItems())
-            {
-                if (ItemStackUtils.isDecoration(stack))
-                {
-                    deco.add(stack);
-                }
-                else
+        final RequestStage currState = requestState;
+        switch (currState)
+        {
+            case SOLID:
+                result = placer.executeStructureStep(world,
+                  null,
+                  requestProgress,
+                  StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+                  () -> placer.getIterator()
+                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || info.getBlockInfo()
+                                                                                                                                                  .getState()
+                                                                                                                                                  .getBlock() instanceof CoralBlock)),
+                  false);
+                requestProgress = result.getIteratorPos();
+
+                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
                 {
                     getOwnBuilding().addNeededResource(stack, stack.getCount());
                 }
-            }
-        }
-        while (result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
 
-        for (final ItemStack stack : deco)
-        {
-            getOwnBuilding().addNeededResource(stack, stack.getCount());
+                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
+                {
+                    requestState = RequestStage.DECO;
+                }
+                return false;
+            case DECO:
+                result = placer.executeStructureStep(world,
+                  null,
+                  requestProgress,
+                  StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+                  () -> placer.getIterator()
+                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !(info.getBlockInfo()
+                                                                                                                                                   .getState()
+                                                                                                                                                   .getBlock() instanceof CoralBlock))),
+                  false);
+                requestProgress = result.getIteratorPos();
+
+                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
+                {
+                    getOwnBuilding().addNeededResource(stack, stack.getCount());
+                }
+
+                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
+                {
+                    requestState = RequestStage.ENTITIES;
+                }
+                return false;
+            case ENTITIES:
+                    result = placer.executeStructureStep(world, null, requestProgress, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+                      () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0)), true);
+                    requestProgress = result.getIteratorPos();
+
+                    for (final ItemStack stack : result.getBlockResult().getRequiredItems())
+                    {
+                        getOwnBuilding().addNeededResource(stack, stack.getCount());
+                    }
+
+                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
+                {
+                    requestState = RequestStage.SOLID;
+                    requestProgress = null;
+                    getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources(), worker.getCitizenData(), true);
+                    return true;
+                }
+                return false;
+            default:
+                return true;
         }
-        getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources(), worker.getCitizenData(), true);
     }
 
     @Override
@@ -321,22 +392,13 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             getOwnBuilding().setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
             return true;
         }
-        return job.getWorkOrder() != null && (!world.isBlockPresent(job.getWorkOrder().getBuildingLocation())) && getState() != PICK_UP_RESIDUALS;
+        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getBuildingLocation())) && getState() != PICK_UP_RESIDUALS;
     }
 
     @Override
     protected boolean isAlreadyCleared()
     {
         return job.getWorkOrder() != null && job.getWorkOrder().isCleared();
-    }
-
-    @Override
-    protected void onStartWithoutStructure()
-    {
-        if (job.getWorkOrder() != null)
-        {
-            loadStructure();
-        }
     }
 
     /**

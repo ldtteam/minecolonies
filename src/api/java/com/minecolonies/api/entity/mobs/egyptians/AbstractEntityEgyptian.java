@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity.mobs.egyptians;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.RaiderType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.util.SoundEvent;
@@ -40,16 +41,15 @@ public abstract class AbstractEntityEgyptian extends AbstractEntityMinecoloniesM
         }
     }
 
-    @Nullable
-    @Override
-    protected SoundEvent getAmbientSound()
-    {
-        return SoundEvents.ENTITY_ZOMBIE_AMBIENT;
-    }
-
     @Override
     public boolean canSpawn(final IWorld worldIn, final SpawnReason spawnReasonIn)
     {
         return true;
+    }
+
+    @Override
+    public RaiderType getRaiderType()
+    {
+        return RaiderType.EGYPTIAN;
     }
 }

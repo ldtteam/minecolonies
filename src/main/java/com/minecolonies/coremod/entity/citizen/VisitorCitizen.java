@@ -337,33 +337,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         this.citizenId = id;
     }
 
-    /**
-     * Getter for the current position. Only approximated position, used for stuck checking.
-     *
-     * @return the current position.
-     */
-    @Override
-    public BlockPos getCurrentPosition()
-    {
-        return getPosition();
-    }
-
-    /**
-     * Setter for the current position.
-     *
-     * @param currentPosition the position to set.
-     */
-    @Override
-    public void setCurrentPosition(final BlockPos currentPosition)
-    {
-    }
-
-    @Override
-    public void spawnEatingParticle()
-    {
-
-    }
-
     @Override
     public ICitizenExperienceHandler getCitizenExperienceHandler()
     {
@@ -425,12 +398,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public ICitizenStuckHandler getCitizenStuckHandler()
-    {
-        return null;
-    }
-
-    @Override
     public ICitizenDiseaseHandler getCitizenDiseaseHandler()
     {
         return citizenDiseaseHandler;
@@ -488,12 +455,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     public boolean isDead()
     {
         return !isAlive();
-    }
-
-    @Override
-    public void setCitizenStuckHandler(final ICitizenStuckHandler citizenStuckHandler)
-    {
-
     }
 
     @Override
@@ -703,7 +664,10 @@ public class VisitorCitizen extends AbstractEntityCitizen
                     tavern.setNoVisitorTime(world.getRandom().nextInt(5000) + 30000);
                 }
 
-                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gui.tavern.visitordeath", getCitizenData().getName());
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
+                  "com.minecolonies.coremod.gui.tavern.visitordeath",
+                  getCitizenData().getName(),
+                  cause.getDamageType());
             }
         }
     }

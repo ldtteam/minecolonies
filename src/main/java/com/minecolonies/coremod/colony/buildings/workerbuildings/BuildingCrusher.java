@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
@@ -22,8 +23,11 @@ import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
+
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
@@ -121,6 +125,42 @@ public class BuildingCrusher extends AbstractBuildingCrafter
               Collections.singletonList(input), 2, mode.getValue().getItemStack(), ModBlocks.blockHutCrusher);
             crusherRecipes.put(mode.getKey(), recipe);
         }
+    }
+
+    @Override
+    public void checkForWorkerSpecificRecipes()
+    {
+        loadCurrentRecipes();
+    }
+
+    /**
+     * Reload all of the current crusher recipes
+     */
+    private void loadCurrentRecipes()
+    {
+        for (final IRecipeStorage recipe : crusherRecipes.values())
+        {
+            final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
+            final IRecipeStorage oldRecipe = getFirstRecipe(recipe.getPrimaryOutput());
+            if(oldRecipe != null && !oldRecipe.getToken().equals(token))
+            {
+                replaceRecipe(oldRecipe.getToken(), token);
+            }
+            else
+            {
+                addRecipe(token);
+            }
+        }
+
+        final IRecipeStorage clayballStorage = StandardFactoryController.getInstance().getNewInstance(
+            TypeConstants.RECIPE,
+            StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+            ImmutableList.of(new ItemStack(Blocks.CLAY, 1)),
+            1,
+            new ItemStack(Items.CLAY_BALL, 4),
+            Blocks.AIR);
+  
+        addRecipe(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(clayballStorage));    
     }
 
     /**
@@ -260,11 +300,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
         if (super.recipes.isEmpty())
         {
-            for (final IRecipeStorage recipe : crusherRecipes.values())
-            {
-                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
-                addRecipe(token);
-            }
+            loadCurrentRecipes();
         }
     }
 
@@ -296,12 +332,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         {
             loadCrusherMode();
 
-            super.recipes.clear();
-            for (final IRecipeStorage recipe : crusherRecipes.values())
-            {
-                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
-                addRecipe(token);
-            }
+            loadCurrentRecipes();
         }
 
         if (crusherMode == null)
@@ -320,36 +351,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         {
             buf.writeItemStack(storage.getItemStack());
         }
-    }
-
-    @Override
-    public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
-    {
-        for (final IRecipeStorage storage : crusherRecipes.values())
-        {
-            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
-            {
-                return storage;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
-    {
-        for (final IRecipeStorage storage : crusherRecipes.values())
-        {
-            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
-            {
-                final List<IItemHandler> handlers = getHandlers();
-                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
-                {
-                    return storage;
-                }
-            }
-        }
-        return null;
     }
 
     @Override

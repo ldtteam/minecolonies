@@ -151,7 +151,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void func_230451_b_(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
+    protected void drawGuiContainerForegroundLayer(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
     {
         this.font.drawString(stack, I18n.format("container.crafting"), X_OFFSET, Y_OFFSET, GUI_COLOR);
     }
@@ -160,7 +160,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void func_230450_a_(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void drawGuiContainerBackgroundLayer(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         if (completeCrafting)

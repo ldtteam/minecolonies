@@ -15,19 +15,14 @@ import com.minecolonies.coremod.client.gui.WindowHutStoneSmelter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
-import com.minecolonies.coremod.util.FurnaceRecipes;
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.GlazedTerracottaBlock;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 import java.util.Optional;
 
@@ -52,6 +47,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     public BuildingStoneSmeltery(final IColony c, final BlockPos l)
     {
         super(c, l);
+        keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
     }
 
     @NotNull

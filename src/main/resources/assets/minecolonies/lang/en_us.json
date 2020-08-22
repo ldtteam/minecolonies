@@ -109,7 +109,9 @@
   "minecolonies.config.restrictbuilderunderground": "Builder Underground",
   "minecolonies.config.restrictbuilderunderground.comment": "If the builder should be slower underground or as fast as anywhere else. [Default: true]",
   "minecolonies.config.fisherspongechance": "Sponge Chance",
-  "minecolonies.config.fisherspongechance.comment": "Chance to get a sponge drop for the fisherman starting at level 4. [Default: 0.1]",
+  "minecolonies.config.fisherspongechance.comment": "Chance to get a sponge drop for the fisherman starting at level 3. [Default: 0.1]",
+  "minecolonies.config.fisherprismarinechance": "Prismarine Chance",
+  "minecolonies.config.fisherprismarinechance.comment": "Chance to get a prismarine shard or crystal drop for the fisherman starting at level 3. Overall chance of prismarine is 2x this number [Default: 2.5]",
   "minecolonies.config.minthleveltoteleport": "TH-Teleport",
   "minecolonies.config.minthleveltoteleport.comment": "The minimum level a townhall has to have to allow teleportation to other colonies. [Default: 3]",
   "minecolonies.config.suggestbuildtoolplacement": "BuildTool Placement",
@@ -404,6 +406,7 @@
 
   "com.minecolonies.coremod.status.worker.goingtohut": "Going to Hut",
   "com.minecolonies.coremod.status.herder.breeding": "Breeding",
+  "com.minecolonies.coremod.status.herder.feeding": "Feeding",
   "com.minecolonies.coremod.status.herder.searching": "Searching",
   "com.minecolonies.coremod.status.herder.goingtoanimal": "Going to Animal",
   "com.minecolonies.coremod.status.herder.butchering": "Butchering",
@@ -459,6 +462,7 @@
   "com.minecolonies.coremod.job.student": "Student",
   "com.minecolonies.coremod.job.smelter": "Smelter",
   "com.minecolonies.coremod.job.cook": "Cook",
+  "com.minecolonies.coremod.job.cookassistant": "Assistant Cook",
   "com.minecolonies.coremod.job.bakery": "Baker",
   "com.minecolonies.coremod.job.researcher": "Researcher",
 
@@ -1329,7 +1333,33 @@
   "com.minecolonies.coremod.gui.chat.ignore": "That has to do for now!",
   "com.minecolonies.coremod.gui.chat.remindmelater": "Please remind me later!",
 
-  "entity.fisherman.messagewatertoofar": "y hut seems to be too far away from the water, and I can't find any water to fish in! It should be an area of at least 7 x 7, and on the same height as my hut.",
+  "com.minecolonies.gui.visiblestatus.idle": "Idle",
+  "com.minecolonies.gui.visiblestatus.eat": "Hungry",
+  "com.minecolonies.gui.visiblestatus.raid": "Hiding from raid",
+  "com.minecolonies.gui.visiblestatus.mourn": "Mourning citizen death",
+  "com.minecolonies.gui.visiblestatus.rain": "Bad weather",
+  "com.minecolonies.gui.visiblestatus.sleep": "Sleeping zZZ",
+  "com.minecolonies.gui.visiblestatus.sick": "Sick",
+  "com.minecolonies.gui.visiblestatus.working": "Working",
+  "com.minecolonies.gui.visiblestatus.archer_combat": "Fighting",
+  "com.minecolonies.gui.visiblestatus.archer_uni": "Shooting",
+  "com.minecolonies.gui.visiblestatus.baker": "Baking",
+  "com.minecolonies.gui.visiblestatus.chickenherder": "Find chicken",
+  "com.minecolonies.gui.visiblestatus.composter": "Composting",
+  "com.minecolonies.gui.visiblestatus.cook": "Cooking",
+  "com.minecolonies.gui.visiblestatus.cowboy": "Herding Cows",
+  "com.minecolonies.gui.visiblestatus.crusher": "Crushing",
+  "com.minecolonies.gui.visiblestatus.delivery": "Delivering",
+  "com.minecolonies.gui.visiblestatus.farmer": "Farming",
+  "com.minecolonies.gui.visiblestatus.florist": "Gardening",
+  "com.minecolonies.gui.visiblestatus.knight_combat": "Fighting",
+  "com.minecolonies.gui.visiblestatus.miner": "Mining",
+  "com.minecolonies.gui.visiblestatus.lumberjack_search": "Searching Trees",
+  "com.minecolonies.gui.visiblestatus.sawmill": "Carpentering",
+  "com.minecolonies.gui.visiblestatus.smelting": "Smelting",
+  "com.minecolonies.gui.visiblestatus.teacher_student": "Teaching",
+
+  "entity.fisherman.messagewatertoofar": "My hut seems to be too far away from the water, and I can't find any water to fish in! It should be an area of at least 7 x 7, and on the same height as my hut.",
   "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel I should use in my furnace!",
   "com.minecolonies.coremod.furnaceuser.noore": "Please tell me what kind of ore I should smelt in my furnace!",
   "com.minecolonies.coremod.florist.noplantground": "I don't have any composted dirt to plant on! Please repair or upgrade my building!",
@@ -1551,6 +1581,7 @@
 
   "com.minecolonies.coremod.worker.ai.exception": "My AI has run into an issue, please checkout the latest.log file(or contact the server owner when on a server) and let the minecolonies authors know.",
   "com.minecolonies.coremod.research.research.toomanyinprogress": "Too many in progress",
+  "com.minecolonies.coremod.research.research.missingrequirements": "Missing Requirements",
   "com.minecolonies.coremod.research.research.notenoughresources": "Missing Resources",
   "com.minecolonies.coremod.research.research.buildingleveltoolow": "Too low building level",
 
@@ -1571,7 +1602,10 @@
   "com.minecolonies.coremod.university.researchconcluded.0": "Your researchers just successfully concluded: %s",
   "com.minecolonies.coremod.university.researchconcluded.1": "The researchers in your colony just unravelled the mystery of: %s",
   "com.minecolonies.coremod.university.researchconcluded.2": "The Research about %s was successfully demystified by your researchers",
-
+  "com.minecolonies.coremod.crafters.recipeimproved.0": "Your %s just successfully improved their recipe for %s by reducing the need for %s.",
+  "com.minecolonies.coremod.crafters.recipeimproved.1": "%4$s just successfully reduced the need for %3$s when they make %2$s.",
+  "com.minecolonies.coremod.crafters.recipeimproved.2": "%4$s the %1$s just successfully improved their recipe for %2$s and no longer needs as much %1$s to make it.",
+  
   "com.minecolonies.coremod.workorder.outofcolony": "The Workorder for %s at x: %d, z: %d is outside of the colony and thus cannot be built!",
 
   "com.minecolonies.coremod.entity.citizen.no.unemployment": "Having a job would really be great.",
@@ -1670,7 +1704,7 @@
   "com.minecolonies.coremod.gui.workerhuts.guide.arrow": "Make sure to check out all the building's pages!",
   "com.minecolonies.coremod.gui.workerhuts.guide.chest": "Here you can have an overview of the combined building inventory.",
 
-  "com.minecolonies.coremod.gui.tavern.visitordeath": "The visitor %s died, word spreads around that your Tavern is a dangerous place. You are likely to see less visitors in the future now!",
+  "com.minecolonies.coremod.gui.tavern.visitordeath": "The visitor %s died from %s, word spreads around that your Tavern is a dangerous place. You are likely to see less visitors in the future now!",
   "com.minecolonies.coremod.gui.chat.showstats": "Show citizen stats",
   "com.minecolonies.coremod.gui.chat.recruit": "Recruit for ",
   "com.minecolonies.coremod.recruit.message": "%s has decided to stay in your colony as a citizen",
@@ -1700,6 +1734,8 @@
   "com.minecolonies.coremod.gui.chat.recruitstory19": "seems adapt at using swords and says 'if by my life or death I can protect you, I will. You have my sword'",
   "com.minecolonies.coremod.gui.chat.recruitstory20": "is never late, nor early, %s arrives precisely when meant to.",
 
+  "com.minecolonies.coremod.gui.chat.hometoofar": "I have to walk a long way home from work every day, it would be nice if I could live somewhere closer.",
+
   "com.minecolonies.coremod.gui.beekeeper.notcollect": "Collect honey",
   "com.minecolonies.coremod.gui.beekeeper.collect": "Collect honeycomb",
   "com.minecolonies.coremod.gui.beekeeper.addhives": "Get hive tool",
@@ -1716,5 +1752,10 @@
   "com.minecolonies.coremod.gui.field.near": "Nearest to you",
   "com.minecolonies.coremod.gui.field.worker": "Farmer: %s",
 
-  "com.minecolonies.coremod.gui.chat.skipchitchat": "Skip the Chit-Chat"
+  "com.minecolonies.coremod.gui.chat.skipchitchat": "Skip the Chit-Chat",
+
+  "com.minecolonies.coremod.gui.flag.choose": "Choose a color and pattern for up to 6 layers",
+  "com.minecolonies.coremod.gui.flag.base_layer": "Base",
+  "com.minecolonies.coremod.gui.townhall.edit_flag": "Edit colony flag",
+  "block.minecolonies.colony_banner": "Colony Flag Banner"
 }

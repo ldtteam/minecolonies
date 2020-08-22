@@ -62,7 +62,7 @@ public class StaticLocation implements ILocation
     @Override
     public boolean isReachableFromLocation(@NotNull final ILocation location)
     {
-        return location.getDimension() == getDimension();
+        return location.getDimension().equals(getDimension());
     }
 
     @Override
@@ -79,7 +79,7 @@ public class StaticLocation implements ILocation
 
         final StaticLocation that = (StaticLocation) o;
 
-        if (getDimension() != that.getDimension())
+        if (!getDimension().equals(that.getDimension()))
         {
             return false;
         }

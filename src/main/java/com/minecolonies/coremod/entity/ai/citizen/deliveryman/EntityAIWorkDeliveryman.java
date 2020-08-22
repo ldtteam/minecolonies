@@ -13,12 +13,14 @@ import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDelive
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
@@ -32,6 +34,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -77,6 +80,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * Completing a request with a priority of at least PRIORITY_FORCING_DUMP will force a dump.
      */
     private static final int PRIORITY_FORCING_DUMP = 10;
+
+    /**
+     * Delivery icon
+     */
+    private final static VisibleCitizenStatus DELIVERING =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/delivery.png"), "com.minecolonies.gui.visiblestatus.delivery");
 
     /**
      * Amount of stacks left to gather from the inventory at the gathering step.
@@ -139,6 +148,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return DUMPING;
         }
 
+        worker.getCitizenData().setVisibleStatus(DELIVERING);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.gathering"));
 
         final BlockPos pickupTarget = currentTask.getRequester().getLocation().getInDimensionLocation();
@@ -317,6 +327,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return DUMPING;
         }
 
+        worker.getCitizenData().setVisibleStatus(DELIVERING);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.delivering"));
 
         final ILocation targetBuildingLocation = ((Delivery) currentTask.getRequest()).getTarget();
@@ -473,7 +484,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
 
-        if (nextPickUp == null || cannotHoldMoreItems())
+        if (nextPickUp == null || parallelDeliveryCount > 1 + (getSecondarySkillLevel() / 5.0))
         {
             job.setParallelDeliveries(parallelDeliveryCount);
             return DELIVERY;
@@ -551,6 +562,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private IAIState decide()
     {
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         final IRequest<? extends IDeliverymanRequestable> currentTask = job.getCurrentTask();
         if (currentTask == null)
         {

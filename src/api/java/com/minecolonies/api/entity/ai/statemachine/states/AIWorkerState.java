@@ -38,6 +38,14 @@ public enum AIWorkerState implements IAIState
      */
     START_BUILDING(false),
     /**
+     * Mine a block.
+     */
+    MINE_BLOCK(false),
+    /**
+     * Load the structure and requirements.
+     */
+    LOAD_STRUCTURE(false),
+    /**
      * Creates the solid structure.
      */
     BUILDING_STEP(false),
@@ -321,6 +329,11 @@ public enum AIWorkerState implements IAIState
      * Pickup items within area.
      */
     HERDER_PICKUP(true),
+
+    /**
+     * Pickup items within area.
+     */
+    HERDER_FEED(false),
 
     /*
 ### Cowboy ###

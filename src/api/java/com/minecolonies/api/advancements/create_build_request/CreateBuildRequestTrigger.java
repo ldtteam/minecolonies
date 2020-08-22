@@ -29,7 +29,7 @@ public class CreateBuildRequestTrigger extends AbstractCriterionTrigger<CreateBu
     }
 
     @Override
-    public CreateBuildRequestCriterionInstance func_230307_a_(final JsonObject jsonObject, final ConditionArrayParser conditionArrayParser)
+    public CreateBuildRequestCriterionInstance deserialize(final JsonObject jsonObject, final ConditionArrayParser conditionArrayParser)
     {
         if (jsonObject.has("hut_name"))
         {

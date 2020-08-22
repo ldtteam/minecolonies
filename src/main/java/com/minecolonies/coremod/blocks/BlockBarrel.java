@@ -67,6 +67,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
         return true;
     }
 
+    @NotNull
     @Override
     public ActionResultType onBlockActivated(
       final BlockState state,
@@ -80,7 +81,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
         final TileEntity te = worldIn.getTileEntity(pos);
         if (te instanceof TileEntityBarrel && !worldIn.isRemote)
         {
-            ((TileEntityBarrel) te).useBarrel(worldIn, player, itemstack, state, pos);
+            ((TileEntityBarrel) te).useBarrel(player, itemstack);
             ((TileEntityBarrel) te).updateBlock(worldIn);
         }
 
@@ -123,24 +124,6 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
         return super.getStateForPlacement(context).with(AbstractBlockBarrel.FACING, context.getPlacementHorizontalFacing());
-    }
-
-    @Override
-    public BlockState updatePostPlacement(
-      @NotNull final BlockState stateIn,
-      final Direction facing,
-      final BlockState state,
-      final IWorld worldIn,
-      final BlockPos currentPos,
-      final BlockPos pos)
-    {
-        final TileEntity entity = worldIn.getTileEntity(pos);
-        if (!(entity instanceof TileEntityBarrel))
-        {
-            return super.updatePostPlacement(stateIn, facing, state, worldIn, currentPos, pos);
-        }
-
-        return AbstractBlockBarrel.changeStateOverFullness((TileEntityBarrel) entity, state);
     }
 
     @Override

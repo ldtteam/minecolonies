@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
@@ -724,7 +723,7 @@ public class InventoryUtils
 
         for (final BlockPos pos : provider.getAdditionalCountainers())
         {
-            if (world.getChunkProvider().isChunkLoaded(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4)))
+            if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityRack)
@@ -741,7 +740,7 @@ public class InventoryUtils
 
         for (final BlockPos pos : provider.getAdditionalCountainers())
         {
-            if (world.getChunkProvider().isChunkLoaded(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4)))
+            if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (!(entity instanceof TileEntityRack) && entity != null)
@@ -973,7 +972,7 @@ public class InventoryUtils
 
                 if (slot >= 0)
                 {
-                    itemHandler.insertItem(slot, itemStack, false);
+                    itemHandler.insertItem(slot, itemStack.copy(), false);
                     return ItemStackUtils.EMPTY;
                 }
                 else
@@ -987,7 +986,7 @@ public class InventoryUtils
                 slot = itemHandler.getSlots() == 0 ? -1 : 0;
                 while (!ItemStackUtils.isEmpty(leftOver) && slot != -1 && slot != itemHandler.getSlots())
                 {
-                    leftOver = itemHandler.insertItem(slot, leftOver, false);
+                    leftOver = itemHandler.insertItem(slot, leftOver.copy(), false);
                     if (!ItemStackUtils.isEmpty(leftOver))
                     {
                         slot++;

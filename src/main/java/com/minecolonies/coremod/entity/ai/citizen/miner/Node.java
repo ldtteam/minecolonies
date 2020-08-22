@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.MathHelper;
@@ -107,7 +108,6 @@ public class Node
         }
 
         final NodeType style = NodeType.valueOf(compound.getString(TAG_STYLE));
-
         final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
         Vec2i parent = null;

@@ -92,6 +92,20 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     }
 
     @Override
+    @NotNull
+    public Skill getCraftSpeedSkill()
+    {
+        return getPrimarySkill();
+    }
+
+    @Override
+    @NotNull
+    public Skill getRecipeImprovementSkill()
+    {
+        return getSecondarySkill();
+    }
+    
+    @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
         Optional<Boolean> isRecipeAllowed;
@@ -122,7 +136,7 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     @Override
     public void checkForWorkerSpecificRecipes()
     {
-        final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
+        final IRecipeStorage stringStorage = StandardFactoryController.getInstance().getNewInstance(
           TypeConstants.RECIPE,
           StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
           ImmutableList.of(new ItemStack(Items.WHITE_WOOL, 1)),
@@ -130,7 +144,16 @@ public class BuildingFletcher extends AbstractBuildingCrafter
           new ItemStack(Items.STRING, 4),
           Blocks.AIR);
 
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+        final IRecipeStorage flintStorage = StandardFactoryController.getInstance().getNewInstance(
+          TypeConstants.RECIPE,
+          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+          ImmutableList.of(new ItemStack(Blocks.GRAVEL, 3)),
+          1,
+          new ItemStack(Items.FLINT, 4),
+          Blocks.AIR);
+          
+        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(stringStorage));
+        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(flintStorage));
     }
 
     @Override

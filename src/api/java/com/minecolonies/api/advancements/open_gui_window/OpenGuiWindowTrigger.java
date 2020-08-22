@@ -27,7 +27,7 @@ public class OpenGuiWindowTrigger extends AbstractCriterionTrigger<OpenGuiWindow
 
     @NotNull
     @Override
-    public OpenGuiWindowCriterionInstance func_230307_a_(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
+    public OpenGuiWindowCriterionInstance deserialize(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
     {
         if (jsonObject.has("window_resource_location"))
         {

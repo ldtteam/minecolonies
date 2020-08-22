@@ -1,8 +1,9 @@
 package com.minecolonies.api.entity.mobs.pirates;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
-import com.minecolonies.api.sounds.BarbarianSounds;
+import com.minecolonies.api.sounds.RaiderSounds;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.util.SoundEvent;
@@ -54,13 +55,6 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
         }
     }
 
-    @Nullable
-    @Override
-    protected SoundEvent getAmbientSound()
-    {
-        return BarbarianSounds.barbarianSay;
-    }
-
     @Override
     public boolean canSpawn(final IWorld worldIn, final SpawnReason spawnReasonIn)
     {
@@ -84,5 +78,11 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
         AbstractAdvancedPathNavigate navigator = super.getNavigator();
         navigator.getPathingOptions().withStartSwimCost(2.5D).withSwimCost(1.1D);
         return navigator;
+    }
+
+    @Override
+    public RaiderType getRaiderType()
+    {
+        return RaiderType.PIRATE;
     }
 }

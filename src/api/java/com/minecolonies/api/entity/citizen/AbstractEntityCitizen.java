@@ -9,6 +9,7 @@ import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
@@ -37,6 +38,8 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
@@ -47,6 +50,11 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
 public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements INamedContainerProvider
 {
+    /**
+     * Used texture mapping.
+     */
+    private Map<String, String> textureMapping = new HashMap<>();
+
     public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
     public static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
     public static final DataParameter<Integer>  DATA_IS_FEMALE       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
@@ -93,6 +101,16 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     private AbstractAdvancedPathNavigate pathNavigate;
 
     /**
+     * Counts entity collisions
+     */
+    private int collisionCounter = 0;
+
+    /**
+     * The collision threshold
+     */
+    private final static int COLL_THRESHOLD = 50;
+
+    /**
      * Constructor for a new citizen typed entity.
      *
      * @param type  the Entity type.
@@ -110,9 +128,9 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
     {
         return LivingEntity.registerAttributes()
-                 .func_233815_a_(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
-                 .func_233815_a_(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED)
-                 .func_233815_a_(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
+                 .createMutableAttribute(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
+                 .createMutableAttribute(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED)
+                 .createMutableAttribute(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
     }
 
     public GoalSelector getTasks()
@@ -125,12 +143,9 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         return ticksExisted;
     }
 
-    /**
-     * We override this method and execute no code to avoid citizens travelling to the nether.
-     *
-     */
+    @Nullable
     @Override
-    public Entity func_241206_a_(final ServerWorld p_241206_1_)
+    public Entity changeDimension(final ServerWorld p_241206_1_)
     {
         return null;
     }
@@ -232,10 +247,11 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @NotNull
     public ResourceLocation getTexture()
     {
+        final String renderMeta = getRenderMetadata();
         if (texture == null
               || textureDirty
-              || !texture.getPath().contains(getRenderMetadata())
-              || !texture.getPath().contains(getDataManager().get(DATA_STYLE))
+              || !texture.getPath().contains(renderMeta)
+              || !texture.getPath().contains(textureMapping.getOrDefault(getDataManager().get(DATA_STYLE), "default"))
               || !texture.getPath().contains(getDataManager().get(DATA_TEXTURE_SUFFIX)))
         {
             setTexture();
@@ -249,6 +265,16 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public void setTextureDirty()
     {
         this.textureDirty = true;
+    }
+
+    /**
+     * Set the used texture mapping (from style to actual folder).
+     * @param style the colony style.
+     * @param used the actual folder.
+     */
+    public void setTextureMapping(final String style, final String used)
+    {
+        this.textureMapping.put(style, used);
     }
 
     /**
@@ -321,9 +347,39 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             this.pathNavigate.setCanSwim(true);
             this.pathNavigate.getPathingOptions().setEnterDoors(true);
             this.pathNavigate.getPathingOptions().setCanOpenDoors(true);
-            this.navigator.getNodeProcessor().setCanOpenDoors(true);
+            this.pathNavigate.setStuckHandler(PathingStuckHandler.createStuckHandler().withTeleportOnFullStuck().withTeleportSteps(5));
         }
         return pathNavigate;
+    }
+
+    /**
+     * Ignores entity collisions are colliding for a while, solves stuck e.g. for many trying to take the same door
+     *
+     * @param entityIn entity to collide with
+     */
+    @Override
+    public void applyEntityCollision(@NotNull final Entity entityIn)
+    {
+        if ((collisionCounter += 2) > COLL_THRESHOLD)
+        {
+            if (collisionCounter > COLL_THRESHOLD * 2)
+            {
+                collisionCounter = 0;
+            }
+
+            return;
+        }
+        super.applyEntityCollision(entityIn);
+    }
+
+    @Override
+    public void livingTick()
+    {
+        super.livingTick();
+        if (collisionCounter > 0)
+        {
+            collisionCounter--;
+        }
     }
 
     /**
@@ -354,6 +410,10 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public void setRenderMetadata(final String renderMetadata)
     {
+        if (renderMetadata.equals(getRenderMetadata()))
+        {
+            return;
+        }
         this.renderMetadata = renderMetadata;
         dataManager.set(DATA_RENDER_METADATA, getRenderMetadata());
     }
@@ -534,25 +594,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract void decreaseSaturationForContinuousAction();
 
     /**
-     * Getter for the current position. Only approximated position, used for stuck checking.
-     *
-     * @return the current position.
-     */
-    public abstract BlockPos getCurrentPosition();
-
-    /**
-     * Setter for the current position.
-     *
-     * @param currentPosition the position to set.
-     */
-    public abstract void setCurrentPosition(BlockPos currentPosition);
-
-    /**
-     * Spawn eating particles for the citizen.
-     */
-    public abstract void spawnEatingParticle();
-
-    /**
      * The Handler for all experience related methods.
      *
      * @return the instance of the handler.
@@ -613,13 +654,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract ICitizenSleepHandler getCitizenSleepHandler();
 
     /**
-     * The Handler to check if a citizen is stuck.
-     *
-     * @return the instance of the handler.
-     */
-    public abstract ICitizenStuckHandler getCitizenStuckHandler();
-
-    /**
      * The Handler to check if the citizen is sick.
      *
      * @return the instance of the handler.
@@ -668,8 +702,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract float getRotationPitch();
 
     public abstract boolean isDead();
-
-    public abstract void setCitizenStuckHandler(ICitizenStuckHandler citizenStuckHandler);
 
     public abstract void setCitizenSleepHandler(ICitizenSleepHandler citizenSleepHandler);
 

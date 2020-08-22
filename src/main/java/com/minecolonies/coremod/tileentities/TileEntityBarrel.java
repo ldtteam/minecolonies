@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -101,14 +103,11 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     /**
      * Method called when a player uses the block. Takes the needed itmes from the player if needed.
      *
-     * @param worldIn   the world
      * @param playerIn  the player
      * @param itemstack the itemStack on the hand of the player
-     * @param state     the state of the block
-     * @param pos       the position
      * @return if the barrel took any item
      */
-    public boolean useBarrel(final World worldIn, final PlayerEntity playerIn, final ItemStack itemstack, final BlockState state, final BlockPos pos)
+    public boolean useBarrel(final PlayerEntity playerIn, final ItemStack itemstack)
     {
         if (done)
         {
@@ -165,9 +164,12 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
      */
     public void updateBlock(final World worldIn)
     {
-        worldIn.setBlockState(pos, AbstractBlockBarrel.changeStateOverFullness(this, world.getBlockState(pos)));
-        worldIn.markChunkDirty(pos, this);
-        this.markDirty();
+        final BlockState barrel = world.getBlockState(pos);
+        if (barrel.getBlock() == ModBlocks.blockBarrel)
+        {
+            worldIn.setBlockState(pos, AbstractBlockBarrel.changeStateOverFullness(this, barrel));
+            markDirty();
+        }
     }
 
     @Override
@@ -211,7 +213,13 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     {
         final CompoundNBT compound = packet.getNbtCompound();
         this.read(getBlockState(), compound);
-        world.markChunkDirty(pos, this);
+        markDirty();
+    }
+
+    @Override
+    public void markDirty()
+    {
+        WorldUtil.markChunkDirty(world, pos);
     }
 
     @Override

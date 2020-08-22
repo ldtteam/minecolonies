@@ -56,7 +56,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void place(final StructureName structureName)
     {
-        final BlockPos offset = Settings.instance.getActiveStructure().getPrimaryBlockOffset();
+        final BlockPos offset =Settings.instance.getActiveStructure().getPrimaryBlockOffset();
         ;
         final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         Network.getNetwork().sendToServer(new BuildToolPlaceMessage(

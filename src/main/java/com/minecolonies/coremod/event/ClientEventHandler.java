@@ -2,7 +2,6 @@ package com.minecolonies.coremod.event;
 
 import com.ldtteam.blockout.Log;
 import com.ldtteam.structures.blueprints.v1.Blueprint;
-import com.ldtteam.structures.client.BlueprintHandler;
 import com.ldtteam.structures.client.StructureClientHandler;
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.Network;
@@ -21,28 +20,23 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.views.EmptyView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeBuffers;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.antlr.v4.runtime.misc.Triple;
@@ -90,13 +84,16 @@ public class ClientEventHandler
      * Render buffers.
      */
     public static final RenderTypeBuffers renderBuffers = new RenderTypeBuffers();
+    private static final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.getBufferSource();
+    private static final Supplier<IVertexBuilder> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.getLines());
+    private static final Supplier<IVertexBuilder> linesWithoutCullAndDepth = () -> renderBuffer.getBuffer(RenderUtils.LINES_GLINT);
 
     /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
      *
      * @param event the catched event.
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
         if (MineColonies.getConfig().getCommon().pathfindingDebugDraw.get())
@@ -123,6 +120,8 @@ public class ClientEventHandler
         {
             handleRenderBuildTool(event, world, player);
         }
+
+        renderBuffer.finish();
     }
 
     /**
@@ -149,6 +148,10 @@ public class ClientEventHandler
         final Map<BlockPos, Triple<Blueprint, BlockPos, BlockPos>> newCache = new HashMap<>();
         for (final IBuildingView buildingView : colony.getBuildings())
         {
+            if (buildingView instanceof PostBox.View || buildingView instanceof EmptyView)
+            {
+                continue;
+            }
             final BlockPos currentPosition = buildingView.getPosition();
 
             if (activePosition.withinDistance(currentPosition, PREVIEW_RANGE))
@@ -213,20 +216,13 @@ public class ClientEventHandler
             final BlockPos position = nearbyBuilding.getKey();
             if (buildingData.a != null)
             {
-                StructureClientHandler.renderStructure(buildingData.a,
+                StructureClientHandler.renderStructureAtPos(buildingData.a,
                   event.getPartialTicks(),
                   position,
                   event.getMatrixStack());
             }
 
-            final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.getBufferSource();
-            final Supplier<IVertexBuilder> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.getLines());
-
             RenderUtils.renderBox(buildingData.b, buildingData.c, 0, 0, 1, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
-
-            renderBuffer.finish(RenderType.getLines());
-            renderBuffer.finish(RenderUtils.LINES_GLINT);
-            renderBuffer.finish();
         }
     }
 
@@ -247,18 +243,12 @@ public class ClientEventHandler
             {
                 if (wayPointTemplate == null)
                 {
-                    if (wayPointTemplate == null)
-                    {
-                        wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
-                    }
-                    BlueprintHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()),
-                      event.getPartialTicks(),
-                      // hashcode is safe unless the template needs different rotations/mirrors
-                      Settings.instance.getActiveStructure().hashCode() == wayPointTemplate.hashCode() ? Settings.instance.getActiveStructure() : wayPointTemplate,
-                      event.getMatrixStack());
+                    wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
                 }
-                BlueprintHandler.getInstance()
-                  .drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate, event.getMatrixStack());
+                StructureClientHandler.renderStructureAtPosList(Settings.instance.getActiveStructure().hashCode() == wayPointTemplate.hashCode() ? Settings.instance.getActiveStructure() : wayPointTemplate,
+                    event.getPartialTicks(),
+                    new ArrayList<>(tempView.getWayPoints().keySet()),
+                    event.getMatrixStack());
             }
         }
     }
@@ -296,11 +286,7 @@ public class ClientEventHandler
 
         if (hut instanceof AbstractBuildingGuards.View)
         {
-            BlueprintHandler.getInstance()
-              .drawBlueprintAtListOfPositions(((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::up).collect(Collectors.toList()),
-                event.getPartialTicks(),
-                partolPointTemplate,
-                event.getMatrixStack());
+            StructureClientHandler.renderStructureAtPosList(partolPointTemplate, event.getPartialTicks(),((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::up).collect(Collectors.toList()), event.getMatrixStack());
         }
     }
 
@@ -321,17 +307,8 @@ public class ClientEventHandler
         {
             if (world.func_234923_W_().func_240901_a_() != guardTower.getDimension())
             {
-                continue;
+                RenderUtils.renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), 0, 0, 0, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
             }
-
-            final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.getBufferSource();
-            final Supplier<IVertexBuilder> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.getLines());
-
-            RenderUtils.renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), 0, 0, 0, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
-
-            renderBuffer.finish(RenderType.getLines());
-            renderBuffer.finish(RenderUtils.LINES_GLINT);
-            renderBuffer.finish();
         }
     }
 }

@@ -88,8 +88,6 @@ public final class RaiderMobUtils
     {
         final double difficultyModifier = (mob.world.getDifficulty().getId() / 2d) * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
                                                                                         / (double) DEFAULT_BARBARIAN_DIFFICULTY);
-        mob.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE * 2);
-        mob.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
         final int raidLevel = colony.getRaiderManager().getColonyRaidLevel();
 
         // Base damage

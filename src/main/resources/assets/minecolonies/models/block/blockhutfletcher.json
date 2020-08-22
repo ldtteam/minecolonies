@@ -1,6 +1,6 @@
 {
   "credit": "Made with Blockbench",
-  "parent": "item/shovel_display",
+  "parent": "block/block",
   "ambientocclusion": false,
   "texture_size": [
     64,

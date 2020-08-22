@@ -20,7 +20,7 @@ public interface ISimpleModelType extends IModelType
     /**
      * Default folder.
      */
-    String DEFAULT_FOLDER = "default/";
+    String DEFAULT_FOLDER = "default";
 
     /**
      * The base name of the texture. Is by default appended by a random textureId as well as the render info.
@@ -50,20 +50,22 @@ public interface ISimpleModelType extends IModelType
         final String textureIdentifier =
           getTextureBase() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getRenderMetadata() + entityCitizen.getDataManager()
                                                                                                                                       .get(DATA_TEXTURE_SUFFIX);
-
         //TODO: We have to add style tags to the townhalls that will be used for this in the future.
         // - This will then become a switch case statement for this sake
-        if (entityCitizen.getDataManager().get(DATA_STYLE).contains("medieval"))
+        final String style = entityCitizen.getDataManager().get(DATA_STYLE);
+        if (style.contains("medieval"))
         {
-            folder = "medieval/";
+            folder = "medieval";
         }
 
-        ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + folder + textureIdentifier + ".png");
+        final ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + folder + "/" + textureIdentifier + ".png");
         if (Minecraft.getInstance().getResourceManager().hasResource(modified))
         {
+            entityCitizen.setTextureMapping(style, folder);
             return modified;
         }
 
-        return new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + DEFAULT_FOLDER + textureIdentifier + ".png");
+        entityCitizen.setTextureMapping(style, DEFAULT_FOLDER);
+        return new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + DEFAULT_FOLDER + "/" + textureIdentifier + ".png");
     }
 }

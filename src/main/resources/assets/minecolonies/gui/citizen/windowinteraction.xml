@@ -2,7 +2,7 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
     <switch id="head" size="100% 100%" pos="0 0">
-        <view>
+        <view id="interactionView">
             <gradient id="gradient" size="300 150" pos="20 0"/>
             <text id="chat" size="250 100" color="white" pos="30 15"/>
             <box id="responseOptions" size="270 50" pos="30 100"/>

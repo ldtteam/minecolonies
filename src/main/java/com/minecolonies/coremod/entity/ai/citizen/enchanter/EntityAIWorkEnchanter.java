@@ -115,7 +115,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             return DECIDE;
         }
 
-        if (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) < getOwnBuilding().getBuildingLevel() * MANA_REQ_PER_LEVEL)
+        if (getPrimarySkillLevel() < getOwnBuilding().getBuildingLevel() * MANA_REQ_PER_LEVEL)
         {
             final BuildingEnchanter enchanterBuilding = getOwnBuilding();
             if (enchanterBuilding.getBuildingsToGatherFrom().isEmpty())
@@ -357,7 +357,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         if (bookSlot != -1)
         {
             final int size = citizenToGatherFrom.getInventory().getSlots();
-            final int attempts = getOwnBuilding().getBuildingLevel();
+            final int attempts = (int) (getSecondarySkillLevel() / 5.0);
 
             for (int i = 0; i < attempts; i++)
             {
@@ -365,7 +365,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
                 final ItemStack stack = citizenToGatherFrom.getInventory().getStackInSlot(randomSlot);
                 if (!stack.isEmpty() && stack.isEnchantable())
                 {
-                    EnchantmentHelper.addRandomEnchantment(worker.getRandom(), stack, 1, false);
+                    EnchantmentHelper.addRandomEnchantment(worker.getRandom(), stack, getSecondarySkillLevel() > 50 ? 2 : 1, false);
                     break;
                 }
             }

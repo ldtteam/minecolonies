@@ -17,7 +17,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.LIST_REQUE
 /**
  * Deliverable that can only be fulfilled by a single stack with a given minimal amount of items matching one of a list of stacks.
  */
-public class StackList implements IDeliverable
+public class StackList implements IConcreteDeliverable
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_STACK_LIST  = "StackList";
@@ -374,5 +374,11 @@ public class StackList implements IDeliverable
     public String getDescription()
     {
         return description;
+    }
+
+    @Override
+    public List<ItemStack> getRequestedItems() 
+    {
+        return theStacks;
     }
 }

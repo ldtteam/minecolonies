@@ -3,13 +3,13 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
-import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.ai.goal.Goal;
@@ -107,6 +107,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     public final void startExecuting()
     {
         worker.getCitizenStatusHandler().setStatus(Status.WORKING);
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
     }
 
     /**
@@ -116,6 +117,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     public final void resetTask()
     {
         resetAI();
+        worker.getCitizenData().setVisibleStatus(null);
     }
 
     /**
@@ -164,10 +166,20 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     }
 
     /**
+     * Whether the AI is allowed to be interrupted
+     *
+     * @return true if can be interrupted
+     */
+    public boolean canBeInterrupted()
+    {
+        return getState().isOkayToEat();
+    }
+
+    /**
      * Resets the worker AI to Idle state, use with care interrupts all current Actions
      */
     public void resetAI()
     {
-        stateMachine.addTransition(new AIOneTimeEventTarget(AIWorkerState.IDLE));
+        stateMachine.reset();
     }
 }

@@ -5,6 +5,7 @@ import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,6 +87,10 @@ public class PathJobMoveToLocation extends AbstractPathJob
                      && n.pos.getZ() == destination.getZ();
         }
 
+        if (n.pos.getY() == destination.getY() - 1)
+        {
+            return destination.withinDistance(new Vector3i(n.pos.getX(), destination.getY(), n.pos.getZ()), DESTINATION_SLACK_ADJACENT);
+        }
         return destination.withinDistance(n.pos, DESTINATION_SLACK_ADJACENT);
     }
 

@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
@@ -362,7 +363,7 @@ public final class WorkerUtil
     {
         for (final BlockPos pos : buildingFlorist.getPlantGround())
         {
-            if (world.isBlockPresent(pos))
+            if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityCompostedDirt)

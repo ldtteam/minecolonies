@@ -27,7 +27,7 @@ public class ClickGuiButtonTrigger extends AbstractCriterionTrigger<ClickGuiButt
 
     @NotNull
     @Override
-    public ClickGuiButtonCriterionInstance func_230307_a_(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
+    public ClickGuiButtonCriterionInstance deserialize(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
     {
         if (jsonObject.has("button_id"))
         {

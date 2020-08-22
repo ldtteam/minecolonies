@@ -153,8 +153,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         if (sittingTicks == 0 || worker.ridingEntity == null)
         {
             // Sit for 60-120 seconds.
-            final int jobModifier = 120;
-            maxSittingTicks = worker.getRandom().nextInt(jobModifier / 2) + jobModifier / 2;
+            maxSittingTicks = worker.getRandom().nextInt(120 / 2) + 60;
 
             final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(world);
             entity.setPosition(studyPos.getX(), studyPos.getY() - 0.6, studyPos.getZ());

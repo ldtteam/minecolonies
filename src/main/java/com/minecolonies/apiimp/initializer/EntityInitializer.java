@@ -105,7 +105,7 @@ public class EntityInitializer
             .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
         ModEntities.SITTINGENTITY = build("sittingentity",
-          EntityType.Builder.<SittingEntity>create(SittingEntity::new, EntityClassification.AMBIENT)
+          EntityType.Builder.<SittingEntity>create(SittingEntity::new, EntityClassification.MISC)
             .setTrackingRange(ENTITY_TRACKING_RANGE)
             .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
             .size(0F, 0.5F));

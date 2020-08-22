@@ -5,9 +5,10 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
-import com.minecolonies.api.sounds.BarbarianSounds;
+import com.minecolonies.api.sounds.RaiderSounds;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -28,7 +29,6 @@ import java.util.Random;
 
 import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
-import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
@@ -108,6 +108,16 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     private boolean envDamageImmunity = false;
 
     /**
+     * Counts entity collisions
+     */
+    private int collisionCounter = 0;
+
+    /**
+     * The collision threshold
+     */
+    private final static int COLL_THRESHOLD = 50;
+
+    /**
      * Constructor method for Abstract Barbarians.
      *
      * @param world the world.
@@ -129,9 +139,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     @Override
     public void applyEntityCollision(@NotNull final Entity entityIn)
     {
-        if (invulTime < 0 && entityIn instanceof AbstractEntityMinecoloniesMob
-              && ((stuckCounter > 0 || ladderCounter > 0 || ((AbstractEntityMinecoloniesMob) entityIn).stuckCounter > 0
-                     || ((AbstractEntityMinecoloniesMob) entityIn).ladderCounter > 0)))
+        if (invulTime > 0 || (collisionCounter += 3) > COLL_THRESHOLD)
         {
             return;
         }
@@ -149,18 +157,17 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         }
     }
 
-    @Nullable
-    @Override
-    protected SoundEvent getAmbientSound()
-    {
-        return BarbarianSounds.barbarianSay;
-    }
-
     @Override
     public boolean canDespawn(final double distanceToClosestPlayer)
     {
         return shouldDespawn() || (world != null && world.isAreaLoaded(this.getPosition(), 3) && getColony() == null);
     }
+
+    /**
+     * Get the specific raider type of this raider.
+     * @return the type enum.
+     */
+    public abstract RaiderType getRaiderType();
 
     /**
      * Should the barbs despawn.
@@ -183,6 +190,18 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
             this.newNavigator.setCanSwim(true);
             this.newNavigator.getNodeProcessor().setCanEnterDoors(true);
             newNavigator.getPathingOptions().withJumpDropCost(1.1D);
+            PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
+                                                 .withTakeDamageOnStuck(0.4f)
+                                                 .withBuildLeafBridges()
+                                                 .withPlaceLadders();
+
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().doBarbariansBreakThroughWalls.get())
+            {
+                stuckHandler.withBlockBreaks();
+                stuckHandler.withCompleteStuckBlockBreak(6);
+            }
+
+            newNavigator.setStuckHandler(stuckHandler);
         }
         return newNavigator;
     }
@@ -230,16 +249,22 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     @Override
     protected SoundEvent getHurtSound(final DamageSource damageSourceIn)
     {
-        return BarbarianSounds.barbarianHurt;
+        return RaiderSounds.raiderSounds.get(getRaiderType()).get(RaiderSounds.RaiderSoundTypes.HURT);
     }
 
     @Override
     protected SoundEvent getDeathSound()
     {
-        return BarbarianSounds.barbarianDeath;
+        return RaiderSounds.raiderSounds.get(getRaiderType()).get(RaiderSounds.RaiderSoundTypes.DEATH);
     }
 
-    @NotNull
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound()
+    {
+        return RaiderSounds.raiderSounds.get(getRaiderType()).get(RaiderSounds.RaiderSoundTypes.SAY);
+    }
+
     @Override
     public void writeAdditional(final CompoundNBT compound)
     {
@@ -255,10 +280,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
      * We override this method and execute no code to avoid citizens travelling to the nether.
      *
      */
+    @Nullable
     @Override
-    public Entity func_241206_a_(final ServerWorld p_241206_1_)
+    public Entity changeDimension(final ServerWorld p_241206_1_)
     {
-        return this;
+        return null;
     }
 
     @Override
@@ -295,6 +321,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         else
         {
             this.setInvulnerable(false);
+        }
+
+        if (collisionCounter > 0)
+        {
+            collisionCounter--;
         }
 
         if (world.isRemote)
@@ -427,8 +458,12 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
     {
         return LivingEntity.registerAttributes()
-                 .func_233815_a_(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue())
-                 .func_233815_a_(MOB_ATTACK_DAMAGE, MOB_ATTACK_DAMAGE.getDefaultValue());
+                 .createMutableAttribute(MOB_ATTACK_DAMAGE)
+                 .createMutableAttribute(Attributes.MAX_HEALTH)
+                 .createMutableAttribute(Attributes.ARMOR)
+                 .createMutableAttribute(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
+                 .createMutableAttribute(Attributes.FOLLOW_RANGE, FOLLOW_RANGE * 2)
+                 .createMutableAttribute(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue());
     }
 
     /**

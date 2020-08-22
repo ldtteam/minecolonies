@@ -2,6 +2,7 @@ package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
@@ -76,7 +77,10 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     public void setSchematicName(final String schematicName)
     {
         this.schematicName = schematicName;
-        this.update();
+        if (world != null)
+        {
+            this.update();
+        }
     }
 
     /**
@@ -126,6 +130,15 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     private void update()
     {
         this.markDirty();
+    }
+
+    @Override
+    public void markDirty()
+    {
+        if (world != null)
+        {
+            WorldUtil.markChunkDirty(world, pos);
+        }
     }
 
     @Override

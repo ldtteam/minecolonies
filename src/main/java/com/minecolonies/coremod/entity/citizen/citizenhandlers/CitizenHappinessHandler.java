@@ -33,6 +33,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     public Map<String, IHappinessModifier> happinessFactors = new HashMap<>();
 
     /**
+     * The cached happiness value.
+     */
+    private double cachedHappiness = -1.0;
+
+    /**
      * Create a new instance of the citizen happiness handler.
      *
      * @param data the data to handle.
@@ -95,11 +100,10 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         {
             happinessFactors.get(name).reset();
         }
+        cachedHappiness = -1;
     }
 
     @Override
-
-
     public IHappinessModifier getModifier(final String name)
     {
         return happinessFactors.get(name);
@@ -120,20 +124,25 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
                 citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(DEMANDS + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
         }
+        cachedHappiness = -1;
     }
 
     @Override
     public double getHappiness()
     {
-        double total = 0.0;
-        double totalWeight = 0.0;
-        for (final IHappinessModifier happinessModifier : happinessFactors.values())
+        if (cachedHappiness == -1)
         {
-            total += happinessModifier.getFactor() * happinessModifier.getWeight();
-            totalWeight += happinessModifier.getWeight();
-        }
+            double total = 0.0;
+            double totalWeight = 0.0;
+            for (final IHappinessModifier happinessModifier : happinessFactors.values())
+            {
+                total += happinessModifier.getFactor() * happinessModifier.getWeight();
+                totalWeight += happinessModifier.getWeight();
+            }
 
-        return Math.min(10.0 * (total / totalWeight), 10);
+            cachedHappiness = Math.min(10.0 * (total / totalWeight), 10);
+        }
+        return cachedHappiness;
     }
 
     @Override

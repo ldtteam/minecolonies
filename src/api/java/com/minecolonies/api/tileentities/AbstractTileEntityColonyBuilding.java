@@ -159,11 +159,6 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      */
     public abstract ResourceLocation getBuildingName();
 
-    /**
-     * Mark the inventory dirty for rebuild.
-     */
-    public abstract void markInvDirty();
-
     @Override
     public String getSchematicName()
     {

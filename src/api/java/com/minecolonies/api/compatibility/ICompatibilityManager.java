@@ -38,9 +38,10 @@ public interface ICompatibilityManager
      *
      * @param mesh  the used mesh.
      * @param block the used block.
+     * @param attempts attempts until an item is returned that is not air.
      * @return the ItemStack.
      */
-    ItemStack getRandomSieveResultForMeshAndBlock(ItemStorage mesh, ItemStorage block);
+    ItemStack getRandomSieveResultForMeshAndBlock(ItemStorage mesh, ItemStorage block, final int attempts);
 
     /**
      * Method called to instantiate the requirements.

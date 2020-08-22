@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.Random;
 
 public interface ICitizenData extends ICivilianData
 {
@@ -211,4 +213,29 @@ public interface ICitizenData extends ICivilianData
      */
     @Override
     Optional<AbstractEntityCitizen> getEntity();
+
+    /**
+     * Gets the citizen's status
+     *
+     * @return status
+     */
+    VisibleCitizenStatus getStatus();
+
+    /**
+     * Sets the citizens status
+     *
+     * @param status status to set
+     */
+    void setVisibleStatus(VisibleCitizenStatus status);
+
+    /**
+     * Get the random var of the citizen.
+     * @return the random.
+     */
+    Random getRandom();
+
+    /**
+     * Applies the effects of research to the data's entity
+     */
+    void applyResearchEffects();
 }

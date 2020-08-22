@@ -3,7 +3,9 @@ package com.minecolonies.coremod.entity.ai.citizen.crusher;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
@@ -12,6 +14,7 @@ import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectM
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +30,12 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
      * Delay for each of the craftings.
      */
     private static final int TICK_DELAY = 20;
+
+    /**
+     * Crusher icon
+     */
+    private final static VisibleCitizenStatus CRUSHING =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/crusher.png"), "com.minecolonies.gui.visiblestatus.crusher");
 
     /**
      * Constructor for the crusher. Defines the tasks the crusher executes.
@@ -55,6 +64,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         final IAIState nextState = super.decide();
         if (nextState != START_WORKING)
         {
+            worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
             return nextState;
         }
         return CRUSH;
@@ -71,6 +81,8 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         {
             return getState();
         }
+
+        worker.getCitizenData().setVisibleStatus(CRUSHING);
         job.setProgress(job.getProgress() + TICK_DELAY);
 
         final BuildingCrusher crusherBuilding = getOwnBuilding();
@@ -86,7 +98,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         }
 
         final IAIState check = checkForItems(currentRecipeStorage);
-        if (job.getProgress() > MAX_LEVEL - Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL))
+        if (job.getProgress() > MAX_LEVEL - Math.min((getSecondarySkillLevel()/2) + 1, MAX_LEVEL))
         {
             job.setProgress(0);
 

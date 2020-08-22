@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Load only structure handler just to get dimensions etc from structures, not for placement.
  */
-public final class LoadOnlyStructureHandler extends CreativeStructureHandler
+public class LoadOnlyStructureHandler extends CreativeStructureHandler
 {
     /**
      * The minecolonies specific creative structure placer.
