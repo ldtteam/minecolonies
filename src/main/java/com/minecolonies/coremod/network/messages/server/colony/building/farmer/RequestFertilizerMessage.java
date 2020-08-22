@@ -35,17 +35,20 @@ public class RequestFertilizerMessage extends AbstractBuildingServerMessage<Buil
     }
 
     @Override
-    protected void onExecute(NetworkEvent.Context ctxIn, boolean isLogicalServer, IColony colony, BuildingFarmer building) {
+    protected void onExecute(NetworkEvent.Context ctxIn, boolean isLogicalServer, IColony colony, BuildingFarmer building)
+    {
         building.setRequestFertilizer(shouldRequestFertilizer);
     }
 
     @Override
-    protected void toBytesOverride(PacketBuffer buf) {
+    protected void toBytesOverride(PacketBuffer buf)
+    {
         buf.writeBoolean(shouldRequestFertilizer);
     }
 
     @Override
-    protected void fromBytesOverride(PacketBuffer buf) {
+    protected void fromBytesOverride(PacketBuffer buf)
+    {
         shouldRequestFertilizer = buf.readBoolean();
     }
 }

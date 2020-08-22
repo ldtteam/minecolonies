@@ -73,7 +73,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     private static final String TAG_BUTTON_ASSIGNMENT_MODE = "assignmentMode";
 
     /**
-     * Id of shouldRequestFertilizer button inside the GUI.
+     * Id of the requestFert button inside the GUI.
      */
     private static final String TAG_BUTTON_REQUEST_FERTILIZER = "requestFert";
 
