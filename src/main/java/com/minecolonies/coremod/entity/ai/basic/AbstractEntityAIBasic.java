@@ -82,6 +82,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     protected static final int REQUEST_DELAY = TICKS_20 * 3;
 
     /**
+     * Number of possible pickup attempts.
+     */
+    private static final int PICKUP_ATTEMPTS = 10;
+
+    /**
      * The block the ai is currently working at or wants to work.
      */
     @Nullable
@@ -136,6 +141,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * Already kept items during the dumping cycle.
      */
     private final List<ItemStorage> alreadyKept = new ArrayList<>();
+
+    /**
+     * Counter to count pickup attempts.
+     */
+    private int pickUpCounter = 0;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -223,7 +233,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return getState();
         }
 
-
         if (needsCurrently == null)
         {
             return getStateAfterPickUp();
@@ -240,10 +249,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 walkTo = pos;
             }
 
-            if (walkToBlock(walkTo))
+            if (walkToBlock(walkTo) && pickUpCounter++ < PICKUP_ATTEMPTS)
             {
                 return getState();
             }
+
+            pickUpCounter = 0;
 
             tryTransferFromPosToWorkerIfNeeded(walkTo, needsCurrently);
         }
@@ -582,7 +593,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * Get the secondary skill of this worker.
      * @return the secondary skill.
      */
-    protected int getSecondarySKill()
+    protected int getSecondarySkillLevel()
     {
         return worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getSecondarySkill());
     }

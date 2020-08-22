@@ -337,12 +337,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public void spawnEatingParticle()
-    {
-
-    }
-
-    @Override
     public ICitizenExperienceHandler getCitizenExperienceHandler()
     {
         return citizenExperienceHandler;

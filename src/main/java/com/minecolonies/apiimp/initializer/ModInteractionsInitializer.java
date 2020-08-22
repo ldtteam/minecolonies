@@ -26,6 +26,11 @@ public final class ModInteractionsInitializer
                                                     .setRegistryName(ModInteractionResponseHandlers.STANDARD)
                                                     .createEntry();
 
+        ModInteractionResponseHandlers.simpleNotification = new InteractionResponseHandlerEntry.Builder()
+                                                              .setResponseHandlerProducer(StandardInteraction::new)
+                                                              .setRegistryName(ModInteractionResponseHandlers.SIMPLE_NOTIFICATION)
+                                                              .createEntry();
+
         ModInteractionResponseHandlers.pos = new InteractionResponseHandlerEntry.Builder()
                                                .setResponseHandlerProducer(PosBasedInteraction::new)
                                                .setRegistryName(ModInteractionResponseHandlers.POS)
@@ -44,6 +49,7 @@ public final class ModInteractionsInitializer
         reg.register(ModInteractionResponseHandlers.standard);
         reg.register(ModInteractionResponseHandlers.pos);
         reg.register(ModInteractionResponseHandlers.request);
+        reg.register(ModInteractionResponseHandlers.simpleNotification);
         reg.register(ModInteractionResponseHandlers.recruitment);
     }
 }

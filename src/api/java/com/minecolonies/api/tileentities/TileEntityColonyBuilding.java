@@ -272,6 +272,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         final CompoundNBT compound = packet.getNbtCompound();
         colonyId = compound.getInt(TAG_COLONY);
+        super.onDataPacket(net, packet);
     }
 
     @Override

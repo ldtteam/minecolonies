@@ -83,6 +83,12 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     private Map<Integer, List<BlockPos>> fluidsToRemove = new LinkedHashMap<>();
 
     /**
+     * Total amount of stages.
+     */
+    private int totalStages = 0;
+    private int currentStage = 0;
+
+    /**
      * Public constructor of the building, creates an object of the building.
      *
      * @param c the colony.
@@ -248,6 +254,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 this.fluidsToRemove.put(y, fluids);
             });
         }
+
+
+        currentStage = compound.getInt(TAG_CURR_STAGE);
+        totalStages = compound.getInt(TAG_TOTAL_STAGES);
     }
 
     @Override
@@ -270,6 +280,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             fluidsToRemove.add(fluidsRemove);
         });
         compound.put(TAG_FLUIDS_REMOVE, fluidsToRemove);
+        compound.putInt(TAG_TOTAL_STAGES, totalStages);
+        compound.putInt(TAG_CURR_STAGE, currentStage);
 
         return compound;
     }
@@ -322,12 +334,16 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
                 buf.writeString(desc);
                 buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty / workOrderBuildDecoration.getAmountOfRes());
+                buf.writeInt(totalStages);
+                buf.writeInt(currentStage);
             }
             else
             {
                 buf.writeString("-");
                 buf.writeString("");
                 buf.writeDouble(0.0);
+                buf.writeInt(0);
+                buf.writeInt(0);
             }
         }
         else
@@ -335,6 +351,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             buf.writeString("-");
             buf.writeString("");
             buf.writeDouble(0.0);
+            buf.writeInt(0);
+            buf.writeInt(0);
         }
         buf.writeString((getMainCitizen() == null || colony.getCitizenManager().getCivilian(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());
     }
@@ -655,6 +673,28 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 }
             }
         }
+    }
+
+    /**
+     * Go to the next stage.
+     */
+    public void nextStage()
+    {
+        if (this.currentStage + 1 > totalStages)
+        {
+            totalStages++;
+        }
+        this.currentStage++;
+    }
+
+    /**
+     * Set the total number of stages.
+     * @param total the total.
+     */
+    public void setTotalStages(final int total)
+    {
+        this.totalStages = total;
+        this.currentStage = 0;
     }
 
     /**

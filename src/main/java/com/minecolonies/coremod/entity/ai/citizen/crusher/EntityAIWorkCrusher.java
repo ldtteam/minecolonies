@@ -98,7 +98,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         }
 
         final IAIState check = checkForItems(currentRecipeStorage);
-        if (job.getProgress() > MAX_LEVEL - Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL))
+        if (job.getProgress() > MAX_LEVEL - Math.min((getSecondarySkillLevel()/2) + 1, MAX_LEVEL))
         {
             job.setProgress(0);
 
