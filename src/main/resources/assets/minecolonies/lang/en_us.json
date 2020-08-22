@@ -282,7 +282,7 @@
 
   "tile.blockhut.messagenopermission": "You don't have permission to open huts in %s.",
   "tile.blockhut.messagenopermissionplace": "You don't have permission to place hutes in %s.",
-  "tile.blockhut.messagetoofarfromtownhall": "You need to be closer to your town hall!",
+  "tile.blockhut.messagetoofarfromtownhall": "You need to be closer to your town hall! Expand your colony by upgrading the townhall, or build/upgrade barracks or guardtowers.",
   "tile.blockhut.messagenotownhall": "You need to place a town hall first!",
 
   "block.blockhuttownhall.messagemaxsize.config": "%d has reached max size. Edit the config file to be able to get more.",
