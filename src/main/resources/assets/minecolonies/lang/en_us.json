@@ -525,6 +525,8 @@
   "com.minecolonies.coremod.gui.warehouse.tostonemason": "Deliver to Stonemason:",
   "com.minecolonies.coremod.workorderadded": "Build Request Created!",
   "com.minecolonies.coremod.gui.hiring.on": "Manual",
+  "com.minecolonies.coremod.gui.requestfert.on": "Enabled",
+  "com.minecolonies.coremod.gui.requestfert.off": "Disabled",
 
   "com.minecolonies.coremod.gui.hiring.buttonhire": "Hire",
   "com.minecolonies.coremod.gui.hiring.buttonassign": "Assign",
@@ -564,6 +566,7 @@
   "com.minecolonies.coremod.gui.inventory.scarecrow": "Scarecrow",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.fields": "Fields",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.assignmentmode": "Assign fields to farmer:",
+  "com.minecolonies.coremod.gui.workerhuts.farmerhut.requestfertilizer": "Allow farmer to request Fertilizer",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.north": "North",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.south": "South",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.east": "East",
