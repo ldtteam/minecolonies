@@ -276,7 +276,7 @@
   "block.minecolonies.blockconstructiontape.name": "Construction Tape",
   "block.minecolonies.blockhutguardtower.name": "Guard Tower",
   "block.minecolonies.blockhutfield.name": "Field",
-  
+
   "tile.blockhut.messagenopermission": "You don't have permission to open huts in %s.",
   "tile.blockhut.messagenopermissionplace": "You don't have permission to place huts in %s.",
   "tile.blockhut.messagetoofarfromtownhall": "You need to be closer to your town hall!",
@@ -373,7 +373,7 @@
   "com.minecolonies.command.deleteable.success": "Changed deletable flag of colony id %s. It is now set to %s.",
   "com.minecolonies.command.rsreset.success": "The request system for colony %s has been restarted in 1.618 seconds.",
   "com.minecolonies.command.rsresetall.success": "The request systems for all colonies have been restarted in 1.618 seconds.",
-  
+
   "com.minecolonies.command.citizeninfo.desc": "§2ID: §f %d §2 Name: §f %s",
   "com.minecolonies.command.citizeninfo.skills": "§2Athletics: §f%s §2Dexterity: §f%s §2Strength: §f%s\n§2Agility: §f%s §2Stamina: §f%s §2Mana: §f%s\n§2Adaptability: §f%s §2Focus: §f%s §2Creativity: §f%s\n§2Knowledge: §f%s §2Intelligence: §f%s",
   "com.minecolonies.command.citizeninfo.job": "§2Job: §f%s",
@@ -1600,7 +1600,7 @@
   "com.minecolonies.coremod.crafters.recipeimproved.0": "Your %s just successfully improved their recipe for %s by reducing the need for %s.",
   "com.minecolonies.coremod.crafters.recipeimproved.1": "%4$s just successfully reduced the need for %3$s when they make %2$s.",
   "com.minecolonies.coremod.crafters.recipeimproved.2": "%4$s the %1$s just successfully improved their recipe for %2$s and no longer needs as much %3$s to make it.",
-  
+
   "com.minecolonies.coremod.workorder.outofcolony": "The build order for %s at x: %d, z: %d is outside of the colony and thus cannot be built!",
 
   "com.minecolonies.coremod.entity.citizen.no.unemployment": "Having a job would really be great.",
@@ -1699,7 +1699,7 @@
   "com.minecolonies.coremod.gui.workerhuts.guide.arrow": "Make sure to check out all the building's pages!",
   "com.minecolonies.coremod.gui.workerhuts.guide.chest": "Here you can have an overview of the combined building inventory.",
 
-  "com.minecolonies.coremod.gui.tavern.visitordeath": "The visitor %s died from %s and word spreads around that your Tavern is a dangerous place. You are likely to see less visitors in the future!",
+  "com.minecolonies.coremod.gui.tavern.visitordeath": "The visitor %s died from %s at %s and word spreads around that your Tavern is a dangerous place. You are likely to see less visitors in the future!",
   "com.minecolonies.coremod.gui.chat.showstats": "Show citizen stats",
   "com.minecolonies.coremod.gui.chat.recruit": "Recruit for ",
   "com.minecolonies.coremod.recruit.message": "%s has decided to stay in your colony as a citizen!",
