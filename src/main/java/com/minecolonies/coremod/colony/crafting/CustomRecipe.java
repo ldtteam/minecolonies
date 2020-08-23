@@ -8,6 +8,7 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -28,7 +29,7 @@ public class CustomRecipe
     /**
      * The property name that indicates type for the recipe
      */
-    public static final String RECIPE_TYPE = "type";
+    public static final String RECIPE_TYPE_PROP = "type";
 
     /**
      * The recipe type 
@@ -43,42 +44,42 @@ public class CustomRecipe
     /**
      * The property name that indicates crafter type for the recipe
      */
-    public static final String RECIPE_CRAFTER = "crafter";
+    public static final String RECIPE_CRAFTER_PROP = "crafter";
 
     /**
      * The property name for the inputs array
      */
-    public static final String RECIPE_INPUTS = "inputs";
+    public static final String RECIPE_INPUTS_PROP = "inputs";
 
     /**
      * The property name for the result item 
      */
-    public static final String RECIPE_RESULT = "result";
+    public static final String RECIPE_RESULT_PROP = "result";
 
     /**
      * The property name for Count, used both in inputs array and for result
      */
-    public static final String COUNT = "count";
+    public static final String COUNT_PROP = "count";
 
     /**
      * The property name for the item id in the inputs array
      */
-    public static final String ITEM = "item";
+    public static final String ITEM_PROP = "item";
 
     /**
      * The property name for the intermediate block ID
      */
-    public static final String RECIPE_INTERMEDIATE = "intermediate";
+    public static final String RECIPE_INTERMEDIATE_PROP = "intermediate";
 
     /**
      * The property name for the required research id
      */
-    public static final String RECIPE_RESEARCHID = "research-id";
+    public static final String RECIPE_RESEARCHID_PROP = "research-id";
 
     /**
      * The property name for the research id that invalidates this recipe
      */
-    public static final String RECIPE_EXCLUDED_RESEARCHID = "not-research-id";
+    public static final String RECIPE_EXCLUDED_RESEARCHID_PROP = "not-research-id";
 
     /**
      * The crafter name for this instance, defaults to 'unknown'
@@ -90,18 +91,37 @@ public class CustomRecipe
      */
     private String recipeId = "";
 
+    /**
+     * The list of ItemStacks for input to the recipe
+     */
     private ArrayList<ItemStack> inputs = new ArrayList<>();
+
+    /**
+     * the result ItemStack
+     */
     private ItemStack result = null;
+
+    /**
+     * The Intermediate Block
+     */
     private Block intermediate = Blocks.AIR;
 
+    /**
+     * ID of the required research. Null if none required
+     */
     private String researchId = null;
+
+    /**
+     * ID of the exclusionary research. Null if nothing excludes this recipe
+     */
     private String excludedResearchId = null;
 
 
     /**
      * This class can only be created by the parse static
      */
-    private CustomRecipe() {
+    private CustomRecipe()
+    {
 
     }
     
@@ -110,29 +130,29 @@ public class CustomRecipe
      * @param recipeJson the json representing the recipe
      * @return new instance of CustomRecipe
      */
-    public static CustomRecipe parse(JsonObject recipeJson)
+    public static CustomRecipe parse(@NotNull final JsonObject recipeJson)
     {
-        CustomRecipe recipe = new CustomRecipe();
+        final CustomRecipe recipe = new CustomRecipe();
         
-        if (recipeJson.has(RECIPE_CRAFTER))
+        if (recipeJson.has(RECIPE_CRAFTER_PROP))
         {
-            recipe.crafter = recipeJson.get(RECIPE_CRAFTER).getAsString();
+            recipe.crafter = recipeJson.get(RECIPE_CRAFTER_PROP).getAsString();
         }
-        if (recipeJson.has(RECIPE_INPUTS))
+        if (recipeJson.has(RECIPE_INPUTS_PROP))
         {
-            for(JsonElement e : recipeJson.get(RECIPE_INPUTS).getAsJsonArray())
+            for(JsonElement e : recipeJson.get(RECIPE_INPUTS_PROP).getAsJsonArray())
             {   
                 if(e instanceof JsonElement && e.isJsonObject())
                 {
                     JsonObject ingredient = e.getAsJsonObject();
-                    if(ingredient.has(ITEM))
+                    if(ingredient.has(ITEM_PROP))
                     {
-                        final String[] split = ingredient.get(ITEM).getAsString().split(":");
+                        final String[] split = ingredient.get(ITEM_PROP).getAsString().split(":");
                         final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
                         final ItemStack stack = new ItemStack(item);
-                        if(ingredient.has(COUNT))
+                        if(ingredient.has(COUNT_PROP))
                         {
-                            stack.setCount(ingredient.get(COUNT).getAsInt());
+                            stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
                         }
                         recipe.inputs.add(stack);
                     }
@@ -140,28 +160,28 @@ public class CustomRecipe
                 }
             }
         }
-        if (recipeJson.has(RECIPE_RESULT))
+        if (recipeJson.has(RECIPE_RESULT_PROP))
         {
-            final String[] split = recipeJson.get(RECIPE_RESULT).getAsString().split(":");
+            final String[] split = recipeJson.get(RECIPE_RESULT_PROP).getAsString().split(":");
             final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
             recipe.result = new ItemStack(item);
         }
-        if (recipeJson.has(COUNT) && recipe.result != null)
+        if (recipeJson.has(COUNT_PROP) && recipe.result != null)
         {
-            recipe.result.setCount(recipeJson.get(COUNT).getAsInt());
+            recipe.result.setCount(recipeJson.get(COUNT_PROP).getAsInt());
         }
-        if (recipeJson.has(RECIPE_INTERMEDIATE))
+        if (recipeJson.has(RECIPE_INTERMEDIATE_PROP))
         {
-            final String[] split = recipeJson.get(RECIPE_INTERMEDIATE).getAsString().split(":");
+            final String[] split = recipeJson.get(RECIPE_INTERMEDIATE_PROP).getAsString().split(":");
             recipe.intermediate = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0], split[1]));
         }
-        if (recipeJson.has(RECIPE_RESEARCHID))
+        if (recipeJson.has(RECIPE_RESEARCHID_PROP))
         {
-            recipe.researchId = recipeJson.get(RECIPE_RESEARCHID).getAsString();
+            recipe.researchId = recipeJson.get(RECIPE_RESEARCHID_PROP).getAsString();
         }
-        if (recipeJson.has(RECIPE_EXCLUDED_RESEARCHID))
+        if (recipeJson.has(RECIPE_EXCLUDED_RESEARCHID_PROP))
         {
-            recipe.excludedResearchId = recipeJson.get(RECIPE_EXCLUDED_RESEARCHID).getAsString();
+            recipe.excludedResearchId = recipeJson.get(RECIPE_EXCLUDED_RESEARCHID_PROP).getAsString();
         }
 
         return recipe;

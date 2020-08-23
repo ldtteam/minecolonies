@@ -789,12 +789,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     public void checkForWorkerSpecificRecipes()
     {
-        Set<CustomRecipe> staticRecipes = CustomRecipeManager.getInstance().getRecipes(getJobName());
+        final Set<CustomRecipe> staticRecipes = CustomRecipeManager.getInstance().getRecipes(getJobName());
 
-        for(CustomRecipe newRecipe : staticRecipes)
+        for(final CustomRecipe newRecipe : staticRecipes)
         {
-            IRecipeStorage recipeStorage = newRecipe.getRecipeStorage();
-            IToken<?> recipeToken = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipeStorage);
+            final IRecipeStorage recipeStorage = newRecipe.getRecipeStorage();
+            final IToken<?> recipeToken = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipeStorage);
 
             if(newRecipe.isValidForColony(colony))
             {   
@@ -811,23 +811,24 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                     //Let's verify that this recipe doesn't exist in an improved form
                     if(storage != null && storage.getPrimaryOutput().equals(recipeStorage.getPrimaryOutput(), true))
                     {
-                        List<ItemStorage> storageInput = storage.getCleanedInput();
-                        List<ItemStorage> recipeInput = recipeStorage.getCleanedInput();
+                        List<ItemStorage> recipeInput1 = storage.getCleanedInput();
+                        List<ItemStorage> recipeInput2 = recipeStorage.getCleanedInput();
 
-                        if(storageInput.size() != recipeInput.size())
+                        if(recipeInput1.size() != recipeInput2.size())
                         {
                             continue;
                         }
                         
-                        if(storageInput.size() > 1) {
-                            storageInput.sort(Comparator.comparing(item -> item.toString()));
-                            recipeInput.sort(Comparator.comparing(item -> item.toString()));
+                        if(recipeInput1.size() > 1)
+                        {
+                            recipeInput1.sort(Comparator.comparing(item -> item.toString()));
+                            recipeInput2.sort(Comparator.comparing(item -> item.toString()));
                         }
 
                         boolean allMatch = true;
-                        for(int i=0; i<storageInput.size(); i++)
+                        for(int i=0; i<recipeInput1.size(); i++)
                         {
-                            if(!storageInput.get(i).getItem().equals(recipeInput.get(i).getItem()))
+                            if(!recipeInput1.get(i).getItem().equals(recipeInput2.get(i).getItem()))
                             {
                                 allMatch = false;
                                 break;
@@ -836,6 +837,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                         if(allMatch)
                         {
                             duplicateFound = true;
+                            break;
                         }
                     }
                 }

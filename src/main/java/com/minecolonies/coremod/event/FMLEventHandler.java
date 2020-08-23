@@ -57,9 +57,7 @@ public class FMLEventHandler
     @SubscribeEvent
     public static void onServerAboutToStart(FMLServerAboutToStartEvent event)
     {
-        IReloadableResourceManager resourceManager = event.getServer().getResourceManager();
-
-        resourceManager.addReloadListener(new CrafterRecipeListener());
+        event.getServer().getResourceManager().addReloadListener(new CrafterRecipeListener());
     }
 
     @SubscribeEvent

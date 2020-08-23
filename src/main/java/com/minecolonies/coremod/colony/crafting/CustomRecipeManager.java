@@ -3,6 +3,8 @@ package com.minecolonies.coremod.colony.crafting;
 import java.util.*;
 import java.util.stream.Collectors;
 import com.google.gson.JsonObject;
+import com.ldtteam.blockout.Log;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.coremod.colony.crafting.CustomRecipe.*;
 
@@ -12,7 +14,14 @@ import static com.minecolonies.coremod.colony.crafting.CustomRecipe.*;
  */
 public class CustomRecipeManager
 {
+    /**
+     * The internal static instance of the singleton
+     */
     private static CustomRecipeManager instance = new CustomRecipeManager();
+
+    /**
+     * The map of loaded recipes
+     */
     private HashMap<String, HashMap<String, CustomRecipe>> recipeMap = new HashMap<>();
 
     private CustomRecipeManager()
@@ -34,7 +43,7 @@ public class CustomRecipeManager
      * @param namespace
      * @param path
      */
-    public void addRecipe(JsonObject recipeJson, String namespace, String path)
+    public void addRecipe(@NotNull final JsonObject recipeJson, @NotNull final String namespace, @NotNull final String path)
     {
         CustomRecipe recipe = CustomRecipe.parse(recipeJson);
         recipe.setRecipeId(namespace + ":" + path);
@@ -53,10 +62,10 @@ public class CustomRecipeManager
      * @param namespace
      * @param path
      */
-    public void removeRecipe(JsonObject recipeJson, String namespace, String path)
+    public void removeRecipe(@NotNull final JsonObject recipeJson, @NotNull final String namespace, @NotNull final String path)
     {
         final String id = namespace + ":" + path;
-        if (recipeJson.has(RECIPE_TYPE) && recipeJson.get(RECIPE_TYPE).getAsString().equals("remove") && recipeJson.has("recipe-id-to-remove"))
+        if (recipeJson.has(RECIPE_TYPE_PROP) && recipeJson.get(RECIPE_TYPE_PROP).getAsString().equals("remove") && recipeJson.has("recipe-id-to-remove"))
         {
             final Optional<HashMap<String, CustomRecipe>> crafterMap = recipeMap.entrySet().stream().map(r -> r.getValue()).filter(r1 -> r1.keySet().contains(id)).findFirst();
             if(crafterMap.isPresent())
@@ -71,7 +80,7 @@ public class CustomRecipeManager
      * @param crafter
      * @return
      */
-    public Set<CustomRecipe> getRecipes(String crafter)
+    public Set<CustomRecipe> getRecipes(@NotNull final String crafter)
     {
         if(recipeMap.containsKey(crafter))
         {

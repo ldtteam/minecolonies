@@ -40,12 +40,12 @@ public class CrafterRecipeListener extends JsonReloadListener
             ResourceLocation key = entry.getKey();
             JsonObject recipeJson = entry.getValue();
 
-            if(recipeJson.has(RECIPE_TYPE) && recipeJson.get(RECIPE_TYPE).getAsString().equals(RECIPE_TYPE_RECIPE)) 
+            if(recipeJson.has(RECIPE_TYPE_PROP) && recipeJson.get(RECIPE_TYPE_PROP).getAsString().equals(RECIPE_TYPE_RECIPE)) 
             {
                 recipeManager.addRecipe(recipeJson, key.getNamespace(), key.getPath());
             }
 
-            if(recipeJson.has(RECIPE_TYPE) && recipeJson.get(RECIPE_TYPE).getAsString().equals(RECIPE_TYPE_REMOVE)) 
+            if(recipeJson.has(RECIPE_TYPE_PROP) && recipeJson.get(RECIPE_TYPE_PROP).getAsString().equals(RECIPE_TYPE_REMOVE)) 
             {
                 recipeManager.removeRecipe(recipeJson, key.getNamespace(), key.getPath());
             }
