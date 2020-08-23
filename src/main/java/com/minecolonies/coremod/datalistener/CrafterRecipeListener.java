@@ -42,7 +42,6 @@ public class CrafterRecipeListener extends JsonReloadListener
 
             if(recipeJson.has(RECIPE_TYPE) && recipeJson.get(RECIPE_TYPE).getAsString().equals(RECIPE_TYPE_RECIPE)) 
             {
-                Log.getLogger().info("Loading: " + key.getNamespace() + ":" + key.getPath());
                 recipeManager.addRecipe(recipeJson, key.getNamespace(), key.getPath());
             }
 

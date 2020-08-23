@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.crafting;
 import java.util.*;
 import java.util.stream.Collectors;
 import com.google.gson.JsonObject;
-import com.ldtteam.blockout.Log;
 
 import static com.minecolonies.coremod.colony.crafting.CustomRecipe.*;
 
@@ -39,11 +38,9 @@ public class CustomRecipeManager
     {
         CustomRecipe recipe = CustomRecipe.parse(recipeJson);
         recipe.setRecipeId(namespace + ":" + path);
-        Log.getLogger().info("Parsed: " + recipe.getRecipeId());
 
         if(!recipeMap.containsKey(recipe.getCrafter()))
         {
-            Log.getLogger().info("Adding collection for: " + recipe.getCrafter());
             recipeMap.put(recipe.getCrafter(), new HashMap<>());
         }
         recipeMap.get(recipe.getCrafter()).put(recipe.getRecipeId(), recipe);
