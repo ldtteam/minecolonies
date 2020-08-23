@@ -281,7 +281,9 @@ public class ServerConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> circus;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> festival;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> nightowl;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> spectacle;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> nightowl2;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> opera;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> theater;
 
@@ -1150,8 +1152,14 @@ public class ServerConfiguration extends AbstractConfiguration
         this.festival = defineList(builder, "festival",
           Collections.singletonList("minecraft:cake*9"),
           s -> s instanceof String);
+        this.nightowl = defineList(builder, "nightowl",
+          Collections.singletonList("minecraft:golden_carrot*25"),
+          s -> s instanceof String);
         this.spectacle = defineList(builder, "spectacle",
           Collections.singletonList("minecraft:cake*18"),
+          s -> s instanceof String);
+        this.nightowl2 = defineList(builder, "nightowl2",
+          Collections.singletonList("minecraft:golden_carrot*75"),
           s -> s instanceof String);
         this.opera = defineList(builder, "opera",
           Collections.singletonList("minecraft:cake*27"),
