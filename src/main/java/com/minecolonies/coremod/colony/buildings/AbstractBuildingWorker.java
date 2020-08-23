@@ -841,7 +841,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 }
                 if(!duplicateFound)
                 {
-                    Log.getLogger().info("Adding recipe for " + recipeStorage.getPrimaryOutput());
                     addRecipeToList(recipeToken);    
                 }
             } 
