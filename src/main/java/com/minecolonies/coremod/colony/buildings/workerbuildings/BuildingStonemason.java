@@ -56,48 +56,6 @@ public class BuildingStonemason extends AbstractBuildingCrafter
         super(c, l);
     }
 
-    @Override
-    public void checkForWorkerSpecificRecipes()
-    {
-        final IRecipeStorage sandstoneStorage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(Blocks.COBBLESTONE, 1), new ItemStack(Blocks.SAND, 1)),
-          1,
-          new ItemStack(Blocks.SANDSTONE, 1),
-          Blocks.AIR);
-
-        final IRecipeStorage redsandstoneStorage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(Blocks.COBBLESTONE, 1), new ItemStack(Blocks.RED_SAND, 1)),
-          1,
-          new ItemStack(Blocks.RED_SANDSTONE, 1),
-          Blocks.AIR);
-
-        final IRecipeStorage prismarineBlockStorage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(Blocks.COBBLESTONE, 1), new ItemStack(Items.PRISMARINE_SHARD, 1)),
-          1,
-          new ItemStack(Blocks.PRISMARINE, 1),
-          Blocks.AIR);
-
-        final IRecipeStorage prismarineBrickStorage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(Blocks.STONE_BRICKS, 1), new ItemStack(Items.PRISMARINE_SHARD, 1)),
-          1,
-          new ItemStack(Blocks.PRISMARINE_BRICKS, 1),
-          Blocks.AIR);
-            
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(sandstoneStorage));
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(redsandstoneStorage));
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(prismarineBlockStorage));
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(prismarineBrickStorage));
-
-    }
-
     @NotNull
     @Override
     public String getSchematicName()
