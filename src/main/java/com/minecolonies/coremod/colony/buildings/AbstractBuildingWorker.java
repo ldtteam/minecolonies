@@ -25,6 +25,8 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.crafting.CustomRecipe;
+import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
@@ -222,7 +224,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     /**
      * Get the count of items in all the warehouses
      */
-    private int getWarehouseCount(ItemStorage item)
+    protected int getWarehouseCount(ItemStorage item)
     {
         int count = 0;
         final Set<IBuilding> wareHouses = colony.getBuildingManager().getBuildings().values().stream()
@@ -787,7 +789,71 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     public void checkForWorkerSpecificRecipes()
     {
-        // Override if necessary.
+        Set<CustomRecipe> staticRecipes = CustomRecipeManager.getInstance().getRecipes(getJobName());
+
+        for(CustomRecipe newRecipe : staticRecipes)
+        {
+            IRecipeStorage recipeStorage = newRecipe.getRecipeStorage();
+            IToken<?> recipeToken = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipeStorage);
+
+            if(newRecipe.isValidForColony(colony))
+            {   
+                boolean duplicateFound = false; 
+                for(IToken<?> token : recipes)
+                {
+                    if(token == recipeToken)
+                    {
+                        duplicateFound = true;
+                        break;
+                    }
+                    final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+                    //Let's verify that this recipe doesn't exist in an improved form
+                    if(storage != null && storage.getPrimaryOutput().equals(recipeStorage.getPrimaryOutput(), true))
+                    {
+                        List<ItemStorage> storageInput = storage.getCleanedInput();
+                        List<ItemStorage> recipeInput = recipeStorage.getCleanedInput();
+
+                        if(storageInput.size() != recipeInput.size())
+                        {
+                            continue;
+                        }
+                        
+                        if(storageInput.size() > 1) {
+                            storageInput.sort(Comparator.comparing(item -> item.toString()));
+                            recipeInput.sort(Comparator.comparing(item -> item.toString()));
+                        }
+
+                        boolean allMatch = true;
+                        for(int i=0; i<storageInput.size(); i++)
+                        {
+                            if(!storageInput.get(i).getItem().equals(recipeInput.get(i).getItem()))
+                            {
+                                allMatch = false;
+                                break;
+                            }
+                        }
+                        if(allMatch)
+                        {
+                            duplicateFound = true;
+                        }
+                    }
+                }
+                if(!duplicateFound)
+                {
+                    Log.getLogger().info("Adding recipe for " + recipeStorage.getPrimaryOutput());
+                    addRecipeToList(recipeToken);    
+                }
+            } 
+            else
+            {
+                if(recipes.contains(recipeToken))
+                {
+                    removeRecipe(recipeToken);
+                }
+            }
+        }
+        markDirty();
     }
 
     /**
