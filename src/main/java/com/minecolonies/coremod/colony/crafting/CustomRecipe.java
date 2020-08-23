@@ -42,6 +42,11 @@ public class CustomRecipe
     public static final String RECIPE_TYPE_REMOVE = "remove";
 
     /**
+     * The property name that indicates the recipe to remove
+     */
+    public static final String RECIPE_ID_TO_REMOVE_PROP = "recipe-id-to-remove";
+
+    /**
      * The property name that indicates crafter type for the recipe
      */
     public static final String RECIPE_CRAFTER_PROP = "crafter";
@@ -89,7 +94,7 @@ public class CustomRecipe
     /**
      * The recipe id for this instance, used for removal and lookup
      */
-    private String recipeId = "";
+    private ResourceLocation recipeId = null;
 
     /**
      * The list of ItemStacks for input to the recipe
@@ -200,7 +205,7 @@ public class CustomRecipe
      * Get the ID for this recipe
      * @return
      */
-    public String getRecipeId()
+    public ResourceLocation getRecipeId()
     {
         return recipeId;
     }
@@ -208,7 +213,7 @@ public class CustomRecipe
     /**
      * Set the ID for this recipe
      */
-    public void setRecipeId(String recipeId)
+    public void setRecipeId(ResourceLocation recipeId)
     {
         this.recipeId = recipeId;
     }
