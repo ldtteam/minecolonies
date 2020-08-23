@@ -1,0 +1,13 @@
+{
+  "type" : "recipe",
+  "crafter": "lumberjack",
+  "inputs": [
+    {
+        "item" : "minecraft:spruce_log",
+        "count": "1"
+    }
+  ],
+  "result": "minecraft:stripped_spruce_log",
+  "count": "1",
+  "intermediate" : "minecraft:air"
+}
