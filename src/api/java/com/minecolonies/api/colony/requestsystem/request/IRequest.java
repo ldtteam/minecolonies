@@ -231,6 +231,13 @@ public interface IRequest<R extends IRequestable>
     void addDelivery(@NotNull final ItemStack stack);
 
     /**
+     * Adds a list of stacks as a delivery to this request.
+     *
+     * @param list The list of stacks that should be treated as a new delivery.
+     */
+    void addDelivery(@NotNull final List<ItemStack> list);
+
+    /**
      * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes the request in short. Should represent the request, in case the player needs to
      * fulfill it, or information about this request is required.
      *
