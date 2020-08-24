@@ -2310,16 +2310,13 @@ public class InventoryUtils
             final Optional<ItemStack>
               alreadyContained = requiredCountForStacks.keySet().stream().filter(itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)).findFirst();
 
-            final ItemStack inputUnitStack = targetStack.copy();
-            inputUnitStack.setCount(1);
-
             if (alreadyContained.isPresent())
             {
                 requiredCountForStacks.put(alreadyContained.get(), requiredCountForStacks.get(alreadyContained.get()) + targetStack.getCount());
             }
             else
             {
-                requiredCountForStacks.put(inputUnitStack, targetStack.getCount());
+                requiredCountForStacks.put(targetStack, targetStack.getCount());
             }
         });
 
@@ -2336,7 +2333,8 @@ public class InventoryUtils
     public static List<ItemStack> splitMergedCountedStacksIntoMaxContentStacks(@NotNull final Map<ItemStack, Integer> mergedCountedStacks)
     {
         final List<ItemStack> list = Lists.newArrayList();
-        mergedCountedStacks.entrySet().forEach(itemStackIntegerEntry -> {
+        for (final Map.Entry<ItemStack, Integer> itemStackIntegerEntry : mergedCountedStacks.entrySet())
+        {
             final int minimalFullStacks = itemStackIntegerEntry.getValue() / itemStackIntegerEntry.getKey().getMaxStackSize();
             final int residualStackSize = itemStackIntegerEntry.getValue() % itemStackIntegerEntry.getKey().getMaxStackSize();
 
@@ -2355,70 +2353,9 @@ public class InventoryUtils
 
                 list.add(tobeAdded);
             }
-        });
+        }
 
         return list;
-    }
-
-    /**
-     * Method searches a list of itemstacks given and an itemhandler to find the stacks that do not appear in the itemhandler. If multiple of the same itemstack appear their sum
-     * will be taken into account.
-     *
-     * @param stacks  The stacks to check
-     * @param handler The handler to check in
-     * @return The list of missing stacks. Or an empty list if all stacks and at least their sizes are present.
-     */
-    public static List<ItemStack> getMissingFromItemHandler(@NotNull final List<ItemStack> stacks, @NotNull final IItemHandler handler)
-    {
-        final List<ItemStack> result = Lists.newArrayList();
-
-        final Map<ItemStack, Integer> inputCounts = getMergedCountedStacksFromList(stacks);
-        final Map<ItemStack, Integer> inventoryCounts = getMergedCountedStacksFromList(getItemHandlerAsList(handler));
-
-        final Map<ItemStack, Integer> resultingMissing = new HashMap<>();
-        inputCounts
-          .forEach((itemStack, count) -> {
-
-              int remainingCount = count;
-              for (Map.Entry<ItemStack, Integer> entry : inventoryCounts.entrySet())
-              {
-                  ItemStack containedStack = entry.getKey();
-                  Integer containedCount = entry.getValue();
-                  if (ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, containedStack))
-                  {
-                      remainingCount -= containedCount;
-                  }
-              }
-
-              if (remainingCount > 0)
-              {
-                  resultingMissing.put(itemStack, count);
-              }
-          });
-
-        resultingMissing
-          .forEach((itemStack, count) -> {
-              final int fullStackCount = count / itemStack.getMaxStackSize();
-              final int missingPartialCount = count % itemStack.getMaxStackSize();
-
-              for (int i = 0; i < fullStackCount; i++)
-              {
-                  final ItemStack targetStack = itemStack.copy();
-                  targetStack.setCount(targetStack.getMaxStackSize());
-
-                  result.add(targetStack);
-              }
-
-              if (missingPartialCount != 0)
-              {
-                  final ItemStack targetStack = itemStack.copy();
-                  targetStack.setCount(missingPartialCount);
-
-                  result.add(targetStack);
-              }
-          });
-
-        return result;
     }
 
     /**
