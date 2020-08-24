@@ -78,7 +78,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
             final List<IRequest<?>> deliveries = Lists.newArrayList();
 
-            completedRequest.getDeliveries().forEach(parentRequest::addDelivery);
+            parentRequest.addDelivery(completedRequest.getDeliveries());
             completedRequest.getDeliveries().forEach(itemStack -> {
                 final Delivery delivery = new Delivery(getLocation(), parentRequestRequester.getLocation(), itemStack, getDefaultDeliveryPriority(true));
 
