@@ -318,7 +318,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         {
             if (walkToBlock(walkTo))
             {
-                setDelay(2);
                 return getState();
             }
             final ItemStack stack = currentRequest.getRequest().getStack().copy();
@@ -477,7 +476,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
                             if (walkToBlock(walkTo))
                             {
-                                setDelay(2);
                                 return getState();
                             }
                             worker.getCitizenItemHandler().hitBlockWithToolInHand(walkTo);
