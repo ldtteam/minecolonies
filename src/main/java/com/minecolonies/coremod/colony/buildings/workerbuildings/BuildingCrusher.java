@@ -127,42 +127,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         }
     }
 
-    @Override
-    public void checkForWorkerSpecificRecipes()
-    {
-        loadCurrentRecipes();
-    }
-
-    /**
-     * Reload all of the current crusher recipes
-     */
-    private void loadCurrentRecipes()
-    {
-        for (final IRecipeStorage recipe : crusherRecipes.values())
-        {
-            final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
-            final IRecipeStorage oldRecipe = getFirstRecipe(recipe.getPrimaryOutput());
-            if(oldRecipe != null && !oldRecipe.getToken().equals(token))
-            {
-                replaceRecipe(oldRecipe.getToken(), token);
-            }
-            else
-            {
-                addRecipe(token);
-            }
-        }
-
-        final IRecipeStorage clayballStorage = StandardFactoryController.getInstance().getNewInstance(
-            TypeConstants.RECIPE,
-            StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-            ImmutableList.of(new ItemStack(Blocks.CLAY, 1)),
-            1,
-            new ItemStack(Items.CLAY_BALL, 4),
-            Blocks.AIR);
-  
-        addRecipe(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(clayballStorage));    
-    }
-
     /**
      * Get the recipe storage of the current mode.
      *
@@ -297,11 +261,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         }
 
         this.oneByOne = compound.getBoolean(CRUSHING_11);
-
-        if (super.recipes.isEmpty())
-        {
-            loadCurrentRecipes();
-        }
     }
 
     @Override
@@ -331,8 +290,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         if (crusherRecipes.isEmpty() || oneOne && !oneByOne)
         {
             loadCrusherMode();
-
-            loadCurrentRecipes();
         }
 
         if (crusherMode == null)

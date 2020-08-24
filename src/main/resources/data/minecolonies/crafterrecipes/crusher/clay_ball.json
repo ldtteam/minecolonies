@@ -1,0 +1,13 @@
+{
+  "type" : "recipe",
+  "crafter": "crusher",
+  "inputs": [
+    {
+        "item" : "minecraft:clay",
+        "count": "1"
+    }
+  ],
+  "result": "minecraft:clay_ball",
+  "count": "4",
+  "intermediate" : "minecraft:air"
+}

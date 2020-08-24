@@ -110,40 +110,6 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     }
 
     @Override
-    public void checkForWorkerSpecificRecipes()
-    {
-        if (recipes.isEmpty())
-        {
-            addStrippedWoodRecipe(Items.OAK_LOG, Items.STRIPPED_OAK_LOG);
-            addStrippedWoodRecipe(Items.SPRUCE_LOG, Items.STRIPPED_SPRUCE_LOG);
-            addStrippedWoodRecipe(Items.BIRCH_LOG, Items.STRIPPED_BIRCH_LOG);
-            addStrippedWoodRecipe(Items.JUNGLE_LOG, Items.STRIPPED_JUNGLE_LOG);
-            addStrippedWoodRecipe(Items.ACACIA_LOG, Items.STRIPPED_ACACIA_LOG);
-            addStrippedWoodRecipe(Items.DARK_OAK_LOG, Items.STRIPPED_DARK_OAK_LOG);
-            addStrippedWoodRecipe(Items.OAK_WOOD, Items.STRIPPED_OAK_WOOD);
-            addStrippedWoodRecipe(Items.SPRUCE_WOOD, Items.STRIPPED_SPRUCE_WOOD);
-            addStrippedWoodRecipe(Items.BIRCH_WOOD, Items.STRIPPED_BIRCH_WOOD);
-            addStrippedWoodRecipe(Items.JUNGLE_WOOD, Items.STRIPPED_JUNGLE_WOOD);
-            addStrippedWoodRecipe(Items.ACACIA_WOOD, Items.STRIPPED_ACACIA_WOOD);
-            addStrippedWoodRecipe(Items.DARK_OAK_WOOD, Items.STRIPPED_DARK_OAK_WOOD);
-            markDirty();
-        }
-    }
-
-    public final void addStrippedWoodRecipe(final Item baseVariant, final Item strippedVariant)
-    {
-        final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(baseVariant, 1)),
-          1,
-          new ItemStack(strippedVariant, 1),
-          Blocks.AIR);
-
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
-    }
-
-    @Override
     public boolean canBeGathered()
     {
         // Normal crafters are only gatherable when they have a task, i.e. while producing stuff.

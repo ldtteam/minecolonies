@@ -1,0 +1,13 @@
+{
+  "type" : "recipe",
+  "crafter": "lumberjack",
+  "inputs": [
+    {
+        "item" : "minecraft:jungle_wood",
+        "count": "1"
+    }
+  ],
+  "result": "minecraft:stripped_jungle_log",
+  "count": "1",
+  "intermediate" : "minecraft:air"
+}

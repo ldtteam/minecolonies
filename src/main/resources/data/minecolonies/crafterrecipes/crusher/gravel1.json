@@ -1,0 +1,14 @@
+{
+  "type" : "recipe",
+  "crafter": "crusher",
+  "inputs": [
+    {
+        "item" : "minecraft:cobblestone",
+        "count": "2"
+    }
+  ],
+  "result": "minecraft:gravel",
+  "count": "1",
+  "intermediate" : "minecraft:air",
+  "not-research-id" : "gildedhammer"
+}
