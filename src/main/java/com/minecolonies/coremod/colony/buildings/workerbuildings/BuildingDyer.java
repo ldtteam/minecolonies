@@ -33,7 +33,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -183,20 +182,20 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
 
         if(recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
         {
-            final ResourceLocation wool = new ResourceLocation("minecraft", "wool");
             final HashMap<ItemStorage, Integer> inventoryCounts = new HashMap<>();
 
-            final Set<IBuilding> wareHouses = colony.getBuildingManager().getBuildings().values().stream()
-                                                    .filter(building -> building instanceof BuildingWareHouse)
-                                                    .collect(Collectors.toSet());
+            if (!colony.getBuildingManager().hasWarehouse())
+            {
+                return null;
+            }
             
-            final List<ItemStorage> woolItems = ItemTags.getCollection().getOrCreate(wool).getAllElements().stream()
+            final List<ItemStorage> woolItems = ItemTags.WOOL.getAllElements().stream()
                                                         .filter(item -> !item.equals(Items.WHITE_WOOL))
                                                         .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
 
             for(ItemStorage color : woolItems)
             {
-                for(IBuilding wareHouse: wareHouses)
+                for(IBuilding wareHouse: colony.getBuildingManager().getWareHouses())
                 {
                     final int colorCount = InventoryUtils.hasBuildingEnoughElseCount(wareHouse, color, 1);
                     inventoryCounts.replace(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
