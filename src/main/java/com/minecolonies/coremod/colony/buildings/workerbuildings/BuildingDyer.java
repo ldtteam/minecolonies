@@ -216,9 +216,10 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
         {
             final HashMap<ItemStorage, Integer> inventoryCounts = new HashMap<>();
 
-            final Set<IBuilding> wareHouses = colony.getBuildingManager().getBuildings().values().stream()
-                                                    .filter(building -> building instanceof BuildingWareHouse)
-                                                    .collect(Collectors.toSet());
+            if (!colony.getBuildingManager().hasWarehouse())
+            {
+                return null;
+            }
             
             final List<ItemStorage> woolItems = ItemTags.WOOL.getAllElements().stream()
                                                         .filter(item -> !item.equals(Items.WHITE_WOOL))
@@ -226,7 +227,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
 
             for(ItemStorage color : woolItems)
             {
-                for(IBuilding wareHouse: wareHouses)
+                for(IBuilding wareHouse: colony.getBuildingManager().getWareHouses())
                 {
                     final int colorCount = InventoryUtils.hasBuildingEnoughElseCount(wareHouse, color, 1);
                     inventoryCounts.replace(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
