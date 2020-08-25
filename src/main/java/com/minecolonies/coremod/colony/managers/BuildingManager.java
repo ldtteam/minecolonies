@@ -429,8 +429,6 @@ public class BuildingManager implements IBuildingManager
             wareHouses.remove(building);
         }
 
-        colony.getRequestManager().onProviderRemovedFromColony(building);
-
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
         for (@NotNull final ICitizenData citizen : colony.getCitizenManager().getCitizens())
         {
@@ -438,6 +436,7 @@ public class BuildingManager implements IBuildingManager
             building.cancelAllRequestsOfCitizen(citizen);
         }
 
+        colony.getRequestManager().onProviderRemovedFromColony(building);
         colony.getCitizenManager().calculateMaxCitizens();
     }
 

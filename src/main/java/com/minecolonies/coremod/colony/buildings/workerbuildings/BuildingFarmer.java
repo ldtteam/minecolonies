@@ -343,20 +343,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
     }
 
     @Override
-    public void checkForWorkerSpecificRecipes()
-    {
-        final IRecipeStorage carvedPumpkinStorage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(Blocks.PUMPKIN, 1)),
-          1,
-          new ItemStack(Blocks.CARVED_PUMPKIN, 1),
-          Blocks.AIR);
-
-         addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(carvedPumpkinStorage));
-    }
-    
-    @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
 

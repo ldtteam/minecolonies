@@ -1,0 +1,14 @@
+{
+  "type" : "recipe",
+  "crafter": "crusher",
+  "inputs": [
+    {
+        "item" : "minecraft:sand",
+        "count": "2"
+    }
+  ],
+  "result": "minecraft:clay",
+  "count": "1",
+  "intermediate" : "minecraft:air",
+  "not-research-id" : "gildedhammer"
+}
