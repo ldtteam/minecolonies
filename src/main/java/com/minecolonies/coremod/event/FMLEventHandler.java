@@ -9,6 +9,7 @@ import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.client.ServerUUIDMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -55,9 +56,9 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
-    public static void onServerAboutToStart(FMLServerAboutToStartEvent event)
+    public static void onServerAboutToStart(AddReloadListenerEvent event)
     {
-        event.getServer().getResourceManager().addReloadListener(new CrafterRecipeListener());
+        event.addListener(new CrafterRecipeListener());
     }
 
     @SubscribeEvent

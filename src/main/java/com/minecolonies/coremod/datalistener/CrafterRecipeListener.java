@@ -30,17 +30,18 @@ public class CrafterRecipeListener extends JsonReloadListener
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonObject> object, IResourceManager resourceManager, IProfiler profiler)
+    protected void apply(final Map<ResourceLocation, JsonElement> object, final IResourceManager resourceManagerIn, final IProfiler profilerIn)
     {
         Log.getLogger().info("Beginning load of custom recipes for colony workers");
 
         CustomRecipeManager recipeManager = CustomRecipeManager.getInstance();
-        for(Map.Entry<ResourceLocation, JsonObject> entry : object.entrySet())
+        for(Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
         {
             ResourceLocation key = entry.getKey();
-            JsonObject recipeJson = entry.getValue();
 
-            if(recipeJson.has(RECIPE_TYPE_PROP) && recipeJson.get(RECIPE_TYPE_PROP).getAsString().equals(RECIPE_TYPE_RECIPE)) 
+            JsonObject recipeJson = entry.getValue().getAsJsonObject();
+
+            if(recipeJson.has(RECIPE_TYPE_PROP) && recipeJson.get(RECIPE_TYPE_PROP).getAsString().equals(RECIPE_TYPE_RECIPE))
             {
                 recipeManager.addRecipe(recipeJson, key);
             }
