@@ -74,38 +74,6 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
         super(c, l);
     }
 
-    @Override
-    public void checkForWorkerSpecificRecipes()
-    {
-        final IRecipeStorage cactusStorage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(Blocks.CACTUS, 1)),
-          1,
-          new ItemStack(Items.GREEN_DYE, 1),
-          Blocks.FURNACE);
-
-          final IRecipeStorage redsandStorage = StandardFactoryController.getInstance().getNewInstance(
-            TypeConstants.RECIPE,
-            StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-            ImmutableList.of(new ItemStack(Blocks.SAND, 4), new ItemStack(Items.RED_DYE)),
-            1,
-            new ItemStack(Blocks.RED_SAND, 4),
-            Blocks.AIR);
-
-        final IRecipeStorage darkPrismarineStorage = StandardFactoryController.getInstance().getNewInstance(
-            TypeConstants.RECIPE,
-            StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-            ImmutableList.of(new ItemStack(Blocks.PRISMARINE, 4), new ItemStack(Items.BLACK_DYE)),
-            1,
-            new ItemStack(Blocks.DARK_PRISMARINE, 4),
-            Blocks.AIR);
-                
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(cactusStorage));
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(redsandStorage));
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(darkPrismarineStorage));
-    }
-
     @NotNull
     @Override
     public String getSchematicName()
