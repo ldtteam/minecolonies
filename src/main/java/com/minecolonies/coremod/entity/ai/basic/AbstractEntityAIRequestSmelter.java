@@ -307,8 +307,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
-        walkTo = null;
-
         final int preExtractCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> currentRequest.getRequest().getStack().isItemEqual(stack));
 
         extractFromFurnace((FurnaceTileEntity) entity);
@@ -316,10 +314,11 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         final int resultCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> currentRequest.getRequest().getStack().isItemEqual(stack)) - preExtractCount;
         if (resultCount > 0)
         {
-            if (walkToBlock(walkTo))
+            if (walkTo != null && walkToBlock(walkTo))
             {
                 return getState();
             }
+            walkTo = null;
             final ItemStack stack = currentRequest.getRequest().getStack().copy();
             stack.setCount(resultCount);
             currentRequest.addDelivery(stack);
