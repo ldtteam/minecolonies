@@ -492,22 +492,22 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                                 return getState();
                             }
                             worker.getCitizenItemHandler().hitBlockWithToolInHand(walkTo);
-                            //This will pick the first slot in the citizen inventory with a smeltable, even if you are attempting to transfer 10, and the slot has 8.
-                            int transferred = InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                                                worker.getInventoryCitizen(), 
-                                                smeltable, 
-                                                toTransfer,
-                                                new InvWrapper(furnace), SMELTABLE_SLOT);
-                            // It's possible we emptied the slot, and transferred less than we want, so try one more time to pick up from another slot. 
-                            if (transferred < toTransfer)
+
+                            int actualTransferred = 0;
+                            while(actualTransferred < toTransfer)
                             {
-                                transferred += InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                                                worker.getInventoryCitizen(), 
-                                                smeltable, 
-                                                toTransfer - transferred,
-                                                new InvWrapper(furnace), SMELTABLE_SLOT);
+                                int transferred = InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
+                                                    worker.getInventoryCitizen(), 
+                                                    smeltable, 
+                                                    toTransfer,
+                                                    new InvWrapper(furnace), SMELTABLE_SLOT);
+                                if(transferred == 0)
+                                {
+                                    break;
+                                }
+                                actualTransferred += transferred;
                             }
-                            job.setProgress(job.getProgress() + transferred);
+                            job.setProgress(job.getProgress() + actualTransferred);
                             }
                     }
                 }
