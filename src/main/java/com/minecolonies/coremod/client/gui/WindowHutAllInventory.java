@@ -99,7 +99,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 if (((TileEntityRack) rack).hasItemStack(storage.getItemStack(), false))
                 {
                     HighlightManager.HIGHLIGHT_MAP.put("inventoryHighlight", new Tuple<>(blockPos, Minecraft.getInstance().world.getGameTime() + 120 * 20));
-                    Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.locating"), Minecraft.getInstance().player.getUniqueID());
+                    Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.locating"));
                     close();
                     return;
                 }
