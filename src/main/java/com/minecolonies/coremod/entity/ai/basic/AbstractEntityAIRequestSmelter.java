@@ -492,22 +492,13 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                                 return getState();
                             }
                             worker.getCitizenItemHandler().hitBlockWithToolInHand(walkTo);
-
-                            int actualTransferred = 0;
-                            while(actualTransferred < toTransfer)
-                            {
-                                int transferred = InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                                                    worker.getInventoryCitizen(), 
-                                                    smeltable, 
-                                                    toTransfer - actualTransferred,
-                                                    new InvWrapper(furnace), SMELTABLE_SLOT);
-                                if(transferred == 0)
-                                {
-                                    break;
-                                }
-                                actualTransferred += transferred;
-                            }
-                            job.setProgress(job.getProgress() + actualTransferred);
+                            int transferred = InventoryUtils.transferXInItemHandlerIntoSlotInItemHandler(
+                                                worker.getInventoryCitizen(), 
+                                                smeltable, 
+                                                toTransfer,
+                                                new InvWrapper(furnace), 
+                                                SMELTABLE_SLOT);
+                            job.setProgress(job.getProgress() + transferred);
                             }
                     }
                 }

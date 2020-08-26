@@ -1800,6 +1800,40 @@ public class InventoryUtils
     }
 
     /**
+     * Takes an item matching a predicate and moves it form one handler across multiple slots to the other to a specific slot.
+     *
+     * @param sourceHandler               the source handler.
+     * @param itemStackSelectionPredicate the predicate.
+     * @param amount                      the max amount to extract
+     * @param targetHandler               the target.
+     * @param slot                        the slot to put it in.
+     * @return                            the count of items actually transferred
+     */
+    public static int transferXInItemHandlerIntoSlotInItemHandler(
+        final IItemHandler sourceHandler,
+        final Predicate<ItemStack> itemStackSelectionPredicate,
+        final int amount,
+        final IItemHandler targetHandler, final int slot)
+    {        
+        int actualTransferred = 0;
+        while(actualTransferred < amount)
+        {
+            final int transferred = InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
+                                sourceHandler, 
+                                itemStackSelectionPredicate, 
+                                amount - actualTransferred,
+                                targetHandler,
+                                slot);
+            if(transferred <= 0)
+            {
+                break;
+            }
+            actualTransferred += transferred;
+        }
+        return actualTransferred;
+    }
+
+    /**
      * Takes an item matching a predicate and moves it form one handler to the other to a specific slot.
      *
      * @param sourceHandler               the source handler.
