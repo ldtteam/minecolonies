@@ -1807,6 +1807,7 @@ public class InventoryUtils
      * @param amount                      the max amount to extract
      * @param targetHandler               the target.
      * @param slot                        the slot to put it in.
+     * @return                            the count of items actually transferred
      */
     public static int transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
       final IItemHandler sourceHandler,

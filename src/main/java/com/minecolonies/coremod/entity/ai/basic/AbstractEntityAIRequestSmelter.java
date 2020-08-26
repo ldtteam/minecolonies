@@ -492,15 +492,20 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                                 return getState();
                             }
                             worker.getCitizenItemHandler().hitBlockWithToolInHand(walkTo);
+                            //This will pick the first slot in the citizen inventory with a smeltable, even if you are attempting to transfer 10, and the slot has 8.
                             int transferred = InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                                worker.getInventoryCitizen(), smeltable, toTransfer,
-                                new InvWrapper(furnace), SMELTABLE_SLOT);
-                            // It's possible we have less in the stack than we want to transfer, so transfer what we can, and try one more time. 
+                                                worker.getInventoryCitizen(), 
+                                                smeltable, 
+                                                toTransfer,
+                                                new InvWrapper(furnace), SMELTABLE_SLOT);
+                            // It's possible we emptied the slot, and transferred less than we want, so try one more time to pick up from another slot. 
                             if (transferred < toTransfer)
                             {
                                 transferred += InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                                    worker.getInventoryCitizen(), smeltable, toTransfer - transferred,
-                                    new InvWrapper(furnace), SMELTABLE_SLOT);
+                                                worker.getInventoryCitizen(), 
+                                                smeltable, 
+                                                toTransfer - transferred,
+                                                new InvWrapper(furnace), SMELTABLE_SLOT);
                             }
                             job.setProgress(job.getProgress() + transferred);
                             }
