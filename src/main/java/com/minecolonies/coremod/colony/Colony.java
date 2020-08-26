@@ -272,6 +272,11 @@ public class Colony implements IColony
     private boolean hasChilds = false;
 
     /**
+     * Last time the server was online.
+     */
+    public long lastOnlineTime = 0;
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -411,6 +416,23 @@ public class Colony implements IColony
         eventManager.onColonyTick(this);
         buildingManager.onColonyTick(this);
         workManager.onColonyTick(this);
+
+        final long currTime = System.currentTimeMillis();
+        if (lastOnlineTime != 0)
+        {
+            final long pastTime = currTime - lastOnlineTime;
+            if (pastTime > ONE_HOUR_IN_MILLIS)
+            {
+                for (final ICitizenData citizenData : citizenManager.getCitizens())
+                {
+                    if (citizenData.getJob() != null)
+                    {
+                        citizenData.getJob().processOfflineTime(pastTime / 1000);
+                    }
+                }
+            }
+        }
+        lastOnlineTime = currTime;
 
         updateChildTime();
         return false;
@@ -729,7 +751,7 @@ public class Colony implements IColony
         {
             this.requestManager.deserializeNBT(compound.getCompound(TAG_REQUESTMANAGER));
         }
-
+        this.lastOnlineTime = compound.getLong(TAG_LAST_ONLINE);
         this.colonyTag = compound;
     }
 
@@ -830,6 +852,7 @@ public class Colony implements IColony
         compound.putBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
         compound.putInt(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         compound.put(TAG_FLAG_PATTERNS, colonyFlag);
+        compound.putLong(TAG_LAST_ONLINE, lastOnlineTime);
         this.colonyTag = compound;
 
         isActive = false;

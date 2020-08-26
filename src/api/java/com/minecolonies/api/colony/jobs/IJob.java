@@ -239,4 +239,10 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * @return true if so.
      */
     boolean isActive();
+
+    /**
+     * Process time the colony was offline.
+     * @param time the time in seconds.
+     */
+    void processOfflineTime(long time);
 }

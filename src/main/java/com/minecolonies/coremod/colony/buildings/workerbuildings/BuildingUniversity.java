@@ -207,23 +207,37 @@ public class BuildingUniversity extends AbstractBuildingWorker
                 return;
             }
 
+            for (final ICitizenData data : getAssignedCitizen())
+            {
+                data.getCitizenSkillHandler().addXpToSkill(getSecondarySkill(), 25.0, data);
+            }
+
             if (colony.getResearchManager()
                   .getResearchTree()
                   .getResearch(research.getBranch(), research.getId())
                   .research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree()))
             {
-                for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
-                {
-                    citizen.applyResearchEffects();
-                }
-
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                  RESEARCH_CONCLUDED + random.nextInt(3),
-                  IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc());
+                onSuccess(research);
             }
-            this.markDirty();
             i++;
         }
+    }
+
+    /**
+     * Called on successfully concluding a research.
+     * @param research the concluded research.
+     */
+    public void onSuccess(final ILocalResearch research)
+    {
+        for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
+        {
+            citizen.applyResearchEffects();
+        }
+
+        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+          RESEARCH_CONCLUDED + random.nextInt(3),
+          IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc());
+        this.markDirty();
     }
 
     /**

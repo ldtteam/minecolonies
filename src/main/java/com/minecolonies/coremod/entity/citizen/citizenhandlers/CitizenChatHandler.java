@@ -100,11 +100,11 @@ public class CitizenChatHandler implements ICitizenChatHandler
             {
                 players.remove(owner);
                 LanguageHandler.sendPlayerMessage(owner,
-                  citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), citizenDescription, requiredItem);
+                  citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), " ", citizenDescription, requiredItem);
             }
 
             LanguageHandler.sendPlayersMessage(players,
-              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(),
+              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), " ",
               citizenDescription,
               colonyDescription,
               requiredItem);
