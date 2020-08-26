@@ -499,7 +499,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                                 int transferred = InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
                                                     worker.getInventoryCitizen(), 
                                                     smeltable, 
-                                                    toTransfer,
+                                                    toTransfer - actualTransferred,
                                                     new InvWrapper(furnace), SMELTABLE_SLOT);
                                 if(transferred == 0)
                                 {
