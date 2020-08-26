@@ -1808,7 +1808,7 @@ public class InventoryUtils
      * @param targetHandler               the target.
      * @param slot                        the slot to put it in.
      */
-    public static void transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
+    public static int transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
       final IItemHandler sourceHandler,
       final Predicate<ItemStack> itemStackSelectionPredicate,
       final int amount,
@@ -1819,19 +1819,21 @@ public class InventoryUtils
 
         if (desiredItemSlot == -1)
         {
-            return;
+            return 0;
         }
         final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
         if (ItemStackUtils.isEmpty(returnStack))
         {
-            return;
+            return 0;
         }
 
         final ItemStack insertResult = targetHandler.insertItem(slot, returnStack, false);
         if (!ItemStackUtils.isEmpty(insertResult))
         {
             sourceHandler.insertItem(desiredItemSlot, insertResult, false);
+            return returnStack.getCount() - insertResult.getCount();
         }
+        return returnStack.getCount();
     }
 
     /**
