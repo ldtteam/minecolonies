@@ -649,12 +649,14 @@ public class BuildingManager implements IBuildingManager
         }
         else if (block instanceof BlockHutTavern)
         {
-            for (final IBuilding building : buildings.values())
-            {
-                if (building instanceof BuildingTavern)
+            if (MineColonies.getConfig().getCommon().limitToOneTavernPerColony.get()) {
+                for (final IBuilding building : buildings.values())
                 {
-                    LanguageHandler.sendPlayerMessage(player, "tile.blockhut.tavern.limit");
-                    return false;
+                    if (building instanceof BuildingTavern)
+                    {
+                        LanguageHandler.sendPlayerMessage(player, "tile.blockhut.tavern.limit");
+                        return false;
+                    }
                 }
             }
         }

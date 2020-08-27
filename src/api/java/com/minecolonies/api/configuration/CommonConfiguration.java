@@ -53,6 +53,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue disableCitizenVoices;
     public final ForgeConfigSpec.IntValue     diseaseModifier;
     public final ForgeConfigSpec.BooleanValue generateSupplyLoot;
+    public final ForgeConfigSpec.BooleanValue limitToOneTavernPerColony;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -406,6 +407,7 @@ public class CommonConfiguration extends AbstractConfiguration
         disableCitizenVoices = defineBoolean(builder, "disablecitizenvoices", false);
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
         generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
+        limitToOneTavernPerColony = defineBoolean(builder, "limittoonetavernpercolony", true);
 
         swapToCategory(builder, "commands");
 
