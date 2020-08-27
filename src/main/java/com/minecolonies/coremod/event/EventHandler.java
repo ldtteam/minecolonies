@@ -481,7 +481,7 @@ public class EventHandler
 
             final IColony colony = IColonyManager.getInstance()
                                      .getColonyByDimension(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_COLONY_ID),
-                                       world.getDimensionKey().getRegistryName());
+                                       world.getDimensionKey().func_240901_a_());
             if (colony != null)
             {
                 colony.getEventManager().onTileEntityBreak(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_EVENT_ID), spawner);
