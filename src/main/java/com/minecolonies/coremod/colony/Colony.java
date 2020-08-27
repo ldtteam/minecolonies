@@ -423,12 +423,9 @@ public class Colony implements IColony
             final long pastTime = currTime - lastOnlineTime;
             if (pastTime > ONE_HOUR_IN_MILLIS)
             {
-                for (final ICitizenData citizenData : citizenManager.getCitizens())
+                for (final IBuilding building : buildingManager.getBuildings().values())
                 {
-                    if (citizenData.getJob() != null)
-                    {
-                        citizenData.getJob().processOfflineTime(pastTime / 1000);
-                    }
+                    building.processOfflineTime(pastTime/1000);
                 }
             }
         }
