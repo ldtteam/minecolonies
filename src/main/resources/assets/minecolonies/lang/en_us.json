@@ -75,7 +75,7 @@
   "minecolonies.config.limittoonewarehousepercolony": "Warehouse Limit",
   "minecolonies.config.limittoonewarehousepercolony.comment": "Should there be a max of 1 warehouse per colony? [Default: true]",
   "minecolonies.config.limittoonetavernpercolony": "Tavern Limit",
-  "minecolonies.config.limittoonetavernpercolony.comment": "Should there be a max of 1 Tavern per colony?. [Default: true]",
+  "minecolonies.config.limittoonetavernpercolony.comment": "Should there be a max of 1 Tavern per colony? [Default: true]",
   "minecolonies.config.builderbuildblockdelay": "Builder Block Delay",
   "minecolonies.config.builderbuildblockdelay.comment": "Delay after each block placement (increasing it increases the delay). [Default: 15]",
   "minecolonies.config.blockminingdelaymodifier": "Mining Delay",
