@@ -1800,6 +1800,40 @@ public class InventoryUtils
     }
 
     /**
+     * Takes an item matching a predicate and moves it form one handler across multiple slots to the other to a specific slot.
+     *
+     * @param sourceHandler               the source handler.
+     * @param itemStackSelectionPredicate the predicate.
+     * @param amount                      the max amount to extract
+     * @param targetHandler               the target.
+     * @param slot                        the slot to put it in.
+     * @return                            the count of items actually transferred
+     */
+    public static int transferXInItemHandlerIntoSlotInItemHandler(
+        final IItemHandler sourceHandler,
+        final Predicate<ItemStack> itemStackSelectionPredicate,
+        final int amount,
+        final IItemHandler targetHandler, final int slot)
+    {        
+        int actualTransferred = 0;
+        while(actualTransferred < amount)
+        {
+            final int transferred = InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
+                                sourceHandler, 
+                                itemStackSelectionPredicate, 
+                                amount - actualTransferred,
+                                targetHandler,
+                                slot);
+            if(transferred <= 0)
+            {
+                break;
+            }
+            actualTransferred += transferred;
+        }
+        return actualTransferred;
+    }
+
+    /**
      * Takes an item matching a predicate and moves it form one handler to the other to a specific slot.
      *
      * @param sourceHandler               the source handler.
@@ -1807,8 +1841,9 @@ public class InventoryUtils
      * @param amount                      the max amount to extract
      * @param targetHandler               the target.
      * @param slot                        the slot to put it in.
+     * @return                            the count of items actually transferred
      */
-    public static void transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
+    public static int transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
       final IItemHandler sourceHandler,
       final Predicate<ItemStack> itemStackSelectionPredicate,
       final int amount,
@@ -1819,19 +1854,21 @@ public class InventoryUtils
 
         if (desiredItemSlot == -1)
         {
-            return;
+            return 0;
         }
         final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
         if (ItemStackUtils.isEmpty(returnStack))
         {
-            return;
+            return 0;
         }
 
         final ItemStack insertResult = targetHandler.insertItem(slot, returnStack, false);
         if (!ItemStackUtils.isEmpty(insertResult))
         {
             sourceHandler.insertItem(desiredItemSlot, insertResult, false);
+            return returnStack.getCount() - insertResult.getCount();
         }
+        return returnStack.getCount();
     }
 
     /**
