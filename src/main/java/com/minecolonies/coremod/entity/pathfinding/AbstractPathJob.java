@@ -19,6 +19,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.properties.Half;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -868,7 +869,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         //  Now check the block we want to move to
         final BlockState target = world.getBlockState(pos);
-        if (!isPassable(target))
+        if (!isPassable(target, pos))
         {
             return handleTargeNotPassable(parent, pos, target);
         }
@@ -1071,7 +1072,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param block the block we are checking.
      * @return true if the block does not block movement.
      */
-    protected boolean isPassable(@NotNull final BlockState block)
+    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos)
     {
         if (block.getMaterial() != Material.AIR)
         {
@@ -1091,7 +1092,8 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
             else
             {
-                return !block.getMaterial().isLiquid() && (block.getBlock() != Blocks.SNOW || block.get(SnowBlock.LAYERS) == 1) && block.getBlock() != Blocks.SWEET_BERRY_BUSH;
+                final VoxelShape shape = block.getCollisionShape(world, pos);
+                return (shape.isEmpty() || shape.getEnd(Direction.Axis.Y) <= 0.1) && !block.getMaterial().isLiquid() && (block.getBlock() != Blocks.SNOW || block.get(SnowBlock.LAYERS) == 1) && block.getBlock() != Blocks.SWEET_BERRY_BUSH;
             }
         }
 
@@ -1101,11 +1103,12 @@ public abstract class AbstractPathJob implements Callable<Path>
     protected boolean isPassable(final BlockPos pos, final boolean head)
     {
         final BlockState state = world.getBlockState(pos);
-        if (!state.getMaterial().blocksMovement())
+        final VoxelShape shape = state.getCollisionShape(world, pos);
+        if (shape.isEmpty())
         {
-            return !head || !(state.getBlock() instanceof CarpetBlock);
+             return !head || !(state.getBlock() instanceof CarpetBlock);
         }
-        return isPassable(state);
+        return isPassable(state, pos);
     }
 
     /**

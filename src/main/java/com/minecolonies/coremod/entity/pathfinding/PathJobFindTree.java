@@ -149,8 +149,8 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected boolean isPassable(@NotNull final BlockState block)
+    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos)
     {
-        return super.isPassable(block) || block.getMaterial() == Material.LEAVES || Compatibility.isDynamicTrunkShell(block.getBlock());
+        return super.isPassable(block, pos) || block.getMaterial() == Material.LEAVES || Compatibility.isDynamicTrunkShell(block.getBlock());
     }
 }
