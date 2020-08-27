@@ -47,6 +47,7 @@ import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.util.Hand;
@@ -65,6 +66,7 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.ItemCraftedEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
@@ -726,6 +728,27 @@ public class EventHandler
         {
             IColonyManager.getInstance().resetColonyViews();
             Log.getLogger().info("Removed all colony views");
+        }
+    }
+
+    /**
+     * Gets called when an item is crafted. Calls {@link AbstractBlockHut#onItemCrafted(IColony, PlayerEntity)}
+     * 
+     * @param event the event.
+     */
+    @SubscribeEvent
+    public static void onItemCrafted(final ItemCraftedEvent event)
+    {
+        final Item result = event.getCrafting().getItem();
+        if (result instanceof BlockItem && ((BlockItem) result).getBlock() instanceof AbstractBlockHut)
+        {
+            final AbstractBlockHut<?> hut = (AbstractBlockHut<?>) ((BlockItem) result).getBlock();
+            final PlayerEntity player = event.getPlayer();
+            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(player.getEntityWorld(), player.getPosition());
+            if (!player.getEntityWorld().isRemote())
+            {
+                hut.onItemCrafted(colony, player);
+            }
         }
     }
 }

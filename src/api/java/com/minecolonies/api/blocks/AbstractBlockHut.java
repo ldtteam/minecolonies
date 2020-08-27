@@ -12,6 +12,7 @@ import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
@@ -268,5 +269,16 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
 
         onBlockPlacedBy(worldIn, pos, state, placer, stack);
+    }
+
+    /**
+     * Gets called whenever this block gets crafted.
+     * Override to do whatever you like with it, does nothing by default.
+     * 
+     * @param colony the colony this is crafted in, can be null.
+     * @param player the player crafting this item.
+     */
+    public void onItemCrafted(final IColony colony, final PlayerEntity player)
+    {
     }
 }
