@@ -73,7 +73,7 @@
   "minecolonies.config.builderinfiniteresources": "Infinite Resources",
   "minecolonies.config.builderinfiniteresources.comment": "Should the Builder and Miner build without resources? (This also turns off what they produce.) [Default: false]",
   "minecolonies.config.limittoonewarehousepercolony": "Warehouse Limit",
-  "minecolonies.config.limittoonewarehousepercolony.comment": "Should there be a max of 1 warehouse per colony?. [Default: true]",
+  "minecolonies.config.limittoonewarehousepercolony.comment": "Should there be a max of 1 warehouse per colony? [Default: true]",
   "minecolonies.config.limittoonetavernpercolony": "Tavern Limit",
   "minecolonies.config.limittoonetavernpercolony.comment": "Should there be a max of 1 Tavern per colony?. [Default: true]",
   "minecolonies.config.builderbuildblockdelay": "Builder Block Delay",
