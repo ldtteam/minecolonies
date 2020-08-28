@@ -76,7 +76,7 @@ public class EntityAIWorkRabbitHerder extends AbstractEntityAIHerder<JobRabbitHe
         {
             worker.swingArm(Hand.MAIN_HAND);
 
-            if (worker.getRandom().nextInt((ONE_HUNDRED_PERCENT - getPrimarySkillLevel()) / 5) <= 1)
+            if (worker.getRandom().nextInt(1 + (ONE_HUNDRED_PERCENT - getPrimarySkillLevel()) / 5) <= 1)
             {
                 animal.attackEntityFrom(new NamedDamageSource(worker.getName().getFormattedText(), worker), (float) BUTCHERING_ATTACK_DAMAGE);
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);

@@ -110,12 +110,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
             }
         }
 
-        while (qty > 0)
-        {
-            final int requestSize = qty > stack.getMaxStackSize() ? stack.getMaxStackSize() : qty;
-            qty -= requestSize;
-            Network.getNetwork().sendToServer(new PostBoxRequestMessage(buildingView, stack.copy(), requestSize, deliverAvailable));
-        }
+        Network.getNetwork().sendToServer(new PostBoxRequestMessage(buildingView, stack.copy(), qty, deliverAvailable));
     }
 
     private void deliverPartialClicked(@NotNull final Button button)

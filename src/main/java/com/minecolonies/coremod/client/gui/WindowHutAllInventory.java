@@ -21,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -98,7 +99,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 if (((TileEntityRack) rack).hasItemStack(storage.getItemStack(), false))
                 {
                     HighlightManager.HIGHLIGHT_MAP.put("inventoryHighlight", new Tuple<>(blockPos, Minecraft.getInstance().world.getGameTime() + 120 * 20));
-                    Minecraft.getInstance().player.sendChatMessage(LanguageHandler.format("com.minecolonies.coremod.locating"));
+                    Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.locating"));
                     close();
                     return;
                 }

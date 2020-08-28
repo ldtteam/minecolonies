@@ -41,6 +41,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -110,7 +111,7 @@ public class EventHandler
     {
         if (!event.getWorld().isRemote)
         {
-            if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof IMob) && !(event.getEntity() instanceof LlamaEntity))
+            if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof IMob) && !(event.getEntity() instanceof LlamaEntity) && !(event.getEntity() instanceof EndermanEntity))
             {
                 ((MobEntity) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityCitizen.class, true));
                 ((MobEntity) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityMercenary.class, true));
