@@ -12,6 +12,7 @@ import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.items.ItemBlockHut;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -20,6 +21,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
@@ -35,6 +37,8 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.IForgeRegistry;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -272,13 +276,18 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     /**
-     * Gets called whenever this block gets crafted.
-     * Override to do whatever you like with it, does nothing by default.
+     * Checks whether this block is yet to be researched.
      * 
-     * @param colony the colony this is crafted in, can be null.
-     * @param player the player crafting this item.
+     * @param colony the colony this is crafted in.
+     * @return true if this block needs to be researched before building its hut.
      */
-    public void onItemCrafted(final IColony colony, final PlayerEntity player)
+    public boolean checkResearch(final IColony colony)
     {
+    	return false;
+    }
+
+    @Override
+    public void registerBlockItem(IForgeRegistry<Item> registry, net.minecraft.item.Item.Properties properties) {
+    	registry.register((new ItemBlockHut(this, properties)).setRegistryName(this.getRegistryName()));
     }
 }

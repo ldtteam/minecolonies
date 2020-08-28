@@ -6,9 +6,6 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TranslationTextComponent;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -30,15 +27,12 @@ public class BlockHutCombatAcademy extends AbstractBlockHut<BlockHutCombatAcadem
     }
 
     @Override
-    public void onItemCrafted(final IColony colony, final PlayerEntity player)
+    public boolean checkResearch(final IColony colony)
     {
-        if (colony == null || player == null)
+        if (colony == null)
         {
-            return;
+            return false;
         }
-        if (colony.getResearchManager().getResearchEffects().getEffect("Combat Academy", UnlockBuildingResearchEffect.class) == null)
-        {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.crafted", "combat academy"));
-        }
+        return colony.getResearchManager().getResearchEffects().getEffect("Combat Academy", UnlockBuildingResearchEffect.class) == null;
     }
 }
