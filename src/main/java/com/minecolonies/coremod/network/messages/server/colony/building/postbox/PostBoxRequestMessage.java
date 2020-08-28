@@ -25,6 +25,8 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
      */
     private boolean deliverAvailable;
 
+    private int reqQuantity;
+
     /**
      * Empty constructor used when registering the
      */
@@ -44,7 +46,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     {
         super(building);
         this.itemStack = itemStack;
-        this.itemStack.setCount(quantity);
+        reqQuantity = quantity;
         this.deliverAvailable = deliverAvailable;
     }
 
@@ -54,6 +56,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
 
         buf.writeItemStack(itemStack);
         buf.writeBoolean(deliverAvailable);
+        buf.writeInt(reqQuantity);
     }
 
     @Override
@@ -62,6 +65,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
 
         itemStack = buf.readItemStack();
         deliverAvailable = buf.readBoolean();
+        reqQuantity = buf.readInt();
     }
 
     @Override
@@ -69,8 +73,8 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final PostBox building)
     {
 
-        int minCount = (deliverAvailable) ? 1 : itemStack.getCount();
-        Stack requestStack = new Stack(itemStack, itemStack.getCount(), minCount);
+        final int minCount = (deliverAvailable) ? 1 : reqQuantity;
+        Stack requestStack = new Stack(itemStack, reqQuantity, minCount);
 
         building.createRequest(requestStack, false);
     }
