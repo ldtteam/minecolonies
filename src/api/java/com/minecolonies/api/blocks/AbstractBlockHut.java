@@ -78,6 +78,11 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     private static final VoxelShape SHAPE = VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
     /**
+     * Whether this hut is yet to be researched in the current colony.
+     */
+    protected boolean needsResearch = false;
+
+    /**
      * Constructor for a hut block.
      * <p>
      * Registers the block, sets the creative tab, as well as the resistance and the hardness.
@@ -281,13 +286,18 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param colony the colony this is crafted in.
      * @return true if this block needs to be researched before building its hut.
      */
-    public boolean checkResearch(final IColony colony)
+    public void checkResearch(final IColony colony)
     {
-        return false;
+        needsResearch = false;
     }
 
     @Override
     public void registerBlockItem(IForgeRegistry<Item> registry, net.minecraft.item.Item.Properties properties) {
         registry.register((new ItemBlockHut(this, properties)).setRegistryName(this.getRegistryName()));
+    }
+
+    public boolean needsResearch()
+    {
+    	return needsResearch;
     }
 }

@@ -27,12 +27,12 @@ public class BlockHutMechanic extends AbstractBlockHut<BlockHutMechanic>
     }
 
     @Override
-    public boolean checkResearch(final IColony colony)
+    public void checkResearch(final IColony colony)
     {
         if (colony == null)
         {
-            return false;
+            needsResearch = false;
         }
-        return colony.getResearchManager().getResearchEffects().getEffect("Mechanic", UnlockBuildingResearchEffect.class) == null;
+        needsResearch = colony.getResearchManager().getResearchEffects().getEffect("Mechanic", UnlockBuildingResearchEffect.class) == null;
     }
 }

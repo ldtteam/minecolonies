@@ -33,12 +33,12 @@ public class BlockHutSchool extends AbstractBlockHut<BlockHutSchool>
     }
 
     @Override
-    public boolean checkResearch(final IColony colony)
+    public void checkResearch(final IColony colony)
     {
         if (colony == null)
         {
-            return false;
+            needsResearch = false;
         }
-        return colony.getResearchManager().getResearchEffects().getEffect("School", UnlockBuildingResearchEffect.class) == null;
+        needsResearch = colony.getResearchManager().getResearchEffects().getEffect("School", UnlockBuildingResearchEffect.class) == null;
     }
 }

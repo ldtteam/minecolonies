@@ -33,12 +33,12 @@ public class BlockHutBlacksmith extends AbstractBlockHut<BlockHutBlacksmith>
     }
 
     @Override
-    public boolean checkResearch(final IColony colony)
+    public void checkResearch(final IColony colony)
     {
         if (colony == null)
         {
-            return false;
+            needsResearch = false;
         }
-        return colony.getResearchManager().getResearchEffects().getEffect("Blacksmith", UnlockBuildingResearchEffect.class) == null;
+        needsResearch = colony.getResearchManager().getResearchEffects().getEffect("Blacksmith", UnlockBuildingResearchEffect.class) == null;
     }
 }

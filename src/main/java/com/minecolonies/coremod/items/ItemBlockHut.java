@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.items;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.constant.TranslationConstants;
 
@@ -20,14 +20,14 @@ import net.minecraft.world.World;
 public class ItemBlockHut extends BlockItem
 {
 
-    private boolean needsResearch = false;
+	/**
+	 * This items block.
+	 */
     private AbstractBlockHut<?> block;
-    private static final List<ItemBlockHut> HUTS = new ArrayList<>();
 
     public ItemBlockHut(AbstractBlockHut<?> block, Properties builder)
     {
         super(block, builder);
-        HUTS.add(this);
         this.block = block;
     }
 
@@ -35,7 +35,7 @@ public class ItemBlockHut extends BlockItem
     public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
         super.addInformation(stack, worldIn, tooltip, flagIn);
-        if (needsResearch)
+        if (block.needsResearch())
         {
             tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getNameTextComponent()));
             tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getNameTextComponent()));
@@ -49,13 +49,10 @@ public class ItemBlockHut extends BlockItem
      */
     public static void checkResearch(final IColony colony)
     {
-        HUTS.forEach(hut -> {
-            if (colony == null) {
-                hut.needsResearch = false;
-            } else {
-                hut.needsResearch = hut.block.checkResearch(colony);
-            }
-        });
+        for(AbstractBlockHut<?> hut : ModBlocks.getHuts())
+        {
+            hut.checkResearch(colony);
+        }
     }
 
 }

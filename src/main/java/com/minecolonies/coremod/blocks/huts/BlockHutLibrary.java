@@ -27,12 +27,12 @@ public class BlockHutLibrary extends AbstractBlockHut<BlockHutLibrary>
     }
 
     @Override
-    public boolean checkResearch(final IColony colony)
+    public void checkResearch(final IColony colony)
     {
         if (colony == null)
         {
-            return false;
+            needsResearch = false;
         }
-        return colony.getResearchManager().getResearchEffects().getEffect("Library", UnlockBuildingResearchEffect.class) == null;
+        needsResearch = colony.getResearchManager().getResearchEffects().getEffect("Library", UnlockBuildingResearchEffect.class) == null;
     }
 }
