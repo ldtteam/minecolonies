@@ -283,11 +283,11 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public boolean checkResearch(final IColony colony)
     {
-    	return false;
+        return false;
     }
 
     @Override
     public void registerBlockItem(IForgeRegistry<Item> registry, net.minecraft.item.Item.Properties properties) {
-    	registry.register((new ItemBlockHut(this, properties)).setRegistryName(this.getRegistryName()));
+        registry.register((new ItemBlockHut(this, properties)).setRegistryName(this.getRegistryName()));
     }
 }
