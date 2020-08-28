@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.coremod.research.ResearchInitializer;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +27,6 @@ public class BlockHutComposter extends AbstractBlockHut<BlockHutComposter>
     @Override
     public void checkResearch(final IColony colony)
     {
-        checkResearch(colony, "Composter");
+        checkResearch(colony, ResearchInitializer.COMPOSTER_RESEARCH);
     }
 }

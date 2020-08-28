@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.coremod.research.ResearchInitializer;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +29,6 @@ public class BlockHutConcreteMixer extends AbstractBlockHut<BlockHutConcreteMixe
     @Override
     public void checkResearch(final IColony colony)
     {
-        checkResearch(colony, "Concrete Mixer");
+        checkResearch(colony, ResearchInitializer.CONCRETE_MIXER_RESEARCH);
     }
 }
