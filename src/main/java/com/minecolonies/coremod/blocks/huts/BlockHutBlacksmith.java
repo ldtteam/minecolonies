@@ -4,7 +4,6 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,10 +34,6 @@ public class BlockHutBlacksmith extends AbstractBlockHut<BlockHutBlacksmith>
     @Override
     public void checkResearch(final IColony colony)
     {
-        if (colony == null)
-        {
-            needsResearch = false;
-        }
-        needsResearch = colony.getResearchManager().getResearchEffects().getEffect("Blacksmith", UnlockBuildingResearchEffect.class) == null;
+        checkResearch(colony, "Blacksmith");
     }
 }

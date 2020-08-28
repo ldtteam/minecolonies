@@ -13,6 +13,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.items.ItemBlockHut;
+import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -291,13 +292,35 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         needsResearch = false;
     }
 
+    /**
+     * Checks whether the research with the given id is already researched in the given colony.
+     * 
+     * @param colony     the colony to check.
+     * @param researchId the id of the research to look for.
+     */
+    protected void checkResearch(final IColony colony, final String researchId)
+    {
+        if (colony == null)
+        {
+            needsResearch = false;
+            return;
+        }
+        needsResearch = colony.getResearchManager().getResearchEffects().getEffect(researchId, UnlockBuildingResearchEffect.class) == null;
+    }
+
     @Override
-    public void registerBlockItem(IForgeRegistry<Item> registry, net.minecraft.item.Item.Properties properties) {
+    public void registerBlockItem(final IForgeRegistry<Item> registry, final net.minecraft.item.Item.Properties properties)
+    {
         registry.register((new ItemBlockHut(this, properties)).setRegistryName(this.getRegistryName()));
     }
 
+    /**
+     * Whether this hut blocks building needs to be researched.
+     * 
+     * @return true if this building needs to be researched, but isn't yet.
+     */
     public boolean needsResearch()
     {
-    	return needsResearch;
+        return needsResearch;
     }
 }

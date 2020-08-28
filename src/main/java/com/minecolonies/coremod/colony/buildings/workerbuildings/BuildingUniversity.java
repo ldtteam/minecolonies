@@ -222,8 +222,8 @@ public class BuildingUniversity extends AbstractBuildingWorker
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                   RESEARCH_CONCLUDED + random.nextInt(3),
                   IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc());
+                ItemBlockHut.checkResearch(colony);
             }
-            ItemBlockHut.checkResearch(colony);
             this.markDirty();
             i++;
         }
