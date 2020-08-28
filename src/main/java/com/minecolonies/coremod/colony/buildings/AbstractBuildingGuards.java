@@ -475,28 +475,22 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         if (hireTrainees && !isFull() && ((getBuildingLevel() > 0 && isBuilt()))
               && (this.getHiringMode() == HiringMode.DEFAULT && !this.getColony().isManualHiring() || this.getHiringMode() == HiringMode.AUTO))
         {
-            List<ICitizenData> trainingCitizens = null;
-            
-            if(this.getGuardType() == ModGuardTypes.ranger)
-            {
-                trainingCitizens = colony.getCitizenManager().getCitizens().stream().filter(x -> x.getJob() instanceof JobArcherTraining).collect(Collectors.toList());
-            }
-            else if (this.getGuardType() == ModGuardTypes.knight)
-            {
-                trainingCitizens = colony.getCitizenManager().getCitizens().stream().filter(x -> x.getJob() instanceof JobCombatTraining).collect(Collectors.toList());
-            }
+            ICitizenData trainingCitizen = null;
+            int maxSkill = 0;
 
-            if(trainingCitizens != null && !trainingCitizens.isEmpty())
+            for(ICitizenData trainee:colony.getCitizenManager().getCitizens())
             {
-                Comparator<ICitizenData> skillComparator = Comparator.comparingInt(e -> e.getCitizenSkillHandler().getLevel(job.getPrimarySkill()));
-                skillComparator = skillComparator.reversed();
-                trainingCitizens.sort(skillComparator);
-
-                final ICitizenData traineeCitizen = trainingCitizens.get(0);
-                if (traineeCitizen != null)
+                if((this.getGuardType() == ModGuardTypes.ranger && trainee instanceof JobArcherTraining) || (this.getGuardType() == ModGuardTypes.knight && trainee instanceof JobCombatTraining)
+                    &&  trainee.getCitizenSkillHandler().getLevel(job.getPrimarySkill()) > maxSkill)
                 {
-                    assignCitizen(traineeCitizen);
+                    maxSkill = trainee.getCitizenSkillHandler().getLevel(job.getPrimarySkill());
+                    trainingCitizen = trainee;
                 }
+            }
+
+            if(trainingCitizen != null )
+            {
+                assignCitizen(trainingCitizen);
             }
         }
 
