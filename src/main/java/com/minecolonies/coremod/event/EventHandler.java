@@ -25,6 +25,7 @@ import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapab
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
+import com.minecolonies.coremod.items.ItemBlockHut;
 import com.minecolonies.coremod.loot.SupplyLoot;
 import com.minecolonies.coremod.network.messages.client.OpenSuggestionWindowMessage;
 import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMessage;
@@ -725,6 +726,7 @@ public class EventHandler
         if (event.getWorld().isRemote())
         {
             IColonyManager.getInstance().resetColonyViews();
+            ItemBlockHut.checkResearch(null);
             Log.getLogger().info("Removed all colony views");
         }
     }
