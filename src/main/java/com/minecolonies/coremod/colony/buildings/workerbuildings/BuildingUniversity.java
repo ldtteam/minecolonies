@@ -14,7 +14,6 @@ import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.coremod.client.gui.WindowHutUniversity;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobResearch;
-import com.minecolonies.coremod.items.ItemBlockHut;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -222,7 +221,6 @@ public class BuildingUniversity extends AbstractBuildingWorker
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                   RESEARCH_CONCLUDED + random.nextInt(3),
                   IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc());
-                ItemBlockHut.checkResearch(colony);
             }
             this.markDirty();
             i++;

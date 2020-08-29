@@ -28,6 +28,7 @@ import com.minecolonies.coremod.colony.managers.ResearchManager;
 import com.minecolonies.coremod.colony.permissions.PermissionsView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.items.ItemBlockHut;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.ColonyFlagChangeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.TownHallRenameMessage;
@@ -837,6 +838,7 @@ public final class ColonyView implements IColonyView
         }
 
         this.manager.readFromNBT(buf.readCompoundTag());
+        ItemBlockHut.checkResearch(this);
         return null;
     }
 

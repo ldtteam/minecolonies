@@ -31,7 +31,6 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
-import com.minecolonies.coremod.items.ItemBlockHut;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import net.minecraft.block.AirBlock;
@@ -1471,7 +1470,6 @@ public class Colony implements IColony
     @Override
     public void addVisitingPlayer(final PlayerEntity player)
     {
-        ItemBlockHut.checkResearch(this);
         final Rank rank = getPermissions().getRank(player);
         if (rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && MineColonies.getConfig().getCommon().sendEnteringLeavingMessages.get())
         {
@@ -1484,7 +1482,6 @@ public class Colony implements IColony
     @Override
     public void removeVisitingPlayer(final PlayerEntity player)
     {
-        ItemBlockHut.checkResearch(null);
         if (!getMessagePlayerEntities().contains(player) && MineColonies.getConfig().getCommon().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.remove(player);

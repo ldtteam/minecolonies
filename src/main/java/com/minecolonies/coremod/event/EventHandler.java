@@ -362,9 +362,9 @@ public class EventHandler
     @SubscribeEvent
     public static void onPlayerEnterWorld(final PlayerEvent.PlayerLoggedInEvent event)
     {
-        if (event.getEntity() instanceof ServerPlayerEntity)
+        if (event.getPlayer() instanceof ServerPlayerEntity)
         {
-            final ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
+            final ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
             for (final IColony colony : IColonyManager.getInstance().getAllColonies())
             {
                 if (colony.getPermissions().hasPermission(player, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY)
