@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.minimal;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
@@ -210,9 +211,9 @@ public class EntityAISleep extends Goal
             if (usedBed == null)
             {
                 final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
-                if (hut instanceof BuildingHome)
+                if (hut instanceof IBuildingBedProvider)
                 {
-                    for (final BlockPos pos : ((BuildingHome) hut).getBedList())
+                    for (final BlockPos pos : ((IBuildingBedProvider) hut).getBedList())
                     {
                         if (WorldUtil.isEntityBlockLoaded(citizen.world, pos))
                         {
