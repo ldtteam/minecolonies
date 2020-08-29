@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -36,7 +37,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RESIDENTS;
 /**
  * The class of the citizen hut.
  */
-public class BuildingHome extends AbstractBuilding
+public class BuildingHome extends AbstractBuilding implements IBuildingBedProvider
 {
     /**
      * The string describing the hut.
@@ -507,12 +508,8 @@ public class BuildingHome extends AbstractBuilding
         getColony().getCitizenManager().calculateMaxCitizens();
     }
 
-    /**
-     * Gets a list of all beds in this building.
-     *
-     * @return a list of all beds in this building.
-     */
     @NotNull
+    @Override
     public List<BlockPos> getBedList()
     {
         return new ArrayList<>(bedList);
