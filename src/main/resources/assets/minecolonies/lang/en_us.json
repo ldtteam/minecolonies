@@ -316,7 +316,7 @@
 
   "entity.builder.messagebuildstart": " started building %s.",
   "entity.builder.messagebuildcomplete": " finished building %s.",
-  "entity.builder.messagebuildcomplete_generic": " finished building %s.",
+  "entity.builder.messagebuildcomplete_generic": "%s finished building %s.",
   "entity.builder.messageremovalcomplete": " finished deconstructing building %s.",
   "entity.builder.messagebuildtoohigh": "%s is too high! Please lower the building below Y 256.",
   "entity.builder.messagebuildtoolow": "%s is too low! Please raise the building above Y 0.",
@@ -1754,5 +1754,7 @@
   "com.minecolonies.coremod.gui.townhall.edit_flag": "Edit colony flag",
   "block.minecolonies.colony_banner": "Colony Flag Banner",
   "com.minecolonies.coremod.gui.locate": "Locate",
-  "com.minecolonies.coremod.locating": "Successfully located rack with respective Stack..."
+  "com.minecolonies.coremod.locating": "Successfully located rack with respective Stack...",
+
+  "entity.researcher.moreknowledge": "During your absence your researchers used the time to do some extra research which will speed up your current research a bit!"
 }

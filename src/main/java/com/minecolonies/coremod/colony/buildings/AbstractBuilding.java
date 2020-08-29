@@ -423,6 +423,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
     }
 
+    @Override
+    public void processOfflineTime(final long time)
+    {
+        // Do nothing.
+    }
+
     /**
      * Checks if this building have a work order.
      *
