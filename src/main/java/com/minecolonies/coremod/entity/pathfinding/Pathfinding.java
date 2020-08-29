@@ -65,7 +65,7 @@ public final class Pathfinding
     {
         if (executor == null)
         {
-            executor = new ThreadPoolExecutor(1, MineColonies.getConfig().getCommon().pathfindingMaxThreadCount.get(), 10, TimeUnit.SECONDS, jobQueue, new MinecoloniesThreadFactory());
+            executor = new ThreadPoolExecutor(1, MineColonies.getConfig().getServer().pathfindingMaxThreadCount.get(), 10, TimeUnit.SECONDS, jobQueue, new MinecoloniesThreadFactory());
         }
         return executor;
     }
