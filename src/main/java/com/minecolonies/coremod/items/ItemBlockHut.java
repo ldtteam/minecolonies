@@ -13,6 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * A custom item class for hut blocks.
@@ -32,6 +34,7 @@ public class ItemBlockHut extends BlockItem
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
         super.addInformation(stack, worldIn, tooltip, flagIn);
@@ -47,6 +50,7 @@ public class ItemBlockHut extends BlockItem
      * 
      * @param colony the colony to check.
      */
+    @OnlyIn(Dist.CLIENT)
     public static void checkResearch(final IColony colony)
     {
         for(AbstractBlockHut<?> hut : ModBlocks.getHuts())

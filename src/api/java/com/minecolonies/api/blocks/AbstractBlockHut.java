@@ -38,6 +38,8 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import org.jetbrains.annotations.NotNull;
@@ -80,6 +82,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
     /**
      * Whether this hut is yet to be researched in the current colony.
+     * This is only ever used client side, but adding @OnlyIn(Dist.CLIENT) causes the server to crash, so its not there.
      */
     protected boolean needsResearch = false;
 
@@ -287,6 +290,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param colony the colony this is crafted in.
      * @return true if this block needs to be researched before building its hut.
      */
+    @OnlyIn(Dist.CLIENT)
     public void checkResearch(final IColony colony)
     {
         needsResearch = false;
@@ -298,6 +302,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param colony     the colony to check.
      * @param researchId the id of the research to look for.
      */
+    @OnlyIn(Dist.CLIENT)
     protected void checkResearch(final IColony colony, final String researchId)
     {
         if (colony == null)
@@ -319,6 +324,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * 
      * @return true if this building needs to be researched, but isn't yet.
      */
+    @OnlyIn(Dist.CLIENT)
     public boolean needsResearch()
     {
         return needsResearch;

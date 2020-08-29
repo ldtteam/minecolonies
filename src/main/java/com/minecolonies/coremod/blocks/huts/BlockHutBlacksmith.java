@@ -6,6 +6,9 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.coremod.research.ResearchInitializer;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,6 +36,7 @@ public class BlockHutBlacksmith extends AbstractBlockHut<BlockHutBlacksmith>
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void checkResearch(final IColony colony)
     {
         checkResearch(colony, ResearchInitializer.BLACKSMITH_RESEARCH);
