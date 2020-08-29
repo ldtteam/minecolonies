@@ -34,6 +34,7 @@ import com.minecolonies.coremod.network.messages.server.colony.ColonyFlagChangeM
 import com.minecolonies.coremod.network.messages.server.colony.TownHallRenameMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
@@ -836,7 +837,10 @@ public final class ColonyView implements IColonyView
         }
 
         this.manager.readFromNBT(buf.readCompoundTag());
-        ItemBlockHut.checkResearch(this);
+        if (isCoordInColony(world, Minecraft.getInstance().player.getPosition()))
+        {
+            ItemBlockHut.checkResearch(this);
+        }
         return null;
     }
 
