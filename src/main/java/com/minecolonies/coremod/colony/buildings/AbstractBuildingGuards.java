@@ -45,6 +45,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -1104,12 +1105,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         mobsToAttack = new HashMap<>();
 
         int i = 0;
-        for (final Map.Entry<ResourceLocation, EntityType<?>> entry : ForgeRegistries.ENTITIES.getEntries())
+        for (final Map.Entry<RegistryKey<EntityType<?>>, EntityType<?>> entry : ForgeRegistries.ENTITIES.getEntries())
         {
             if (entry.getValue().getClassification() == EntityClassification.MONSTER)
             {
                 i++;
-                mobsToAttack.put(entry.getKey(), new MobEntryView(entry.getKey(), true, i));
+                mobsToAttack.put(entry.getKey().func_240901_a_(), new MobEntryView(entry.getKey().func_240901_a_(), true, i));
             }
             else
             {
@@ -1118,7 +1119,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                     if (entry.getKey() != null && entry.getKey().toString().equals(location))
                     {
                         i++;
-                        mobsToAttack.put(entry.getKey(), new MobEntryView(entry.getKey(), true, i));
+                        mobsToAttack.put(entry.getKey().func_240901_a_(), new MobEntryView(entry.getKey().func_240901_a_(), true, i));
                     }
                 }
             }
