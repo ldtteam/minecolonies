@@ -809,11 +809,18 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             return tightGrouping;
         }
 
+        /**
+         * Is hiring from training facilities enabled
+         * @return
+         */
         public boolean isHireTrainees()
         {
             return hireTrainees;
         }
 
+        /**
+         * Set whether or not to hire from training facilities
+         */
         public void setHireTrainees(final boolean hireTrainees)
         {
             this.hireTrainees = hireTrainees;
@@ -1198,11 +1205,18 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         return true;
     }
 
+    /**
+     * is hiring from training facilities enabled
+     * @return
+     */
     public boolean isHireTrainees()
     {
         return hireTrainees;
     }
 
+    /**
+     * set hiring from training facilities
+     */
     public void setHireTrainees(boolean hireTrainees)
     {
         this.hireTrainees = hireTrainees;
