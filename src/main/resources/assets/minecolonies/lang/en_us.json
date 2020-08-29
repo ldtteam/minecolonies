@@ -587,6 +587,7 @@
   "com.minecolonies.coremod.gui.workerhuts.assign": "Assign the guard to the job:",
   "com.minecolonies.coremod.gui.workerhuts.patrol": "Find patrol target:",
   "com.minecolonies.coremod.gui.workerhuts.retrieve": "Try to retreat on low health:",
+  "com.minecolonies.coremod.gui.workerhuts.trainees": "Try to hire from training facility:",
   "com.minecolonies.coremod.gui.workerhuts.knight": "Knight",
   "com.minecolonies.coremod.gui.workerhuts.ranger": "Archer",
   "com.minecolonies.coremod.gui.workerhuts.modem": "Manually",

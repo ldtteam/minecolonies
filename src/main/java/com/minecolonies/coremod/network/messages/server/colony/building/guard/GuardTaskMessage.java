@@ -27,6 +27,8 @@ public class GuardTaskMessage extends AbstractBuildingServerMessage<AbstractBuil
      */
     private boolean tightGrouping;
 
+    private boolean hireTrainees;
+
     /**
      * Empty standard constructor.
      */
@@ -53,7 +55,8 @@ public class GuardTaskMessage extends AbstractBuildingServerMessage<AbstractBuil
       final boolean patrollingMode,
       final boolean retrieval,
       final int task,
-      final boolean tightGrouping
+      final boolean tightGrouping,
+      final boolean hireTrainees
     )
     {
         super(building);
@@ -63,6 +66,7 @@ public class GuardTaskMessage extends AbstractBuildingServerMessage<AbstractBuil
         this.retrieval = retrieval;
         this.task = task;
         this.tightGrouping = tightGrouping;
+        this.hireTrainees = hireTrainees;
     }
 
     @Override
@@ -75,6 +79,7 @@ public class GuardTaskMessage extends AbstractBuildingServerMessage<AbstractBuil
         tightGrouping = buf.readBoolean();
         retrieval = buf.readBoolean();
         task = buf.readInt();
+        hireTrainees = buf.readBoolean();
     }
 
     @Override
@@ -87,6 +92,7 @@ public class GuardTaskMessage extends AbstractBuildingServerMessage<AbstractBuil
         buf.writeBoolean(tightGrouping);
         buf.writeBoolean(retrieval);
         buf.writeInt(task);
+        buf.writeBoolean(hireTrainees);
     }
 
     @Override
@@ -99,6 +105,7 @@ public class GuardTaskMessage extends AbstractBuildingServerMessage<AbstractBuil
         building.setTightGrouping(tightGrouping);
         building.setRetrieveOnLowHealth(retrieval);
         building.setTask(GuardTask.values()[task]);
+        building.setHireTrainees(hireTrainees);
 
         if (building.getTask().equals(GuardTask.FOLLOW))
         {
