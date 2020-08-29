@@ -14,6 +14,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -663,12 +664,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
                     tavern.setNoVisitorTime(world.getRandom().nextInt(5000) + 30000);
                 }
 
-                final String deathLocation = "{".concat(String.valueOf(getCitizenData().getLastPosition().getX()))
-                                               .concat(", ")
-                                               .concat(String.valueOf(getCitizenData().getLastPosition().getY()))
-                                               .concat(", ")
-                                               .concat(String.valueOf(getCitizenData().getLastPosition().getZ()))
-                                               .concat("}");
+                final String deathLocation = BlockPosUtil.getString(getCitizenData().getLastPosition());
 
                 LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
                   "com.minecolonies.coremod.gui.tavern.visitordeath",
