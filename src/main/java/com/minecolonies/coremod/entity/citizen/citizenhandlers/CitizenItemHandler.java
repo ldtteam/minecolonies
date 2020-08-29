@@ -71,7 +71,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             final ItemStack itemStack = itemEntity.getItem();
             final ItemStack compareStack = itemStack.copy();
 
-            if (citizen.getCitizenJobHandler().getColonyJob() != null && citizen.getCitizenJobHandler().getColonyJob().pickupSuccess(compareStack))
+            if (citizen.getCitizenJobHandler().getColonyJob() == null || citizen.getCitizenJobHandler().getColonyJob().pickupSuccess(compareStack))
             {
                 final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(citizen.getInventoryCitizen(), itemStack);
                 final int resultingStackSize = ItemStackUtils.isEmpty(resultStack) ? 0 : ItemStackUtils.getSize(resultStack);
@@ -278,7 +278,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
                                                                .expand(2.0F, 1.0F, 2.0F)
                                                                .expand(-2.0F, -1.0F, -2.0F)))
         {
-            if (item != null && citizen.canPickUpLoot())
+            if (item != null && citizen.canPickUpLoot() && item.isAlive())
             {
                 tryPickupItemEntity(item);
             }

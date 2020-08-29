@@ -17,12 +17,14 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
+import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -75,7 +77,44 @@ public final class MinecoloniesPlacementHandlers
         PlacementHandlers.handlers.add(new PlacementHandlers.BannerPlacementHandler());
         PlacementHandlers.handlers.add(new BuildingSubstitutionBlock());
         PlacementHandlers.handlers.add(new BuildingBarracksTowerSub());
+        PlacementHandlers.handlers.add(new FieldPlacementHandler());
         PlacementHandlers.handlers.add(new GeneralBlockPlacementHandler());
+    }
+
+    public static class FieldPlacementHandler implements IPlacementHandler
+    {
+        @Override
+        public boolean canHandle(@NotNull World world, @NotNull BlockPos pos, @NotNull BlockState blockState) {
+            return blockState.getBlock() instanceof BlockScarecrow;
+        }
+
+        @Override
+        public ActionProcessingResult handle(@NotNull World world, @NotNull BlockPos pos, @NotNull BlockState blockState, @Nullable CompoundNBT tileEntityData, boolean complete, BlockPos centerPos)
+        {
+            if (world.getBlockState(pos).getBlock() == ModBlocks.blockScarecrow)
+            {
+                return ActionProcessingResult.SUCCESS;
+            }
+
+            if (blockState.get(DoorBlock.HALF).equals(DoubleBlockHalf.LOWER))
+            {
+                world.setBlockState(pos, blockState.with(DoorBlock.HALF, DoubleBlockHalf.LOWER), 3);
+                world.setBlockState(pos.up(), blockState.with(DoorBlock.HALF, DoubleBlockHalf.UPPER), 3);
+            }
+
+            return ActionProcessingResult.SUCCESS;
+        }
+
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull World world, @NotNull BlockPos pos, @NotNull BlockState blockState, @Nullable CompoundNBT tileEntityData, boolean complete) {
+            List<ItemStack> itemList = new ArrayList<>();
+            if (blockState.get(DoorBlock.HALF).equals(DoubleBlockHalf.LOWER))
+            {
+                itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+            }
+
+            return itemList;
+        }
     }
 
     public static class WayPointBlockPlacementHandler implements IPlacementHandler
