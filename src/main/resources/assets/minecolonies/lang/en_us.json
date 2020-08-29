@@ -720,7 +720,7 @@
   "com.minecolonies.coremod.gui.workerhuts.saplinglist": "Saplings",
 
   "com.minecolonies.coremod.gui.townhall.housing": "Housing Assignment Mode:",
-  "com.minecolonies.coremod.gui.townhall.movein": "Children will be born (if there's space):",
+  "com.minecolonies.coremod.gui.townhall.movein": "Kids will be born:",
   "com.minecolonies.coremod.gui.home.assign": "Assign %d citizens",
   "com.minecolonies.coremod.gui.workerhuts.unassign": "Remove Citizen",
   "block.minecolonies.blockminecoloniesrack": "Rack",
