@@ -589,6 +589,7 @@ public final class WindowConstants
     public static final String  GUI_BUTTON_ASSIGNMENT_MODE = "assign";
     public static final String  GUI_BUTTON_PATROL_MODE     = "patrol";
     public static final String  GUI_BUTTON_RETRIEVAL_MODE  = "retrieve";
+    public static final String  GUI_BUTTON_TRAINEE_MODE    = "trainees";
     public static final String  GUI_BUTTON_SET_TARGET      = "setTarget";
     public static final String  GUI_BUTTON_RECALCULATE     = "recalculate";
     //GUI Switches

@@ -6,6 +6,8 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -24,6 +26,7 @@ import net.minecraft.block.HayBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -41,7 +44,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Building class for the Combat Academy.
  */
-public class BuildingCombatAcademy extends AbstractBuildingWorker
+public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBuildingBedProvider
 {
     /**
      * The Schematic name.
@@ -64,6 +67,12 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     private final BiMap<Integer, Integer> trainingPartners = HashBiMap.create();
 
     /**
+     * List of all beds.
+     */
+    @NotNull
+    private final List<BlockPos> bedList = new ArrayList<>();
+
+    /**
      * The abstract constructor of the building.
      *
      * @param c the colony
@@ -79,6 +88,30 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobCombatTraining(citizen);
+    }
+
+    @NotNull
+    @Override
+    public List<BlockPos> getBedList()
+    {
+        return new ArrayList<>(bedList);
+    }
+    
+    @Override
+    public boolean assignCitizen(final ICitizenData citizen)
+    {
+        if (super.assignCitizen(citizen) && citizen != null)
+        {
+            // Set new home, since guards are housed at their workerbuilding.
+            final IBuilding building = citizen.getHomeBuilding();
+            if (building != null && !building.getID().equals(this.getID()))
+            {
+                building.removeCitizen(citizen);
+            }
+            citizen.setHomeBuilding(this);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -116,6 +149,17 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         final ListNBT partnersTagList = compound.getList(TAG_COMBAT_PARTNER, Constants.NBT.TAG_COMPOUND);
         trainingPartners.putAll(NBTUtils.streamCompound(partnersTagList)
                                   .collect(Collectors.toMap(targetCompound -> targetCompound.getInt(TAG_PARTNER1), targetCompound -> targetCompound.getInt(TAG_PARTNER2))));
+        
+        final ListNBT bedTagList = compound.getList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < bedTagList.size(); ++i)
+        {
+            final CompoundNBT bedCompound = bedTagList.getCompound(i);
+            final BlockPos bedPos = NBTUtil.readBlockPos(bedCompound);
+            if (!bedList.contains(bedPos))
+            {
+                bedList.add(bedPos);
+            }
+        }
     }
 
     @Override
@@ -129,6 +173,16 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         final ListNBT partnersTagList = trainingPartners.entrySet().stream().map(BuildingCombatAcademy::writePartnerTupleToNBT).collect(NBTUtils.toListNBT());
         compound.put(TAG_COMBAT_PARTNER, partnersTagList);
 
+        if (!bedList.isEmpty())
+        {
+            @NotNull final ListNBT bedTagList = new ListNBT();
+            for (@NotNull final BlockPos pos : bedList)
+            {
+                bedTagList.add(NBTUtil.writeBlockPos(pos));
+            }
+            compound.put(TAG_BEDS, bedTagList);
+        }
+        
         return compound;
     }
 
