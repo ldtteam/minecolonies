@@ -101,7 +101,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     /**
      * The current path to the random position
      */
-    protected RandomPathResult pathResult;
+    private RandomPathResult pathResult;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!

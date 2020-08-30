@@ -59,11 +59,10 @@ public interface IGuardBuilding extends IBuildingWorker
      * Returns a patrolTarget to patrol to.
      *
      * @param newTarget whether to search a new target
-     * @param suggestion possible suggestion.
      * @return the position of the next target.
      */
     @Nullable
-    BlockPos getNextPatrolTarget(final boolean newTarget, final BlockPos suggestion);
+    BlockPos getNextPatrolTarget(final boolean newTarget);
 
     /**
      * Get an Defence bonus related to the building.
@@ -83,9 +82,8 @@ public interface IGuardBuilding extends IBuildingWorker
      * Called when a guard is at the current patrol point
      *
      * @param guard guard which arrived
-     * @param suggestion next position suggestion.
      */
-    void arrivedAtPatrolPoint(AbstractEntityCitizen guard, final BlockPos suggestion);
+    void arrivedAtPatrolPoint(AbstractEntityCitizen guard);
 
     /**
      * Getter for the patrol distance the guard currently has.
@@ -252,10 +250,4 @@ public interface IGuardBuilding extends IBuildingWorker
      * Populates the mobs list from the ForgeRegistries.
      */
     void calculateMobs();
-
-    /**
-     * If we have to calculate a new target manually.
-     * @return true if so.
-     */
-    boolean requiresManualTarget();
 }
