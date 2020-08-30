@@ -5,15 +5,16 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.items.ItemBlockHut;
+import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -287,11 +288,11 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     /**
      * Checks whether this block is yet to be researched.
      * 
-     * @param colony the colony this is crafted in.
+     * @param colony a view of the colony this is crafted in.
      * @return true if this block needs to be researched before building its hut.
      */
     @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColony colony)
+    public void checkResearch(final IColonyView colony)
     {
         needsResearch = false;
     }
@@ -303,14 +304,14 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param researchId the id of the research to look for.
      */
     @OnlyIn(Dist.CLIENT)
-    protected void checkResearch(final IColony colony, final String researchId)
+    protected void checkResearch(final IColonyView colony, final String researchId)
     {
         if (colony == null)
         {
             needsResearch = false;
             return;
         }
-        needsResearch = colony.getResearchManager().getResearchEffects().getEffect(researchId, UnlockBuildingResearchEffect.class) == null;
+        needsResearch = colony.getResearchManager().getResearchEffects().getEffect(researchId, AbstractResearchEffect.class) == null;
     }
 
     @Override

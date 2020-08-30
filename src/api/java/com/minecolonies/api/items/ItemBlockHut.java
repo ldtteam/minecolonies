@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.constant.TranslationConstants;
 
 import net.minecraft.client.util.ITooltipFlag;
@@ -57,7 +57,7 @@ public class ItemBlockHut extends BlockItem
      * @param colony the colony to check.
      */
     @OnlyIn(Dist.CLIENT)
-    public static void checkResearch(final IColony colony)
+    public static void checkResearch(final IColonyView colony)
     {
         for(AbstractBlockHut<?> hut : ModBlocks.getHuts())
         {
