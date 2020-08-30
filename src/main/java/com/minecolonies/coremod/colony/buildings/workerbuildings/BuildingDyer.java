@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
@@ -45,7 +44,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -198,7 +196,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
                 for(IBuilding wareHouse: colony.getBuildingManager().getWareHouses())
                 {
                     final int colorCount = InventoryUtils.hasBuildingEnoughElseCount(wareHouse, color, 1);
-                    inventoryCounts.replace(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
+                    inventoryCounts.put(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
                 }
             }
 
