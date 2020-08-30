@@ -12,6 +12,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.coremod.entity.pathfinding.pathjobs.*;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.BlockState;
@@ -96,24 +97,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         stuckHandler = PathingStuckHandler.createStuckHandler().withTakeDamageOnStuck(0.2f).withTeleportSteps(6).withTeleportOnFullStuck();
     }
 
-    /**
-     * Get the destination from the path.
-     *
-     * @return the destination position.
-     */
+    @Override
     public BlockPos getDestination()
     {
         return destination;
     }
 
-    /**
-     * Used to path away from a position.
-     *
-     * @param avoid the position to avoid.
-     * @param range the range he should move out of.
-     * @param speed the speed to run at.
-     * @return the result of the pathing.
-     */
     @Nullable
     public PathResult moveAwayFromXYZ(final BlockPos avoid, final double range, final double speed)
     {
@@ -124,6 +113,24 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           avoid,
           (int) range,
           (int) ourEntity.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getValue(),
+          ourEntity), null, speed);
+    }
+
+    @Nullable
+    public RandomPathResult moveToRandomPos(final double range, final double speed)
+    {
+        if (pathResult instanceof RandomPathResult && pathResult.isComputing())
+        {
+            return (RandomPathResult) pathResult;
+        }
+
+        final int theRange = (int) (entity.getRNG().nextInt((int) range) + range / 2);
+        @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
+
+        return (RandomPathResult) setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
+          start,
+          theRange,
+          (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
           ourEntity), null, speed);
     }
 
@@ -161,9 +168,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         return pathResult;
     }
 
-    /**
-     * If null path or reached the end.
-     */
     @Override
     public boolean noPath()
     {
@@ -226,15 +230,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         stuckHandler.checkStuck(this);
     }
 
-    /**
-     * Try to move to a certain position.
-     *
-     * @param x     the x target.
-     * @param y     the y target.
-     * @param z     the z target.
-     * @param speed the speed to walk.
-     * @return the PathResult.
-     */
     @Nullable
     public PathResult moveToXYZ(final double x, final double y, final double z, final double speed)
     {
@@ -265,6 +260,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           desiredPos, speed);
     }
 
+    @Override
     public boolean tryMoveToBlockPos(final BlockPos pos, final double speed)
     {
         moveToXYZ(pos.getX(), pos.getY(), pos.getZ(), speed);
@@ -817,15 +813,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         super.clearPath();
     }
 
-    /**
-     * Used to find a water.
-     *
-     * @param range in the range.
-     * @param speed walking speed.
-     * @param ponds a list of ponds.
-     * @return the result of the search.
-     */
     @Nullable
+    @Override
     public WaterPathResult moveToWater(final int range, final double speed, final List<Tuple<BlockPos, BlockPos>> ponds)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
@@ -838,15 +827,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             ourEntity), null, speed);
     }
 
-    /**
-     * Used to find a tree.
-     *
-     * @param startRestriction the start of the restricted area.
-     * @param endRestriction   the end of the restricted area.
-     * @param speed            walking speed.
-     * @param treesToCut       the trees which should be cut.
-     * @return the result of the search.
-     */
+    @Override
     public TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> treesToCut, final IColony colony)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
@@ -858,14 +839,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         return (TreePathResult) setPathJob(job, null, speed);
     }
 
-    /**
-     * Used to find a tree.
-     *
-     * @param range      in the range.
-     * @param speed      walking speed.
-     * @param treesToCut the trees which should be cut.
-     * @return the result of the search.
-     */
+    @Override
     public TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> treesToCut, final IColony colony)
     {
         @NotNull BlockPos start = AbstractPathJob.prepareStart(ourEntity);
@@ -880,28 +854,15 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(entity), start, buildingPos, range, treesToCut, colony, ourEntity), null, speed);
     }
 
-    /**
-     * Used to move a living ourEntity with a speed.
-     *
-     * @param e     the ourEntity.
-     * @param speed the speed.
-     * @return the result.
-     */
     @Nullable
+    @Override
     public PathResult moveToLivingEntity(@NotNull final Entity e, final double speed)
     {
         return moveToXYZ(e.posX, e.posY, e.posZ, speed);
     }
 
-    /**
-     * Used to path away from a ourEntity.
-     *
-     * @param e        the ourEntity.
-     * @param distance the distance to move to.
-     * @param speed    the speed to run at.
-     * @return the result of the pathing.
-     */
     @Nullable
+    @Override
     public PathResult moveAwayFromLivingEntity(@NotNull final Entity e, final double distance, final double speed)
     {
         return moveAwayFromXYZ(e.getPosition(), distance, speed);

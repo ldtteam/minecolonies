@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.pathfinding;
+package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
@@ -11,12 +11,15 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
+import com.minecolonies.coremod.entity.pathfinding.ChunkCache;
+import com.minecolonies.coremod.entity.pathfinding.Node;
+import com.minecolonies.coremod.entity.pathfinding.PathPointExtended;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.state.properties.Half;
@@ -41,11 +44,11 @@ import static com.minecolonies.api.util.constant.PathingConstants.*;
 public abstract class AbstractPathJob implements Callable<Path>
 {
     @Nullable
-    protected static Set<Node>          lastDebugNodesVisited;
+    public static Set<Node> lastDebugNodesVisited;
     @Nullable
-    protected static Set<Node>          lastDebugNodesNotVisited;
+    public static Set<Node> lastDebugNodesNotVisited;
     @Nullable
-    protected static Set<Node>          lastDebugNodesPath;
+    public static Set<Node>          lastDebugNodesPath;
     @NotNull
     protected final  BlockPos           start;
     @NotNull
@@ -131,7 +134,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         allowJumpPointSearchTypeWalk = false;
 
-        if (MineColonies.getConfig().getCommon().pathfindingDebugDraw.get())
+        if (MineColonies.getConfig().getClient().pathfindingDebugDraw.get()) // this is automatically false when on server
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -172,7 +175,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         allowJumpPointSearchTypeWalk = false;
 
-        if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pathfindingDebugDraw.get())
+        if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().pathfindingDebugDraw.get()) // this is automatically false when on server
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -197,9 +200,9 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public static BlockPos prepareStart(@NotNull final LivingEntity entity)
     {
-        @NotNull final BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.posX),
-          MathHelper.floor(entity.posY),
-          MathHelper.floor(entity.posZ));
+        @NotNull final BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.getPosX()),
+          MathHelper.floor(entity.getPosY()),
+          MathHelper.floor(entity.getPosZ()));
         BlockState bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
         final Block b = bs.getBlock();
 
@@ -220,8 +223,8 @@ public abstract class AbstractPathJob implements Callable<Path>
         else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault || bs.getMaterial().isSolid())
         {
             //Push away from fence
-            final double dX = entity.posX - Math.floor(entity.posX);
-            final double dZ = entity.posZ - Math.floor(entity.posZ);
+            final double dX = entity.getPosX() - Math.floor(entity.getPosX());
+            final double dZ = entity.getPosZ() - Math.floor(entity.getPosZ());
 
             if (dX < ONE_SIDE)
             {
@@ -274,7 +277,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 p.setLadderFacing(Direction.EAST);
             }
         }
-        else if (state.getBlock() instanceof ScaffoldingBlock)
+        else if (state.getBlock() instanceof ScaffoldingBlock || state.getBlock() instanceof WeepingVinesBlock)
         {
             p.setLadderFacing(Direction.UP);
         }
@@ -432,7 +435,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             totalNodesVisited++;
 
             // Limiting max amount of nodes mapped
-            if (totalNodesVisited > MineColonies.getConfig().getCommon().pathfindingMaxNodes.get() || totalNodesVisited > maxRange * maxRange)
+            if (totalNodesVisited > MineColonies.getConfig().getServer().pathfindingMaxNodes.get() || totalNodesVisited > maxRange * maxRange)
             {
                 break;
             }
@@ -477,7 +480,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             addNodeToDebug(currentNode);
         }
 
-        if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() == DEBUG_VERBOSITY_FULL)
+        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() == DEBUG_VERBOSITY_FULL)
         {
             Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
               currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.getCost(), currentNode.getScore()));
@@ -631,7 +634,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
 
             @NotNull final PathPointExtended p = new PathPointExtended(pos);
-            if (railsLength >= MineColonies.getConfig().getCommon().minimumRailsToPath.get())
+            if (railsLength >= MineColonies.getConfig().getServer().minimumRailsToPath.get())
             {
                 p.setOnRails(node.isOnRails());
                 if (p.isOnRails() && (!node.parent.isOnRails() || node.parent.parent == null))
@@ -682,7 +685,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     private void doDebugPrinting(@NotNull final PathPoint[] points)
     {
-        if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
+        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
         {
             Log.getLogger().info("Path found:");
 
@@ -1132,7 +1135,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.NOT_PASSABLE;
         }
 
-        final IFluidState fluid = world.getFluidState(pos);
+        final FluidState fluid = world.getFluidState(pos);
         if (fluid != null && !fluid.isEmpty() && (fluid.getFluid() == Fluids.LAVA || fluid.getFluid() == Fluids.FLOWING_LAVA))
         {
             return SurfaceType.NOT_PASSABLE;
