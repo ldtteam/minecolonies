@@ -27,6 +27,12 @@ public class ItemBlockHut extends BlockItem
 	 */
     private AbstractBlockHut<?> block;
 
+    /**
+     * Creates a new ItemBlockHut representing the item form of the given {@link AbstractBlockHut}.
+     * 
+     * @param block   the {@link AbstractBlockHut} this item represents.
+     * @param builder the item properties to use.
+     */
     public ItemBlockHut(AbstractBlockHut<?> block, Properties builder)
     {
         super(block, builder);
