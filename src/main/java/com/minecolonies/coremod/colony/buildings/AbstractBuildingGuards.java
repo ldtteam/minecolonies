@@ -57,7 +57,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.ARROW_ITEMS;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
@@ -502,13 +501,13 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             if (patrolTimer <= 0 && !getAssignedCitizen().isEmpty())
             {
                 // Next patrol point
-                startPatrolNext();
+                startPatrolNext(null);
             }
         }
     }
 
     @Override
-    public void arrivedAtPatrolPoint(final AbstractEntityCitizen guard)
+    public void arrivedAtPatrolPoint(final AbstractEntityCitizen guard, final BlockPos possibleNext)
     {
         // Start waiting timer for other guards
         if (arrivedAtPatrol.isEmpty())
@@ -521,16 +520,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         if (getAssignedCitizen().size() <= arrivedAtPatrol.size() || patrolTimer <= 0)
         {
             // Next patrol point
-            startPatrolNext();
+            startPatrolNext(possibleNext);
         }
     }
 
     /**
      * Starts the patrol to the next point
+     * @param suggestion a suggestion for the next point.
      */
-    private void startPatrolNext()
+    private void startPatrolNext(final BlockPos suggestion)
     {
-        getNextPatrolTarget(true);
+        getNextPatrolTarget(true, suggestion);
         patrolTimer = 5;
 
         for (final ICitizenData curguard : getAssignedCitizen())
@@ -547,8 +547,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     }
 
     @Override
+    public boolean requiresManualTarget()
+    {
+        return tempNextPatrolPoint == null && (!patrolManually || patrolTargets == null || patrolTargets.isEmpty());
+    }
+
+    @Override
     @Nullable
-    public BlockPos getNextPatrolTarget(final boolean newTarget)
+    public BlockPos getNextPatrolTarget(final boolean newTarget, final BlockPos suggestion)
     {
         if (!newTarget && lastPatrolPoint != null)
         {
@@ -571,9 +577,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         if (!patrolManually || patrolTargets == null || patrolTargets.isEmpty())
         {
             BlockPos pos;
-            if (colony.getWorld().rand.nextBoolean())
+            if (colony.getWorld().rand.nextBoolean() && suggestion != null)
             {
-                pos = BlockPosUtil.getRandomPosition(getColony().getWorld(), lastPatrolPoint, getPosition(), 10, 16);
+                pos = suggestion;
             }
             else
             {

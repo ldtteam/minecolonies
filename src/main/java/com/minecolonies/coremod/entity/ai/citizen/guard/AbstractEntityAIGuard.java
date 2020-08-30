@@ -574,12 +574,25 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     {
         if (currentPatrolPoint == null)
         {
-            currentPatrolPoint = buildingGuards.getNextPatrolTarget(false);
+            //final BlockPos pos = findRandomPositionToWalkTo(20);
+            currentPatrolPoint = buildingGuards.getNextPatrolTarget(false, null);
         }
 
-        if (currentPatrolPoint != null && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 3)))
+        final boolean requiresManualTarget = buildingGuards.requiresManualTarget();
+
+        if ((requiresManualTarget && pathResult != null) || currentPatrolPoint != null && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 3)))
         {
-            buildingGuards.arrivedAtPatrolPoint(worker);
+            BlockPos suggestion = null;
+            if (requiresManualTarget)
+            {
+                suggestion = findRandomPositionToWalkTo(20);
+                if (suggestion != null)
+                {
+                    buildingGuards.arrivedAtPatrolPoint(worker, suggestion);
+                }
+                return GUARD_PATROL;
+            }
+            buildingGuards.arrivedAtPatrolPoint(worker, suggestion);
         }
         return GUARD_PATROL;
     }
