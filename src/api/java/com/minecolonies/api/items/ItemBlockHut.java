@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.items;
+package com.minecolonies.api.items;
 
 import java.util.List;
 
