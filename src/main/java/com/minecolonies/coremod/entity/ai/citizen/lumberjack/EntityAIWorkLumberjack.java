@@ -26,7 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;

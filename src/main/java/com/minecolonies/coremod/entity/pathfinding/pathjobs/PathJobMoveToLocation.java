@@ -6,7 +6,7 @@ import com.minecolonies.coremod.entity.pathfinding.Node;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +51,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     @Override
     protected Path search()
     {
-        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
+        if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
         {
             Log.getLogger().info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]",
               start.getX(), start.getY(), start.getZ(), destination.getX(), destination.getY(), destination.getZ()));
@@ -90,7 +90,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
 
         if (n.pos.getY() == destination.getY() - 1)
         {
-            return destination.withinDistance(new Vector3i(n.pos.getX(), destination.getY(), n.pos.getZ()), DESTINATION_SLACK_ADJACENT);
+            return destination.withinDistance(new Vec3i(n.pos.getX(), destination.getY(), n.pos.getZ()), DESTINATION_SLACK_ADJACENT);
         }
         return destination.withinDistance(n.pos, DESTINATION_SLACK_ADJACENT);
     }

@@ -20,6 +20,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.state.properties.Half;
@@ -134,7 +135,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         allowJumpPointSearchTypeWalk = false;
 
-        if (MineColonies.getConfig().getClient().pathfindingDebugDraw.get()) // this is automatically false when on server
+        if (MineColonies.getConfig().getCommon().pathfindingDebugDraw.get()) // this is automatically false when on server
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -175,7 +176,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         allowJumpPointSearchTypeWalk = false;
 
-        if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().pathfindingDebugDraw.get()) // this is automatically false when on server
+        if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pathfindingDebugDraw.get()) // this is automatically false when on server
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -277,7 +278,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 p.setLadderFacing(Direction.EAST);
             }
         }
-        else if (state.getBlock() instanceof ScaffoldingBlock || state.getBlock() instanceof WeepingVinesBlock)
+        else if (state.getBlock() instanceof ScaffoldingBlock)
         {
             p.setLadderFacing(Direction.UP);
         }
@@ -435,7 +436,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             totalNodesVisited++;
 
             // Limiting max amount of nodes mapped
-            if (totalNodesVisited > MineColonies.getConfig().getServer().pathfindingMaxNodes.get() || totalNodesVisited > maxRange * maxRange)
+            if (totalNodesVisited > MineColonies.getConfig().getCommon().pathfindingMaxNodes.get() || totalNodesVisited > maxRange * maxRange)
             {
                 break;
             }
@@ -480,7 +481,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             addNodeToDebug(currentNode);
         }
 
-        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() == DEBUG_VERBOSITY_FULL)
+        if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() == DEBUG_VERBOSITY_FULL)
         {
             Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
               currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.getCost(), currentNode.getScore()));
@@ -634,7 +635,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
 
             @NotNull final PathPointExtended p = new PathPointExtended(pos);
-            if (railsLength >= MineColonies.getConfig().getServer().minimumRailsToPath.get())
+            if (railsLength >= MineColonies.getConfig().getCommon().minimumRailsToPath.get())
             {
                 p.setOnRails(node.isOnRails());
                 if (p.isOnRails() && (!node.parent.isOnRails() || node.parent.parent == null))
@@ -685,7 +686,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     private void doDebugPrinting(@NotNull final PathPoint[] points)
     {
-        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
+        if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
         {
             Log.getLogger().info("Path found:");
 
@@ -1135,7 +1136,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.NOT_PASSABLE;
         }
 
-        final FluidState fluid = world.getFluidState(pos);
+        final IFluidState fluid = world.getFluidState(pos);
         if (fluid != null && !fluid.isEmpty() && (fluid.getFluid() == Fluids.LAVA || fluid.getFluid() == Fluids.FLOWING_LAVA))
         {
             return SurfaceType.NOT_PASSABLE;

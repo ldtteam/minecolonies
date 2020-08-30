@@ -5,7 +5,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,8 +68,8 @@ public class PathJobCanSee extends AbstractPathJob
 
     private boolean canSeeTargetFromPos(final BlockPos pos)
     {
-        Vector3d vec3d = new Vector3d(pos.getX(), pos.getZ() + searchingEntity.getEyeHeight(), pos.getZ());
-        Vector3d vec3d1 = new Vector3d(lookTarget.getPosX(), lookTarget.getPosYEye(), lookTarget.getPosZ());
+        Vec3d vec3d = new Vec3d(pos.getX(), pos.getZ() + searchingEntity.getEyeHeight(), pos.getZ());
+        Vec3d vec3d1 = new Vec3d(lookTarget.getPosX(), lookTarget.getPosYEye(), lookTarget.getPosZ());
         return this.world.rayTraceBlocks(new RayTraceContext(vec3d, vec3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, searchingEntity)).getType()
                  == RayTraceResult.Type.MISS;
     }
