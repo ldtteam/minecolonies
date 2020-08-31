@@ -6,8 +6,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -23,6 +23,7 @@ public class Node
      */
     private static final String TAG_X       = "idX";
     private static final String TAG_Z       = "idZ";
+    private static final String TAG_ROT     = "rotation";
     private static final String TAG_STYLE   = "Style";
     private static final String TAG_STATUS  = "Status";
     private static final String TAG_PARENTX = "ParentX";
@@ -47,6 +48,11 @@ public class Node
      * Z position of the node.
      */
     private final int z;
+
+    /**
+     * The rotation that was calculated and used at build time
+     */
+    private Optional<Integer> rot = Optional.empty();
 
     /**
      * Central position of parent node.
@@ -96,6 +102,7 @@ public class Node
 
         final int x;
         final int z;
+        Optional<Integer> rot = Optional.empty();
         if (hasDoubles)
         {
             x = MathHelper.floor(compound.getDouble(TAG_X));
@@ -105,6 +112,11 @@ public class Node
         {
             x = compound.getInt(TAG_X);
             z = compound.getInt(TAG_Z);
+        }
+
+        if(compound.keySet().contains(TAG_ROT))
+        {
+            rot = Optional.of(compound.getInt(TAG_ROT));
         }
 
         final NodeType style = NodeType.valueOf(compound.getString(TAG_STYLE));
@@ -130,6 +142,11 @@ public class Node
         node.setStyle(style);
         node.setStatus(status);
 
+        if(rot.isPresent())
+        {
+            node.setRot(rot.get());
+        }
+
         return node;
     }
 
@@ -142,6 +159,11 @@ public class Node
     {
         compound.putInt(TAG_X, x);
         compound.putInt(TAG_Z, z);
+        
+        if(rot.isPresent())
+        {
+            compound.putInt(TAG_ROT, rot.get());
+        }
 
         compound.putString(TAG_STYLE, style.name());
         compound.putString(TAG_STATUS, status.name());
@@ -368,5 +390,15 @@ public class Node
         CROSSROAD,
         //Bending tunnle
         BEND
+    }
+
+    public Optional<Integer> getRot()
+    {
+        return rot;
+    }
+
+    public void setRot(int rot)
+    {
+        this.rot = Optional.of(rot);
     }
 }
