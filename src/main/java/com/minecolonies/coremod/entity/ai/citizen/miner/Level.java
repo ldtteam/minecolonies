@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
+import com.ldtteam.blockout.Log;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
@@ -194,7 +195,7 @@ public class Level
     public Node getRandomNode(@Nullable final Node node)
     {
         Node nextNode = null;
-        if (node != null && rand.nextInt(RANDOM_TYPES) > 0)
+        if (node != null && getNumberOfBuiltNodes() > 10 && rand.nextInt(RANDOM_TYPES) > 0)
         {
             nextNode = node.getRandomNextNode(this, 0);
         }
@@ -245,7 +246,12 @@ public class Level
             nodes.put(pos, tempNodeToAdd);
             openNodes.add(tempNodeToAdd);
         }
-        nodes.get(new Vec2i(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
+        Node I = nodes.get(new Vec2i(tempNode.getX(), tempNode.getZ())); //.setStatus(Node.NodeStatus.COMPLETED);
+        if(!tempNode.equals(I))
+        {
+            Log.getLogger().warn("Nodes not equal during close");
+        }
+        tempNode.setStatus(Node.NodeStatus.COMPLETED);
         openNodes.removeIf(tempNode::equals);
     }
 
