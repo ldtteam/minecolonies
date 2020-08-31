@@ -2,7 +2,6 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
@@ -197,7 +196,9 @@ public class Tool implements IDeliverable
 
         if (!toolTypeResult)
         {
-            return (stack.getItem() instanceof HoeItem && toolClass.equals(ToolType.HOE)) || (stack.getItem() instanceof ShieldItem && toolClass.equals(ToolType.SHIELD));
+            return (stack.getItem() instanceof HoeItem && toolClass.equals(ToolType.HOE))
+                     || (stack.getItem() instanceof ShieldItem && toolClass.equals(ToolType.SHIELD))
+                     || (stack.getItem() instanceof FlintAndSteelItem && toolClass.equals(ToolType.FLINT_N_STEEL));
         }
 
         return toolTypeResult;
