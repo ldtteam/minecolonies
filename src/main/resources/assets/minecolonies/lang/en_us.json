@@ -279,6 +279,8 @@
   "block.minecolonies.blockconstructiontape.name": "Construction tape",
   "block.minecolonies.blockhutguardtower.name": "GuardTower",
   "block.minecolonies.blockhutfield.name": "Field",
+  "block.minecolonies.gate_iron.name": "Iron gate",
+  "block.minecolonies.gate_wood.name": "Wooden gate",
 
   "tile.blockhut.messagenopermission": "You don't have permission to open huts in %s.",
   "tile.blockhut.messagenopermissionplace": "You don't have permission to place hutes in %s.",
@@ -846,6 +848,9 @@
   "com.minecolonies.coremod.item.bannerrallyguards.gui.dismiss": "Dismiss guards",
   "com.minecolonies.coremod.item.bannerrallyguards.gui.error": "Error modifying banner. Please try again.",
   "block.minecolonies.blockpaperwall": "Paper wall",
+
+  "com.minecolonies.coremod.item.gate.craft": "Crafted by the mechanic",
+  "com.minecolonies.coremod.item.gate.place": "Autoplaces parts, max 5x4 which need a stack of 20",
 
   "com.minecolonies.coremod.gui.workerhuts.buildprio": "Pickup Prio.: ",
   "item.supplychestdeployer.invalid": "You must place it in a fitting pool of water.",

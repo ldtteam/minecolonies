@@ -33,7 +33,7 @@ import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.event.*;
-import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
+import com.minecolonies.coremod.placementhandlers.PlacementHandlerInitializer;
 import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
@@ -160,7 +160,7 @@ public class MineColonies
     public static void onLoadComplete(final FMLLoadCompleteEvent event)
     {
         Log.getLogger().warn("FMLLoadCompleteEvent");
-        MinecoloniesPlacementHandlers.initHandlers();
+        PlacementHandlerInitializer.initHandlers();
         RequestSystemInitializer.onPostInit();
         MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().loadCost();
     }

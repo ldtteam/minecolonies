@@ -40,6 +40,8 @@ public final class ModItems
     public static Item santaHat;
 
     public static Item flagBanner;
+    public static Item irongate;
+    public static Item woodgate;
 
     /**
      * Private constructor to hide the implicit public one.

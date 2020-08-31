@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
@@ -32,7 +33,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends MobEntity
+public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements IStuckHandlerEntity
 {
     /**
      * The New PathNavigate navigator.
@@ -108,6 +109,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
      * Counts entity collisions
      */
     private int collisionCounter = 0;
+
+    /**
+     * Whether the entity is possibly stuck
+     */
+    private boolean canBeStuck = true;
 
     /**
      * The collision threshold
@@ -516,5 +522,21 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
 
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(baseHealth);
         this.setHealth(this.getMaxHealth());
+    }
+
+    @Override
+    public boolean canBeStuck()
+    {
+        return canBeStuck;
+    }
+
+    /**
+     * Sets whether the entity currently could be stuck
+     *
+     * @param canBeStuck true if its possible to be stuck
+     */
+    public void setCanBeStuck(final boolean canBeStuck)
+    {
+        this.canBeStuck = canBeStuck;
     }
 }
