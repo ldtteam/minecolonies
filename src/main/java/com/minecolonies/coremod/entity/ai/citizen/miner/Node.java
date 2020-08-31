@@ -141,7 +141,7 @@ public class Node
         @NotNull final Node node = new Node(x, z, parent);
         if(style == NodeType.UNDEFINED)
         {
-            com.ldtteam.blockout.Log.getLogger().warn("Node " + x + "," + z + " has an undefined style");
+            Log.getLogger().error("Minecolonies Node " + x + "," + z + " has an undefined style, please tell the mod author about this");
         }
         node.setStyle(style);
         node.setStatus(status);
@@ -398,11 +398,19 @@ public class Node
         UNDEFINED
     }
 
+    /**
+     * Get rotation stored in the node as an optional, only set if actually stored. 
+     * @return
+     */
     public Optional<Integer> getRot()
     {
         return rot;
     }
 
+    /**
+     * Set rotation storaged in the node
+     * @param rot
+     */
     public void setRot(int rot)
     {
         this.rot = Optional.of(rot);
