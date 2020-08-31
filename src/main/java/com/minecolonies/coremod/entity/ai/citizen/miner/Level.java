@@ -231,6 +231,9 @@ public class Level
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
                 break;
+            case UNDEFINED:
+                Log.getLogger().warn("Node: " + node.getX() + ":" + node.getZ() +" style undefined, not creating children");
+                return;
             default:
                 return;
         }
@@ -246,13 +249,14 @@ public class Level
             nodes.put(pos, tempNodeToAdd);
             openNodes.add(tempNodeToAdd);
         }
-        Node I = nodes.get(new Vec2i(tempNode.getX(), tempNode.getZ())); //.setStatus(Node.NodeStatus.COMPLETED);
+        Node I = nodes.get(new Vec2i(tempNode.getX(), tempNode.getZ()));
         if(!tempNode.equals(I))
         {
             Log.getLogger().warn("Nodes not equal during close");
         }
         tempNode.setStatus(Node.NodeStatus.COMPLETED);
         openNodes.removeIf(tempNode::equals);
+
     }
 
     /**

@@ -83,7 +83,7 @@ public class Node
     {
         this.x = x;
         this.z = z;
-        this.style = NodeType.CROSSROAD;
+        this.style = NodeType.UNDEFINED;
         this.status = NodeStatus.AVAILABLE;
         this.parent = parent;
     }
@@ -139,6 +139,10 @@ public class Node
 
         //Set the node status in all directions.
         @NotNull final Node node = new Node(x, z, parent);
+        if(style == NodeType.UNDEFINED)
+        {
+            com.ldtteam.blockout.Log.getLogger().warn("Node " + x + "," + z + " has an undefined style");
+        }
         node.setStyle(style);
         node.setStatus(status);
 
@@ -389,7 +393,9 @@ public class Node
         //Crossroad structure
         CROSSROAD,
         //Bending tunnle
-        BEND
+        BEND,
+        //New node, undefined
+        UNDEFINED
     }
 
     public Optional<Integer> getRot()
