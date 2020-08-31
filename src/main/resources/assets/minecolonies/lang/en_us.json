@@ -1387,8 +1387,8 @@
   "com.minecolonies.coremod.research.requirementnotmet": "Minimum research requirement not met!",
   "com.minecolonies.coremod.research.started": "Research successfully started!",
   "com.minecolonies.coremod.research.havetounlock": "Build a University and research this hut to unlock it!",
-  "com.minecolonies.coremod.research.item1": "§cTo build the %s, you first need",
-  "com.minecolonies.coremod.research.item2": "§cto complete its research in the University.",
+  "com.minecolonies.coremod.research.item1": "§cThe %s requires research",
+  "com.minecolonies.coremod.research.item2": "§cat the University to be built.",
 
   "com.minecolonies.coremod.info.builder.0.name": "Introduction",
   "com.minecolonies.coremod.info.builder.0": "The Builder is the heart of your colony. Without them, you wouldn't be able to get anything done!\n Every hut worker has to have their building built to at least level 1 before they can do anything, except the Builder. If the Builder has a hut at level 0 (no hut), they can only build one thing, their own hut.\n\n For your Builder to build, upgrade, reposition, or repair a hut that isn't their own, their hut must be at least the same level as the other hut. For example, the Builder's Hut must be level 3 or above to build a level 3 hut.",
