@@ -400,6 +400,13 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         this.deliveries = InventoryUtils.processItemStackListAndMerge(this.deliveries);
     }
 
+    @Override
+    public void addDelivery(@NotNull final List<ItemStack> list)
+    {
+        this.deliveries.addAll(list);
+        this.deliveries = InventoryUtils.processItemStackListAndMerge(this.deliveries);
+    }
+
     @NotNull
     @Override
     public ITextComponent getLongDisplayString()
@@ -508,5 +515,11 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         result1 = 31 * result1 + getDeliveries().hashCode();
         result1 = 31 * result1 + (itemExamples != null ? itemExamples.hashCode() : 0);
         return result1;
+    }
+
+    @Override
+    public Set<TypeToken<?>> getSuperClasses()
+    {
+        return requested.getSuperClasses();
     }
 }

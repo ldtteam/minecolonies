@@ -30,6 +30,7 @@ public final class NbtTagConstants
     public static final String TAG_ABANDONED          = "abandoned";
     public static final String TAG_BUILDING_PRIO      = "buildingPrio";
     public static final String TAG_PRIO               = "prio";
+    public static final String TAG_LAST_ONLINE        = "lastOnlineTime";
 
     /**
      * @deprecated Superseeded by request-based pickup system.
@@ -510,6 +511,11 @@ public final class NbtTagConstants
     public static final String TAG_GATHERED_ALREADY  = "gatheredalready";
     public static final String TAG_BUILDING_TO_DRAIN = "buildingtodrain";
     public static final String TAG_WAITING_TICKS     = "waitingticks";
+
+    /**
+     * Researcher tags.
+     */
+    public static final String TAG_CURR_MANA  = "currentMana";
 
     /**
      * Herder breeding tag

@@ -330,8 +330,20 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     @Override
+    public boolean isActive()
+    {
+        return true;
+    }
+
+    @Override
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
         return false;
+    }
+
+    @Override
+    public void processOfflineTime(final long time)
+    {
+        // Do Nothing.
     }
 }

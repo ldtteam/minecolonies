@@ -21,10 +21,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.minecolonies.api.util.RSConstants.CONST_BUILDING_RESOLVER_PRIORITY;
@@ -137,20 +134,23 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
         final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
 
         final int total = request.getRequest().getCount();
-        final AtomicInteger current = new AtomicInteger(0);
+        int current = 0;
+        final List<ItemStack> deliveries = new ArrayList<>();
 
         for (final ICapabilityProvider tile : tileEntities)
         {
             final List<ItemStack> inv = InventoryUtils.filterProvider(tile, itemStack -> request.getRequest().matches(itemStack));
             for (final ItemStack stack : inv)
             {
-                if (!stack.isEmpty() && current.get() < total)
+                if (!stack.isEmpty() && current < total)
                 {
-                    request.addDelivery(stack);
-                    current.getAndAdd(stack.getCount());
+                    deliveries.add(stack);
+                    current += stack.getCount();
                 }
             }
         }
+
+        request.addDelivery(deliveries);
 
         manager.updateRequestState(request.getId(), RequestState.RESOLVED);
     }

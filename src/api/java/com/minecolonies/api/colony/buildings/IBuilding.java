@@ -344,4 +344,10 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @param player the player opening it.
      */
     void openCraftingContainer(final ServerPlayerEntity player);
+
+    /**
+     * Process time the colony was offline.
+     * @param time the time in seconds.
+     */
+    void processOfflineTime(long time);
 }

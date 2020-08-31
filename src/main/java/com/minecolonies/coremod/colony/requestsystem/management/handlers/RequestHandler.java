@@ -131,8 +131,7 @@ public class RequestHandler implements IRequestHandler
 
         request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNING);
 
-        final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
-        requestTypes.remove(TypeConstants.OBJECT);
+        final Set<TypeToken<?>> requestTypes = request.getSuperClasses();
 
         final List<TypeToken<?>> typeIndexList = new LinkedList<>(requestTypes);
 

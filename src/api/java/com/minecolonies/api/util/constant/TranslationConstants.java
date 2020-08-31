@@ -441,6 +441,11 @@ public final class TranslationConstants
     public static final String GATE_CRAFTING_TOOLTIP     = "com.minecolonies.coremod.item.gate.craft";
     @NonNls
     public static final String GATE_PLACEMENT_TOOLTIP    = "com.minecolonies.coremod.item.gate.place";
+    public static final String ALL_CITIZENS_ARE_SLEEPING                                           = "com.minecolonies.coremod.entity.citizen.sleep";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF                        = "com.minecolonies.coremod.gui.requestfert.off";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_ON                         = "com.minecolonies.coremod.gui.requestfert.on";
 
     private TranslationConstants()
     {

@@ -264,6 +264,11 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
                 getTaskQueueFromDataStore().remove(req.getId());
             }
         }
+        else if (request.getRequest() instanceof Pickup)
+        {
+            getTaskQueueFromDataStore().remove(request.getId());
+            getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
+        }
         else
         {
             getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
@@ -290,7 +295,10 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             getTaskQueueFromDataStore().remove(token);
         }
 
-        getCitizen().getWorkBuilding().markDirty();
+        if (getCitizen().getWorkBuilding() != null)
+        {
+            getCitizen().getWorkBuilding().markDirty();
+        }
     }
 
     /**
@@ -348,11 +356,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         }
     }
 
-    /**
-     * Check if the dman can currently accept requests.
-     *
-     * @return true if active.
-     */
+    @Override
     public boolean isActive()
     {
         return this.active;

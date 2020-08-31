@@ -15,9 +15,7 @@ import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Used to represent requests, of type R, made to the internal market of the colony.
@@ -26,7 +24,6 @@ import java.util.Optional;
  */
 public interface IRequest<R extends IRequestable>
 {
-
     /**
      * Method to get the assigning strategy for this request.
      *
@@ -234,6 +231,13 @@ public interface IRequest<R extends IRequestable>
     void addDelivery(@NotNull final ItemStack stack);
 
     /**
+     * Adds a list of stacks as a delivery to this request.
+     *
+     * @param list The list of stacks that should be treated as a new delivery.
+     */
+    void addDelivery(@NotNull final List<ItemStack> list);
+
+    /**
      * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes the request in short. Should represent the request, in case the player needs to
      * fulfill it, or information about this request is required.
      *
@@ -268,6 +272,18 @@ public interface IRequest<R extends IRequestable>
     @NotNull
     ResourceLocation getDisplayIcon();
 
+    /**
+     * Get a request of a specific type.
+     * @param tClass the class of it.
+     * @param <T> the type.
+     * @return the request of this particular type.
+     */
     @NotNull
     <T> Optional<T> getRequestOfType(final Class<T> tClass);
+
+    /**
+     * Get all super classes of this type (cached value).
+     * @return an immutable copy of the set.
+     */
+    Set<TypeToken<?>> getSuperClasses();
 }

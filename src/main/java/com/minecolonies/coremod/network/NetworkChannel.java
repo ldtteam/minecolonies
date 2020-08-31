@@ -18,6 +18,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.crusher.
 import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.farmer.RequestFertilizerMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardTaskMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.MobEntryChangeMessage;
@@ -118,6 +119,7 @@ public class NetworkChannel
         registerMessage(++idx, WorkOrderChangeMessage.class, WorkOrderChangeMessage::new);
         registerMessage(++idx, AssignFieldMessage.class, AssignFieldMessage::new);
         registerMessage(++idx, AssignmentModeMessage.class, AssignmentModeMessage::new);
+        registerMessage(++idx, RequestFertilizerMessage.class, RequestFertilizerMessage::new);
         registerMessage(++idx, GuardTaskMessage.class, GuardTaskMessage::new);
         registerMessage(++idx, GuardRecalculateMessage.class, GuardRecalculateMessage::new);
         registerMessage(++idx, MobEntryChangeMessage.class, MobEntryChangeMessage::new);

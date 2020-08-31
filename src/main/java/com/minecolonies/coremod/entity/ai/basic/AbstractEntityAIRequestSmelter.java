@@ -128,7 +128,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         }
 
         IAIState newState = super.getRecipe();
-        
+
         // This should only happen in the stonesmelter, but it could potentially happen with multiple fuels. 
         if(newState == QUERY_ITEMS && currentRecipeStorage != null && getOwnBuilding().isAllowedFuel(currentRecipeStorage.getPrimaryOutput()))
         {
@@ -190,6 +190,12 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             }
         }
         return getState();
+    }
+
+    private int getMaxUsableFurnaces()
+    {
+        final int maxSkillFurnaces = (worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getPrimarySkill()) / 10) + 1;
+        return Math.min(maxSkillFurnaces, getOwnBuilding().getFurnaces().size());
     }
 
     /**
@@ -300,12 +306,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
-        if (walkToBlock(walkTo))
-        {
-            setDelay(2);
-            return getState();
-        }
-
         final TileEntity entity = world.getTileEntity(walkTo);
         if (!(entity instanceof FurnaceTileEntity) || (isEmpty(((FurnaceTileEntity) entity).getStackInSlot(RESULT_SLOT))))
         {
@@ -313,6 +313,10 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
+        if (walkToBlock(walkTo))
+        {
+            return getState();
+        }
         walkTo = null;
 
         final int preExtractCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> currentRequest.getRequest().getStack().isItemEqual(stack));
@@ -328,7 +332,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
             job.setCraftCounter(job.getCraftCounter() + resultCount);
             job.setProgress(job.getProgress() - resultCount);
-            if(job.getCraftCounter() >= job.getMaxCraftingCount())
+            if(job.getCraftCounter() >= job.getMaxCraftingCount() && job.getProgress() <= 0)
             {
                 job.finishRequest(true);
                 resetValues();
@@ -363,6 +367,14 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      */
     private IAIState checkIfAbleToSmelt(final int amountOfFuel, final boolean checkSmeltables)
     {
+        // We're fully committed currently, try again later.
+        final int burning = countOfBurningFurnaces();
+        if(burning > 0 && (burning >= getMaxUsableFurnaces() || (job.getCraftCounter() + job.getProgress() ) >= job.getMaxCraftingCount()))
+        {
+            setDelay(TICKS_SECOND);
+            return getState();            
+        }
+
         for (final BlockPos pos : getOwnBuilding().getFurnaces())
         {
             final TileEntity entity = world.getTileEntity(pos);
@@ -391,7 +403,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             }
         }
 
-        if(countOfBurningFurnaces() > 0)
+        if(burning > 0)
         {
             setDelay(TICKS_SECOND);
         }
@@ -424,12 +436,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
-        if (walkToBlock(walkTo))
-        {
-            setDelay(2);
-            return getState();
-        }
-
+        final int burningCount = countOfBurningFurnaces();
         final TileEntity entity = world.getTileEntity(walkTo);
         if (entity instanceof FurnaceTileEntity)
         {
@@ -447,8 +454,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
             if(currentRecipeStorage != null)
             {
-                final int maxSkillFurnaces = (worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getPrimarySkill()) / 10) + 1;
-                final int maxFurnaces = Math.min(maxSkillFurnaces, getOwnBuilding().getFurnaces().size());
+                final int maxFurnaces = getMaxUsableFurnaces();
                 final Predicate<ItemStack> smeltable = stack -> currentRecipeStorage.getCleanedInput().get(0).getItemStack().isItemEqual(stack);
                 final int targetCount = currentRequest.getRequest().getCount();
                 final int amountOfSmeltableInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), smeltable);
@@ -458,14 +464,12 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                 {
                     worker.setHeldItem(Hand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(0).getItemStack().copy());
                 }
-                
                 if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), smeltable))
                 {
                     if (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace))
                     {
                         int remainingToSmelt = job.getMaxCraftingCount() - (job.getProgress() + job.getCraftCounter());
                         int toTransfer = 0;
-                        int burningCount =countOfBurningFurnaces();
                         if(burningCount < maxFurnaces)
                         {
                             final int availableFurnaces = maxFurnaces - burningCount;
@@ -482,12 +486,20 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                         }
                         if(toTransfer > 0)
                         {
+
+                            if (walkToBlock(walkTo))
+                            {
+                                return getState();
+                            }
                             worker.getCitizenItemHandler().hitBlockWithToolInHand(walkTo);
-                            job.setProgress(job.getProgress() + toTransfer);
-                            InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                            worker.getInventoryCitizen(), smeltable, toTransfer,
-                            new InvWrapper(furnace), SMELTABLE_SLOT);
-                        }
+                            int transferred = InventoryUtils.transferXInItemHandlerIntoSlotInItemHandler(
+                                                worker.getInventoryCitizen(), 
+                                                smeltable, 
+                                                toTransfer,
+                                                new InvWrapper(furnace), 
+                                                SMELTABLE_SLOT);
+                            job.setProgress(job.getProgress() + transferred);
+                            }
                     }
                 }
                 else if(amountOfSmeltableInInv < targetCount 
@@ -497,7 +509,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                     needsCurrently = new Tuple<>(smeltable, targetCount);
                     return GATHERING_REQUIRED_MATERIALS;
                 } 
-                else if (countOfBurningFurnaces() == 0)
+                else if (burningCount == 0)
                 {
                     //This is a safety net for the AI getting way out of sync with it's tracking. It shouldn't happen. 
                     job.finishRequest(false);
@@ -539,24 +551,18 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             worker.getCitizenData().createRequestAsync(new StackList(possibleFuels, COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE, 1));
         }
 
-        if (currentRecipeStorage == null)
-        {
-            setDelay(TICKS_20);
-            return START_WORKING;
-        }
-
         if (walkToBuilding())
         {
             setDelay(STANDARD_DELAY);
             return getState();
         }
         
-        if(currentRequest == null)
+        if(currentRecipeStorage != null && currentRequest == null)
         {
             currentRequest = job.getCurrentTask();
         }
 
-        if (currentRecipeStorage.getIntermediate() != Blocks.FURNACE)
+        if (currentRecipeStorage != null && currentRecipeStorage.getIntermediate() != Blocks.FURNACE)
         {
             return super.craft();
         }
@@ -587,7 +593,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         }
 
         // Safety net, should get caught removing things from the furnace.
-        if(job.getMaxCraftingCount() > 0 && job.getCraftCounter() >= job.getMaxCraftingCount())
+        if(currentRequest != null && job.getMaxCraftingCount() > 0 && job.getCraftCounter() >= job.getMaxCraftingCount())
         {
             job.finishRequest(true);
             currentRecipeStorage = null;
