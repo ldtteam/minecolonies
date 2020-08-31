@@ -39,6 +39,7 @@ public final class PlacementHandlerInitializer
         PlacementHandlers.handlers.add(new PlacementHandlers.BannerPlacementHandler());
         PlacementHandlers.handlers.add(new BuildingSubstitutionBlock());
         PlacementHandlers.handlers.add(new BuildingBarracksTowerSub());
+        PlacementHandlers.handlers.add(new FieldPlacementHandler());
         PlacementHandlers.handlers.add(new GeneralBlockPlacementHandler());
     }
 }
