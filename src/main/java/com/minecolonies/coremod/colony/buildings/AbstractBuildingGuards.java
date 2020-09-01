@@ -470,6 +470,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
+        boolean hiredFromTraining = false;
 
         // If we have no active worker, attempt to grab one from the appropriate trainer
         if (hireTrainees && !isFull() && ((getBuildingLevel() > 0 && isBuilt()))
@@ -480,7 +481,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
             for(ICitizenData trainee:colony.getCitizenManager().getCitizens())
             {
-                if((this.getGuardType() == ModGuardTypes.ranger && trainee instanceof JobArcherTraining) || (this.getGuardType() == ModGuardTypes.knight && trainee instanceof JobCombatTraining)
+                if((this.getGuardType() == ModGuardTypes.ranger && trainee.getJob() instanceof JobArcherTraining) || (this.getGuardType() == ModGuardTypes.knight && trainee.getJob() instanceof JobCombatTraining)
                     &&  trainee.getCitizenSkillHandler().getLevel(job.getPrimarySkill()) > maxSkill)
                 {
                     maxSkill = trainee.getCitizenSkillHandler().getLevel(job.getPrimarySkill());
@@ -490,11 +491,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
             if(trainingCitizen != null )
             {
+                hiredFromTraining = true;
                 assignCitizen(trainingCitizen);
             }
         }
 
-        super.onColonyTick(colony); 
+        //If we hired, we may have more than one to hire, so let's skip the superclass until next time. 
+        if(!hiredFromTraining)
+        {
+            super.onColonyTick(colony); 
+        }
 
         if (patrolTimer > 0 && task == GuardTask.PATROL)
         {
