@@ -165,7 +165,9 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             return;
         }
 
-        final AxisAlignedBB box = citizen.getBoundingBox().grow(2);
+        final int growSize = citizen.getRandom().nextInt(100) < 20 ? 6 : 2;
+
+        final AxisAlignedBB box = citizen.getBoundingBox().grow(growSize);
         if (!WorldUtil.isAABBLoaded(citizen.world, box))
         {
             return;

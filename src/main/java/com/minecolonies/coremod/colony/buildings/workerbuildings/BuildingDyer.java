@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
@@ -21,6 +20,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutDyer;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobDyer;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Blocks;
@@ -45,7 +45,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -166,7 +165,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Dyer", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.DYER_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -198,7 +197,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
                 for(IBuilding wareHouse: colony.getBuildingManager().getWareHouses())
                 {
                     final int colorCount = InventoryUtils.hasBuildingEnoughElseCount(wareHouse, color, 1);
-                    inventoryCounts.replace(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
+                    inventoryCounts.put(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
                 }
             }
 
