@@ -441,6 +441,10 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF                        = "com.minecolonies.coremod.gui.requestfert.off";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_ON                         = "com.minecolonies.coremod.gui.requestfert.on";
+    @NonNls
+    public static final String HUT_NEEDS_RESEARCH_TOOLTIP_1                                        = "com.minecolonies.coremod.research.item1";
+    @NonNls
+    public static final String HUT_NEEDS_RESEARCH_TOOLTIP_2                                        = "com.minecolonies.coremod.research.item2";
 
     private TranslationConstants()
     {
