@@ -17,13 +17,16 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
+import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FenceBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.state.properties.BedPart;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -254,6 +257,26 @@ public class BuildingArchery extends AbstractBuildingWorker implements IBuilding
         }
         return null;
     }
+
+    @Override
+    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        super.registerBlockPosition(blockState, pos, world);
+
+        BlockPos registrationPosition = pos;
+        if (blockState.getBlock() instanceof BedBlock)
+        {
+            if (blockState.get(BedBlock.PART) == BedPart.FOOT)
+            {
+                registrationPosition = registrationPosition.offset(blockState.get(BedBlock.HORIZONTAL_FACING));
+            }
+
+            if (!bedList.contains(registrationPosition))
+            {
+                bedList.add(registrationPosition);
+            }
+        }
+    }    
 
     @Override
     public BuildingEntry getBuildingRegistryEntry()

@@ -831,7 +831,7 @@
 
   "item.minecolonies.clipboard": "Clipboard",
 
-  "com.minecolonies.coremod.item.clipboard.needcolony": "Please shift + right-click your Town Hall to register your clipboard to the colony.",
+  "com.minecolonies.coremod.item.clipboard.needcolony": "Please sneak + right-click your Town Hall to register your clipboard to the colony.",
   "com.minecolonies.coremod.item.clipboard.registered": "Registered to colony %d.",
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
   "com.minecolonies.coremod.buildings.warehouse.name": "Warehouse",
@@ -1018,7 +1018,7 @@
   "com.minecolonies.coremod.gui.workerhuts.library": "Library",
 
   "item.minecolonies.resourcescroll": "Resource-Scroll",
-  "com.minecolonies.coremod.gui.resourcescroll.nobuilder": "Couldn't find a registered Builder, please shift + right-click a Builder's Hut.",
+  "com.minecolonies.coremod.gui.resourcescroll.nobuilder": "Couldn't find a registered Builder. Please sneak + right-click a Builder's Hut to register the resource scroll.",
 
   "com.minecolonies.coremod.gui.workerhuts.baker.recipes": "Recipes",
   "com.minecolonies.coremod.gui.workerhuts.gettool": "Get Guard Tool",
@@ -1550,7 +1550,7 @@
 
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!",
 
-  "com.minecolonies.coremod.resourcescroll.nobuilder": "Please register a Builder's Hut first by shift + right-clicking one!",
+  "com.minecolonies.coremod.resourcescroll.nobuilder": "Please register a Builder's Hut first by sneak + right-clicking one!",
   "com.minecolonies.coremod.resourcescroll.null": "Something went wrong opening the resource scroll, please try again!",
   "com.minecolonies.coremod.gui.workerhuts.hospital": "Hospital",
   "block.minecolonies.blockhuthospital": "Hospital",
@@ -1732,7 +1732,7 @@
   "com.minecolonies.coremod.gui.chat.recruitstory19": "seems adept at using swords and says 'If by my life or death I can protect you, I will. You have my sword.'",
   "com.minecolonies.coremod.gui.chat.recruitstory20": "is never late, nor early. %s arrives precisely when they mean to.",
 
-  "com.minecolonies.coremod.gui.chat.hometoofar": "I have to walk a long way home from work every day, it would be nice if I could live somewhere closer.",
+  "com.minecolonies.coremod.gui.chat.hometoofar": "I have to walk a long way home from work every day. It would be nice if I could live somewhere closer.",
 
   "com.minecolonies.coremod.gui.beekeeper.notcollect": "Collect honey",
   "com.minecolonies.coremod.gui.beekeeper.collect": "Collect honeycomb",
@@ -1757,7 +1757,7 @@
   "com.minecolonies.coremod.gui.townhall.edit_flag": "Edit colony flag",
   "block.minecolonies.colony_banner": "Colony Flag Banner",
   "com.minecolonies.coremod.gui.locate": "Locate",
-  "com.minecolonies.coremod.locating": "Successfully located rack with respective Stack...",
+  "com.minecolonies.coremod.locating": "Successfully located rack with respective item(s).",
 
-  "entity.researcher.moreknowledge": "During your absence your researchers used the time to do some extra research which will speed up your current research a bit!"
+  "entity.researcher.moreknowledge": "During your absence, your Researchers used the time to do some extra work. This will speed up their current research a bit!"
 }
