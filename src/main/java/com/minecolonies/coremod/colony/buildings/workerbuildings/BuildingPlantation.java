@@ -18,6 +18,7 @@ import com.minecolonies.coremod.client.gui.WindowHutPlantation;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.network.messages.server.colony.building.plantation.PlantationSetPhaseMessage;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Block;
@@ -277,7 +278,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Plantation", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.PLANTATION_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
