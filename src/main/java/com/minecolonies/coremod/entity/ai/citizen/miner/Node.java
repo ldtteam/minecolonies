@@ -102,7 +102,6 @@ public class Node
 
         final int x;
         final int z;
-        Optional<Integer> rot = Optional.empty();
         if (hasDoubles)
         {
             x = MathHelper.floor(compound.getDouble(TAG_X));
@@ -112,11 +111,6 @@ public class Node
         {
             x = compound.getInt(TAG_X);
             z = compound.getInt(TAG_Z);
-        }
-
-        if(compound.keySet().contains(TAG_ROT))
-        {
-            rot = Optional.of(compound.getInt(TAG_ROT));
         }
 
         final NodeType style = NodeType.valueOf(compound.getString(TAG_STYLE));
@@ -146,9 +140,9 @@ public class Node
         node.setStyle(style);
         node.setStatus(status);
 
-        if(rot.isPresent())
+        if(compound.keySet().contains(TAG_ROT))
         {
-            node.setRot(rot.get());
+            node.setRot(compound.getInt(TAG_ROT));
         }
 
         return node;
