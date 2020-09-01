@@ -9,15 +9,14 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import org.jetbrains.annotations.NotNull;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
-
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This class represents a recipe loaded from custom data that is available to a crafter
@@ -253,5 +252,33 @@ public class CustomRecipe
             1,
             result,
             intermediate);
-      }
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(result, researchId, excludedResearchId, inputs);
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        final CustomRecipe that = (CustomRecipe) o;
+
+
+        return result.isItemEqual(that.result) 
+            && researchId.equals(that.researchId)
+            && excludedResearchId.equals(that.excludedResearchId)
+            && inputs.equals(that.inputs);
+    }
+
 }
