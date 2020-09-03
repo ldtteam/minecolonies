@@ -495,7 +495,7 @@ public class CommonConfiguration extends AbstractConfiguration
                      "minecraft:diamond;9",
                      "minecraft:emerald;8",
                      "minecraft:baked_potato;1",
-                     "minecraft:gold;2",
+                     "minecraft:gold_ingot;2",
                      "minecraft:redstone;2",
                      "minecraft:lapis_lazuli;2",
                      "minecraft:cake;7",
