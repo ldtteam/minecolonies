@@ -584,7 +584,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 {
                     currentPatrolPoint = findRandomPositionToWalkTo(20);
                 }
-                setNextPatrolTarget(currentPatrolPoint);
+                
+                if (currentPatrolPoint != null)
+                {
+                    setNextPatrolTarget(currentPatrolPoint);
+                }
             }
         }
         else
