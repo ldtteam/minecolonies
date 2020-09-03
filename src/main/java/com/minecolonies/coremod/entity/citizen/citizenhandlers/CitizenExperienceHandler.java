@@ -35,9 +35,19 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     public static final int SECONDARY_DEPENDENCY_SHARE = 5;
 
     /**
+     * Number of times to attempt XP pickup before forcing it
+     */
+    public static final int MAX_XP_PICKUP_ATTEMPTS = 5;
+
+    /**
      * The citizen assigned to this manager.
      */
     private final AbstractEntityCitizen citizen;
+
+    /**
+     * Number of times we've moved XP consecutively
+     */
+    private int counterMovedXp = 0;
 
     /**
      * Constructor for the experience handler.
@@ -165,7 +175,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             return;
         }
 
-        final int growSize = citizen.getRandom().nextInt(100) < 20 ? 6 : 2;
+        final int growSize = counterMovedXp > 0 || citizen.getRandom().nextInt(100) < 20 ? 8 : 2;
 
         final AxisAlignedBB box = citizen.getBoundingBox().grow(growSize);
         if (!WorldUtil.isAABBLoaded(citizen.world, box))
@@ -173,19 +183,28 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             return;
         }
 
+        boolean movedXp = false;
+
         for (@NotNull final ExperienceOrbEntity orb : citizen.world.getEntitiesWithinAABB(ExperienceOrbEntity.class, box))
         {
             Vec3d vec3d = new Vec3d(citizen.posX - orb.getPosX(), citizen.posY + (double) this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
             double d1 = vec3d.lengthSquared();
 
-            if (d1 < 1.0D)
+            if (d1 < 1.0D || counterMovedXp > MAX_XP_PICKUP_ATTEMPTS)
             {
                 addExperience(orb.getXpValue() / 2.0D);
                 orb.remove();
+                counterMovedXp = 0;
                 return;
             }
             double d2 = 1.0D - Math.sqrt(d1) / 8.0D;
             orb.setMotion(orb.getMotion().add(vec3d.normalize().scale(d2 * d2 * 0.1D)));
+            movedXp = true;
+            counterMovedXp++;
+        }
+        if(!movedXp)
+        {
+            counterMovedXp = 0;
         }
     }
 }
