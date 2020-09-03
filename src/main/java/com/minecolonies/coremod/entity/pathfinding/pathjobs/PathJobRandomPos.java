@@ -14,6 +14,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Random;
+
 import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSITY_NONE;
 
 /**
@@ -31,6 +33,11 @@ public class PathJobRandomPos extends AbstractPathJob
      * Required avoidDistance.
      */
     protected final int distance;
+
+    /**
+     * Random pathing rand.
+     */
+    private static Random random = new Random();
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -51,7 +58,7 @@ public class PathJobRandomPos extends AbstractPathJob
         super(world, start, start, range, new RandomPathResult(), entity);
         this.distance = distance;
 
-        final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple(entity.getRNG());
+        final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple(random);
         this.destination = start.offset(dir.getA(), distance).offset(dir.getB(), distance);
     }
 
