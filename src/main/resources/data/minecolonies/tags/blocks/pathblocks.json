@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "#minecolonies:concrete",
+    "minecraft:gravel",
+    "minecraft:grass_path",
+    "minecraft:stone_bricks",
+    "minecraft:stone_brick_stairs",
+    "minecraft:stone_brick_slab"
+  ]
+}

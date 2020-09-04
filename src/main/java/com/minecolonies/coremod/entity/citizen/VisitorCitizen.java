@@ -664,7 +664,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
                     tavern.setNoVisitorTime(world.getRandom().nextInt(5000) + 30000);
                 }
 
-                final String deathLocation = BlockPosUtil.getString(getCitizenData().getLastPosition());
+                final String deathLocation = BlockPosUtil.getString(getPosition());
 
                 LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
                   "com.minecolonies.coremod.gui.tavern.visitordeath",
