@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.mobs.aitasks;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.LivingEntity;
@@ -52,10 +51,6 @@ public class EntityAIRaiderAttackMelee extends Goal
     public boolean shouldExecute()
     {
         target = entity.getAttackTarget() != null ? entity.getAttackTarget() : entity.getAttackingEntity();
-        if (target != null)
-        {
-            Log.getLogger().warn(target.getDisplayName() + " is fyling:" + EntityUtils.isFlying(target));
-        }
         return target != null && !EntityUtils.isFlying(target);
     }
 
