@@ -798,7 +798,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             final IRecipeStorage recipeStorage = newRecipe.getRecipeStorage();
             final IToken<?> recipeToken = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipeStorage);
 
-            if(newRecipe.isValidForColony(colony))
+            if(newRecipe.isValidForBuilding(this))
             {   
                 boolean duplicateFound = false; 
                 for(IToken<?> token : recipes)
@@ -846,6 +846,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 if(!duplicateFound)
                 {
                     addRecipeToList(recipeToken);    
+                    colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
                 }
             } 
             else
