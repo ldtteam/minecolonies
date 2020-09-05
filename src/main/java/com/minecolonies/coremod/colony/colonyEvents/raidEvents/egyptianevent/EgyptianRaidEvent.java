@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
@@ -19,8 +20,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 import static com.minecolonies.api.entity.ModEntities.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EGYPTIAN;
 
 /**
  * Egyptian raid event for the colony, triggers a horde of egyptians that spawn and attack the colony.
@@ -57,6 +61,13 @@ public class EgyptianRaidEvent extends HordeRaidEvent
             Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayerEntity) player);
             Network.getNetwork().sendToPlayer(new PlayMusicMessage(RaidSounds.DESERT_RAID_WARNING), (ServerPlayerEntity) player);
         }
+    }
+
+    @Override
+    protected void updateRaidBar()
+    {
+        super.updateRaidBar();
+        raidBar.setDarkenSky(true);
     }
 
     @Override
@@ -182,5 +193,11 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     public EntityType<?> getBossRaiderType()
     {
         return PHARAO;
+    }
+
+    @Override
+    protected ITextComponent getDisplayName()
+    {
+        return new StringTextComponent(LanguageHandler.format(RAID_EGYPTIAN));
     }
 }
