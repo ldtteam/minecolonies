@@ -60,6 +60,13 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     }
 
     @Override
+    protected void updateRaidBar()
+    {
+        super.updateRaidBar();
+        raidBar.setDarkenSky(true);
+    }
+
+    @Override
     public void onUpdate()
     {
         super.onUpdate();

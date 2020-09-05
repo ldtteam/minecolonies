@@ -76,6 +76,13 @@ public class AmazonRaidEvent extends HordeRaidEvent
     }
 
     @Override
+    protected void updateRaidBar()
+    {
+        super.updateRaidBar();
+        raidBar.setCreateFog(true);
+    }
+
+    @Override
     public void onUpdate()
     {
         super.onUpdate();

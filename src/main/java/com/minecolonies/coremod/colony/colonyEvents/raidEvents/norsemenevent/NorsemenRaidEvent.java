@@ -38,6 +38,13 @@ public class NorsemenRaidEvent extends HordeRaidEvent
     }
 
     @Override
+    protected void updateRaidBar()
+    {
+        super.updateRaidBar();
+        raidBar.setCreateFog(true);
+    }
+
+    @Override
     public void registerEntity(final Entity entity)
     {
         if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isAlive())
