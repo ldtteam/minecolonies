@@ -26,6 +26,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.server.ServerBossInfo;
@@ -66,9 +67,9 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     protected Horde horde;
 
     /**
-     * The raids visual raidbar TODO: try different overlay
+     * The raids visual raidbar
      */
-    protected final ServerBossInfo raidBar = new ServerBossInfo(new StringTextComponent("Colony Raid"), BossInfo.Color.RED, BossInfo.Overlay.NOTCHED_20);
+    protected final ServerBossInfo raidBar = new ServerBossInfo(new StringTextComponent("Colony Raid"), BossInfo.Color.RED, BossInfo.Overlay.NOTCHED_10);
 
     /**
      * The references to living raiders left
@@ -347,13 +348,20 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     protected void updateRaidBar()
     {
         final String directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint);
-        raidBar.setName(new StringTextComponent(directionName));
+        raidBar.setName(getDisplayName().appendSibling(new StringTextComponent(" - " + directionName)));
         for (final PlayerEntity player : colony.getImportantMessageEntityPlayers())
         {
             raidBar.addPlayer((ServerPlayerEntity) player);
         }
         raidBar.setVisible(true);
     }
+
+    /**
+     * Gets the raids display name
+     *
+     * @return
+     */
+    protected abstract ITextComponent getDisplayName();
 
     @Override
     public void onUpdate()

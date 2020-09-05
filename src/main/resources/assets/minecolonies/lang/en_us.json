@@ -876,6 +876,12 @@
   "event.minecolonies.raidmessage_p3": "§4Arr Comrade! There's some darn pirates from %s comin' for %s tonight! They sailed here and will continue attacking until we destroy their caravel.",
   "event.minecolonies.raidmessage_p4": "§4A huge horde of pirates are sailin' %s of %s and they're not here to play! Their rigorous waves will hit us unless we destroy their galleon!",
 
+  "com.minecolonies.coremod.raid.amazon.name": "Amazons",
+  "com.minecolonies.coremod.raid.egyptian.name": "Mummies",
+  "com.minecolonies.coremod.raid.barbarian.name": "Barbarians",
+  "com.minecolonies.coremod.raid.pirate.name": "Pirates",
+  "com.minecolonies.coremod.raid.norsemen.name": "Norsemen",
+
   "com.minecolonies.coremod.gui.workerhuts.toggleallon": "Toggle all on",
   "com.minecolonies.coremod.gui.workerhuts.togglealloff": "Toggle all off",
   "com.minecolonies.coremod.gui.recipe.remove": "Remove",

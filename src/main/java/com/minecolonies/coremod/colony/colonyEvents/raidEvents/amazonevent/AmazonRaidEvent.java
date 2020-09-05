@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.amazonevent;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
@@ -21,9 +22,12 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 import static com.minecolonies.api.entity.ModEntities.AMAZON;
 import static com.minecolonies.api.entity.ModEntities.AMAZONCHIEF;
+import static com.minecolonies.api.util.constant.TranslationConstants.RAID_AMAZON;
 
 /**
  * Amazon raid event for the colony, triggers a horde of amazons that spawn and attack the colony.
@@ -80,6 +84,12 @@ public class AmazonRaidEvent extends HordeRaidEvent
     {
         super.updateRaidBar();
         raidBar.setCreateFog(true);
+    }
+
+    @Override
+    protected ITextComponent getDisplayName()
+    {
+        return new StringTextComponent(LanguageHandler.format(RAID_AMAZON));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.ModEntities;
@@ -8,7 +9,11 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.AbstractShipRaidE
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.RAID_PIRATE;
 
 /**
  * The Pirate raid event, spawns a ship with pirate spawners onboard.
@@ -72,5 +77,11 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
     public EntityType<?> getBossRaiderType()
     {
         return ModEntities.CHIEFPIRATE;
+    }
+
+    @Override
+    protected ITextComponent getDisplayName()
+    {
+        return new StringTextComponent(LanguageHandler.format(RAID_PIRATE));
     }
 }
