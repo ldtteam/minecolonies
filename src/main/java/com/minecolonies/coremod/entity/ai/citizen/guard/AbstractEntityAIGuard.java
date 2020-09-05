@@ -572,14 +572,36 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public IAIState patrol()
     {
-        if (currentPatrolPoint == null)
+        if (buildingGuards.requiresManualTarget())
         {
-            currentPatrolPoint = buildingGuards.getNextPatrolTarget(false);
+            if (currentPatrolPoint == null || worker.isWorkerAtSiteWithMove(currentPatrolPoint, 3))
+            {
+                if (worker.getRandom().nextInt(5) <= 1)
+                {
+                    currentPatrolPoint = buildingGuards.getColony().getBuildingManager().getRandomBuilding(b -> true);
+                }
+                else
+                {
+                    currentPatrolPoint = findRandomPositionToWalkTo(20);
+                }
+                
+                if (currentPatrolPoint != null)
+                {
+                    setNextPatrolTarget(currentPatrolPoint);
+                }
+            }
         }
-
-        if (currentPatrolPoint != null && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 3)))
+        else
         {
-            buildingGuards.arrivedAtPatrolPoint(worker);
+            if (currentPatrolPoint == null)
+            {
+                currentPatrolPoint = buildingGuards.getNextPatrolTarget(false);
+            }
+
+            if (currentPatrolPoint != null && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 3)))
+            {
+                buildingGuards.arrivedAtPatrolPoint(worker);
+            }
         }
         return GUARD_PATROL;
     }

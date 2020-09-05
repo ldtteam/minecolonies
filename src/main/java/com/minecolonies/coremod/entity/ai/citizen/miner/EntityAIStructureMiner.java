@@ -294,7 +294,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             {
                 return getState();
             }
-            setBlockFromInventory(nextLadder, Blocks.LADDER);
+            //Get ladder orientation
+            final BlockState metadata = getBlockState(safeStand);
+
+            setBlockFromInventory(nextLadder, Blocks.LADDER, metadata);
             return getState();
         }
         return MINER_CHECK_MINESHAFT;

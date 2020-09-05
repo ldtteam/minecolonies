@@ -90,7 +90,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
     {
         if (worker.getRandom().nextInt(STUDY_TO_RECESS_RATIO) < 1)
         {
-            recessPos = BlockPosUtil.getRandomPosition(world, recessPos == null ? BlockPos.ZERO : recessPos, worker.getPosition(), 10, 16);
+            recessPos = getOwnBuilding().getPosition();
             return RECESS;
         }
 
@@ -122,7 +122,12 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         {
             return getState();
         }
-        recessPos = BlockPosUtil.getRandomPosition(world, recessPos == null ? BlockPos.ZERO : recessPos, worker.getPosition(), 10, 16);
+
+        final BlockPos newRecessPos = findRandomPositionToWalkTo(10);
+        if (newRecessPos != null)
+        {
+            recessPos = newRecessPos;
+        }
         return getState();
     }
 
