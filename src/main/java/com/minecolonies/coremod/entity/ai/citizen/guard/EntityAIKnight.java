@@ -27,8 +27,8 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -63,7 +63,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
     /**
      * Cooldown for the Aoe knockback
      */
-    private final int KNOCKBACK_COOLDOWN = 30 * GUARD_ATTACK_INTERVAL;
+    private static final int KNOCKBACK_COOLDOWN = 30 * GUARD_ATTACK_INTERVAL;
 
     /**
      * Coodlown counter
