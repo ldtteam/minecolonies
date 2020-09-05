@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
@@ -128,7 +129,8 @@ public class EntityAIWalkToRandomHuts extends Goal
     @Override
     public boolean shouldExecute()
     {
-        if (!(this.entity.isAlive() && this.entity.getColony() != null && entity.getAttackTarget() == null && entity.getAttackingEntity() == null))
+        if (!this.entity.isAlive() || this.entity.getColony() == null || (entity.getAttackTarget() != null && !EntityUtils.isFlying(entity.getAttackTarget())) || (
+          entity.getAttackingEntity() != null && !EntityUtils.isFlying(entity.getAttackTarget())))
         {
             return false;
         }
