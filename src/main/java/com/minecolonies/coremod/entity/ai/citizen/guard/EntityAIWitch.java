@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -18,6 +19,7 @@ import net.minecraft.entity.projectile.PotionEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +27,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
+import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 //TODO
@@ -445,80 +450,50 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
 
     private boolean checkForDebuffTarget()
     {
-        if (debuffTarget == null || !debuffTarget.isAlive())
-        {
-            return false;
-        }
-
-        final Collection<EffectInstance> effects = PotionUtils.getFullEffectsFromItem(worker.getHeldItemMainhand());
-        if (debuffTarget.getActivePotionEffects().isEmpty() || effects.stream()
-                                                                 .map(EffectInstance::getPotion)
-                                                                 .noneMatch(effect -> debuffTarget.getActivePotionEffect(effect) != null))
-        {
-            // Check sight
-            if (!worker.canEntityBeSeen(debuffTarget))
-            {
-                lastSeenDebuff += GUARD_TASK_INTERVAL;
-            }
-            else
-            {
-                lastSeenDebuff = 0;
-            }
-
-            if (lastSeenDebuff > STOP_PERSECUTION_AFTER)
-            {
-                resetTarget();
-                return false;
-            }
-
-            // Move into range
-            if (!isInAttackDistance(debuffTarget.getPosition()))
-            {
-                if (worker.getNavigator().noPath())
-                {
-                    moveInAttackPosition();
-                }
-            }
-
-            return true;
-        }
-        else
-        {
-            resetTarget();
-        }
-        return false;
+        final AtomicInteger lastSeenRef = new AtomicInteger(lastSeenDebuff);
+        final boolean ret = checkForTarget(lastSeenRef, target);
+        lastSeenDebuff = lastSeenRef.get();
+        return ret;
     }
 
     private boolean checkForBuffTarget()
     {
-        if (buffTarget == null || !buffTarget.isAlive())
+        final AtomicInteger lastSeenRef = new AtomicInteger(lastSeenBuff);
+        final boolean ret = checkForTarget(lastSeenRef, target);
+        lastSeenBuff = lastSeenRef.get();
+        return ret;
+    }
+
+    private boolean checkForTarget(final AtomicInteger lastSeenRef, final LivingEntity target)
+    {
+        if (target == null || !target.isAlive())
         {
             return false;
         }
 
         final Collection<EffectInstance> effects = PotionUtils.getFullEffectsFromItem(worker.getHeldItemMainhand());
-        if (buffTarget.getActivePotionEffects().isEmpty() || effects.stream()
-                                                               .map(EffectInstance::getPotion)
-                                                               .noneMatch(effect -> buffTarget.getActivePotionEffect(effect) != null))
+        if (target.getActivePotionEffects().isEmpty() || effects.stream()
+                                                           .map(EffectInstance::getPotion)
+                                                           .noneMatch(effect -> target.getActivePotionEffect(effect) != null))
         {
             // Check sight
-            if (!worker.canEntityBeSeen(buffTarget))
+            if (worker.canEntityBeSeen(target))
             {
-                lastSeenBuff += GUARD_TASK_INTERVAL;
+                lastSeenRef.set(0);
             }
             else
             {
-                lastSeenBuff = 0;
+                lastSeenRef.addAndGet(GUARD_TASK_INTERVAL);
             }
 
-            if (lastSeenBuff > STOP_PERSECUTION_AFTER)
+            if (lastSeenRef.get() > STOP_PERSECUTION_AFTER)
             {
                 resetTarget();
                 return false;
             }
 
             // Move into range
-            if (!isInAttackDistance(buffTarget.getPosition()))
+            if (!isInAttackDistance(target.getPosition()))
             {
                 if (worker.getNavigator().noPath())
                 {
@@ -538,13 +513,15 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     @NotNull
     private EffectInstance getBuffEffect()
     {
-        return null;//TODO
+        final double mod = worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) / (double) MAX_CITIZEN_LEVEL;
+        return new EffectInstance(Effects.STRENGTH, ((int) Math.floor(mod * 90) + 30) * TICKS_20, (int) Math.floor(mod * 2));//TODO implement real effect choosing strategy
     }
 
     @NotNull
     private EffectInstance getDebuffEffect()
     {
-        return null;//TODO
+        final double mod = worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) / (double) MAX_CITIZEN_LEVEL;
+        return new EffectInstance(Effects.WEAKNESS, ((int) Math.floor(mod * 50) + 10) * TICKS_20, (int) Math.floor(mod * 2));//TODO implement real effect choosing strategy
     }
 
     /**

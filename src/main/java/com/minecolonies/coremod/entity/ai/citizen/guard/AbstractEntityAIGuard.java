@@ -86,7 +86,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * After this amount of ticks not seeing an entity stop persecution.
      */
-    private static final int STOP_PERSECUTION_AFTER = TICKS_SECOND * 10;
+    protected static final int STOP_PERSECUTION_AFTER = TICKS_SECOND * 10;
 
     /**
      * How far off patrols are alterated to match a raider attack point, sq dist
@@ -151,7 +151,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * Interval between guard task updates
      */
-    private static final int GUARD_TASK_INTERVAL = 100;
+    protected static final int GUARD_TASK_INTERVAL = 100;
 
     /**
      * Interval between guard regen updates
