@@ -14,6 +14,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -334,12 +335,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     public void setCitizenId(final int id)
     {
         this.citizenId = id;
-    }
-
-    @Override
-    public void spawnEatingParticle()
-    {
-
     }
 
     @Override
@@ -669,7 +664,13 @@ public class VisitorCitizen extends AbstractEntityCitizen
                     tavern.setNoVisitorTime(world.getRandom().nextInt(5000) + 30000);
                 }
 
-                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gui.tavern.visitordeath", getCitizenData().getName());
+                final String deathLocation = BlockPosUtil.getString(getPosition());
+
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
+                  "com.minecolonies.coremod.gui.tavern.visitordeath",
+                  getCitizenData().getName(),
+                  cause.getDamageType(),
+                  deathLocation);
             }
         }
     }

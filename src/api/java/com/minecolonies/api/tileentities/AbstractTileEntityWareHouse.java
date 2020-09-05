@@ -1,8 +1,10 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.util.Tuple;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -15,12 +17,31 @@ public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuildi
         super(warehouse);
     }
 
+    /**
+     * Method to get the first matching ItemStack in the Warehouse.
+     *
+     * @param itemStackSelectionPredicate The predicate to select the ItemStack with.
+     * @return The first matching ItemStack.
+     */
     public abstract boolean hasMatchingItemStackInWarehouse(@NotNull Predicate<ItemStack> itemStackSelectionPredicate, int count);
 
-    public abstract boolean hasMatchingItemStackInWarehouse(@NotNull ItemStack itemStack);
+    /**
+     * Method used to check if this warehouse holds any of the requested itemstacks.
+     *
+     * @param itemStack The stack to check with to check with.
+     * @param count the min count.
+     * @return True when the warehouse holds a stack, false when not.
+     */
+    public abstract boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count);
 
+    /**
+     * Method used to check if this warehouse holds any of the requested itemstacks.
+     *
+     * @param itemStackSelectionPredicate The predicate to check with.
+     * @return True when the warehouse holds a stack, false when not.
+     */
     @NotNull
-    public abstract List<ItemStack> getMatchingItemStacksInWarehouse(@NotNull Predicate<ItemStack> itemStackSelectionPredicate);
+    public abstract List<Tuple<ItemStack, BlockPos>> getMatchingItemStacksInWarehouse(@NotNull Predicate<ItemStack> itemStackSelectionPredicate);
 
     /**
      * Dump the inventory of a citizen into the warehouse. Go through all items and search the right chest to dump it in.

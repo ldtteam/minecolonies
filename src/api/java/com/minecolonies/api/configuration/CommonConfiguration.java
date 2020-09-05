@@ -46,6 +46,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue fixOrphanedChunks;
     public final ForgeConfigSpec.BooleanValue restrictBuilderUnderground;
     public final ForgeConfigSpec.DoubleValue  fisherSpongeChance;
+    public final ForgeConfigSpec.DoubleValue  fisherPrismarineChance;
     public final ForgeConfigSpec.IntValue     minThLevelToTeleport;
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
     public final ForgeConfigSpec.DoubleValue  foodModifier;
@@ -279,7 +280,9 @@ public class CommonConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> circus;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> festival;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> nightowl;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> spectacle;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> nightowl2;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> opera;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> theater;
 
@@ -355,6 +358,9 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> doubletrouble;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> hotboots;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> pavetheroad;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> arrowuse;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> arrowpierce;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> knockbackaoe;
 
     /**
      * Builds common configuration.
@@ -387,12 +393,13 @@ public class CommonConfiguration extends AbstractConfiguration
         allowPlayerSchematics = defineBoolean(builder, "allowplayerschematics", false);
         allowGlobalNameChanges = defineInteger(builder, "allowglobalnamechanges", 1, -1, 1);
         holidayFeatures = defineBoolean(builder, "holidayfeatures", true);
-        updateRate = defineInteger(builder, "updaterate", 1, 0, 100);
+        updateRate = defineInteger(builder, "updaterate", 1, 1, 100);
         dirtFromCompost = defineInteger(builder, "dirtfromcompost", 1, 0, 100);
         luckyBlockChance = defineInteger(builder, "luckyblockchance", 1, 0, 100);
         fixOrphanedChunks = defineBoolean(builder, "fixorphanedchunks", false);
         restrictBuilderUnderground = defineBoolean(builder, "restrictbuilderunderground", true);
         fisherSpongeChance = defineDouble(builder, "fisherspongechance", 0.1, 0, 100);
+        fisherPrismarineChance = defineDouble(builder, "fisherprismarinechance", 2.5, 0, 100);
         minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
         suggestBuildToolPlacement = defineBoolean(builder, "suggestbuildtoolplacement", true);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
@@ -478,20 +485,23 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         configListStudyItems = defineList(builder, "configliststudyitems",
           Arrays.asList
-                   ("minecraft:paper;400;100"),
+                   ("minecraft:paper;400;100", "minecraft:book;600;10"),
           s -> s instanceof String);
         configListRecruitmentItems = defineList(builder, "configlistrecruitmentitems",
           Arrays.asList
                    ("minecraft:hay_block;2",
                      "minecraft:book;2",
-                     "minecraft:diamond;7",
-                     "minecraft:emerald;10",
+                     "minecraft:enchanted_book;9",
+                     "minecraft:diamond;9",
+                     "minecraft:emerald;8",
                      "minecraft:baked_potato;1",
-                     "minecraft:gold;3",
+                     "minecraft:gold_ingot;2",
                      "minecraft:redstone;2",
+                     "minecraft:lapis_lazuli;2",
+                     "minecraft:cake;7",
                      "minecraft:sunflower;5",
                      "minecraft:honeycomb;6",
-                     "minecraft:quartz;4"),
+                     "minecraft:quartz;3"),
           s -> s instanceof String);
         listOfCompostableItems = defineList(builder, "listOfCompostableItems",
           Arrays.asList
@@ -1141,8 +1151,14 @@ public class CommonConfiguration extends AbstractConfiguration
         this.festival = defineList(builder, "festival",
           Collections.singletonList("minecraft:cake*9"),
           s -> s instanceof String);
+        this.nightowl = defineList(builder, "nightowl",
+          Collections.singletonList("minecraft:golden_carrot*25"),
+          s -> s instanceof String);
         this.spectacle = defineList(builder, "spectacle",
           Collections.singletonList("minecraft:cake*18"),
+          s -> s instanceof String);
+        this.nightowl2 = defineList(builder, "nightowl2",
+          Collections.singletonList("minecraft:golden_carrot*75"),
           s -> s instanceof String);
         this.opera = defineList(builder, "opera",
           Collections.singletonList("minecraft:cake*27"),
@@ -1335,6 +1351,15 @@ public class CommonConfiguration extends AbstractConfiguration
         tauntCosts.add("minecraft:spider_eye*8");
         taunt = defineList(builder, "taunt",
           tauntCosts,
+          s -> s instanceof String);
+        arrowuse = defineList(builder, "arrowuse",
+          Collections.singletonList("minecraft:arrow*64"),
+          s -> s instanceof String);
+        arrowpierce = defineList(builder, "arrowpierce",
+          Arrays.asList("minecraft:arrow*64", "minecraft:redstone*64"),
+          s -> s instanceof String);
+        knockbackaoe = defineList(builder, "knockbackaoe",
+          Arrays.asList("minecraft:redstone*64", "minecraft:gold_ingot*64", "minecraft:lapis_lazuli*128"),
           s -> s instanceof String);
 
         this.gildedhammer = defineList(builder, "gildedhammer",

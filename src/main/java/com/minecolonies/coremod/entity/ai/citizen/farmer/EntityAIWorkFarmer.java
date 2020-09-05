@@ -115,13 +115,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private BlockPos prevPos;
 
     /**
-     * Variables used in handleOffset.
-     */
-    private int     totalDis;
-    private int     dist;
-    private boolean horizontal;
-
-    /**
      * Constructor for the Farmer. Defines the tasks the Farmer executes.
      *
      * @param job a farmer job to use.
@@ -186,20 +179,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     }
 
     /**
-     * Redirects the farmer to his building.
-     *
-     * @return the next state.
-     */
-    private IAIState startWorkingAtOwnBuilding()
-    {
-        if (walkToBuilding())
-        {
-            return getState();
-        }
-        return PREPARING;
-    }
-
-    /**
      * Prepares the farmer for farming. Also requests the tools and checks if the farmer has sufficient fields.
      *
      * @return the next IAIState
@@ -230,7 +209,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         if (amountOfCompostInBuilding + amountOfCompostInInv <= 0)
         {
-            if (!getOwnBuilding().hasWorkerOpenRequestsOfType(Objects.requireNonNull(worker.getCitizenData()), TypeToken.of(StackList.class)))
+            if (getOwnBuilding().requestFertilizer() && !getOwnBuilding().hasWorkerOpenRequestsOfType(Objects.requireNonNull(worker.getCitizenData()), TypeToken.of(StackList.class)))
             {
                 final List<ItemStack> compostAbleItems = new ArrayList<>();
                 compostAbleItems.add(new ItemStack(ModItems.compost, 1));
@@ -355,7 +334,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private IAIState canGoPlanting(@NotNull final ScarecrowTileEntity currentField, @NotNull final BuildingFarmer buildingFarmer)
     {
-        if (currentField.getSeed() == null)
+        if (currentField.getSeed() == null || currentField.getSeed().isEmpty())
         {
             worker.getCitizenData()
               .triggerInteraction(new PosBasedInteraction(new TranslationTextComponent(NO_SEED_SET, currentField.getPos()),
@@ -381,8 +360,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
 
         seeds.setCount(seeds.getMaxStackSize());
-        checkIfRequestForItemExistOrCreateAsynch(seeds);
-
+        checkIfRequestForItemExistOrCreateAsynch(seeds, seeds.getMaxStackSize(), 1);
         currentField.nextState();
         return PREPARING;
     }
@@ -581,6 +559,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         return true;
     }
 
+    @Override
+    public int getBreakSpeedLevel()
+    {
+        return getSecondarySkillLevel();
+    }
+
     /**
      * Checks if we can harvest, and does so if we can.
      *
@@ -605,7 +589,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
     protected int getLevelDelay()
     {
-        return (int) Math.max(SMALLEST_DELAY, STANDARD_DELAY - (this.worker.getCitizenData().getJobModifier() * DELAY_DIVIDER));
+        return (int) Math.max(SMALLEST_DELAY, STANDARD_DELAY - ((getPrimarySkillLevel() / 2.0) * DELAY_DIVIDER));
     }
 
     /**

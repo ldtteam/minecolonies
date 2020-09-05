@@ -79,7 +79,10 @@ public abstract class AbstractScarecrowTileEntity extends TileEntity implements 
     @Override
     public void markDirty()
     {
-        WorldUtil.markChunkDirty(world, pos);
+        if (world != null)
+        {
+            WorldUtil.markChunkDirty(world, pos);
+        }
     }
 
     /**

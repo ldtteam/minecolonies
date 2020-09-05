@@ -4,6 +4,7 @@ import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -18,16 +19,22 @@ import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -36,6 +43,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.G
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBuildingGuards>
@@ -48,8 +56,19 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
     /**
      * Combat icon
      */
-    private final static VisibleCitizenStatus COMBAT =
+    private final static VisibleCitizenStatus COMBAT           =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/knight_combat.png"), "com.minecolonies.gui.visiblestatus.knight_combat");
+    private static final int                  KNOCKBACK_CHANCE = 5;
+
+    /**
+     * Cooldown for the Aoe knockback
+     */
+    private final int KNOCKBACK_COOLDOWN = 30 * GUARD_ATTACK_INTERVAL;
+
+    /**
+     * Coodlown counter
+     */
+    private int knockbackAoeCooldown = KNOCKBACK_COOLDOWN;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -67,7 +86,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
 
         for (final List<GuardGear> list : itemsNeeded)
         {
-            list.add(new GuardGear(ToolType.SHIELD, EquipmentSlotType.MAINHAND, 0, 0, SHIELD_LEVEL_RANGE, SHIELD_BUILDING_LEVEL_RANGE));
+            list.add(new GuardGear(ToolType.SHIELD, EquipmentSlotType.OFFHAND, 0, 0, SHIELD_LEVEL_RANGE, SHIELD_BUILDING_LEVEL_RANGE));
         }
     }
 
@@ -107,7 +126,18 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
     @Override
     protected int getAttackDelay()
     {
-        return KNIGHT_ATTACK_DELAY_BASE;
+        final int reload = KNIGHT_ATTACK_DELAY_BASE - worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 3;
+        return Math.max(reload, KNIGHT_ATTACK_DELAY_MIN);
+    }
+
+    @Override
+    public void reduceAttackDelay(final int value)
+    {
+        if (knockbackAoeCooldown > 0)
+        {
+            knockbackAoeCooldown -= value;
+        }
+        super.reduceAttackDelay(value);
     }
 
     @NotNull
@@ -136,6 +166,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
             {
                 worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
                 worker.setActiveHand(Hand.OFF_HAND);
+
+                // Apply the colony Flag to the shield
+                ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(Hand.OFF_HAND);
+                CompoundNBT nbt = shieldStack.getOrCreateChildTag("BlockEntityTag");
+                nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColony().getColonyFlag());
 
                 worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 worker.decreaseSaturationForContinuousAction();
@@ -201,6 +236,54 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
                 target.setFire(fireLevel * 80);
             }
 
+            if (knockbackAoeCooldown <= 0)
+            {
+                final UnlockAbilityResearchEffect knockBackEnabled =
+                  worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(KNIGHT_WHIRLWIND, UnlockAbilityResearchEffect.class);
+                if (knockBackEnabled != null && knockBackEnabled.getEffect() && worker.getRandom().nextInt(KNOCKBACK_CHANCE) == 0)
+                {
+                    List<LivingEntity> entities = this.world.getEntitiesWithinAABB(LivingEntity.class, worker.getBoundingBox().grow(2.0D, 0.5D, 2.0D));
+                    for (LivingEntity livingentity : entities)
+                    {
+                        if (livingentity != worker && (!worker.isOnSameTeam(livingentity)) && (!(livingentity instanceof ArmorStandEntity)))
+                        {
+                            livingentity.knockBack(worker,
+                              2F,
+                              (double) MathHelper.sin(livingentity.rotationYaw * ((float) Math.PI)),
+                              (double) (-MathHelper.cos(livingentity.rotationYaw * ((float) Math.PI))));
+                            livingentity.attackEntityFrom(source, (float) (damageToBeDealt / entities.size()));
+                        }
+                    }
+
+                    this.world.playSound(null,
+                      worker.getPosX(),
+                      worker.getPosY(),
+                      worker.getPosZ(),
+                      SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP,
+                      worker.getSoundCategory(),
+                      1.0F,
+                      1.0F);
+
+                    double d0 = (double) (-MathHelper.sin(worker.rotationYaw * ((float) Math.PI / 180)));
+                    double d1 = (double) MathHelper.cos(worker.rotationYaw * ((float) Math.PI / 180));
+                    if (worker.world instanceof ServerWorld)
+                    {
+                        ((ServerWorld) worker.world).spawnParticle(ParticleTypes.SWEEP_ATTACK,
+                          worker.getPosX() + d0,
+                          worker.getPosYHeight(0.5D),
+                          worker.getPosZ() + d1,
+                          2,
+                          d0,
+                          0.0D,
+                          d1,
+                          0.0D);
+                    }
+
+                    knockbackAoeCooldown = KNOCKBACK_COOLDOWN;
+                }
+            }
+
+
             target.attackEntityFrom(source, (float) damageToBeDealt);
             target.setRevengeTarget(worker);
             if (target instanceof MobEntity)
@@ -244,8 +327,6 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
                 addDmg += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute()) / 2.5;
             }
 
-            addDmg += getLevelDamage();
-
             final AdditionModifierResearchEffect
               effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(MELEE_DAMAGE, AdditionModifierResearchEffect.class);
             if (effect != null)
@@ -256,6 +337,12 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
             return (int) ((addDmg) * MineColonies.getConfig().getCommon().knightDamageMult.get());
         }
         return (int) (BASE_PHYSICAL_DAMAGE * MineColonies.getConfig().getCommon().knightDamageMult.get());
+    }
+
+    @Override
+    protected double getCombatSpeedBonus()
+    {
+        return worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) * SPEED_LEVEL_BONUS;
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CreativeBuildingStructureHandler;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
 import net.minecraft.block.AirBlock;
@@ -244,7 +245,7 @@ public final class ShipBasedRaiderUtils
             return null;
         }
 
-        if (colony.getWorld().isBlockPresent(startPos))
+        if (WorldUtil.isBlockLoaded(colony.getWorld(), startPos))
         {
             return BlockPosUtil.findLand(startPos, colony.getWorld());
         }
@@ -266,7 +267,7 @@ public final class ShipBasedRaiderUtils
                 return null;
             }
 
-            if (colony.getWorld().isBlockPresent(tempPos))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), tempPos))
             {
                 return BlockPosUtil.getFloor(tempPos, colony.getWorld());
             }

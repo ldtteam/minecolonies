@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
@@ -18,9 +19,11 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobHealer;
 import com.minecolonies.coremod.entity.ai.citizen.healer.Patient;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -34,12 +37,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 
@@ -211,6 +212,18 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                 bedMap.put(registrationPosition, 0);
             }
         }
+    }
+
+    @Override
+    public void removeCitizen(final ICitizenData citizen)
+    {
+        if (citizen != null)
+        {
+            final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
+            optCitizen.ifPresent(entityCitizen -> entityCitizen.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+                                                    .setBaseValue(BASE_MOVEMENT_SPEED));
+        }
+        super.removeCitizen(citizen);
     }
 
     /**
@@ -397,7 +410,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Hospital", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.HOSPITAL_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));

@@ -17,6 +17,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobFletcher;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -92,6 +93,20 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     }
 
     @Override
+    @NotNull
+    public Skill getCraftSpeedSkill()
+    {
+        return getPrimarySkill();
+    }
+
+    @Override
+    @NotNull
+    public Skill getRecipeImprovementSkill()
+    {
+        return getSecondarySkill();
+    }
+    
+    @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
         Optional<Boolean> isRecipeAllowed;
@@ -120,20 +135,6 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     }
 
     @Override
-    public void checkForWorkerSpecificRecipes()
-    {
-        final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(Items.WHITE_WOOL, 1)),
-          1,
-          new ItemStack(Items.STRING, 4),
-          Blocks.AIR);
-
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
-    }
-
-    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.fletcher;
@@ -142,7 +143,7 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Fletcher", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.FLETCHER_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));

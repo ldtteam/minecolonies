@@ -18,6 +18,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.crusher.
 import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.farmer.RequestFertilizerMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardTaskMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.MobEntryChangeMessage;
@@ -118,6 +119,7 @@ public class NetworkChannel
         registerMessage(++idx, WorkOrderChangeMessage.class, WorkOrderChangeMessage::new);
         registerMessage(++idx, AssignFieldMessage.class, AssignFieldMessage::new);
         registerMessage(++idx, AssignmentModeMessage.class, AssignmentModeMessage::new);
+        registerMessage(++idx, RequestFertilizerMessage.class, RequestFertilizerMessage::new);
         registerMessage(++idx, GuardTaskMessage.class, GuardTaskMessage::new);
         registerMessage(++idx, GuardRecalculateMessage.class, GuardRecalculateMessage::new);
         registerMessage(++idx, MobEntryChangeMessage.class, MobEntryChangeMessage::new);
@@ -152,6 +154,7 @@ public class NetworkChannel
         registerMessage(++idx, RecallSingleCitizenMessage.class, RecallSingleCitizenMessage::new);
         registerMessage(++idx, AssignFilterableItemMessage.class, AssignFilterableItemMessage::new);
         registerMessage(++idx, TeamColonyColorChangeMessage.class, TeamColonyColorChangeMessage::new);
+        registerMessage(++idx, ColonyFlagChangeMessage.class, ColonyFlagChangeMessage::new);
         registerMessage(++idx, ToggleHelpMessage.class, ToggleHelpMessage::new);
         registerMessage(++idx, PauseCitizenMessage.class, PauseCitizenMessage::new);
         registerMessage(++idx, RestartCitizenMessage.class, RestartCitizenMessage::new);
@@ -176,6 +179,7 @@ public class NetworkChannel
         registerMessage(++idx, RemoveMinimumStockFromBuildingMessage.class, RemoveMinimumStockFromBuildingMessage::new);
         registerMessage(++idx, PlantationSetPhaseMessage.class, PlantationSetPhaseMessage::new);
         registerMessage(++idx, FieldPlotResizeMessage.class, FieldPlotResizeMessage::new);
+        registerMessage(++idx, AdjustSkillCitizenMessage.class, AdjustSkillCitizenMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);

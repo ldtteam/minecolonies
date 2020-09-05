@@ -17,6 +17,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobStonemason;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -54,30 +55,6 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     public BuildingStonemason(final IColony c, final BlockPos l)
     {
         super(c, l);
-    }
-
-    @Override
-    public void checkForWorkerSpecificRecipes()
-    {
-        final IRecipeStorage sandstoneStorage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(Blocks.COBBLESTONE, 1), new ItemStack(Blocks.SAND, 1)),
-          1,
-          new ItemStack(Blocks.SANDSTONE, 1),
-          Blocks.AIR);
-
-        final IRecipeStorage redsandstoneStorage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(Blocks.COBBLESTONE, 1), new ItemStack(Blocks.RED_SAND, 1)),
-          1,
-          new ItemStack(Blocks.RED_SANDSTONE, 1),
-          Blocks.AIR);
-              
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(sandstoneStorage));
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(redsandstoneStorage));
-
     }
 
     @NotNull
@@ -158,7 +135,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Stonemason", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.STONEMASON_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));

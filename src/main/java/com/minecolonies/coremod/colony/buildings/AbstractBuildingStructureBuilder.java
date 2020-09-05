@@ -83,6 +83,12 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     private Map<Integer, List<BlockPos>> fluidsToRemove = new LinkedHashMap<>();
 
     /**
+     * Total amount of stages.
+     */
+    private int totalStages = 0;
+    private int currentStage = 0;
+
+    /**
      * Public constructor of the building, creates an object of the building.
      *
      * @param c the colony.
@@ -227,20 +233,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT neededResTagList = compound.getList(TAG_RESOURCE_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < neededResTagList.size(); ++i)
-        {
-            final CompoundNBT neededRes = neededResTagList.getCompound(i);
-            final ItemStack stack = ItemStack.read(neededRes);
-
-            if (!stack.isEmpty())
-            {
-                final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
-                final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
-                neededResources.put(stack.getTranslationKey() + "-" + hashCode, resource);
-            }
-        }
-
         if (compound.contains(TAG_PROGRESS_POS))
         {
             progressPos = BlockPosUtil.read(compound, TAG_PROGRESS_POS);
@@ -262,25 +254,16 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 this.fluidsToRemove.put(y, fluids);
             });
         }
+
+
+        currentStage = compound.getInt(TAG_CURR_STAGE);
+        totalStages = compound.getInt(TAG_TOTAL_STAGES);
     }
 
     @Override
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-
-        @NotNull final ListNBT neededResTagList = new ListNBT();
-        for (@NotNull final BuildingBuilderResource resource : neededResources.values())
-        {
-            @NotNull final CompoundNBT neededRes = new CompoundNBT();
-            final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount());
-            itemStack.setTag(resource.getItemStack().getTag());
-            itemStack.write(neededRes);
-
-            neededResTagList.add(neededRes);
-        }
-
-        compound.put(TAG_RESOURCE_LIST, neededResTagList);
         if (progressPos != null)
         {
             BlockPosUtil.write(compound, TAG_PROGRESS_POS, progressPos);
@@ -297,6 +280,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             fluidsToRemove.add(fluidsRemove);
         });
         compound.put(TAG_FLUIDS_REMOVE, fluidsToRemove);
+        compound.putInt(TAG_TOTAL_STAGES, totalStages);
+        compound.putInt(TAG_CURR_STAGE, currentStage);
 
         return compound;
     }
@@ -349,12 +334,16 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
                 buf.writeString(desc);
                 buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty / workOrderBuildDecoration.getAmountOfRes());
+                buf.writeInt(totalStages);
+                buf.writeInt(currentStage);
             }
             else
             {
                 buf.writeString("-");
                 buf.writeString("");
                 buf.writeDouble(0.0);
+                buf.writeInt(0);
+                buf.writeInt(0);
             }
         }
         else
@@ -362,6 +351,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             buf.writeString("-");
             buf.writeString("");
             buf.writeDouble(0.0);
+            buf.writeInt(0);
+            buf.writeInt(0);
         }
         buf.writeString((getMainCitizen() == null || colony.getCitizenManager().getCivilian(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());
     }
@@ -592,8 +583,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public void setProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
     {
         this.progressPos = blockPos;
-        this.progressStage = stage;
-        if (this.progressCounter > COUNT_TO_STORE_POS || blockPos == null)
+        if (this.progressCounter > COUNT_TO_STORE_POS || blockPos == null || stage != progressStage)
         {
             this.markDirty();
             this.progressCounter = 0;
@@ -602,6 +592,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             this.progressCounter++;
         }
+        this.progressStage = stage;
     }
 
     /**
@@ -682,6 +673,28 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 }
             }
         }
+    }
+
+    /**
+     * Go to the next stage.
+     */
+    public void nextStage()
+    {
+        if (this.currentStage + 1 > totalStages)
+        {
+            totalStages++;
+        }
+        this.currentStage++;
+    }
+
+    /**
+     * Set the total number of stages.
+     * @param total the total.
+     */
+    public void setTotalStages(final int total)
+    {
+        this.totalStages = total;
+        this.currentStage = 0;
     }
 
     /**

@@ -4,6 +4,8 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.*;
+import com.minecolonies.coremod.blocks.decorative.BlockColonyFlagBanner;
+import com.minecolonies.coremod.blocks.decorative.BlockColonyFlagWallBanner;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.blocks.huts.*;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
@@ -94,6 +96,8 @@ public final class ModBlocksInitializer
         ModBlocks.blockDecorationPlaceholder = new BlockDecorationController().registerBlock(registry);
         ModBlocks.blockBarrel = new BlockBarrel().registerBlock(registry);
         ModBlocks.blockCompostedDirt = new BlockCompostedDirt().registerBlock(registry);
+        ModBlocks.blockColonyBanner = new BlockColonyFlagBanner().registerBlock(registry);
+        ModBlocks.blockColonyWallBanner = new BlockColonyFlagWallBanner().registerBlock(registry);
     }
 
     @SubscribeEvent

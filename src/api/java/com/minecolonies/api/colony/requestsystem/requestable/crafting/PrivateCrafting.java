@@ -1,14 +1,27 @@
 package com.minecolonies.api.colony.requestsystem.requestable.crafting;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.requestable.Tag;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class PrivateCrafting extends AbstractCrafting
 {
+    /**
+     * Set of type tokens belonging to this class.
+     */
+    private final static Set<TypeToken<?>>
+      TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(PrivateCrafting.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
+
     /**
      * Create a Stack deliverable.
      *
@@ -82,5 +95,11 @@ public class PrivateCrafting extends AbstractCrafting
         final int minCount = buffer.readInt();
 
         return new PrivateCrafting(stack, count, minCount == 0 ? count : minCount);
+    }
+
+    @Override
+    public Set<TypeToken<?>> getSuperClasses()
+    {
+        return TYPE_TOKENS;
     }
 }

@@ -5,12 +5,14 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
@@ -30,7 +32,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the crafter building.
  */
-public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
+public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
     /**
      * Extra amount of recipes the crafters can learn.
@@ -183,5 +185,17 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
     {
         return super.canRecipeBeAddedBasedOnTags(token);
+    }
+
+    @Override
+    public Skill getCraftSpeedSkill()
+    {
+        return getSecondarySkill();
+    }
+
+    @Override
+    public Skill getRecipeImprovementSkill()
+    {
+        return getPrimarySkill();
     }
 }

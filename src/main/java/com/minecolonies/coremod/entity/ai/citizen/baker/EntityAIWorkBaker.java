@@ -235,7 +235,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker, BuildingB
 
         final BakingProduct bakingProduct = getOwnBuilding().getFurnacesWithProduct().get(currentFurnace);
         getOwnBuilding().removeProductFromFurnace(currentFurnace);
-        worker.decreaseSaturationForAction();
+        worker.decreaseSaturationForContinuousAction();
         if (bakingProduct != null)
         {
             getOwnBuilding().addToTasks(bakingProduct.getState(), bakingProduct);
@@ -285,7 +285,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker, BuildingB
             if (progress >= getRequiredProgressForKneading())
             {
                 worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
-                worker.decreaseSaturationForAction();
+                worker.decreaseSaturationForContinuousAction();
                 progress = 0;
                 currentBakingProduct.nextState();
                 getOwnBuilding().removeFromTasks(ProductState.RAW, currentBakingProduct);
@@ -498,7 +498,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker, BuildingB
      */
     private IAIState createNewProduct()
     {
-        if (getOwnBuilding().getCopyOfAllowedItems().isEmpty())
+        if (getOwnBuilding().getCopyOfAllowedItems().isEmpty() || getOwnBuilding().getCopyOfAllowedItems().get("recipes").isEmpty())
         {
             if (worker.getCitizenData() != null)
             {

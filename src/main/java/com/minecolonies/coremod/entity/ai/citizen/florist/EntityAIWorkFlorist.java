@@ -8,6 +8,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
@@ -198,9 +199,12 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         if (entity instanceof TileEntityCompostedDirt)
         {
             @Nullable final ItemStack stack = getOwnBuilding().getFlowerToGrow();
-            if (stack != null && InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST))
+            if (stack != null)
             {
-                ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH, getOwnBuilding().getFlowerToGrow());
+                if (worker.getRandom().nextInt(200 - getPrimarySkillLevel()) < 0 || InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST))
+                {
+                    ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH, getOwnBuilding().getFlowerToGrow());
+                }
             }
             else
             {
@@ -264,7 +268,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     @Override
     public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
-        return BASE_BLOCK_MINING_DELAY * (int) (1 + Math.max(0, MAX_BONUS - PER_LEVEL_BONUS * worker.getCitizenData().getJobModifier()));
+        return BASE_BLOCK_MINING_DELAY * (int) (1 + Math.max(0, MAX_BONUS - PER_LEVEL_BONUS * (getSecondarySkillLevel() / 2.0)));
     }
 
     /**
@@ -294,7 +298,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     {
         for (final BlockPos pos : getOwnBuilding().getPlantGround())
         {
-            if (world.isBlockPresent(pos))
+            if (WorldUtil.isEntityBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityCompostedDirt)

@@ -57,6 +57,7 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
     @Override
     public void startExecuting()
     {
+        super.startExecuting();
         this.closeDoorTemporisation = TIME_TO_CLOSE_DOOR;
         toggleDoor(true);
     }

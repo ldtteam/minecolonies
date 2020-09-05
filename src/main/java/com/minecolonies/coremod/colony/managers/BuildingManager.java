@@ -16,6 +16,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
@@ -174,7 +175,7 @@ public class BuildingManager implements IBuildingManager
         //  Tick Buildings
         for (@NotNull final IBuilding building : buildings.values())
         {
-            if (colony.getWorld().isBlockPresent(building.getPosition()))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition()))
             {
                 building.onColonyTick(colony);
             }
@@ -198,7 +199,7 @@ public class BuildingManager implements IBuildingManager
         for (@NotNull final IBuilding building : tempBuildings)
         {
             final BlockPos loc = building.getPosition();
-            if (colony.getWorld().isBlockPresent(loc) && !building.isMatchingBlock(colony.getWorld().getBlockState(loc).getBlock()))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), loc) && !building.isMatchingBlock(colony.getWorld().getBlockState(loc).getBlock()))
             {
                 //  Sanity cleanup
                 removedBuildings.add(building);
@@ -209,7 +210,7 @@ public class BuildingManager implements IBuildingManager
 
         for (@NotNull final BlockPos pos : tempFields)
         {
-            if (colony.getWorld().isBlockPresent(pos))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), pos))
             {
                 if (colony.getWorld().getTileEntity(pos) instanceof ScarecrowTileEntity)
                 {
@@ -428,8 +429,6 @@ public class BuildingManager implements IBuildingManager
             wareHouses.remove(building);
         }
 
-        colony.getRequestManager().onProviderRemovedFromColony(building);
-
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
         for (@NotNull final ICitizenData citizen : colony.getCitizenManager().getCitizens())
         {
@@ -437,6 +436,7 @@ public class BuildingManager implements IBuildingManager
             building.cancelAllRequestsOfCitizen(citizen);
         }
 
+        colony.getRequestManager().onProviderRemovedFromColony(building);
         colony.getCitizenManager().calculateMaxCitizens();
     }
 

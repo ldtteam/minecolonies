@@ -48,6 +48,18 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     }
 
     @Override
+    public double getButcheringAttackDamage()
+    {
+        return Math.max(1.0, getPrimarySkillLevel() / 10.0);
+    }
+
+    @Override
+    protected boolean canFeedChildren()
+    {
+        return getSecondarySkillLevel() >= LIMIT_TO_FEED_CHILDREN;
+    }
+
+    @Override
     public Class<PigEntity> getAnimalClass()
     {
         return PigEntity.class;

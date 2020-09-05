@@ -1,7 +1,8 @@
 package com.minecolonies.api.entity.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.api.sounds.BarbarianSounds;
+import com.minecolonies.api.entity.mobs.RaiderType;
+import com.minecolonies.api.sounds.RaiderSounds;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
@@ -38,10 +39,9 @@ public abstract class AbstractEntityBarbarian extends AbstractEntityMinecolonies
         }
     }
 
-    @Nullable
     @Override
-    protected SoundEvent getAmbientSound()
+    public RaiderType getRaiderType()
     {
-        return BarbarianSounds.barbarianSay;
+        return RaiderType.BARBARIAN;
     }
 }

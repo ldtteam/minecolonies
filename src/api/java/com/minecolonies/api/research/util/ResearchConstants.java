@@ -69,8 +69,12 @@ public final class ResearchConstants
     public static final String SHIELD_USAGE     = "Shield Usage";
     public static final String KNIGHT_TAUNT     = "Knight taunt mobs";
     public static final String DOUBLE_ARROWS    = "Double Arrows";
+    public static final String ARROW_ITEMS      = "Consume Arrows";
+    public static final String ARROW_PIERCE     = "Piercing Arrows";
+    public static final String KNIGHT_WHIRLWIND = "Whirldwind ability";
     public static final String BLOCK_ATTACKS    = "Block Attacks";
     public static final String SLEEP_LESS       = "Sleep Less";
+    public static final String WORK_LONGER      = "Working day h";
 
     public static final String TEACHING = "Teaching";
     public static final String GROWTH   = "Growth";

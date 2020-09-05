@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.Constants.SLIGHTLY_UP;
 import static com.minecolonies.api.util.constant.PathingConstants.HALF_A_BLOCK;
 
 /**
@@ -87,7 +88,7 @@ public class VisitorManager implements IVisitorManager
             return;
         }
 
-        if (!existingCitizen.get().isAlive() || !WorldUtil.isEntityBlockLoaded(colony.getWorld(), existingCitizen.get().getPosition()))
+        if (!visitor.isAlive())
         {
             existingCitizen.get().remove();
             data.setEntity(visitor);
@@ -227,7 +228,7 @@ public class VisitorManager implements IVisitorManager
         data.setEntity(citizenEntity);
         data.initEntityValues();
 
-        citizenEntity.setPosition(spawnPos.getX() + HALF_A_BLOCK, spawnPos.getY(), spawnPos.getZ() + HALF_A_BLOCK);
+        citizenEntity.setPosition(spawnPos.getX() + HALF_A_BLOCK, spawnPos.getY() + SLIGHTLY_UP, spawnPos.getZ() + HALF_A_BLOCK);
         world.addEntity(citizenEntity);
         return (IVisitorData) data;
     }

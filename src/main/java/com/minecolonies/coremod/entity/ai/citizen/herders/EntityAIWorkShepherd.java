@@ -7,12 +7,14 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,6 +23,7 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static net.minecraft.entity.passive.SheepEntity.WOOL_BY_COLOR;
 
 /**
  * The AI behind the {@link JobShepherd} for Breeding, Killing and Shearing sheep.
@@ -103,6 +106,12 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     }
 
     @Override
+    public double getButcheringAttackDamage()
+    {
+        return Math.max(1.0, getSecondarySkillLevel() / 10.0);
+    }
+
+    @Override
     public Class<SheepEntity> getAnimalClass()
     {
         return SheepEntity.class;
@@ -137,11 +146,24 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             {
                 return getState();
             }
+
+            int enchantmentLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, worker.getHeldItemMainhand());
+            enchantmentLevel *= Math.max(1.0, (getPrimarySkillLevel() / 5.0));
+
             worker.swingArm(Hand.MAIN_HAND);
-            final List<ItemStack> items = sheep.onSheared(worker.getHeldItemMainhand(),
-              worker.getEntityWorld(),
-              worker.getPosition(),
-              net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, worker.getHeldItemMainhand()));
+
+            final List<ItemStack> items = new ArrayList<>();
+            if (!this.world.isRemote)
+            {
+                sheep.setSheared(true);
+                int qty = 1 + worker.getRandom().nextInt(enchantmentLevel + 1);
+
+                for(int j = 0; j < qty; ++j)
+                {
+                    items.add(new ItemStack(WOOL_BY_COLOR.get(sheep.getFleeceColor())));
+                }
+            }
+            sheep.playSound(SoundEvents.ENTITY_SHEEP_SHEAR, 1.0F, 1.0F);
 
             dyeSheepChance(sheep);
 

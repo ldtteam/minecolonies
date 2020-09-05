@@ -21,6 +21,8 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -36,14 +38,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -247,6 +250,13 @@ public class Colony implements IColony
     private TextFormatting colonyTeamColor = TextFormatting.WHITE;
 
     /**
+     * The colony flag, as a list of patterns.
+     */
+    private ListNBT colonyFlag = new BannerPattern.Builder()
+            .setPatternWithColor(BannerPattern.BASE, DyeColor.WHITE)
+            .func_222476_a();
+
+    /**
      * The last time the mercenaries were used.
      */
     private long mercenaryLastUse = 0;
@@ -260,6 +270,11 @@ public class Colony implements IColony
      * Boolean whether the colony has childs.
      */
     private boolean hasChilds = false;
+
+    /**
+     * Last time the server was online.
+     */
+    public long lastOnlineTime = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -402,6 +417,20 @@ public class Colony implements IColony
         buildingManager.onColonyTick(this);
         workManager.onColonyTick(this);
 
+        final long currTime = System.currentTimeMillis();
+        if (lastOnlineTime != 0)
+        {
+            final long pastTime = currTime - lastOnlineTime;
+            if (pastTime > ONE_HOUR_IN_MILLIS)
+            {
+                for (final IBuilding building : buildingManager.getBuildings().values())
+                {
+                    building.processOfflineTime(pastTime/1000);
+                }
+            }
+        }
+        lastOnlineTime = currTime;
+
         updateChildTime();
         return false;
     }
@@ -439,7 +468,7 @@ public class Colony implements IColony
      */
     private boolean checkDayTime()
     {
-        if (isDay && !world.isDaytime())
+        if (isDay && !WorldUtil.isDayTime(world))
         {
             isDay = false;
             eventManager.onNightFall();
@@ -457,7 +486,7 @@ public class Colony implements IColony
                 citizenManager.updateCitizenMourn(false);
             }
         }
-        else if (!isDay && world.isDaytime())
+        else if (!isDay && WorldUtil.isDayTime(world))
         {
             isDay = true;
             if (needToMourn)
@@ -535,6 +564,18 @@ public class Colony implements IColony
             this.world.getScoreboard().getTeam(getTeamName()).setPrefix(new StringTextComponent(colonyColor.toString()));
             this.markDirty();
         }
+    }
+
+    /**
+     * Set up the colony flag patterns for use in decorations etc
+     *
+     * @param colonyFlag the list of pattern-color pairs
+     */
+    @Override
+    public void setColonyFlag(ListNBT colonyFlag)
+    {
+        this.colonyFlag = colonyFlag;
+        markDirty();
     }
 
     /**
@@ -678,6 +719,11 @@ public class Colony implements IColony
             this.raidManager.setCanHaveRaiderEvents(true);
         }
 
+        if (compound.contains(TAG_NIGHTS_SINCE_LAST_RAID))
+        {
+            raidManager.setNightsSinceLastRaid(compound.getInt(TAG_NIGHTS_SINCE_LAST_RAID));
+        }
+
         if (compound.keySet().contains(TAG_AUTO_DELETE))
         {
             this.canColonyBeAutoDeleted = compound.getBoolean(TAG_AUTO_DELETE);
@@ -692,12 +738,17 @@ public class Colony implements IColony
             this.setColonyColor(TextFormatting.values()[compound.getInt(TAG_TEAM_COLOR)]);
         }
 
+        if (compound.keySet().contains(TAG_FLAG_PATTERNS))
+        {
+            this.setColonyFlag(compound.getList(TAG_FLAG_PATTERNS, Constants.TAG_COMPOUND));
+        }
+
         this.requestManager.reset();
         if (compound.keySet().contains(TAG_REQUESTMANAGER))
         {
             this.requestManager.deserializeNBT(compound.getCompound(TAG_REQUESTMANAGER));
         }
-
+        this.lastOnlineTime = compound.getLong(TAG_LAST_ONLINE);
         this.colonyTag = compound;
     }
 
@@ -794,8 +845,11 @@ public class Colony implements IColony
         compound.put(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
         compound.putString(TAG_STYLE, style);
         compound.putBoolean(TAG_RAIDABLE, raidManager.canHaveRaiderEvents());
+        compound.putInt(TAG_NIGHTS_SINCE_LAST_RAID, raidManager.getNightsSinceLastRaid());
         compound.putBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
         compound.putInt(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
+        compound.put(TAG_FLAG_PATTERNS, colonyFlag);
+        compound.putLong(TAG_LAST_ONLINE, lastOnlineTime);
         this.colonyTag = compound;
 
         isActive = false;
@@ -997,7 +1051,7 @@ public class Colony implements IColony
             {
                 if (count++ == randomPos)
                 {
-                    if (world.getChunkProvider().isChunkLoaded(new ChunkPos(entry.getKey().getX() >> 4, entry.getKey().getZ() >> 4)))
+                    if (WorldUtil.isBlockLoaded(world, entry.getKey()))
                     {
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
                         if (
@@ -1611,6 +1665,14 @@ public class Colony implements IColony
     {
         return colonyTeamColor;
     }
+
+    /**
+     * Getter for the colony flag patterns
+     *
+     * @return the list of pattern-color pairs
+     */
+    @Override
+    public ListNBT getColonyFlag() { return colonyFlag; }
 
     /**
      * Set the colony to be active.

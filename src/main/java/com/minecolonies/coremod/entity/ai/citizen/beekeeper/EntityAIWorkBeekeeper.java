@@ -11,6 +11,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeep
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+
+import net.minecraft.block.BeehiveBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.BeeEntity;
@@ -171,7 +173,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      */
     private IAIState decideWhatToDo()
     {
-        setDelay(DECIDING_DELAY + (99 / worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getSecondarySkill())) - 1);
+        setDelay(DECIDING_DELAY + (99 / getSecondarySkillLevel() - 1));
 
         final Set<BlockPos> hives = getOwnBuilding().getHives();
 
@@ -180,6 +182,14 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_HIVES), ChatPriority.BLOCKING));
             setDelay(NO_HIVES_DELAY);
             return DECIDE;
+        }
+
+        for (BlockPos pos : hives)
+        {
+            if(!(world.getBlockState(pos).getBlock() instanceof BeehiveBlock))
+            {
+                getOwnBuilding().removeHive(pos);
+            }
         }
 
         final Optional<BlockPos> hive = hives
@@ -355,7 +365,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             }
         }
 
-        final int dex = worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getPrimarySkill());
+        final int dex = getPrimarySkillLevel();
         if ((50 - (dex / 99. * 50.)) / 100 > worker.getRandom().nextDouble())
         {
             final List<Entity> bees = ((BeehiveTileEntity) world.getTileEntity(hive)).tryReleaseBee(world.getBlockState(hive), BeehiveTileEntity.State.EMERGENCY);

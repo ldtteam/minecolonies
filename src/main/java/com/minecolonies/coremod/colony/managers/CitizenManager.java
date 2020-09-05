@@ -6,12 +6,12 @@ import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -127,7 +127,7 @@ public class CitizenManager implements ICitizenManager
             return;
         }
 
-        if (!existingCitizen.get().isAlive() || !existingCitizen.get().world.isBlockPresent(existingCitizen.get().getPosition()))
+        if (entity.isAlive())
         {
             existingCitizen.get().remove();
             data.setEntity(entity);
@@ -145,14 +145,11 @@ public class CitizenManager implements ICitizenManager
         final ICitizenData data = citizens.get(entity.getCivilianID());
         if (data != null && data.getEntity().isPresent() && data.getEntity().get() == entity)
         {
-            try
+            if (colony.getWorld().getScoreboard().getPlayersTeam(entity.getScoreboardName()) == colony.getTeam())
             {
                 colony.getWorld().getScoreboard().removePlayerFromTeam(entity.getScoreboardName(), colony.getTeam());
             }
-            catch (final IllegalArgumentException e)
-            {
-                Log.getLogger().error("A citizen spent his life without joining the colony team, and now died.");
-            }
+
             citizens.get(entity.getCivilianID()).setEntity(null);
         }
     }
@@ -377,7 +374,7 @@ public class CitizenManager implements ICitizenManager
         {
             if (b.getBuildingLevel() > 0)
             {
-                if (b instanceof BuildingHome)
+                if (b instanceof IBuildingBedProvider)
                 {
                     newMaxCitizens += b.getMaxInhabitants();
                 }

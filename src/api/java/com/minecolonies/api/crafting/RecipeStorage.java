@@ -175,7 +175,7 @@ public class RecipeStorage implements IRecipeStorage
 
         for (int i = 0; i < input.size(); i++)
         {
-            if (!that.input.get(i).isItemEqual(input.get(i)))
+            if (!(that.input.get(i).isItemEqual(input.get(i)) && that.input.get(i).getCount() == input.get(i).getCount()))
             {
                 return false;
             }

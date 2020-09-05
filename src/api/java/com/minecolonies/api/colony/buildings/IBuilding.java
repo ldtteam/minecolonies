@@ -253,6 +253,14 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
 
     boolean hasWorkerOpenRequestsFiltered(@NotNull ICitizenData citizen, @NotNull Predicate<IRequest<?>> selectionPredicate);
 
+    /**
+     * Checks whether the citizen has an open sync request, preventing it from working
+     *
+     * @param citizen citizen data to check
+     * @return true if an open non async request exists
+     */
+    boolean hasOpenSyncRequest(@NotNull ICitizenData citizen);
+
     <R> boolean hasWorkerOpenRequestsOfType(@NotNull ICitizenData citizenData, TypeToken<R> requestType);
 
     @SuppressWarnings(GENERIC_WILDCARD)
@@ -336,4 +344,10 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @param player the player opening it.
      */
     void openCraftingContainer(final ServerPlayerEntity player);
+
+    /**
+     * Process time the colony was offline.
+     * @param time the time in seconds.
+     */
+    void processOfflineTime(long time);
 }

@@ -2,16 +2,14 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -73,46 +71,18 @@ public class TileEntityRack extends AbstractTileEntityRack
         super(MinecoloniesTileEntities.RACK);
     }
 
-    /**
-     * Check if a certain itemstack is present in the inventory. This method checks the content list, it is therefore extremely fast.
-     *
-     * @param stack the stack to check.
-     * @return true if so.
-     */
-    @Override
-    public boolean hasItemStack(final ItemStack stack)
-    {
-        final ItemStorage checkItem = new ItemStorage(stack);
-        return content.getOrDefault(checkItem, 0) >= stack.getCount();
-    }
-
-    /**
-     * Set the value for inWarehouse
-     *
-     * @param isInWarehouse is this rack in a warehouse?
-     */
     @Override
     public void setInWarehouse(final Boolean isInWarehouse)
     {
         this.inWarehouse = isInWarehouse;
     }
 
-    /**
-     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
-     *
-     * @return true if so.
-     */
     @Override
     public boolean freeStacks()
     {
         return content.isEmpty();
     }
 
-    /**
-     * Get the amount of free slots in the inventory. This method checks the content list, it is therefore extremely fast.
-     *
-     * @return the amount of free slots (an integer).
-     */
     @Override
     public int getFreeSlots()
     {
@@ -125,13 +95,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         return freeSlots;
     }
 
-    /**
-     * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
-     *
-     * @param stack             the stack to check.
-     * @param ignoreDamageValue ignore the damage value.
-     * @return true if so.
-     */
     @Override
     public boolean hasItemStack(final ItemStack stack, final boolean ignoreDamageValue)
     {
@@ -140,12 +103,14 @@ public class TileEntityRack extends AbstractTileEntityRack
         return content.getOrDefault(checkItem, 0) >= stack.getCount();
     }
 
-    /**
-     * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
-     *
-     * @param itemStackSelectionPredicate the predicate to test the stack against.
-     * @return true if so.
-     */
+    @Override
+    public int getCount(final ItemStack stack, final boolean ignoreDamageValue)
+    {
+        final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
+
+        return content.getOrDefault(checkItem, 0);
+    }
+
     @Override
     public boolean hasItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
@@ -164,11 +129,11 @@ public class TileEntityRack extends AbstractTileEntityRack
      *
      * @return the map of content.
      */
-    public Map<ItemStorage, Integer> getAllContent() {return content;}
+    public Map<ItemStorage, Integer> getAllContent()
+    {
+        return content;
+    }
 
-    /**
-     * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
-     */
     @Override
     public void upgradeItemStorage()
     {
@@ -189,55 +154,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         }
     }
 
-    /**
-     * Notifies the parent building about inventory change.
-     */
-    private void notifyParentAboutInvChange()
-    {
-        if (!buildingPos.equals(BlockPos.ZERO))
-        {
-            if (WorldUtil.isBlockLoaded(world, buildingPos))
-            {
-                TileEntity building = world.getTileEntity(buildingPos);
-                if (building instanceof TileEntityColonyBuilding)
-                {
-                    ((TileEntityColonyBuilding) building).markInvDirty();
-                }
-            }
-        }
-        else if (inWarehouse && world != null)
-        {
-            final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
-            if (colony != null)
-            {
-                colony.getBuildingManager().getWareHouses().forEach(warehouse -> {
-                    if (WorldUtil.isBlockLoaded(world, warehouse.getPosition()))
-                    {
-                        warehouse.getTileEntity().markInvDirty();
-                    }
-                });
-            }
-        }
-    }
-
-    @Override
-    public void remove()
-    {
-        super.remove();
-        notifyParentAboutInvChange();
-    }
-
-    @Override
-    public void onChunkUnloaded()
-    {
-        super.onChunkUnloaded();
-        notifyParentAboutInvChange();
-    }
-
-    /* Get the amount of items matching a predicate in the inventory.
-     * @param predicate the predicate.
-     * @return the total count.
-     */
     @Override
     public int getItemCount(final Predicate<ItemStack> predicate)
     {
@@ -251,11 +167,26 @@ public class TileEntityRack extends AbstractTileEntityRack
         return 0;
     }
 
-    /**
-     * Scans through the whole storage and updates it.
-     */
     @Override
     public void updateItemStorage()
+    {
+        if (world != null && !world.isRemote)
+        {
+            final boolean empty = content.isEmpty();
+            updateContent();
+
+            if ((empty && !content.isEmpty()) || !empty && content.isEmpty())
+            {
+                updateBlockState();
+            }
+            markDirty();
+        }
+    }
+
+    /**
+     * Just do the content update.
+     */
+    private void updateContent()
     {
         content.clear();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
@@ -275,17 +206,8 @@ public class TileEntityRack extends AbstractTileEntityRack
             }
             content.put(storage, amount);
         }
-
-        if (world != null)
-        {
-            updateBlockState();
-            markDirty();
-        }
     }
 
-    /**
-     * Update the blockState of the rack. Switch between connected, single, full and empty texture.
-     */
     @Override
     protected void updateBlockState()
     {
@@ -336,10 +258,16 @@ public class TileEntityRack extends AbstractTileEntityRack
                     getOtherChest().setMain(false);
                 }
 
-                world.setBlockState(pos, typeHere);
+                if (!world.getBlockState(pos).equals(typeHere))
+                {
+                    world.setBlockState(pos, typeHere);
+                }
                 if (typeNeighbor != null)
                 {
-                    world.setBlockState(this.pos.subtract(relativeNeighbor), typeNeighbor);
+                    if (!world.getBlockState(this.pos.subtract(relativeNeighbor)).equals(typeHere))
+                    {
+                        world.setBlockState(this.pos.subtract(relativeNeighbor), typeNeighbor);
+                    }
                 }
             }
             else
@@ -349,11 +277,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         }
     }
 
-    /**
-     * Get the other double chest or null.
-     *
-     * @return the tileEntity of the other half or null.
-     */
     @Override
     public AbstractTileEntityRack getOtherChest()
     {
@@ -376,11 +299,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         return null;
     }
 
-    /**
-     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
-     *
-     * @return true if so.
-     */
     @Override
     public boolean isEmpty()
     {
@@ -428,19 +346,15 @@ public class TileEntityRack extends AbstractTileEntityRack
         for (int i = 0; i < inventoryTagList.size(); ++i)
         {
             final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
-            final ItemStack stack = ItemStack.read(inventoryCompound);
-            if (ItemStackUtils.getSize(stack) <= 0)
+            if (!inventoryCompound.contains(TAG_EMPTY))
             {
-                inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
-            }
-            else
-            {
+                final ItemStack stack = ItemStack.read(inventoryCompound);
                 inventory.setStackInSlot(i, stack);
             }
         }
 
         main = compound.getBoolean(TAG_MAIN);
-        updateItemStorage();
+        updateContent();
 
         this.inWarehouse = compound.getBoolean(TAG_IN_WAREHOUSE);
         if (compound.contains(TAG_POS))
@@ -465,9 +379,9 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             @NotNull final CompoundNBT inventoryCompound = new CompoundNBT();
             final ItemStack stack = inventory.getStackInSlot(slot);
-            if (stack == ItemStackUtils.EMPTY)
+            if (stack.isEmpty())
             {
-                new ItemStack(Blocks.AIR, 0).write(inventoryCompound);
+                inventoryCompound.putBoolean(TAG_EMPTY, true);
             }
             else
             {
@@ -503,6 +417,12 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
+    public void handleUpdateTag(final CompoundNBT tag)
+    {
+        this.read(tag);
+    }
+
+    @Override
     public void rotate(final Rotation rotationIn)
     {
         super.rotate(rotationIn);
@@ -510,12 +430,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             relativeNeighbor = relativeNeighbor.rotate(rotationIn);
         }
-    }
-
-    @Override
-    public void handleUpdateTag(final CompoundNBT tag)
-    {
-        this.read(tag);
     }
 
     @Nonnull

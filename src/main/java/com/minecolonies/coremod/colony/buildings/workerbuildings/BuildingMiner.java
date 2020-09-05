@@ -262,7 +262,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         if (oldNode != null)
         {
             final CompoundNBT nodeCompound = new CompoundNBT();
-            oldNode.write(new CompoundNBT());
+            oldNode.write(nodeCompound);
             compound.put(TAG_OLD, nodeCompound);
         }
         compound.putInt(TAG_CURRENT_LEVEL, currentLevel);
@@ -587,7 +587,12 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     @NotNull
     public Node getActiveNode()
     {
-        return activeNode == null || activeNode.getStatus() == Node.NodeStatus.COMPLETED ? levels.get(currentLevel).getRandomNode(oldNode) : activeNode;
+        Node calcNode = activeNode == null || activeNode.getStatus() == Node.NodeStatus.COMPLETED ? levels.get(currentLevel).getRandomNode(oldNode) : activeNode;
+        if (activeNode != calcNode)
+        {
+            activeNode = calcNode;
+        }
+        return activeNode;
     }
 
     /**

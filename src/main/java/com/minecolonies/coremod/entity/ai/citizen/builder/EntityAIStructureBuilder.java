@@ -125,6 +125,19 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         return PICK_UP;
     }
 
+    @Override
+    public int getBreakSpeedLevel()
+    {
+        return getSecondarySkillLevel();
+    }
+
+    @Override
+    public int getPlaceSpeedLevel()
+    {
+        return getPrimarySkillLevel();
+    }
+
+
     /**
      * State to pick up material before going back to work.
      *
@@ -209,11 +222,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        if (!job.hasBlueprint())
-        {
-            super.initiate();
-        }
-
         return true;
     }
 
@@ -229,7 +237,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         {
             return getState();
         }
-        return START_BUILDING;
+        return LOAD_STRUCTURE;
     }
 
     /**

@@ -224,6 +224,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING                     = "com.minecolonies.coremod.status.herder.breeding";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_FEEDING                      = "com.minecolonies.coremod.status.herder.feeding";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_SEARCHING                    = "com.minecolonies.coremod.status.herder.searching";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL                = "com.minecolonies.coremod.status.herder.goingToAnimal";
@@ -424,6 +426,8 @@ public final class TranslationConstants
     @NonNls
     public static final String RESEARCH_CONCLUDED                                                  = "com.minecolonies.coremod.university.researchconcluded.";
     @NonNls
+    public static final String RECIPE_IMPROVED                                                     = "com.minecolonies.coremod.crafters.recipeimproved.";
+    @NonNls
     public static final String OUT_OF_COLONY                                                       = "com.minecolonies.coremod.workorder.outofcolony";
     @NonNls
     public static final String NO                                                                  = "com.minecolonies.coremod.entity.citizen.no.";
@@ -433,6 +437,14 @@ public final class TranslationConstants
     public static final String WAREHOUSE_SORTED                                                    = "com.minecolonies.coremod.gui.warehouse.sorted";
     @NonNls
     public static final String ALL_CITIZENS_ARE_SLEEPING                                           = "com.minecolonies.coremod.entity.citizen.sleep";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF                        = "com.minecolonies.coremod.gui.requestfert.off";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_ON                         = "com.minecolonies.coremod.gui.requestfert.on";
+    @NonNls
+    public static final String HUT_NEEDS_RESEARCH_TOOLTIP_1                                        = "com.minecolonies.coremod.research.item1";
+    @NonNls
+    public static final String HUT_NEEDS_RESEARCH_TOOLTIP_2                                        = "com.minecolonies.coremod.research.item2";
 
     private TranslationConstants()
     {

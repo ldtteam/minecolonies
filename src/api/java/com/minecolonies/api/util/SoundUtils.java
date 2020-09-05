@@ -2,7 +2,6 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.EventType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -15,7 +14,6 @@ import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.api.sounds.ModSoundEvents.SOUND_EVENTS;
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * Utilities for playing sounds.
@@ -76,7 +74,7 @@ public final class SoundUtils
      */
     public static void playRandomSound(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final ICitizenData citizen)
     {
-        final double v = rand.nextDouble() * TICKS_SECOND;
+        final double v = rand.nextDouble();
         if (v <= 0.1)
         {
             if (citizen.getSaturation() < 2)
@@ -103,7 +101,7 @@ public final class SoundUtils
         {
             playSoundAtCitizenWith(worldIn, pos, EventType.GENERAL, citizen);
         }
-        else if (v <= 0.4 && citizen.getEntity().isPresent() && ((AbstractEntityCitizen) citizen.getEntity().get()).getCitizenDiseaseHandler().isSick())
+        else if (v <= 0.4 && citizen.getEntity().isPresent() && citizen.getEntity().get().getCitizenDiseaseHandler().isSick())
         {
             playSoundAtCitizenWith(worldIn, pos, EventType.SICKNESS, citizen);
         }

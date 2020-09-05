@@ -16,10 +16,12 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
@@ -28,13 +30,18 @@ import com.minecolonies.coremod.colony.permissions.PermissionsView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
+import com.minecolonies.coremod.network.messages.server.colony.ColonyFlagChangeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.TownHallRenameMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -47,6 +54,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
@@ -79,6 +87,14 @@ public final class ColonyView implements IColonyView
      * Colony team color.
      */
     private TextFormatting teamColonyColor = TextFormatting.WHITE;
+
+    /**
+     * The colony flag (set to plain white as default)
+     */
+    private ListNBT        colonyFlag      = new BannerPattern.Builder()
+        .setPatternWithColor(BannerPattern.BASE, DyeColor.WHITE)
+        .func_222476_a();
+
     private BlockPos       center          = BlockPos.ZERO;
 
     /**
@@ -288,6 +304,10 @@ public final class ColonyView implements IColonyView
         }
 
         buf.writeInt(colony.getTeamColonyColor().ordinal());
+
+        CompoundNBT flagNBT = new CompoundNBT();
+        flagNBT.put(TAG_BANNER_PATTERNS, colony.getColonyFlag());
+        buf.writeCompoundTag(flagNBT);
 
         buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
 
@@ -790,6 +810,7 @@ public final class ColonyView implements IColonyView
         Collections.reverse(lastSpawnPoints);
 
         this.teamColonyColor = TextFormatting.values()[buf.readInt()];
+        this.colonyFlag = buf.readCompoundTag().getList(TAG_BANNER_PATTERNS, Constants.TAG_COMPOUND);
 
         this.printProgress = buf.readBoolean();
 
@@ -816,6 +837,10 @@ public final class ColonyView implements IColonyView
         }
 
         this.manager.readFromNBT(buf.readCompoundTag());
+        if (isCoordInColony(world, Minecraft.getInstance().player.getPosition()))
+        {
+            ItemBlockHut.checkResearch(this);
+        }
         return null;
     }
 
@@ -1026,6 +1051,14 @@ public final class ColonyView implements IColonyView
     {
         return teamColonyColor;
     }
+
+    /**
+     * Getter for the pattern list of the colony flag
+     *
+     * @return the ListNBT of flag (banner) patterns
+     */
+    @Override
+    public ListNBT getColonyFlag() { return colonyFlag; }
 
     /**
      * Sets the name of the view.
@@ -1277,6 +1310,13 @@ public final class ColonyView implements IColonyView
     public void setColonyColor(final TextFormatting color)
     {
 
+    }
+
+    @Override
+    public void setColonyFlag(ListNBT colonyFlag)
+    {
+        this.colonyFlag = colonyFlag;
+        Network.getNetwork().sendToServer(new ColonyFlagChangeMessage(this, colonyFlag));
     }
 
     /**

@@ -219,6 +219,11 @@ public final class ModJobsInitializer
                               .setRegistryName(ModJobs.BEEKEEPER_ID)
                               .createJobEntry();
 
+        ModJobs.cookassistant= new JobEntry.Builder()
+                              .setJobProducer(JobCookAssistant::new)
+                              .setRegistryName(ModJobs.COOKASSISTANT_ID)
+                              .createJobEntry();
+
         ModJobs.witch = new JobEntry.Builder()
                           .setJobProducer(JobWitch::new)
                           .setRegistryName(ModJobs.WITCH_ID)
@@ -264,6 +269,7 @@ public final class ModJobsInitializer
         reg.register(ModJobs.concreteMixer);
         reg.register(ModJobs.rabbitHerder);
         reg.register(ModJobs.beekeeper);
+        reg.register(ModJobs.cookassistant);
         reg.register(ModJobs.witch);
     }
 }

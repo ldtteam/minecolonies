@@ -30,6 +30,7 @@ public final class NbtTagConstants
     public static final String TAG_ABANDONED          = "abandoned";
     public static final String TAG_BUILDING_PRIO      = "buildingPrio";
     public static final String TAG_PRIO               = "prio";
+    public static final String TAG_LAST_ONLINE        = "lastOnlineTime";
 
     /**
      * @deprecated Superseeded by request-based pickup system.
@@ -161,6 +162,11 @@ public final class NbtTagConstants
     public static final String TAG_RAIDABLE = "raidable";
 
     /**
+     * Tag to store nights since last raid
+     */
+    public static final String TAG_NIGHTS_SINCE_LAST_RAID = "nightsRaid";
+
+    /**
      * Tag on the ancient tome used to indicate if a raid will happen.
      */
     public static final String TAG_RAID_WILL_HAPPEN = "raidWillHappen";
@@ -231,6 +237,11 @@ public final class NbtTagConstants
      * Tag to store the inventory to nbt.
      */
     public static final String TAG_INVENTORY = "inventory";
+
+    /**
+     * Tag to store an empty stack to nbt.
+     */
+    public static final String TAG_EMPTY = "empty";
 
     /**
      * Tag to store the inventory to nbt.
@@ -367,6 +378,26 @@ public final class NbtTagConstants
     public static final String TAG_TEAM_COLOR = "teamcolor";
 
     /**
+     * Tag used to store the colony flag
+     */
+    public static final String TAG_FLAG_PATTERNS = "colonyflag";
+
+    /**
+     * Tag used by vanilla to store banner patterns
+     */
+    public static final String TAG_BANNER_PATTERNS = "Patterns";
+
+    /**
+     * Tag used by vanilla to store a single pattern in banner pattern-color pairs
+     */
+    public static final String TAG_SINGLE_PATTERN = "Pattern";
+
+    /**
+     * Tag used by vanilla to store single color in banner pattern-color pairs
+     */
+    public static final String TAG_PATTERN_COLOR = "Color";
+
+    /**
      * Citizen data Tags.
      */
     public static final String TAG_FEMALE             = "female";
@@ -482,6 +513,11 @@ public final class NbtTagConstants
     public static final String TAG_WAITING_TICKS     = "waitingticks";
 
     /**
+     * Researcher tags.
+     */
+    public static final String TAG_CURR_MANA  = "currentMana";
+
+    /**
      * Herder breeding tag
      */
     public static final String TAG_BREEDING = "breeding";
@@ -558,6 +594,12 @@ public final class NbtTagConstants
      * Tags to store the needed resources to nbt.
      */
     public static final String TAG_FLUIDS_REMOVE = "fluidsToRemove";
+
+    /**
+     * Tags to store the stages
+     */
+    public static final String TAG_TOTAL_STAGES = "totalStages";
+    public static final String TAG_CURR_STAGE = "currStage";
 
     /**
      * Tags to store the needed resources to nbt.

@@ -21,7 +21,7 @@ public class CommandRSResetAll implements IMCOPCommand
         {
             colony.getRequestManager().reset();
         }
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.rsreset.success"), true);
+        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.rsresetall.success"), true);
 
         return 1;
     }

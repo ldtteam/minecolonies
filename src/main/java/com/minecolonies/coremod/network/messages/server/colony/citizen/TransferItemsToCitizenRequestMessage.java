@@ -150,7 +150,6 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
             final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(citizen.getInventoryCitizen(), insertStack);
             if (!ItemStackUtils.isEmpty(remainingItemStack))
             {
-                insertStack.setCount(remainingItemStack.getCount());
                 tempAmount += (insertStack.getCount() - remainingItemStack.getCount());
                 break;
             }

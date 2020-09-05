@@ -589,6 +589,7 @@ public final class WindowConstants
     public static final String  GUI_BUTTON_ASSIGNMENT_MODE = "assign";
     public static final String  GUI_BUTTON_PATROL_MODE     = "patrol";
     public static final String  GUI_BUTTON_RETRIEVAL_MODE  = "retrieve";
+    public static final String  GUI_BUTTON_TRAINEE_MODE    = "trainees";
     public static final String  GUI_BUTTON_SET_TARGET      = "setTarget";
     public static final String  GUI_BUTTON_RECALCULATE     = "recalculate";
     //GUI Switches
@@ -1135,6 +1136,8 @@ public final class WindowConstants
     public static final String RESPONSE_BOX_ID         = "responseOptions";
     public static final String MEDIUM_SIZED_BUTTON_RES = "textures/gui/builderhut/builder_button_medium_large.png";
 
+    public static final String SMALL_SIZED_BUTTON_RES = "textures/gui/builderhut/builder_button_mini.png";
+
     /**
      * The resource string.
      */
@@ -1156,7 +1159,15 @@ public final class WindowConstants
     public static final String SECONDARY_SKILL_COM   = "comp2";
     public static final String SECONDARY_SKILL_ADV   = "adverse2";
     public static final String IMAGE_APPENDIX        = "img";
-    public static final String BASE_IMG_SRC          = "minecolonies:textures/entity/skills/small/";
+    public static final String BASE_IMG_SRC = "minecolonies:textures/entity/skills/small/";
+
+    /**
+     * Button prefixes.
+     */
+    public static final String PLUS_PREFIX = "plus_";
+    public static final String MINUS_PREFIX = "minus_";
+
+    public static final String LOCATE = "locate";
 
     /**
      * public constructor to hide implicit public one.

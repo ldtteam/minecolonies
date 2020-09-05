@@ -3,24 +3,32 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
+import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
+import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobCanSee;
+import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobWalkRandomEdge;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
+import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.item.ArrowItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
@@ -30,8 +38,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.DECIDE;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_RANGED;
-import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_DAMAGE;
-import static com.minecolonies.api.research.util.ResearchConstants.DOUBLE_ARROWS;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
@@ -40,12 +47,14 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     private static final int    TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS = 4;
     private static final double SWITCH_STRAFING_DIRECTION                 = 0.3d;
     private static final double STRAFING_SPEED                            = 0.7f;
+    private static final double ARROW_EXTRA_DAMAGE                        = 2.0f;
 
     /**
      * Visible combat icon
      */
-    private final static VisibleCitizenStatus ARCHER_COMBAT =
+    private final static VisibleCitizenStatus ARCHER_COMBAT     =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/archer_combat.png"), "com.minecolonies.gui.visiblestatus.archer_combat");
+    private static final int                  GUARD_BONUS_RANGE = 10;
 
     /**
      * Whether the guard is moving towards his target
@@ -147,18 +156,25 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
         {
             attackDist += buildingGuards.getBuildingLevel();
         }
-        // ~ +1 each three levels for a total of +15 from guard level
+        // ~ +1 each three levels for a total of +10 from guard level
         if (worker.getCitizenData() != null)
         {
-            attackDist += (worker.getCitizenData().getJobModifier() / 50.0f) * 15;
+            attackDist += (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 50.0f) * 15;
         }
+
+        attackDist = Math.min(attackDist, MAX_DISTANCE_FOR_RANGED_ATTACK);
 
         if (target != null)
         {
             attackDist += worker.posY - target.posY;
         }
 
-        return attackDist > MAX_DISTANCE_FOR_RANGED_ATTACK ? MAX_DISTANCE_FOR_RANGED_ATTACK : attackDist;
+        if (buildingGuards.getTask() == GuardTask.GUARD)
+        {
+            attackDist += GUARD_BONUS_RANGE;
+        }
+
+        return attackDist;
     }
 
     @Override
@@ -337,6 +353,14 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                 {
                     final ArrowEntity arrow = EntityType.ARROW.create(world);
                     arrow.setShooter(worker);
+
+                    final UnlockAbilityResearchEffect arrowPierceEffect =
+                      worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARROW_PIERCE, UnlockAbilityResearchEffect.class);
+                    if (arrowPierceEffect != null && arrowPierceEffect.getEffect())
+                    {
+                        arrow.setPierceLevel((byte) 2);
+                    }
+
                     arrow.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
                     final double xVector = target.posX - worker.getPosX();
                     final double yVector = target.getBoundingBox().minY + target.getHeight() / getAimHeight() - arrow.posY;
@@ -344,6 +368,22 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
 
                     final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
                     double damage = getRangedAttackDamage() + extraDamage;
+
+                    final UnlockAbilityResearchEffect arrowItemEffect =
+                      worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARROW_ITEMS, UnlockAbilityResearchEffect.class);
+
+                    if (arrowItemEffect != null && arrowItemEffect.getEffect())
+                    {
+                        // Extra damage from arrows
+                        int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem);
+                        if (slot != -1)
+                        {
+                            if (!ItemStackUtils.isEmpty(worker.getInventoryCitizen().extractItem(slot, 1, false)))
+                            {
+                                damage += ARROW_EXTRA_DAMAGE;
+                            }
+                        }
+                    }
 
 
                     // Add bow enchant effects: Knocback and fire
@@ -359,7 +399,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                         arrow.setKnockbackStrength(k);
                     }
 
-                    final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getJobModifier() + 1);
+                    final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) + 1);
 
                     arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
 
@@ -413,6 +453,30 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
         return GUARD_ATTACK_RANGED;
     }
 
+    @Override
+    protected void atBuildingActions()
+    {
+        super.atBuildingActions();
+
+
+        final UnlockAbilityResearchEffect arrowItemEffect =
+          worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARROW_ITEMS, UnlockAbilityResearchEffect.class);
+
+        if (arrowItemEffect != null && arrowItemEffect.getEffect())
+        {
+            // Pickup arrows and request arrows
+            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(),
+              item -> item.getItem() instanceof ArrowItem,
+              64,
+              worker.getInventoryCitizen());
+
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem) < 16)
+            {
+                checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.ARROW), 64, 16);
+            }
+        }
+    }
+
     /**
      * Gets the reload time for a physical guard attack.
      *
@@ -423,7 +487,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     {
         if (worker.getCitizenData() != null)
         {
-            final int attackDelay = RANGED_ATTACK_DELAY_BASE - (worker.getCitizenData().getJobModifier() / 2);
+            final int attackDelay = RANGED_ATTACK_DELAY_BASE - (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 2);
             return attackDelay < PHYSICAL_ATTACK_DELAY_MIN * 2 ? PHYSICAL_ATTACK_DELAY_MIN * 2 : attackDelay;
         }
         return RANGED_ATTACK_DELAY_BASE;
@@ -453,6 +517,27 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     }
 
     /**
+     * Calculates the dmg increase per level
+     *
+     * @return the level damage.
+     */
+    public int getLevelDamage()
+    {
+        if (worker.getCitizenData() == null)
+        {
+            return 0;
+        }
+        // Level scaling damage, +1 every 5 levels
+        return (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Agility) / 50) * 10;
+    }
+
+    @Override
+    protected double getCombatSpeedBonus()
+    {
+        return worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Agility) * SPEED_LEVEL_BONUS;
+    }
+
+    /**
      * Gets the aim height for ranged guards.
      *
      * @return the aim height. Suppression because the method already explains the value.
@@ -466,8 +551,28 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     @Override
     public void moveInAttackPosition()
     {
+        if (buildingGuards.getTask() == GuardTask.GUARD)
+        {
+            ((MinecoloniesAdvancedPathNavigate) worker.getNavigator()).setPathJob(new PathJobCanSee(worker, target, world, buildingGuards.getGuardPos(), 20),
+              null,
+              getCombatMovementSpeed());
+            return;
+        }
+
         worker.getNavigator()
           .tryMoveToBlockPos(worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 8), getCombatMovementSpeed());
+    }
+
+    @Override
+    public void guardMovement()
+    {
+        if (worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 10) && Math.abs(buildingGuards.getGuardPos().getY() - worker.getPosition().getY()) < 3)
+        {
+            // Moves the ranger randomly to close edges, for better vision to mobs
+            ((MinecoloniesAdvancedPathNavigate) worker.getNavigator()).setPathJob(new PathJobWalkRandomEdge(world, buildingGuards.getGuardPos(), 20, worker),
+              null,
+              getCombatMovementSpeed());
+        }
     }
 
     @Override

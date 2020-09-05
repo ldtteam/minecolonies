@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -55,7 +56,7 @@ public class ChunkCache implements IWorldReader
         {
             for (int l = this.chunkZ; l <= j; ++l)
             {
-                if (worldIn.getChunkProvider().isChunkLoaded(new ChunkPos(k, l)))
+                if (WorldUtil.isEntityChunkLoaded(world, new ChunkPos(k, l)))
                 {
                     this.chunkArray[k - this.chunkX][l - this.chunkZ] = worldIn.getChunk(k, l);
                 }

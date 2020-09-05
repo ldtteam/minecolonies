@@ -5,12 +5,14 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
@@ -52,7 +54,7 @@ import static com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceU
 /**
  * Class of the crafter building.
  */
-public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableListBuilding
+public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFurnaceUser implements IBuildingPublicCrafter
 {
     /**
      * Tag to store the furnace position.
@@ -223,6 +225,12 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     public void removeFromFurnaces(final BlockPos pos)
     {
         this.furnaces.remove(pos);
+    }
+
+    @Override
+    public Skill getCraftSpeedSkill()
+    {
+        return getSecondarySkill();
     }
 
     @Override

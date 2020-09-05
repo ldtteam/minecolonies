@@ -125,7 +125,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         for (final Patient patient : hospital.getPatients())
         {
             final ICitizenData data = hospital.getColony().getCitizenManager().getCivilian(patient.getId());
-            if (data == null || (data.getEntity().isPresent() && !data.getEntity().get().getCitizenDiseaseHandler().isSick()))
+            if (data == null || !data.getEntity().isPresent() || (data.getEntity().isPresent() && !data.getEntity().get().getCitizenDiseaseHandler().isSick()))
             {
                 hospital.removePatientFile(patient);
                 continue;
@@ -164,6 +164,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                     }
 
                     final ImmutableList<IRequest<? extends Stack>> list = getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
+                    final ImmutableList<IRequest<? extends Stack>> completed = getOwnBuilding().getCompletedRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
                     for (final ItemStack cure : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName).getCure())
                     {
                         if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), cure::isItemEqual))
@@ -176,6 +177,14 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                             }
                             boolean hasCureRequested = false;
                             for (final IRequest<? extends Stack> request : list)
+                            {
+                                if (request.getRequest().getStack().isItemEqual(cure))
+                                {
+                                    hasCureRequested = true;
+                                    break;
+                                }
+                            }
+                            for (final IRequest<? extends Stack> request : completed)
                             {
                                 if (request.getRequest().getStack().isItemEqual(cure))
                                 {
@@ -265,6 +274,8 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         }
 
         final ImmutableList<IRequest<? extends Stack>> list = getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
+        final ImmutableList<IRequest<? extends Stack>> completed = getOwnBuilding().getCompletedRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
+
         for (final ItemStack cure : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName).getCure())
         {
             if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), cure::isItemEqual)
@@ -276,6 +287,15 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                     if (request.getRequest().getStack().isItemEqual(cure))
                     {
                         hasRequest = true;
+                        break;
+                    }
+                }
+                for (final IRequest<? extends Stack> request : completed)
+                {
+                    if (request.getRequest().getStack().isItemEqual(cure))
+                    {
+                        hasRequest = true;
+                        break;
                     }
                 }
                 if (!hasRequest)
@@ -493,7 +513,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      */
     private boolean testRandomCureChance()
     {
-        return worker.getRandom().nextInt(60 * 60) <= Math.max(1, worker.getCitizenData().getJobModifier() / 10);
+        return worker.getRandom().nextInt(60 * 60) <= Math.max(1, getSecondarySkillLevel() / 20);
     }
 
     /**

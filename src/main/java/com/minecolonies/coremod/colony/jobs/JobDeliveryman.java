@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
@@ -90,7 +91,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             final AbstractEntityCitizen worker = getCitizen().getEntity().get();
             worker.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
               .setBaseValue(
-                BASE_MOVEMENT_SPEED + (getCitizen().getJobModifier()) * BONUS_SPEED_PER_LEVEL);
+                BASE_MOVEMENT_SPEED + (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill())) * BONUS_SPEED_PER_LEVEL);
         }
     }
 
@@ -263,6 +264,11 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
                 getTaskQueueFromDataStore().remove(req.getId());
             }
         }
+        else if (request.getRequest() instanceof Pickup)
+        {
+            getTaskQueueFromDataStore().remove(request.getId());
+            getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
+        }
         else
         {
             getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
@@ -289,7 +295,10 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             getTaskQueueFromDataStore().remove(token);
         }
 
-        getCitizen().getWorkBuilding().markDirty();
+        if (getCitizen().getWorkBuilding() != null)
+        {
+            getCitizen().getWorkBuilding().markDirty();
+        }
     }
 
     /**
@@ -315,7 +324,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             else if (!active && b)
             {
                 this.active = b;
-                getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof Delivery);
+                getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof Delivery || request.getRequest() instanceof Pickup);
             }
         }
         catch (final Exception ex)
@@ -347,11 +356,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         }
     }
 
-    /**
-     * Check if the dman can currently accept requests.
-     *
-     * @return true if active.
-     */
+    @Override
     public boolean isActive()
     {
         return this.active;

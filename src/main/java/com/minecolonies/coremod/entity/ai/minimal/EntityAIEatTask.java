@@ -471,7 +471,7 @@ public class EntityAIEatTask extends Goal
         }
 
         final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-        if (job != null)
+        if (job != null && job.isActive())
         {
             job.setActive(false);
         }
@@ -524,6 +524,14 @@ public class EntityAIEatTask extends Goal
         citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
         placeToPath = null;
         currentState = CHECK_FOR_FOOD;
+    }
+
+    @Override
+    public void resetTask()
+    {
+        reset();
+        currentState = IDLE;
+        citizen.getCitizenData().setVisibleStatus(null);
     }
 
     @Override

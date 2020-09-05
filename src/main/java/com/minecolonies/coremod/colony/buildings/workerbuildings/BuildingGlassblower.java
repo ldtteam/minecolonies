@@ -17,6 +17,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutGlassblower;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobGlassblower;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import io.netty.buffer.Unpooled;
@@ -29,6 +30,7 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -42,6 +44,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
  * Class of the glassblower building.
@@ -62,6 +65,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     public BuildingGlassblower(final IColony c, final BlockPos l)
     {
         super(c, l);
+        keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
     }
 
     @NotNull
@@ -202,7 +206,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
         super.requestUpgrade(player, builder);
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Glassblower", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.GLASSBLOWER_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));

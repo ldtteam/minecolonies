@@ -23,9 +23,14 @@ import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
+import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -45,8 +50,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
-import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MAX_HEALTH;
-import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
+import static com.minecolonies.api.research.util.ResearchConstants.HEALTH;
+import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
+import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -209,6 +215,11 @@ public class CitizenData implements ICitizenData
     private VisibleCitizenStatus status;
 
     /**
+     * The citizen data random.
+     */
+    private Random random = new Random();
+
+    /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
      *
      * @param id     ID of the Citizen.
@@ -335,13 +346,12 @@ public class CitizenData implements ICitizenData
     @Override
     public void initForNewCivilian()
     {
-        final Random rand = new Random();
         //Assign the gender before name
-        female = rand.nextBoolean();
-        textureSuffix = SUFFIXES.get(rand.nextInt(SUFFIXES.size()));
+        female = random.nextBoolean();
+        textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
         paused = false;
-        name = generateName(rand);
-        textureId = rand.nextInt(255);
+        name = generateName(random);
+        textureId = random.nextInt(255);
 
         saturation = MAX_SATURATION;
         final int levelCap = (int) colony.getOverallHappiness();
@@ -390,6 +400,8 @@ public class CitizenData implements ICitizenData
         setLastPosition(citizen.getPosition());
 
         citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
+
+        applyResearchEffects();
 
         markDirty();
     }
@@ -458,7 +470,7 @@ public class CitizenData implements ICitizenData
     public void setIsFemale(@NotNull final boolean isFemale)
     {
         this.female = isFemale;
-        this.name = generateName(new Random());
+        this.name = generateName(random);
         markDirty();
     }
 
@@ -889,7 +901,7 @@ public class CitizenData implements ICitizenData
         }
         else
         {
-            textureSuffix = SUFFIXES.get(new Random().nextInt(SUFFIXES.size()));
+            textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
         }
 
         lastPosition = BlockPosUtil.read(nbtTagCompound, TAG_POS);
@@ -913,7 +925,7 @@ public class CitizenData implements ICitizenData
 
         if (name.isEmpty())
         {
-            name = generateName(new Random());
+            name = generateName(random);
         }
 
         if (nbtTagCompound.keySet().contains(TAG_ASLEEP))
@@ -956,7 +968,6 @@ public class CitizenData implements ICitizenData
                 levels.put(jobName, level);
             }
 
-            final Random random = new Random();
             for (final Map.Entry<String, Integer> entry : levels.entrySet())
             {
                 final Skill primary = Skill.values()[random.nextInt(Skill.values().length)];
@@ -1119,5 +1130,38 @@ public class CitizenData implements ICitizenData
         final CitizenData data = new CitizenData(nbt.getInt(TAG_ID), colony);
         data.deserializeNBT(nbt);
         return data;
+    }
+
+    @Override
+    public Random getRandom()
+    {
+        return random;
+    }
+
+    @Override
+    public void applyResearchEffects()
+    {
+        if (getEntity().isPresent())
+        {
+            final AbstractEntityCitizen citizen = getEntity().get();
+
+            // Applies entity related research effects.
+            citizen.getNavigator().getPathingOptions().setCanUseRails(((EntityCitizen) citizen).canPathOnRails());
+
+            final MultiplierModifierResearchEffect speedEffect =
+              colony.getResearchManager().getResearchEffects().getEffect(WALKING, MultiplierModifierResearchEffect.class);
+            if (speedEffect != null)
+            {
+                citizen.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED + (BASE_MOVEMENT_SPEED * speedEffect.getEffect()));
+            }
+
+            final AdditionModifierResearchEffect healthEffect =
+              colony.getResearchManager().getResearchEffects().getEffect(HEALTH, AdditionModifierResearchEffect.class);
+            if (healthEffect != null)
+            {
+                final AttributeModifier healthModLevel = new AttributeModifier(HEALTH, healthEffect.getEffect(), AttributeModifier.Operation.ADDITION);
+                AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
+            }
+        }
     }
 }

@@ -90,7 +90,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
     {
         if (worker.getRandom().nextInt(STUDY_TO_RECESS_RATIO) < 1)
         {
-            recessPos = BlockPosUtil.getRandomPosition(world, recessPos == null ? BlockPos.ZERO : recessPos, worker.getPosition(), 10, 16);
+            recessPos = getOwnBuilding().getPosition();
             return RECESS;
         }
 
@@ -122,7 +122,12 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         {
             return getState();
         }
-        recessPos = BlockPosUtil.getRandomPosition(world, recessPos == null ? BlockPos.ZERO : recessPos, worker.getPosition(), 10, 16);
+
+        final BlockPos newRecessPos = findRandomPositionToWalkTo(10);
+        if (newRecessPos != null)
+        {
+            recessPos = newRecessPos;
+        }
         return getState();
     }
 
@@ -153,8 +158,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         if (sittingTicks == 0 || worker.ridingEntity == null)
         {
             // Sit for 60-120 seconds.
-            final int jobModifier = 120;
-            maxSittingTicks = worker.getRandom().nextInt(jobModifier / 2) + jobModifier / 2;
+            maxSittingTicks = worker.getRandom().nextInt(120 / 2) + 60;
 
             final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(world);
             entity.setPosition(studyPos.getX(), studyPos.getY() - 0.6, studyPos.getZ());

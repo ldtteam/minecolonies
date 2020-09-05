@@ -94,6 +94,8 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(EventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(FMLEventHandler.class);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(HighlightManager.class));
+
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DebugRendererChunkBorder.class));
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(CommonProxy.class);
 
@@ -137,7 +139,7 @@ public class MineColonies
     @SubscribeEvent
     public static void preInit(@NotNull final FMLCommonSetupEvent event)
     {
-        StructureLoadingUtils.originFolders.add(Constants.MOD_ID);
+        StructureLoadingUtils.addOriginMod(Constants.MOD_ID);
         CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IColonyManagerCapability.class, new IColonyManagerCapability.Storage(), IColonyManagerCapability.Impl::new);
@@ -199,6 +201,7 @@ public class MineColonies
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.BUILDING, EmptyTileEntitySpecialRenderer::new);
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.COLONY_FLAG, TileEntityColonyFlagRenderer::new);
 
         Arrays.stream(ModBlocks.getHuts())
           .forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.getCutout()) || renderType.equals(RenderType.getSolid())));

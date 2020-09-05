@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
@@ -724,7 +723,7 @@ public class InventoryUtils
 
         for (final BlockPos pos : provider.getAdditionalCountainers())
         {
-            if (world.getChunkProvider().isChunkLoaded(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4)))
+            if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityRack)
@@ -741,7 +740,7 @@ public class InventoryUtils
 
         for (final BlockPos pos : provider.getAdditionalCountainers())
         {
-            if (world.getChunkProvider().isChunkLoaded(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4)))
+            if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (!(entity instanceof TileEntityRack) && entity != null)
@@ -973,7 +972,7 @@ public class InventoryUtils
 
                 if (slot >= 0)
                 {
-                    itemHandler.insertItem(slot, itemStack, false);
+                    itemHandler.insertItem(slot, itemStack.copy(), false);
                     return ItemStackUtils.EMPTY;
                 }
                 else
@@ -987,7 +986,7 @@ public class InventoryUtils
                 slot = itemHandler.getSlots() == 0 ? -1 : 0;
                 while (!ItemStackUtils.isEmpty(leftOver) && slot != -1 && slot != itemHandler.getSlots())
                 {
-                    leftOver = itemHandler.insertItem(slot, leftOver, false);
+                    leftOver = itemHandler.insertItem(slot, leftOver.copy(), false);
                     if (!ItemStackUtils.isEmpty(leftOver))
                     {
                         slot++;
@@ -1801,6 +1800,40 @@ public class InventoryUtils
     }
 
     /**
+     * Takes an item matching a predicate and moves it form one handler across multiple slots to the other to a specific slot.
+     *
+     * @param sourceHandler               the source handler.
+     * @param itemStackSelectionPredicate the predicate.
+     * @param amount                      the max amount to extract
+     * @param targetHandler               the target.
+     * @param slot                        the slot to put it in.
+     * @return                            the count of items actually transferred
+     */
+    public static int transferXInItemHandlerIntoSlotInItemHandler(
+        final IItemHandler sourceHandler,
+        final Predicate<ItemStack> itemStackSelectionPredicate,
+        final int amount,
+        final IItemHandler targetHandler, final int slot)
+    {        
+        int actualTransferred = 0;
+        while(actualTransferred < amount)
+        {
+            final int transferred = InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
+                                sourceHandler, 
+                                itemStackSelectionPredicate, 
+                                amount - actualTransferred,
+                                targetHandler,
+                                slot);
+            if(transferred <= 0)
+            {
+                break;
+            }
+            actualTransferred += transferred;
+        }
+        return actualTransferred;
+    }
+
+    /**
      * Takes an item matching a predicate and moves it form one handler to the other to a specific slot.
      *
      * @param sourceHandler               the source handler.
@@ -1808,8 +1841,9 @@ public class InventoryUtils
      * @param amount                      the max amount to extract
      * @param targetHandler               the target.
      * @param slot                        the slot to put it in.
+     * @return                            the count of items actually transferred
      */
-    public static void transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
+    public static int transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
       final IItemHandler sourceHandler,
       final Predicate<ItemStack> itemStackSelectionPredicate,
       final int amount,
@@ -1820,19 +1854,21 @@ public class InventoryUtils
 
         if (desiredItemSlot == -1)
         {
-            return;
+            return 0;
         }
         final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
         if (ItemStackUtils.isEmpty(returnStack))
         {
-            return;
+            return 0;
         }
 
         final ItemStack insertResult = targetHandler.insertItem(slot, returnStack, false);
         if (!ItemStackUtils.isEmpty(insertResult))
         {
             sourceHandler.insertItem(desiredItemSlot, insertResult, false);
+            return returnStack.getCount() - insertResult.getCount();
         }
+        return returnStack.getCount();
     }
 
     /**
@@ -2311,16 +2347,13 @@ public class InventoryUtils
             final Optional<ItemStack>
               alreadyContained = requiredCountForStacks.keySet().stream().filter(itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)).findFirst();
 
-            final ItemStack inputUnitStack = targetStack.copy();
-            inputUnitStack.setCount(1);
-
             if (alreadyContained.isPresent())
             {
                 requiredCountForStacks.put(alreadyContained.get(), requiredCountForStacks.get(alreadyContained.get()) + targetStack.getCount());
             }
             else
             {
-                requiredCountForStacks.put(inputUnitStack, targetStack.getCount());
+                requiredCountForStacks.put(targetStack, targetStack.getCount());
             }
         });
 
@@ -2337,7 +2370,8 @@ public class InventoryUtils
     public static List<ItemStack> splitMergedCountedStacksIntoMaxContentStacks(@NotNull final Map<ItemStack, Integer> mergedCountedStacks)
     {
         final List<ItemStack> list = Lists.newArrayList();
-        mergedCountedStacks.entrySet().forEach(itemStackIntegerEntry -> {
+        for (final Map.Entry<ItemStack, Integer> itemStackIntegerEntry : mergedCountedStacks.entrySet())
+        {
             final int minimalFullStacks = itemStackIntegerEntry.getValue() / itemStackIntegerEntry.getKey().getMaxStackSize();
             final int residualStackSize = itemStackIntegerEntry.getValue() % itemStackIntegerEntry.getKey().getMaxStackSize();
 
@@ -2356,70 +2390,9 @@ public class InventoryUtils
 
                 list.add(tobeAdded);
             }
-        });
+        }
 
         return list;
-    }
-
-    /**
-     * Method searches a list of itemstacks given and an itemhandler to find the stacks that do not appear in the itemhandler. If multiple of the same itemstack appear their sum
-     * will be taken into account.
-     *
-     * @param stacks  The stacks to check
-     * @param handler The handler to check in
-     * @return The list of missing stacks. Or an empty list if all stacks and at least their sizes are present.
-     */
-    public static List<ItemStack> getMissingFromItemHandler(@NotNull final List<ItemStack> stacks, @NotNull final IItemHandler handler)
-    {
-        final List<ItemStack> result = Lists.newArrayList();
-
-        final Map<ItemStack, Integer> inputCounts = getMergedCountedStacksFromList(stacks);
-        final Map<ItemStack, Integer> inventoryCounts = getMergedCountedStacksFromList(getItemHandlerAsList(handler));
-
-        final Map<ItemStack, Integer> resultingMissing = new HashMap<>();
-        inputCounts
-          .forEach((itemStack, count) -> {
-
-              int remainingCount = count;
-              for (Map.Entry<ItemStack, Integer> entry : inventoryCounts.entrySet())
-              {
-                  ItemStack containedStack = entry.getKey();
-                  Integer containedCount = entry.getValue();
-                  if (ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, containedStack))
-                  {
-                      remainingCount -= containedCount;
-                  }
-              }
-
-              if (remainingCount > 0)
-              {
-                  resultingMissing.put(itemStack, count);
-              }
-          });
-
-        resultingMissing
-          .forEach((itemStack, count) -> {
-              final int fullStackCount = count / itemStack.getMaxStackSize();
-              final int missingPartialCount = count % itemStack.getMaxStackSize();
-
-              for (int i = 0; i < fullStackCount; i++)
-              {
-                  final ItemStack targetStack = itemStack.copy();
-                  targetStack.setCount(targetStack.getMaxStackSize());
-
-                  result.add(targetStack);
-              }
-
-              if (missingPartialCount != 0)
-              {
-                  final ItemStack targetStack = itemStack.copy();
-                  targetStack.setCount(missingPartialCount);
-
-                  result.add(targetStack);
-              }
-          });
-
-        return result;
     }
 
     /**

@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -21,6 +22,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractFilterableListCrafter;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -34,8 +36,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -103,40 +107,6 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
         super(c, l);
 
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
-    }
-
-    @Override
-    public void checkForWorkerSpecificRecipes()
-    {
-        if (recipes.isEmpty())
-        {
-            addStrippedWoodRecipe(Items.OAK_LOG, Items.STRIPPED_OAK_LOG);
-            addStrippedWoodRecipe(Items.SPRUCE_LOG, Items.STRIPPED_SPRUCE_LOG);
-            addStrippedWoodRecipe(Items.BIRCH_LOG, Items.STRIPPED_BIRCH_LOG);
-            addStrippedWoodRecipe(Items.JUNGLE_LOG, Items.STRIPPED_JUNGLE_LOG);
-            addStrippedWoodRecipe(Items.ACACIA_LOG, Items.STRIPPED_ACACIA_LOG);
-            addStrippedWoodRecipe(Items.DARK_OAK_LOG, Items.STRIPPED_DARK_OAK_LOG);
-            addStrippedWoodRecipe(Items.OAK_WOOD, Items.STRIPPED_OAK_WOOD);
-            addStrippedWoodRecipe(Items.SPRUCE_WOOD, Items.STRIPPED_SPRUCE_WOOD);
-            addStrippedWoodRecipe(Items.BIRCH_WOOD, Items.STRIPPED_BIRCH_WOOD);
-            addStrippedWoodRecipe(Items.JUNGLE_WOOD, Items.STRIPPED_JUNGLE_WOOD);
-            addStrippedWoodRecipe(Items.ACACIA_WOOD, Items.STRIPPED_ACACIA_WOOD);
-            addStrippedWoodRecipe(Items.DARK_OAK_WOOD, Items.STRIPPED_DARK_OAK_WOOD);
-            markDirty();
-        }
-    }
-
-    public final void addStrippedWoodRecipe(final Item baseVariant, final Item strippedVariant)
-    {
-        final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(baseVariant, 1)),
-          1,
-          new ItemStack(strippedVariant, 1),
-          Blocks.AIR);
-
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
     }
 
     @Override
@@ -401,6 +371,18 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     public BlockPos getEndRestriction()
     {
         return this.endRestriction;
+    }
+
+    @Override
+    public void removeCitizen(final ICitizenData citizen)
+    {
+        if (citizen != null)
+        {
+            final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
+            optCitizen.ifPresent(entityCitizen -> entityCitizen.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+                                                    .setBaseValue(BASE_MOVEMENT_SPEED));
+        }
+        super.removeCitizen(citizen);
     }
 
     /**

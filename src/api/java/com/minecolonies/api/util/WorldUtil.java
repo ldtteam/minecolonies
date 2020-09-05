@@ -1,10 +1,14 @@
 package com.minecolonies.api.util;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkStatus;
+
+import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
 
 /**
  * Class which has world related util functions like chunk load checks
@@ -41,11 +45,13 @@ public class WorldUtil
      * @param world the world to mark it dirty in.
      * @param pos the position within the chunk.
      */
-    public static void markChunkDirty(final IWorld world, final BlockPos pos)
+    public static void markChunkDirty(final World world, final BlockPos pos)
     {
         if (WorldUtil.isBlockLoaded(world, pos))
         {
-            ((Chunk) world.getChunk(pos)).markDirty();
+            world.getChunk(pos.getX() >> 4, pos.getZ() >> 4).markDirty();
+            final BlockState state = world.getBlockState(pos);
+            world.notifyBlockUpdate(pos, state, state, 3);
         }
     }
 
@@ -70,7 +76,7 @@ public class WorldUtil
      */
     public static boolean isEntityBlockLoaded(final IWorld world, final BlockPos pos)
     {
-        return isChunkLoaded(world, pos.getX() >> 4, pos.getZ() >> 4);
+        return isEntityChunkLoaded(world, pos.getX() >> 4, pos.getZ() >> 4);
     }
 
     /**
@@ -96,5 +102,39 @@ public class WorldUtil
     public static boolean isEntityChunkLoaded(final IWorld world, final ChunkPos pos)
     {
         return world.getChunkProvider().isChunkLoaded(pos);
+    }
+
+    /**
+     * Returns whether an axis aligned bb is entirely loaded.
+     *
+     * @param world world to check on.
+     * @param box   the box.
+     * @return true if loaded.
+     */
+    public static boolean isAABBLoaded(final World world, final AxisAlignedBB box)
+    {
+        return isChunkLoaded(world, ((int) box.minX) >> 4, ((int) box.minZ) >> 4) && isChunkLoaded(world, ((int) box.maxX) >> 4, ((int) box.maxZ) >> 4);
+    }
+
+    /**
+     * Check if it's currently day inn the world.
+     *
+     * @param world the world to check.
+     * @return true if so.
+     */
+    public static boolean isDayTime(final World world)
+    {
+        return world.getDayTime() % 24000 <= NIGHT;
+    }
+
+    /**
+     * Check if it's currently day inn the world.
+     *
+     * @param world the world to check.
+     * @return true if so.
+     */
+    public static boolean isPastTime(final World world, final int pastTime)
+    {
+        return world.getDayTime() % 24000 <= pastTime;
     }
 }

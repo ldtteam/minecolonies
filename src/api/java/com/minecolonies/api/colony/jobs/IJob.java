@@ -143,7 +143,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      *
      * @return true if so.
      */
-    boolean isOkayToEat();
+    boolean canAIBeInterrupted();
 
     /**
      * Getter for the amount of actions done.
@@ -226,4 +226,23 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * @param id the id.
      */
     void markRequestSync(IToken<?> id);
+
+    /**
+     * If the worker can pick up the stack.
+     * @param pickedUpStack the stack to check.
+     * @return true if so.
+     */
+    boolean pickupSuccess(@NotNull ItemStack pickedUpStack);
+
+    /**
+     * Check if the job is actually set as active.
+     * @return true if so.
+     */
+    boolean isActive();
+
+    /**
+     * Process time the colony was offline.
+     * @param time the time in seconds.
+     */
+    void processOfflineTime(long time);
 }

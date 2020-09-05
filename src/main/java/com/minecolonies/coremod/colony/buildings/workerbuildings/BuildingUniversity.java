@@ -14,6 +14,7 @@ import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.coremod.client.gui.WindowHutUniversity;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobResearch;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
@@ -46,7 +47,12 @@ public class BuildingUniversity extends AbstractBuildingWorker
     /**
      * Max building level of the hut.
      */
-    private static final int MAX_BUILDING_LEVEL = 5;
+    private static final int MAX_BUILDING_LEVEL           = 5;
+
+    /**
+     * Offline processing level cap.
+     */
+    private static final int OFFLINE_PROCESSING_LEVEL_CAP = 3;
 
     /**
      * List of registered barrels.
@@ -207,17 +213,53 @@ public class BuildingUniversity extends AbstractBuildingWorker
                 return;
             }
 
+            for (final ICitizenData data : getAssignedCitizen())
+            {
+                data.getCitizenSkillHandler().addXpToSkill(getSecondarySkill(), 25.0, data);
+            }
+
             if (colony.getResearchManager()
                   .getResearchTree()
                   .getResearch(research.getBranch(), research.getId())
                   .research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree()))
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                  RESEARCH_CONCLUDED + random.nextInt(3),
-                  IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc());
+                onSuccess(research);
             }
-            this.markDirty();
             i++;
+        }
+    }
+
+    /**
+     * Called on successfully concluding a research.
+     * @param research the concluded research.
+     */
+    public void onSuccess(final ILocalResearch research)
+    {
+        for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
+        {
+            citizen.applyResearchEffects();
+        }
+
+        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+          RESEARCH_CONCLUDED + random.nextInt(3),
+          IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc());
+        this.markDirty();
+    }
+
+    @Override
+    public void processOfflineTime(final long time)
+    {
+        if (getBuildingLevel() >= OFFLINE_PROCESSING_LEVEL_CAP && time > 0)
+        {
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+              "entity.researcher.moreknowledge");
+            for (final ICitizenData citizenData : getAssignedCitizen())
+            {
+                if (citizenData.getJob() != null)
+                {
+                    citizenData.getJob().processOfflineTime(time);
+                }
+            }
         }
     }
 

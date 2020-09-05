@@ -115,6 +115,12 @@ public final class CitizenConstants
      * 20 ticks or also: once a second.
      */
     public static final int    TICKS_20                   = 20;
+
+    /**
+     * 200 ticks or also: once every 10 seconds.
+     */
+    public static final int TICKS_200 = 200;
+
     /**
      * This times the citizen id is the personal offset of the citizen.
      */
@@ -144,9 +150,9 @@ public final class CitizenConstants
      */
     public static final double LATER_RUN_SPEED_AVOID      = 0.8D;
     /**
-     * The max squaredistance a citizen can call a guard to help.
+     * The max squaredistance a citizen can call a guard to help, 300 blocks
      */
-    public static final int    MAX_GUARD_CALL_RANGE       = 10000;
+    public static final int    MAX_GUARD_CALL_RANGE       = 90000;
     /**
      * Happiness penalty for citizen death.
      */
@@ -256,6 +262,11 @@ public final class CitizenConstants
      * Noon day time.
      */
     public static final int NOON = 6000;
+
+    /**
+     * Noon day time.
+     */
+    public static final int NIGHT = 13000;
 
     /**
      * The minimum range to keep from the current building place.

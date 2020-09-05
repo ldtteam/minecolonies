@@ -1,7 +1,10 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -11,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.LIST_REQUEST_DISPLAY_STRING;
 
@@ -19,6 +24,11 @@ import static com.minecolonies.api.util.constant.TranslationConstants.LIST_REQUE
  */
 public class StackList implements IConcreteDeliverable
 {
+    /**
+     * Set of type tokens belonging to this class.
+     */
+    private final static Set<TypeToken<?>> TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(StackList.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
+
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_STACK_LIST  = "StackList";
     private static final String NBT_MATCHMETA   = "MatchMeta";
@@ -380,5 +390,11 @@ public class StackList implements IConcreteDeliverable
     public List<ItemStack> getRequestedItems() 
     {
         return theStacks;
+    }
+
+    @Override
+    public Set<TypeToken<?>> getSuperClasses()
+    {
+        return TYPE_TOKENS;
     }
 }

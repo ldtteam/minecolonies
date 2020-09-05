@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
+import com.ldtteam.blockout.controls.ItemIcon;
+import com.ldtteam.blockout.views.View;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.interactionhandling.*;
@@ -10,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.client.gui.WindowCitizen;
 import com.minecolonies.coremod.client.gui.WindowRequestDetail;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
@@ -22,6 +25,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiPredicate;
 
+import static com.minecolonies.coremod.colony.interactionhandling.StandardInteraction.*;
+
 /**
  * The request based interaction response handler.
  */
@@ -31,17 +36,17 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
 
     @SuppressWarnings("unchecked")
     private static final Tuple<ITextComponent, ITextComponent>[] tuples = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null),
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_OKAY), null),
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_REMIND), null),
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel"), null),
       new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill"), null)};
 
     @SuppressWarnings("unchecked")
     private static final Tuple<ITextComponent, ITextComponent>[] tuplesAsync = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.okay"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.ignore"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.remindmelater"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.skipchitchat"), null)};
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_OKAY), null),
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_IGNORE), null),
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_REMIND), null),
+      new Tuple<>(new TranslationTextComponent(INTERACTION_R_SKIP), null)};
 
     /**
      * The request this is related to.
@@ -124,6 +129,37 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     {
         super.deserializeNBT(compoundNBT);
         this.token = StandardFactoryController.getInstance().deserialize(compoundNBT.getCompound(TOKEN_TAG));
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void onWindowOpened(final Window window, final ICitizenDataView dataView)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyView(dataView.getColonyId(), Minecraft.getInstance().player.world.getDimension().getType().getId());
+
+        if (colony != null)
+        {
+            final IRequest<?> request = colony.getRequestManager().getRequestForToken(token);
+            if (request != null)
+            {
+                final View group = window.findPaneOfTypeByID("interactionView", View.class);
+                ItemIcon icon = window.findPaneOfTypeByID("request_item", ItemIcon.class);
+                if (icon == null)
+                {
+                    icon = new ItemIcon();
+                    group.addChild(icon);
+                }
+
+                icon.setID("request_item");
+                icon.setSize(32, 32);
+                if (!request.getDisplayStacks().isEmpty())
+                {
+                    icon.setItem((request.getDisplayStacks().get(0)));
+                }
+                icon.setPosition(30, 60);
+                icon.setVisible(true);
+            }
+        }
     }
 
     @Override

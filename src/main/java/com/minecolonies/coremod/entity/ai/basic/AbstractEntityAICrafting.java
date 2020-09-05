@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
@@ -15,6 +16,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
+
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +35,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     /**
      * Time the worker delays until the next hit.
      */
-    protected static final int HIT_DELAY = 20;
+    protected static final int HIT_DELAY = 10;
 
     /**
      * Increase this value to make the product creation progress way slower.
@@ -166,7 +169,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         {
             if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
                   + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
-                  < inputStorage.getAmount() * remainingOpsCount)
+                  < inputStorage.getAmount() * remainingOpsCount && currentRecipeStorage.getIntermediate() != Blocks.FURNACE)
             {
                 job.finishRequest(false);
                 incrementActionsDone(getActionRewardForCraftingSuccess());
@@ -226,7 +229,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount())
+            final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate);
+            if (invCount <= 0 || invCount + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount())
                   < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
@@ -302,6 +306,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 if (job.getCraftCounter() >= job.getMaxCraftingCount())
                 {
                     incrementActionsDone(getActionRewardForCraftingSuccess());
+                    getOwnBuilding().improveRecipe(currentRecipeStorage, job.getCraftCounter(), worker.getCitizenData());
                     currentRecipeStorage = null;
                     resetValues();
 
@@ -375,7 +380,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     private int getRequiredProgressForMakingRawMaterial()
     {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL) * HITTING_TIME;
+        final int jobModifier = worker.getCitizenData().getCitizenSkillHandler().getLevel(((IBuildingPublicCrafter) getOwnBuilding()).getCraftSpeedSkill()) / 2;
+        return PROGRESS_MULTIPLIER / Math.min(jobModifier + 1, MAX_LEVEL) * HITTING_TIME;
     }
 
     @Override

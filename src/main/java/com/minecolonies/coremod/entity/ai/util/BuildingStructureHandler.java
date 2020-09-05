@@ -219,6 +219,20 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     }
 
     @Override
+    public void triggerEntitySuccess(final BlockPos blockPos, final List<ItemStack> list, final boolean placement)
+    {
+        if (placement)
+        {
+            structureAI.getWorker().getCitizenExperienceHandler().addExperience(XP_EACH_BLOCK);
+
+            for (final ItemStack stack : list)
+            {
+                structureAI.reduceNeededResources(stack);
+            }
+        }
+    }
+
+    @Override
     public boolean hasRequiredItems(@NotNull final List<ItemStack> requiredItems)
     {
         final List<ItemStack> itemList = new ArrayList<>();
@@ -237,7 +251,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
             itemList.add(structureAI.getTotalAmount(stack));
         }
 
-        return AbstractEntityAIStructure.hasListOfResInInvOrRequest(structureAI, itemList, itemList.size() > 1);
+        return AbstractEntityAIStructure.hasListOfResInInvOrRequest(structureAI, itemList, itemList.size() > 1) == AbstractEntityAIStructure.ItemCheckResult.SUCCESS;
     }
 
     @Override
@@ -319,6 +333,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         CLEAR,
         BUILD_SOLID,
         CLEAR_WATER,
+        CLEAR_NON_SOLIDS,
         DECORATE,
         SPAWN,
         REMOVE,
