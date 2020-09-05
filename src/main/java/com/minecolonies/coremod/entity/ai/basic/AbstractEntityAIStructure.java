@@ -334,13 +334,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             case REMOVE:
                 placer.getIterator().setRemoving();
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_REMOVAL,
-                  () -> placer.getIterator().decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> handler.getWorld().getBlockState(pos).getBlock() instanceof AirBlock
+                  () -> placer.getIterator().decrement((info, pos, handler) -> handler.getWorld().getBlockState(pos).getBlock() instanceof AirBlock
                                                                                                          || info.getBlockInfo().getState().getBlock() instanceof AirBlock
                                                                                                          || !handler.getWorld().getBlockState(pos).getFluidState().isEmpty()
                                                                                                          || info.getBlockInfo().getState().getBlock()
                                                                                                               == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
                                                                                                          || info.getBlockInfo().getState().getBlock()
-                                                                                                              == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution)),
+                                                                                                              == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution),
                   true);
                 break;
             case CLEAR:

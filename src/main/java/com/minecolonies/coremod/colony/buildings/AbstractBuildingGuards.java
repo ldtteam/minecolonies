@@ -23,6 +23,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -32,6 +33,8 @@ import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
+import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
+import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRandomPos;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.minecolonies.coremod.network.messages.client.colony.building.guard.GuardMobAttackListMessage;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
@@ -48,6 +51,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.pathfinding.Path;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -58,6 +62,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.ARROW_ITEMS;
@@ -121,7 +127,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Whether to patrol manually or not.
      */
-    private boolean patrolManually = false;
+    protected boolean patrolManually = false;
 
     /**
      * The task of the guard, following the {@link GuardTask} enum.
@@ -141,7 +147,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The list of manual patrol targets.
      */
-    private List<BlockPos> patrolTargets = new ArrayList<>();
+    protected List<BlockPos> patrolTargets = new ArrayList<>();
 
     /**
      * Hashmap of mobs we may or may not attack.
@@ -166,12 +172,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * A temporary next patrol point, which gets consumed and used once
      */
-    private BlockPos tempNextPatrolPoint = null;
+    protected BlockPos tempNextPatrolPoint = null;
 
     /**
      * Whether or not to hire from the trainee facilities
      */
-    private boolean hireTrainees = true; 
+    private boolean      hireTrainees = true;
+
+    /**
+     * Pathing future for the next patrol target.
+     */
+    private Future<Path> pathingFuture;
 
     /**
      * The abstract constructor of the building.
@@ -512,6 +523,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     }
 
     @Override
+    public boolean requiresManualTarget()
+    {
+        return false;
+    }
+
+    @Override
     public void arrivedAtPatrolPoint(final AbstractEntityCitizen guard)
     {
         // Start waiting timer for other guards
@@ -574,22 +591,37 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         if (!patrolManually || patrolTargets == null || patrolTargets.isEmpty())
         {
-            BlockPos pos;
-            if (colony.getWorld().rand.nextBoolean())
+            BlockPos pos = null;
+            if (this.pathingFuture != null && this.pathingFuture.isDone())
             {
-                pos = BlockPosUtil.getRandomPosition(getColony().getWorld(), lastPatrolPoint, getPosition(), 10, 16);
+                try
+                {
+                    pos = this.pathingFuture.get().getTarget();
+                }
+                catch (final Exception e)
+                {
+                    Log.getLogger().warn("Guard pathing interrupted", e);
+                }
+                this.pathingFuture = null;
+            }
+            else if (colony.getWorld().rand.nextBoolean() || (this.pathingFuture != null && this.pathingFuture.isCancelled()))
+            {
+                this.pathingFuture = Pathfinding.enqueue(new PathJobRandomPos(colony.getWorld(),lastPatrolPoint,10, 30,null));
             }
             else
             {
                 pos = colony.getBuildingManager().getRandomBuilding(b -> true);
             }
 
-            if (BlockPosUtil.getDistance2D(pos, getPosition()) > getPatrolDistance())
+            if (pos != null)
             {
-                lastPatrolPoint = getPosition();
-                return lastPatrolPoint;
+                if (BlockPosUtil.getDistance2D(pos, getPosition()) > getPatrolDistance())
+                {
+                    lastPatrolPoint = getPosition();
+                    return lastPatrolPoint;
+                }
+                lastPatrolPoint = pos;
             }
-            lastPatrolPoint = pos;
             return lastPatrolPoint;
         }
 

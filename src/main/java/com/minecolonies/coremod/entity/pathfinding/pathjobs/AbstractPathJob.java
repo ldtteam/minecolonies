@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.pathfinding;
+package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
@@ -11,6 +11,9 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
+import com.minecolonies.coremod.entity.pathfinding.ChunkCache;
+import com.minecolonies.coremod.entity.pathfinding.Node;
+import com.minecolonies.coremod.entity.pathfinding.PathPointExtended;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -41,11 +44,11 @@ import static com.minecolonies.api.util.constant.PathingConstants.*;
 public abstract class AbstractPathJob implements Callable<Path>
 {
     @Nullable
-    protected static Set<Node>          lastDebugNodesVisited;
+    public static Set<Node> lastDebugNodesVisited;
     @Nullable
-    protected static Set<Node>          lastDebugNodesNotVisited;
+    public static Set<Node> lastDebugNodesNotVisited;
     @Nullable
-    protected static Set<Node>          lastDebugNodesPath;
+    public static Set<Node>          lastDebugNodesPath;
     @NotNull
     protected final  BlockPos           start;
     @NotNull
@@ -274,7 +277,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 p.setLadderFacing(Direction.EAST);
             }
         }
-        else if (state.getBlock() instanceof ScaffoldingBlock || state.getBlock() instanceof WeepingVinesBlock)
+        else if (state.getBlock() instanceof ScaffoldingBlock)
         {
             p.setLadderFacing(Direction.UP);
         }
