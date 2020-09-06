@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -29,13 +31,14 @@ public class EntityAIAttackArcher extends Goal
     private static final double                        PITCH_MULTIPLIER               = 0.4;
     private static final double                        HALF_ROTATION                  = 180;
     private static final double                        ATTACK_SPEED                   = 1.3;
-    private static final double                        AIM_HEIGHT                     = 3.0D;
-    private static final double                        ARROW_SPEED                    = 1.6D;
+    private static final double                        AIM_HEIGHT                     = 2.0D;
+    private static final double                        ARROW_SPEED                    = 1.4D;
     private static final double                        HIT_CHANCE                     = 10.0D;
     private static final double                        AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.20000000298023224D;
     private static final double                        BASE_PITCH                     = 0.8D;
     private static final double                        PITCH_DIVIDER                  = 1.0D;
     private static final double                        MAX_ATTACK_DISTANCE            = 20.0D;
+    private static final double                        SPEED_FOR_DIST                 = 35;
     private final        AbstractEntityMinecoloniesMob entity;
     private              LivingEntity                  target;
     private              int                           lastAttack                     = 0;
@@ -106,7 +109,7 @@ public class EntityAIAttackArcher extends Goal
         }
         tickTimer = 10;
 
-        if (entity.getDistance(target) >= MAX_ATTACK_DISTANCE || !entity.canEntityBeSeen(target))
+        if ((entity.getDistance(target) >= MAX_ATTACK_DISTANCE && !EntityUtils.isFlying(target)) || !entity.canEntityBeSeen(target))
         {
             entity.getNavigator().tryMoveToEntityLiving(target, ATTACK_SPEED);
         }
@@ -129,14 +132,25 @@ public class EntityAIAttackArcher extends Goal
                     arrowEntity = ((BowItem) bow.getItem()).customArrow(arrowEntity);
                 }
 
-                arrowEntity.setPosition(entity.getPosX(), entity.getPosY() + 1, entity.getPosZ());
-                final double xVector = target.getPosX() - entity.getPosX();
-                final double yVector = target.getBoundingBox().minY + target.getHeight() / AIM_HEIGHT - arrowEntity.getPosY();
-                final double zVector = target.getPosZ() - entity.getPosZ();
-                final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
+                arrowEntity.setPosition(entity.posX, entity.posY + 1, entity.posZ);
+                final double xVector = target.posX - entity.posX;
+                final double yVector = target.getBoundingBox().minY + target.getHeight() / AIM_HEIGHT - arrowEntity.posY;
+                final double zVector = target.posZ - entity.posZ;
+                final double distance = MathHelper.sqrt(xVector * xVector + zVector * zVector);
+                final double dist3d = MathHelper.sqrt(yVector * yVector + xVector * xVector + zVector * zVector);
                 //Lower the variable higher the chance that the arrows hits the target.
                 arrowEntity.setDamage(entity.getAttribute(MOB_ATTACK_DAMAGE).getValue());
-                arrowEntity.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) HIT_CHANCE);
+                if (EntityUtils.isFlying(target))
+                {
+                    arrowEntity.setFire(200);
+                    arrowEntity.setDamage(20);
+                    lastAttack = 10;
+                }
+                else
+                {
+                    lastAttack = getAttackDelay();
+                }
+                arrowEntity.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) (ARROW_SPEED * 1 + (dist3d / SPEED_FOR_DIST)), (float) HIT_CHANCE);
 
                 entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
                 entity.getLookController().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
@@ -144,7 +158,6 @@ public class EntityAIAttackArcher extends Goal
                 target.world.addEntity(arrowEntity);
                 entity.swingArm(Hand.MAIN_HAND);
                 entity.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) 1.0D, (float) getRandomPitch());
-                lastAttack = getAttackDelay();
             }
         }
         if (lastAttack > 0)
