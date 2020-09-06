@@ -313,4 +313,15 @@ public final class EntityUtils
         final BlockPos pos = new BlockPos(entityLiving.getPosX(), entityLiving.getPosY(), entityLiving.getPosZ());
         return pos.distanceSq(new Vector3i(x, y, z)) < MathUtils.square(range);
     }
+
+    /**
+     * Checks if the target is flying
+     *
+     * @param target entity to check
+     * @return true if flying or falling deeper
+     */
+    public static boolean isFlying(final LivingEntity target)
+    {
+        return target != null && (target.isAirBorne || !target.onGround) && target.fallDistance <= 0.1f && target.world.isAirBlock(target.getPosition().down(2));
+    }
 }
