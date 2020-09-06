@@ -6,6 +6,8 @@ import com.minecolonies.coremod.colony.jobs.JobCookAssistant;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIRequestSmelter;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.block.Blocks;
+
 /**
  * Crafts food related things.
  */
@@ -35,7 +37,8 @@ public class EntityAIWorkCookAssistant extends AbstractEntityAIRequestSmelter<Jo
     protected IAIState decide()
     {
         IAIState nextState = super.decide();
-        if (job.hasTask() && !getOwnBuilding().getIsCooking())
+        // Only mark is cooking if the current recipe is a furnace recipe, to keep the cook from messing with the furnaces
+        if (job.hasTask() && !getOwnBuilding().getIsCooking() && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
         {
             getOwnBuilding().setIsCooking(true);
         }

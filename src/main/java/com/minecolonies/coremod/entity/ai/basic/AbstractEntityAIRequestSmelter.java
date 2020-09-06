@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.reflect.TypeToken;
-import com.ldtteam.blockout.Log;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -16,6 +15,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
@@ -110,19 +110,22 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return RETRIEVING_END_PRODUCT_FROM_FURNACE;
         }
 
-        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        if(currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
         {
-            final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof FurnaceTileEntity)
+            for (final BlockPos pos : getOwnBuilding().getFurnaces())
             {
-                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-                if (furnace.isBurning() || !isEmpty(furnace.getStackInSlot(RESULT_SLOT)) || !isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT)))
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof FurnaceTileEntity)
                 {
-                    if (furnace.isBurning())
+                    final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+                    if (furnace.isBurning() || !isEmpty(furnace.getStackInSlot(RESULT_SLOT)) || !isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT)))
                     {
-                        setDelay(TICKS_20);
+                        if (furnace.isBurning())
+                        {
+                            setDelay(TICKS_20);
+                        }
+                        return CRAFT;
                     }
-                    return CRAFT;
                 }
             }
         }

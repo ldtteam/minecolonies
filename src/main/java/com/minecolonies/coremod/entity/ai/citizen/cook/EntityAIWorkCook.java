@@ -271,16 +271,16 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             citizenToServe.addAll(citizenList);
             playerToServe.addAll(playerList);
 
-            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), ItemStackUtils.CAN_EAT))
+            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), i -> ItemStackUtils.CAN_EAT.test(i) && !getOwnBuilding().isItemStackInRequest(i)))
             {
                 return COOK_SERVE_FOOD_TO_CITIZEN;
             }
-            else if (!InventoryUtils.hasItemInProvider(getOwnBuilding(), ItemStackUtils.CAN_EAT))
+            else if (!InventoryUtils.hasItemInProvider(getOwnBuilding(), i -> ItemStackUtils.CAN_EAT.test(i) && !getOwnBuilding().isItemStackInRequest(i)))
             {
                 return START_WORKING;
             }
 
-            needsCurrently = new Tuple<>(ItemStackUtils.CAN_EAT, STACKSIZE);
+            needsCurrently = new Tuple<>(i -> ItemStackUtils.CAN_EAT.test(i) && !getOwnBuilding().isItemStackInRequest(i), STACKSIZE);
             return GATHERING_REQUIRED_MATERIALS;
         }
 
