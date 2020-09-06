@@ -77,6 +77,7 @@ public class RaidManager implements IRaiderManager
      * Difficulty nbt tag
      */
     private static final String TAG_RAID_DIFFICULTY = "difficulty";
+    private static final String TAG_LOST_CITIZENS   = "lostCitizens";
 
     /**
      * Min required raidlevel
@@ -708,12 +709,6 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public int getRaidDifficulty()
-    {
-        return raidDifficulty;
-    }
-
-    @Override
     public double getRaidDifficultyModifier()
     {
         return (raidDifficulty / (double) NORMAL_RAID_DIFFICULTY) * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
@@ -752,6 +747,7 @@ public class RaidManager implements IRaiderManager
         compound.putBoolean(TAG_RAIDABLE, canHaveRaiderEvents());
         compound.putInt(TAG_NIGHTS_SINCE_LAST_RAID, getNightsSinceLastRaid());
         compound.putInt(TAG_RAID_DIFFICULTY, raidDifficulty);
+        compound.putInt(TAG_LOST_CITIZENS, lostCitizens);
     }
 
     @Override
@@ -771,9 +767,13 @@ public class RaidManager implements IRaiderManager
             setNightsSinceLastRaid(compound.getInt(TAG_NIGHTS_SINCE_LAST_RAID));
         }
 
-        if (compound.contains(TAG_RAID_DIFFICULTY))
-        {
             raidDifficulty = compound.getInt(TAG_RAID_DIFFICULTY);
-        }
+        lostCitizens = compound.getInt(TAG_LOST_CITIZENS);
+    }
+
+    @Override
+    public int getLostCitizen()
+    {
+        return lostCitizens;
     }
 }
