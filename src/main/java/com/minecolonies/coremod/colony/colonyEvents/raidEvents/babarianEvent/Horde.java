@@ -15,7 +15,7 @@ public class Horde
     public static final String TAG_NUMBEROFRAIDERS = "horde_numberOfRaiders";
     public static final String TAG_NUMBEROFARCHERS = "horde_numberOfArchers";
     public static final String TAG_NUMBEROFBOSSES  = "horde_numberOfBosses";
-    public static final String TAG_HORDESIZE       = "horde_hordeSize";
+    public static final String TAG_HORDEINITSIZE   = "horde_initSize";
 
     /**
      * Amount of melee barbarians
@@ -38,6 +38,11 @@ public class Horde
     public int hordeSize;
 
     /**
+     * The initial amount of raiders the horde had
+     */
+    public final int initialSize;
+
+    /**
      * Create a new horde.
      *
      * @param hordeSize total amount of raiders.
@@ -49,6 +54,7 @@ public class Horde
         numberOfRaiders = Math.max(hordeSize - numberOfBosses - numberOfArchers, 0);
 
         this.hordeSize = numberOfArchers + numberOfRaiders + numberOfBosses;
+        this.initialSize = hordeSize;
     }
 
     /**
@@ -84,7 +90,7 @@ public class Horde
         compound.putInt(TAG_NUMBEROFRAIDERS, numberOfRaiders);
         compound.putInt(TAG_NUMBEROFARCHERS, numberOfArchers);
         compound.putInt(TAG_NUMBEROFBOSSES, numberOfBosses);
-        compound.putInt(TAG_HORDESIZE, hordeSize);
+        compound.putInt(TAG_HORDEINITSIZE, hordeSize);
     }
 
     /**
@@ -95,12 +101,12 @@ public class Horde
      */
     public static Horde loadFromNbt(final CompoundNBT compound)
     {
-        if (!compound.contains(TAG_HORDESIZE))
+        if (!compound.contains(TAG_HORDEINITSIZE))
         {
             return new Horde(5);
         }
 
-        Horde horde = new Horde(compound.getInt(TAG_HORDESIZE));
+        Horde horde = new Horde(compound.getInt(TAG_HORDEINITSIZE));
         horde.numberOfRaiders = compound.getInt(TAG_NUMBEROFRAIDERS);
         horde.numberOfArchers = compound.getInt(TAG_NUMBEROFARCHERS);
         horde.numberOfBosses = compound.getInt(TAG_NUMBEROFBOSSES);

@@ -340,11 +340,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     {
         if (worker.getRevengeTarget() != null || (sleepTimer -= getTickRate()) < 0)
         {
-            resetTarget();
-            worker.setRevengeTarget(null);
-            worker.stopRiding();
-            worker.setPosition(worker.posX, worker.posY + 1, worker.posZ);
-            worker.getCitizenExperienceHandler().addExperience(1);
+            stopSleeping();
             return GUARD_DECIDE;
         }
 
@@ -355,6 +351,21 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             0f,
             30f);
         return null;
+    }
+
+    /**
+     * Stops the guard from sleeping
+     */
+    private void stopSleeping()
+    {
+        if (getState() == GUARD_SLEEP)
+        {
+            resetTarget();
+            worker.setRevengeTarget(null);
+            worker.stopRiding();
+            worker.setPosition(worker.posX, worker.posY + 1, worker.posZ);
+            worker.getCitizenExperienceHandler().addExperience(1);
+        }
     }
 
     /**
@@ -665,7 +676,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public boolean canHelp()
     {
-        return !isEntityValidTarget(target) && getState() == GUARD_PATROL && canBeInterrupted();
+        if (!isEntityValidTarget(target) && (getState() == GUARD_PATROL || getState() == GUARD_SLEEP) && canBeInterrupted())
+        {
+            // Stop sleeping when someone called for help
+            stopSleeping();
+            return true;
+        }
+        return false;
     }
 
     /**
