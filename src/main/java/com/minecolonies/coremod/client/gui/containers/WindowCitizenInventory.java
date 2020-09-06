@@ -16,6 +16,11 @@ import org.jetbrains.annotations.NotNull;
 public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInventory>
 {
     /**
+     * Texture res loc.
+     */
+    private static final ResourceLocation TEXT = new ResourceLocation(Constants.MOD_ID, "textures/gui/generic_108.png");
+
+    /**
      * Offset inside the texture to use.
      */
     private static final int TEXTURE_OFFSET = 126 * 2 - 17;
@@ -86,7 +91,7 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-        this.minecraft.getTextureManager().bindTexture(new ResourceLocation(Constants.MOD_ID, "textures/gui/generic_108.png"));
+        this.minecraft.getTextureManager().bindTexture(TEXT);
 
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
