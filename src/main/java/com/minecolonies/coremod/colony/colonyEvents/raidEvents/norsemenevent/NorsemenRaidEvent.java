@@ -14,7 +14,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
 import static com.minecolonies.api.entity.ModEntities.*;
@@ -148,7 +148,7 @@ public class NorsemenRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    protected ITextComponent getDisplayName()
+    protected IFormattableTextComponent getDisplayName()
     {
         return new StringTextComponent(LanguageHandler.format(RAID_NORSEMEN));
     }

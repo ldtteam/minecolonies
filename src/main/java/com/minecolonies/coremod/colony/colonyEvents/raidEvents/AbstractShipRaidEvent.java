@@ -32,7 +32,7 @@ import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.server.ServerBossInfo;
@@ -192,7 +192,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     protected void updateRaidBar()
     {
         final String directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint);
-        raidBar.setName(getDisplayName().appendSibling(new StringTextComponent(" - " + directionName)));
+        raidBar.setName(getDisplayName().append(new StringTextComponent(" - " + directionName)));
         for (final PlayerEntity player : colony.getImportantMessageEntityPlayers())
         {
             raidBar.addPlayer((ServerPlayerEntity) player);
@@ -205,7 +205,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
      *
      * @return
      */
-    protected abstract ITextComponent getDisplayName();
+    protected abstract IFormattableTextComponent getDisplayName();
 
     @Override
     public void onUpdate()

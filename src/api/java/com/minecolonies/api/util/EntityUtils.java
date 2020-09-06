@@ -322,6 +322,6 @@ public final class EntityUtils
      */
     public static boolean isFlying(final LivingEntity target)
     {
-        return target != null && (target.isAirBorne || !target.onGround) && target.fallDistance <= 0.1f && target.world.isAirBlock(target.getPosition().down(2));
+        return target != null && (target.isAirBorne || !target.isOnGround()) && target.fallDistance <= 0.1f && target.world.isAirBlock(target.getPosition().down(2));
     }
 }

@@ -358,7 +358,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             resetTarget();
             worker.setRevengeTarget(null);
             worker.stopRiding();
-            worker.setPosition(worker.posX, worker.posY + 1, worker.posZ);
+            worker.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
             worker.getCitizenExperienceHandler().addExperience(1);
         }
     }

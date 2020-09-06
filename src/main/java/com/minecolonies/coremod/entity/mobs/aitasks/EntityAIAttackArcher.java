@@ -132,10 +132,10 @@ public class EntityAIAttackArcher extends Goal
                     arrowEntity = ((BowItem) bow.getItem()).customArrow(arrowEntity);
                 }
 
-                arrowEntity.setPosition(entity.posX, entity.posY + 1, entity.posZ);
-                final double xVector = target.posX - entity.posX;
-                final double yVector = target.getBoundingBox().minY + target.getHeight() / AIM_HEIGHT - arrowEntity.posY;
-                final double zVector = target.posZ - entity.posZ;
+                arrowEntity.setPosition(entity.getPosX(), entity.getPosY() + 1, entity.getPosZ());
+                final double xVector = target.getPosX() - entity.getPosX();
+                final double yVector = target.getBoundingBox().minY + target.getHeight() / AIM_HEIGHT - arrowEntity.getPosY();
+                final double zVector = target.getPosZ() - entity.getPosZ();
                 final double distance = MathHelper.sqrt(xVector * xVector + zVector * zVector);
                 final double dist3d = MathHelper.sqrt(yVector * yVector + xVector * xVector + zVector * zVector);
                 //Lower the variable higher the chance that the arrows hits the target.
