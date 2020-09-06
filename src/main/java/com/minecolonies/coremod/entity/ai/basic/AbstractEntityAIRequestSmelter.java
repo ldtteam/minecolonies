@@ -130,7 +130,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         IAIState newState = super.getRecipe();
 
         // This should only happen in the stonesmelter, but it could potentially happen with multiple fuels. 
-        if(newState == QUERY_ITEMS && currentRecipeStorage != null && getOwnBuilding().isAllowedFuel(currentRecipeStorage.getPrimaryOutput()))
+        if(newState == QUERY_ITEMS && currentRecipeStorage != null && !getOwnBuilding().getAllowedFuel().isEmpty() && getOwnBuilding().isAllowedFuel(currentRecipeStorage.getPrimaryOutput()))
         {
             job.setCraftCounter(0);
         }
