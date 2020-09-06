@@ -445,22 +445,22 @@ public class ResearchInitializer
         agile.addChild(swift);
         swift.addChild(athlete);
 
-        final GlobalResearch firstaid = new GlobalResearch("firstaid", "civilian", "First Aid", 1, new AdditionModifierResearchEffect("Health", 1));
+        final GlobalResearch firstaid = new GlobalResearch("firstaid", "civilian", "First Aid", 1, new AdditionModifierResearchEffect("Health", 2));
         firstaid.setRequirement(new BuildingResearchRequirement(1, "townhall"));
 
-        final GlobalResearch firstaid2 = new GlobalResearch("firstaid2", "civilian", "First Aid II", 2, new AdditionModifierResearchEffect("Health", 1));
+        final GlobalResearch firstaid2 = new GlobalResearch("firstaid2", "civilian", "First Aid II", 2, new AdditionModifierResearchEffect("Health", 4));
         firstaid2.setRequirement(new BuildingResearchRequirement(2, "townhall"));
 
-        final GlobalResearch livesaver = new GlobalResearch("livesaver", "civilian", "Livesaver", 3, new AdditionModifierResearchEffect("Health", 1));
+        final GlobalResearch livesaver = new GlobalResearch("livesaver", "civilian", "Livesaver", 3, new AdditionModifierResearchEffect("Health", 6));
         livesaver.setRequirement(new BuildingResearchRequirement(3, "townhall"));
 
-        final GlobalResearch livesaver2 = new GlobalResearch("livesaver2", "civilian", "Livesaver II", 4, new AdditionModifierResearchEffect("Health", 1));
+        final GlobalResearch livesaver2 = new GlobalResearch("livesaver2", "civilian", "Livesaver II", 4, new AdditionModifierResearchEffect("Health", 8));
         livesaver2.setRequirement(new BuildingResearchRequirement(4, "townhall"));
 
-        final GlobalResearch guardianangel = new GlobalResearch("guardianangel", "civilian", "Guardian Angel", 5, new AdditionModifierResearchEffect("Health", 1));
+        final GlobalResearch guardianangel = new GlobalResearch("guardianangel", "civilian", "Guardian Angel", 5, new AdditionModifierResearchEffect("Health", 10));
         guardianangel.setRequirement(new BuildingResearchRequirement(5, "townhall"));
 
-        final GlobalResearch guardianangel2 = new GlobalResearch("guardianangel2", "civilian", "Guardian Angel II", 6, new AdditionModifierResearchEffect("Health", 5));
+        final GlobalResearch guardianangel2 = new GlobalResearch("guardianangel2", "civilian", "Guardian Angel II", 6, new AdditionModifierResearchEffect("Health", 20));
 
         firstaid.addChild(firstaid2);
         firstaid2.addChild(livesaver);
