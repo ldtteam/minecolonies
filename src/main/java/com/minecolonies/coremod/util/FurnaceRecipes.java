@@ -22,8 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.registries.ObjectHolder;
-
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -55,16 +54,13 @@ public class FurnaceRecipes implements IFurnaceRecipes
             final NonNullList<Ingredient> list = recipe.getIngredients();
             if (list.size() == 1)
             {
-                for (final ItemStack stack : list.get(0).getMatchingStacks())
-                {
-                    final RecipeStorage storage = new RecipeStorage(new StandardToken(), Collections.singletonList(stack), 1, recipe.getRecipeOutput(), Blocks.FURNACE);
+                final RecipeStorage storage = new RecipeStorage(new StandardToken(), Arrays.asList(list.get(0).getMatchingStacks()), 1, recipe.getRecipeOutput(), Blocks.FURNACE);
 
-                    recipes.put(new ItemStorage(stack), storage);
+                recipes.put(storage.getCleanedInput().get(0), storage);
 
-                    final ItemStack output = recipe.getRecipeOutput();
-                    output.setCount(1);
-                    reverseRecipes.put(new ItemStorage(output), storage);
-                }
+                final ItemStack output = recipe.getRecipeOutput();
+                output.setCount(1);
+                reverseRecipes.put(new ItemStorage(output), storage);
             }
         });
     }
