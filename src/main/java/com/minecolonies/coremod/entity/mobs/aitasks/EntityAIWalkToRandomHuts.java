@@ -1,28 +1,35 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import net.minecraft.block.*;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.LEVITATION_EFFECT;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * Raider Pathing Class
@@ -167,6 +174,20 @@ public class EntityAIWalkToRandomHuts extends Goal
 
         if (this.isEntityAtSiteWithMove(targetBlock, 2))
         {
+            entity.swingArm(Hand.OFF_HAND);
+            final IBuilding building = entity.getColony().getBuildingManager().getBuilding(targetBlock);
+            if (building != null && building.getTileEntity() != null)
+            {
+                final TileEntity te = building.getTileEntity();
+                if (te.getCapability(ITEM_HANDLER_CAPABILITY, null).isPresent())
+                {
+                    final IItemHandler handler = te.getCapability(ITEM_HANDLER_CAPABILITY, null).orElse(null);
+                    if (ItemStackUtils.isEmpty(entity.getItemStackFromSlot(EquipmentSlotType.OFFHAND)))
+                    {
+                        entity.setItemStackToSlot(EquipmentSlotType.OFFHAND, handler.extractItem(entity.world.rand.nextInt(handler.getSlots()), 1, false));
+                    }
+                }
+            }
             targetBlock = getRandomBuilding();
             resetStuckCounters();
         }

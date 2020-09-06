@@ -1,6 +1,8 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
@@ -95,9 +97,10 @@ public interface IRaiderManager
     /**
      * Calculates the barbarian amount for raids
      *
+     * @param raidLevel the colonies raidlevel
      * @return the number of barbs.
      */
-    int calcBarbarianAmount();
+    int calculateRaiderAmount(final int raidLevel);
 
     /**
      * Whether the colony is currently raided.
@@ -159,4 +162,14 @@ public interface IRaiderManager
      * @return a random building.
      */
     BlockPos getRandomBuilding();
+
+    int getRaidDifficulty();
+
+    double getRaidDifficultyModifier();
+
+    void onLostCitizen(ICitizenData citizen);
+
+    void write(CompoundNBT compound);
+
+    void read(CompoundNBT compound);
 }

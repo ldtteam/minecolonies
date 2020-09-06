@@ -97,7 +97,7 @@ public class Horde
     {
         if (!compound.contains(TAG_HORDESIZE))
         {
-            return null;
+            return new Horde(5);
         }
 
         Horde horde = new Horde(compound.getInt(TAG_HORDESIZE));
