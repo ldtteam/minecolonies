@@ -277,7 +277,9 @@
   "block.minecolonies.blockhutguardtower.name": "Guard Tower",
   "block.minecolonies.blockhutfield.name": "Field",
   "block.minecolonies.gate_iron.name": "Iron gate",
+  "block.minecolonies.gate_iron": "Iron gate",
   "block.minecolonies.gate_wood.name": "Wooden gate",
+  "block.minecolonies.gate_wood": "Wooden gate",
 
   "tile.blockhut.messagenopermission": "You don't have permission to open huts in %s.",
   "tile.blockhut.messagenopermissionplace": "You don't have permission to place huts in %s.",
