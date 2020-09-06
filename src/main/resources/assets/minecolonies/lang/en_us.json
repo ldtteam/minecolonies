@@ -833,7 +833,7 @@
 
   "item.minecolonies.clipboard": "Clipboard",
 
-  "com.minecolonies.coremod.item.clipboard.needcolony": "Please shift + right-click your Town Hall to register your clipboard to the colony.",
+  "com.minecolonies.coremod.item.clipboard.needcolony": "Please sneak + right-click your Town Hall to register your clipboard to the colony.",
   "com.minecolonies.coremod.item.clipboard.registered": "Registered to colony %d.",
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
   "com.minecolonies.coremod.buildings.warehouse.name": "Warehouse",
@@ -880,6 +880,12 @@
   "event.minecolonies.raidmessage_p2": "§4Citizens report rumors of pirates close to %s of %s! They brought a ship, better destroy it.",
   "event.minecolonies.raidmessage_p3": "§4Arr Comrade! There's some darn pirates from %s comin' for %s tonight! They sailed here and will continue attacking until we destroy their caravel.",
   "event.minecolonies.raidmessage_p4": "§4A huge horde of pirates are sailin' %s of %s and they're not here to play! Their rigorous waves will hit us unless we destroy their galleon!",
+
+  "com.minecolonies.coremod.raid.amazon.name": "Amazons",
+  "com.minecolonies.coremod.raid.egyptian.name": "Mummies",
+  "com.minecolonies.coremod.raid.barbarian.name": "Barbarians",
+  "com.minecolonies.coremod.raid.pirate.name": "Pirates",
+  "com.minecolonies.coremod.raid.norsemen.name": "Norsemen",
 
   "com.minecolonies.coremod.gui.workerhuts.toggleallon": "Toggle all on",
   "com.minecolonies.coremod.gui.workerhuts.togglealloff": "Toggle all off",
@@ -1023,7 +1029,7 @@
   "com.minecolonies.coremod.gui.workerhuts.library": "Library",
 
   "item.minecolonies.resourcescroll": "Resource-Scroll",
-  "com.minecolonies.coremod.gui.resourcescroll.nobuilder": "Couldn't find a registered Builder, please shift + right-click a Builder's Hut.",
+  "com.minecolonies.coremod.gui.resourcescroll.nobuilder": "Couldn't find a registered Builder. Please sneak + right-click a Builder's Hut to register the resource scroll.",
 
   "com.minecolonies.coremod.gui.workerhuts.baker.recipes": "Recipes",
   "com.minecolonies.coremod.gui.workerhuts.gettool": "Get Guard Tool",
@@ -1392,6 +1398,8 @@
   "com.minecolonies.coremod.research.requirementnotmet": "Minimum research requirement not met!",
   "com.minecolonies.coremod.research.started": "Research successfully started!",
   "com.minecolonies.coremod.research.havetounlock": "Build a University and research this hut to unlock it!",
+  "com.minecolonies.coremod.research.item1": "§cThe %s requires research",
+  "com.minecolonies.coremod.research.item2": "§cat the University to be built.",
 
   "com.minecolonies.coremod.info.builder.0.name": "Introduction",
   "com.minecolonies.coremod.info.builder.0": "The Builder is the heart of your colony. Without them, you wouldn't be able to get anything done!\n Every hut worker has to have their building built to at least level 1 before they can do anything, except the Builder. If the Builder has a hut at level 0 (no hut), they can only build one thing, their own hut.\n\n For your Builder to build, upgrade, reposition, or repair a hut that isn't their own, their hut must be at least the same level as the other hut. For example, the Builder's Hut must be level 3 or above to build a level 3 hut.",
@@ -1553,7 +1561,7 @@
 
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!",
 
-  "com.minecolonies.coremod.resourcescroll.nobuilder": "Please register a Builder's Hut first by shift + right-clicking one!",
+  "com.minecolonies.coremod.resourcescroll.nobuilder": "Please register a Builder's Hut first by sneak + right-clicking one!",
   "com.minecolonies.coremod.resourcescroll.null": "Something went wrong opening the resource scroll, please try again!",
   "com.minecolonies.coremod.gui.workerhuts.hospital": "Hospital",
   "block.minecolonies.blockhuthospital": "Hospital",
@@ -1735,7 +1743,7 @@
   "com.minecolonies.coremod.gui.chat.recruitstory19": "seems adept at using swords and says 'If by my life or death I can protect you, I will. You have my sword.'",
   "com.minecolonies.coremod.gui.chat.recruitstory20": "is never late, nor early. %s arrives precisely when they mean to.",
 
-  "com.minecolonies.coremod.gui.chat.hometoofar": "I have to walk a long way home from work every day, it would be nice if I could live somewhere closer.",
+  "com.minecolonies.coremod.gui.chat.hometoofar": "I have to walk a long way home from work every day. It would be nice if I could live somewhere closer.",
 
   "com.minecolonies.coremod.gui.beekeeper.notcollect": "Collect honey",
   "com.minecolonies.coremod.gui.beekeeper.collect": "Collect honeycomb",
@@ -1760,7 +1768,7 @@
   "com.minecolonies.coremod.gui.townhall.edit_flag": "Edit colony flag",
   "block.minecolonies.colony_banner": "Colony Flag Banner",
   "com.minecolonies.coremod.gui.locate": "Locate",
-  "com.minecolonies.coremod.locating": "Successfully located rack with respective Stack...",
+  "com.minecolonies.coremod.locating": "Successfully located rack with respective item(s).",
 
-  "entity.researcher.moreknowledge": "During your absence your researchers used the time to do some extra research which will speed up your current research a bit!"
+  "entity.researcher.moreknowledge": "During your absence, your Researchers used the time to do some extra work. This will speed up their current research a bit!"
 }

@@ -81,6 +81,12 @@ public class BuildingGuardTower extends AbstractBuildingGuards
     }
 
     @Override
+    public boolean requiresManualTarget()
+    {
+        return (!patrolManually || patrolTargets == null || patrolTargets.isEmpty() || tempNextPatrolPoint != null) && tempNextPatrolPoint == null;
+    }
+
+    @Override
     protected int getBonusHealth()
     {
         return BONUS_HP_SINGLE_GUARD + super.getBonusHealth();

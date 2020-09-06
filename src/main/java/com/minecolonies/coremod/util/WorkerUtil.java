@@ -17,7 +17,6 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.GlazedTerracottaBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.MoverType;
@@ -26,8 +25,11 @@ import net.minecraft.item.Items;
 import net.minecraft.item.ToolItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.SignTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
@@ -37,7 +39,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MOVE_MINIMAL;
@@ -67,8 +68,8 @@ public final class WorkerUtil
     /**
      * A list of all the path blocks on which the citizen walks faster.
      */
-    private static final List<Block> pathBlocks = Arrays.asList(Blocks.GRAVEL, Blocks.GRASS_PATH,
-      Blocks.STONE_BRICKS, Blocks.STONE_BRICK_STAIRS, Blocks.STONE_BRICK_SLAB);
+    private static final ResourceLocation PATHING_BLOCKS = new ResourceLocation("minecolonies", "pathblocks");
+    private static Tag<Block> PATHING_TAG;
 
     private WorkerUtil()
     {
@@ -100,11 +101,15 @@ public final class WorkerUtil
      */
     public static boolean isPathBlock(final Block block)
     {
-        return pathBlocks.contains(block);
+        if (PATHING_TAG == null)
+        {
+            PATHING_TAG = BlockTags.getCollection().getOrCreate(PATHING_BLOCKS);
+        }
+        return PATHING_TAG.contains(block);
     }
 
     /**
-     * {@link WorkerUtil#isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}.
+     * {@link WorkerUtil#isWorkerAtSiteWithMove(AbstractEntityCitizen, int, int, int, int)}.
      *
      * @param worker Worker to check.
      * @param site   Chunk coordinates of site to check.

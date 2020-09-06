@@ -3,6 +3,8 @@ package com.minecolonies.api.entity.mobs;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
@@ -169,6 +171,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
 
     /**
      * Get the specific raider type of this raider.
+     *
      * @return the type enum.
      */
     public abstract RaiderType getRaiderType();
@@ -444,6 +447,14 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
             else
             {
                 return false;
+            }
+        }
+        else if (!world.isRemote())
+        {
+            final IColonyEvent event = colony.getEventManager().getEventByID(eventID);
+            if (event instanceof IColonyCampFireRaidEvent)
+            {
+                ((IColonyCampFireRaidEvent) event).setCampFireTime(0);
             }
         }
 

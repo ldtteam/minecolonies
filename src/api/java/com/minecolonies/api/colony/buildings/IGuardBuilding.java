@@ -250,4 +250,10 @@ public interface IGuardBuilding extends IBuildingWorker
      * Populates the mobs list from the ForgeRegistries.
      */
     void calculateMobs();
+
+    /**
+     * If we have to calculate a new target manually.
+     * @return true if so.
+     */
+    boolean requiresManualTarget();
 }
