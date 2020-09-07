@@ -1,107 +1,79 @@
 package com.minecolonies.coremod.colony.colonyEvents.citizenEvents;
 
-import org.jetbrains.annotations.NotNull;
-
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.colonyEvents.EventStatus;
-import com.minecolonies.api.colony.colonyEvents.IColonyEntitySpawnEvent;
+import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
 import com.minecolonies.api.util.BlockPosUtil;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
-import static com.minecolonies.api.colony.colonyEvents.NBTTags.*;
+import static com.minecolonies.api.colony.colonyEvents.descriptions.NBTTags.*;
 
 /**
  * Event for spawning a new citizen, or recruitable citizen.
  */
-public abstract class AbstractCitizenSpawnEvent implements IColonyEntitySpawnEvent
+public abstract class AbstractCitizenSpawnEvent implements ICitizenEventDescription
 {
 
-	private int id;
-	private IColony colony;
-	private BlockPos spawnPos;
-	private EventStatus status = EventStatus.DONE;
-
-	/**
-	 * Creates a new Event.
-	 * 
-	 * @param colony the colony in which the citizen spawned.
-	 * @param spawnPos the position in which the citizen spawned.
-	 */
-	public AbstractCitizenSpawnEvent(@NotNull final IColony colony, @NotNull final BlockPos spawnPos)
-    {
-        this.colony = colony;
-        id = colony.getEventManager().getAndTakeNextEventID();
-        this.spawnPos = spawnPos;
-    }
+	private BlockPos eventPos;
+	private String citizenName;
 
 	@Override
-	public int getID()
+	public BlockPos getEventPos()
 	{
-		return id;
+		return eventPos;
 	}
 
 	@Override
-	public BlockPos getSpawnPos()
+	public void setEventPos(BlockPos eventPos)
 	{
-		return spawnPos;
+		this.eventPos = eventPos;
 	}
 
 	@Override
-	public void setSpawnPoint(BlockPos spawnPoint)
+	public String getCitizenName()
 	{
-		spawnPos = spawnPoint;
+		return citizenName;
 	}
 
 	@Override
-	public void setColony(IColony colony)
+	public void setCitizenName(String citizenName)
 	{
-		this.colony = colony;
-	}
-
-	@Override
-	public EventStatus getStatus()
-	{
-		return status;
-	}
-
-	@Override
-	public void setStatus(EventStatus status)
-	{
-		this.status = status;
+		this.citizenName = citizenName;
 	}
 
 	@Override
 	public CompoundNBT writeToNBT(CompoundNBT compound)
 	{
-		compound.putInt(TAG_EVENT_ID, id);
-        BlockPosUtil.write(compound, TAG_SPAWN_POS, spawnPos);
-		compound.putInt(TAG_EVENT_STATUS, status.ordinal());
+        BlockPosUtil.write(compound, TAG_EVENT_POS, eventPos);
+        compound.putString(TAG_CITIZEN_NAME, citizenName);
 		return compound;
 	}
 
 	@Override
 	public void readFromNBT(CompoundNBT compound)
 	{
-		id = compound.getInt(TAG_EVENT_ID);
-		spawnPos = BlockPosUtil.read(compound, TAG_SPAWN_POS);
-		status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
+		eventPos = BlockPosUtil.read(compound, TAG_EVENT_POS);
+		citizenName = compound.getString(TAG_CITIZEN_NAME);
 	}
 
 	@Override
-	public void serialize(PacketBuffer buf) {
-		buf.writeInt(id);
-		buf.writeBlockPos(spawnPos);
-		buf.writeInt(status.ordinal());
+	public void serialize(PacketBuffer buf)
+	{
+		buf.writeBlockPos(eventPos);
+		buf.writeString(citizenName);
 	}
 
 	@Override
-	public void deserialize(PacketBuffer buf) {
-		id = buf.readInt();
-		spawnPos = buf.readBlockPos();
-		status = EventStatus.values()[buf.readInt()];
+	public void deserialize(PacketBuffer buf)
+	{
+		eventPos = buf.readBlockPos();
+		citizenName = buf.readString();
 	}
 
+	@Override
+	public String toString()
+	{
+		return toDisplayString();
+	}
 }

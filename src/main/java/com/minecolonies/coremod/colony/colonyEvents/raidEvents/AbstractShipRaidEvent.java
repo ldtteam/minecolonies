@@ -24,7 +24,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
@@ -445,45 +444,6 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         shipSize = ShipSize.values()[compound.getInt(TAG_SHIPSIZE)];
         killedCitizenInRaid = compound.getBoolean(TAG_KILLED);
         shipRotation = compound.getInt(TAG_SHIPROTATION);
-    }
-
-    @Override
-    public void serialize(PacketBuffer buf) {
-        buf.writeInt(id);
-        buf.writeInt(status.ordinal());
-        buf.writeInt(daysToGo);
-
-        buf.writeInt(spawners.size());
-        for (final BlockPos spawner : spawners)
-        {
-            buf.writeBlockPos(spawner);
-        }
-
-        buf.writeInt(spawnerCount);
-        buf.writeBlockPos(spawnPoint);
-        buf.writeInt(shipSize.ordinal());
-        buf.writeBoolean(killedCitizenInRaid);
-        buf.writeInt(shipRotation);
-    }
-
-    @Override
-    public void deserialize(PacketBuffer buf) {
-        id = buf.readInt();
-        status = EventStatus.values()[buf.readInt()];
-        daysToGo = buf.readInt();
-
-        spawners = new ArrayList<>();
-        int spawnersSize = buf.readInt();
-        for (int i = 0; i < spawnersSize; i++)
-        {
-            spawners.add(buf.readBlockPos());
-        }
-
-        spawnerCount = buf.readInt();
-        spawnPoint = buf.readBlockPos();
-        shipSize = ShipSize.values()[buf.readInt()];
-        killedCitizenInRaid = buf.readBoolean();
-        shipRotation = buf.readInt();
     }
 
     @Override

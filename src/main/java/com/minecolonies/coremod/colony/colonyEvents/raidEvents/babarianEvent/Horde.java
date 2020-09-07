@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent;
 
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 
@@ -105,35 +104,6 @@ public class Horde
         horde.numberOfRaiders = compound.getInt(TAG_NUMBEROFRAIDERS);
         horde.numberOfArchers = compound.getInt(TAG_NUMBEROFARCHERS);
         horde.numberOfBosses = compound.getInt(TAG_NUMBEROFBOSSES);
-        horde.hordeSize = horde.numberOfArchers + horde.numberOfRaiders + horde.numberOfBosses;
-        return horde;
-    }
-
-    /**
-     * Writes the horde to the given {@link PacketBuffer}.
-     * 
-     * @param buf the buffer to write to.
-     */
-    public void serialize(final PacketBuffer buf)
-    {
-    	buf.writeInt(hordeSize);
-    	buf.writeInt(numberOfRaiders);
-    	buf.writeInt(numberOfArchers);
-    	buf.writeInt(numberOfBosses);
-    }
-
-    /**
-     * Create a new horde from a {@link PacketBuffer}.
-     * 
-     * @param buf the buffer to load.
-     * @return the new horde.
-     */
-    public static Horde deserialize(final PacketBuffer buf)
-    {
-    	Horde horde = new Horde(buf.readInt());
-    	horde.numberOfRaiders = buf.readInt();
-    	horde.numberOfArchers = buf.readInt();
-    	horde.numberOfBosses = buf.readInt();
         horde.hordeSize = horde.numberOfArchers + horde.numberOfRaiders + horde.numberOfBosses;
         return horde;
     }

@@ -11,8 +11,8 @@ import com.minecolonies.api.colony.CompactColonyReference;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
-import com.minecolonies.api.colony.colonyEvents.IColonySpawnEvent;
+import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
+import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.colony.permissions.Player;
@@ -29,6 +29,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.*;
@@ -816,14 +817,21 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             	}
             	else
             	{
-            		final IColonyEvent event = building.getColonyEvents().get(index);
-
-                    rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(event.getName() + "");
-                    if (event instanceof IColonySpawnEvent)
+            		final IColonyEventDescription event = building.getColonyEvents().get(index);
+            		if (event instanceof CitizenDiedEvent)
+            		{
+            			rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(((CitizenDiedEvent) event).getDeathCause());
+            		}
+            		else
+            		{
+                        rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(event.getName());
+            		}
+                    if (event instanceof ICitizenEventDescription)
                     {
-                    	final IColonySpawnEvent spawnEvent = (IColonySpawnEvent) event;
-                        rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(spawnEvent.getSpawnPos().getX() + " " + spawnEvent.getSpawnPos().getY() + " " + spawnEvent.getSpawnPos().getZ());
+                        rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(((ICitizenEventDescription) event).getCitizenName());
                     }
+                    rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ());
+                    rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
             	}
             }
         });

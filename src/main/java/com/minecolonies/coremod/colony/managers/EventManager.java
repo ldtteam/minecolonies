@@ -4,6 +4,8 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyEntitySpawnEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
+import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.managers.interfaces.IEventManager;
 import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;
@@ -13,7 +15,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
@@ -21,10 +22,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 import static com.minecolonies.api.colony.colonyEvents.EventStatus.*;
+import static com.minecolonies.api.util.constant.ColonyConstants.MAX_COLONY_EVENTS;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 
@@ -36,9 +39,10 @@ public class EventManager implements IEventManager
     /**
      * NBT tags
      */
-    private static final String TAG_EVENT_ID      = "event_currentID";
-    private static final String TAG_EVENT_MANAGER = "event_manager";
-    private static final String TAG_EVENT_LIST    = "events_list";
+    private static final String TAG_EVENT_ID        = "event_currentID";
+    private static final String TAG_EVENT_MANAGER   = "event_manager";
+    private static final String TAG_EVENT_LIST      = "events_list";
+    private static final String TAG_EVENT_DESC_LIST = "event_descs_list";
 
     /**
      * The current event ID this colony is at, unique for each event
@@ -56,14 +60,14 @@ public class EventManager implements IEventManager
     private final Map<Integer, IColonyEvent> events = new HashMap<>();
 
     /**
+     * The event descriptions of this colony.
+     */
+    private final LinkedList<IColonyEventDescription> eventDescs = new LinkedList<>();
+
+    /**
      * The related structure manager, which takes care of structures for the events.
      */
     private final EventStructureManager structureManager;
-
-    /**
-     * The deserializers for the different IColonyEvents.
-     */
-    private static final Map<String, BiFunction<IColony, PacketBuffer, IColonyEvent>> EVENT_DESERIALIZERS = new HashMap<>();
 
     public EventManager(final IColony colony)
     {
@@ -71,11 +75,6 @@ public class EventManager implements IEventManager
         structureManager = new EventStructureManager(this, colony);
     }
 
-    /**
-     * Adds a event event to the colony.
-     *
-     * @param colonyEvent the event to add
-     */
     @Override
     public void addEvent(final IColonyEvent colonyEvent)
     {
@@ -86,6 +85,16 @@ public class EventManager implements IEventManager
         }
         events.put(colonyEvent.getID(), colonyEvent);
         colony.markDirty();
+    }
+
+    @Override
+    public void addEventDescription(IColonyEventDescription colonyEventDescription) {
+    	if (eventDescs.size() >= MAX_COLONY_EVENTS)
+        {
+    		eventDescs.removeFirst();
+        }
+    	eventDescs.add(colonyEventDescription);
+    	colony.getBuildingManager().getTownHall().markDirty();
     }
 
     /**
@@ -230,6 +239,11 @@ public class EventManager implements IEventManager
     }
 
     @Override
+    public List<IColonyEventDescription> getEventDescriptions() {
+    	return eventDescs;
+    }
+
+    @Override
     public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         if (compound.contains(TAG_EVENT_MANAGER))
@@ -252,6 +266,23 @@ public class EventManager implements IEventManager
                 events.put(colonyEvent.getID(), colonyEvent);
             }
 
+            final ListNBT eventDescListNBT = eventManagerNBT.getList(TAG_EVENT_DESC_LIST, Constants.NBT.TAG_COMPOUND);
+            for (final INBT event : eventDescListNBT)
+            {
+            	final CompoundNBT eventCompound = (CompoundNBT) event;
+            	final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, eventCompound.getString(TAG_NAME));
+
+            	final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().getValue(eventTypeID);
+            	if (registryEntry == null)
+                {
+                    Log.getLogger().warn("Event is missing registryEntry!:" + eventTypeID.getPath());
+                    continue;
+                }
+
+            	final IColonyEventDescription eventDescription = registryEntry.getNBTEventCreator().apply(eventCompound);
+            	eventDescs.add(eventDescription);
+            }
+
             currentEventID = eventManagerNBT.getInt(TAG_EVENT_ID);
             structureManager.readFromNBT(compound);
         }
@@ -272,6 +303,17 @@ public class EventManager implements IEventManager
 
         eventManagerNBT.putInt(TAG_EVENT_ID, currentEventID);
         eventManagerNBT.put(TAG_EVENT_LIST, eventListNBT);
+
+        final ListNBT eventDescsListNBT = new ListNBT();
+        for (final IColonyEventDescription event : eventDescs)
+        {
+        	final CompoundNBT eventNBT = new CompoundNBT();
+        	eventNBT.putString(TAG_NAME, event.getEventTypeId().getPath());
+        	event.writeToNBT(eventNBT);
+        	eventDescsListNBT.add(eventNBT);
+        }
+
+        eventManagerNBT.put(TAG_EVENT_DESC_LIST, eventDescsListNBT);
         compound.put(TAG_EVENT_MANAGER, eventManagerNBT);
         structureManager.writeToNBT(compound);
     }
@@ -280,39 +322,5 @@ public class EventManager implements IEventManager
     public IEventStructureManager getStructureManager()
     {
         return structureManager;
-    }
-
-    /**
-     * Registers the deserializer for a colony event.
-     * 
-     * @param eventId      the id of the event to deserialize.
-     * @param deserializer the function to deserialize it.
-     */
-    public static void registerEventDeserializer(ResourceLocation eventId, BiFunction<IColony, PacketBuffer, IColonyEvent> deserializer)
-    {
-    	if (!EVENT_DESERIALIZERS.containsKey(eventId.getPath()))
-    	{
-    	    EVENT_DESERIALIZERS.put(eventId.getPath(), deserializer);
-    	}
-    	else
-    	{
-    		Log.getLogger().warn("Tried to register a second colony event with id " + eventId.getPath());
-    	}
-    }
-
-    /**
-     * Deserializes an event of the given type from the {@link PacketBuffer}.
-     * 
-     * @param eventId the event id for the event to deserialize.
-     * @param buf     the buffer to serialize the event from.
-     * @return the new colony event.
-     */
-    public static IColonyEvent deserializeEvent(String eventId, IColony colony, PacketBuffer buf)
-    {
-    	if (EVENT_DESERIALIZERS.containsKey(eventId))
-    	{
-    		return EVENT_DESERIALIZERS.get(eventId).apply(colony, buf);
-    	}
-    	return null;
     }
 }

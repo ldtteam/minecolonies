@@ -34,6 +34,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
@@ -1484,6 +1485,12 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
             InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) posX, (int) posY, (int) posZ);
+
+            CitizenDiedEvent deathEvent = new CitizenDiedEvent();
+            deathEvent.setEventPos(getPosition());
+            deathEvent.setCitizenName(citizenData.getName());
+            deathEvent.setDeathCause(damageSource.getDeathMessage(this).getString().replaceFirst(citizenData.getName(), "Citizen"));
+            citizenColonyHandler.getColony().getEventManager().addEventDescription(deathEvent);
         }
         super.onDeath(damageSource);
     }

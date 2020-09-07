@@ -9,7 +9,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
-import com.minecolonies.coremod.colony.managers.EventManager;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
 import com.minecolonies.coremod.network.messages.client.PlayMusicMessage;
@@ -40,15 +39,6 @@ public class AmazonRaidEvent extends HordeRaidEvent
      * Cooldown for the music, to not play it too much/not overlap with itself
      */
     private int musicCooldown = 0;
-
-    static
-	{
-		EventManager.registerEventDeserializer(AMAZON_RAID_EVENT_TYPE_ID, (colony, buf) -> {
-			AmazonRaidEvent event = new AmazonRaidEvent(colony);
-			event.deserialize(buf);
-			return event;
-		});
-	}
 
     public AmazonRaidEvent(IColony colony)
     {
@@ -175,11 +165,5 @@ public class AmazonRaidEvent extends HordeRaidEvent
     public EntityType<?> getBossRaiderType()
     {
         return AMAZONCHIEF;
-    }
-
-    @Override
-    public String getName()
-    {
-    	return "Amazon Raid";
     }
 }

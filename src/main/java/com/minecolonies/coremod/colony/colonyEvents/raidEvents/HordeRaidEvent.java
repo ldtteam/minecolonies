@@ -20,7 +20,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.BlockPos;
@@ -444,41 +443,6 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
         daysToGo = compound.getInt(TAG_DAYS_LEFT);
         killedCitizenInRaid = compound.getBoolean(TAG_KILLED);
-    }
-
-    @Override
-    public void serialize(PacketBuffer buf) {
-        buf.writeInt(id);
-        buf.writeBlockPos(spawnPoint);
-
-        buf.writeInt(campFires.size());
-        for (final BlockPos fire : campFires)
-        {
-            buf.writeBlockPos(fire);
-        }
-
-        buf.writeInt(status.ordinal());
-        buf.writeInt(daysToGo);
-        horde.serialize(buf);
-        buf.writeBoolean(killedCitizenInRaid);
-    }
-
-    @Override
-    public void deserialize(PacketBuffer buf) {
-        id = buf.readInt();
-        spawnPoint = buf.readBlockPos();
-
-        campFires = new ArrayList<>();
-        int campFiresSize = buf.readInt();
-        for (int i = 0; i < campFiresSize; i++)
-        {
-            campFires.add(buf.readBlockPos());
-        }
-
-        status = EventStatus.values()[buf.readInt()];
-        daysToGo = buf.readInt();
-        horde = Horde.deserialize(buf);
-        killedCitizenInRaid = buf.readBoolean();
     }
 
     @Override

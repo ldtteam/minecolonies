@@ -7,7 +7,6 @@ import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
-import com.minecolonies.coremod.colony.managers.EventManager;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityArcherMummy;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityMummy;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityPharao;
@@ -37,15 +36,6 @@ public class EgyptianRaidEvent extends HordeRaidEvent
      * Cooldown for the music, to not play it too much/not overlap with itself
      */
     private int musicCooldown = 0;
-
-    static
-	{
-		EventManager.registerEventDeserializer(EGYPTIAN_RAID_EVENT_TYPE_ID, (colony, buf) -> {
-			EgyptianRaidEvent event = new EgyptianRaidEvent(colony);
-			event.deserialize(buf);
-			return event;
-		});
-	}
 
     public EgyptianRaidEvent(IColony colony)
     {
@@ -193,10 +183,4 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     {
         return PHARAO;
     }
-
-	@Override
-	public String getName()
-	{
-		return "Egyptian Raid";
-	}
 }
