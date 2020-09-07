@@ -52,11 +52,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
      */
     protected boolean isRequestFromSelf(final IRequest<?> requestToCheck)
     {
-        if (requestToCheck.getRequester().getClass().equals(this.getClass()))
-        {
-            return true;
-        }
-        return false;
+        return requestToCheck.getRequester().getClass().equals(this.getClass());
     }
 
     @Override
@@ -220,12 +216,12 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                 matchingStack.setCount(Math.min(remainingCount, matchingStack.getCount()));
 
                 final ItemStack deliveryStack = matchingStack.copy();
-                completedRequest.addDelivery(deliveryStack.copy());
+                completedRequest.addDelivery(deliveryStack);
 
                 final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, tuple.getB(), wareHouse.getWorld().getDimensionKey().func_240901_a_());
 
                 final Delivery delivery =
-                  new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy(), getDefaultDeliveryPriority(true));
+                  new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack, getDefaultDeliveryPriority(true));
 
                 final IToken<?> requestToken =
                   manager.createRequest(manager.getFactoryController()
