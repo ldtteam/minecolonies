@@ -19,6 +19,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
@@ -292,9 +293,9 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             if (storage != null)
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                if (!storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
                 {
-                    return storage;
+                    return null;
                 }
             }                
         }
