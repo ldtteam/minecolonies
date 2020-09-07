@@ -145,8 +145,9 @@ public class RecipeStorage implements IRecipeStorage
                              && itemStack.isItemEqual(stack.getItemStack()));
 
             final ItemStack container = stack.getItem().getContainerItem(stack.getItemStack());
+            final int neededCount = ItemStackUtils.isEmpty(container) ? stack.getAmount() * neededMultiplier : stack.getAmount();
 
-            if ((ItemStackUtils.isEmpty(container) && availableCount < stack.getAmount() * neededMultiplier) || (!ItemStackUtils.isEmpty(container) && availableCount < stack.getAmount()))
+            if (availableCount < neededCount)
             {
                 return false;
             }
