@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
+import com.minecolonies.coremod.colony.managers.EventManager;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
@@ -25,6 +26,15 @@ public class BarbarianRaidEvent extends HordeRaidEvent
      * This raids event id, registry entries use res locations as ids.
      */
     public static final ResourceLocation BABARIAN_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "babarian_raid");
+
+    static
+	{
+		EventManager.registerEventDeserializer(BABARIAN_RAID_EVENT_TYPE_ID, (colony, buf) -> {
+			BarbarianRaidEvent event = new BarbarianRaidEvent(colony);
+			event.deserialize(buf);
+			return event;
+		});
+	}
 
     public BarbarianRaidEvent(IColony colony)
     {
@@ -134,4 +144,10 @@ public class BarbarianRaidEvent extends HordeRaidEvent
     {
         return CHIEFBARBARIAN;
     }
+
+	@Override
+	public String getName()
+	{
+		return "Barbarian Raid";
+	}
 }

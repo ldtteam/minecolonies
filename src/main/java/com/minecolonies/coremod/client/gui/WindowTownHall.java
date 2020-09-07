@@ -11,6 +11,8 @@ import com.minecolonies.api.colony.CompactColonyReference;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonySpawnEvent;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.colony.permissions.Player;
@@ -103,7 +105,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     /**
      * The ScrollingList of the users.
      */
-    private ScrollingList permEventList;
+    private ScrollingList eventList;
 
     /**
      * The ScrollingList of the users.
@@ -129,6 +131,11 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      * The ScrollingList of all feuds.
      */
     private final ScrollingList feudsList;
+
+    /**
+     * Whether the event list should display permission events, or colony events.
+     */
+    private boolean permissionEvents;
 
     /**
      * Constructor for the town hall window.
@@ -307,7 +314,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         fillWorkOrderList();
         fillFreeBlockList();
         fillAlliesAndFeudsList();
-        fillPermEventsList();
+        fillEventsList();
         updateHappiness();
 
         if (townHall.getColony().isManualHiring())
@@ -772,38 +779,52 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         });
     }
 
-    private void fillPermEventsList()
+    private void fillEventsList()
     {
-        permEventList = findPaneOfTypeByID(LIST_PERM_EVENT, ScrollingList.class);
-        permEventList.setDataProvider(new ScrollingList.DataProvider()
+        eventList = findPaneOfTypeByID(LIST_PERM_EVENT, ScrollingList.class);
+        eventList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
             public int getElementCount()
             {
-                return building.getPermissionEvents().size();
+                return permissionEvents ? building.getPermissionEvents().size() : building.getColonyEvents().size();
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final PermissionEvent event = building.getPermissionEvents().get(index);
+            	if (permissionEvents)
+            	{
+                    final PermissionEvent event = building.getPermissionEvents().get(index);
 
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(event.getName() + (event.getId() == null ? " <fake>" : ""));
-                rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ());
+                    rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(event.getName() + (event.getId() == null ? " <fake>" : ""));
+                    rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ());
 
-                if (event.getId() == null)
-                {
-                    rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
-                }
+                    if (event.getId() == null)
+                    {
+                        rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
+                    }
 
-                final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US));
+                    final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US));
 
-                if (name.contains(KEY_TO_PERMISSIONS))
-                {
-                    Log.getLogger().warn("Didn't work for:" + name);
-                    return;
-                }
-                rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(name);
+                    if (name.contains(KEY_TO_PERMISSIONS))
+                    {
+                        Log.getLogger().warn("Didn't work for:" + name);
+                        return;
+                    }
+                    rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(name);
+            	}
+            	else
+            	{
+            		final IColonyEvent event = building.getColonyEvents().get(index);
+
+                    rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(event.getName() + "");
+                    if (event instanceof IColonySpawnEvent)
+                    {
+                    	final IColonySpawnEvent spawnEvent = (IColonySpawnEvent) event;
+                        rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(spawnEvent.getSpawnPos().getX() + " " + spawnEvent.getSpawnPos().getY() + " " + spawnEvent.getSpawnPos().getZ());
+                    }
+            	}
             }
         });
     }
@@ -1236,7 +1257,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void addPlayerToColonyClicked(@NotNull final Button button)
     {
-        final int row = permEventList.getListElementIndexByPane(button);
+        final int row = eventList.getListElementIndexByPane(button);
         if (row >= 0 && row < building.getPermissionEvents().size())
         {
             final PermissionEvent user = building.getPermissionEvents().get(row);

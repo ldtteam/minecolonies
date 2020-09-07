@@ -5,6 +5,8 @@ import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.AbstractShipRaidEvent;
+import com.minecolonies.coremod.colony.managers.EventManager;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -19,6 +21,15 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
      * This raids event id, registry entries use res locations as ids.
      */
     public static final ResourceLocation PIRATE_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "pirate_raid");
+
+    static
+	{
+		EventManager.registerEventDeserializer(PIRATE_RAID_EVENT_TYPE_ID, (colony, buf) -> {
+			PirateRaidEvent event = new PirateRaidEvent(colony);
+			event.deserialize(buf);
+			return event;
+		});
+	}
 
     /**
      * Create a new Pirate raid event.
@@ -73,4 +84,10 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
     {
         return ModEntities.CHIEFPIRATE;
     }
+
+	@Override
+	public String getName()
+	{
+		return "Pirate Raid";
+	}
 }

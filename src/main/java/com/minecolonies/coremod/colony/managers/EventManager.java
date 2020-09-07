@@ -13,6 +13,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import static com.minecolonies.api.colony.colonyEvents.EventStatus.*;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -57,6 +59,11 @@ public class EventManager implements IEventManager
      * The related structure manager, which takes care of structures for the events.
      */
     private final EventStructureManager structureManager;
+
+    /**
+     * The deserializers for the different IColonyEvents.
+     */
+    private static final Map<String, BiFunction<IColony, PacketBuffer, IColonyEvent>> EVENT_DESERIALIZERS = new HashMap<>();
 
     public EventManager(final IColony colony)
     {
@@ -274,5 +281,38 @@ public class EventManager implements IEventManager
     {
         return structureManager;
     }
-}
 
+    /**
+     * Registers the deserializer for a colony event.
+     * 
+     * @param eventId      the id of the event to deserialize.
+     * @param deserializer the function to deserialize it.
+     */
+    public static void registerEventDeserializer(ResourceLocation eventId, BiFunction<IColony, PacketBuffer, IColonyEvent> deserializer)
+    {
+    	if (!EVENT_DESERIALIZERS.containsKey(eventId.getPath()))
+    	{
+    	    EVENT_DESERIALIZERS.put(eventId.getPath(), deserializer);
+    	}
+    	else
+    	{
+    		Log.getLogger().warn("Tried to register a second colony event with id " + eventId.getPath());
+    	}
+    }
+
+    /**
+     * Deserializes an event of the given type from the {@link PacketBuffer}.
+     * 
+     * @param eventId the event id for the event to deserialize.
+     * @param buf     the buffer to serialize the event from.
+     * @return the new colony event.
+     */
+    public static IColonyEvent deserializeEvent(String eventId, IColony colony, PacketBuffer buf)
+    {
+    	if (EVENT_DESERIALIZERS.containsKey(eventId))
+    	{
+    		return EVENT_DESERIALIZERS.get(eventId).apply(colony, buf);
+    	}
+    	return null;
+    }
+}

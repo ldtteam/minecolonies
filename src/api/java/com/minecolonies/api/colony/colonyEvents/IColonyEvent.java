@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.colonyEvents;
 
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +48,13 @@ public interface IColonyEvent
     void setColony(@NotNull final IColony colony);
 
     /**
+     * Returns this events display name.
+     * 
+     * @return the name of this event.
+     */
+    String getName();
+
+    /**
      * Writes the event to NBT
      *
      * @param compound the compound to write it to.
@@ -60,6 +68,20 @@ public interface IColonyEvent
      * @param compound the compound to read it from.
      */
     void readFromNBT(final CompoundNBT compound);
+
+    /**
+     * Serializes this event to a {@link PacketBuffer}.
+     * 
+     * @param buf the buffer to serialize to.
+     */
+    void serialize(final PacketBuffer buf);
+
+    /**
+     * Deserializes this event from a {@link PacketBuffer}.
+     * 
+     * @param buf the buffer to deserialize from.
+     */
+    void deserialize(final PacketBuffer buf);
 
     /*
      *

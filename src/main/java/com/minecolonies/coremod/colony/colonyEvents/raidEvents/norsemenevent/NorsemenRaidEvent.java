@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
+import com.minecolonies.coremod.colony.managers.EventManager;
 import com.minecolonies.coremod.entity.mobs.norsemen.EntityNorsemenArcher;
 import com.minecolonies.coremod.entity.mobs.norsemen.EntityNorsemenChief;
 import com.minecolonies.coremod.entity.mobs.norsemen.EntityShieldmaiden;
@@ -25,6 +26,15 @@ public class NorsemenRaidEvent extends HordeRaidEvent
      * This raids event id, registry entries use res locations as ids.
      */
     public static final ResourceLocation NORSEMEN_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "norsemen_raid");
+
+    static
+	{
+		EventManager.registerEventDeserializer(NORSEMEN_RAID_EVENT_TYPE_ID, (colony, buf) -> {
+			NorsemenRaidEvent event = new NorsemenRaidEvent(colony);
+			event.deserialize(buf);
+			return event;
+		});
+	}
 
     public NorsemenRaidEvent(IColony colony)
     {
@@ -135,4 +145,10 @@ public class NorsemenRaidEvent extends HordeRaidEvent
     {
         return NORSEMEN_CHIEF;
     }
+
+	@Override
+	public String getName()
+	{
+		return "Norsemen Raid";
+	}
 }
