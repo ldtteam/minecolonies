@@ -853,7 +853,7 @@
   "com.minecolonies.coremod.item.bannerrallyguards.gui.error": "Error modifying banner. Please try again.",
   "block.minecolonies.blockpaperwall": "Paper Wall",
 
-  "com.minecolonies.coremod.item.gate.craft": "Crafted by the mechanic",
+  "com.minecolonies.coremod.item.gate.craft": "Crafted by the Mechanic",
   "com.minecolonies.coremod.item.gate.place": "Autoplaces parts. The max size is 5x4 which needs a stack of 20.",
 
   "com.minecolonies.coremod.gui.workerhuts.buildprio": "Pickup Prio.: ",
