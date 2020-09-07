@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.reflect.TypeToken;
-import com.ldtteam.blockout.Log;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -24,7 +22,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
@@ -33,6 +30,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.system.CallbackI;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -70,8 +68,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::accelerateFurnaces, TICKS_SECOND)
           );
     }
-    
-    
+
     @Override
     protected int getActionsDoneUntilDumping()
     {
@@ -83,12 +80,37 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     }
 
     @Override
-    protected int getExtendedOutputCount(final ItemStack primaryOutput)
+    protected int getExtendedCount(final ItemStack stack)
     {
-        if(currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
+        if (currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
         {
-            return job.getProgress();
+            int count = 0;
+            for (final BlockPos pos : getOwnBuilding().getFurnaces())
+            {
+                if (WorldUtil.isBlockLoaded(world, pos))
+                {
+                    final TileEntity entity = world.getTileEntity(pos);
+                    if (entity instanceof FurnaceTileEntity)
+                    {
+                        final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+
+                        final ItemStack smeltableSlot = furnace.getStackInSlot(SMELTABLE_SLOT);
+                        final ItemStack resultSlot = furnace.getStackInSlot(RESULT_SLOT);
+                        if (stack.isItemEqual(smeltableSlot))
+                        {
+                            count += smeltableSlot.getCount();
+                        }
+                        else if (stack.isItemEqual(resultSlot))
+                        {
+                            count += resultSlot.getCount();
+                        }
+                    }
+                }
+            }
+
+            return count;
         }
+
         return 0;
     }
 
@@ -102,6 +124,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
+        job.setMaxCraftingCount(currentTask.getRequest().getCount());
         final BlockPos furnacePos = getPositionOfOvenToRetrieveFrom();
         if (furnacePos != null)
         {
@@ -127,7 +150,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             }
         }
 
-        IAIState newState = super.getRecipe();
+        final IAIState newState = super.getRecipe();
 
         // This should only happen in the stonesmelter, but it could potentially happen with multiple fuels. 
         if(newState == QUERY_ITEMS && currentRecipeStorage != null && !getOwnBuilding().getAllowedFuel().isEmpty() && getOwnBuilding().isAllowedFuel(currentRecipeStorage.getPrimaryOutput()))
@@ -140,7 +163,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
     /**
      * Check to see how many furnaces are still processing
-     * @return
+     * @return the count.
      */
     private int countOfBurningFurnaces()
     {
@@ -232,56 +255,27 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         }
 
         final List<ItemStorage> input = storage.getCleanedInput();
-        final World world = getOwnBuilding().getColony().getWorld();
+        final int countInFurnaces = getExtendedCount(storage.getPrimaryOutput());
+        int outputInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> stack.isItemEqual(storage.getPrimaryOutput()));
+
         for (final ItemStorage inputStorage : input)
         {
-            final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            int countInFurnaces = job.getProgress();
+            final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(inputStorage.getItemStack());
+            int inputInFurnace = getExtendedCount(inputStorage.getItemStack());
+            int inputInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate);
 
-            if (countInFurnaces == 0)
-            {
-                for (final BlockPos pos : getOwnBuilding().getFurnaces())
-                {
-                    if (WorldUtil.isBlockLoaded(world, pos))
-                    {
-                        final TileEntity entity = world.getTileEntity(pos);
-                        if (entity instanceof FurnaceTileEntity)
-                        {
-                            final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-                            if (furnace.isBurning()) 
-                            {
-                                final ItemStack smeltableSlot = furnace.getStackInSlot(SMELTABLE_SLOT);
-                                final ItemStack resultSlot = furnace.getStackInSlot(RESULT_SLOT);
-                                if(!ItemStackUtils.isEmpty(smeltableSlot) && smeltableSlot.isItemEqual(inputStorage.getItemStack()))
-                                {
-                                    countInFurnaces += 1;
-                                    job.setProgress(job.getProgress() + smeltableSlot.getCount());
-                                }
-                                if(!ItemStackUtils.isEmpty(resultSlot) && resultSlot.isItemEqual(currentRecipeStorage.getPrimaryOutput()))
-                                {
-                                    countInFurnaces += 1;
-                                    job.setProgress(job.getProgress() + resultSlot.getCount());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + countInFurnaces + (job.getCraftCounter() * inputStorage.getAmount())
-                  < inputStorage.getAmount() * job.getMaxCraftingCount())
+            if (countInFurnaces + inputInFurnace + inputInInv + outputInInv < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
-                    needsCurrently = new Tuple<>(predicate, inputStorage.getAmount() * (job.getMaxCraftingCount() - countInFurnaces));
+                    needsCurrently = new Tuple<>(predicate, inputStorage.getAmount() * (job.getMaxCraftingCount() - countInFurnaces - inputInFurnace));
                     return GATHERING_REQUIRED_MATERIALS;
                 }
-            } 
+            }
 
             //if we don't have enough at all, cancel
-            int countOfInput = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + InventoryUtils.getItemCountInProvider(getOwnBuilding(), predicate) + countInFurnaces;
-            if (countOfInput <inputStorage.getAmount() * job.getMaxCraftingCount() && countOfBurningFurnaces() == 0 && getPositionOfOvenToRetrieveFrom() == null)
+            int countOfInput = inputInInv + InventoryUtils.getItemCountInProvider(getOwnBuilding(), predicate) + countInFurnaces + inputInFurnace + outputInInv;
+            if (countOfInput < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 job.finishRequest(false);
                 resetValues();
@@ -332,11 +326,16 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
             job.setCraftCounter(job.getCraftCounter() + resultCount);
             job.setProgress(job.getProgress() - resultCount);
+            if (job.getMaxCraftingCount() == 0)
+            {
+                job.setMaxCraftingCount(currentRequest.getRequest().getCount());
+            }
             if(job.getCraftCounter() >= job.getMaxCraftingCount() && job.getProgress() <= 0)
             {
                 job.finishRequest(true);
                 resetValues();
                 currentRecipeStorage = null;
+                incrementActionsDoneAndDecSaturation();
                 return IDLE;
             }
         }
@@ -356,7 +355,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
           new InvWrapper(furnace), RESULT_SLOT,
           worker.getInventoryCitizen());
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
-        this.incrementActionsDoneAndDecSaturation();
     }
 
     /**
@@ -422,8 +420,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData()
-                  .triggerInteraction(new StandardInteraction(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
             }
             setDelay(STANDARD_DELAY);
             return START_WORKING;
@@ -438,92 +435,96 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         final int burningCount = countOfBurningFurnaces();
         final TileEntity entity = world.getTileEntity(walkTo);
-        if (entity instanceof FurnaceTileEntity)
+        if (entity instanceof FurnaceTileEntity && currentRecipeStorage != null)
         {
             final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
             final List<ItemStack> possibleFuels = getOwnBuilding().getAllowedFuel();
 
+            possibleFuels.removeIf(stack -> stack.isItemEqual(currentRecipeStorage.getPrimaryOutput()));
+            // There is always only one input.
+            possibleFuels.removeIf(stack -> stack.isItemEqual(currentRecipeStorage.getCleanedInput().get(0).getItemStack()));
+
             //Stoke the furnaces
-            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> item.isItemEqual(candidate)))
+            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(item::isItemEqual))
                   && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                  worker.getInventoryCitizen(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> item.isItemEqual(candidate)), STACKSIZE,
+                  worker.getInventoryCitizen(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(item::isItemEqual), STACKSIZE,
                   new InvWrapper(furnace), FUEL_SLOT);
             }
 
-            if(currentRecipeStorage != null)
+            final int maxFurnaces = getMaxUsableFurnaces();
+            final Predicate<ItemStack> smeltable = stack -> currentRecipeStorage.getCleanedInput().get(0).getItemStack().isItemEqual(stack);
+            final int smeltableInFurnaces = getExtendedCount(currentRecipeStorage.getCleanedInput().get(0).getItemStack());
+            final int resultInFurnaces = getExtendedCount(currentRecipeStorage.getPrimaryOutput());
+            final int resultInPlayerInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> stack.isItemEqual(currentRecipeStorage.getPrimaryOutput()));
+
+            final int targetCount = currentRequest.getRequest().getCount() - smeltableInFurnaces - resultInFurnaces - resultInPlayerInv;
+
+            if (targetCount <= 0)
             {
-                final int maxFurnaces = getMaxUsableFurnaces();
-                final Predicate<ItemStack> smeltable = stack -> currentRecipeStorage.getCleanedInput().get(0).getItemStack().isItemEqual(stack);
-                final int targetCount = currentRequest.getRequest().getCount();
-                final int amountOfSmeltableInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), smeltable);
-                final int amountOfSmeltableInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), smeltable);
+                return START_WORKING;
+            }
+            final int amountOfSmeltableInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), smeltable);
+            final int amountOfSmeltableInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), smeltable);
 
-                if(worker.getHeldItem(Hand.MAIN_HAND).isEmpty())
+            if (worker.getHeldItem(Hand.MAIN_HAND).isEmpty())
+            {
+                worker.setHeldItem(Hand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(0).getItemStack().copy());
+            }
+            if (amountOfSmeltableInInv > 0)
+            {
+                if (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace))
                 {
-                    worker.setHeldItem(Hand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(0).getItemStack().copy());
-                }
-                if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), smeltable))
-                {
-                    if (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace))
+                    int toTransfer = 0;
+                    if (burningCount < maxFurnaces)
                     {
-                        int remainingToSmelt = job.getMaxCraftingCount() - (job.getProgress() + job.getCraftCounter());
-                        int toTransfer = 0;
-                        if(burningCount < maxFurnaces)
-                        {
-                            final int availableFurnaces = maxFurnaces - burningCount;
+                        final int availableFurnaces = maxFurnaces - burningCount;
 
-                            if(remainingToSmelt > STACKSIZE * availableFurnaces)
-                            {
-                                toTransfer = STACKSIZE;
-                            }
-                            else {
-                                //We need to split stacks and spread them across furnaces for best performance
-                                //We will front-load the remainder
-                                toTransfer = Math.min((remainingToSmelt / availableFurnaces) + (remainingToSmelt % availableFurnaces), STACKSIZE);
-                            }
+                        if (targetCount > STACKSIZE * availableFurnaces)
+                        {
+                            toTransfer = STACKSIZE;
                         }
-                        if(toTransfer > 0)
+                        else
                         {
-
-                            if (walkToBlock(walkTo))
-                            {
-                                return getState();
-                            }
-                            worker.getCitizenItemHandler().hitBlockWithToolInHand(walkTo);
-                            int transferred = InventoryUtils.transferXInItemHandlerIntoSlotInItemHandler(
-                                                worker.getInventoryCitizen(), 
-                                                smeltable, 
-                                                toTransfer,
-                                                new InvWrapper(furnace), 
-                                                SMELTABLE_SLOT);
-                            job.setProgress(job.getProgress() + transferred);
-                            }
+                            //We need to split stacks and spread them across furnaces for best performance
+                            //We will front-load the remainder
+                            toTransfer = Math.min((targetCount / availableFurnaces) + (targetCount % availableFurnaces), STACKSIZE);
+                        }
+                    }
+                    if (toTransfer > 0)
+                    {
+                        if (walkToBlock(walkTo))
+                        {
+                            return getState();
+                        }
+                        worker.getCitizenItemHandler().hitBlockWithToolInHand(walkTo);
+                        InventoryUtils.transferXInItemHandlerIntoSlotInItemHandler(
+                          worker.getInventoryCitizen(),
+                          smeltable,
+                          toTransfer,
+                          new InvWrapper(furnace),
+                          SMELTABLE_SLOT);
                     }
                 }
-                else if(amountOfSmeltableInInv < targetCount 
-                && amountOfSmeltableInBuilding >= targetCount - amountOfSmeltableInInv
-                && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
-                {
-                    needsCurrently = new Tuple<>(smeltable, targetCount);
-                    return GATHERING_REQUIRED_MATERIALS;
-                } 
-                else if (burningCount == 0)
-                {
-                    //This is a safety net for the AI getting way out of sync with it's tracking. It shouldn't happen. 
-                    job.finishRequest(false);
-                    resetValues();
-                    return IDLE;
-                }
-            }   
-        }
-        else
-        {
-            if (!(world.getBlockState(walkTo).getBlock() instanceof FurnaceBlock))
-            {
-                getOwnBuilding().removeFromFurnaces(walkTo);
             }
+            else if (amountOfSmeltableInBuilding >= targetCount - amountOfSmeltableInInv
+                       && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
+            {
+                needsCurrently = new Tuple<>(smeltable, targetCount);
+                return GATHERING_REQUIRED_MATERIALS;
+            }
+            else
+            {
+                //This is a safety net for the AI getting way out of sync with it's tracking. It shouldn't happen.
+                job.finishRequest(false);
+                resetValues();
+                return IDLE;
+            }
+        }
+        else if (!(world.getBlockState(walkTo).getBlock() instanceof FurnaceBlock))
+        {
+            getOwnBuilding().removeFromFurnaces(walkTo);
         }
         walkTo = null;
         setDelay(STANDARD_DELAY);
