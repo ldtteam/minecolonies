@@ -339,10 +339,8 @@ public final class ChunkDataHelper
                 {
                     continue;
                 }
-                else
-                {
-                    areAllChunksAdded = false;
-                }
+
+                areAllChunksAdded = false;
 
                 @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(colonyId, ChunkPos.asLong(i, j), dimension, center);
                 chunkManager.addChunkStorage(i, j, newStorage);
