@@ -854,7 +854,7 @@
   "block.minecolonies.blockpaperwall": "Paper Wall",
 
   "com.minecolonies.coremod.item.gate.craft": "Crafted by the mechanic",
-  "com.minecolonies.coremod.item.gate.place": "Autoplaces parts, max 5x4 which need a stack of 20",
+  "com.minecolonies.coremod.item.gate.place": "Autoplaces parts. The max size is 5x4 which needs a stack of 20.",
 
   "com.minecolonies.coremod.gui.workerhuts.buildprio": "Pickup Prio.: ",
   "item.supplychestdeployer.invalid": "You must place it in a fitting pool of water.",
