@@ -340,4 +340,10 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     {
         return false;
     }
+
+    @Override
+    public void processOfflineTime(final long time)
+    {
+        // Do Nothing.
+    }
 }

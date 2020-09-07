@@ -276,7 +276,7 @@
   "block.minecolonies.blockconstructiontape.name": "Construction Tape",
   "block.minecolonies.blockhutguardtower.name": "Guard Tower",
   "block.minecolonies.blockhutfield.name": "Field",
-  
+
   "tile.blockhut.messagenopermission": "You don't have permission to open huts in %s.",
   "tile.blockhut.messagenopermissionplace": "You don't have permission to place huts in %s.",
   "tile.blockhut.messagetoofarfromtownhall": "You cannot place a building outside of your colony! Expand your colony by upgrading the Town Hall and/or building and upgrading Guard Towers and Barracks.",
@@ -316,7 +316,7 @@
 
   "entity.builder.messagebuildstart": " started building %s.",
   "entity.builder.messagebuildcomplete": " finished building %s.",
-  "entity.builder.messagebuildcomplete_generic": " finished building %s.",
+  "entity.builder.messagebuildcomplete_generic": "%s finished building %s.",
   "entity.builder.messageremovalcomplete": " finished deconstructing building %s.",
   "entity.builder.messagebuildtoohigh": "%s is too high! Please lower the building below Y 256.",
   "entity.builder.messagebuildtoolow": "%s is too low! Please raise the building above Y 0.",
@@ -373,7 +373,7 @@
   "com.minecolonies.command.deleteable.success": "Changed deletable flag of colony id %s. It is now set to %s.",
   "com.minecolonies.command.rsreset.success": "The request system for colony %s has been restarted in 1.618 seconds.",
   "com.minecolonies.command.rsresetall.success": "The request systems for all colonies have been restarted in 1.618 seconds.",
-  
+
   "com.minecolonies.command.citizeninfo.desc": "§2ID: §f %d §2 Name: §f %s",
   "com.minecolonies.command.citizeninfo.skills": "§2Athletics: §f%s §2Dexterity: §f%s §2Strength: §f%s\n§2Agility: §f%s §2Stamina: §f%s §2Mana: §f%s\n§2Adaptability: §f%s §2Focus: §f%s §2Creativity: §f%s\n§2Knowledge: §f%s §2Intelligence: §f%s",
   "com.minecolonies.command.citizeninfo.job": "§2Job: §f%s",
@@ -587,6 +587,7 @@
   "com.minecolonies.coremod.gui.workerhuts.assign": "Assign the guard to the job:",
   "com.minecolonies.coremod.gui.workerhuts.patrol": "Find patrol target:",
   "com.minecolonies.coremod.gui.workerhuts.retrieve": "Try to retreat on low health:",
+  "com.minecolonies.coremod.gui.workerhuts.trainees": "Try to hire from training facility:",
   "com.minecolonies.coremod.gui.workerhuts.knight": "Knight",
   "com.minecolonies.coremod.gui.workerhuts.ranger": "Archer",
   "com.minecolonies.coremod.gui.workerhuts.modem": "Manually",
@@ -720,7 +721,7 @@
   "com.minecolonies.coremod.gui.workerhuts.saplinglist": "Saplings",
 
   "com.minecolonies.coremod.gui.townhall.housing": "Housing Assignment Mode:",
-  "com.minecolonies.coremod.gui.townhall.movein": "Children will be born (if there's space):",
+  "com.minecolonies.coremod.gui.townhall.movein": "Kids will be born:",
   "com.minecolonies.coremod.gui.home.assign": "Assign %d citizens",
   "com.minecolonies.coremod.gui.workerhuts.unassign": "Remove Citizen",
   "block.minecolonies.blockminecoloniesrack": "Rack",
@@ -830,7 +831,7 @@
 
   "item.minecolonies.clipboard": "Clipboard",
 
-  "com.minecolonies.coremod.item.clipboard.needcolony": "Please shift + right-click your Town Hall to register your clipboard to the colony.",
+  "com.minecolonies.coremod.item.clipboard.needcolony": "Please sneak + right-click your Town Hall to register your clipboard to the colony.",
   "com.minecolonies.coremod.item.clipboard.registered": "Registered to colony %d.",
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
   "com.minecolonies.coremod.buildings.warehouse.name": "Warehouse",
@@ -875,6 +876,12 @@
   "event.minecolonies.raidmessage_p2": "§4Citizens report rumors of pirates close to %s of %s! They brought a ship, better destroy it.",
   "event.minecolonies.raidmessage_p3": "§4Arr Comrade! There's some darn pirates from %s comin' for %s tonight! They sailed here and will continue attacking until we destroy their caravel.",
   "event.minecolonies.raidmessage_p4": "§4A huge horde of pirates are sailin' %s of %s and they're not here to play! Their rigorous waves will hit us unless we destroy their galleon!",
+
+  "com.minecolonies.coremod.raid.amazon.name": "Amazons",
+  "com.minecolonies.coremod.raid.egyptian.name": "Mummies",
+  "com.minecolonies.coremod.raid.barbarian.name": "Barbarians",
+  "com.minecolonies.coremod.raid.pirate.name": "Pirates",
+  "com.minecolonies.coremod.raid.norsemen.name": "Norsemen",
 
   "com.minecolonies.coremod.gui.workerhuts.toggleallon": "Toggle all on",
   "com.minecolonies.coremod.gui.workerhuts.togglealloff": "Toggle all off",
@@ -1018,7 +1025,7 @@
   "com.minecolonies.coremod.gui.workerhuts.library": "Library",
 
   "item.minecolonies.resourcescroll": "Resource-Scroll",
-  "com.minecolonies.coremod.gui.resourcescroll.nobuilder": "Couldn't find a registered Builder, please shift + right-click a Builder's Hut.",
+  "com.minecolonies.coremod.gui.resourcescroll.nobuilder": "Couldn't find a registered Builder. Please sneak + right-click a Builder's Hut to register the resource scroll.",
 
   "com.minecolonies.coremod.gui.workerhuts.baker.recipes": "Recipes",
   "com.minecolonies.coremod.gui.workerhuts.gettool": "Get Guard Tool",
@@ -1387,6 +1394,8 @@
   "com.minecolonies.coremod.research.requirementnotmet": "Minimum research requirement not met!",
   "com.minecolonies.coremod.research.started": "Research successfully started!",
   "com.minecolonies.coremod.research.havetounlock": "Build a University and research this hut to unlock it!",
+  "com.minecolonies.coremod.research.item1": "§cThe %s requires research",
+  "com.minecolonies.coremod.research.item2": "§cat the University to be built.",
 
   "com.minecolonies.coremod.info.builder.0.name": "Introduction",
   "com.minecolonies.coremod.info.builder.0": "The Builder is the heart of your colony. Without them, you wouldn't be able to get anything done!\n Every hut worker has to have their building built to at least level 1 before they can do anything, except the Builder. If the Builder has a hut at level 0 (no hut), they can only build one thing, their own hut.\n\n For your Builder to build, upgrade, reposition, or repair a hut that isn't their own, their hut must be at least the same level as the other hut. For example, the Builder's Hut must be level 3 or above to build a level 3 hut.",
@@ -1548,7 +1557,7 @@
 
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!",
 
-  "com.minecolonies.coremod.resourcescroll.nobuilder": "Please register a Builder's Hut first by shift + right-clicking one!",
+  "com.minecolonies.coremod.resourcescroll.nobuilder": "Please register a Builder's Hut first by sneak + right-clicking one!",
   "com.minecolonies.coremod.resourcescroll.null": "Something went wrong opening the resource scroll, please try again!",
   "com.minecolonies.coremod.gui.workerhuts.hospital": "Hospital",
   "block.minecolonies.blockhuthospital": "Hospital",
@@ -1601,7 +1610,7 @@
   "com.minecolonies.coremod.crafters.recipeimproved.0": "Your %s just successfully improved their recipe for %s by reducing the need for %s.",
   "com.minecolonies.coremod.crafters.recipeimproved.1": "%4$s just successfully reduced the need for %3$s when they make %2$s.",
   "com.minecolonies.coremod.crafters.recipeimproved.2": "%4$s the %1$s just successfully improved their recipe for %2$s and no longer needs as much %3$s to make it.",
-  
+
   "com.minecolonies.coremod.workorder.outofcolony": "The build order for %s at x: %d, z: %d is outside of the colony and thus cannot be built!",
 
   "com.minecolonies.coremod.entity.citizen.no.unemployment": "Having a job would really be great.",
@@ -1700,7 +1709,7 @@
   "com.minecolonies.coremod.gui.workerhuts.guide.arrow": "Make sure to check out all the building's pages!",
   "com.minecolonies.coremod.gui.workerhuts.guide.chest": "Here you can have an overview of the combined building inventory.",
 
-  "com.minecolonies.coremod.gui.tavern.visitordeath": "The visitor %s died from %s and word spreads around that your Tavern is a dangerous place. You are likely to see less visitors in the future!",
+  "com.minecolonies.coremod.gui.tavern.visitordeath": "The visitor %s died from %s at %s and word spreads around that your Tavern is a dangerous place. You are likely to see less visitors in the future!",
   "com.minecolonies.coremod.gui.chat.showstats": "Show citizen stats",
   "com.minecolonies.coremod.gui.chat.recruit": "Recruit for ",
   "com.minecolonies.coremod.recruit.message": "%s has decided to stay in your colony as a citizen!",
@@ -1730,7 +1739,7 @@
   "com.minecolonies.coremod.gui.chat.recruitstory19": "seems adept at using swords and says 'If by my life or death I can protect you, I will. You have my sword.'",
   "com.minecolonies.coremod.gui.chat.recruitstory20": "is never late, nor early. %s arrives precisely when they mean to.",
 
-  "com.minecolonies.coremod.gui.chat.hometoofar": "I have to walk a long way home from work every day, it would be nice if I could live somewhere closer.",
+  "com.minecolonies.coremod.gui.chat.hometoofar": "I have to walk a long way home from work every day. It would be nice if I could live somewhere closer.",
 
   "com.minecolonies.coremod.gui.beekeeper.notcollect": "Collect honey",
   "com.minecolonies.coremod.gui.beekeeper.collect": "Collect honeycomb",
@@ -1755,5 +1764,7 @@
   "com.minecolonies.coremod.gui.townhall.edit_flag": "Edit colony flag",
   "block.minecolonies.colony_banner": "Colony Flag Banner",
   "com.minecolonies.coremod.gui.locate": "Locate",
-  "com.minecolonies.coremod.locating": "Successfully located rack with respective Stack..."
+  "com.minecolonies.coremod.locating": "Successfully located rack with respective item(s).",
+
+  "entity.researcher.moreknowledge": "During your absence, your Researchers used the time to do some extra work. This will speed up their current research a bit!"
 }

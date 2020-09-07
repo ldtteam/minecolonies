@@ -77,7 +77,7 @@ public final class BlockPosUtil
      * @param random a random object.
      * @return a tuple of two directions.
      */
-    private static Tuple<Direction, Direction> getRandomDirectionTuple(final Random random)
+    public static Tuple<Direction, Direction> getRandomDirectionTuple(final Random random)
     {
         return new Tuple<>(Direction.random(random), Direction.random(random));
     }

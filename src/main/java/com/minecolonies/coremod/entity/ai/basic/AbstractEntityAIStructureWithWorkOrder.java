@@ -5,7 +5,6 @@ import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.*;
@@ -161,7 +160,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         super.loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
         workOrder.setCleared(false);
-        workOrder.setRequested(false);
+        workOrder.setRequested(removal);
     }
 
     /**

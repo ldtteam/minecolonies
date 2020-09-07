@@ -1,10 +1,11 @@
-package com.minecolonies.coremod.entity.pathfinding;
+package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
+import com.minecolonies.coremod.entity.pathfinding.Node;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
