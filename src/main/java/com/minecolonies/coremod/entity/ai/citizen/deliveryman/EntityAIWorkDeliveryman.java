@@ -486,7 +486,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (nextPickUp == null || parallelDeliveryCount > 1 + (getSecondarySkillLevel() / 5.0))
         {
-            job.setParallelDeliveries(parallelDeliveryCount);
+            job.setParallelDeliveries(parallelDeliveryCount - 1);
             return DELIVERY;
         }
 
