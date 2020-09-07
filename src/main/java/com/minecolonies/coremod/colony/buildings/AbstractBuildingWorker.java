@@ -187,7 +187,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
     {
         IRecipeStorage firstFound = null;
-        HashMap<IRecipeStorage, Integer> candidates = new HashMap<>();
+        final HashMap<IRecipeStorage, Integer> candidates = new HashMap<>();
+
 
         //Scan through and collect all possible recipes that could fulfill this, taking special note of the first one
         for (final IToken<?> token : recipes)
@@ -211,7 +212,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 final ItemStorage checkItem = foo.getKey().getCleanedInput().stream()
                                                 .sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed())
                                                 .findFirst().get();
-                candidates.replace(foo.getKey(), getWarehouseCount(checkItem));
+                candidates.put(foo.getKey(), getWarehouseCount(checkItem));
             }
             return candidates.entrySet().stream()
                             .sorted(Comparator.comparing(itemEntry -> itemEntry.getValue(), Comparator.reverseOrder()))
