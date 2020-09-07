@@ -58,7 +58,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
 
                 recipes.put(storage.getCleanedInput().get(0), storage);
 
-                final ItemStack output = recipe.getRecipeOutput();
+                final ItemStack output = recipe.getRecipeOutput().copy();
                 output.setCount(1);
                 reverseRecipes.put(new ItemStorage(output), storage);
             }
