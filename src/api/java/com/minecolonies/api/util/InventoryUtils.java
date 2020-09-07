@@ -1679,12 +1679,11 @@ public class InventoryUtils
       final ItemStack stack,
       @NotNull final IItemHandler targetHandler)
     {
-        ItemStack sourceStack = stack.copy();
-
-        if (ItemStackUtils.isEmpty(sourceStack))
+        if (ItemStackUtils.isEmpty(stack))
         {
-            return sourceStack;
+            return stack;
         }
+        ItemStack sourceStack = stack.copy();
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
