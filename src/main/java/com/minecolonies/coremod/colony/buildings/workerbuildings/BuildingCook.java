@@ -39,6 +39,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -104,7 +105,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         keepX.put(ItemStackUtils.ISFOOD, new Tuple<>(STACKSIZE, true));
         keepX.put(ItemStackUtils.ISCOOKABLE, new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
-        keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getContainerItem()), new Tuple<>(STACKSIZE, false));
+        keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getContainerItem()) && !stack.getContainerItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
     }
 
     /**
