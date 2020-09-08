@@ -1176,7 +1176,7 @@ public class CitizenData implements ICitizenData
     @Override
     public void onGoSleep()
     {
-        if (false && random.nextInt(NO_GUARD_COMPLAIN_CHANCE) != 0)
+        if (random.nextInt(NO_GUARD_COMPLAIN_CHANCE) != 0)
         {
             return;
         }
