@@ -14,6 +14,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
@@ -30,7 +31,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.system.CallbackI;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -133,19 +133,22 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return RETRIEVING_END_PRODUCT_FROM_FURNACE;
         }
 
-        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        if(currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
         {
-            final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof FurnaceTileEntity)
+            for (final BlockPos pos : getOwnBuilding().getFurnaces())
             {
-                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-                if (furnace.isBurning() || !isEmpty(furnace.getStackInSlot(RESULT_SLOT)) || !isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT)))
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof FurnaceTileEntity)
                 {
-                    if (furnace.isBurning())
+                    final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+                    if (furnace.isBurning() || !isEmpty(furnace.getStackInSlot(RESULT_SLOT)) || !isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT)))
                     {
-                        setDelay(TICKS_20);
+                        if (furnace.isBurning())
+                        {
+                            setDelay(TICKS_20);
+                        }
+                        return CRAFT;
                     }
-                    return CRAFT;
                 }
             }
         }
@@ -542,6 +545,13 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                 worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(FURNACE_USER_NO_FUEL), ChatPriority.BLOCKING));
             }
             return getState();
+        }
+
+        if(currentRecipeStorage != null)
+        {
+            possibleFuels.removeIf(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()));
+            // There is always only one input.
+            possibleFuels.removeIf(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getCleanedInput().get(0).getItemStack()));
         }
 
         final int amountOfFuelInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> ItemStackUtils.compareItemStacksIgnoreStackSize(candidate, item)));
