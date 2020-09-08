@@ -136,7 +136,7 @@ public final class ShipBasedRaiderUtils
         }
 
         final World world = colony.getWorld();
-        final String shipSize = ShipSize.getShipForRaidLevel(raidLevel).schematicPrefix + event.getShipDesc();
+        final String shipSize = ShipSize.getShipForRaiderAmount(raidLevel).schematicPrefix + event.getShipDesc();
 
         final CreativeBuildingStructureHandler
           structure = new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize, new PlacementSettings(), true);

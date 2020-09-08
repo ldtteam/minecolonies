@@ -28,6 +28,11 @@ public class EntityAIAttackArcher extends Goal
      */
     private static final int MAX_ATTACK_DELAY = 80;
 
+    /**
+     * Difficulty leve at which arrows do pierce
+     */
+    private static final double ARROW_PIERCE_DIFFICULTY = 3.0d;
+
     private static final double                        PITCH_MULTIPLIER               = 0.4;
     private static final double                        HALF_ROTATION                  = 180;
     private static final double                        ATTACK_SPEED                   = 1.3;
@@ -109,7 +114,7 @@ public class EntityAIAttackArcher extends Goal
         }
         tickTimer = 10;
 
-        if ((entity.getDistance(target) >= MAX_ATTACK_DISTANCE && !EntityUtils.isFlying(target)) || !entity.canEntityBeSeen(target))
+        if ((entity.getDistance(target) >= MAX_ATTACK_DISTANCE * Math.max(entity.getDifficulty(), 2.0d) && !EntityUtils.isFlying(target)) || !entity.canEntityBeSeen(target))
         {
             entity.getNavigator().tryMoveToEntityLiving(target, ATTACK_SPEED);
         }
@@ -140,6 +145,12 @@ public class EntityAIAttackArcher extends Goal
                 final double dist3d = MathHelper.sqrt(yVector * yVector + xVector * xVector + zVector * zVector);
                 //Lower the variable higher the chance that the arrows hits the target.
                 arrowEntity.setDamage(entity.getAttribute(MOB_ATTACK_DAMAGE).getValue());
+
+                if (entity.getDifficulty() > ARROW_PIERCE_DIFFICULTY)
+                {
+                    arrowEntity.setPierceLevel((byte) 2);
+                }
+
                 if (EntityUtils.isFlying(target))
                 {
                     arrowEntity.setFire(200);
