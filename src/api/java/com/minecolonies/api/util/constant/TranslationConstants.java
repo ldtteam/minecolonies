@@ -218,6 +218,8 @@ public final class TranslationConstants
     @NonNls
     public static final String LEAVING_COLONY_MESSAGE_NOTIFY                                       = "com.minecolonies.coremod.leavingcolonynotify";
     @NonNls
+    public static final String COLONY_SIZE_CHANGE                                                  = "com.minecolonies.coremod.colonysizechange";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_WAITING_FOR                         = "com.minecolonies.coremod.status.waiting";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT                   = "com.minecolonies.coremod.status.worker.goingtohut";

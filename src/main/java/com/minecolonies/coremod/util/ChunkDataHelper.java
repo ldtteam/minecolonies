@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.util;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.Log;
@@ -27,8 +29,10 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.nio.file.Path;
 
+import static com.ldtteam.structurize.util.LanguageHandler.*;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
+import static com.minecolonies.api.util.constant.TranslationConstants.COLONY_SIZE_CHANGE;
 import static com.minecolonies.coremod.MineColonies.*;
 
 /**
@@ -295,6 +299,7 @@ public final class ChunkDataHelper
         final World world = colony.getWorld();
         final int colonyId = colony.getID();
         final ResourceLocation dimension = colony.getDimension();
+        boolean areAllChunksAdded = true;
 
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (chunkManager == null)
@@ -339,9 +344,17 @@ public final class ChunkDataHelper
                     continue;
                 }
 
+                areAllChunksAdded = false;
+
                 @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(colonyId, ChunkPos.asLong(i, j), dimension, center);
                 chunkManager.addChunkStorage(i, j, newStorage);
             }
+        }
+
+        if (areAllChunksAdded && add && range > 0)
+        {
+            final IBuilding building = colony.getBuildingManager().getBuilding(center);
+            sendPlayersMessage(colony.getImportantMessageEntityPlayers(), COLONY_SIZE_CHANGE, range, building.getSchematicName());
         }
     }
 
