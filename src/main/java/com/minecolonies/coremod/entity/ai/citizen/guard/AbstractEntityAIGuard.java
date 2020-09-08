@@ -99,6 +99,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private static final int TARGET_RANGE_ATTACK_RANGE_BONUS = 18;
 
     /**
+     * The amount of time the guard counts as in combat after last combat action
+     */
+    protected static final int COMBAT_TIME = 30;
+
+    /**
      * How many more ticks we have until next attack.
      */
     protected int currentAttackDelay = 0;
@@ -181,7 +186,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * Timer for fighting, goes down to 0 when hasnt been fighting for a while
      */
-    private int fighttimer = 0;
+    protected int fighttimer = 0;
 
     /**
      * The sleeping guard we found
@@ -424,7 +429,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 return START_WORKING;
             }
 
-            fighttimer = 30;
+            fighttimer = COMBAT_TIME;
             equipInventoryArmor();
             moveInAttackPosition();
             return getAttackState();

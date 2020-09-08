@@ -9,11 +9,6 @@ import net.minecraft.util.math.BlockPos;
 public interface IColonyRaidEvent extends IColonyEntitySpawnEvent
 {
     /**
-     * Set that a citizen was killed in a raid.
-     */
-    void setKilledCitizenInRaid();
-
-    /**
      * Get the normal raider type.
      *
      * @return the normal type.
