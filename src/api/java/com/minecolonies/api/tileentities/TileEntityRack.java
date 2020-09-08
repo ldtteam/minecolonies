@@ -294,7 +294,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             return (AbstractTileEntityRack) tileEntity;
         }
 
-        single = true;
+        setSingle(true);
         relativeNeighbor = null;
         return null;
     }
@@ -339,7 +339,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             }
             else
             {
-                single = false;
+                setSingle(false);
             }
         }
         final ListNBT inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
@@ -500,7 +500,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     {
         if (neighbor == null)
         {
-            single = true;
+            setSingle(true);
             this.relativeNeighbor = null;
             markDirty();
         }
@@ -508,7 +508,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         else if (this.pos.subtract(neighbor).getY() == 0)
         {
             this.relativeNeighbor = this.pos.subtract(neighbor);
-            single = false;
+            setSingle(false);
             markDirty();
             return true;
         }

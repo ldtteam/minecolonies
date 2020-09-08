@@ -340,7 +340,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                                                                                                          || info.getBlockInfo().getState().getBlock()
                                                                                                               == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
                                                                                                          || info.getBlockInfo().getState().getBlock()
-                                                                                                              == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution),
+                                                                                                              == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution
+                                                                                                         || handler.getWorld().getBlockState(pos).getBlock() instanceof IBuilderUndestroyable),
                   true);
                 break;
             case CLEAR:
