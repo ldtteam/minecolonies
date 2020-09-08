@@ -197,8 +197,17 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      */
     void onUpgradeComplete(int newLevel);
 
+    /**
+     * Whether this building has a guard building nearby
+     *
+     * @return true/false
+     */
     boolean isGuardBuildingNear();
 
+    /**
+     * Sets whether this building has a guard building nearby
+     * @param guardBuildingNear
+     */
     void setGuardBuildingNear(boolean guardBuildingNear);
 
     /**
