@@ -62,11 +62,13 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMPROVED;;
+import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMPROVED;
+
+;
 
 /**
  * The abstract class for each worker building.
@@ -661,6 +663,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             super.removeCitizen(citizen);
             citizen.setWorkBuilding(null);
             cancelAllRequestsOfCitizen(citizen);
+            citizen.setVisibleStatus(null);
         }
     }
 

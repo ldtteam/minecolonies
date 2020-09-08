@@ -18,7 +18,6 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 
-import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.NotNull;
@@ -157,7 +156,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         currentRequest = currentTask;
         job.setMaxCraftingCount(currentRequest.getRequest().getCount());
         final int currentCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> stack.isItemEqual(currentRecipeStorage.getPrimaryOutput()));
-        final int inProgressCount = getExtendedOutputCount(currentRecipeStorage.getPrimaryOutput());
+        final int inProgressCount = getExtendedCount(currentRecipeStorage.getPrimaryOutput());
 
         final int countPerIteration = currentRecipeStorage.getPrimaryOutput().getCount();
         final int doneOpsCount = currentCount / countPerIteration;
@@ -172,6 +171,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             final int remaining = !ItemStackUtils.isEmpty(container) ? inputStorage.getAmount() :inputStorage.getAmount() * remainingOpsCount ;
             if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
                   + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
+                  + getExtendedCount(inputStorage.getItemStack())
                   < remaining && currentRecipeStorage.getIntermediate() != Blocks.FURNACE)
             {
                 job.finishRequest(false);
@@ -185,12 +185,12 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     }
 
     /**
-     * Get an extended output count that can be overriden.
+     * Get an extended count that can be overriden.
      *
-     * @param primaryOutput the type of output.
-     * @return the output count that should be added too.
+     * @param stack the stack to add.
+     * @return the additional quantities (for example in a furnace).
      */
-    protected int getExtendedOutputCount(final ItemStack primaryOutput)
+    protected int getExtendedCount(final ItemStack stack)
     {
         return 0;
     }
@@ -224,7 +224,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     protected IAIState checkForItems(@NotNull final IRecipeStorage storage)
     {
-        final int inProgressCount = getExtendedOutputCount(currentRecipeStorage.getPrimaryOutput());
+        final int inProgressCount = getExtendedCount(currentRecipeStorage.getPrimaryOutput());
         final int countPerIteration = currentRecipeStorage.getPrimaryOutput().getCount();
         final int progressOpsCount = inProgressCount / countPerIteration;
 
