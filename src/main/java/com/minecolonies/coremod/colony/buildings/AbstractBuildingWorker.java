@@ -662,6 +662,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             super.removeCitizen(citizen);
             citizen.setWorkBuilding(null);
             cancelAllRequestsOfCitizen(citizen);
+            citizen.setVisibleStatus(null);
         }
     }
 

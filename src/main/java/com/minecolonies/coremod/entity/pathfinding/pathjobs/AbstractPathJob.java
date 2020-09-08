@@ -675,7 +675,18 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         doDebugPrinting(points);
 
-        return new Path(Arrays.asList(points), targetNode.pos, false);
+        return new Path(Arrays.asList(points), getPathTargetPos(targetNode), isAtDestination(targetNode));
+    }
+
+    /**
+     * Creates the path for the given points
+     *
+     * @param finalNode
+     * @return
+     */
+    protected BlockPos getPathTargetPos(final Node finalNode)
+    {
+        return finalNode.pos;
     }
 
     /**

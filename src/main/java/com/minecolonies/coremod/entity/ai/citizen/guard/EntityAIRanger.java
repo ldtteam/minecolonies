@@ -211,6 +211,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
             return state;
         }
 
+        fighttimer = COMBAT_TIME;
         final double sqDistanceToEntity = BlockPosUtil.getDistanceSquared2D(worker.getPosition(), new BlockPos(target.getPositionVec()));
         final boolean canSee = worker.getEntitySenses().canSee(target);
         final double sqAttackRange = getRealAttackRange() * getRealAttackRange();
@@ -272,7 +273,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
             strafingTime = -1;
 
             // Fleeing
-            if (!fleeing && !movingToTarget && sqDistanceToEntity < RANGED_FLEE_SQDIST && tooCloseNumTicks > 5)
+            if (!fleeing && !movingToTarget && sqDistanceToEntity < RANGED_FLEE_SQDIST && tooCloseNumTicks > 3)
             {
                 fleePath = worker.getNavigator().moveAwayFromLivingEntity(target, getRealAttackRange() / 2.0, getCombatMovementSpeed());
                 fleeing = true;

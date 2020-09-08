@@ -67,6 +67,12 @@ public class PathJobMoveToLocation extends AbstractPathJob
     }
 
     @Override
+    protected BlockPos getPathTargetPos(final Node finalNode)
+    {
+        return destination;
+    }
+
+    @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
         return Math.sqrt(destination.distanceSq(pos));

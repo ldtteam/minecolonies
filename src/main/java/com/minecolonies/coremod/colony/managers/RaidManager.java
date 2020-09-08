@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -26,6 +27,8 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent.Nor
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
@@ -35,7 +38,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
-import static com.minecolonies.api.util.constant.ColonyConstants.NUMBER_OF_CITIZENS_NEEDED;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NIGHTS_SINCE_LAST_RAID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RAIDABLE;
 
 /**
  * Handles spawning hostile raid events.
@@ -45,12 +50,12 @@ public class RaidManager implements IRaiderManager
     /**
      * Spawn modifier to decrease the spawn-rate.
      */
-    public static final double SPAWN_MODIFIER = 5;
+    public static final double SPAWN_MODIFIER = 50;
 
     /**
      * Min distance to keep while spawning near buildings
      */
-    private static final int MIN_BUILDING_SPAWN_DIST = 35;
+    private static final int MIN_BUILDING_SPAWN_DIST = 25;
 
     /**
      * Different biome ids.
@@ -58,6 +63,36 @@ public class RaidManager implements IRaiderManager
     private static final String DESERT_BIOME_ID = "desert";
     private static final String JUNGLE_BIOME_ID = "jungle";
     private static final String TAIGA_BIOME_ID  = "taiga";
+    private static final double THIRTY_PERCENT  = 0.3d;
+    private static final double TEN_PERCENT     = 0.1d;
+
+    /**
+     * Min and max for raid difficulty
+     */
+    private static final int MIN_RAID_DIFFICULTY    = 1;
+    private static final int NORMAL_RAID_DIFFICULTY = 5;
+    private static final int MAX_RAID_DIFFICULTY    = 10;
+
+    /**
+     * Difficulty nbt tag
+     */
+    private static final String TAG_RAID_DIFFICULTY = "difficulty";
+    private static final String TAG_LOST_CITIZENS   = "lostCitizens";
+
+    /**
+     * Min required raidlevel
+     */
+    private static final int MIN_REQUIRED_RAIDLEVEL = 100;
+
+    /**
+     * Percentage increased amount of spawns per player
+     */
+    private static final double INCREASE_PER_PLAYER = 0.10;
+
+    /**
+     * The dynamic difficulty of raids for this colony
+     */
+    private int raidDifficulty = MIN_RAID_DIFFICULTY;
 
     /**
      * Whether there will be a raid in this colony tonight.
@@ -103,6 +138,11 @@ public class RaidManager implements IRaiderManager
      * The time the last building pos was used.
      */
     private int buildingPosUsage = 0;
+
+    /**
+     * The amount of citizens lost in a raid, two for normal citizens one for guards
+     */
+    private int lostCitizens = 0;
 
     /**
      * Creates the RaidManager for a colony.
@@ -180,8 +220,9 @@ public class RaidManager implements IRaiderManager
             return;
         }
 
-        int amount = calcBarbarianAmount();
-        if (amount <= 0)
+        final int raidLevel = getColonyRaidLevel();
+        int amount = calculateRaiderAmount(raidLevel);
+        if (amount <= 0 || raidLevel < MIN_REQUIRED_RAIDLEVEL)
         {
             return;
         }
@@ -207,7 +248,6 @@ public class RaidManager implements IRaiderManager
             return;
         }
 
-        nightsSinceLastRaid = 0;
         amount = (int) Math.ceil((float) amount / spawnPoints.size());
 
         for (final BlockPos targetSpawnPoint : spawnPoints)
@@ -227,7 +267,7 @@ public class RaidManager implements IRaiderManager
             {
                 final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
-                event.setShipSize(ShipSize.getShipForRaidLevel(amount));
+                event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
                 event.setShipRotation(shipRotation);
                 colony.getEventManager().addEvent(event);
             }
@@ -235,7 +275,7 @@ public class RaidManager implements IRaiderManager
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
-                event.setShipSize(ShipSize.getShipForRaidLevel(amount));
+                event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
                 event.setShipRotation(shipRotation);
                 colony.getEventManager().addEvent(event);
             }
@@ -373,7 +413,9 @@ public class RaidManager implements IRaiderManager
                 // Choose random between our two directions
                 if (random.nextBoolean())
                 {
-                    if (WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir1, 16)))
+                    if (WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir1, 16))
+                          && WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir1, 32))
+                          && WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir2, 16)))
                     {
                         if (isValidSpawnPoint(tempPos.offset(dir1, 16), loadedBuildings))
                         {
@@ -388,7 +430,9 @@ public class RaidManager implements IRaiderManager
                 }
                 else
                 {
-                    if (WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir2, 16)))
+                    if (WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir2, 16))
+                          && WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir2, 32))
+                          && WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir1, 16)))
                     {
                         if (isValidSpawnPoint(tempPos.offset(dir2, 16), loadedBuildings))
                         {
@@ -473,10 +517,11 @@ public class RaidManager implements IRaiderManager
      * @return the amount of barbarians.
      */
     @Override
-    public int calcBarbarianAmount()
+    public int calculateRaiderAmount(final int raidLevel)
     {
-        return Math.min(MineColonies.getConfig().getCommon().maxBarbarianSize.get(),
-          (int) ((getColonyRaidLevel() / SPAWN_MODIFIER) * ((double) MineColonies.getConfig().getCommon().spawnBarbarianSize.get() * 0.2)));
+        return Math.min(MineColonies.getConfig().getServer().maxBarbarianSize.get(),
+          (int) ((raidLevel / SPAWN_MODIFIER) * getRaidDifficultyModifier() * (1.0 + colony.getMessagePlayerEntities().size() * INCREASE_PER_PLAYER) * ((
+            colony.getWorld().rand.nextDouble() * 0.5d) + 0.75)));
     }
 
     @Override
@@ -497,7 +542,21 @@ public class RaidManager implements IRaiderManager
     {
         if (!isRaided())
         {
+            if (nightsSinceLastRaid == 0)
+            {
+                final double lostPct = (double) lostCitizens / colony.getCitizenManager().getMaxCitizens();
+                if (lostPct > THIRTY_PERCENT)
+                {
+                    raidDifficulty = Math.max(MIN_RAID_DIFFICULTY, raidDifficulty - 1);
+                }
+                else if (lostPct < TEN_PERCENT)
+                {
+                    raidDifficulty = Math.min(MAX_RAID_DIFFICULTY, raidDifficulty + 1);
+                }
+            }
+
             nightsSinceLastRaid++;
+            lostCitizens = 0;
         }
         else
         {
@@ -543,11 +602,6 @@ public class RaidManager implements IRaiderManager
     @Override
     public boolean isItTimeToRaid()
     {
-        if (colony.getCitizenManager().getCitizens().size() < NUMBER_OF_CITIZENS_NEEDED)
-        {
-            return false;
-        }
-
         if (WorldUtil.isDayTime(colony.getWorld()) && !colony.getRaiderManager().hasRaidBeenCalculated())
         {
             colony.getRaiderManager().setHasRaidBeenCalculated(true);
@@ -596,19 +650,12 @@ public class RaidManager implements IRaiderManager
      */
     public int getColonyRaidLevel()
     {
-        int levels = 0;
-        @NotNull final List<ICitizenData> citizensList = new ArrayList<>(colony.getCitizenManager().getCitizens());
-        for (@NotNull final ICitizenData citizen : citizensList)
-        {
-            levels += citizen.getJobModifier() / 5;
-        }
+        int levels = colony.getCitizenManager().getCitizens().size() * 10;
 
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            levels += building.getBuildingLevel();
+            levels += building.getBuildingLevel() * building.getBuildingLevel();
         }
-
-        levels += citizensList.size();
 
         return levels;
     }
@@ -659,5 +706,74 @@ public class RaidManager implements IRaiderManager
         }
 
         return lastBuilding;
+    }
+
+    @Override
+    public double getRaidDifficultyModifier()
+    {
+        return (raidDifficulty / (double) NORMAL_RAID_DIFFICULTY) * (MinecoloniesAPIProxy.getInstance().getConfig().getServer().barbarianHordeDifficulty.get()
+                                                                       / (double) DEFAULT_BARBARIAN_DIFFICULTY) * (colony.getWorld().getDifficulty().getId() / 2d);
+    }
+
+    @Override
+    public void onLostCitizen(final ICitizenData citizen)
+    {
+        if (!isRaided())
+        {
+            return;
+        }
+
+        if (citizen.getJob() instanceof AbstractJobGuard)
+        {
+            lostCitizens++;
+        }
+        else
+        {
+            lostCitizens += 2;
+        }
+
+        if (((double) lostCitizens / colony.getCitizenManager().getMaxCitizens()) > 0.5)
+        {
+            for (final IColonyEvent event : colony.getEventManager().getEvents().values())
+            {
+                event.setStatus(EventStatus.DONE);
+            }
+        }
+    }
+
+    @Override
+    public void write(final CompoundNBT compound)
+    {
+        compound.putBoolean(TAG_RAIDABLE, canHaveRaiderEvents());
+        compound.putInt(TAG_NIGHTS_SINCE_LAST_RAID, getNightsSinceLastRaid());
+        compound.putInt(TAG_RAID_DIFFICULTY, raidDifficulty);
+        compound.putInt(TAG_LOST_CITIZENS, lostCitizens);
+    }
+
+    @Override
+    public void read(final CompoundNBT compound)
+    {
+        if (compound.keySet().contains(TAG_RAIDABLE))
+        {
+            setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
+        }
+        else
+        {
+            setCanHaveRaiderEvents(true);
+        }
+
+        if (compound.contains(TAG_NIGHTS_SINCE_LAST_RAID))
+        {
+            setNightsSinceLastRaid(compound.getInt(TAG_NIGHTS_SINCE_LAST_RAID));
+        }
+
+            raidDifficulty = compound.getInt(TAG_RAID_DIFFICULTY);
+        lostCitizens = compound.getInt(TAG_LOST_CITIZENS);
+    }
+
+    @Override
+    public int getLostCitizen()
+    {
+        return lostCitizens;
     }
 }
