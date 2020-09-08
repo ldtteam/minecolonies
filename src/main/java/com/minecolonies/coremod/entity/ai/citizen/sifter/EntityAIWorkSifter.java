@@ -162,7 +162,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
                 if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
                 {
                     sifterBuilding.resetMesh();
-                    worker.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers().forEach(player -> player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.meshBroke"), player.getUniqueID()));
+                    worker.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.meshbroke"));
                 }
 
                 worker.decreaseSaturationForContinuousAction();
