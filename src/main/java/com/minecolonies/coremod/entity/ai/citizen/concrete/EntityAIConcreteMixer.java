@@ -92,7 +92,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     }
 
     @Override
-    protected int getExtendedOutputCount(final ItemStack primaryOutput)
+    protected int getExtendedCount(final ItemStack primaryOutput)
     {
         return getOwnBuilding().outputBlockCountInWorld(primaryOutput);
     }
