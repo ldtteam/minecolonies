@@ -19,6 +19,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
@@ -38,6 +39,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -103,6 +105,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         keepX.put(ItemStackUtils.ISFOOD, new Tuple<>(STACKSIZE, true));
         keepX.put(ItemStackUtils.ISCOOKABLE, new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
+        keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getContainerItem()) && !stack.getContainerItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
     }
 
     /**
@@ -287,13 +290,13 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         //Couldn't fulfill normally, let's try to fulfill with a temporary smelting recipe. 
         if(storage == null)
         {
-            storage = getFirstRecipe(stackPredicate);
+            storage = FurnaceRecipes.getInstance().getFirstSmeltingRecipeByResult(stackPredicate);
             if (storage != null)
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                if (!storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
                 {
-                    return storage;
+                    return null;
                 }
             }                
         }
