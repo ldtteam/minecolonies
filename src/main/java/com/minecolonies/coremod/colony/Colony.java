@@ -712,19 +712,7 @@ public class Colony implements IColony
             this.style = compound.getString(TAG_STYLE);
         }
 
-        if (compound.keySet().contains(TAG_RAIDABLE))
-        {
-            this.raidManager.setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
-        }
-        else
-        {
-            this.raidManager.setCanHaveRaiderEvents(true);
-        }
-
-        if (compound.contains(TAG_NIGHTS_SINCE_LAST_RAID))
-        {
-            raidManager.setNightsSinceLastRaid(compound.getInt(TAG_NIGHTS_SINCE_LAST_RAID));
-        }
+        raidManager.read(compound);
 
         if (compound.keySet().contains(TAG_AUTO_DELETE))
         {
@@ -846,8 +834,6 @@ public class Colony implements IColony
         compound.putBoolean(TAG_MOVE_IN, moveIn);
         compound.put(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
         compound.putString(TAG_STYLE, style);
-        compound.putBoolean(TAG_RAIDABLE, raidManager.canHaveRaiderEvents());
-        compound.putInt(TAG_NIGHTS_SINCE_LAST_RAID, raidManager.getNightsSinceLastRaid());
         compound.putBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
         compound.putInt(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         compound.put(TAG_FLAG_PATTERNS, colonyFlag);

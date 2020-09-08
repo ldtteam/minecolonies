@@ -102,7 +102,7 @@ public final class BlockPosUtil
                  || !WorldUtil.isEntityBlockLoaded(world, pos)
                  || world.getBlockState(pos).getMaterial().isLiquid()
                  || !world.getBlockState(pos.down()).getMaterial().isSolid()
-                 || (!world.isAirBlock(pos) && !world.isAirBlock(pos.up())))
+                 || (!world.isAirBlock(pos) || !world.isAirBlock(pos.up())))
         {
             final Tuple<Direction, Direction> direction = getRandomDirectionTuple(random);
             pos =

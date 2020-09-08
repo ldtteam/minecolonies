@@ -8,7 +8,7 @@ public class PathingOptions
     /**
      * Additional cost of jumping and dropping - base 1.
      */
-    public double jumpDropCost = 2.0D;
+    public double jumpDropCost = 1.1D;
 
     /**
      * Cost improvement of paths - base 1.

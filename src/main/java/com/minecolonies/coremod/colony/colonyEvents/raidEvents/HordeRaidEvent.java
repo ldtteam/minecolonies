@@ -39,7 +39,6 @@ import static com.minecolonies.api.util.constant.ColonyConstants.SMALL_HORDE_SIZ
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_DAYS_LEFT;
-import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_KILLED;
 
 /**
  * Horde raid event for the colony, triggers a horde that spawn and attack the colony.
@@ -109,11 +108,6 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     protected EventStatus status = EventStatus.STARTING;
 
     /**
-     * If a citizen was killed during the raid.
-     */
-    private boolean killedCitizenInRaid = false;
-
-    /**
      * Days the event can last, to make sure it eventually despawns.
      */
     private int daysToGo = 3;
@@ -149,12 +143,6 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         entities.addAll(boss.keySet());
         entities.addAll(normal.keySet());
         return entities;
-    }
-
-    @Override
-    public void setKilledCitizenInRaid()
-    {
-        killedCitizenInRaid = true;
     }
 
     @Override
@@ -438,7 +426,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         if (total == 0)
         {
             LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE);
-            if (!this.killedCitizenInRaid)
+            if (colony.getRaiderManager().getLostCitizen() == 0)
             {
                 colony.getCitizenManager().updateModifier("raidwithoutdeath");
             }
@@ -465,7 +453,6 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         compound.putInt(TAG_EVENT_STATUS, status.ordinal());
         compound.putInt(TAG_DAYS_LEFT, daysToGo);
         horde.writeToNbt(compound);
-        compound.putBoolean(TAG_KILLED, killedCitizenInRaid);
         return compound;
     }
 
@@ -489,7 +476,6 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
         daysToGo = compound.getInt(TAG_DAYS_LEFT);
-        killedCitizenInRaid = compound.getBoolean(TAG_KILLED);
     }
 
     @Override

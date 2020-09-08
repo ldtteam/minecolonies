@@ -121,11 +121,6 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     private List<Tuple<EntityType<?>, BlockPos>> respawns = new ArrayList<>();
 
     /**
-     * If a citizen was killed during the raid.
-     */
-    private boolean killedCitizenInRaid = false;
-
-    /**
      * Rotation of the ship to spawn
      */
     private int shipRotation = 0;
@@ -460,7 +455,6 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         compound.putInt(TAG_SPAWNER_COUNT, maxSpawners);
         BlockPosUtil.write(compound, TAG_SPAWN_POS, spawnPoint);
         compound.putInt(TAG_SHIPSIZE, shipSize.ordinal());
-        compound.putBoolean(TAG_KILLED, killedCitizenInRaid);
         compound.putInt(TAG_SHIPROTATION, shipRotation);
         return compound;
     }
@@ -481,7 +475,6 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         maxSpawners = compound.getInt(TAG_SPAWNER_COUNT);
         spawnPoint = BlockPosUtil.read(compound, TAG_SPAWN_POS);
         shipSize = ShipSize.values()[compound.getInt(TAG_SHIPSIZE)];
-        killedCitizenInRaid = compound.getBoolean(TAG_KILLED);
         shipRotation = compound.getInt(TAG_SHIPROTATION);
     }
 
@@ -490,11 +483,5 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     {
         this.spawners.add(pos);
         maxSpawners++;
-    }
-
-    @Override
-    public void setKilledCitizenInRaid()
-    {
-        killedCitizenInRaid = true;
     }
 }

@@ -430,7 +430,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
             }
 
-            tempPath = new Path(Arrays.asList(newPoints), getTargetPos(), false);
+            tempPath = new Path(Arrays.asList(newPoints), path.getTarget(), path.reachesTarget());
 
             final PathPointExtended finalPoint = newPoints[pathLength - 1];
             destination = new BlockPos(finalPoint.x, finalPoint.y, finalPoint.z);
