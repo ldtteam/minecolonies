@@ -234,19 +234,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
             final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate);
             final ItemStack container = inputStorage.getItem().getContainerItem(inputStorage.getItemStack());
-            if (invCount <= 0 || (invCount + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount())
-                  < inputStorage.getAmount() * job.getMaxCraftingCount()) && !ItemStackUtils.isEmpty(container) && invCount < inputStorage.getAmount())
+            final int remaining = !ItemStackUtils.isEmpty(container) ? inputStorage.getAmount() :inputStorage.getAmount() * job.getMaxCraftingCount() ;
+            if (invCount <= 0 || invCount + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount())
+                  < remaining)
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
-                    if (!ItemStackUtils.isEmpty(container))
-                    { 
-                        needsCurrently = new Tuple<>(predicate, inputStorage.getAmount());
-                    }
-                    else 
-                    {
-                        needsCurrently = new Tuple<>(predicate, inputStorage.getAmount() * job.getMaxCraftingCount());
-                    }
+                    needsCurrently = new Tuple<>(predicate, remaining);
                     return GATHERING_REQUIRED_MATERIALS;
                 }
                 currentRecipeStorage = null;
