@@ -137,7 +137,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     {
         //Saplings and seeds counts as 1 item added, the rest counts as 2 items
         final int factor = itemStack.getItem().getRegistryName().toString().contains("sapling")
-                             || itemStack.getItem().getRegistryName().toString().contains("seed") ? 1 : 2;
+                             || itemStack.getItem().getRegistryName().toString().contains("seed") ? 2 : 4;
 
         //The available items the player has in his hand (Rotten Flesh counts as the double)
         final int availableItems = itemStack.getCount() * factor;
