@@ -172,7 +172,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
                   + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
                   + getExtendedCount(inputStorage.getItemStack())
-                  < remaining && currentRecipeStorage.getIntermediate() != Blocks.FURNACE)
+                  < remaining)
             {
                 job.finishRequest(false);
                 incrementActionsDone(getActionRewardForCraftingSuccess());
