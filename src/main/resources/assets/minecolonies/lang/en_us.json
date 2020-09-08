@@ -1741,7 +1741,7 @@
 
   "com.minecolonies.coremod.gui.chat.hometoofar": "I have to walk a long way home from work every day. It would be nice if I could live somewhere closer.",
   "com.minecolonies.coremod.gui.chat.noguardnearwork": "There are no Guard or Barrack Towers near my workplace, so I don't feel safe there!",
-  "com.minecolonies.coremod.gui.chat.noguardnearhome": "There is no guard building nearby my home, so I'm not feeling safe at home.",
+  "com.minecolonies.coremod.gui.chat.noguardnearhome": "There are no Guard or Barrack Towers near my home, so I don't feel safe there!",
 
   "com.minecolonies.coremod.gui.beekeeper.notcollect": "Collect honey",
   "com.minecolonies.coremod.gui.beekeeper.collect": "Collect honeycomb",
