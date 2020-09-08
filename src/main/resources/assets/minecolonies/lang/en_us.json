@@ -1176,7 +1176,7 @@
   "com.minecolonies.coremod.gui.hiringmode.default": "Default (colony override)",
   "com.minecolonies.coremod.gui.hiringmode.auto": "Automatic",
   "com.minecolonies.coremod.gui.hiringmode.manual": "Manual",
-  "com.minecolonies.coremod.gui.name.tooLong": "We reduced the string to \"%s\" since it exceeded the limit of 15 letters.",
+  "com.minecolonies.coremod.gui.name.toolong": "We reduced the string to \"%s\" since it exceeded the limit of 15 letters.",
 
   "block.minecolonies.decorationcontroller": "Decoration Controller",
   "com.minecolonies.coremod.gui.deco.namescan": "Final file path and filename, no level:",
