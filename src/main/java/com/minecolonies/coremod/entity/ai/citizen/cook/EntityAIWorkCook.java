@@ -2,13 +2,8 @@ package com.minecolonies.coremod.entity.ai.citizen.cook;
 
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
-import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -25,7 +20,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -38,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -85,31 +78,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      * The building range the cook should search for clients.
      */
     private AxisAlignedBB range = null;
-
-    /**
-     * Time the worker delays until the next hit.
-     */
-    protected static final int HIT_DELAY = 20;
-
-    /**
-     * Increase this value to make the product creation progress way slower.
-     */
-    public static final int PROGRESS_MULTIPLIER = 10;
-
-    /**
-     * Max level which should have an effect on the speed of the worker.
-     */
-    protected static final int MAX_LEVEL = 50;
-
-    /**
-     * The current request that is being crafted;
-     */
-    public IRequest<? extends PublicCrafting> currentRequest;
-
-    /**
-     * The current recipe that is being crafted.
-     */
-    protected IRecipeStorage currentRecipeStorage;
 
     /**
      * Constructor for the Cook. Defines the tasks the cook executes.

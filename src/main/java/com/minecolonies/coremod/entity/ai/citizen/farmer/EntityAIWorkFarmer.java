@@ -115,13 +115,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private BlockPos prevPos;
 
     /**
-     * Variables used in handleOffset.
-     */
-    private int     totalDis;
-    private int     dist;
-    private boolean horizontal;
-
-    /**
      * Constructor for the Farmer. Defines the tasks the Farmer executes.
      *
      * @param job a farmer job to use.
@@ -183,20 +176,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
 
         return GET_RECIPE;
-    }
-
-    /**
-     * Redirects the farmer to his building.
-     *
-     * @return the next state.
-     */
-    private IAIState startWorkingAtOwnBuilding()
-    {
-        if (walkToBuilding())
-        {
-            return getState();
-        }
-        return PREPARING;
     }
 
     /**
@@ -580,6 +559,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         return true;
     }
 
+    @Override
+    public int getBreakSpeedLevel()
+    {
+        return getSecondarySkillLevel();
+    }
+
     /**
      * Checks if we can harvest, and does so if we can.
      *
@@ -604,7 +589,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
     protected int getLevelDelay()
     {
-        return (int) Math.max(SMALLEST_DELAY, STANDARD_DELAY - (this.worker.getCitizenData().getJobModifier() * DELAY_DIVIDER));
+        return (int) Math.max(SMALLEST_DELAY, STANDARD_DELAY - ((getPrimarySkillLevel() / 2.0) * DELAY_DIVIDER));
     }
 
     /**

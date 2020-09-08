@@ -199,9 +199,12 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         if (entity instanceof TileEntityCompostedDirt)
         {
             @Nullable final ItemStack stack = getOwnBuilding().getFlowerToGrow();
-            if (stack != null && InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST))
+            if (stack != null)
             {
-                ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH, getOwnBuilding().getFlowerToGrow());
+                if (worker.getRandom().nextInt(200 - getPrimarySkillLevel()) < 0 || InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST))
+                {
+                    ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH, getOwnBuilding().getFlowerToGrow());
+                }
             }
             else
             {
@@ -265,7 +268,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     @Override
     public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
-        return BASE_BLOCK_MINING_DELAY * (int) (1 + Math.max(0, MAX_BONUS - PER_LEVEL_BONUS * worker.getCitizenData().getJobModifier()));
+        return BASE_BLOCK_MINING_DELAY * (int) (1 + Math.max(0, MAX_BONUS - PER_LEVEL_BONUS * (getSecondarySkillLevel() / 2.0)));
     }
 
     /**

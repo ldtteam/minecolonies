@@ -273,10 +273,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void pickupItems()
     {
-        for (final ItemEntity item :
-          CompatibilityUtils.getWorldFromCitizen(citizen).
-                                                           getEntitiesWithinAABB(ItemEntity.class,
-                                                             new AxisAlignedBB(citizen.getPosition()).expand(2.0F, 1.0F, 2.0F).expand(-2.0F, -1.0F, -2.0F)))
+        for (final ItemEntity item : CompatibilityUtils.getWorldFromCitizen(citizen).getEntitiesWithinAABB(ItemEntity.class,
+                                                             new AxisAlignedBB(citizen.getPosition())
+                                                               .expand(2.0F, 1.0F, 2.0F)
+                                                               .expand(-2.0F, -1.0F, -2.0F)))
         {
             if (item != null && citizen.canPickUpLoot() && item.isAlive())
             {

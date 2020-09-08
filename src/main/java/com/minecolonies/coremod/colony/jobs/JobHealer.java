@@ -18,6 +18,11 @@ import static com.minecolonies.coremod.colony.jobs.JobDeliveryman.BONUS_SPEED_PE
 public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
 {
     /**
+     * Walking speed bonus per level
+     */
+    public static final double BONUS_SPEED_PER_LEVEL = 0.003;
+
+    /**
      * Create a healer job.
      *
      * @param entity the healer.

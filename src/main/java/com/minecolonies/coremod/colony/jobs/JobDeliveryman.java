@@ -91,7 +91,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             final AbstractEntityCitizen worker = getCitizen().getEntity().get();
             worker.getAttribute(Attributes.MOVEMENT_SPEED)
               .setBaseValue(
-                BASE_MOVEMENT_SPEED + (getCitizen().getJobModifier()) * BONUS_SPEED_PER_LEVEL);
+                BASE_MOVEMENT_SPEED + (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill())) * BONUS_SPEED_PER_LEVEL);
         }
     }
 

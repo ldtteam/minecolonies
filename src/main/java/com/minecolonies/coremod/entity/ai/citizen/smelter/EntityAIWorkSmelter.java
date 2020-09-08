@@ -269,7 +269,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     protected void extractFromFurnace(final FurnaceTileEntity furnace)
     {
         final ItemStack ingots = new InvWrapper(furnace).extractItem(RESULT_SLOT, STACKSIZE, false);
-        final int multiplier = getOwnBuilding().ingotMultiplier(worker.getCitizenData().getJobModifier(), worker.getRandom());
+        final int multiplier = getOwnBuilding().ingotMultiplier((int) (getSecondarySkillLevel()/2.0), worker.getRandom());
         int amount = ingots.getCount() * multiplier;
 
         while (amount > 0)
@@ -392,7 +392,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
      */
     private int getRequiredProgressForMakingRawMaterial()
     {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL) * HITTING_TIME;
+        return PROGRESS_MULTIPLIER / Math.min((int) (getPrimarySkillLevel()/2.0) + 1, MAX_LEVEL) * HITTING_TIME;
     }
 
     private ItemStack extractEnchantFromItem(final ItemStack item)
