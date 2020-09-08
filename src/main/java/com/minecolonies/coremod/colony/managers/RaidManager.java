@@ -519,7 +519,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public int calculateRaiderAmount(final int raidLevel)
     {
-        return Math.min(MineColonies.getConfig().getServer().maxBarbarianSize.get(),
+        return Math.min(MineColonies.getConfig().getCommon().maxBarbarianSize.get(),
           (int) ((raidLevel / SPAWN_MODIFIER) * getRaidDifficultyModifier() * (1.0 + colony.getMessagePlayerEntities().size() * INCREASE_PER_PLAYER) * ((
             colony.getWorld().rand.nextDouble() * 0.5d) + 0.75)));
     }
@@ -711,7 +711,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public double getRaidDifficultyModifier()
     {
-        return (raidDifficulty / (double) NORMAL_RAID_DIFFICULTY) * (MinecoloniesAPIProxy.getInstance().getConfig().getServer().barbarianHordeDifficulty.get()
+        return (raidDifficulty / (double) NORMAL_RAID_DIFFICULTY) * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
                                                                        / (double) DEFAULT_BARBARIAN_DIFFICULTY) * (colony.getWorld().getDifficulty().getId() / 2d);
     }
 
