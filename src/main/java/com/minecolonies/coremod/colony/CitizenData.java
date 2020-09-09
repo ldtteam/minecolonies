@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
@@ -22,6 +23,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.SimpleNotificationInteraction;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
@@ -41,6 +43,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -218,6 +221,11 @@ public class CitizenData implements ICitizenData
      * The citizen data random.
      */
     private Random random = new Random();
+
+    /**
+     * Chance to complain for having no guard nearby
+     */
+    private static final int NO_GUARD_COMPLAIN_CHANCE = 10;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -1162,6 +1170,25 @@ public class CitizenData implements ICitizenData
                 final AttributeModifier healthModLevel = new AttributeModifier(HEALTH, healthEffect.getEffect(), AttributeModifier.Operation.ADDITION);
                 AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
             }
+        }
+    }
+
+    @Override
+    public void onGoSleep()
+    {
+        if (random.nextInt(NO_GUARD_COMPLAIN_CHANCE) != 0)
+        {
+            return;
+        }
+
+        if (!colony.getBuildingManager().hasGuardBuildingNear(workBuilding))
+        {
+            triggerInteraction(new SimpleNotificationInteraction(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.noguardnearwork"), ChatPriority.CHITCHAT));
+        }
+
+        if (!colony.getBuildingManager().hasGuardBuildingNear(homeBuilding))
+        {
+            triggerInteraction(new SimpleNotificationInteraction(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.noguardnearhome"), ChatPriority.CHITCHAT));
         }
     }
 }
