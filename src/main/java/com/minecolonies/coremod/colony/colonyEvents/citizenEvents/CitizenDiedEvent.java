@@ -2,31 +2,24 @@ package com.minecolonies.coremod.colony.colonyEvents.citizenEvents;
 
 import static com.minecolonies.api.colony.colonyEvents.descriptions.NBTTags.*;
 
-import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The event for handling a citizen death.
  */
-public class CitizenDiedEvent implements ICitizenEventDescription
+public class CitizenDiedEvent extends AbstractCitizenEvent
 {
 
     /**
      * This events id, registry entries use res locations as ids.
      */
     public static final ResourceLocation CITIZEN_DIED_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "citizen_died");
-
-    private BlockPos eventPos;
-
-    private String citizenName;
 
     private String deathCause;
 
@@ -43,22 +36,9 @@ public class CitizenDiedEvent implements ICitizenEventDescription
     }
 
     @Override
-    public BlockPos getEventPos()
-    {
-        return eventPos;
-    }
-
-    @Override
-    public void setEventPos(BlockPos pos)
-    {
-        eventPos = pos;
-    }
-
-    @Override
     public CompoundNBT writeToNBT(CompoundNBT compound)
     {
-        BlockPosUtil.write(compound, TAG_EVENT_POS, eventPos);
-        compound.putString(TAG_CITIZEN_NAME, citizenName);
+        super.writeToNBT(compound);
         compound.putString(TAG_DEATH_CAUSE, deathCause);
         return compound;
     }
@@ -66,37 +46,22 @@ public class CitizenDiedEvent implements ICitizenEventDescription
     @Override
     public void readFromNBT(CompoundNBT compound)
     {
-        eventPos = BlockPosUtil.read(compound, TAG_EVENT_POS);
-        citizenName = compound.getString(TAG_CITIZEN_NAME);
+        super.readFromNBT(compound);
         deathCause = compound.getString(TAG_DEATH_CAUSE);
     }
 
     @Override
     public void serialize(PacketBuffer buf)
     {
-        buf.writeBlockPos(eventPos);
-        buf.writeString(citizenName);
+        super.serialize(buf);
         buf.writeString(deathCause);
     }
 
     @Override
     public void deserialize(PacketBuffer buf)
     {
-        eventPos = buf.readBlockPos();
-        citizenName = buf.readString();
+        super.deserialize(buf);
         deathCause = buf.readString();
-    }
-
-    @Override
-    public String getCitizenName()
-    {
-        return citizenName;
-    }
-
-    @Override
-    public void setCitizenName(String name)
-    {
-        citizenName = name;
     }
 
     /**

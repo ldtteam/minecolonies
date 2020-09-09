@@ -10,9 +10,9 @@ import net.minecraft.util.math.BlockPos;
 import static com.minecolonies.api.colony.colonyEvents.descriptions.NBTTags.*;
 
 /**
- * Event for spawning a new citizen.
+ * Event for something happening to a citizen.
  */
-public abstract class AbstractCitizenSpawnEvent implements ICitizenEventDescription
+public abstract class AbstractCitizenEvent implements ICitizenEventDescription
 {
 
     private BlockPos eventPos;

@@ -18,7 +18,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.AbstractCitizenSpawnEvent;
+import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.AbstractCitizenEvent;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenBornEvent;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
@@ -297,7 +297,7 @@ public class CitizenManager implements ICitizenManager
         entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
         world.addEntity(entity);
 
-        AbstractCitizenSpawnEvent spawnEvent = citizenData.isChild() ? new CitizenBornEvent() : new CitizenSpawnedEvent();
+        AbstractCitizenEvent spawnEvent = citizenData.isChild() ? new CitizenBornEvent() : new CitizenSpawnedEvent();
         spawnEvent.setEventPos(spawnPoint);
         spawnEvent.setCitizenName(citizenData.getName());
         colony.getEventManager().addEventDescription(spawnEvent);

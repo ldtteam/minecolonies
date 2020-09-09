@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 /**
  * The event handling a newly spawned(not born) citizen.
  */
-public class CitizenSpawnedEvent extends AbstractCitizenSpawnEvent
+public class CitizenSpawnedEvent extends AbstractCitizenEvent
 {
 
     /**
