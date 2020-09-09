@@ -14,22 +14,22 @@ import net.minecraft.util.ResourceLocation;
 public class CitizenGrownUpEvent extends AbstractCitizenEvent
 {
 
-	/**
-	 * This events id, registry entries use res locations as ids.
-	 */
-	public static final ResourceLocation CITIZEN_GROWN_UP_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "citizen_grown_up");
+    /**
+     * This events id, registry entries use res locations as ids.
+     */
+    public static final ResourceLocation CITIZEN_GROWN_UP_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "citizen_grown_up");
 
-	@Override
-	public ResourceLocation getEventTypeId()
-	{
-		return CITIZEN_GROWN_UP_EVENT_ID;
-	}
+    @Override
+    public ResourceLocation getEventTypeId()
+    {
+        return CITIZEN_GROWN_UP_EVENT_ID;
+    }
 
-	@Override
-	public String getName()
-	{
-		return "Citizen Grew Up";
-	}
+    @Override
+    public String getName()
+    {
+        return "Citizen Grew Up";
+    }
 
     /**
      * Loads the citizen grown up event from the given nbt.
