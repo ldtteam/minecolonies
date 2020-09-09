@@ -1077,6 +1077,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
             if (citizenSleepHandler.shouldGoSleep())
             {
+                citizenData.onGoSleep();
                 citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() * 2);
                 citizenData.markDirty();
                 citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.sleeping"));

@@ -108,6 +108,7 @@ public class BuildingBarracks extends AbstractBuilding
             }
         }
         super.onDestroyed();
+        colony.getBuildingManager().guardBuildingChangedAt(this, 0);
     }
 
     @Override
@@ -120,6 +121,13 @@ public class BuildingBarracks extends AbstractBuilding
             return;
         }
         super.requestUpgrade(player, builder);
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+        colony.getBuildingManager().guardBuildingChangedAt(this, newLevel);
     }
 
     @Override
