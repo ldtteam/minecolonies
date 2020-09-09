@@ -12,6 +12,10 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.AbstractBuildingEvent;
+import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingBuiltEvent;
+import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
+import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
@@ -320,10 +324,21 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         if (wo instanceof WorkOrderBuildBuilding)
         {
             worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
+            // TODO: find a way to detect the building building a new building with a level > 1 because of a reposition request.
+            AbstractBuildingEvent event = ((WorkOrderBuildBuilding) wo).getUpgradeLevel() > 1 ? new BuildingUpgradedEvent() : new BuildingBuiltEvent();
+            event.setBuilding(wo.getName());
+            event.setLevel(((WorkOrderBuildBuilding) wo).getUpgradeLevel());
+            event.setEventPos(wo.getBuildingLocation());
+            job.getColony().getEventManager().addEventDescription(event);
         }
         else if (wo instanceof WorkOrderBuildRemoval)
         {
             worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
+            BuildingDeconstructedEvent event = new BuildingDeconstructedEvent();
+            event.setBuilding(wo.getName());
+            event.setLevel(((WorkOrderBuildRemoval) wo).getUpgradeLevel());
+            event.setEventPos(wo.getBuildingLocation());
+            job.getColony().getEventManager().addEventDescription(event);
         }
 
         if (wo == null)

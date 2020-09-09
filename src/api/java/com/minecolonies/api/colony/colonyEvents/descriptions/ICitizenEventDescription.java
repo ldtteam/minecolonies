@@ -5,7 +5,6 @@ package com.minecolonies.api.colony.colonyEvents.descriptions;
  */
 public interface ICitizenEventDescription extends IColonyEventDescription
 {
-
     /**
      * Gets the name of the citizen causing this event.
      * 
@@ -25,5 +24,4 @@ public interface ICitizenEventDescription extends IColonyEventDescription
     {
         return String.format("%s %s at %d %d %d.%n", getCitizenName(), getName(), getEventPos().getX(), getEventPos().getY(), getEventPos().getZ());
     }
-
 }

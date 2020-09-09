@@ -216,8 +216,8 @@ public class ModelEntitySheepFarmerFemale extends CitizenModel<AbstractEntityCit
         bipedBody.addChild(bipedChest);
         setRotationAngle(bipedChest, -0.5934F, 0.0F, 0.0F);
         bipedChest.setTextureOffset(40, 32).addBox(-3.5F, 2.7F, -0.5F, 7.0F, 3.0F, 4.0F, 0.0F, true);
-		
-		bipedHeadwear.showModel = false;
+
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

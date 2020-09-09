@@ -518,7 +518,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     /**
      * Determine what block the entity stands on
      *
-     * @param parEntity	the entity that stands on the block
+     * @param parEntity the entity that stands on the block
      * @return the Blockstate.
      */
     private BlockPos findBlockUnderEntity(@NotNull final Entity parEntity)

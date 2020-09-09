@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.CompactColonyReference;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
 import com.minecolonies.api.colony.permissions.Action;
@@ -794,8 +795,8 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-            	if (permissionEvents)
-            	{
+                if (permissionEvents)
+                {
                     final PermissionEvent event = building.getPermissionEvents().get(index);
 
                     rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(event.getName() + (event.getId() == null ? " <fake>" : ""));
@@ -814,25 +815,30 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                         return;
                     }
                     rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(name);
-            	}
-            	else
-            	{
-            		final IColonyEventDescription event = building.getColonyEvents().get(index);
-            		if (event instanceof CitizenDiedEvent)
-            		{
-            			rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(((CitizenDiedEvent) event).getDeathCause());
-            		}
-            		else
-            		{
+                }
+                else
+                {
+                    final IColonyEventDescription event = building.getColonyEvents().get(index);
+                    if (event instanceof CitizenDiedEvent)
+                    {
+                        rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(((CitizenDiedEvent) event).getDeathCause());
+                    }
+                    else
+                    {
                         rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(event.getName());
-            		}
+                    }
                     if (event instanceof ICitizenEventDescription)
                     {
                         rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(((ICitizenEventDescription) event).getCitizenName());
                     }
+                    else if (event instanceof IBuildingEventDescription)
+                    {
+                        IBuildingEventDescription buildEvent = (IBuildingEventDescription) event;
+                        rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(buildEvent.getBuilding() + "(" + buildEvent.getLevel() + ")");
+                    }
                     rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ());
                     rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
-            	}
+                }
             }
         });
     }

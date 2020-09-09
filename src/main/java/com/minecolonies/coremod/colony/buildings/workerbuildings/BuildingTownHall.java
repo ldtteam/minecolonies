@@ -115,7 +115,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         buf.writeInt(colonyEvents.size());
         for (final IColonyEventDescription event : colonyEvents)
         {
-        	buf.writeString(event.getEventTypeId().getPath());
+            buf.writeString(event.getEventTypeId().getPath());
             event.serialize(buf);
         }
     }
@@ -220,16 +220,16 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
             final int colonyEventsSize = buf.readInt();
             for (int i = 0; i < colonyEventsSize; i++)
             {
-            	final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, buf.readString());
+                final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, buf.readString());
 
-            	final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().getValue(eventTypeID);
-            	if (registryEntry == null)
+                final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().getValue(eventTypeID);
+                if (registryEntry == null)
                 {
                     Log.getLogger().warn("Event is missing registryEntry!:" + eventTypeID.getPath());
                     continue;
                 }
 
-            	colonyEvents.add(registryEntry.getPacketBufferEventCreator().apply(buf));
+                colonyEvents.add(registryEntry.getPacketBufferEventCreator().apply(buf));
             }
         }
 
@@ -242,7 +242,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         @Override
         public List<IColonyEventDescription> getColonyEvents()
         {
-        	return new LinkedList<>(colonyEvents);
+            return new LinkedList<>(colonyEvents);
         }
 
         @Override

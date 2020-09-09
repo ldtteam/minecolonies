@@ -7,7 +7,6 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 
 /**
  * The event for handling a newly born citizen.
@@ -15,44 +14,24 @@ import net.minecraft.util.math.BlockPos;
 public class CitizenBornEvent extends AbstractCitizenSpawnEvent
 {
 
-	/**
+    /**
      * This events id, registry entries use res locations as ids.
      */
-	public static final ResourceLocation CITIZEN_BORN_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "citizen_born");
+    public static final ResourceLocation CITIZEN_BORN_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "citizen_born");
 
-	/**
-	 * Creates a new event.
-	 */
-	public CitizenBornEvent()
-	{
-	}
+    @Override
+    public ResourceLocation getEventTypeId()
+    {
+        return CITIZEN_BORN_EVENT_ID;
+    }
 
-	/**
-	 * Creates a new event.
-	 * 
-	 * @param birthPos the position in which the citizen spawned.
-	 * @param citizenName the name of the new citizen.
-	 */
-	public CitizenBornEvent(BlockPos birthPos, String citizenName)
-	{
-		super();
-		setEventPos(birthPos);
-		setCitizenName(citizenName);
-	}
+    @Override
+    public String getName()
+    {
+        return "Citizen Born";
+    }
 
-	@Override
-	public ResourceLocation getEventTypeId()
-	{
-		return CITIZEN_BORN_EVENT_ID;
-	}
-
-	@Override
-	public String getName()
-	{
-		return "Citizen Born";
-	}
-
-	/**
+    /**
      * Loads the citizen born event from the given nbt.
      *
      * @param compound the NBT compound
@@ -73,8 +52,8 @@ public class CitizenBornEvent extends AbstractCitizenSpawnEvent
      */
     public static CitizenBornEvent loadFromPacketBuffer(@NotNull final PacketBuffer buf)
     {
-    	final CitizenBornEvent birthEvent = new CitizenBornEvent();
-    	birthEvent.deserialize(buf);
-    	return birthEvent;
+        final CitizenBornEvent birthEvent = new CitizenBornEvent();
+        birthEvent.deserialize(buf);
+        return birthEvent;
     }
 }

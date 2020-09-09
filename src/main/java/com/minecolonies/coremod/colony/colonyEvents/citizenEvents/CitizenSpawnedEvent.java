@@ -14,31 +14,24 @@ import net.minecraft.util.ResourceLocation;
 public class CitizenSpawnedEvent extends AbstractCitizenSpawnEvent
 {
 
-	/**
+    /**
      * This events id, registry entries use res locations as ids.
      */
-	public static final ResourceLocation CITIZEN_SPAWNED_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "citizen_spawn");
+    public static final ResourceLocation CITIZEN_SPAWNED_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "citizen_spawn");
 
-	/**
-	 * Creates a new event.
-	 */
-	public CitizenSpawnedEvent()
-	{
-	}
+    @Override
+    public ResourceLocation getEventTypeId()
+    {
+        return CITIZEN_SPAWNED_EVENT_ID;
+    }
 
-	@Override
-	public ResourceLocation getEventTypeId()
-	{
-		return CITIZEN_SPAWNED_EVENT_ID;
-	}
+    @Override
+    public String getName()
+    {
+        return "Citizen Spawned";
+    }
 
-	@Override
-	public String getName()
-	{
-		return "Citizen Spawned";
-	}
-
-	/**
+    /**
      * Loads the citizen born event from the given nbt.
      *
      * @param compound the NBT compound
@@ -59,8 +52,8 @@ public class CitizenSpawnedEvent extends AbstractCitizenSpawnEvent
      */
     public static CitizenSpawnedEvent loadFromPacketBuffer(@NotNull final PacketBuffer buf)
     {
-    	final CitizenSpawnedEvent spawnEvent = new CitizenSpawnedEvent();
-    	spawnEvent.deserialize(buf);
-    	return spawnEvent;
+        final CitizenSpawnedEvent spawnEvent = new CitizenSpawnedEvent();
+        spawnEvent.deserialize(buf);
+        return spawnEvent;
     }
 }

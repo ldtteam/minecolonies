@@ -75,6 +75,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -1489,7 +1490,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             CitizenDiedEvent deathEvent = new CitizenDiedEvent();
             deathEvent.setEventPos(getPosition());
             deathEvent.setCitizenName(citizenData.getName());
-            deathEvent.setDeathCause(damageSource.getDeathMessage(this).getString().replaceFirst(citizenData.getName(), "Citizen"));
+            deathEvent.setDeathCause(damageSource.getDeathMessage(this).setStyle(new Style()).getFormattedText().replaceFirst(this.getDisplayName().getFormattedText(), "Citizen"));
             citizenColonyHandler.getColony().getEventManager().addEventDescription(deathEvent);
         }
         super.onDeath(damageSource);

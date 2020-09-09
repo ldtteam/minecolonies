@@ -89,12 +89,12 @@ public class EventManager implements IEventManager
 
     @Override
     public void addEventDescription(IColonyEventDescription colonyEventDescription) {
-    	if (eventDescs.size() >= MAX_COLONY_EVENTS)
+        if (eventDescs.size() >= MAX_COLONY_EVENTS)
         {
-    		eventDescs.removeFirst();
+            eventDescs.removeFirst();
         }
-    	eventDescs.add(colonyEventDescription);
-    	colony.getBuildingManager().getTownHall().markDirty();
+        eventDescs.add(colonyEventDescription);
+        colony.getBuildingManager().getTownHall().markDirty();
     }
 
     /**
@@ -240,7 +240,7 @@ public class EventManager implements IEventManager
 
     @Override
     public List<IColonyEventDescription> getEventDescriptions() {
-    	return eventDescs;
+        return eventDescs;
     }
 
     @Override
@@ -269,18 +269,18 @@ public class EventManager implements IEventManager
             final ListNBT eventDescListNBT = eventManagerNBT.getList(TAG_EVENT_DESC_LIST, Constants.NBT.TAG_COMPOUND);
             for (final INBT event : eventDescListNBT)
             {
-            	final CompoundNBT eventCompound = (CompoundNBT) event;
-            	final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, eventCompound.getString(TAG_NAME));
+                final CompoundNBT eventCompound = (CompoundNBT) event;
+                final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, eventCompound.getString(TAG_NAME));
 
-            	final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().getValue(eventTypeID);
-            	if (registryEntry == null)
+                final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().getValue(eventTypeID);
+                if (registryEntry == null)
                 {
                     Log.getLogger().warn("Event is missing registryEntry!:" + eventTypeID.getPath());
                     continue;
                 }
 
-            	final IColonyEventDescription eventDescription = registryEntry.getNBTEventCreator().apply(eventCompound);
-            	eventDescs.add(eventDescription);
+                final IColonyEventDescription eventDescription = registryEntry.getNBTEventCreator().apply(eventCompound);
+                eventDescs.add(eventDescription);
             }
 
             currentEventID = eventManagerNBT.getInt(TAG_EVENT_ID);
@@ -307,10 +307,10 @@ public class EventManager implements IEventManager
         final ListNBT eventDescsListNBT = new ListNBT();
         for (final IColonyEventDescription event : eventDescs)
         {
-        	final CompoundNBT eventNBT = new CompoundNBT();
-        	eventNBT.putString(TAG_NAME, event.getEventTypeId().getPath());
-        	event.writeToNBT(eventNBT);
-        	eventDescsListNBT.add(eventNBT);
+            final CompoundNBT eventNBT = new CompoundNBT();
+            eventNBT.putString(TAG_NAME, event.getEventTypeId().getPath());
+            event.writeToNBT(eventNBT);
+            eventDescsListNBT.add(eventNBT);
         }
 
         eventManagerNBT.put(TAG_EVENT_DESC_LIST, eventDescsListNBT);

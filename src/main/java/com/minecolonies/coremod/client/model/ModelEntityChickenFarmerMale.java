@@ -75,8 +75,8 @@ public class ModelEntityChickenFarmerMale extends CitizenModel<AbstractEntityCit
         beardTop.setRotationPoint(0.0F, 0.0F, 0.0F);
         bipedHead.addChild(beardTop);
         beardTop.setTextureOffset(31, 52).addBox(-1.5F, 0.0F, -4.0F, 3.0F, 1.0F, 0.0F, 0.0F, true);
-		
-		bipedHeadwear.showModel = false;
+
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

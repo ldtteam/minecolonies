@@ -8,14 +8,14 @@ import net.minecraft.util.math.BlockPos;
 /**
  * Description for an event that happened in the colony.
  */
-public interface IColonyEventDescription {
-	
-	/**
-	 * Gets this event types registry id.
-	 * 
-	 * @return this event types registry id.
-	 */
-	ResourceLocation getEventTypeId();
+public interface IColonyEventDescription
+{
+    /**
+     * Gets this event types registry id.
+     * 
+     * @return this event types registry id.
+     */
+    ResourceLocation getEventTypeId();
 
     /**
      * Gets the name of this event type.
@@ -76,5 +76,4 @@ public interface IColonyEventDescription {
      * @param buf the {@link PacketBuffer} to deserialize from.
      */
     void deserialize(final PacketBuffer buf);
-    
 }
