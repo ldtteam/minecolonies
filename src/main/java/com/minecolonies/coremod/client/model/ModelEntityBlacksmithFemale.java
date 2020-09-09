@@ -101,7 +101,7 @@ public class ModelEntityBlacksmithFemale extends CitizenModel<AbstractEntityCiti
         hair = new ModelRenderer(this);
         hair.setRotationPoint(0.0F, 0.0F, 0.0F);
         bipedHead.addChild(hair);
-        
+
 
         hairF1 = new ModelRenderer(this);
         hairF1.setRotationPoint(0.0F, 0.0F, 0.0F);

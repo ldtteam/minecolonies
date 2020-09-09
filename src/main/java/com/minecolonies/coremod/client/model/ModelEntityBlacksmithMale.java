@@ -89,7 +89,7 @@ public class ModelEntityBlacksmithMale extends CitizenModel<AbstractEntityCitize
         beard = new ModelRenderer(this);
         beard.setRotationPoint(0.0F, 2.7F, -0.4F);
         bipedHead.addChild(beard);
-        
+
 
         beardB = new ModelRenderer(this);
         beardB.setRotationPoint(0.0F, 0.0F, 0.0F);
