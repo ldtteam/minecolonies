@@ -429,27 +429,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 return START_WORKING;
             }
 
-            for (final ICitizenData citizen : getOwnBuilding().getAssignedCitizen())
-            {
-                if (citizen.getEntity().isPresent() && citizen.getEntity().get().getRevengeTarget() == null)
-                {
-                    citizen.getEntity().get().setRevengeTarget(target);
-                }
-            }
-
-            if (target instanceof AbstractEntityMinecoloniesMob)
-            {
-                for (final Map.Entry<BlockPos, IBuilding> entry : worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().entrySet())
-                {
-                    if (entry.getValue() instanceof AbstractBuildingGuards &&
-                          worker.getPosition().distanceSq(entry.getKey()) < PATROL_DEVIATION_RAID_POINT)
-                    {
-                        final AbstractBuildingGuards building = (AbstractBuildingGuards) entry.getValue();
-                        building.setTempNextPatrolPoint(target.getPosition());
-                    }
-                }
-            }
-
             fighttimer = COMBAT_TIME;
             equipInventoryArmor();
             moveInAttackPosition();
@@ -785,6 +764,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                   && worker.getDistanceSq(worker.getRevengeTarget()) < worker.getDistanceSq(target) - 15)
             {
                 target = worker.getRevengeTarget();
+                onTargetChange();
             }
 
             // Check sight
@@ -814,10 +794,38 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         if (isEntityValidTargetAndCanbeSeen(worker.getRevengeTarget()))
         {
             target = worker.getRevengeTarget();
+            onTargetChange();
             return true;
         }
 
         return target != null;
+    }
+
+    /**
+     * Actions on changing to a new target entity
+     */
+    protected void onTargetChange()
+    {
+        for (final ICitizenData citizen : getOwnBuilding().getAssignedCitizen())
+        {
+            if (citizen.getEntity().isPresent() && citizen.getEntity().get().getRevengeTarget() == null)
+            {
+                citizen.getEntity().get().setRevengeTarget(target);
+            }
+        }
+
+        if (target instanceof AbstractEntityMinecoloniesMob)
+        {
+            for (final Map.Entry<BlockPos, IBuilding> entry : worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().entrySet())
+            {
+                if (entry.getValue() instanceof AbstractBuildingGuards &&
+                      worker.getPosition().distanceSq(entry.getKey()) < PATROL_DEVIATION_RAID_POINT)
+                {
+                    final AbstractBuildingGuards building = (AbstractBuildingGuards) entry.getValue();
+                    building.setTempNextPatrolPoint(target.getPosition());
+                }
+            }
+        }
     }
 
     /**
@@ -1001,6 +1009,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         target = targetEntity;
+        onTargetChange();
         return targetEntity;
     }
 

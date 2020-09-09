@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
@@ -35,7 +36,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends MobEntity
+public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements IStuckHandlerEntity
 {
     /**
      * Difficulty at which raiders team up
@@ -116,6 +117,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
      * Counts entity collisions
      */
     private int collisionCounter = 0;
+
+    /**
+     * Whether the entity is possibly stuck
+     */
+    private boolean canBeStuck = true;
 
     /**
      * The collision threshold
@@ -580,5 +586,21 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     public double getDifficulty()
     {
         return difficulty;
+    }
+
+    @Override
+    public boolean canBeStuck()
+    {
+        return canBeStuck;
+    }
+
+    /**
+     * Sets whether the entity currently could be stuck
+     *
+     * @param canBeStuck true if its possible to be stuck
+     */
+    public void setCanBeStuck(final boolean canBeStuck)
+    {
+        this.canBeStuck = canBeStuck;
     }
 }
