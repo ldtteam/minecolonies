@@ -23,6 +23,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -187,6 +188,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         registerButton(BUTTON_MANAGE_FRIEND, this::editFriend);
         registerButton(BUTTON_MANAGE_NEUTRAL, this::editNeutral);
         registerButton(BUTTON_MANAGE_HOSTILE, this::editHostile);
+        registerButton(BUTTON_PERMISSION_EVENTS, this::permissionEventsClicked);
         registerButton(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, this::addPlayerToColonyClicked);
         registerButton(BUTTON_TP, this::teleportToColony);
         registerButton(BUTTON_UP, this::updatePriority);
@@ -783,7 +785,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
     private void fillEventsList()
     {
-        eventList = findPaneOfTypeByID(LIST_PERM_EVENT, ScrollingList.class);
+        eventList = findPaneOfTypeByID(EVENTS_LIST, ScrollingList.class);
         eventList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
@@ -1328,5 +1330,16 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         {
             editOfficer();
         }
+    }
+
+    /**
+     * Switching between permission and colony events.
+     * 
+     * @param button the clicked button.
+     */
+    public void permissionEventsClicked(@NotNull final Button button)
+    {
+    	permissionEvents = !permissionEvents;
+    	button.setLabel(LanguageHandler.format(permissionEvents ? TranslationConstants.GUI_TOWNHALL_COLONY_EVENTS : TranslationConstants.GUI_TOWNHALL_PERMISSION_EVENTS));
     }
 }
