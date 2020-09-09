@@ -1,5 +1,6 @@
 package com.minecolonies.apiimp.initializer;
 
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
@@ -13,6 +14,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
+
+import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.IRON_GATE;
+import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GATE;
 
 @ObjectHolder(Constants.MOD_ID)
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -68,6 +72,8 @@ public final class ModItemsInitializer
         ModItems.scepterBeekeeper = new ItemScepterBeekeeper(new Item.Properties());
 
         ModItems.santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, EquipmentSlotType.HEAD, new Item.Properties());
+        ModItems.irongate = new ItemGate(IRON_GATE, ModBlocks.blockIronGate, ModCreativeTabs.MINECOLONIES, new Item.Properties());
+        ModItems.woodgate = new ItemGate(WOODEN_GATE, ModBlocks.blockWoodenGate, ModCreativeTabs.MINECOLONIES, new Item.Properties());
 
         ModItems.flagBanner = new ItemColonyFlagBanner("colony_banner", ModCreativeTabs.MINECOLONIES, new Item.Properties());
 
@@ -108,6 +114,8 @@ public final class ModItemsInitializer
         registry.register(ModItems.pirateBoots_2);
 
         registry.register(ModItems.santaHat);
+        registry.register(ModItems.irongate);
+        registry.register(ModItems.woodgate);
         registry.register(ModItems.flagBanner);
 
         registry.register(new SpawnEggItem(ModEntities.BARBARIAN,

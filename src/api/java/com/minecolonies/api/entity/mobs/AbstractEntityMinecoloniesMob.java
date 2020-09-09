@@ -3,8 +3,11 @@ package com.minecolonies.api.entity.mobs;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
@@ -13,6 +16,7 @@ import net.minecraft.entity.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
@@ -32,8 +36,13 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends MobEntity
+public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements IStuckHandlerEntity
 {
+    /**
+     * Difficulty at which raiders team up
+     */
+    private static final double TEAM_DIFFICULTY = 2.0d;
+
     /**
      * The New PathNavigate navigator.
      */
@@ -110,9 +119,20 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     private int collisionCounter = 0;
 
     /**
+     * Whether the entity is possibly stuck
+     */
+    private boolean canBeStuck = true;
+
+    /**
      * The collision threshold
      */
-    private final static int COLL_THRESHOLD = 50;
+    private final static int    COLL_THRESHOLD = 50;
+    private final static String RAID_TEAM      = "RAIDERS_TEAM";
+
+    /**
+     * Mob difficulty
+     */
+    private double difficulty = 1.0d;
 
     /**
      * Constructor method for Abstract Barbarians.
@@ -163,6 +183,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
 
     /**
      * Get the specific raider type of this raider.
+     *
      * @return the type enum.
      */
     public abstract RaiderType getRaiderType();
@@ -440,6 +461,14 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
                 return false;
             }
         }
+        else if (!world.isRemote())
+        {
+            final IColonyEvent event = colony.getEventManager().getEventByID(eventID);
+            if (event instanceof IColonyCampFireRaidEvent)
+            {
+                ((IColonyCampFireRaidEvent) event).setCampFireTime(0);
+            }
+        }
 
         return super.attackEntityFrom(damageSource, damage);
     }
@@ -505,6 +534,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     {
         this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage);
 
+        this.difficulty = difficulty;
         final double armor = difficulty * ARMOR;
         this.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
         this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * difficulty));
@@ -514,7 +544,63 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
             this.setEnvDamageImmunity(true);
         }
 
+        if (difficulty >= TEAM_DIFFICULTY)
+        {
+            world.getScoreboard().addPlayerToTeam(getScoreboardName(), checkOrCreateTeam());
+        }
+
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(baseHealth);
         this.setHealth(this.getMaxHealth());
+    }
+
+    /**
+     * Creates or gets the scoreboard team
+     *
+     * @return Scoreboard team
+     */
+    private ScorePlayerTeam checkOrCreateTeam()
+    {
+        if (this.world.getScoreboard().getTeam(getTeamName()) == null)
+        {
+            this.world.getScoreboard().createTeam(getTeamName());
+            this.world.getScoreboard().getTeam(getTeamName()).setAllowFriendlyFire(false);
+        }
+        return this.world.getScoreboard().getTeam(getTeamName());
+    }
+
+    /**
+     * Gets the scoreboard team name
+     *
+     * @return
+     */
+    protected String getTeamName()
+    {
+        return RAID_TEAM;
+    }
+
+    /**
+     * Get the mobs difficulty
+     *
+     * @return difficulty
+     */
+    public double getDifficulty()
+    {
+        return difficulty;
+    }
+
+    @Override
+    public boolean canBeStuck()
+    {
+        return canBeStuck;
+    }
+
+    /**
+     * Sets whether the entity currently could be stuck
+     *
+     * @param canBeStuck true if its possible to be stuck
+     */
+    public void setCanBeStuck(final boolean canBeStuck)
+    {
+        this.canBeStuck = canBeStuck;
     }
 }

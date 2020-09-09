@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.pathfinding;
+package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
@@ -11,6 +11,9 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
+import com.minecolonies.coremod.entity.pathfinding.ChunkCache;
+import com.minecolonies.coremod.entity.pathfinding.Node;
+import com.minecolonies.coremod.entity.pathfinding.PathPointExtended;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -41,11 +44,11 @@ import static com.minecolonies.api.util.constant.PathingConstants.*;
 public abstract class AbstractPathJob implements Callable<Path>
 {
     @Nullable
-    protected static Set<Node>          lastDebugNodesVisited;
+    public static Set<Node> lastDebugNodesVisited;
     @Nullable
-    protected static Set<Node>          lastDebugNodesNotVisited;
+    public static Set<Node> lastDebugNodesNotVisited;
     @Nullable
-    protected static Set<Node>          lastDebugNodesPath;
+    public static Set<Node>          lastDebugNodesPath;
     @NotNull
     protected final  BlockPos           start;
     @NotNull
@@ -131,7 +134,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         allowJumpPointSearchTypeWalk = false;
 
-        if (MineColonies.getConfig().getCommon().pathfindingDebugDraw.get())
+        if (MineColonies.getConfig().getCommon().pathfindingDebugDraw.get()) // this is automatically false when on server
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -172,7 +175,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         allowJumpPointSearchTypeWalk = false;
 
-        if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pathfindingDebugDraw.get())
+        if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pathfindingDebugDraw.get()) // this is automatically false when on server
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -197,9 +200,9 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public static BlockPos prepareStart(@NotNull final LivingEntity entity)
     {
-        @NotNull final BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.posX),
-          MathHelper.floor(entity.posY),
-          MathHelper.floor(entity.posZ));
+        @NotNull final BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.getPosX()),
+          MathHelper.floor(entity.getPosY()),
+          MathHelper.floor(entity.getPosZ()));
         BlockState bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
         final Block b = bs.getBlock();
 
@@ -220,8 +223,8 @@ public abstract class AbstractPathJob implements Callable<Path>
         else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault || bs.getMaterial().isSolid())
         {
             //Push away from fence
-            final double dX = entity.posX - Math.floor(entity.posX);
-            final double dZ = entity.posZ - Math.floor(entity.posZ);
+            final double dX = entity.getPosX() - Math.floor(entity.getPosX());
+            final double dZ = entity.getPosZ() - Math.floor(entity.getPosZ());
 
             if (dX < ONE_SIDE)
             {
@@ -672,7 +675,18 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         doDebugPrinting(points);
 
-        return new Path(Arrays.asList(points), targetNode.pos, false);
+        return new Path(Arrays.asList(points), getPathTargetPos(targetNode), isAtDestination(targetNode));
+    }
+
+    /**
+     * Creates the path for the given points
+     *
+     * @param finalNode
+     * @return
+     */
+    protected BlockPos getPathTargetPos(final Node finalNode)
+    {
+        return finalNode.pos;
     }
 
     /**

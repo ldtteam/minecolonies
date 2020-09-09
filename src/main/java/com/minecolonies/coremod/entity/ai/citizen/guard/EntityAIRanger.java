@@ -16,8 +16,8 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
-import com.minecolonies.coremod.entity.pathfinding.PathJobCanSee;
-import com.minecolonies.coremod.entity.pathfinding.PathJobWalkRandomEdge;
+import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobCanSee;
+import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobWalkRandomEdge;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
@@ -210,6 +210,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
             return state;
         }
 
+        fighttimer = COMBAT_TIME;
         final double sqDistanceToEntity = BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target.getPosition());
         final boolean canSee = worker.getEntitySenses().canSee(target);
         final double sqAttackRange = getRealAttackRange() * getRealAttackRange();
@@ -271,7 +272,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
             strafingTime = -1;
 
             // Fleeing
-            if (!fleeing && !movingToTarget && sqDistanceToEntity < RANGED_FLEE_SQDIST && tooCloseNumTicks > 5)
+            if (!fleeing && !movingToTarget && sqDistanceToEntity < RANGED_FLEE_SQDIST && tooCloseNumTicks > 3)
             {
                 fleePath = worker.getNavigator().moveAwayFromLivingEntity(target, getRealAttackRange() / 2.0, getCombatMovementSpeed());
                 fleeing = true;

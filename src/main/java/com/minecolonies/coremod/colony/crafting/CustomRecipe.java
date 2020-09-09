@@ -3,21 +3,21 @@ package com.minecolonies.coremod.colony.crafting;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import org.jetbrains.annotations.NotNull;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
-
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This class represents a recipe loaded from custom data that is available to a crafter
@@ -87,6 +87,17 @@ public class CustomRecipe
     public static final String RECIPE_EXCLUDED_RESEARCHID_PROP = "not-research-id";
 
     /**
+     * The property name for the minimum level the building must be
+     */
+    public static final String RECIPE_BUILDING_MIN_LEVEL_PROP = "min-building-level";
+
+    /**
+     * The property name for the maximum level the building can be
+     */
+    public static final String RECIPE_BUILDING_MAX_LEVEL_PROP = "max-building-level";
+
+
+    /**
      * The crafter name for this instance, defaults to 'unknown'
      */
     private String crafter = "unknown";
@@ -120,6 +131,16 @@ public class CustomRecipe
      * ID of the exclusionary research. Null if nothing excludes this recipe
      */
     private String excludedResearchId = null;
+
+    /**
+     * The Minimum Level the building has to be for this recipe to be valid
+     */
+    private int minBldgLevel = 0;
+
+    /**
+     * The Maximum Level the building can to be for this recipe to be valid
+     */
+    private int maxBldgLevel = 5;
 
 
     /**
@@ -188,6 +209,14 @@ public class CustomRecipe
         {
             recipe.excludedResearchId = recipeJson.get(RECIPE_EXCLUDED_RESEARCHID_PROP).getAsString();
         }
+        if(recipeJson.has(RECIPE_BUILDING_MIN_LEVEL_PROP))
+        {
+            recipe.minBldgLevel= recipeJson.get(RECIPE_BUILDING_MIN_LEVEL_PROP).getAsInt();
+        }
+        if(recipeJson.has(RECIPE_BUILDING_MAX_LEVEL_PROP))
+        {
+            recipe.maxBldgLevel= recipeJson.get(RECIPE_BUILDING_MAX_LEVEL_PROP).getAsInt();
+        }
 
         return recipe;
     }
@@ -219,13 +248,15 @@ public class CustomRecipe
     }
  
     /**
-     * Check to see if the recipe is currently valid for the colony
+     * Check to see if the recipe is currently valid for the building
      * This does research checks, to verify that the appropriate researches are in the correct states
      */
-    public boolean isValidForColony(IColony colony)
+    public boolean isValidForBuilding(IBuilding building)
     {
         IResearchEffect<?> requiredEffect = null;
         IResearchEffect<?> excludedEffect = null;
+        final IColony colony = building.getColony();
+        final int bldgLevel = building.getBuildingLevel();
         
         if (researchId != null)
         {
@@ -237,7 +268,10 @@ public class CustomRecipe
             excludedEffect = colony.getResearchManager().getResearchEffects().getEffect(excludedResearchId, UnlockAbilityResearchEffect.class);
         }
 
-        return (researchId == null || requiredEffect != null) && (excludedResearchId == null || excludedEffect == null);
+        return (researchId == null || requiredEffect != null) 
+            && (excludedResearchId == null || excludedEffect == null)
+            && (bldgLevel >= minBldgLevel)
+            && (bldgLevel <= maxBldgLevel);
     }
 
     /**
@@ -253,5 +287,33 @@ public class CustomRecipe
             1,
             result,
             intermediate);
-      }
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(result, researchId, excludedResearchId, inputs);
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        final CustomRecipe that = (CustomRecipe) o;
+
+
+        return result.isItemEqual(that.result) 
+            && researchId.equals(that.researchId)
+            && excludedResearchId.equals(that.excludedResearchId)
+            && inputs.equals(that.inputs);
+    }
+
 }

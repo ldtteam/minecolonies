@@ -77,7 +77,7 @@ public final class BlockPosUtil
      * @param random a random object.
      * @return a tuple of two directions.
      */
-    private static Tuple<Direction, Direction> getRandomDirectionTuple(final Random random)
+    public static Tuple<Direction, Direction> getRandomDirectionTuple(final Random random)
     {
         return new Tuple<>(Direction.random(random), Direction.random(random));
     }
@@ -102,7 +102,7 @@ public final class BlockPosUtil
                  || !WorldUtil.isEntityBlockLoaded(world, pos)
                  || world.getBlockState(pos).getMaterial().isLiquid()
                  || !world.getBlockState(pos.down()).getMaterial().isSolid()
-                 || (!world.isAirBlock(pos) && !world.isAirBlock(pos.up())))
+                 || (!world.isAirBlock(pos) || !world.isAirBlock(pos.up())))
         {
             final Tuple<Direction, Direction> direction = getRandomDirectionTuple(random);
             pos =

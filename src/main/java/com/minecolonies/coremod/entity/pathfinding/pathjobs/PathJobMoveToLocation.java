@@ -1,7 +1,8 @@
-package com.minecolonies.coremod.entity.pathfinding;
+package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.entity.pathfinding.Node;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.util.math.BlockPos;
@@ -63,6 +64,12 @@ public class PathJobMoveToLocation extends AbstractPathJob
         }
 
         return super.search();
+    }
+
+    @Override
+    protected BlockPos getPathTargetPos(final Node finalNode)
+    {
+        return destination;
     }
 
     @Override

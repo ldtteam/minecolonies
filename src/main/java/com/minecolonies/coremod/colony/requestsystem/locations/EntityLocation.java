@@ -27,7 +27,7 @@ public class EntityLocation implements ILocation
     private final UUID uuid;
 
     @Nullable
-    private WeakReference<Entity> entity;
+    private WeakReference<Entity> entity = new WeakReference<>(null);
 
     public EntityLocation(@NotNull final UUID uuid)
     {
@@ -37,7 +37,7 @@ public class EntityLocation implements ILocation
 
     private void checkEntity()
     {
-        if (entity != null)
+        if (entity.get() != null)
         {
             return;
         }

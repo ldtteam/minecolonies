@@ -30,6 +30,10 @@ import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.BossInfo;
+import net.minecraft.world.server.ServerBossInfo;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 

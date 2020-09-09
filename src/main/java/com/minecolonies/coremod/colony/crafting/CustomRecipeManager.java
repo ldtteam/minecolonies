@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.crafting;
 import java.util.*;
 import java.util.stream.Collectors;
 import com.google.gson.JsonObject;
-import com.ldtteam.blockout.Log;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.util.ResourceLocation;
@@ -25,6 +24,12 @@ public class CustomRecipeManager
      * The map of loaded recipes
      */
     private HashMap<String, HashMap<ResourceLocation, CustomRecipe>> recipeMap = new HashMap<>();
+
+    /**
+     * The recipes that are marked for removal after loading all resource packs
+     * This list will be processed on first access of the custom recipe list after load, and will be emptied.
+     */
+    private List<ResourceLocation> removedRecipes = new ArrayList<>();
 
     private CustomRecipeManager()
     {
@@ -70,10 +75,9 @@ public class CustomRecipeManager
         if (recipeJson.has(RECIPE_TYPE_PROP) && recipeJson.get(RECIPE_TYPE_PROP).getAsString().equals(RECIPE_TYPE_REMOVE) && recipeJson.has(RECIPE_ID_TO_REMOVE_PROP))
         {
             ResourceLocation toRemove = new ResourceLocation(recipeJson.get(RECIPE_ID_TO_REMOVE_PROP).getAsString());
-            final Optional<HashMap<ResourceLocation, CustomRecipe>> crafterMap = recipeMap.entrySet().stream().map(r -> r.getValue()).filter(r1 -> r1.keySet().contains(toRemove)).findFirst();
-            if(crafterMap.isPresent())
+            if(!removedRecipes.contains(toRemove))
             {
-                crafterMap.get().remove(toRemove);
+                removedRecipes.add(toRemove);
             }
         }
     }
@@ -85,6 +89,19 @@ public class CustomRecipeManager
      */
     public Set<CustomRecipe> getRecipes(@NotNull final String crafter)
     {
+        if(!removedRecipes.isEmpty())
+        {
+            for(ResourceLocation toRemove: removedRecipes)
+            {
+                final Optional<HashMap<ResourceLocation, CustomRecipe>> crafterMap = recipeMap.entrySet().stream().map(r -> r.getValue()).filter(r1 -> r1.keySet().contains(toRemove)).findFirst();
+                if(crafterMap.isPresent())
+                {
+                    crafterMap.get().remove(toRemove);
+                }
+             }
+            removedRecipes.clear();
+        }
+
         if(recipeMap.containsKey(crafter))
         {
             return recipeMap.get(crafter).entrySet().stream().map(x -> x.getValue()).collect(Collectors.toSet());
