@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingBuilt
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
@@ -324,9 +325,8 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         if (wo instanceof WorkOrderBuildBuilding)
         {
             worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
-            // TODO: find a way to detect the building building a new building with a level > 1 because of a reposition request.
-            AbstractBuildingEvent event = ((WorkOrderBuildBuilding) wo).getUpgradeLevel() > 1 ? new BuildingUpgradedEvent() : new BuildingBuiltEvent();
-            event.setLevel(((WorkOrderBuildBuilding) wo).getUpgradeLevel());
+            AbstractBuildingEvent event = ((WorkOrderBuild) wo).getUpgradeLevel() > 1 ? new BuildingUpgradedEvent() : new BuildingBuiltEvent();
+            event.setLevel(((WorkOrderBuild) wo).getUpgradeLevel());
 
             String buildingName = wo.getStructureName();
             buildingName = buildingName.substring(buildingName.indexOf('/') + 1, buildingName.lastIndexOf('/')) + " " +
@@ -339,7 +339,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         {
             worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE, structureName);
             BuildingDeconstructedEvent event = new BuildingDeconstructedEvent();
-            event.setLevel(((WorkOrderBuildBuilding) wo).getUpgradeLevel());
+            event.setLevel(((WorkOrderBuild) wo).getUpgradeLevel());
 
             String buildingName = wo.getStructureName();
             buildingName = buildingName.substring(buildingName.indexOf('/') + 1, buildingName.lastIndexOf('/')) + " " +
