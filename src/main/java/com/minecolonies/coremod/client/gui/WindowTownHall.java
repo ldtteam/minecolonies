@@ -594,7 +594,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final int citizensSize = townHall.getColony().getCitizens().size();
 
         final String numberOfCitizens =
-          LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalcitizens", citizensSize, townHall.getColony().getCitizenCount());
+          LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS, citizensSize, townHall.getColony().getCitizenCount());
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
         int children = 0;
@@ -656,8 +656,8 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 children++;
             }
         }
-        final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", citizensSize - totalWorkers - children);
-        final String numberOfKids = LanguageHandler.format("com.minecolonies.coremod.gui.townhall.population.childs", children);
+        final String numberOfUnemployed = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED, citizensSize - totalWorkers - children);
+        final String numberOfKids = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS, children);
 
         final ScrollingList list = findPaneOfTypeByID("citizen-stats", ScrollingList.class);
         if (list == null)
@@ -687,7 +687,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     final Map.Entry<String, Tuple<Integer, Integer>> entry = theList.get(index);
                     final String job = LanguageHandler.format(entry.getKey());
                     final String numberOfWorkers =
-                      LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.each", job, entry.getValue().getA(), entry.getValue().getB());
+                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH, job, entry.getValue().getA(), entry.getValue().getB());
                     label.setLabelText(numberOfWorkers);
                 }
                 else

@@ -288,30 +288,43 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT                      = "com.minecolonies.coremod.gui.beekeeper.collect";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT   = "com.minecolonies.coremod.gui.beekeeper.notcollect";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT                   = "com.minecolonies.coremod.gui.beekeeper.notcollect";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO   = "com.minecolonies.coremod.gui.workerhuts.modeA";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO                   = "com.minecolonies.coremod.gui.workerhuts.modeA";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL = "com.minecolonies.coremod.gui.workerhuts.modeM";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL                 = "com.minecolonies.coremod.gui.workerhuts.modeM";
     @NonNls
-    public static final String AUTOMATIC_HIRE_WARNING                              = "com.minecolonies.coremod.gui.auto.hire.warning";
+    public static final String AUTOMATIC_HIRE_WARNING                                              = "com.minecolonies.coremod.gui.auto.hire.warning";
     @NonNls
-    public static final String RAID_EVENT_MESSAGE                                  = "event.minecolonies.raidmessage";
+    public static final String RAID_EVENT_MESSAGE                                                  = "event.minecolonies.raidmessage";
     @NonNls
-    public static final String RAID_EVENT_MESSAGE_PIRATE                           = "event.minecolonies.raidmessage_p";
-    public static final String RAID_AMAZON                                         = "com.minecolonies.coremod.raid.amazon.name";
-    public static final String RAID_EGYPTIAN                                       = "com.minecolonies.coremod.raid.egyptian.name";
-    public static final String RAID_BARBARIAN                                      = "com.minecolonies.coremod.raid.barbarian.name";
-    public static final String RAID_PIRATE                                         = "com.minecolonies.coremod.raid.pirate.name";
-    public static final String RAID_NORSEMEN                                       = "com.minecolonies.coremod.raid.norsemen.name";
+    public static final String RAID_EVENT_MESSAGE_PIRATE                                           = "event.minecolonies.raidmessage_p";
     @NonNls
-    public static final String ONLY_X_BARBARIANS_LEFT_MESSAGE                      = "com.minecolonies.coremod.barbarians.left";
+    public static final String RAID_AMAZON                                                         = "com.minecolonies.coremod.raid.amazon.name";
     @NonNls
-    public static final String ALL_BARBARIANS_KILLED_MESSAGE                       = "com.minecolonies.coremod.barbarians.killed";
+    public static final String RAID_EGYPTIAN                                                       = "com.minecolonies.coremod.raid.egyptian.name";
     @NonNls
-    public static final String CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN                = "com.minecolonies.coremod.tooclose";
+    public static final String RAID_BARBARIAN                                                      = "com.minecolonies.coremod.raid.barbarian.name";
     @NonNls
-    public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                = "com.minecolonies.coremod.toofar";
+    public static final String RAID_PIRATE                                                         = "com.minecolonies.coremod.raid.pirate.name";
+    @NonNls
+    public static final String RAID_NORSEMEN                                                       = "com.minecolonies.coremod.raid.norsemen.name";
+    @NonNls
+    public static final String ONLY_X_BARBARIANS_LEFT_MESSAGE                                      = "com.minecolonies.coremod.barbarians.left";
+    @NonNls
+    public static final String ALL_BARBARIANS_KILLED_MESSAGE                                       = "com.minecolonies.coremod.barbarians.killed";
+    @NonNls
+    public static final String CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN                                = "com.minecolonies.coremod.tooclose";
+    @NonNls
+    public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                = "com.minecolonies.coremod.toofar";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS      = "com.minecolonies.coremod.gui.townHall.population.totalcitizens";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS             = "com.minecolonies.coremod.gui.townHall.population.childs";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH               = "com.minecolonies.coremod.gui.townHall.population.each";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED         = "com.minecolonies.coremod.gui.townHall.population.unemployed";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED            = "com.minecolonies.coremod.gui.townHall.citizens.unemployed";
     @NonNls
