@@ -25,6 +25,9 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
      */
     public static final ResourceLocation PIRATE_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "pirate_raid");
 
+    /**
+     * Ship description
+     */
     public static final String SHIP_NAME = "pirate_ship";
 
     /**

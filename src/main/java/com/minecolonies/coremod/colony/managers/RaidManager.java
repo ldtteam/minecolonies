@@ -34,11 +34,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
-import net.minecraftforge.common.BiomeDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
@@ -151,8 +149,6 @@ public class RaidManager implements IRaiderManager
      * The amount of citizens lost in a raid, two for normal citizens one for guards
      */
     private int lostCitizens = 0;
-
-    private static final HashMap<BiomeDictionary.Type, List<Consumer<IColony>>> raidBiomeMap = new HashMap<>();
 
     /**
      * Creates the RaidManager for a colony.
