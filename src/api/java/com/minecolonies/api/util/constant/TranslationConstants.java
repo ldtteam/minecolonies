@@ -313,11 +313,11 @@ public final class TranslationConstants
     @NonNls
     public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                = "com.minecolonies.coremod.toofar";
     @NonNls
-    public static final String GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED                 = "com.minecolonies.coremod.gui.townhall.citizens.unemployed";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED            = "com.minecolonies.coremod.gui.townHall.citizens.unemployed";
     @NonNls
-    public static final String GUI_TOWNHALL_PERMISSION_EVENTS                      = "com.minecolonies.coremod.gui.townhall.permissionevents";
+    public static final String COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS              = "com.minecolonies.coremod.gui.townHall.permissionevents";
     @NonNls
-    public static final String GUI_TOWNHALL_COLONY_EVENTS                          = "com.minecolonies.coremod.gui.townhall.colonyevents";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS                  = "com.minecolonies.coremod.gui.townHall.colonyevents";
     @NonNls
     public static final String LIST_REQUEST_DISPLAY_STRING                                         = "com.minecolonies.coremod.request.stacklist";
     @NonNls

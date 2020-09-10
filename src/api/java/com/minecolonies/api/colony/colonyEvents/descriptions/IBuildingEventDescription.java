@@ -36,6 +36,6 @@ public interface IBuildingEventDescription extends IColonyEventDescription
     @Override
     default String toDisplayString()
     {
-        return String.format("%s of type %s at %d %d %d.%n", getName(), getBuilding(), getEventPos().getX(), getEventPos().getY(), getEventPos().getZ());
+        return String.format("%s: %s %d at %d %d %d.%n", getName(), getBuilding(), getLevel(), getEventPos().getX(), getEventPos().getY(), getEventPos().getZ());
     }
 }

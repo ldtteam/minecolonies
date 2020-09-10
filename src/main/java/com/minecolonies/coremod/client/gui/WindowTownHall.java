@@ -836,7 +836,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     else if (event instanceof IBuildingEventDescription)
                     {
                         IBuildingEventDescription buildEvent = (IBuildingEventDescription) event;
-                        rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(buildEvent.getBuilding() + "(" + buildEvent.getLevel() + ")");
+                        rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(buildEvent.getBuilding() + " " + buildEvent.getLevel());
                     }
                     rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ());
                     rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
@@ -974,7 +974,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         WindowCitizen.createHappinessBar(view, this);
         WindowCitizen.createSkillContent(view, this);
         findPaneOfTypeByID(JOB_LABEL, Label.class).setLabelText(
-          "§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED : view.getJob()));
+          "§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : view.getJob()));
         findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Label.class).setLabelText(String.valueOf(view.getId()));
     }
 
@@ -1340,6 +1340,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     public void permissionEventsClicked(@NotNull final Button button)
     {
     	permissionEvents = !permissionEvents;
-    	button.setLabel(LanguageHandler.format(permissionEvents ? TranslationConstants.GUI_TOWNHALL_COLONY_EVENTS : TranslationConstants.GUI_TOWNHALL_PERMISSION_EVENTS));
+    	button.setLabel(LanguageHandler.format(permissionEvents ? TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS : TranslationConstants.COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS));
     }
 }
