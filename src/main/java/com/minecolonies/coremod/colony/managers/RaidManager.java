@@ -268,8 +268,8 @@ public class RaidManager implements IRaiderManager
             // No rotation till spawners are moved into schematics
             final int shipRotation = new Random().nextInt(3);
             final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath();
-            final Random rand = colony.getWorld().rand;
-            if ((homeBiomePath.contains(TAIGA_BIOME_ID) || rand.nextInt(100) < IGNORE_BIOME_CHANCE) && ShipBasedRaiderUtils.canSpawnShipAt(colony,
+            final int rand = colony.getWorld().rand.nextInt(100);
+            if ((homeBiomePath.contains(TAIGA_BIOME_ID) || rand < IGNORE_BIOME_CHANCE) && ShipBasedRaiderUtils.canSpawnShipAt(colony,
               targetSpawnPoint,
               amount,
               shipRotation,
@@ -293,15 +293,15 @@ public class RaidManager implements IRaiderManager
             {
                 final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getRegistryName().getPath();
                 final HordeRaidEvent event;
-                if (biomePath.contains(DESERT_BIOME_ID) || rand.nextInt(100) < IGNORE_BIOME_CHANCE)
+                if (biomePath.contains(DESERT_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
                 {
                     event = new EgyptianRaidEvent(colony);
                 }
-                else if (biomePath.contains(JUNGLE_BIOME_ID) || rand.nextInt(100) < IGNORE_BIOME_CHANCE)
+                else if (biomePath.contains(JUNGLE_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3))
                 {
                     event = new AmazonRaidEvent(colony);
                 }
-                else if (biomePath.contains(TAIGA_BIOME_ID) || rand.nextInt(100) < IGNORE_BIOME_CHANCE)
+                else if (biomePath.contains(TAIGA_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
                 {
                     event = new NorsemenRaidEvent(colony);
                 }
