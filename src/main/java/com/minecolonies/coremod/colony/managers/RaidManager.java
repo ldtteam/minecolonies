@@ -281,7 +281,7 @@ public class RaidManager implements IRaiderManager
                 event.setShipRotation(shipRotation);
                 colony.getEventManager().addEvent(event);
             }
-            else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateShipRaidEvent.SHIP_NAME))
+            else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME))
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
