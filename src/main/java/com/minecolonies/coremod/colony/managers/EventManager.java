@@ -88,7 +88,8 @@ public class EventManager implements IEventManager
     }
 
     @Override
-    public void addEventDescription(IColonyEventDescription colonyEventDescription) {
+    public void addEventDescription(IColonyEventDescription colonyEventDescription)
+    {
         if (eventDescs.size() >= MAX_COLONY_EVENTS)
         {
             eventDescs.removeFirst();

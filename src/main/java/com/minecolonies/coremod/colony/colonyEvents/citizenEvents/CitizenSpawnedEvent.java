@@ -7,6 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * The event handling a newly spawned(not born) citizen.
@@ -18,6 +19,25 @@ public class CitizenSpawnedEvent extends AbstractCitizenEvent
      * This events id, registry entries use res locations as ids.
      */
     public static final ResourceLocation CITIZEN_SPAWNED_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "citizen_spawn");
+
+    /**
+     * Creates a new citizen spawned event.
+     */
+    public CitizenSpawnedEvent()
+    {
+        super();
+    }
+
+    /**
+     * Creates a new citizen spawned event.
+     * 
+     * @param eventPos    the position of the hut block of the building.
+     * @param citizenName the name of the building.
+     */
+    public CitizenSpawnedEvent(BlockPos eventPos, String citizenName)
+    {
+        super(eventPos, citizenName);
+    }
 
     @Override
     public ResourceLocation getEventTypeId()

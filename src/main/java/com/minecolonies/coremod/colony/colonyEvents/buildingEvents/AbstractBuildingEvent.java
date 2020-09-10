@@ -19,6 +19,27 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     private String building;
     private int level;
 
+    /**
+     * Creates a new building event.
+     */
+    public AbstractBuildingEvent()
+    {
+    }
+
+    /**
+     * Creates a new building event.
+     * 
+     * @param eventPos      the position of the hut block of the building.
+     * @param buildingName  the name of the building.
+     * @param buildingLevel the level of the building after this event.
+     */
+    public AbstractBuildingEvent(BlockPos eventPos, String buildingName, int buildingLevel)
+    {
+        this.eventPos = eventPos;
+        building = buildingName;
+        level = buildingLevel;
+    }
+
     @Override
     public BlockPos getEventPos()
     {

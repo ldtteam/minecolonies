@@ -7,6 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +23,27 @@ public class CitizenDiedEvent extends AbstractCitizenEvent
     public static final ResourceLocation CITIZEN_DIED_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "citizen_died");
 
     private String deathCause;
+
+    /**
+     * Creates a new citizen died event.
+     */
+    public CitizenDiedEvent()
+    {
+        super();
+    }
+
+    /**
+     * Creates a new citizen died event.
+     * 
+     * @param eventPos    the position of the hut block of the building.
+     * @param citizenName the name of the building.
+     * @param deathCause  the cause of the citizen death.
+     */
+    public CitizenDiedEvent(BlockPos eventPos, String citizenName, String deathCause)
+    {
+        super(eventPos, citizenName);
+        this.deathCause = deathCause;
+    }
 
     @Override
     public ResourceLocation getEventTypeId()

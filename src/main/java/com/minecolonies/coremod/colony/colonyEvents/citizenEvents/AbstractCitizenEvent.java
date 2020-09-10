@@ -18,6 +18,25 @@ public abstract class AbstractCitizenEvent implements ICitizenEventDescription
     private BlockPos eventPos;
     private String citizenName;
 
+    /**
+     * Creates a new citizen event.
+     */
+    public AbstractCitizenEvent()
+    {
+    }
+
+    /**
+     * Creates a new citizen event.
+     * 
+     * @param eventPos    the position of the hut block of the building.
+     * @param citizenName the name of the building.
+     */
+    public AbstractCitizenEvent(BlockPos eventPos, String citizenName)
+    {
+        this.eventPos = eventPos;
+        this.citizenName = citizenName;
+    }
+
     @Override
     public BlockPos getEventPos()
     {

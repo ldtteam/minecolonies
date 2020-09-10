@@ -11,7 +11,7 @@
             <label size="148 11" pos="201 59" color="black" textalign="MIDDLE"
                    label="$(com.minecolonies.coremod.gui.townHall.events):"/>
 
-            <list id="eventsList" size="148 160" pos="201 70">
+            <list id="eventsList" size="148 152" pos="201 70">
                 <box size="100% 36" linewidth="2">
                     <label id="action" size="100 12" pos="1 1" color="black"/>
                     <label id="name" size="100 12" pos="1 12" color="blue"/>

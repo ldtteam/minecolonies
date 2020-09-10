@@ -297,10 +297,8 @@ public class CitizenManager implements ICitizenManager
         entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
         world.addEntity(entity);
 
-        AbstractCitizenEvent spawnEvent = citizenData.isChild() ? new CitizenBornEvent() : new CitizenSpawnedEvent();
-        spawnEvent.setEventPos(spawnPoint);
-        spawnEvent.setCitizenName(citizenData.getName());
-        colony.getEventManager().addEventDescription(spawnEvent);
+        colony.getEventManager().addEventDescription(citizenData.isChild() ? new CitizenBornEvent(spawnPoint, citizenData.getName()) :
+              new CitizenSpawnedEvent(spawnPoint, citizenData.getName()));
 
         colony.getProgressManager()
           .progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
