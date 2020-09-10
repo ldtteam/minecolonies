@@ -12,7 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;
@@ -26,7 +25,7 @@ public class EntityLocation implements ILocation
     @NotNull
     private final UUID uuid;
 
-    @Nullable
+    @NotNull
     private WeakReference<Entity> entity = new WeakReference<>(null);
 
     public EntityLocation(@NotNull final UUID uuid)
@@ -70,13 +69,14 @@ public class EntityLocation implements ILocation
     public BlockPos getInDimensionLocation()
     {
         checkEntity();
-        if (entity == null || entity.get() == null)
+        final Entity entityRef = entity.get();
+        if (entityRef == null)
         {
             return BlockPos.ZERO;
         }
         else
         {
-            return entity.get().getPosition();
+            return entityRef.getPosition();
         }
     }
 
@@ -89,13 +89,14 @@ public class EntityLocation implements ILocation
     public int getDimension()
     {
         checkEntity();
-        if (entity == null || entity.get() == null)
+        final Entity entityRef = entity.get();
+        if (entityRef == null)
         {
             return 0;
         }
         else
         {
-            return entity.get().dimension.getId();
+            return entityRef.dimension.getId();
         }
     }
 
@@ -109,7 +110,7 @@ public class EntityLocation implements ILocation
     public boolean isReachableFromLocation(@NotNull final ILocation location)
     {
         checkEntity();
-        return !(entity == null || entity.get() == null) && location.getDimension() == getDimension();
+        return !(entity.get() == null) && location.getDimension() == getDimension();
     }
 
     /**
@@ -120,7 +121,8 @@ public class EntityLocation implements ILocation
     public PlayerEntity getPlayerEntity()
     {
         checkEntity();
-        return entity != null && entity.get() != null && entity.get() instanceof PlayerEntity ? (PlayerEntity) entity.get() : null;
+        final Entity entityRef = entity.get();
+        return entityRef instanceof PlayerEntity ? (PlayerEntity) entityRef : null;
     }
 
     @SuppressWarnings("squid:S2972")
