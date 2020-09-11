@@ -12,6 +12,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.BannerPattern;
+import net.minecraft.tileentity.BannerTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -89,7 +90,7 @@ public class TileEntityColonyFlag extends TileEntity
             }
         }
 
-        return func_230138_a_(
+        return BannerTileEntity.getPatternColorData(
                 DyeColor.WHITE,
                 this.flag.size() > 1 ? this.flag : this.patterns
         );

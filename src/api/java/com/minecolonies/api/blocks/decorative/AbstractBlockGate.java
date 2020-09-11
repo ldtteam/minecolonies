@@ -452,7 +452,7 @@ public abstract class AbstractBlockGate extends DoorBlock
         boolean powered = worldIn.isBlockPowered(pos);
         if (powered != state.get(OPEN))
         {
-            func_242663_a(worldIn, state, pos, powered);
+            toggleDoor(worldIn, pos, powered);
         }
     }
 

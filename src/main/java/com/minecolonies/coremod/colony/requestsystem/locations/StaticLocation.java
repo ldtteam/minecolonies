@@ -197,7 +197,7 @@ public class StaticLocation implements ILocation
         @Override
         public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final BlockPos input)
         {
-            return new StaticLocation(input, World.field_234918_g_.func_240901_a_());
+            return new StaticLocation(input, World.OVERWORLD.func_240901_a_());
         }
 
         @Override
