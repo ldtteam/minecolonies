@@ -142,7 +142,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public void unregisterFromWareHouse(final IBuildingDeliveryman buildingWorker)
     {
-        final Vec3d vec = new Vec3d(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ());
+        final Vec3d vec = new Vec3d(buildingWorker.getID());
         registeredDeliverymen.remove(vec);
     }
 
