@@ -258,6 +258,8 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         raidBar.setVisible(false);
         raidBar.removeAllPlayers();
+
+        colony.getRaiderManager().setNightsSinceLastRaid(0);
     }
 
     @Override
