@@ -8,15 +8,12 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -249,7 +246,19 @@ public interface IColony
 
     IRaiderManager getRaiderManager();
 
+    /**
+     * Get the event manager of the colony.
+     *
+     * @return the event manager.
+     */
     IEventManager getEventManager();
+
+    /**
+     * Get the event description manager of the colony.
+     *
+     * @return the event description manager.
+     */
+    IEventDescriptionManager getEventDescriptionManager();
 
     IColonyPackageManager getPackageManager();
 

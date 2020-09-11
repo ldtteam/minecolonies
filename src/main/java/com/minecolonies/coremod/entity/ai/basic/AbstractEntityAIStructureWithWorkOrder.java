@@ -330,7 +330,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             String buildingName = wo.getStructureName();
             buildingName = buildingName.substring(buildingName.indexOf('/') + 1, buildingName.lastIndexOf('/')) + " " +
                   buildingName.substring(buildingName.lastIndexOf('/') + 1, buildingName.indexOf(String.valueOf(wob.getUpgradeLevel())));
-            job.getColony().getEventManager().addEventDescription(wob.getUpgradeLevel() > 1 ? new BuildingUpgradedEvent(wo.getBuildingLocation(), buildingName,
+            job.getColony().getEventDescriptionManager().addEventDescription(wob.getUpgradeLevel() > 1 ? new BuildingUpgradedEvent(wo.getBuildingLocation(), buildingName,
                   wob.getUpgradeLevel()) : new BuildingBuiltEvent(wo.getBuildingLocation(), buildingName, wob.getUpgradeLevel()));
         }
         else if (wo instanceof WorkOrderBuildRemoval)
@@ -341,7 +341,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             String buildingName = wo.getStructureName();
             buildingName = buildingName.substring(buildingName.indexOf('/') + 1, buildingName.lastIndexOf('/')) + " " +
                   buildingName.substring(buildingName.lastIndexOf('/') + 1, buildingName.indexOf(String.valueOf(wob.getUpgradeLevel())));
-            job.getColony().getEventManager().addEventDescription(new BuildingDeconstructedEvent(wo.getBuildingLocation(), buildingName, wob.getUpgradeLevel()));
+            job.getColony().getEventDescriptionManager().addEventDescription(new BuildingDeconstructedEvent(wo.getBuildingLocation(), buildingName, wob.getUpgradeLevel()));
         }
 
         if (wo == null)

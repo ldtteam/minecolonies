@@ -2,7 +2,6 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
-import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -10,7 +9,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,13 +22,6 @@ public interface IEventManager
      * @param colonyEvent event to add
      */
     void addEvent(IColonyEvent colonyEvent);
-
-    /**
-     * Adds an event description.
-     * 
-     * @param colonyEventDescription the event description to add.
-     */
-    void addEventDescription(IColonyEventDescription colonyEventDescription);
 
     /**
      * Gets and takes the next open event ID.
@@ -98,13 +89,6 @@ public interface IEventManager
      * @return the map of events per colony.
      */
     Map<Integer, IColonyEvent> getEvents();
-
-    /**
-     * Returns the current list of colony events.
-     * 
-     * @return the list of colony events.
-     */
-    List<IColonyEventDescription> getEventDescriptions();
 
     /**
      * Reads the eventManager nbt and creates events from it

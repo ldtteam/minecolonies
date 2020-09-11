@@ -131,6 +131,11 @@ public class Colony implements IColony
     private final IEventManager eventManager = new EventManager(this);
 
     /**
+     * Event description manager of the colony.
+     */
+    private final IEventDescriptionManager eventDescManager = new EventDescriptionManager(this);
+
+    /**
      * The colony package manager.
      */
     private final IColonyPackageManager packageManager = new ColonyPackageManager(this);
@@ -659,6 +664,7 @@ public class Colony implements IColony
         }
 
         eventManager.readFromNBT(compound);
+        eventDescManager.readFromNBT(compound);
 
         if (compound.keySet().contains(TAG_RESEARCH))
         {
@@ -793,6 +799,7 @@ public class Colony implements IColony
 
         progressManager.write(compound);
         eventManager.writeToNBT(compound);
+        eventDescManager.writeToNBT(compound);
         raidManager.write(compound);
 
         @NotNull final CompoundNBT researchManagerCompound = new CompoundNBT();
@@ -1431,15 +1438,16 @@ public class Colony implements IColony
         return raidManager;
     }
 
-    /**
-     * Get the event manager of the colony.
-     *
-     * @return the event manager.
-     */
     @Override
     public IEventManager getEventManager()
     {
         return eventManager;
+    }
+
+    @Override
+    public IEventDescriptionManager getEventDescriptionManager()
+    {
+    	return eventDescManager;
     }
 
     /**

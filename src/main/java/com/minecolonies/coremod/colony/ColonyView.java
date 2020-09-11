@@ -1385,6 +1385,12 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
+    public IEventDescriptionManager getEventDescriptionManager()
+    {
+    	return null;
+    }
+
+    @Override
     public IColonyPackageManager getPackageManager()
     {
         return null;
