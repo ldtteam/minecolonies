@@ -179,6 +179,6 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);
-        this.func_230459_a_(stack, x, y);
+        this.renderHoveredTooltip(stack, x, y);
     }
 }

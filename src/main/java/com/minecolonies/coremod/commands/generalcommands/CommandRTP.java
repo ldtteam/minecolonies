@@ -104,7 +104,7 @@ public class CommandRTP implements IMCCommand
             /* this math is to get negative numbers */
             final int x = getRandCoordinate();
             final int z = getRandCoordinate();
-            final BlockPos spawnPoint = ((ServerWorld) player.getEntityWorld()).getSpawnPoint()wn();
+            final BlockPos spawnPoint = ((ServerWorld) player.getEntityWorld()).getSpawnPoint();
             if (player.getEntityWorld().getWorldBorder().getSize()
                   < BlockPosUtil.getDistance2D(spawnPoint, spawnPoint.add(x, 0, z)))
             {

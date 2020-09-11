@@ -125,6 +125,6 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);
-        this.func_230459_a_(stack, x, y);
+        this.renderHoveredTooltip(stack, x, y);
     }
 }

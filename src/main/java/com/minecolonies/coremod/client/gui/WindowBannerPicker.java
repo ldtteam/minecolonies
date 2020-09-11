@@ -116,7 +116,7 @@ public class WindowBannerPicker extends Screen
         this.patterns.removeAll(Arrays.asList(EXCLUDED));
 
         // Fetch the patterns as a List and not ListNBT
-        this.layers = BannerTileEntity.func_230138_a_(DyeColor.WHITE, colony.getColonyFlag());
+        this.layers = BannerTileEntity.getPatternColorData(DyeColor.WHITE, colony.getColonyFlag());
         // Remove the extra base layer created by the above function
         if (this.layers.size() > 1)
             this.layers.remove(0);

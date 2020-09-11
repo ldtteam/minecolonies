@@ -55,7 +55,7 @@ public class WindowBuildingInventory extends ContainerScreen<ContainerBuildingIn
     {
         this.renderBackground(matrixStack);
         super.render(matrixStack, x, y, z);
-        this.func_230459_a_(matrixStack, x, y);
+        this.renderHoveredTooltip(matrixStack, x, y);
     }
 
     /**
