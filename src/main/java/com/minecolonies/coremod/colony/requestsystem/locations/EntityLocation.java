@@ -15,7 +15,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;
@@ -29,7 +28,7 @@ public class EntityLocation implements ILocation
     @NotNull
     private final UUID uuid;
 
-    @Nullable
+    @NotNull
     private WeakReference<Entity> entity = new WeakReference<>(null);
 
     public EntityLocation(@NotNull final UUID uuid)
@@ -73,13 +72,14 @@ public class EntityLocation implements ILocation
     public BlockPos getInDimensionLocation()
     {
         checkEntity();
-        if (entity == null || entity.get() == null)
+        final Entity entityRef = entity.get();
+        if (entityRef == null)
         {
             return BlockPos.ZERO;
         }
         else
         {
-            return new BlockPos(entity.get().getPositionVec());
+            return entityRef.getPosition();
         }
     }
 
@@ -92,12 +92,14 @@ public class EntityLocation implements ILocation
     public ResourceLocation getDimension()
     {
         checkEntity();
-        if (entity == null || entity.get() == null)
+        final Entity entityRef = entity.get();
+        if (entityRef == null)
         {
             return World.field_234918_g_.func_240901_a_();
         }
         else
         {
+            return entityRef.dimension.getId();
             return entity.get().world.func_234923_W_().func_240901_a_();
         }
     }
@@ -123,7 +125,8 @@ public class EntityLocation implements ILocation
     public PlayerEntity getPlayerEntity()
     {
         checkEntity();
-        return entity != null && entity.get() != null && entity.get() instanceof PlayerEntity ? (PlayerEntity) entity.get() : null;
+        final Entity entityRef = entity.get();
+        return entityRef instanceof PlayerEntity ? (PlayerEntity) entityRef : null;
     }
 
     @SuppressWarnings("squid:S2972")
