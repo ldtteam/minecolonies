@@ -40,7 +40,7 @@ public class BuildingSubstitutionBlock implements IPlacementHandler
     {
         if (tileEntityData != null)
         {
-            TileEntity tileEntity = TileEntity.create(tileEntityData);
+            TileEntity tileEntity= TileEntity.readTileEntity(blockState, tileEntityData);
             if (tileEntity instanceof TileEntityPlaceholder)
             {
                 final ItemStack stack = ((TileEntityPlaceholder) tileEntity).getStack();
@@ -85,7 +85,7 @@ public class BuildingSubstitutionBlock implements IPlacementHandler
     {
         if (tileEntityData != null)
         {
-            TileEntity tileEntity = TileEntity.create(tileEntityData);
+            TileEntity tileEntity = TileEntity.readTileEntity(blockState, tileEntityData);;
             if (tileEntity instanceof TileEntityPlaceholder)
             {
                 final ItemStack stack = ((TileEntityPlaceholder) tileEntity).getStack();

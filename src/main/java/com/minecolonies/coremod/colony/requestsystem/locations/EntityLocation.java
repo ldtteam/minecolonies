@@ -10,7 +10,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -99,7 +98,7 @@ public class EntityLocation implements ILocation
         }
         else
         {
-            return entityRef.dimension.getId();
+            return entityRef.getEntityWorld().getDimensionKey().func_240901_a_();
         }
     }
 

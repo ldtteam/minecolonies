@@ -392,7 +392,7 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Override
-    public void toggleDoor(World worldIn, BlockPos pos, boolean open)
+    public void func_242663_a(final World worldIn, final BlockState state, @NotNull final BlockPos pos, final boolean open)
     {
         BlockState blockstate = worldIn.getBlockState(pos);
         if (blockstate.getBlock() == this && blockstate.get(OPEN) != open)
@@ -433,11 +433,11 @@ public abstract class AbstractBlockGate extends DoorBlock
                 // Set top blocks to spikes
                 if (world.getBlockState(worldPos.up()).getBlock() != this)
                 {
-                    world.setBlockState(worldPos, state.cycle(DoorBlock.HINGE), 2);
+                    world.setBlockState(worldPos, state.func_235896_a_(DoorBlock.HINGE), 2);
                 }
                 else
                 {
-                    world.setBlockState(worldPos, state.cycle(BlockStateProperties.OPEN), 2);
+                    world.setBlockState(worldPos, state.func_235896_a_(BlockStateProperties.OPEN), 2);
                 }
             }
         }
@@ -447,12 +447,12 @@ public abstract class AbstractBlockGate extends DoorBlock
      * Mostly redstone stuff for opening
      */
     @Override
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving)
+    public void neighborChanged(final BlockState state, final World worldIn, @NotNull final BlockPos pos, Block blockIn, final BlockPos fromPos, boolean isMoving)
     {
         boolean powered = worldIn.isBlockPowered(pos);
         if (powered != state.get(OPEN))
         {
-            toggleDoor(worldIn, pos, powered);
+            func_242663_a(worldIn, state, pos, powered);
         }
     }
 

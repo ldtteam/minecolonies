@@ -78,7 +78,7 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
         }
         if (tileEntityData != null)
         {
-            itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, world));
+            itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, world, pos));
         }
         itemList.removeIf(ItemStackUtils::isEmpty);
 

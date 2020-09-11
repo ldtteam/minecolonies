@@ -2,7 +2,6 @@ package com.minecolonies.coremod.placementhandlers;
 
 import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
-import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
@@ -75,7 +74,7 @@ public class ChestPlacementHandler implements IPlacementHandler
     {
         final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-        itemList.addAll(PlacementHandlers.getItemsFromTileEntity(tileEntityData, world));
+        itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, world, pos));
 
         itemList.removeIf(ItemStackUtils::isEmpty);
 
