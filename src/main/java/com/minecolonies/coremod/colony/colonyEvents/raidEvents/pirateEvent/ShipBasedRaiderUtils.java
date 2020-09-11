@@ -6,7 +6,6 @@ import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
-import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.WorldUtil;
@@ -128,7 +127,7 @@ public final class ShipBasedRaiderUtils
      * @param rotation   the rotation.
      * @return true if successful.
      */
-    public static boolean canSpawnShipAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation, final IColonyStructureSpawnEvent event)
+    public static boolean canSpawnShipAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation, final String shipName)
     {
         if (spawnPoint.equals(colony.getCenter()) || spawnPoint.getY() > MineColonies.getConfig().getServer().maxYForBarbarians.get())
         {
@@ -136,7 +135,7 @@ public final class ShipBasedRaiderUtils
         }
 
         final World world = colony.getWorld();
-        final String shipSize = ShipSize.getShipForRaiderAmount(raidLevel).schematicPrefix + event.getShipDesc();
+        final String shipSize = ShipSize.getShipForRaiderAmount(raidLevel).schematicPrefix + shipName;
 
         final CreativeBuildingStructureHandler
           structure = new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize, new PlacementSettings(), true);

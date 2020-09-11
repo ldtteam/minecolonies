@@ -91,6 +91,11 @@ public class RaidManager implements IRaiderManager
     private static final double INCREASE_PER_PLAYER = 0.10;
 
     /**
+     * Chance to ignore biome selection
+     */
+    private static final int IGNORE_BIOME_CHANCE = 2;
+
+    /**
      * The dynamic difficulty of raids for this colony
      */
     private int raidDifficulty = MIN_RAID_DIFFICULTY;
@@ -262,9 +267,13 @@ public class RaidManager implements IRaiderManager
 
             // No rotation till spawners are moved into schematics
             final int shipRotation = new Random().nextInt(3);
-            final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getCategory().getName().toLowerCase();
-
-            if (homeBiomePath.contains(TAIGA_BIOME_ID) && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, new NorsemenShipRaidEvent(colony)))
+            final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath();
+            final int rand = colony.getWorld().rand.nextInt(100);
+            if ((homeBiomePath.contains(TAIGA_BIOME_ID) || rand < IGNORE_BIOME_CHANCE) && ShipBasedRaiderUtils.canSpawnShipAt(colony,
+              targetSpawnPoint,
+              amount,
+              shipRotation,
+              NorsemenShipRaidEvent.SHIP_NAME))
             {
                 final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
@@ -272,7 +281,7 @@ public class RaidManager implements IRaiderManager
                 event.setShipRotation(shipRotation);
                 colony.getEventManager().addEvent(event);
             }
-            else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, new PirateRaidEvent(colony)))
+            else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME))
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
@@ -284,15 +293,15 @@ public class RaidManager implements IRaiderManager
             {
                 final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getCategory().getName().toLowerCase();
                 final HordeRaidEvent event;
-                if (biomePath.contains(DESERT_BIOME_ID))
+                if (biomePath.contains(DESERT_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
                 {
                     event = new EgyptianRaidEvent(colony);
                 }
-                else if (biomePath.contains(JUNGLE_BIOME_ID))
+                else if (biomePath.contains(JUNGLE_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3))
                 {
                     event = new AmazonRaidEvent(colony);
                 }
-                else if (biomePath.contains(TAIGA_BIOME_ID))
+                else if (biomePath.contains(TAIGA_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
                 {
                     event = new NorsemenRaidEvent(colony);
                 }
