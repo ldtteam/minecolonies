@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.ModEntities;
@@ -8,7 +9,11 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.AbstractShipRaidE
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.RAID_PIRATE;
 
 /**
  * The Pirate raid event, spawns a ship with pirate spawners onboard.
@@ -19,6 +24,11 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
      * This raids event id, registry entries use res locations as ids.
      */
     public static final ResourceLocation PIRATE_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "pirate_raid");
+
+    /**
+     * Ship description
+     */
+    public static final String SHIP_NAME = "pirate_ship";
 
     /**
      * Create a new Pirate raid event.
@@ -33,7 +43,7 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
     @Override
     public String getShipDesc()
     {
-        return "pirate_ship";
+        return SHIP_NAME;
     }
 
     @Override
@@ -72,5 +82,11 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
     public EntityType<?> getBossRaiderType()
     {
         return ModEntities.CHIEFPIRATE;
+    }
+
+    @Override
+    protected ITextComponent getDisplayName()
+    {
+        return new StringTextComponent(LanguageHandler.format(RAID_PIRATE));
     }
 }

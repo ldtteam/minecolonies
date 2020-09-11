@@ -4,8 +4,6 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
-import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
-import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -436,11 +434,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         citizenStatusHandler.setStatus(Status.values()[compound.getInt(TAG_STATUS)]);
         citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
         citizenId = compound.getInt(TAG_CITIZEN);
-
-        if (isServerWorld())
-        {
-            citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
-        }
 
         if (compound.keySet().contains(TAG_MOURNING))
         {
@@ -1079,6 +1072,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
             if (citizenSleepHandler.shouldGoSleep())
             {
+                citizenData.onGoSleep();
                 citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() * 2);
                 citizenData.markDirty();
                 citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.sleeping"));
@@ -1457,13 +1451,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         currentlyFleeing = false;
         if (citizenColonyHandler.getColony() != null && getCitizenData() != null)
         {
-            for (final IColonyEvent event : citizenColonyHandler.getColony().getEventManager().getEvents().values())
-            {
-                if (event instanceof IColonyRaidEvent)
-                {
-                    ((IColonyRaidEvent) event).setKilledCitizenInRaid();
-                }
-            }
+            citizenColonyHandler.getColony().getRaiderManager().onLostCitizen(getCitizenData());
 
             citizenExperienceHandler.dropExperience();
             this.remove();

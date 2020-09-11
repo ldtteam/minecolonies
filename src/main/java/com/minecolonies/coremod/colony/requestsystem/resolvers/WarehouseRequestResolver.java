@@ -30,8 +30,14 @@ public class WarehouseRequestResolver extends AbstractWarehouseRequestResolver
         {
             return false; 
         }
-        return wareHouses.stream()
-                .anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack),
-                requestToCheck.getRequest().getMinimumCount()));
+
+        for (final TileEntityWareHouse wareHouse : wareHouses)
+        {
+            if (wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack), requestToCheck.getRequest().getMinimumCount()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

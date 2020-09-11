@@ -197,6 +197,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
             return state;
         }
 
+        fighttimer = COMBAT_TIME;
         moveInAttackPosition();
         reduceAttackDelay(GUARD_ATTACK_INTERVAL);
         if (currentAttackDelay > 0)

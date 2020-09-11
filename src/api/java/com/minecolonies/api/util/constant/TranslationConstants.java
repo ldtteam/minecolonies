@@ -218,6 +218,8 @@ public final class TranslationConstants
     @NonNls
     public static final String LEAVING_COLONY_MESSAGE_NOTIFY                                       = "com.minecolonies.coremod.leavingcolonynotify";
     @NonNls
+    public static final String COLONY_SIZE_CHANGE                                                  = "com.minecolonies.coremod.colonysizechange";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_WAITING_FOR                         = "com.minecolonies.coremod.status.waiting";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT                   = "com.minecolonies.coremod.status.worker.goingtohut";
@@ -286,27 +288,32 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT                      = "com.minecolonies.coremod.gui.beekeeper.collect";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT                   = "com.minecolonies.coremod.gui.beekeeper.notcollect";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT   = "com.minecolonies.coremod.gui.beekeeper.notcollect";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO                   = "com.minecolonies.coremod.gui.workerhuts.modeA";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO   = "com.minecolonies.coremod.gui.workerhuts.modeA";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL                 = "com.minecolonies.coremod.gui.workerhuts.modeM";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL = "com.minecolonies.coremod.gui.workerhuts.modeM";
     @NonNls
-    public static final String AUTOMATIC_HIRE_WARNING                                              = "com.minecolonies.coremod.gui.auto.hire.warning";
+    public static final String AUTOMATIC_HIRE_WARNING                              = "com.minecolonies.coremod.gui.auto.hire.warning";
     @NonNls
-    public static final String RAID_EVENT_MESSAGE                                                  = "event.minecolonies.raidmessage";
+    public static final String RAID_EVENT_MESSAGE                                  = "event.minecolonies.raidmessage";
     @NonNls
-    public static final String RAID_EVENT_MESSAGE_PIRATE                                           = "event.minecolonies.raidmessage_p";
+    public static final String RAID_EVENT_MESSAGE_PIRATE                           = "event.minecolonies.raidmessage_p";
+    public static final String RAID_AMAZON                                         = "com.minecolonies.coremod.raid.amazon.name";
+    public static final String RAID_EGYPTIAN                                       = "com.minecolonies.coremod.raid.egyptian.name";
+    public static final String RAID_BARBARIAN                                      = "com.minecolonies.coremod.raid.barbarian.name";
+    public static final String RAID_PIRATE                                         = "com.minecolonies.coremod.raid.pirate.name";
+    public static final String RAID_NORSEMEN                                       = "com.minecolonies.coremod.raid.norsemen.name";
     @NonNls
-    public static final String ONLY_X_BARBARIANS_LEFT_MESSAGE                                      = "com.minecolonies.coremod.barbarians.left";
+    public static final String ONLY_X_BARBARIANS_LEFT_MESSAGE                      = "com.minecolonies.coremod.barbarians.left";
     @NonNls
-    public static final String ALL_BARBARIANS_KILLED_MESSAGE                                       = "com.minecolonies.coremod.barbarians.killed";
+    public static final String ALL_BARBARIANS_KILLED_MESSAGE                       = "com.minecolonies.coremod.barbarians.killed";
     @NonNls
-    public static final String CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN                                = "com.minecolonies.coremod.tooclose";
+    public static final String CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN                = "com.minecolonies.coremod.tooclose";
     @NonNls
-    public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                = "com.minecolonies.coremod.toofar";
+    public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                = "com.minecolonies.coremod.toofar";
     @NonNls
-    public static final String GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED                                 = "com.minecolonies.coremod.gui.townHall.citizens.unemployed";
+    public static final String GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED                 = "com.minecolonies.coremod.gui.townHall.citizens.unemployed";
     @NonNls
     public static final String LIST_REQUEST_DISPLAY_STRING                                         = "com.minecolonies.coremod.request.stacklist";
     @NonNls
@@ -430,13 +437,17 @@ public final class TranslationConstants
     @NonNls
     public static final String OUT_OF_COLONY                                                       = "com.minecolonies.coremod.workorder.outofcolony";
     @NonNls
-    public static final String NO                                                                  = "com.minecolonies.coremod.entity.citizen.no.";
+    public static final String NO                        = "com.minecolonies.coremod.entity.citizen.no.";
     @NonNls
-    public static final String DEMANDS                                                             = "com.minecolonies.coremod.entity.citizen.demands.";
+    public static final String DEMANDS                   = "com.minecolonies.coremod.entity.citizen.demands.";
     @NonNls
-    public static final String WAREHOUSE_SORTED                                                    = "com.minecolonies.coremod.gui.warehouse.sorted";
+    public static final String WAREHOUSE_SORTED          = "com.minecolonies.coremod.gui.warehouse.sorted";
     @NonNls
-    public static final String ALL_CITIZENS_ARE_SLEEPING                                           = "com.minecolonies.coremod.entity.citizen.sleep";
+    public static final String ALL_CITIZENS_ARE_SLEEPING = "com.minecolonies.coremod.entity.citizen.sleep";
+    @NonNls
+    public static final String GATE_CRAFTING_TOOLTIP     = "com.minecolonies.coremod.item.gate.craft";
+    @NonNls
+    public static final String GATE_PLACEMENT_TOOLTIP    = "com.minecolonies.coremod.item.gate.place";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF                        = "com.minecolonies.coremod.gui.requestfert.off";
     @NonNls

@@ -2,7 +2,6 @@ package com.minecolonies.api.entity.mobs;
 
 import com.google.common.collect.Multimap;
 import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.mobs.barbarians.IChiefBarbarianEntity;
 import com.minecolonies.api.entity.mobs.barbarians.IMeleeBarbarianEntity;
@@ -30,7 +29,6 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
 /**
@@ -86,10 +84,9 @@ public final class RaiderMobUtils
      */
     public static void setMobAttributes(final AbstractEntityMinecoloniesMob mob, final IColony colony)
     {
-        final double difficultyModifier = (mob.world.getDifficulty().getId() / 2d) * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
-                                                                                        / (double) DEFAULT_BARBARIAN_DIFFICULTY);
+        final double difficultyModifier = colony.getRaiderManager().getRaidDifficultyModifier();
         mob.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE * 2);
-        mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
+        mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(difficultyModifier < 2.4 ? MOVEMENT_SPEED : MOVEMENT_SPEED + 0.1);
         final int raidLevel = colony.getRaiderManager().getColonyRaidLevel();
 
         // Base damage
