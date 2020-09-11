@@ -31,6 +31,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -767,7 +768,7 @@ public class RaidManager implements IRaiderManager
             setNightsSinceLastRaid(compound.getInt(TAG_NIGHTS_SINCE_LAST_RAID));
         }
 
-            raidDifficulty = compound.getInt(TAG_RAID_DIFFICULTY);
+        raidDifficulty = MathHelper.clamp(compound.getInt(TAG_RAID_DIFFICULTY), MIN_RAID_DIFFICULTY, MAX_RAID_DIFFICULTY);
         lostCitizens = compound.getInt(TAG_LOST_CITIZENS);
     }
 

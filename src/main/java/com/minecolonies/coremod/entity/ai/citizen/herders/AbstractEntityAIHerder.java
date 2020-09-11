@@ -179,8 +179,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         }
 
         final boolean hasBreedingItem =
-          InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()),
-            (ItemStack stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, getBreedingItem()));
+          InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()),
+            (ItemStack stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, getBreedingItem())) > 1;
 
         if (!searchForItemsInArea().isEmpty())
         {

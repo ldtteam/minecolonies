@@ -7,6 +7,7 @@ import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.blocks.decorative.BlockColonyFlagBanner;
 import com.minecolonies.coremod.blocks.decorative.BlockColonyFlagWallBanner;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
+import com.minecolonies.coremod.blocks.decorative.BlockGate;
 import com.minecolonies.coremod.blocks.huts.*;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import net.minecraft.block.Block;
@@ -15,6 +16,9 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
+
+import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.IRON_GATE;
+import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GATE;
 
 /**
  * This class deals with the initialization of blocks and their items.
@@ -98,6 +102,8 @@ public final class ModBlocksInitializer
         ModBlocks.blockCompostedDirt = new BlockCompostedDirt().registerBlock(registry);
         ModBlocks.blockColonyBanner = new BlockColonyFlagBanner().registerBlock(registry);
         ModBlocks.blockColonyWallBanner = new BlockColonyFlagWallBanner().registerBlock(registry);
+        ModBlocks.blockIronGate = new BlockGate(IRON_GATE, 5f, 5, 4).registerBlock(registry);
+        ModBlocks.blockWoodenGate = new BlockGate(WOODEN_GATE, 4f, 5, 4).registerBlock(registry);
     }
 
     @SubscribeEvent
