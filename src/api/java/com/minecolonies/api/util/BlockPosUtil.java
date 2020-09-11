@@ -79,7 +79,7 @@ public final class BlockPosUtil
      */
     public static Tuple<Direction, Direction> getRandomDirectionTuple(final Random random)
     {
-        return new Tuple<>(Direction.func_239631_a_(random), Direction.func_239631_a_(random));
+        return new Tuple<>(Direction.getRandomDirection(random), Direction.getRandomDirection(random));
     }
 
     /**

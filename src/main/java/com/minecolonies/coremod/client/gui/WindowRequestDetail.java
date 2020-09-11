@@ -177,13 +177,13 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             logo.setImage(request.getDisplayIcon());
         }
 
-        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.func_234923_W_().func_240901_a_());
+        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().func_240901_a_());
         findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getRequesterDisplayName(view.getRequestManager(), request).getString());
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getLocation().toString());
 
 
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.func_234923_W_().func_240901_a_());
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().func_240901_a_());
         if (colony == null)
         {
             Log.getLogger().warn("---Colony Null in WindowRequestDetail---");

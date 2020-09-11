@@ -170,7 +170,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
          */
         if (worldIn.isRemote)
         {
-            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.func_234923_W_().func_240901_a_(), pos);
+            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimensionKey().func_240901_a_(), pos);
 
             if (building == null)
             {

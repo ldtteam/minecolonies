@@ -71,7 +71,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     {
         super(container, playerInventory, iTextComponent);
         this.container = container;
-        this.building = (AbstractBuildingSmelterCrafter.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.world.func_234923_W_().func_240901_a_(), container.getPos());
+        this.building = (AbstractBuildingSmelterCrafter.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.world.getDimensionKey().func_240901_a_(), container.getPos());
     }
 
     @Override

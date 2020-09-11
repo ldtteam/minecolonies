@@ -24,7 +24,7 @@ public class CommandRaidTonight implements IMCOPCommand
     {
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().func_234923_W_().func_240901_a_());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey().func_240901_a_());
         if (colony == null)
         {
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);

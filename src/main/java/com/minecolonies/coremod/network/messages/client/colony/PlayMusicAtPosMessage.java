@@ -99,7 +99,7 @@ public class PlayMusicAtPosMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        if (Minecraft.getInstance().world.func_234923_W_().func_240901_a_().equals(dimensionID))
+        if (Minecraft.getInstance().world.getDimensionKey().func_240901_a_().equals(dimensionID))
         {
             Minecraft.getInstance().world.playSound(Minecraft.getInstance().player, pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundCategory.AMBIENT, volume, pitch);
         }

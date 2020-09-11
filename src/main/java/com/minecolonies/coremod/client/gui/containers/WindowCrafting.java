@@ -97,7 +97,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     public WindowCrafting(final ContainerCrafting container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
-        this.building = (AbstractBuildingWorker.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.world.func_234923_W_().func_240901_a_(), container.getPos());
+        this.building = (AbstractBuildingWorker.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.world.getDimensionKey().func_240901_a_(), container.getPos());
         completeCrafting = building.canCraftComplexRecipes();
     }
 

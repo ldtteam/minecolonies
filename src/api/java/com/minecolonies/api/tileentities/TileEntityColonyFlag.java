@@ -18,7 +18,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static net.minecraft.tileentity.BannerTileEntity.func_230138_a_;
 
 public class TileEntityColonyFlag extends TileEntity
 {
@@ -80,9 +79,9 @@ public class TileEntityColonyFlag extends TileEntity
     public List<Pair<BannerPattern, DyeColor>> getPatternList()
     {
         // Structurize will cause the second condition to be false
-        if (world != null && world.func_234923_W_() != null)
+        if (world != null && world.getDimensionKey() != null)
         {
-            IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, world.func_234923_W_().func_240901_a_());
+            IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, world.getDimensionKey().func_240901_a_());
             if (colony != null && this.flag != colony.getColonyFlag())
             {
                 this.flag = colony.getColonyFlag();

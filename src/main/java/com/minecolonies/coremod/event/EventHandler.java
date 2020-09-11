@@ -388,7 +388,7 @@ public class EventHandler
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
             if (cap != null && cap.getOwningColony() != 0)
             {
-                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), player.world.func_234923_W_().func_240901_a_());
+                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), player.world.getDimensionKey().func_240901_a_());
                 if (colony != null)
                 {
                     colony.addVisitingPlayer(player);
@@ -478,7 +478,7 @@ public class EventHandler
 
             final IColony colony = IColonyManager.getInstance()
                                      .getColonyByDimension(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_COLONY_ID),
-                                       event.getWorld().getWorld().func_234923_W_().func_240901_a_());
+                                       event.getWorld().getWorld().getDimensionKey().func_240901_a_());
             if (colony != null)
             {
                 colony.getEventManager().onTileEntityBreak(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_EVENT_ID), spawner);
@@ -653,7 +653,7 @@ public class EventHandler
      */
     public static boolean onBlockHutPlaced(@NotNull final World world, @NotNull final PlayerEntity player, final Block block, final BlockPos pos)
     {
-        if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && !world.func_234923_W_().func_240901_a_().equals(World.field_234918_g_.func_240901_a_()))
+        if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && !world.getDimensionKey().func_240901_a_().equals(World.field_234918_g_.func_240901_a_()))
         {
             LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_IN_OTHER_DIM);
             return false;
