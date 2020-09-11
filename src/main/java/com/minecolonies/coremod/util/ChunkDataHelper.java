@@ -171,7 +171,7 @@ public final class ChunkDataHelper
      */
     public static void loadChunkStorageToWorldCapability(final World world)
     {
-        @NotNull final File chunkDir = new File(world.getServer().func_240776_a_(FolderName.field_237245_a_).toFile(), CHUNK_INFO_PATH);
+        @NotNull final File chunkDir = new File(world.getServer().func_240776_a_(FolderName.DOT).toFile(), CHUNK_INFO_PATH);
         if (!chunkDir.exists())
         {
             return;

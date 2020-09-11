@@ -63,7 +63,7 @@ public class PlayMusicAtPosMessage implements IMessage
         super();
         this.soundEvent = event;
         this.pos = pos;
-        this.dimensionID = world.func_234922_V_().func_240901_a_();
+        this.dimensionID = world.getDimensionKey().func_240901_a_();
         this.volume = volume;
         this.pitch = pitch;
     }
