@@ -114,12 +114,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         super.requestRepair(builder);
     }
 
-    /**
-     * Register deliveryman with the warehouse.
-     *
-     * @param buildingWorker the building of the worker.
-     * @return true if able to register or already registered
-     */
     @Override
     public boolean registerWithWareHouse(final IBuildingDeliveryman buildingWorker)
     {
@@ -143,6 +137,13 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
         registeredDeliverymen.add(new Vector3d(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ()));
         return true;
+    }
+
+    @Override
+    public void unregisterFromWareHouse(final IBuildingDeliveryman buildingWorker)
+    {
+        final Vec3d vec = new Vec3d(buildingWorker.getID());
+        registeredDeliverymen.remove(vec);
     }
 
     /**
