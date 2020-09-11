@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -114,10 +115,14 @@ public class VisitorData extends CitizenData implements IVisitorData
     {
         if (getEntity().isPresent())
         {
-            return;
+            final Entity entity = getEntity().get();
+            if (entity.isAlive() && entity.addedToChunk && WorldUtil.isEntityBlockLoaded(entity.world, entity.getPosition()))
+            {
+                return;
+            }
         }
 
-        if (WorldUtil.isEntityBlockLoaded(getColony().getWorld(), getLastPosition()))
+        if (getLastPosition() != BlockPos.ZERO && WorldUtil.isEntityBlockLoaded(getColony().getWorld(), getLastPosition()))
         {
             getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), getLastPosition(), true);
         }
