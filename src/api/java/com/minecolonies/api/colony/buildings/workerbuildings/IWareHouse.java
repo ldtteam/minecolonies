@@ -20,6 +20,13 @@ public interface IWareHouse extends IBuilding
     boolean registerWithWareHouse(IBuildingDeliveryman buildingWorker);
 
     /**
+     * Unregister deliveryman from the warehouse.
+     *
+     * @param buildingWorker the building of the worker.
+     */
+    void unregisterFromWareHouse(final IBuildingDeliveryman buildingWorker);
+
+    /**
      * Check if deliveryman is allowed to access warehouse.
      *
      * @param buildingWorker the building of the deliveryman.
