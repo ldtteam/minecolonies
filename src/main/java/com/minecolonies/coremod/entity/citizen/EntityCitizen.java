@@ -246,7 +246,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.moveController = new MovementHandler(this);
         this.enablePersistence();
         this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
-        initTasks();
 
         entityStatemachine.addTransition(new TickingTransition<>(EntityState.INIT, () -> true, this::initialize, 40));
 
@@ -297,6 +296,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                     this.citizenDataView = colonyView.getCitizen(citizenId);
                     if (citizenDataView != null)
                     {
+                        initTasks();
                         return EntityState.ACTIVE_CLIENT;
                     }
                 }
@@ -307,6 +307,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
             if (citizenData != null && isAlive() && citizenColonyHandler.getColony() != null)
             {
+                initTasks();
                 return EntityState.ACTIVE_SERVER;
             }
         }
