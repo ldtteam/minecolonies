@@ -793,6 +793,7 @@ public class Colony implements IColony
 
         progressManager.write(compound);
         eventManager.writeToNBT(compound);
+        raidManager.write(compound);
 
         @NotNull final CompoundNBT researchManagerCompound = new CompoundNBT();
         researchManager.writeToNBT(researchManagerCompound);

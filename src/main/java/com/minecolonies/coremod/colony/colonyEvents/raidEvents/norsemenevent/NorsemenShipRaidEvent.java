@@ -27,6 +27,11 @@ public class NorsemenShipRaidEvent extends AbstractShipRaidEvent
     public static final ResourceLocation NORSEMEN_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "norsemen_ship_raid");
 
     /**
+     * Ship description
+     */
+    public static final String SHIP_NAME = "norsemen_ship";
+
+    /**
      * Create a new Norsemen raid event.
      *
      * @param colony the colony.
@@ -39,7 +44,7 @@ public class NorsemenShipRaidEvent extends AbstractShipRaidEvent
     @Override
     public String getShipDesc()
     {
-        return "norsemen_ship";
+        return SHIP_NAME;
     }
 
     @Override
