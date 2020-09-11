@@ -64,6 +64,7 @@ public class RecallSingleCitizenMessage extends AbstractBuildingServerMessage<IB
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
+        citizenData.setLastPosition(building.getPosition());
         Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();
         if (!optionalEntityCitizen.isPresent())
         {
