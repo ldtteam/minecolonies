@@ -4,10 +4,10 @@
   "inputs": [
     {
       "item": "minecraft:oak_log",
-      "count": "5"
+      "count": 5
     }
   ],
   "result": "minecolonies:gate_wood",
-  "count": "1",
+  "count": 1,
   "intermediate": "minecraft:air"
 }
