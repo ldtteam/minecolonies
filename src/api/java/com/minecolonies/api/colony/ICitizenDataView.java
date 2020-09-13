@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.colony.jobs.IJobView;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
@@ -147,4 +148,11 @@ public interface ICitizenDataView extends ICitizen
      * @return status
      */
     VisibleCitizenStatus getVisibleStatus();
+
+    /**
+     * Get the job view that belongs to this citizen (or null).
+     * @return the job.
+     */
+    @Nullable
+    IJobView getJobView();
 }

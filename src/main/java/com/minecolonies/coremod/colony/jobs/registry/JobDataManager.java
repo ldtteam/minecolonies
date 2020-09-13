@@ -1,13 +1,18 @@
 package com.minecolonies.coremod.colony.jobs.registry;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.IJobView;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,5 +47,28 @@ public final class JobDataManager implements IJobDataManager
         }
 
         return job;
+    }
+
+    @Override
+    public IJobView createViewFrom(
+      final IColonyView colony, final ICitizenDataView citizenDataView, final PacketBuffer networkBuffer)
+    {
+        final ResourceLocation jobName = new ResourceLocation(networkBuffer.readString(32767));
+        final JobEntry entry = IJobRegistry.getInstance().getValue(jobName);
+
+        if (entry == null)
+        {
+            Log.getLogger().error(String.format("Unknown job type '%s'.", jobName), new Exception());
+            return null;
+        }
+
+        final IJobView view = entry.getJobViewProducer().get().apply(colony, citizenDataView);
+
+        if (view != null)
+        {
+            view.deserialize(networkBuffer);
+        }
+
+        return view;
     }
 }

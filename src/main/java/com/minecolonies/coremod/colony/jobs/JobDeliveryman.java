@@ -23,6 +23,7 @@ import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -157,6 +158,13 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     private IRequestSystemDeliveryManJobDataStore getDataStore()
     {
         return getCitizen().getColony().getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE);
+    }
+
+    @Override
+    public void serializeToView(final PacketBuffer buffer)
+    {
+        super.serializeToView(buffer);
+        StandardFactoryController.getInstance().serialize(buffer, rsDataStoreToken);
     }
 
     private LinkedList<IToken<?>> getTaskQueueFromDataStore()
