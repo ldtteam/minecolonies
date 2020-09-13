@@ -119,6 +119,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
           new AITarget(GUARD_ATTACK_RANGED, this::attackRanged, 10)
         );
         toolsNeeded.add(ToolType.BOW);
+        worker.getNavigator().getPathingOptions().withJumpDropCost(0.95D);
     }
 
     @Override
