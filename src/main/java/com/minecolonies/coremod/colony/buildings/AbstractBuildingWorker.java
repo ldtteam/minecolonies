@@ -62,11 +62,13 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMPROVED;;
+import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMPROVED;
+
+;
 
 /**
  * The abstract class for each worker building.
@@ -187,7 +189,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
     {
         IRecipeStorage firstFound = null;
-        HashMap<IRecipeStorage, Integer> candidates = new HashMap<>();
+        final HashMap<IRecipeStorage, Integer> candidates = new HashMap<>();
+
 
         //Scan through and collect all possible recipes that could fulfill this, taking special note of the first one
         for (final IToken<?> token : recipes)
@@ -211,7 +214,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 final ItemStorage checkItem = foo.getKey().getCleanedInput().stream()
                                                 .sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed())
                                                 .findFirst().get();
-                candidates.replace(foo.getKey(), getWarehouseCount(checkItem));
+                candidates.put(foo.getKey(), getWarehouseCount(checkItem));
             }
             return candidates.entrySet().stream()
                             .sorted(Comparator.comparing(itemEntry -> itemEntry.getValue(), Comparator.reverseOrder()))
@@ -660,6 +663,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             super.removeCitizen(citizen);
             citizen.setWorkBuilding(null);
             cancelAllRequestsOfCitizen(citizen);
+            citizen.setVisibleStatus(null);
         }
     }
 
@@ -796,7 +800,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             final IRecipeStorage recipeStorage = newRecipe.getRecipeStorage();
             final IToken<?> recipeToken = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipeStorage);
 
-            if(newRecipe.isValidForColony(colony))
+            if(newRecipe.isValidForBuilding(this))
             {   
                 boolean duplicateFound = false; 
                 for(IToken<?> token : recipes)
@@ -844,6 +848,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 if(!duplicateFound)
                 {
                     addRecipeToList(recipeToken);    
+                    colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
                 }
             } 
             else

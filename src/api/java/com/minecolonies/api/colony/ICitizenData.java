@@ -238,4 +238,9 @@ public interface ICitizenData extends ICivilianData
      * Applies the effects of research to the data's entity
      */
     void applyResearchEffects();
+
+    /**
+     * Triggered when the citizen is going to sleep
+     */
+    void onGoSleep();
 }

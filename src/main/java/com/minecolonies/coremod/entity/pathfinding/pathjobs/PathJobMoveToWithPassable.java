@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.pathfinding;
+package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;

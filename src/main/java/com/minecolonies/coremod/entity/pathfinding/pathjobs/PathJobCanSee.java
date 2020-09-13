@@ -1,5 +1,6 @@
-package com.minecolonies.coremod.entity.pathfinding;
+package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
+import com.minecolonies.coremod.entity.pathfinding.Node;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceContext;

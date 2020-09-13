@@ -6,18 +6,19 @@ import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizenViewMessage;
@@ -27,7 +28,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -226,35 +226,23 @@ public class CitizenManager implements ICitizenManager
             spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
         }
 
-
-        BlockPos calculatedSpawn = null;
-
-        if (world.getChunkProvider().isChunkLoaded(new ChunkPos(spawnLocation.getX() >> 4, spawnLocation.getZ() >> 4)))
+        if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), spawnLocation))
         {
-            calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
-        }
-
-        if (calculatedSpawn == null)
-        {
-            spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
-            if (world.getChunkProvider().isChunkLoaded(new ChunkPos(spawnLocation.getX() >> 4, spawnLocation.getZ() >> 4)))
+            final BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+            if (calculatedSpawn != null)
             {
-                calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+                return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
+            }
+            else
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                  "com.minecolonies.coremod.citizens.nospace",
+                  spawnLocation.getX(),
+                  spawnLocation.getY(),
+                  spawnLocation.getZ());
             }
         }
 
-        if (calculatedSpawn != null)
-        {
-            return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
-        }
-        else
-        {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-              "com.minecolonies.coremod.citizens.nospace",
-              spawnLocation.getX(),
-              spawnLocation.getY(),
-              spawnLocation.getZ());
-        }
         return (ICitizenData) data;
     }
 
@@ -373,7 +361,7 @@ public class CitizenManager implements ICitizenManager
         {
             if (b.getBuildingLevel() > 0)
             {
-                if (b instanceof BuildingHome)
+                if (b instanceof IBuildingBedProvider)
                 {
                     newMaxCitizens += b.getMaxInhabitants();
                 }

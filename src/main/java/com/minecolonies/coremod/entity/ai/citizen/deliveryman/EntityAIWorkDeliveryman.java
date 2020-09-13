@@ -152,7 +152,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.gathering"));
 
         final BlockPos pickupTarget = currentTask.getRequester().getLocation().getInDimensionLocation();
-        if (!worker.isWorkerAtSiteWithMove(pickupTarget, MIN_DISTANCE_TO_WAREHOUSE))
+        if (pickupTarget != BlockPos.ZERO && !worker.isWorkerAtSiteWithMove(pickupTarget, MIN_DISTANCE_TO_WAREHOUSE))
         {
             setDelay(WALK_DELAY);
             return PICKUP;
@@ -301,7 +301,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     @Nullable
     private IWareHouse getAndCheckWareHouse()
     {
-        for (final IWareHouse wareHouse : job.getColony().getBuildingManager().getWareHouses())
+        final List<IWareHouse> wareHouses = new ArrayList<>(job.getColony().getBuildingManager().getWareHouses());
+        wareHouses.sort((wh1, wh2) -> (int) (wh1.getPosition().distanceSq(getOwnBuilding().getPosition()) - wh2.getPosition().distanceSq(getOwnBuilding().getPosition())));
+        for (final IWareHouse wareHouse : wareHouses)
+        {
+           wareHouse.unregisterFromWareHouse(this.getOwnBuilding());
+        }
+
+        for (final IWareHouse wareHouse : wareHouses)
         {
             if (wareHouse.registerWithWareHouse(this.getOwnBuilding()))
             {
@@ -486,7 +493,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (nextPickUp == null || parallelDeliveryCount > 1 + (getSecondarySkillLevel() / 5.0))
         {
-            job.setParallelDeliveries(parallelDeliveryCount);
+            job.setParallelDeliveries(parallelDeliveryCount - 1);
             return DELIVERY;
         }
 

@@ -7,8 +7,6 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.VisitorData;
@@ -17,11 +15,9 @@ import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -68,11 +64,6 @@ public class EntityAIVisitor extends Goal
      * Times out entity action going back to a deciding state
      */
     private int actionTimeoutCounter = 0;
-
-    /**
-     * The current wander position
-     */
-    private BlockPos wanderPos = null;
 
     /**
      * The current attack target
@@ -160,10 +151,7 @@ public class EntityAIVisitor extends Goal
             return true;
         }
 
-        if (wanderPos == null || citizen.isWorkerAtSiteWithMove(wanderPos, 3))
-        {
-            generateWanderPos();
-        }
+        citizen.getNavigator().moveToRandomPos(10, 0.6D);
         return false;
     }
 
@@ -203,25 +191,12 @@ public class EntityAIVisitor extends Goal
         }
         else if (random == 2)
         {
-            generateWanderPos();
+            citizen.getNavigator().moveToRandomPos(10, 0.6D);
             actionTimeoutCounter = citizen.getCitizenColonyHandler().getColony().isDay() ? citizen.getRandom().nextInt(1000) + 1000 : 300;
             return VisitorState.WANDERING;
         }
 
         return VisitorState.IDLE;
-    }
-
-    /**
-     * Gets a new wander position
-     */
-    private void generateWanderPos()
-    {
-        final Vec3d vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 7);
-
-        if (vec3d != null && WorldUtil.isEntityBlockLoaded(citizen.world, new BlockPos(vec3d.x, vec3d.y, vec3d.z)))
-        {
-            wanderPos = new BlockPos(vec3d.x, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorldFromCitizen(citizen)), vec3d.z);
-        }
     }
 
     /**

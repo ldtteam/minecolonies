@@ -289,7 +289,7 @@ public final class EntityUtils
 
     public static boolean isEntityAtPosition(final Entity entity, final World world, final AbstractEntityCitizen entityCitizen)
     {
-        if (entity instanceof Entity)
+        if (entity != null)
         {
             return EntityUtils.isEntityAtPosition(entity, world, (Entity) entityCitizen);
         }
@@ -310,5 +310,16 @@ public final class EntityUtils
     public static boolean isLivingAtSite(@NotNull final LivingEntity entityLiving, final int x, final int y, final int z, final int range)
     {
         return entityLiving.getPosition().distanceSq(new Vec3i(x, y, z)) < MathUtils.square(range);
+    }
+
+    /**
+     * Checks if the target is flying
+     *
+     * @param target entity to check
+     * @return true if flying or falling deeper
+     */
+    public static boolean isFlying(final LivingEntity target)
+    {
+        return target != null && (target.isAirBorne || !target.onGround) && target.fallDistance <= 0.1f && target.world.isAirBlock(target.getPosition().down(2));
     }
 }

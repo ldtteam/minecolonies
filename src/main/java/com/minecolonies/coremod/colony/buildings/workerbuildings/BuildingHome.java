@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -36,7 +37,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RESIDENTS;
 /**
  * The class of the citizen hut.
  */
-public class BuildingHome extends AbstractBuilding
+public class BuildingHome extends AbstractBuilding implements IBuildingBedProvider
 {
     /**
      * The string describing the hut.
@@ -67,7 +68,7 @@ public class BuildingHome extends AbstractBuilding
     /**
      * Interval at which the childen are created, in ticks. Every 20 min it tries to spawn a child, 20min*60s*20ticks
      */
-    private int childCreationInterval = 600;
+    private final static int CHILD_SPAWN_INTERVAL = 20 * 60;
 
     /**
      * The timer counting ticks to the next time creating a child
@@ -84,7 +85,7 @@ public class BuildingHome extends AbstractBuilding
     {
         super(c, l);
         final Random rand = new Random();
-        childCreationTimer = rand.nextInt(childCreationInterval) + MIN_TIME_BEFORE_SPAWNTRY;
+        childCreationTimer = rand.nextInt(CHILD_SPAWN_INTERVAL) + MIN_TIME_BEFORE_SPAWNTRY;
     }
 
     @Override
@@ -240,12 +241,14 @@ public class BuildingHome extends AbstractBuilding
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        if (childCreationTimer > childCreationInterval)
+        if (childCreationTimer <= 0)
         {
-            childCreationTimer = 0;
+            childCreationTimer =
+              (int) (colony.getWorld().rand.nextInt(500) + CHILD_SPAWN_INTERVAL * (1.0 - colony.getCitizenManager().getCurrentCitizenCount() / colony.getCitizenManager()
+                                                                                                                                                 .getMaxCitizens()));
             trySpawnChild();
         }
-        childCreationTimer += TWENTYFIVESEC;
+        childCreationTimer -= TWENTYFIVESEC;
 
         if (getAssignedCitizen().size() < getMaxInhabitants() && !getColony().isManualHousing())
         {
@@ -507,12 +510,8 @@ public class BuildingHome extends AbstractBuilding
         getColony().getCitizenManager().calculateMaxCitizens();
     }
 
-    /**
-     * Gets a list of all beds in this building.
-     *
-     * @return a list of all beds in this building.
-     */
     @NotNull
+    @Override
     public List<BlockPos> getBedList()
     {
         return new ArrayList<>(bedList);

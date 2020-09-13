@@ -1,0 +1,36 @@
+{
+  "variants": {
+    "hinge=left,facing=east": {
+      "model": "minecolonies:block/gate/gate_iron",
+      "y": 90
+    },
+    "hinge=left,facing=south": {
+      "model": "minecolonies:block/gate/gate_iron",
+      "y": 0
+    },
+    "hinge=left,facing=west": {
+      "model": "minecolonies:block/gate/gate_iron",
+      "y": 90
+    },
+    "hinge=left,facing=north": {
+      "model": "minecolonies:block/gate/gate_iron",
+      "y": 0
+    },
+    "hinge=right,facing=east": {
+      "model": "minecolonies:block/gate/gate_iron_spike",
+      "y": 90
+    },
+    "hinge=right,facing=south": {
+      "model": "minecolonies:block/gate/gate_iron_spike",
+      "y": 0
+    },
+    "hinge=right,facing=west": {
+      "model": "minecolonies:block/gate/gate_iron_spike",
+      "y": 90
+    },
+    "hinge=right,facing=north": {
+      "model": "minecolonies:block/gate/gate_iron_spike",
+      "y": 0
+    }
+  }
+}

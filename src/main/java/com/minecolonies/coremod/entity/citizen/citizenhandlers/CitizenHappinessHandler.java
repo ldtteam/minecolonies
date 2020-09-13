@@ -243,13 +243,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         {
             if (citizen.getJob() instanceof AbstractJobGuard)
             {
-                guards += citizen.getJobModifier();
+                guards++;
             }
             else
             {
-                workers += citizen.getJobModifier();
+                workers++;
             }
         }
-        return Math.min(guards / workers, 2);
+        return Math.min(guards / (workers * 2 / 3), 2);
     }
 }

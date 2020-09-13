@@ -197,6 +197,16 @@ public interface IBuildingManager
     BlockPos getRandomBuilding(Predicate<IBuilding> filterPredicate);
 
     /**
+     * Finds whether there is a guard building close to the given building
+     *
+     * @param building
+     * @return false if no guard tower close, true in other cases
+     */
+    boolean hasGuardBuildingNear(IBuilding building);
+
+    void guardBuildingChangedAt(IBuilding guardBuilding, int newLevel);
+
+    /**
      * Set the townhall building.
      *
      * @param building the building to set.

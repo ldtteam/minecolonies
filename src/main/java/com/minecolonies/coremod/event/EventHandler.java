@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -83,6 +84,7 @@ import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static net.minecraftforge.eventbus.api.EventPriority.HIGHEST;
 import static net.minecraftforge.eventbus.api.EventPriority.LOWEST;
 
 /**
@@ -362,9 +364,9 @@ public class EventHandler
     @SubscribeEvent
     public static void onPlayerEnterWorld(final PlayerEvent.PlayerLoggedInEvent event)
     {
-        if (event.getEntity() instanceof ServerPlayerEntity)
+        if (event.getPlayer() instanceof ServerPlayerEntity)
         {
-            final ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
+            final ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
             for (final IColony colony : IColonyManager.getInstance().getAllColonies())
             {
                 if (colony.getPermissions().hasPermission(player, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY)
@@ -691,7 +693,7 @@ public class EventHandler
      *
      * @param event {@link net.minecraftforge.event.world.WorldEvent.Load}
      */
-    @SubscribeEvent(priority = LOWEST)
+    @SubscribeEvent(priority = HIGHEST)
     public static void onWorldLoad(@NotNull final WorldEvent.Load event)
     {
         if (event.getWorld() instanceof World)
@@ -725,6 +727,7 @@ public class EventHandler
         if (event.getWorld().isRemote())
         {
             IColonyManager.getInstance().resetColonyViews();
+            ItemBlockHut.checkResearch(null);
             Log.getLogger().info("Removed all colony views");
         }
     }

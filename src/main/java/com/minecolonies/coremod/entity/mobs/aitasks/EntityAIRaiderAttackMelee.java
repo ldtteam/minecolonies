@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.LivingEntity;
@@ -24,7 +25,19 @@ public class EntityAIRaiderAttackMelee extends Goal
     private static final double                        MIN_DISTANCE_FOR_ATTACK = 2.5;
     private static final double                        ATTACK_SPEED            = 1.3;
     public static final  int                           MUTEX_BITS              = 3;
-    private static final double                        MELEE_DAMAGE_BONUS      = 1.0;
+
+    /**
+     * Extended reach based on difficulty
+     */
+    private static final double EXTENDED_REACH_DIFFICUTLY = 1.9;
+    private static final double EXTENDED_REACH            = 0.4;
+
+    /**
+     * Additional movement speed difficulty
+     */
+    private static final double ADD_SPEED_DIFFICULTY = 2.3;
+    private static final double ADD_SPEED            = 0.3;
+
     private final        AbstractEntityMinecoloniesMob entity;
     private              LivingEntity                  target;
     private              int                           lastAttack              = 0;
@@ -50,7 +63,7 @@ public class EntityAIRaiderAttackMelee extends Goal
     public boolean shouldExecute()
     {
         target = entity.getAttackTarget() != null ? entity.getAttackTarget() : entity.getAttackingEntity();
-        return target != null;
+        return target != null && !EntityUtils.isFlying(target);
     }
 
     /**
@@ -62,7 +75,7 @@ public class EntityAIRaiderAttackMelee extends Goal
     public boolean shouldContinueExecuting()
     {
         target = entity.getAttackTarget();
-        if (target != null && target.isAlive() && entity.isAlive() && entity.canEntityBeSeen(target))
+        if (target != null && target.isAlive() && entity.isAlive() && entity.canEntityBeSeen(target) && !EntityUtils.isFlying(target))
         {
             attack(target);
             return true;
@@ -97,9 +110,10 @@ public class EntityAIRaiderAttackMelee extends Goal
 
         if (target != null)
         {
-            double damageToBeDealt = entity.getAttribute(MOB_ATTACK_DAMAGE).getValue() + MELEE_DAMAGE_BONUS;
+            double damageToBeDealt = entity.getAttribute(MOB_ATTACK_DAMAGE).getValue();
 
-            if (entity.getDistance(target) <= MIN_DISTANCE_FOR_ATTACK && lastAttack <= 0 && entity.canEntityBeSeen(target))
+            if (entity.getDistance(target) <= (entity.getDifficulty() < EXTENDED_REACH_DIFFICUTLY ? MIN_DISTANCE_FOR_ATTACK : MIN_DISTANCE_FOR_ATTACK + EXTENDED_REACH)
+                  && lastAttack <= 0 && entity.canEntityBeSeen(target))
             {
                 target.attackEntityFrom(new EntityDamageSource(entity.getType().getTranslationKey(), entity), (float) damageToBeDealt);
                 entity.swingArm(Hand.MAIN_HAND);
@@ -115,7 +129,7 @@ public class EntityAIRaiderAttackMelee extends Goal
             entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
             entity.getLookController().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
 
-            entity.getNavigator().tryMoveToEntityLiving(target, ATTACK_SPEED);
+            entity.getNavigator().tryMoveToEntityLiving(target, entity.getDifficulty() < ADD_SPEED_DIFFICULTY ? ATTACK_SPEED : ATTACK_SPEED + ADD_SPEED);
         }
     }
 
