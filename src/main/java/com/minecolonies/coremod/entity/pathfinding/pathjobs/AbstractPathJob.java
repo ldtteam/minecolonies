@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
+import com.ldtteam.structurize.blocks.decorative.BlockFloatingCarpet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
@@ -22,7 +23,6 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.properties.Half;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -878,14 +878,14 @@ public abstract class AbstractPathJob implements Callable<Path>
         //  lower body (headroom drop) or lower body (jump up)
         if (checkHeadBlock(parent, pos))
         {
-            return -1;
+            return handleTargetNotPassable(parent, pos.up(), world.getBlockState(pos.up()));
         }
 
         //  Now check the block we want to move to
         final BlockState target = world.getBlockState(pos);
         if (!isPassable(target, pos))
         {
-            return handleTargeNotPassable(parent, pos, target);
+            return handleTargetNotPassable(parent, pos, target);
         }
 
         //  Do we have something to stand on in the target space?
@@ -965,7 +965,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return -1;
     }
 
-    private int handleTargeNotPassable(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final BlockState target)
+    private int handleTargetNotPassable(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final BlockState target)
     {
         final boolean canJump = parent != null && !parent.isLadder() && !parent.isSwimming();
         //  Need to try jumping up one, if we can
@@ -1118,9 +1118,9 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         final BlockState state = world.getBlockState(pos);
         final VoxelShape shape = state.getCollisionShape(world, pos);
-        if (shape.isEmpty())
+        if (shape.isEmpty() || shape.getEnd(Direction.Axis.Y) <= 0.1)
         {
-             return !head || !(state.getBlock() instanceof CarpetBlock);
+             return !head || !(state.getBlock() instanceof CarpetBlock || state.getBlock() instanceof BlockFloatingCarpet);
         }
         return isPassable(state, pos);
     }
@@ -1160,7 +1160,10 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.DROPABLE;
         }
 
-        if (blockState.getMaterial().isSolid() || (blockState.getBlock() == Blocks.SNOW && blockState.get(SnowBlock.LAYERS) > 1))
+        if (blockState.getMaterial().isSolid()
+              || (blockState.getBlock() == Blocks.SNOW && blockState.get(SnowBlock.LAYERS) > 1)
+              || block instanceof BlockFloatingCarpet
+              || block instanceof CarpetBlock)
         {
             return SurfaceType.WALKABLE;
         }
