@@ -694,6 +694,7 @@
 
   "item.supplycampdeployer.invalid": "Requires a flat ground at least 16*17 blocks without grass, flowers, or holes!",
   "item.supplycampdeployer.invalid.water_block_needed": "Placing a Supply Ship requires water under the ship. These blocks must be water: %s.",
+  "item.supplycampdeployer.invalid.lava_block_needed": "Placing a Supply Ship requires lava under the ship. These blocks must be lava: %s.",
   "item.supplycampdeployer.invalid.solid_block_needed": "Placing a Supply Camp requires flat, solid ground. These blocks must be solid: %s.",
   "item.supplycampdeployer.invalid.air_block_needed": "Placing a Supply Camp or Ship requires air above the ground/sea level. These blocks must be air: %s.",
   "item.supplycampdeployer.invalid.inside_existing_colony": "You cannot place your Supply Camp or Ship near an existing colony.",
@@ -857,7 +858,7 @@
   "com.minecolonies.coremod.item.gate.place": "Autoplaces parts. The max size is 5x4 which needs a stack of 20.",
 
   "com.minecolonies.coremod.gui.workerhuts.buildprio": "Pickup Prio.: ",
-  "item.supplychestdeployer.invalid": "You must place it in a fitting pool of water.",
+  "item.supplychestdeployer.invalid": "You must place it in a fitting ocean or river.",
   "item.supplychestdeployer.missing": "Are you trying to trick me by picking up that Supply Ship (or Camp) again?",
   "com.minecolonies.coremod.citizen.rename.same": "Renaming failed, as two citizens are not allowed to have the same name!",
   "com.minecolonies.coremod.citizen.rename.notallowed": "Renaming failed, as you're not allowed to rename your citizen!",
