@@ -270,7 +270,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isPlantable(final ItemStack itemStack)
     {
-        if (itemStack.isEmpty() || itemStack.getItem() == Items.WITHER_ROSE)
+        if (itemStack.isEmpty() || itemStack.getItem() == Items.WITHER_ROSE || !(itemStack.getItem() instanceof BlockItem) )
         {
             return false;
         }
@@ -296,7 +296,7 @@ public class CompatibilityManager implements ICompatibilityManager
             {
                 for (final ResourceLocation tag : itemStack.getItem().getTags())
                 {
-                    if (tag.toString().contains(split[1]) && itemStack.getItem().getRegistryName().getNamespace().equals(split[0]))
+                    if (tag.toString().contains(":" + split[1]) && itemStack.getItem().getRegistryName().getNamespace().equals(split[0]))
                     {
                         return true;
                     }
