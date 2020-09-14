@@ -1448,7 +1448,7 @@ public class Colony implements IColony
     @Override
     public IEventDescriptionManager getEventDescriptionManager()
     {
-    	return eventDescManager;
+        return eventDescManager;
     }
 
     /**

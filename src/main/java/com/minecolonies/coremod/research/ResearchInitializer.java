@@ -10,30 +10,30 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
 public class ResearchInitializer
 {
 
-	/**
-	 * Research name constants
-	 */
-	public static final String COMPOSTER_RESEARCH      = "Composter";
-	public static final String FLORIST_RESEARCH        = "Florist";
-	public static final String DYER_RESEARCH           = "Dyer";
-	public static final String CONCRETE_MIXER_RESEARCH = "Concrete Mixer";
-	public static final String PLANTATION_RESEARCH     = "Plantation";
-	public static final String SMELTERY_RESEARCH       = "Smeltery";
-	public static final String STONESMELTERY_RESEARCH  = "Stonesmeltery";
-	public static final String CRUSHER_RESEARCH        = "Crusher";
-	public static final String GLASSBLOWER_RESEARCH    = "Glassblower";
-	public static final String SAWMILL_RESEARCH        = "Sawmill";
-	public static final String SIFTER_RESEARCH         = "Sifter";
-	public static final String FLETCHER_RESEARCH       = "Fletcher";
-	public static final String BLACKSMITH_RESEARCH     = "Blacksmith";
-	public static final String STONEMASON_RESEARCH     = "Stonemason";
-	public static final String MECHANIC_RESEARCH       = "Mechanic";
-	public static final String SCHOOL_RESEARCH         = "School";
-	public static final String LIBRARY_RESEARCH        = "Library";
-	public static final String HOSPITAL_RESEARCH       = "Hospital";
-	public static final String BARRACKS_RESEARCH       = "Barracks";
-	public static final String COMBAT_ACADEMY_RESEARCH = "Combat Academy";
-	public static final String ARCHERY_RESEARCH        = "Archery";
+    /**
+     * Research name constants
+     */
+    public static final String COMPOSTER_RESEARCH      = "Composter";
+    public static final String FLORIST_RESEARCH        = "Florist";
+    public static final String DYER_RESEARCH           = "Dyer";
+    public static final String CONCRETE_MIXER_RESEARCH = "Concrete Mixer";
+    public static final String PLANTATION_RESEARCH     = "Plantation";
+    public static final String SMELTERY_RESEARCH       = "Smeltery";
+    public static final String STONESMELTERY_RESEARCH  = "Stonesmeltery";
+    public static final String CRUSHER_RESEARCH        = "Crusher";
+    public static final String GLASSBLOWER_RESEARCH    = "Glassblower";
+    public static final String SAWMILL_RESEARCH        = "Sawmill";
+    public static final String SIFTER_RESEARCH         = "Sifter";
+    public static final String FLETCHER_RESEARCH       = "Fletcher";
+    public static final String BLACKSMITH_RESEARCH     = "Blacksmith";
+    public static final String STONEMASON_RESEARCH     = "Stonemason";
+    public static final String MECHANIC_RESEARCH       = "Mechanic";
+    public static final String SCHOOL_RESEARCH         = "School";
+    public static final String LIBRARY_RESEARCH        = "Library";
+    public static final String HOSPITAL_RESEARCH       = "Hospital";
+    public static final String BARRACKS_RESEARCH       = "Barracks";
+    public static final String COMBAT_ACADEMY_RESEARCH = "Combat Academy";
+    public static final String ARCHERY_RESEARCH        = "Archery";
 
     /**
      * Method to fill the research tree with the elements.

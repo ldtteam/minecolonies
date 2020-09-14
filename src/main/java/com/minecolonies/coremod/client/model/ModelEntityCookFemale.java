@@ -45,7 +45,7 @@ public class ModelEntityCookFemale extends CitizenModel<AbstractEntityCitizen>
         skirt = new ModelRenderer(this);
         skirt.setRotationPoint(-4.0F, 12.0F, -4.0F);
         bipedBody.addChild(skirt);
-        
+
 
         dress1 = new ModelRenderer(this);
         dress1.setRotationPoint(0.0F, 0.0F, 0.0F);

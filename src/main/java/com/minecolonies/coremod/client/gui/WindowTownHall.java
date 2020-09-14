@@ -1339,7 +1339,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     public void permissionEventsClicked(@NotNull final Button button)
     {
-    	permissionEvents = !permissionEvents;
-    	button.setLabel(LanguageHandler.format(permissionEvents ? TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS : TranslationConstants.COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS));
+        permissionEvents = !permissionEvents;
+        button.setLabel(LanguageHandler.format(permissionEvents ? TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS : TranslationConstants.COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS));
     }
 }

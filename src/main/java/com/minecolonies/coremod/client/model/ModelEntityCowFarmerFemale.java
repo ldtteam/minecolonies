@@ -67,7 +67,7 @@ public class ModelEntityCowFarmerFemale extends CitizenModel<AbstractEntityCitiz
         hair = new ModelRenderer(this);
         hair.setRotationPoint(0.0F, 0.0F, 0.0F);
         bipedHead.addChild(hair);
-        
+
 
         left_top_1 = new ModelRenderer(this);
         left_top_1.setRotationPoint(0.0F, 0.0F, 0.0F);
@@ -138,19 +138,19 @@ public class ModelEntityCowFarmerFemale extends CitizenModel<AbstractEntityCitiz
         ponytail_1.setRotationPoint(7.0F, 4.2F, 2.0F);
         hair.addChild(ponytail_1);
         setRotationAngle(ponytail_1, -1.4486F, 0.0F, 0.0F);
-        
+
 
         ponytail_2 = new ModelRenderer(this);
         ponytail_2.setRotationPoint(6.0F, -1.0F, 0.0F);
         hair.addChild(ponytail_2);
         setRotationAngle(ponytail_2, -1.0647F, 0.0F, 0.0F);
-        
+
 
         ponytail_3 = new ModelRenderer(this);
         ponytail_3.setRotationPoint(6.5F, 0.9F, 0.7F);
         hair.addChild(ponytail_3);
         setRotationAngle(ponytail_3, -1.3613F, 0.0F, 0.0F);
-        
+
 
         hairRightTop_1 = new ModelRenderer(this);
         hairRightTop_1.setRotationPoint(0.0F, 0.0F, 0.0F);
@@ -179,7 +179,7 @@ public class ModelEntityCowFarmerFemale extends CitizenModel<AbstractEntityCitiz
         backpack = new ModelRenderer(this);
         backpack.setRotationPoint(0.0F, 0.0F, 0.0F);
         bipedBody.addChild(backpack);
-        
+
 
         bagR = new ModelRenderer(this);
         bagR.setRotationPoint(0.0F, 0.0F, 0.0F);

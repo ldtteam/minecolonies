@@ -1387,7 +1387,7 @@ public final class ColonyView implements IColonyView
     @Override
     public IEventDescriptionManager getEventDescriptionManager()
     {
-    	return null;
+        return null;
     }
 
     @Override
