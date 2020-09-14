@@ -243,8 +243,9 @@ public class BuildingHome extends AbstractBuilding implements IBuildingBedProvid
         if (childCreationTimer <= 0)
         {
             childCreationTimer =
-              (int) (colony.getWorld().rand.nextInt(500) + CHILD_SPAWN_INTERVAL * (1.0 - colony.getCitizenManager().getCurrentCitizenCount() / colony.getCitizenManager()
-                                                                                                                                                 .getMaxCitizens()));
+              (int) (colony.getWorld().rand.nextInt(500) + CHILD_SPAWN_INTERVAL * (1.0 - colony.getCitizenManager().getCurrentCitizenCount() / Math.max(4,
+                colony.getCitizenManager()
+                  .getMaxCitizens())));
             trySpawnChild();
         }
         childCreationTimer -= TWENTYFIVESEC;
