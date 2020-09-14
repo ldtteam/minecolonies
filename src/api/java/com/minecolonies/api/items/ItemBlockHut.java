@@ -23,9 +23,9 @@ import org.jetbrains.annotations.NotNull;
 public class ItemBlockHut extends BlockItem
 {
 
-	/**
-	 * This items block.
-	 */
+    /**
+     * This items block.
+     */
     private AbstractBlockHut<?> block;
 
     /**

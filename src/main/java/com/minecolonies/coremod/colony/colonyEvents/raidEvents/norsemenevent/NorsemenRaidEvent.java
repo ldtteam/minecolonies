@@ -125,7 +125,7 @@ public class NorsemenRaidEvent extends HordeRaidEvent
     {
         NorsemenRaidEvent
           event = new NorsemenRaidEvent(colony);
-        event.readFromNBT(compound);
+        event.deserializeNBT(compound);
         return event;
     }
 

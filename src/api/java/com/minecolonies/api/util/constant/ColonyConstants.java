@@ -74,9 +74,9 @@ public final class ColonyConstants
     public static final int CONST_CHUNKSIZE = 16;
 
     /**
-     * Max amount of permission events to store in the colony.
+     * Max amount of permission/colony events to store in the colony.
      */
-    public static final int MAX_PERMISSION_EVENTS = 100;
+    public static final int MAX_COLONY_EVENTS = 100;
 
     /**
      * Barbarian Constants.

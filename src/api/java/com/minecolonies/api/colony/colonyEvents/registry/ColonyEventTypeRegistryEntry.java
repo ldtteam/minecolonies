@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is the colonies event registry entry class, used for registering any colony related events. Takes a function of colony, nbt to create the right event object.
  */
@@ -38,12 +40,14 @@ public class ColonyEventTypeRegistryEntry extends ForgeRegistryEntry<ColonyEvent
     }
 
     /**
-     * Gets the event creation function.
-     *
-     * @return the event creator (colony, nbt, event).
+     * Deserializes the event from nbt.
+     * 
+     * @param colony   the colony this event is part of.
+     * @param compound the nbt to deserialize the event from.
+     * @return the deserialized event.
      */
-    public BiFunction<IColony, CompoundNBT, IColonyEvent> getEventCreator()
+    public IColonyEvent deserializeEvent(@Nonnull final IColony colony, @Nonnull final CompoundNBT compound)
     {
-        return eventCreator;
+        return eventCreator.apply(colony, compound);
     }
 }
