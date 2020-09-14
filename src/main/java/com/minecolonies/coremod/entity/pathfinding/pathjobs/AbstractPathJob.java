@@ -1107,7 +1107,11 @@ public abstract class AbstractPathJob implements Callable<Path>
             else
             {
                 final VoxelShape shape = block.getCollisionShape(world, pos);
-                return (shape.isEmpty() || shape.getEnd(Direction.Axis.Y) <= 0.1) && !block.getMaterial().isLiquid() && (block.getBlock() != Blocks.SNOW || block.get(SnowBlock.LAYERS) == 1) && block.getBlock() != Blocks.SWEET_BERRY_BUSH;
+                return block.getBlock() instanceof LadderBlock ||
+                         ((shape.isEmpty() || shape.getEnd(Direction.Axis.Y) <= 0.1)
+                         && !block.getMaterial().isLiquid()
+                         && (block.getBlock() != Blocks.SNOW || block.get(SnowBlock.LAYERS) == 1)
+                         && block.getBlock() != Blocks.SWEET_BERRY_BUSH);
             }
         }
 
@@ -1120,7 +1124,9 @@ public abstract class AbstractPathJob implements Callable<Path>
         final VoxelShape shape = state.getCollisionShape(world, pos);
         if (shape.isEmpty() || shape.getEnd(Direction.Axis.Y) <= 0.1)
         {
-             return !head || !(state.getBlock() instanceof CarpetBlock || state.getBlock() instanceof BlockFloatingCarpet);
+            return !head
+                     || !(state.getBlock() instanceof CarpetBlock || state.getBlock() instanceof BlockFloatingCarpet)
+                     || state.getBlock() instanceof LadderBlock;
         }
         return isPassable(state, pos);
     }
