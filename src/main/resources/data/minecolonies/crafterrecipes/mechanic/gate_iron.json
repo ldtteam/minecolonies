@@ -4,10 +4,10 @@
   "inputs": [
     {
       "item": "minecraft:iron_nugget",
-      "count": "5"
+      "count": 5
     }
   ],
   "result": "minecolonies:gate_iron",
-  "count": "1",
+  "count": 1,
   "intermediate": "minecraft:air"
 }

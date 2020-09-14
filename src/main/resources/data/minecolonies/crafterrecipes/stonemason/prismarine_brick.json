@@ -4,14 +4,14 @@
   "inputs": [
     {
         "item" : "minecraft:stone_bricks",
-        "count": "1"
+        "count": 1
     },
     {
         "item" : "minecraft:prismarine_shard",
-        "count": "1"
+        "count": 1
     }
   ],
   "result": "minecraft:prismarine_bricks",
-  "count": "1",
+  "count": 1,
   "intermediate" : "minecraft:air"
 }

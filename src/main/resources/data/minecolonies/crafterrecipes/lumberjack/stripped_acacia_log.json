@@ -4,10 +4,10 @@
   "inputs": [
     {
         "item" : "minecraft:acacia_log",
-        "count": "1"
+        "count": 1
     }
   ],
   "result": "minecraft:stripped_acacia_log",
-  "count": "1",
+  "count": 1,
   "intermediate" : "minecraft:air"
 }

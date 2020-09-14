@@ -4,14 +4,14 @@
   "inputs": [
     {
         "item" : "minecraft:cobblestone",
-        "count": "1"
+        "count": 1
     },
     {
         "item" : "minecraft:red_sand",
-        "count": "1"
+        "count": 1
     }
   ],
   "result": "minecraft:red_sandstone",
-  "count": "1",
+  "count": 1,
   "intermediate" : "minecraft:air"
 }
