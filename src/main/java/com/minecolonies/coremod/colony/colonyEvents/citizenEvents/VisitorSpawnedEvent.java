@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 /**
- * The event handling a newly spawned(not born) citizen.
+ * The event handling a newly spawned visitor.
  */
 public class VisitorSpawnedEvent extends AbstractCitizenEvent
 {

@@ -63,7 +63,7 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
     public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundNBT compound)
     {
         final PirateRaidEvent raidEvent = new PirateRaidEvent(colony);
-        raidEvent.readFromNBT(compound);
+        raidEvent.deserializeNBT(compound);
         return raidEvent;
     }
 

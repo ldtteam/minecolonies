@@ -252,9 +252,8 @@ public class EventManager implements IEventManager
         final ListNBT eventListNBT = new ListNBT();
         for (final IColonyEvent event : events.values())
         {
-            final CompoundNBT eventNBT = new CompoundNBT();
+            final CompoundNBT eventNBT = event.serializeNBT();
             eventNBT.putString(TAG_NAME, event.getEventTypeID().getPath());
-            event.writeToNBT(eventNBT);
             eventListNBT.add(eventNBT);
         }
 

@@ -665,7 +665,7 @@ public class Colony implements IColony
         }
 
         eventManager.readFromNBT(compound);
-        compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
+        eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
         if (compound.keySet().contains(TAG_RESEARCH))
         {
@@ -800,7 +800,7 @@ public class Colony implements IColony
 
         progressManager.write(compound);
         eventManager.writeToNBT(compound);
-        eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
+        compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
         raidManager.write(compound);
 
         @NotNull final CompoundNBT researchManagerCompound = new CompoundNBT();

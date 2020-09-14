@@ -70,7 +70,7 @@ public class NorsemenShipRaidEvent extends AbstractShipRaidEvent
     public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundNBT compound)
     {
         final NorsemenShipRaidEvent raidEvent = new NorsemenShipRaidEvent(colony);
-        raidEvent.readFromNBT(compound);
+        raidEvent.deserializeNBT(compound);
         return raidEvent;
     }
 
