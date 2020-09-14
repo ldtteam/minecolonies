@@ -161,6 +161,11 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     @Nullable
     public IColony getColony()
     {
+        if (colony == null)
+        {
+            registerWithColony(getColonyId(), citizen.getCivilianID());
+        }
+
         return colony;
     }
 

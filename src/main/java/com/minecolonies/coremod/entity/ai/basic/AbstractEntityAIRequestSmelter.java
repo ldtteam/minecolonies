@@ -66,7 +66,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
           new AITarget(START_USING_FURNACE, this::fillUpFurnace, 1),
           new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, 5),
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::accelerateFurnaces, TICKS_SECOND)
-          );
+        );
     }
 
     @Override

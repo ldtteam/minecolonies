@@ -1174,6 +1174,8 @@ public final class WindowConstants
 
     public static final String LOCATE = "locate";
 
+    public static final String CLIPBOARD_TOGGLE = "important";
+
     /**
      * public constructor to hide implicit public one.
      */
