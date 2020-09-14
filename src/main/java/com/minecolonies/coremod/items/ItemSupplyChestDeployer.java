@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.items;
 
+import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -9,14 +10,15 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Dimension;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +37,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * StructureIterator name and location.
      */
     private static final String SUPPLY_SHIP_STRUCTURE_NAME = "supplyship";
+
+    /**
+     * StructureIterator name for nether dimension
+     */
+    private static final String SUPPLY_SHIP_STRUCTURE_NAME_NETHER = "nethership";
 
     /**
      * Offset south/west of the supply chest.
@@ -76,7 +83,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             {
                 return ActionResultType.FAIL;
             }
-            placeSupplyShip(ctx.getPos(), ctx.getPlayer().getHorizontalFacing());
+            placeSupplyShip(ctx.getWorld().getDimensionTypeKey(), ctx.getPos(), ctx.getPlayer().getHorizontalFacing());
         }
 
         return ActionResultType.FAIL;
@@ -94,7 +101,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return new ActionResult<>(ActionResultType.FAIL, stack);
             }
-            placeSupplyShip(null, playerIn.getHorizontalFacing());
+            placeSupplyShip(worldIn.getDimensionTypeKey(), null, playerIn.getHorizontalFacing());
         }
 
         return new ActionResult<>(ActionResultType.FAIL, stack);
@@ -106,11 +113,15 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param pos       the position to place the supply chest at.
      * @param direction the direction the supply chest should face.
      */
-    private void placeSupplyShip(@Nullable final BlockPos pos, @NotNull final Direction direction)
+    private void placeSupplyShip(RegistryKey<DimensionType> dim, @Nullable final BlockPos pos, @NotNull final Direction direction)
     {
+        final String name = dim.equals(DimensionType.THE_NETHER)
+                ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
+                : SUPPLY_SHIP_STRUCTURE_NAME;
+
         if (pos == null)
         {
-            MineColonies.proxy.openBuildToolWindow(null, SUPPLY_SHIP_STRUCTURE_NAME, 0);
+            MineColonies.proxy.openBuildToolWindow(null, name, 0);
             return;
         }
 
@@ -135,7 +146,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                 rotations = ROTATE_0_TIMES;
                 break;
         }
-        MineColonies.proxy.openBuildToolWindow(tempPos, SUPPLY_SHIP_STRUCTURE_NAME, rotations);
+        MineColonies.proxy.openBuildToolWindow(tempPos, name, rotations);
     }
 
     /**
@@ -143,20 +154,30 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      *
      * @param world              the world.
      * @param pos                the pos.
-     * @param size               the size.
+     * @param ship               the blueprint.
      * @param placementErrorList the list of placement errors.
      * @param placer             the placer.
      * @return true if so.
      */
     public static boolean canShipBePlaced(
-      @NotNull final World world, @NotNull final BlockPos pos, final BlockPos size, @NotNull final List<PlacementError> placementErrorList, final
+            @NotNull final World world, @NotNull final BlockPos pos, final Blueprint ship, @NotNull final List<PlacementError> placementErrorList, final
     PlayerEntity placer)
     {
-        for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
+        final BlockPos size = new BlockPos(ship.getSizeX(), ship.getSizeY(), ship.getSizeZ());
+
+        for (int z = 0; z < size.getZ(); z++)
         {
-            for (int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
+            for (int x = 0; x < size.getX(); x++)
             {
-                checkIfWaterAndNotInColony(world, new BlockPos(x, pos.getY() + 2, z), placementErrorList, placer);
+                checkFluidAndNotInColony(
+                        world,
+                        new BlockPos(
+                                x + pos.getX() - size.getX() / 2 + 1,
+                                pos.getY() + 2,
+                                z + pos.getZ() - size.getZ() / 2 + 1),
+                        placementErrorList,
+                        placer
+                );
             }
         }
 
@@ -182,15 +203,22 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param placementErrorList a list of placement errors.
      * @param placer             the player placing the supply camp.
      */
-    private static void checkIfWaterAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final PlayerEntity placer)
+    private static void checkFluidAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final PlayerEntity placer)
     {
+        final boolean isOverworld = world.getDimensionTypeKey().equals(DimensionType.OVERWORLD);
         final boolean isWater = BlockUtils.isWater(world.getBlockState(pos));
         final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
-        if (!isWater)
+        if (!isWater && isOverworld)
         {
             final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos);
             placementErrorList.add(placementError);
         }
+        else if (!world.getBlockState(pos).getFluidState().getFluid().isEquivalentTo(Fluids.LAVA) && !isOverworld)
+        {
+            final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos);
+            placementErrorList.add(placementError);
+        }
+
         if (!notInAnyColony)
         {
             final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.INSIDE_COLONY, pos);
