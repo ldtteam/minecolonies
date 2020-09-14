@@ -1475,7 +1475,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
             InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
 
-            String deathCause = damageSource.getDeathMessage(this).setStyle(new Style()).getFormattedText().replaceFirst(this.getDisplayName().getFormattedText(), "Citizen");
+            final String deathCause = new StringTextComponent(damageSource.getDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
             citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(getPosition(), citizenData.getName(), deathCause));
         }
         super.onDeath(damageSource);
