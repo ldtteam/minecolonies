@@ -10,6 +10,7 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
@@ -245,4 +246,10 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * @param time the time in seconds.
      */
     void processOfflineTime(long time);
+
+    /**
+     * Serialize the job to a buffer.
+     * @param buffer the buffer to serialize it to.
+     */
+    void serializeToView(final PacketBuffer buffer);
 }

@@ -82,6 +82,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
 import static com.minecolonies.api.research.util.ResearchConstants.MINIMUM_STOCK;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
@@ -979,6 +980,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
+        if (keepFood())
+        {
+            toKeep.put(ItemStackUtils.CAN_EAT, new Tuple<>(getBuildingLevel() * 2, true));
+        }
         final IRequestManager manager = colony.getRequestManager();
         toKeep.put(stack -> this.getOpenRequestsByCitizen().values().stream()
                               .anyMatch(list -> list.stream().filter(token -> manager.getRequestForToken(token) != null)
@@ -987,6 +992,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
           new Tuple<>(Integer.MAX_VALUE, true));
 
         return toKeep;
+    }
+
+    /**
+     * If the worker should keep some food in the inventory/building.
+     * @return true if so.
+     */
+    protected boolean keepFood()
+    {
+        return true;
     }
 
     /**
