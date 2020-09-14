@@ -139,8 +139,8 @@ public class ModelEntityMechanistFemale extends CitizenModel<AbstractEntityCitiz
         mask.setTextureOffset(89, 1).addBox(3.5F, -27.0F, -4.5F, 1.0F, 2.0F, 4.0F, 0.0F, true);
         mask.setTextureOffset(99, 1).addBox(3.5F, -32.0F, -4.5F, 1.0F, 2.0F, 4.0F, 0.0F, true);
         mask.setTextureOffset(83, 0).addBox(-4.0F, -30.0F, -5.0F, 1.0F, 2.0F, 1.0F, 0.0F, true);
-		
-		bipedHeadwear.showModel = false;
+
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

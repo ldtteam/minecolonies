@@ -181,8 +181,8 @@ public class ModelEntityTeacherFemale extends CitizenModel<AbstractEntityCitizen
         bipedBody.addChild(bipedChest);
         setRotationAngle(bipedChest, -0.5934F, 0.0F, 0.0F);
         bipedChest.setTextureOffset(40, 32).addBox(-3.0F, 2.7F, -0.5F, 6.0F, 3.0F, 4.0F, 0.0F, false);
-		
-		bipedHeadwear.showModel = false;
+
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

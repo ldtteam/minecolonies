@@ -22,9 +22,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ItemBlockHut extends BlockItem
 {
 
-	/**
-	 * This items block.
-	 */
+    /**
+     * This items block.
+     */
     private AbstractBlockHut<?> block;
 
     /**

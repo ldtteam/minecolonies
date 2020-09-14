@@ -144,8 +144,8 @@ public class ModelEntityFarmerMale extends CitizenModel<AbstractEntityCitizen>
         hatFrillRight.setRotationPoint(0.0F, 0.0F, 0.0F);
         hatFrillBottom.addChild(hatFrillRight);
         hatFrillRight.setTextureOffset(88, 24).addBox(-7.5F, -7.7F, -8.5F, 1.0F, 1.0F, 14.0F, 0.0F, true);
-		
-		bipedHeadwear.showModel = false;
+
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.AbstractShipRaidEvent;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -62,7 +63,7 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
     public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundNBT compound)
     {
         final PirateRaidEvent raidEvent = new PirateRaidEvent(colony);
-        raidEvent.readFromNBT(compound);
+        raidEvent.deserializeNBT(compound);
         return raidEvent;
     }
 

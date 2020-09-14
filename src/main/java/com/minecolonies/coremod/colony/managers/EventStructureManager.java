@@ -32,9 +32,7 @@ import java.util.Map;
 
 import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
 import static com.ldtteam.structurize.management.Structures.SCHEMATIC_EXTENSION_NEW;
-import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SCHEMATIC_LIST;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Manager for event structures

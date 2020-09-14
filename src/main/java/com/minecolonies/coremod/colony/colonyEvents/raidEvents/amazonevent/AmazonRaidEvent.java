@@ -162,7 +162,7 @@ public class AmazonRaidEvent extends HordeRaidEvent
     public static AmazonRaidEvent loadFromNBT(final IColony colony, final CompoundNBT compound)
     {
         AmazonRaidEvent event = new AmazonRaidEvent(colony);
-        event.readFromNBT(compound);
+        event.deserializeNBT(compound);
         return event;
     }
 
