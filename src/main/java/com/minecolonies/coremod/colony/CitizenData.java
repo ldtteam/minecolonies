@@ -711,6 +711,12 @@ public class CitizenData implements ICitizenData
         buf.writeCompoundTag(happinessCompound);
 
         buf.writeInt(status != null ? status.getId() : -1);
+
+        buf.writeBoolean(job != null);
+        if (job != null)
+        {
+            job.serializeToView(buf);
+        }
     }
 
     @Override

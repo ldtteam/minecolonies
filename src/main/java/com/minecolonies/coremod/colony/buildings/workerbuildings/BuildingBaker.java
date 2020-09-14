@@ -149,6 +149,12 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         markDirty();
     }
 
+    @Override
+    protected boolean keepFood()
+    {
+        return false;
+    }
+
     /**
      * Add a furnace to the building.
      *
