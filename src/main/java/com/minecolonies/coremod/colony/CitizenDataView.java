@@ -2,8 +2,12 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.colony.jobs.IJobView;
+import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
@@ -12,6 +16,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
@@ -57,6 +62,8 @@ public class CitizenDataView implements ICitizenDataView
     protected     boolean female;
     protected     boolean paused;
     protected     boolean isChild;
+
+    private IJobView jobView;
 
     /**
      * colony id of the citizen.
@@ -292,6 +299,18 @@ public class CitizenDataView implements ICitizenDataView
 
         int statusindex = buf.readInt();
         statusIcon = statusindex >= 0 ? VisibleCitizenStatus.getForId(statusindex) : null;
+
+        if (buf.readBoolean())
+        {
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().func_240901_a_());
+            jobView = IJobDataManager.getInstance().createViewFrom(colonyView, this, buf);
+        }
+    }
+
+    @Override
+    public IJobView getJobView()
+    {
+        return this.jobView;
     }
 
     @Override
