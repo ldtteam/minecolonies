@@ -28,8 +28,9 @@ public class ColonyEventDescriptionTypeRegistryEntry extends ForgeRegistryEntry<
     /**
      * Creates a new registry entry for the given function and registry name.
      *
-     * @param eventCreator the event creator.
-     * @param registryID   the registry id.
+     * @param nbtEventCreator          the event creator using nbt.
+     * @param packetBufferEventCreator the event creator using a {@link PacketBuffer}.
+     * @param registryID               the registry id.
      */
     public ColonyEventDescriptionTypeRegistryEntry(@NotNull final Function<CompoundNBT, IColonyEventDescription> nbtEventCreator, @NotNull final Function<PacketBuffer, IColonyEventDescription> packetBufferEventCreator, @NotNull final ResourceLocation registryID)
     {
