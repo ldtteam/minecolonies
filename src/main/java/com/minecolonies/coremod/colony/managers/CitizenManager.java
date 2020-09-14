@@ -115,7 +115,6 @@ public class CitizenManager implements ICitizenManager
         if (!existingCitizen.isPresent())
         {
             data.setEntity(entity);
-            entity.setCivilianData(data);
             colony.getWorld().getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
             return;
         }
