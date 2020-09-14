@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.colonyEvents.citizenEvents;
 
-import static com.minecolonies.api.colony.colonyEvents.descriptions.NBTTags.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 import com.minecolonies.api.util.constant.Constants;
 
@@ -58,17 +58,17 @@ public class CitizenDiedEvent extends AbstractCitizenEvent
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT compound)
+    public CompoundNBT serializeNBT()
     {
-        super.writeToNBT(compound);
+        CompoundNBT compound = super.serializeNBT();
         compound.putString(TAG_DEATH_CAUSE, deathCause);
         return compound;
     }
 
     @Override
-    public void readFromNBT(CompoundNBT compound)
+    public void deserializeNBT(CompoundNBT compound)
     {
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
         deathCause = compound.getString(TAG_DEATH_CAUSE);
     }
 
@@ -115,7 +115,7 @@ public class CitizenDiedEvent extends AbstractCitizenEvent
     public static CitizenDiedEvent loadFromNBT(@NotNull final CompoundNBT compound)
     {
         final CitizenDiedEvent deathEvent = new CitizenDiedEvent();
-        deathEvent.readFromNBT(compound);
+        deathEvent.deserializeNBT(compound);
         return deathEvent;
     }
 

@@ -23,6 +23,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -664,7 +665,7 @@ public class Colony implements IColony
         }
 
         eventManager.readFromNBT(compound);
-        eventDescManager.readFromNBT(compound);
+        compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
 
         if (compound.keySet().contains(TAG_RESEARCH))
         {
@@ -799,7 +800,7 @@ public class Colony implements IColony
 
         progressManager.write(compound);
         eventManager.writeToNBT(compound);
-        eventDescManager.writeToNBT(compound);
+        eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
         raidManager.write(compound);
 
         @NotNull final CompoundNBT researchManagerCompound = new CompoundNBT();

@@ -836,7 +836,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     else if (event instanceof IBuildingEventDescription)
                     {
                         IBuildingEventDescription buildEvent = (IBuildingEventDescription) event;
-                        rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(buildEvent.getBuilding() + " " + buildEvent.getLevel());
+                        rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(buildEvent.getBuildingName() + " " + buildEvent.getLevel());
                     }
                     rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ());
                     rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();

@@ -60,7 +60,7 @@ public class CitizenGrownUpEvent extends AbstractCitizenEvent
     public static CitizenGrownUpEvent loadFromNBT(@NotNull final CompoundNBT compound)
     {
         final CitizenGrownUpEvent growUpEvent = new CitizenGrownUpEvent();
-        growUpEvent.readFromNBT(compound);
+        growUpEvent.deserializeNBT(compound);
         return growUpEvent;
     }
 

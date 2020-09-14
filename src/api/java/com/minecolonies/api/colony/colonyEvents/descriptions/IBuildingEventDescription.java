@@ -10,14 +10,14 @@ public interface IBuildingEventDescription extends IColonyEventDescription
      * 
      * @return the name of the building type involved in this event.
      */
-    String getBuilding();
+    String getBuildingName();
 
     /**
      * Sets the building type for this event.
      * 
-     * @param building the building type for this event.
+     * @param buildingName the building type for this event.
      */
-    void setBuilding(String building);
+    void setBuildingName(String buildingName);
 
     /**
      * Gets the level of the building after the event.
@@ -36,6 +36,6 @@ public interface IBuildingEventDescription extends IColonyEventDescription
     @Override
     default String toDisplayString()
     {
-        return String.format("%s: %s %d at %d %d %d.%n", getName(), getBuilding(), getLevel(), getEventPos().getX(), getEventPos().getY(), getEventPos().getZ());
+        return String.format("%s: %s %d at %d %d %d.%n", getName(), getBuildingName(), getLevel(), getEventPos().getX(), getEventPos().getY(), getEventPos().getZ());
     }
 }

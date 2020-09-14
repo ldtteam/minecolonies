@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is the colonies event registry entry class, used for registering any colony related events. Takes a function of colony, nbt to create the right event object.
  */
@@ -45,22 +47,24 @@ public class ColonyEventDescriptionTypeRegistryEntry extends ForgeRegistryEntry<
     }
 
     /**
-     * Gets the function creating the event description from nbt.
-     *
-     * @return the event creator (nbt -> event description).
+     * Deserializes the event description from nbt.
+     * 
+     * @param compound the nbt to deserialize the event description from.
+     * @return the deserialized event description.
      */
-    public Function<CompoundNBT, IColonyEventDescription> getNBTEventCreator()
+    public IColonyEventDescription deserializeEventDescriptionFromNBT(@Nonnull final CompoundNBT compound)
     {
-        return nbtEventDescriptionCreator;
+        return nbtEventDescriptionCreator.apply(compound);
     }
 
     /**
-     * Gets the function creating the event description from a {@link PacketBuffer}.
-     *
-     * @return the event creator (packet buffer -> event description).
+     * Deserializes the event description from the given {@link PacketBuffer}.
+     * 
+     * @param buffer the {@link PacketBuffer} to deserialize the event description from.
+     * @return the deserialized event description.
      */
-    public Function<PacketBuffer, IColonyEventDescription> getPacketBufferEventCreator()
+    public IColonyEventDescription deserializeEventDescriptionFromPacketBuffer(@Nonnull final PacketBuffer buffer)
     {
-        return packetBufferEventDescriptionCreator;
+        return packetBufferEventDescriptionCreator.apply(buffer);
     }
 }

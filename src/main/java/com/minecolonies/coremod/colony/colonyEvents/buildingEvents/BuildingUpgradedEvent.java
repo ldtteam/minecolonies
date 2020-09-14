@@ -61,7 +61,7 @@ public class BuildingUpgradedEvent extends AbstractBuildingEvent
     public static BuildingUpgradedEvent loadFromNBT(@NotNull final CompoundNBT compound)
     {
         final BuildingUpgradedEvent upgradeEvent = new BuildingUpgradedEvent();
-        upgradeEvent.readFromNBT(compound);
+        upgradeEvent.deserializeNBT(compound);
         return upgradeEvent;
     }
 

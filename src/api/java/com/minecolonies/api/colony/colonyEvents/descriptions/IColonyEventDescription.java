@@ -4,11 +4,12 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * Description for an event that happened in the colony.
  */
-public interface IColonyEventDescription
+public interface IColonyEventDescription extends INBTSerializable<CompoundNBT>
 {
     /**
      * Gets this event types registry id.
@@ -47,21 +48,6 @@ public interface IColonyEventDescription
      * @param pos the position this event happened at.
      */
     void setEventPos(BlockPos pos);
-
-    /**
-     * Writes the event to the given {@link CompoundNBT NBT Compound}.
-     *
-     * @param compound the {@link CompoundNBT} to write it to.
-     * @return the {@link CompoundNBT}.
-     */
-    CompoundNBT writeToNBT(final CompoundNBT compound);
-
-    /**
-     * Reads the events values from the given {@link CompoundNBT NBT Compound}.
-     *
-     * @param compound the {@link CompoundNBT} to read it from.
-     */
-    void readFromNBT(final CompoundNBT compound);
 
     /**
      * Serializes this event to the given {@link PacketBuffer}.

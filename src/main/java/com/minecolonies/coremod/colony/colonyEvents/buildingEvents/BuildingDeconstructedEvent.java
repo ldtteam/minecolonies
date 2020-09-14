@@ -61,7 +61,7 @@ public class BuildingDeconstructedEvent extends AbstractBuildingEvent
     public static BuildingDeconstructedEvent loadFromNBT(@NotNull final CompoundNBT compound)
     {
         final BuildingDeconstructedEvent deconstructionEvent = new BuildingDeconstructedEvent();
-        deconstructionEvent.readFromNBT(compound);
+        deconstructionEvent.deserializeNBT(compound);
         return deconstructionEvent;
     }
 

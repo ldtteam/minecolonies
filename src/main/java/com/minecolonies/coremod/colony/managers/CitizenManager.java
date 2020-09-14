@@ -19,7 +19,6 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenBornEvent;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -277,15 +276,14 @@ public class CitizenManager implements ICitizenManager
                       colony.getName());
                 }
             }
+
+            colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(spawnPoint, citizenData.getName()));
         }
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
         entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
 
         entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
         world.addEntity(entity);
-
-        colony.getEventDescriptionManager().addEventDescription(citizenData.isChild() ? new CitizenBornEvent(spawnPoint, citizenData.getName()) :
-              new CitizenSpawnedEvent(spawnPoint, citizenData.getName()));
 
         colony.getProgressManager()
           .progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
@@ -542,6 +540,9 @@ public class CitizenManager implements ICitizenManager
                 }
 
                 spawnOrCreateCivilian(newCitizen, colony.getWorld(), null, true);
+
+                colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(colony.getBuildingManager().getTownHall().getPosition(),
+                      newCitizen.getName()));
             }
         }
     }

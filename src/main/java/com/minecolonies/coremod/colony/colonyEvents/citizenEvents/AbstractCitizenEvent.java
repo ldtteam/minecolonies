@@ -7,7 +7,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
-import static com.minecolonies.api.colony.colonyEvents.descriptions.NBTTags.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Event for something happening to a citizen.
@@ -62,15 +62,16 @@ public abstract class AbstractCitizenEvent implements ICitizenEventDescription
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT compound)
+    public CompoundNBT serializeNBT()
     {
+        CompoundNBT compound = new CompoundNBT();
         BlockPosUtil.write(compound, TAG_EVENT_POS, eventPos);
         compound.putString(TAG_CITIZEN_NAME, citizenName);
         return compound;
     }
 
     @Override
-    public void readFromNBT(CompoundNBT compound)
+    public void deserializeNBT(CompoundNBT compound)
     {
         eventPos = BlockPosUtil.read(compound, TAG_EVENT_POS);
         citizenName = compound.getString(TAG_CITIZEN_NAME);

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.colonyEvents.buildingEvents;
 
-import static com.minecolonies.api.colony.colonyEvents.descriptions.NBTTags.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -16,7 +16,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
 {
 
     private BlockPos eventPos;
-    private String building;
+    private String buildingName;
     private int level;
 
     /**
@@ -36,7 +36,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     public AbstractBuildingEvent(BlockPos eventPos, String buildingName, int buildingLevel)
     {
         this.eventPos = eventPos;
-        building = buildingName;
+        this.buildingName = buildingName;
         level = buildingLevel;
     }
 
@@ -53,19 +53,20 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT compound)
+    public CompoundNBT serializeNBT()
     {
+        CompoundNBT compound = new CompoundNBT();
         BlockPosUtil.write(compound, TAG_EVENT_POS, eventPos);
-        compound.putString(TAG_BUILDING_NAME, building);
+        compound.putString(TAG_BUILDING_NAME, buildingName);
         compound.putInt(TAG_BUILDING_LEVEL, level);
         return compound;
     }
 
     @Override
-    public void readFromNBT(CompoundNBT compound)
+    public void deserializeNBT(CompoundNBT compound)
     {
         eventPos = BlockPosUtil.read(compound, TAG_EVENT_POS);
-        building = compound.getString(TAG_BUILDING_NAME);
+        buildingName = compound.getString(TAG_BUILDING_NAME);
         level = compound.getInt(TAG_BUILDING_LEVEL);
     }
 
@@ -73,7 +74,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     public void serialize(PacketBuffer buf)
     {
         buf.writeBlockPos(eventPos);
-        buf.writeString(building);
+        buf.writeString(buildingName);
         buf.writeInt(level);
     }
 
@@ -81,20 +82,20 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     public void deserialize(PacketBuffer buf)
     {
         eventPos = buf.readBlockPos();
-        building = buf.readString();
+        buildingName = buf.readString();
         level = buf.readInt();
     }
 
     @Override
-    public String getBuilding()
+    public String getBuildingName()
     {
-        return building;
+        return buildingName;
     }
 
     @Override
-    public void setBuilding(String building)
+    public void setBuildingName(String buildingName)
     {
-        this.building = building;
+        this.buildingName = buildingName;
     }
 
     @Override

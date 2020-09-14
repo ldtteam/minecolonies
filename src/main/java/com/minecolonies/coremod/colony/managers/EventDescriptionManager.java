@@ -28,7 +28,6 @@ public class EventDescriptionManager implements IEventDescriptionManager
     /**
      * NBT tags
      */
-    private static final String TAG_EVENT_DESC_MANAGER = "event_desc_manager";
     private static final String TAG_EVENT_DESC_LIST    = "event_descs_list";
 
     /**
@@ -63,45 +62,39 @@ public class EventDescriptionManager implements IEventDescriptionManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void deserializeNBT(@NotNull final CompoundNBT eventManagerNBT)
     {
-        if (compound.contains(TAG_EVENT_DESC_MANAGER))
+        final ListNBT eventDescListNBT = eventManagerNBT.getList(TAG_EVENT_DESC_LIST, Constants.NBT.TAG_COMPOUND);
+        for (final INBT event : eventDescListNBT)
         {
-            final CompoundNBT eventManagerNBT = compound.getCompound(TAG_EVENT_DESC_MANAGER);
+            final CompoundNBT eventCompound = (CompoundNBT) event;
+            final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, eventCompound.getString(TAG_NAME));
 
-            final ListNBT eventDescListNBT = eventManagerNBT.getList(TAG_EVENT_DESC_LIST, Constants.NBT.TAG_COMPOUND);
-            for (final INBT event : eventDescListNBT)
+            final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().getValue(eventTypeID);
+            if (registryEntry == null)
             {
-                final CompoundNBT eventCompound = (CompoundNBT) event;
-                final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, eventCompound.getString(TAG_NAME));
-
-                final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().getValue(eventTypeID);
-                if (registryEntry == null)
-                {
-                    Log.getLogger().warn("Event is missing registryEntry!:" + eventTypeID.getPath());
-                    continue;
-                }
-
-                final IColonyEventDescription eventDescription = registryEntry.getNBTEventCreator().apply(eventCompound);
-                eventDescs.add(eventDescription);
+                Log.getLogger().warn("Event is missing registryEntry!:" + eventTypeID.getPath());
+                continue;
             }
+
+            final IColonyEventDescription eventDescription = registryEntry.deserializeEventDescriptionFromNBT(eventCompound);
+            eventDescs.add(eventDescription);
         }
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public CompoundNBT serializeNBT()
     {
         final CompoundNBT eventManagerNBT = new CompoundNBT();
         final ListNBT eventDescsListNBT = new ListNBT();
         for (final IColonyEventDescription event : eventDescs)
         {
-            final CompoundNBT eventNBT = new CompoundNBT();
+            final CompoundNBT eventNBT = event.serializeNBT();
             eventNBT.putString(TAG_NAME, event.getEventTypeId().getPath());
-            event.writeToNBT(eventNBT);
             eventDescsListNBT.add(eventNBT);
         }
 
         eventManagerNBT.put(TAG_EVENT_DESC_LIST, eventDescsListNBT);
-        compound.put(TAG_EVENT_DESC_MANAGER, eventManagerNBT);
+        return eventManagerNBT;
     }
 }

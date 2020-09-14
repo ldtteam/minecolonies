@@ -12,29 +12,29 @@ import net.minecraft.util.math.BlockPos;
 /**
  * The event handling a newly spawned(not born) citizen.
  */
-public class CitizenSpawnedEvent extends AbstractCitizenEvent
+public class VisitorSpawnedEvent extends AbstractCitizenEvent
 {
 
     /**
      * This events id, registry entries use res locations as ids.
      */
-    public static final ResourceLocation CITIZEN_SPAWNED_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "citizen_spawn");
+    public static final ResourceLocation VISITOR_SPAWNED_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "visitor_spawn");
 
     /**
-     * Creates a new citizen spawned event.
+     * Creates a new visitor spawned event.
      */
-    public CitizenSpawnedEvent()
+    public VisitorSpawnedEvent()
     {
         super();
     }
 
     /**
-     * Creates a new citizen spawned event.
+     * Creates a new visitor spawned event.
      * 
      * @param eventPos    the position of the hut block of the building.
      * @param citizenName the name of the building.
      */
-    public CitizenSpawnedEvent(BlockPos eventPos, String citizenName)
+    public VisitorSpawnedEvent(BlockPos eventPos, String citizenName)
     {
         super(eventPos, citizenName);
     }
@@ -42,37 +42,37 @@ public class CitizenSpawnedEvent extends AbstractCitizenEvent
     @Override
     public ResourceLocation getEventTypeId()
     {
-        return CITIZEN_SPAWNED_EVENT_ID;
+        return VISITOR_SPAWNED_EVENT_ID;
     }
 
     @Override
     public String getName()
     {
-        return "Citizen Spawned";
+        return "Visitor Spawned";
     }
 
     /**
-     * Loads the citizen spawned event from the given nbt.
+     * Loads the visitor spawned event from the given nbt.
      *
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static CitizenSpawnedEvent loadFromNBT(@NotNull final CompoundNBT compound)
+    public static VisitorSpawnedEvent loadFromNBT(@NotNull final CompoundNBT compound)
     {
-        final CitizenSpawnedEvent spawnEvent = new CitizenSpawnedEvent();
+        final VisitorSpawnedEvent spawnEvent = new VisitorSpawnedEvent();
         spawnEvent.deserializeNBT(compound);
         return spawnEvent;
     }
 
     /**
-     * Loads the citizen spawned event from the given packet buffer.
+     * Loads the visitor spawned event from the given packet buffer.
      *
      * @param compound the packet buffer.
      * @return the colony to load.
      */
-    public static CitizenSpawnedEvent loadFromPacketBuffer(@NotNull final PacketBuffer buf)
+    public static VisitorSpawnedEvent loadFromPacketBuffer(@NotNull final PacketBuffer buf)
     {
-        final CitizenSpawnedEvent spawnEvent = new CitizenSpawnedEvent();
+        final VisitorSpawnedEvent spawnEvent = new VisitorSpawnedEvent();
         spawnEvent.deserialize(buf);
         return spawnEvent;
     }

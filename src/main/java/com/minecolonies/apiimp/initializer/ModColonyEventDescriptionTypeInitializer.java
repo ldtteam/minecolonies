@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenBornEve
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenGrownUpEvent;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
+import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
 
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -27,6 +28,7 @@ public final class ModColonyEventDescriptionTypeInitializer
         final IForgeRegistry<ColonyEventDescriptionTypeRegistryEntry> reg = event.getRegistry();
         reg.register(new ColonyEventDescriptionTypeRegistryEntry(CitizenBornEvent::loadFromNBT, CitizenBornEvent::loadFromPacketBuffer, CitizenBornEvent.CITIZEN_BORN_EVENT_ID));
         reg.register(new ColonyEventDescriptionTypeRegistryEntry(CitizenSpawnedEvent::loadFromNBT, CitizenSpawnedEvent::loadFromPacketBuffer, CitizenSpawnedEvent.CITIZEN_SPAWNED_EVENT_ID));
+        reg.register(new ColonyEventDescriptionTypeRegistryEntry(VisitorSpawnedEvent::loadFromNBT, VisitorSpawnedEvent::loadFromPacketBuffer, VisitorSpawnedEvent.VISITOR_SPAWNED_EVENT_ID));
         reg.register(new ColonyEventDescriptionTypeRegistryEntry(CitizenDiedEvent::loadFromNBT, CitizenDiedEvent::loadFromPacketBuffer, CitizenDiedEvent.CITIZEN_DIED_EVENT_ID));
         reg.register(new ColonyEventDescriptionTypeRegistryEntry(CitizenGrownUpEvent::loadFromNBT, CitizenGrownUpEvent::loadFromPacketBuffer, CitizenGrownUpEvent.CITIZEN_GROWN_UP_EVENT_ID));
         reg.register(new ColonyEventDescriptionTypeRegistryEntry(BuildingBuiltEvent::loadFromNBT, BuildingBuiltEvent::loadFromPacketBuffer, BuildingBuiltEvent.BUILDING_BUILT_EVENT_ID));

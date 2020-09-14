@@ -60,7 +60,7 @@ public class CitizenBornEvent extends AbstractCitizenEvent
     public static CitizenBornEvent loadFromNBT(@NotNull final CompoundNBT compound)
     {
         final CitizenBornEvent birthEvent = new CitizenBornEvent();
-        birthEvent.readFromNBT(compound);
+        birthEvent.deserializeNBT(compound);
         return birthEvent;
     }
 

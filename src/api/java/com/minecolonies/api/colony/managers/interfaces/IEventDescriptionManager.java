@@ -3,14 +3,14 @@ package com.minecolonies.api.colony.managers.interfaces;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
 
 import net.minecraft.nbt.CompoundNBT;
-import org.jetbrains.annotations.NotNull;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.List;
 
 /**
  * Interface for the event description manager, the event description manager deals the colony event log events.
  */
-public interface IEventDescriptionManager
+public interface IEventDescriptionManager extends INBTSerializable<CompoundNBT>
 {
     /**
      * Adds an event description.
@@ -25,18 +25,4 @@ public interface IEventDescriptionManager
      * @return the list of colony events.
      */
     List<IColonyEventDescription> getEventDescriptions();
-
-    /**
-     * Reads the eventManager nbt and creates events from it
-     *
-     * @param compound the compound to read from.
-     */
-    void readFromNBT(@NotNull CompoundNBT compound);
-
-    /**
-     * Write the eventmanager and all events to NBT
-     *
-     * @param compound the compound to write to.
-     */
-    void writeToNBT(@NotNull CompoundNBT compound);
 }

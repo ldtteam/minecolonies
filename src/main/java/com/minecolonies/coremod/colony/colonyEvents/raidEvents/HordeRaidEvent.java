@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.colony.colonyEvents.NBTTags.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.SMALL_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;

@@ -236,7 +236,7 @@ public class EventManager implements IEventManager
                     continue;
                 }
 
-                final IColonyEvent colonyEvent = registryEntry.getEventCreator().apply(colony, tagCompound);
+                final IColonyEvent colonyEvent = registryEntry.deserializeEvent(colony, tagCompound);
                 events.put(colonyEvent.getID(), colonyEvent);
             }
 
