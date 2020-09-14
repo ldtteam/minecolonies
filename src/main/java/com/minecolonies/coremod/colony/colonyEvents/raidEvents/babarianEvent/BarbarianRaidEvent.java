@@ -117,7 +117,7 @@ public class BarbarianRaidEvent extends HordeRaidEvent
     public static BarbarianRaidEvent loadFromNBT(final IColony colony, final CompoundNBT compound)
     {
         BarbarianRaidEvent event = new BarbarianRaidEvent(colony);
-        event.readFromNBT(compound);
+        event.deserializeNBT(compound);
         return event;
     }
 

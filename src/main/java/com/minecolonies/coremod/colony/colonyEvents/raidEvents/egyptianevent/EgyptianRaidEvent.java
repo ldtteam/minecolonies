@@ -173,7 +173,7 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     public static EgyptianRaidEvent loadFromNBT(final IColony colony, final CompoundNBT compound)
     {
         EgyptianRaidEvent event = new EgyptianRaidEvent(colony);
-        event.readFromNBT(compound);
+        event.deserializeNBT(compound);
         return event;
     }
 

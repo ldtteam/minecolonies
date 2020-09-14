@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -18,7 +19,7 @@ public interface IEventManager
     /**
      * Adds an event
      *
-     * @param colonyEvent even to add
+     * @param colonyEvent event to add
      */
     void addEvent(IColonyEvent colonyEvent);
 

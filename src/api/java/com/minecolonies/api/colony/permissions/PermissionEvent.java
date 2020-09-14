@@ -153,7 +153,6 @@ public class PermissionEvent
     @Override
     public int hashCode()
     {
-
         return Objects.hash(id, name, action, position);
     }
 }

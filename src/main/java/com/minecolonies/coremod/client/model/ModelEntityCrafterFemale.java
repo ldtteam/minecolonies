@@ -230,8 +230,8 @@ public class ModelEntityCrafterFemale extends CitizenModel<AbstractEntityCitizen
         SideBeam.setRotationPoint(-5.0F, 2.0F, 0.0F);
         bipedRightArm.addChild(SideBeam);
         SideBeam.setTextureOffset(38, 78).addBox(2.5F, -4.5F, -0.5F, 4.0F, 13.0F, 1.0F, 0.0F, true);
-		
-		bipedHeadwear.showModel = false;
+
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

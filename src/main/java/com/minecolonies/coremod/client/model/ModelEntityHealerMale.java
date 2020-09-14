@@ -279,8 +279,8 @@ public class ModelEntityHealerMale extends CitizenModel<AbstractEntityCitizen>
         rightarmGlove.setRotationPoint(-5.0F, 6.0F, 0.0F);
         bipedRightArm.addChild(rightarmGlove);
         rightarmGlove.setTextureOffset(90, 30).addBox(1.5F, 1.0F, -2.5F, 5.0F, 4.0F, 5.0F, 0.0F, true);
-		
-		bipedHeadwear.showModel = false;
+
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

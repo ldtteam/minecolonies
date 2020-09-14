@@ -427,7 +427,6 @@
   "com.minecolonies.coremod.gui.workerhuts.buildershut": "Builder's Hut",
   "com.minecolonies.coremod.gui.workerhuts.lumberjackhut": "Forester's Hut",
 
-  "com.minecolonies.coremod.gui.townhall.rename": "Rename Colony",
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",
   "com.minecolonies.coremod.gui.workerhuts.buildtype": "Building Style:",
   "com.minecolonies.coremod.gui.workerhuts.workerlevel": "Worker Level: %s",
@@ -498,8 +497,11 @@
   "com.minecolonies.coremod.gui.hiring.description": "Choose a worker for the job.",
   "com.minecolonies.coremod.gui.assigning.description": "Choose a citizen to live here.",
 
+  "com.minecolonies.coremod.gui.townhall.build": "Build Town Hall",
   "com.minecolonies.coremod.gui.townhall.repair": "Repair Town Hall",
+
   "com.minecolonies.coremod.gui.townhall.mercenary": "Hire Mercenaries",
+  "com.minecolonies.coremod.gui.townhall.mercenary.title": "Mercenary Help",
   "com.minecolonies.coremod.gui.townhall.mercenaryhire": "Hire",
   "com.minecolonies.coremod.gui.townhall.mercenarystory": "You've encountered some Mercenaries near your colony, and they offer to help with defending your colony. A price they did not name, but you get the feeling that they will not leave bare-handed. Hire at your own risk!",
   "com.minecolonies.coremod.gui.townhall.hire": "Citizen Recruitment",
@@ -511,18 +513,34 @@
   "com.minecolonies.coremod.gui.townhall.recall": "Recall Citizens",
   "com.minecolonies.coremod.gui.townhall.recallone": "Recall Citizen",
 
+  "com.minecolonies.coremod.gui.townhall.defaultname": "%s's Colony",
+  "com.minecolonies.coremod.gui.townhall.currtownhallname": "Colony Name:",
+  "com.minecolonies.coremod.gui.townhall.rename": "Rename Colony",
+  "com.minecolonies.coremod.gui.townhall.rename.title": "Rename your Colony",
+
   "com.minecolonies.coremod.gui.townhall.addplayer": "Add Player:",
   "com.minecolonies.coremod.gui.townhall.addblock": "Add Block/Position:",
   "com.minecolonies.coremod.gui.townhall.permissions": "Permissions",
   "com.minecolonies.coremod.gui.townhall.togglespec": "Toggle Specialization",
   "com.minecolonies.coremod.gui.townhall.actions": "Actions",
-  "com.minecolonies.coremod.gui.townhall.currtownhallname": "Colony Name:",
-  "com.minecolonies.coremod.gui.townhall.citizens": "Citizens",
-  "com.minecolonies.coremod.gui.townhall.rename.title": "Rename your Colony",
-  "com.minecolonies.coremod.gui.townhall.mercenary.title": "Mercenary Help",
+  "com.minecolonies.coremod.gui.townhall.jobhiring": "Worker Hiring Mode:",
   "com.minecolonies.coremod.gui.townhall.population.totalcitizens": "Number of Citizens: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.each": "%s: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.unemployed": "Unemployed: %d",
+  "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d",
+  "com.minecolonies.coremod.gui.townhall.currentspecialization": "Current Specialization:",
+
+  "com.minecolonies.coremod.gui.townhall.citizens": "Citizens",
+  "com.minecolonies.coremod.gui.townhall.citizens.unemployed": "Unemployed",
+  "com.minecolonies.coremod.gui.townhall.events": "Events",
+  "com.minecolonies.coremod.gui.townhall.permissionevents": "Permission Events",
+  "com.minecolonies.coremod.gui.townhall.colonyevents": "Colony Events",
+  "com.minecolonies.coremod.gui.townhall.workorders": "Work Orders",
+  "com.minecolonies.coremod.gui.townhall.currenthappiness": "Overall Happiness:",
+
+  "com.minecolonies.coremod.gui.townhall.allies": "Allies:",
+  "com.minecolonies.coremod.gui.townhall.feuds": "Feuds:",
+  "com.minecolonies.coremod.gui.townhall.tp": "Do you really want to teleport to %s? [YES]",
 
   "com.minecolonies.coremod.gui.warehouse.tostonemason": "Deliver to Stonemason:",
   "com.minecolonies.coremod.workorderadded": "Build Request Created!",
@@ -550,7 +568,6 @@
   "com.minecolonies.coremod.gui.herder.breeding": "Breeding",
   "com.minecolonies.coremod.gui.herder.notbreeding": "Not Breeding",
 
-  "com.minecolonies.coremod.gui.townhall.build": "Build Town Hall",
   "com.minecolonies.coremod.gui.workerhuts.workorder": "Work Orders",
 
   "com.minecolonies.coremod.gui.workerhuts.minernodelist": "Levels",
@@ -560,11 +577,8 @@
   "com.minecolonies.coremod.gui.workerhuts.workorderadded": "Build Order added to queue.",
   "com.minecolonies.coremod.gui.workerhuts.recall": "Recall Worker",
   "com.minecolonies.coremod.gui.workerhuts.workerassigned": "Worker Assigned:",
-  "com.minecolonies.coremod.gui.townhall.defaultname": "%s's Colony",
-  "com.minecolonies.coremod.gui.townhall.jobhiring": "Worker Hiring Mode:",
   "com.minecolonies.coremod.gui.workerhuts.manage": "Manage Workers",
   "com.minecolonies.coremod.gui.workerhuts.minerhut": "Mine",
-  "com.minecolonies.coremod.gui.townhall.currentspecialization": "Current Specialization:",
   "com.minecolonies.coremod.gui.inventory.scarecrow": "Scarecrow",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.fields": "Fields",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.assignmentmode": "Assign Fields to Farmer:",
@@ -700,7 +714,6 @@
   "item.supplycampdeployer.invalid.inside_existing_colony": "You cannot place your Supply Camp or Ship near an existing colony.",
   "item.minecolonies.supplychestdeployer": "Supply Ship",
   "item.minecolonies.supplycampdeployer": "Supply Camp",
-  "com.minecolonies.coremod.gui.townhall.currenthappiness": "Overall Happiness:",
   "com.minecolonies.coremod.job.guard.toolclickguardtoofar": "Too far away from Guard Tower, please upgrade your Guard Tower to set this spot!",
   "com.minecolonies.coremod.saturation.0": "I'm starving, I can't work anymore!",
   "com.minecolonies.coremod.saturation.3": "I'm quite hungry, I feel very unproductive!",
@@ -904,9 +917,6 @@
 
   "com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe": "You have not learned this recipe yet!",
 
-  "com.minecolonies.coremod.gui.townhall.allies": "Allies:",
-  "com.minecolonies.coremod.gui.townhall.feuds": "Feuds:",
-  "com.minecolonies.coremod.gui.townhall.tp": "Do you really want to teleport to %s? [YES]",
   "com.minecolonies.coremod.gui.workerhuts.switchstyle": "Switch Style",
   "com.minecolonies.coremod.gui.townhall.toolow": "Town Hall level too low!",
   "com.minecolonies.coremod.gui.recipe.full": "Max number of recipes reached for hut level",
@@ -1013,9 +1023,6 @@
 
   "com.minecolonies.gui.workerhuts.composter.compostables": "Items to Compost",
 
-  "com.minecolonies.coremod.gui.townhall.citizens.unemployed": "Unemployed",
-  "com.minecolonies.coremod.gui.townhall.events": "Events",
-  "com.minecolonies.coremod.gui.townhall.workorders": "Work Orders",
   "com.minecolonies.coremod.request.stacklist": "Stack List",
 
   "entity.composter.noitems": "Please define a list of items to be composted!",
@@ -1195,7 +1202,6 @@
   "com.minecolonies.coremod.gui.placement.warning": "We suggest using the build tool to place this schematic. This will allow you to to adjust the position.",
   "com.minecolonies.coremod.gui.placement.buildtool": "Use build tool",
   "com.minecolonies.coremod.gui.placement.direct": "Place anyway",
-  "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d",
 
   "com.minecolonies.coremod.gui.colony.here": "You are inside %s owned by %s",
   "com.minecolonies.coremod.gui.colony.near": "Colony with ID %d is nearby.",
