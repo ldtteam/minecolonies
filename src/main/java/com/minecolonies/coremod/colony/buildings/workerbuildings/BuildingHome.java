@@ -242,7 +242,7 @@ public class BuildingHome extends AbstractBuilding implements IBuildingBedProvid
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        if (childCreationTimer <= 0)
+        if (getBuildingLevel() > 0 && (childCreationTimer -= TWENTYFIVESEC) <= 0)
         {
             childCreationTimer =
               (int) (colony.getWorld().rand.nextInt(500) + CHILD_SPAWN_INTERVAL * (1.0 - colony.getCitizenManager().getCurrentCitizenCount() / Math.max(4,
@@ -250,7 +250,6 @@ public class BuildingHome extends AbstractBuilding implements IBuildingBedProvid
                   .getMaxCitizens())));
             trySpawnChild();
         }
-        childCreationTimer -= TWENTYFIVESEC;
 
         if (getAssignedCitizen().size() < getMaxInhabitants() && !getColony().isManualHousing())
         {

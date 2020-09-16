@@ -537,7 +537,8 @@ public class BuildingManager implements IBuildingManager
 
         for (final BlockPos buildingPos : closeCap.getAllClaimingBuildings().get(colony.getID()))
         {
-            if (colony.getBuildingManager().getBuilding(buildingPos) instanceof AbstractBuildingGuards)
+            final IBuilding guardbuilding = colony.getBuildingManager().getBuilding(buildingPos);
+            if (guardbuilding instanceof AbstractBuildingGuards || guardbuilding instanceof BuildingBarracks)
             {
                 return true;
             }
