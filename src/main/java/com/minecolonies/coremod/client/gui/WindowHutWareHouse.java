@@ -207,7 +207,9 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         neededLabel.setLabelText(resource.getAvailable() + " / " + resource.getAmount());
         findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
-        findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(new ItemStack(resource.getItem(), 1));
+        ItemStack image = new ItemStack(resource.getItem(), 1);
+        image.setTag(resource.getItemStack().getTag());
+        findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(image);
     }
 
     /**

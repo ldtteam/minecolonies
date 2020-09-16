@@ -273,6 +273,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 qtys.setLabelText(Integer.toString(resource.getAmount()));
                 final Item imagesrc = resource.getItemStack().getItem();
                 ItemStack image = new ItemStack(imagesrc, 1);
+                image.setTag(resource.getItemStack().getTag());
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(image);
             }
         });

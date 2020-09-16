@@ -7,13 +7,17 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.research.effects.IResearchEffect;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import java.util.ArrayList;
@@ -25,19 +29,18 @@ import java.util.Objects;
  */
 public class CustomRecipe
 {
-
     /**
      * The property name that indicates type for the recipe
      */
     public static final String RECIPE_TYPE_PROP = "type";
 
     /**
-     * The recipe type 
+     * The recipe type
      */
     public static final String RECIPE_TYPE_RECIPE = "recipe";
 
     /**
-     * The remove type 
+     * The remove type
      */
     public static final String RECIPE_TYPE_REMOVE = "remove";
 
@@ -57,7 +60,7 @@ public class CustomRecipe
     public static final String RECIPE_INPUTS_PROP = "inputs";
 
     /**
-     * The property name for the result item 
+     * The property name for the result item
      */
     public static final String RECIPE_RESULT_PROP = "result";
 
@@ -95,7 +98,6 @@ public class CustomRecipe
      * The property name for the maximum level the building can be
      */
     public static final String RECIPE_BUILDING_MAX_LEVEL_PROP = "max-building-level";
-
 
     /**
      * The crafter name for this instance, defaults to 'unknown'
@@ -142,40 +144,59 @@ public class CustomRecipe
      */
     private int maxBldgLevel = 5;
 
-
     /**
      * This class can only be created by the parse static
      */
     private CustomRecipe()
     {
-
     }
-    
+
+    private static ItemStack idToItemStack(String itemId)
+    {
+        final int tagIndex = itemId.indexOf("{");
+        final String tag = tagIndex > 0 ? itemId.substring(tagIndex) : null;
+        itemId = tagIndex > 0 ? itemId.substring(0, tagIndex) : itemId;
+        final String[] split = itemId.split(":");
+        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
+        final ItemStack stack = new ItemStack(item);
+        if (tag != null)
+        {
+            try
+            {
+                stack.setTag(JsonToNBT.getTagFromJson(tag));
+            }
+            catch (CommandSyntaxException e1)
+            {
+                //Unable to parse tags, drop them.
+            }
+        }
+        return stack;
+    }
+
     /**
      * Parse a Json object into a Custom recipe
+     * 
      * @param recipeJson the json representing the recipe
      * @return new instance of CustomRecipe
      */
     public static CustomRecipe parse(@NotNull final JsonObject recipeJson)
     {
         final CustomRecipe recipe = new CustomRecipe();
-        
+
         if (recipeJson.has(RECIPE_CRAFTER_PROP))
         {
             recipe.crafter = recipeJson.get(RECIPE_CRAFTER_PROP).getAsString();
         }
         if (recipeJson.has(RECIPE_INPUTS_PROP))
         {
-            for(JsonElement e : recipeJson.get(RECIPE_INPUTS_PROP).getAsJsonArray())
-            {   
-                if(e instanceof JsonElement && e.isJsonObject())
+            for (JsonElement e : recipeJson.get(RECIPE_INPUTS_PROP).getAsJsonArray())
+            {
+                if (e instanceof JsonElement && e.isJsonObject())
                 {
                     JsonObject ingredient = e.getAsJsonObject();
-                    if(ingredient.has(ITEM_PROP))
+                    if (ingredient.has(ITEM_PROP))
                     {
-                        final String[] split = ingredient.get(ITEM_PROP).getAsString().split(":");
-                        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
-                        final ItemStack stack = new ItemStack(item);
+                        final ItemStack stack = idToItemStack(ingredient.get(ITEM_PROP).getAsString());
                         if(ingredient.has(COUNT_PROP))
                         {
                             stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
@@ -188,10 +209,9 @@ public class CustomRecipe
         }
         if (recipeJson.has(RECIPE_RESULT_PROP))
         {
-            final String[] split = recipeJson.get(RECIPE_RESULT_PROP).getAsString().split(":");
-            final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
-            recipe.result = new ItemStack(item);
+            recipe.result = idToItemStack(recipeJson.get(RECIPE_RESULT_PROP).getAsString());
         }
+
         if (recipeJson.has(COUNT_PROP) && recipe.result != null)
         {
             recipe.result.setCount(recipeJson.get(COUNT_PROP).getAsInt());
