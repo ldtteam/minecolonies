@@ -294,6 +294,11 @@ public enum AIWorkerState implements IAIState
      */
     RETRIEVING_END_PRODUCT_FROM_FURNACE(true),
 
+    /**
+     * Fuel the furnace
+     */
+    ADD_FUEL_TO_FURNACE(true),
+
     /*
 ###Cook###
      */
