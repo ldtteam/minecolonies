@@ -1,51 +1,69 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.inventory.container.ContainerCrafting;
+import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
-import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import com.minecolonies.coremod.util.FurnaceRecipes;
+
 import net.minecraft.block.Blocks;
-import net.minecraft.block.FurnaceBlock;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.crafting.FurnaceRecipe;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
+import io.netty.buffer.Unpooled;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Building for the bakery.
  */
-public class BuildingBaker extends AbstractFilterableListBuilding
+public class BuildingBaker extends AbstractBuildingSmelterCrafter
 {
     /**
      * General bakery description key.
@@ -73,29 +91,9 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     private static final String TAG_PRODUCTS = "products";
 
     /**
-     * Tag used to store the furnaces positions.
+     * Always try to keep at least 2 stacks of recipe inputs in the inventory and in the worker chest.
      */
-    private static final String TAG_FURNACE_POS = "furnacePos";
-
-    /**
-     * Tag used to store the furnaces map.
-     */
-    private static final String TAG_FURNACES = "furnaces";
-
-    /**
-     * Always try to keep at least 2 stacks of wheat in the inventory and in the worker chest.
-     */
-    private static final int WHEAT_TO_KEEP = 128;
-
-    /**
-     * List of furnaces added to this building.
-     */
-    private final Map<BlockPos, BakingProduct> furnaces = new HashMap<>();
-
-    /**
-     * Map of tasks for the bakery to work on.
-     */
-    private final Map<ProductState, List<BakingProduct>> tasks = new EnumMap<>(ProductState.class);
+    private static final int RECIPE_INPUT_HOLD = 128;
 
     /**
      * Constructor for the bakery building.
@@ -106,11 +104,13 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     public BuildingBaker(final IColony c, final BlockPos l)
     {
         super(c, l);
-        for (final IRecipeStorage storage : BakerRecipes.getRecipes())
+        for (final IToken<?> token : getRecipes())
         {
-            for (final ItemStack stack : storage.getInput())
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            for (final ItemStorage itemStorage : storage.getCleanedInput())
             {
-                keepX.put(stack::isItemEqual, new Tuple<>(WHEAT_TO_KEEP, true));
+                final ItemStack stack = itemStorage.getItemStack();
+                keepX.put(stack::isItemEqual, new Tuple<>(RECIPE_INPUT_HOLD, false));
             }
         }
     }
@@ -139,30 +139,9 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
-    {
-        super.registerBlockPosition(block, pos, world);
-        if (block instanceof FurnaceBlock && !furnaces.containsKey(pos))
-        {
-            addToFurnaces(pos);
-        }
-        markDirty();
-    }
-
-    @Override
     protected boolean keepFood()
     {
         return false;
-    }
-
-    /**
-     * Add a furnace to the building.
-     *
-     * @param pos the position of it.
-     */
-    public void addToFurnaces(final BlockPos pos)
-    {
-        furnaces.put(pos, null);
     }
 
     /**
@@ -181,7 +160,6 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        tasks.clear();
         super.deserializeNBT(compound);
 
         final ListNBT taskTagList = compound.getList(TAG_TASKS, Constants.NBT.TAG_COMPOUND);
@@ -197,61 +175,55 @@ public class BuildingBaker extends AbstractFilterableListBuilding
                 final CompoundNBT productCompound = taskTagList.getCompound(i);
                 final BakingProduct bakingProduct = BakingProduct.createFromNBT(productCompound);
                 bakingProducts.add(bakingProduct);
+                if(state != ProductState.UNCRAFTED)
+                {
+                    InventoryUtils.addItemStackToProvider(this, bakingProduct.getEndProduct());
+                }
             }
-
-            tasks.put(state, bakingProducts);
-        }
-
-        final ListNBT furnaceTagList = compound.getList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < furnaceTagList.size(); ++i)
-        {
-            final CompoundNBT furnaceCompound = furnaceTagList.getCompound(i);
-            final BlockPos pos = BlockPosUtil.read(furnaceCompound, TAG_FURNACE_POS);
-            final BakingProduct bakingProduct = BakingProduct.createFromNBT(furnaceCompound);
-            furnaces.put(pos, bakingProduct);
         }
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final Collection<IRequestResolver<?>> supers =
+          super.createResolvers().stream()
+            .filter(r -> !(r instanceof PrivateWorkerCraftingProductionResolver || r instanceof PrivateWorkerCraftingRequestResolver))
+            .collect(Collectors.toList());
+        final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
-        @NotNull final ListNBT tasksTagList = new ListNBT();
-        for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
+        builder.addAll(supers);
+/*        builder.add(new BuildingRequestResolver(getRequester().getLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN))); */
+        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+
+        return builder.build();
+    }
+
+    @Override
+    public void openCraftingContainer(final ServerPlayerEntity player)
+    {
+        NetworkHooks.openGui(player, new INamedContainerProvider()
         {
-            if (!entry.getValue().isEmpty())
+            @Override
+            public ITextComponent getDisplayName()
             {
-                @NotNull final CompoundNBT taskCompound = new CompoundNBT();
-                taskCompound.putInt(TAG_STATE, entry.getKey().ordinal());
-
-                @NotNull final ListNBT productsTaskList = new ListNBT();
-                for (@NotNull final BakingProduct bakingProduct : entry.getValue())
-                {
-                    @NotNull final CompoundNBT productCompound = new CompoundNBT();
-                    bakingProduct.write(productCompound);
-                }
-                taskCompound.put(TAG_PRODUCTS, productsTaskList);
-                tasksTagList.add(taskCompound);
+                return new StringTextComponent("Crafting GUI");
             }
-        }
-        compound.put(TAG_TASKS, tasksTagList);
 
-        @NotNull final ListNBT furnacesTagList = new ListNBT();
-        for (@NotNull final Map.Entry<BlockPos, BakingProduct> entry : furnaces.entrySet())
-        {
-            @NotNull final CompoundNBT furnaceCompound = new CompoundNBT();
-            BlockPosUtil.write(furnaceCompound, TAG_FURNACE_POS, entry.getKey());
-
-            if (entry.getValue() != null)
+            @NotNull
+            @Override
+            public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
             {
-                entry.getValue().write(furnaceCompound);
+                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+                buffer.writeBoolean(canCraftComplexRecipes());
+                buffer.writeBlockPos(getID());
+                return new ContainerCrafting(id, inv, buffer);
             }
-            furnacesTagList.add(furnaceCompound);
-        }
-        compound.put(TAG_FURNACES, furnacesTagList);
-
-        return compound;
+        }, buffer -> new PacketBuffer(buffer.writeBoolean(canCraftComplexRecipes())).writeBlockPos(getID()));
     }
 
     /**
@@ -264,19 +236,6 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     public String getJobName()
     {
         return BAKER;
-    }
-
-    /**
-     * Checks the furnaces on colony tick.
-     *
-     * @param colony the colony being ticked
-     */
-    @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
-        super.onColonyTick(colony);
-
-        checkFurnaces();
     }
 
     @Override
@@ -316,162 +275,41 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         }
     }
 
-    /**
-     * Checks the furnaces of the bakery if they're ready.
-     */
-    private void checkFurnaces()
+    @Override
+    public boolean addRecipe(final IToken<?> token)
     {
-        final World worldObj = getColony().getWorld();
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
 
-        if (worldObj == null)
+        ItemStack smeltResult = FurnaceRecipes.getInstance().getSmeltingResult(storage.getPrimaryOutput());
+
+        if(smeltResult != null)
         {
-            return;
+            final IRecipeStorage smeltingRecipe =  StandardFactoryController.getInstance().getNewInstance(
+                TypeConstants.RECIPE,
+                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                ImmutableList.of(storage.getPrimaryOutput().copy()),
+                1,
+                smeltResult,
+                Blocks.FURNACE);
+                addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(smeltingRecipe));
         }
 
-        final List<Map.Entry<BlockPos, BakingProduct>> copyOfList = new ArrayList<>(this.getFurnacesWithProduct().entrySet());
-        for (final Map.Entry<BlockPos, BakingProduct> entry : copyOfList)
-        {
-            if (!WorldUtil.isBlockLoaded(worldObj, entry.getKey()))
-            {
-                return;
-            }
-            final BlockState furnace = worldObj.getBlockState(entry.getKey());
-            if (!(furnace.getBlock() instanceof FurnaceBlock))
-            {
-                if (worldObj.getTileEntity(entry.getKey()) instanceof FurnaceTileEntity)
-                {
-                    return;
-                }
-                Log.getLogger().warn(getColony().getName() + " Removed furnace at: " + entry.getKey() + " because it went missing!");
-                this.removeFromFurnaces(entry.getKey());
-                continue;
-            }
-
-            final BakingProduct bakingProduct = entry.getValue();
-            if (bakingProduct != null && bakingProduct.getState() == ProductState.BAKING)
-            {
-                bakingProduct.increaseBakingProgress();
-                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState().with(FurnaceBlock.FACING, furnace.get(FurnaceBlock.FACING)).with(FurnaceBlock.LIT, true));
-            }
-            else
-            {
-                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState().with(FurnaceBlock.FACING, furnace.get(FurnaceBlock.FACING)));
-            }
-        }
-    }
-
-    /**
-     * Return the map of furnaces assigned to this hut and the product in it.
-     *
-     * @return a hashmap with BlockPos, BakingProduct.
-     */
-    public Map<BlockPos, BakingProduct> getFurnacesWithProduct()
-    {
-        return Collections.unmodifiableMap(furnaces);
-    }
-
-    /**
-     * Remove a furnace from the building.
-     *
-     * @param pos the position of it.
-     */
-    public void removeFromFurnaces(final BlockPos pos)
-    {
-        furnaces.remove(pos);
-    }
-
-    /**
-     * Clear the furnaces list.
-     */
-    public void clearFurnaces()
-    {
-        furnaces.clear();
-    }
-
-    /**
-     * Remove a product from the furnace.
-     *
-     * @param pos the position the furnace is at.
-     */
-    public void removeProductFromFurnace(final BlockPos pos)
-    {
-        furnaces.replace(pos, null);
-    }
-
-    /**
-     * Return a list of furnaces assigned to this hut.
-     *
-     * @return copy of the list
-     */
-    public List<BlockPos> getFurnaces()
-    {
-        return new ArrayList<>(furnaces.keySet());
-    }
-
-    /**
-     * Get the map of current tasks in the bakery.
-     *
-     * @return the map of states and products.
-     */
-    public Map<ProductState, List<BakingProduct>> getTasks()
-    {
-        return Collections.unmodifiableMap(new HashMap<>(tasks));
-    }
-
-    /**
-     * Add a task to the tasks list.
-     *
-     * @param state         the state of the task.
-     * @param bakingProduct the regarding bakingProduct.
-     */
-    public void addToTasks(final ProductState state, final BakingProduct bakingProduct)
-    {
-        if (tasks.containsKey(state))
-        {
-            tasks.get(state).add(bakingProduct);
-        }
-        else
-        {
-            final List<BakingProduct> bakingProducts = new ArrayList<>();
-            bakingProducts.add(bakingProduct);
-            tasks.put(state, bakingProducts);
-        }
-        markDirty();
-    }
-
-    /**
-     * Remove a task from the tasks list.
-     *
-     * @param state         the state of the task.
-     * @param bakingProduct the regarding bakingProduct.
-     */
-    public void removeFromTasks(final ProductState state, final BakingProduct bakingProduct)
-    {
-        if (tasks.containsKey(state))
-        {
-            tasks.get(state).remove(bakingProduct);
-            if (tasks.get(state).isEmpty())
-            {
-                tasks.remove(state);
-            }
-            markDirty();
-        }
-    }
-
-    /**
-     * Put a certain BakingProduct in the furnace.
-     *
-     * @param currentFurnace the furnace to put it in.
-     * @param bakingProduct  the BakingProduct.
-     */
-    public void putInFurnace(final BlockPos currentFurnace, final BakingProduct bakingProduct)
-    {
-        furnaces.replace(currentFurnace, bakingProduct);
+        return super.addRecipe(token);
     }
 
     @Override
     public boolean canCraftComplexRecipes()
     {
+        return true;
+    }
+
+    @Override
+    public boolean isRecipeAlterationAllowed()
+    {
+        if(getBuildingLevel() < 3)
+        {
+            return false;
+        }
         return true;
     }
 
@@ -493,46 +331,6 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.bakery;
-    }
-
-    @Override
-    public void onBuildingMove(final IBuilding oldBuilding)
-    {
-        super.onBuildingMove(oldBuilding);
-        for (final Map.Entry<ProductState, List<BakingProduct>> task : ((BuildingBaker) oldBuilding).getTasks().entrySet())
-        {
-            for (final BakingProduct product : task.getValue())
-            {
-                this.addToTasks(task.getKey(), product);
-            }
-        }
-    }
-
-    /**
-     * Get the recipe for an itemstorage.
-     *
-     * @param itemStorage the storage.
-     * @return the recipe.
-     */
-    public IRecipeStorage getRecipeForItemStack(final ItemStorage itemStorage)
-    {
-        for (final IRecipeStorage recipe : BakerRecipes.getRecipes())
-        {
-            if (recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack()))
-            {
-                return recipe;
-            }
-        }
-
-        for (final IToken<?> token : getRecipes())
-        {
-            final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack()))
-            {
-                return recipe;
-            }
-        }
-        return null;
     }
 
     @Override
