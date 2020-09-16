@@ -43,6 +43,11 @@ public final class ModItems
     public static Item irongate;
     public static Item woodgate;
 
+    public static Item breadDough;
+    public static Item cookieDough;
+    public static Item cakeBatter;
+    public static Item rawPumpkinPie;
+
     /**
      * Private constructor to hide the implicit public one.
      */
