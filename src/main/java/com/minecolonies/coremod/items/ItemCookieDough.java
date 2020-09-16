@@ -5,12 +5,12 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
- * Class handling the Santa hat.
+ * Class handling Cookie Dough.
  */
 public class ItemCookieDough extends AbstractItemMinecolonies
 {
     /**
-     * Sets the name, creative tab, and registers the Bread Dough item.
+     * Sets the name, creative tab, and registers the Cookie Dough item.
      *
      * @param properties the properties.
      */

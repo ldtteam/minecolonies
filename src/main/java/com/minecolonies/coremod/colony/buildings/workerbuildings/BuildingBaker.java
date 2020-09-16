@@ -193,8 +193,6 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-/*        builder.add(new BuildingRequestResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN))); */
         builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(),
           getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
         builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(),

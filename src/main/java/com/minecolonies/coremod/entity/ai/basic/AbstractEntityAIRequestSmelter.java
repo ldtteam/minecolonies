@@ -287,7 +287,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                     final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
                     if (!furnace.isBurning() && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)) && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE) 
                     {
-                        Log.getLogger().info("Need to fuel the furnaces!");
                         if (amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)
                         {
                             needsCurrently = new Tuple<>(item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> ItemStackUtils.compareItemStacksIgnoreStackSize(candidate, item)), STACKSIZE);
@@ -352,7 +351,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             }
         }
 
-        Log.getLogger().info("fueling confused!");
         //Fueling is confused, start over. 
         preFuelState = null;
         fuelPos = null;
