@@ -151,12 +151,30 @@ public class CustomRecipe
     {
     }
 
-    private static ItemStack idToItemStack(String itemId)
+    /**
+     * Convert an Item string with NBT to an ItemStack
+     * @param itemData ie: minecraft:potion{Potion=minecraft:water}
+     * @return stack with any defined NBT
+     */
+    private static ItemStack idToItemStack(final String itemData)
     {
+        String itemId = itemData;
         final int tagIndex = itemId.indexOf("{");
         final String tag = tagIndex > 0 ? itemId.substring(tagIndex) : null;
         itemId = tagIndex > 0 ? itemId.substring(0, tagIndex) : itemId;
-        final String[] split = itemId.split(":");
+        String[] split = itemId.split(":");
+        if(split.length != 2)
+        {
+            if(split.length == 1)
+            {
+                final String[] tempArray ={"minecraft", split[0]};
+                split = tempArray;
+            }
+            else
+            {
+                Log.getLogger().error("Unable to parse item definition: " + itemData);
+            }
+        }
         final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
         final ItemStack stack = new ItemStack(item);
         if (tag != null)
@@ -168,7 +186,12 @@ public class CustomRecipe
             catch (CommandSyntaxException e1)
             {
                 //Unable to parse tags, drop them.
+                Log.getLogger().error("Unable to parse item definition: " + itemData);
             }
+        }
+        if (stack.isEmpty())
+        {
+            Log.getLogger().warn("Parsed item definition returned empty: " + itemData);
         }
         return stack;
     }
