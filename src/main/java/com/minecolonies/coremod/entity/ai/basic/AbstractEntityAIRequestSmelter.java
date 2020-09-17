@@ -331,14 +331,12 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     private IAIState addFuelToFurnace()
     {
         final List<ItemStack> possibleFuels = getActivePossibleFuels();
-        final int amountOfFuelInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> ItemStackUtils.compareItemStacksIgnoreStackSize(candidate, item)));
 
-        if(amountOfFuelInInv == 0)
+        if(!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),  isCorrectFuel(possibleFuels)))
         {
-            final int amountOfFuelInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> ItemStackUtils.compareItemStacksIgnoreStackSize(candidate, item)));
-            if (amountOfFuelInBuilding > 0 )
+            if (InventoryUtils.hasItemInProvider(getOwnBuilding(), isCorrectFuel(possibleFuels)))
             {
-                needsCurrently = new Tuple<>(item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> ItemStackUtils.compareItemStacksIgnoreStackSize(candidate, item)), STACKSIZE);
+                needsCurrently = new Tuple<>(isCorrectFuel(possibleFuels), STACKSIZE);
                 return GATHERING_REQUIRED_MATERIALS;
             }
             //We shouldn't get here, unless something changed between the checkFurnaceFuel and the addFueltoFurnace calls
@@ -359,11 +357,11 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             {
                 final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
                 //Stoke the furnaces
-                if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, item)))
+                if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), isCorrectFuel(possibleFuels))
                         && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
                 {
                     InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                        worker.getInventoryCitizen(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, item)), STACKSIZE,
+                        worker.getInventoryCitizen(), isCorrectFuel(possibleFuels), STACKSIZE,
                         new InvWrapper(furnace), FUEL_SLOT);
                     if(preFuelState != null && preFuelState != ADD_FUEL_TO_FURNACE)
                     {
