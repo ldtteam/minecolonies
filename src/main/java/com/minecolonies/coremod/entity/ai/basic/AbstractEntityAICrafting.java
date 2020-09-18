@@ -168,7 +168,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         for (final ItemStorage inputStorage : input)
         {
             final ItemStack container = inputStorage.getItem().getContainerItem(inputStorage.getItemStack());
-            final int remaining = !ItemStackUtils.isEmpty(container) ? inputStorage.getAmount() :inputStorage.getAmount() * remainingOpsCount ;
+            final int remaining = ItemStackUtils.isEmpty(container) && ItemStackUtils.compareItemStacksIgnoreStackSize(inputStorage.getItemStack(), container , false, true) ? inputStorage.getAmount() * remainingOpsCount :inputStorage.getAmount();
             if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
                   + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
                   + getExtendedCount(inputStorage.getItemStack())
