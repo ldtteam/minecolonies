@@ -45,11 +45,11 @@
             <button id="guarding" size="30% 14" pos="119 169"
                     label="$(com.minecolonies.coremod.gui.workerhuts.task.guard)"/>
 
-            <buttonimage id="setTarget" size="129 17" pos="30 164" textcolor="black"
+            <buttonimage id="setTarget" size="129 17" pos="30 184" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                          label="$(com.minecolonies.coremod.gui.workerhuts.setTarget)"/>
 
-            <list id="positions" size="164 30" pos="13 184">
+            <list id="positions" size="164 30" pos="13 201">
                 <box size="100% 15" linewidth="2">
                     <label id="position" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                 </box>
