@@ -15,6 +15,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.client.gui.WindowHutCrafter;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
@@ -354,7 +355,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, CONCRETE_MIXER);
+            return new WindowHutCrafter(this, CONCRETE_MIXER);
         }
     }
 }

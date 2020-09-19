@@ -10,8 +10,9 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
-import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
+import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -21,28 +22,34 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for the courer hut.
+ * Window for the crafter hut.
  */
-public class WindowHutDeliveryman extends AbstractWindowWorkerBuilding<BuildingDeliveryman.View>
+public class WindowHutCrafter extends AbstractWindowWorkerBuilding<AbstractBuildingCrafter.View>
 {
     /**
      * Resource suffix of the GUI.
      */
-    private static final String HUT_DMAN_RESOURCE_SUFFIX = ":gui/windowhutdeliveryman.xml";
+    private static final String HUT_RESOURCE_SUFFIX = ":gui/windowhutcrafter.xml";
 
     /**
-     * Id of the the fields list inside the GUI.
+     * Id of the the task list inside the GUI.
      */
-    private static final String LIST_DELIVERIES = "deliveries";
+    private static final String LIST_TASKS = "tasks";
 
     /**
-     * Constructor for the window of the courier.
+     * The name of the specific one.
+     */
+    private final String name;
+
+    /**
+     * Constructor for the window of the crafter.
      *
-     * @param building {@link BuildingDeliveryman.View}.
+     * @param building {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter.View}.
      */
-    public WindowHutDeliveryman(final BuildingDeliveryman.View building)
+    public WindowHutCrafter(final AbstractBuildingCrafter.View building, final String name)
     {
-        super(building, Constants.MOD_ID + HUT_DMAN_RESOURCE_SUFFIX);
+        super(building, Constants.MOD_ID + HUT_RESOURCE_SUFFIX);
+        this.name = name;
     }
 
     @Override
@@ -54,13 +61,13 @@ public class WindowHutDeliveryman extends AbstractWindowWorkerBuilding<BuildingD
         for (final int citizenId : building.getWorkerId())
         {
             ICitizenDataView citizen = building.getColony().getCitizen(citizenId);
-            if (citizen.getJobView() instanceof DmanJobView)
+            if (citizen.getJobView() instanceof CrafterJobView)
             {
-                tasks.addAll(((DmanJobView) citizen.getJobView()).getDataStore().getQueue());
+                tasks.addAll(((CrafterJobView) citizen.getJobView()).getDataStore().getQueue());
             }
         }
 
-        final ScrollingList deliveryList = findPaneOfTypeByID(LIST_DELIVERIES, ScrollingList.class);
+        final ScrollingList deliveryList = findPaneOfTypeByID(LIST_TASKS, ScrollingList.class);
         deliveryList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
@@ -111,7 +118,7 @@ public class WindowHutDeliveryman extends AbstractWindowWorkerBuilding<BuildingD
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.deliveryman";
+        return "com.minecolonies.coremod.gui.workerhuts." + name;
     }
 }
 

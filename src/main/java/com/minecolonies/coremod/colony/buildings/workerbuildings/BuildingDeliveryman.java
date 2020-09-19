@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
@@ -117,25 +116,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
     {
         return Skill.Adaptability;
     }
-
-    @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
-    {
-        super.serializeToView(buf);
-
-        final List<IToken<?>> tasks = new ArrayList<>();
-        for (final ICitizenData citizenData : getAssignedCitizen())
-        {
-            tasks.addAll(((JobDeliveryman) citizenData.getJob()).getTaskQueue());
-        }
-
-        buf.writeInt(tasks.size());
-        for (final IToken<?> task : tasks)
-        {
-            buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(task));
-        }
-    }
-
+    
     @Override
     public void removeCitizen(final ICitizenData citizen)
     {
@@ -175,11 +156,6 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
     public static class View extends AbstractBuildingWorker.View
     {
         /**
-         * List of dman tasks.
-         */
-        private final List<IToken<?>> tasks = new ArrayList<>();
-
-        /**
          * Instantiate the deliveryman view.
          *
          * @param c the colonyview to put it in
@@ -195,28 +171,6 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         public Window getWindow()
         {
             return new WindowHutDeliveryman(this);
-        }
-
-        @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
-        {
-            super.deserialize(buf);
-            final int size = buf.readInt();
-            tasks.clear();
-            for (int i = 0; i < size; i++)
-            {
-                tasks.add(StandardFactoryController.getInstance().deserialize(buf.readCompoundTag()));
-            }
-        }
-
-        /**
-         * Get the list of tasks.
-         *
-         * @return the list of delivery/pickup tasks.
-         */
-        public List<IToken<?>> getTasks()
-        {
-            return tasks.stream().filter(token -> getColony().getRequestManager().getRequestForToken(token) != null).collect(Collectors.toList());
         }
     }
 }
