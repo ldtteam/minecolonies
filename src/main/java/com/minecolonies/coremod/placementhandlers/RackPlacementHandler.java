@@ -62,8 +62,7 @@ public class RackPlacementHandler implements IPlacementHandler
             entity = world.getTileEntity(pos);
             if (entity instanceof TileEntityRack)
             {
-                final BlockState newState = BlockMinecoloniesRack.getPlacementState(blockState, entity, pos);
-                world.setBlockState(pos, newState);
+                ((TileEntityRack) entity).updateBlockState();
             }
         }
         return ActionProcessingResult.SUCCESS;
