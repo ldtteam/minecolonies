@@ -25,11 +25,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 {
-    /**
-     * Hardness for townhall block in pvp mode.
-     */
-    public static final float PVP_MODE_HARDNESS = 200F;
-
     public BlockHutTownHall()
     {
         super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE));
@@ -38,7 +33,8 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     @Override
     public float getPlayerRelativeBlockHardness(final BlockState state, @NotNull final PlayerEntity player, @NotNull final IBlockReader world, @NotNull final BlockPos pos)
     {
-        return MineColonies.getConfig().getServer().pvp_mode.get() ? PVP_MODE_HARDNESS : HARDNESS;
+        final float def = super.getPlayerRelativeBlockHardness(state, player, world, pos);
+        return MineColonies.getConfig().getServer().pvp_mode.get() ? def/100 : def/10;
     }
 
     @NotNull
