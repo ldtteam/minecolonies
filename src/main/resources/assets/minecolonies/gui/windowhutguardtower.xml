@@ -49,7 +49,7 @@
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                          label="$(com.minecolonies.coremod.gui.workerhuts.setTarget)"/>
 
-            <list id="positions" size="164 30" pos="13 201">
+            <list id="positions" size="134 30" pos="13 201">
                 <box size="100% 15" linewidth="2">
                     <label id="position" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                 </box>
