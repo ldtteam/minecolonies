@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -31,7 +32,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the crafter building.
  */
-public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
+public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
     /**
      * Extra amount of recipes the crafters can learn.
@@ -186,10 +187,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
         return super.canRecipeBeAddedBasedOnTags(token);
     }
 
-    /**
-     * Crafting Speed skill
-     * @return the crafting speed skill
-     */
+    @Override
     public Skill getCraftSpeedSkill()
     {
         return getSecondarySkill();

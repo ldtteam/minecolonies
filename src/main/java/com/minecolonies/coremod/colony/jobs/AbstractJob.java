@@ -11,11 +11,11 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -140,6 +140,18 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         if (compound.keySet().contains(TAG_ACTIONS_DONE))
         {
             actionsDone = compound.getInt(TAG_ACTIONS_DONE);
+        }
+    }
+
+    @Override
+    public void serializeToView(final PacketBuffer buffer)
+    {
+        buffer.writeString(getJobRegistryEntry().getRegistryName().toString());
+        buffer.writeString(getName());
+        buffer.writeInt(getAsyncRequests().size());
+        for (final IToken<?> token : getAsyncRequests())
+        {
+            StandardFactoryController.getInstance().serialize(buffer, token);
         }
     }
 
@@ -330,8 +342,20 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     @Override
+    public boolean isActive()
+    {
+        return true;
+    }
+
+    @Override
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
         return false;
+    }
+
+    @Override
+    public void processOfflineTime(final long time)
+    {
+        // Do Nothing.
     }
 }

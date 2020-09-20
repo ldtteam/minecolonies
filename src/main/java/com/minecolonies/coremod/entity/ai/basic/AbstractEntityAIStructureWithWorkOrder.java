@@ -5,14 +5,18 @@ import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.AbstractBuildingEvent;
+import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingBuiltEvent;
+import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
+import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
@@ -31,6 +35,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.P
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE;
 
 /**
  * AI class for the builder. Manages building and repairing buildings.
@@ -161,7 +166,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         super.loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
         workOrder.setCleared(false);
-        workOrder.setRequested(false);
+        workOrder.setRequested(removal);
     }
 
     /**
@@ -320,10 +325,23 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         if (wo instanceof WorkOrderBuildBuilding)
         {
             worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
+
+            WorkOrderBuild wob = (WorkOrderBuild) wo;
+            String buildingName = wo.getStructureName();
+            buildingName = buildingName.substring(buildingName.indexOf('/') + 1, buildingName.lastIndexOf('/')) + " " +
+                  buildingName.substring(buildingName.lastIndexOf('/') + 1, buildingName.indexOf(String.valueOf(wob.getUpgradeLevel())));
+            job.getColony().getEventDescriptionManager().addEventDescription(wob.getUpgradeLevel() > 1 ? new BuildingUpgradedEvent(wo.getBuildingLocation(), buildingName,
+                  wob.getUpgradeLevel()) : new BuildingBuiltEvent(wo.getBuildingLocation(), buildingName, wob.getUpgradeLevel()));
         }
         else if (wo instanceof WorkOrderBuildRemoval)
         {
-            worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
+            worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE, structureName);
+
+            WorkOrderBuild wob = (WorkOrderBuild) wo;
+            String buildingName = wo.getStructureName();
+            buildingName = buildingName.substring(buildingName.indexOf('/') + 1, buildingName.lastIndexOf('/')) + " " +
+                  buildingName.substring(buildingName.lastIndexOf('/') + 1, buildingName.indexOf(String.valueOf(wob.getUpgradeLevel())));
+            job.getColony().getEventDescriptionManager().addEventDescription(new BuildingDeconstructedEvent(wo.getBuildingLocation(), buildingName, wob.getUpgradeLevel()));
         }
 
         if (wo == null)

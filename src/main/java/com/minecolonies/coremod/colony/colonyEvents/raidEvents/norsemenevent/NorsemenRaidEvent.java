@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
@@ -13,8 +14,11 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 import static com.minecolonies.api.entity.ModEntities.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.RAID_NORSEMEN;
 
 /**
  * Norsemen raid event for the colony, triggers a horde of vikings which spawn and attack the colony.
@@ -35,6 +39,13 @@ public class NorsemenRaidEvent extends HordeRaidEvent
     public ResourceLocation getEventTypeID()
     {
         return NORSEMEN_RAID_EVENT_TYPE_ID;
+    }
+
+    @Override
+    protected void updateRaidBar()
+    {
+        super.updateRaidBar();
+        raidBar.setCreateFog(true);
     }
 
     @Override
@@ -114,7 +125,7 @@ public class NorsemenRaidEvent extends HordeRaidEvent
     {
         NorsemenRaidEvent
           event = new NorsemenRaidEvent(colony);
-        event.readFromNBT(compound);
+        event.deserializeNBT(compound);
         return event;
     }
 
@@ -134,5 +145,11 @@ public class NorsemenRaidEvent extends HordeRaidEvent
     public EntityType<?> getBossRaiderType()
     {
         return NORSEMEN_CHIEF;
+    }
+
+    @Override
+    protected ITextComponent getDisplayName()
+    {
+        return new StringTextComponent(LanguageHandler.format(RAID_NORSEMEN));
     }
 }

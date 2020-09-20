@@ -19,7 +19,7 @@ public class CommandRaidAllTonight implements IMCOPCommand
     {
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
-            colony.getRaiderManager().setWillRaidTonight(true);
+            colony.getRaiderManager().setRaidNextNight(true);
         }
 
         context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.raidtonight"), true);

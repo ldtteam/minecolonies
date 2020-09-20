@@ -16,6 +16,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -31,9 +32,9 @@ import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.ColonyFlagChangeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.TownHallRenameMessage;
-import net.minecraft.block.BannerBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
@@ -41,7 +42,6 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.tileentity.BannerPattern;
-import net.minecraft.tileentity.BannerTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -837,6 +837,10 @@ public final class ColonyView implements IColonyView
         }
 
         this.manager.readFromNBT(buf.readCompoundTag());
+        if (isCoordInColony(world, Minecraft.getInstance().player.getPosition()))
+        {
+            ItemBlockHut.checkResearch(this);
+        }
         return null;
     }
 
@@ -1376,6 +1380,12 @@ public final class ColonyView implements IColonyView
 
     @Override
     public IEventManager getEventManager()
+    {
+        return null;
+    }
+
+    @Override
+    public IEventDescriptionManager getEventDescriptionManager()
     {
         return null;
     }

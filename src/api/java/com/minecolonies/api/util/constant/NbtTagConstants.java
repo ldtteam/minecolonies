@@ -30,6 +30,7 @@ public final class NbtTagConstants
     public static final String TAG_ABANDONED          = "abandoned";
     public static final String TAG_BUILDING_PRIO      = "buildingPrio";
     public static final String TAG_PRIO               = "prio";
+    public static final String TAG_LAST_ONLINE        = "lastOnlineTime";
 
     /**
      * @deprecated Superseeded by request-based pickup system.
@@ -68,6 +69,7 @@ public final class NbtTagConstants
     public static final String TAG_BOOKCASES              = "bookcase";
     public static final String TAG_BUILDING_MANAGER       = "buildingManager";
     public static final String TAG_CITIZEN_MANAGER        = "citizenManager";
+    public static final String TAG_EVENT_DESC_MANAGER     = "event_desc_manager";
     public static final String TAG_STATS_MANAGER          = "statsManager";
     public static final String TAG_COLONY_ID              = "colony";
     public static final String TAG_CITIZEN                = "citizen";
@@ -114,6 +116,19 @@ public final class NbtTagConstants
     public static final String TAG_MERCENARY_TIME         = "mercenaryUseTime";
     public static final String TAG_IDLE                   = "idle";
     public static final String TAG_CITIZENDATA_TYPE       = "citizenDataType";
+
+    /**
+     * Event tags
+     */
+    public static final String TAG_EVENT_ID       = "mc_event_id";
+    public static final String TAG_EVENT_STATUS   = "eventStatus";
+    public static final String TAG_SPAWN_POS      = "spawnPos";
+    public static final String TAG_CAMPFIRE_LIST  = "campfirelist";
+    public static final String TAG_EVENT_POS      = "eventPos";
+    public static final String TAG_CITIZEN_NAME   = "citizenName";
+    public static final String TAG_DEATH_CAUSE    = "deathCause";
+    public static final String TAG_BUILDING_NAME  = "buildingName";
+    public static final String TAG_BUILDING_LEVEL = "buildingLevel";
 
     /**
      * Tag used to store the containers to NBT.
@@ -512,6 +527,11 @@ public final class NbtTagConstants
     public static final String TAG_WAITING_TICKS     = "waitingticks";
 
     /**
+     * Researcher tags.
+     */
+    public static final String TAG_CURR_MANA  = "currentMana";
+
+    /**
      * Herder breeding tag
      */
     public static final String TAG_BREEDING = "breeding";
@@ -618,6 +638,7 @@ public final class NbtTagConstants
     public static final String TAG_WATER_POND    = "waterpond";
     public static final String TAG_PARENT_POND   = "parentpond";
     public static final String TAG_DECONSTRUCTED = "deconstructed";
+    public static final String TAG_GUARD_NEARBY  = "guardnearby";
 
     /**
      * Private constructor to hide the implicit one.

@@ -1,13 +1,14 @@
 package com.minecolonies.api.entity.citizen;
 
 import com.minecolonies.api.colony.ICivilianData;
+import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.INPC;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractCivilianEntity extends AgeableEntity implements INPC
+public abstract class AbstractCivilianEntity extends AgeableEntity implements INPC, IStuckHandlerEntity
 {
 
     protected AbstractCivilianEntity(final EntityType<? extends AgeableEntity> type, final World worldIn)

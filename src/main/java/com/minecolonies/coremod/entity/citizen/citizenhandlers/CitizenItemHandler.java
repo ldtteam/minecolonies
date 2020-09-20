@@ -71,7 +71,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             final ItemStack itemStack = itemEntity.getItem();
             final ItemStack compareStack = itemStack.copy();
 
-            if (citizen.getCitizenJobHandler().getColonyJob() != null && citizen.getCitizenJobHandler().getColonyJob().pickupSuccess(compareStack))
+            if (citizen.getCitizenJobHandler().getColonyJob() == null || citizen.getCitizenJobHandler().getColonyJob().pickupSuccess(compareStack))
             {
                 final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(citizen.getInventoryCitizen(), itemStack);
                 final int resultingStackSize = ItemStackUtils.isEmpty(resultStack) ? 0 : ItemStackUtils.getSize(resultStack);
@@ -237,7 +237,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     {
         final ItemStack heldItem = citizen.getCitizenData().getInventory().getHeldItem(hand);
         //If we hit with bare hands, ignore
-        if (heldItem == null)
+        if (heldItem == null || heldItem.isEmpty())
         {
             return;
         }
@@ -260,7 +260,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
         });
 
         //check if tool breaks
-        if (ItemStackUtils.isEmpty(heldItem))
+        if (ItemStackUtils.isEmpty(heldItem) && citizen.getInventoryCitizen().getHeldItemSlot(hand) != -1)
         {
             citizen.getInventoryCitizen().insertItem(citizen.getInventoryCitizen().getHeldItemSlot(hand), ItemStackUtils.EMPTY, false);
             citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
@@ -273,12 +273,12 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void pickupItems()
     {
-        for (final ItemEntity item :
-          CompatibilityUtils.getWorldFromCitizen(citizen).
-                                                           getEntitiesWithinAABB(ItemEntity.class,
-                                                             new AxisAlignedBB(citizen.getPosition()).expand(2.0F, 1.0F, 2.0F).expand(-2.0F, -1.0F, -2.0F)))
+        for (final ItemEntity item : CompatibilityUtils.getWorldFromCitizen(citizen).getEntitiesWithinAABB(ItemEntity.class,
+                                                             new AxisAlignedBB(citizen.getPosition())
+                                                               .expand(2.0F, 1.0F, 2.0F)
+                                                               .expand(-2.0F, -1.0F, -2.0F)))
         {
-            if (item != null && citizen.canPickUpLoot())
+            if (item != null && citizen.canPickUpLoot() && item.isAlive())
             {
                 tryPickupItemEntity(item);
             }

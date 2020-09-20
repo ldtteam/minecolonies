@@ -211,9 +211,9 @@ public final class WindowConstants
     public static final String LIST_USERS = "users";
 
     /**
-     * If od the permEvent list in the GUI.
+     * Id of the List of colony/permission events in the GUI.
      */
-    public static final String LIST_PERM_EVENT = "permeventslist";
+    public static final String EVENTS_LIST = "eventsList";
 
     /**
      * Id of the total citizens label in the GUI.
@@ -314,6 +314,11 @@ public final class WindowConstants
      * Link to the xml file of the window.
      */
     public static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/townhall/windowtownhall.xml";
+
+    /**
+     * The button to toggle showing permission events instead of colony events.
+     */
+    public static final String BUTTON_PERMISSION_EVENTS = "permissionEvents";
 
     /**
      * The button to go to the officer permission settings page.
@@ -589,6 +594,7 @@ public final class WindowConstants
     public static final String  GUI_BUTTON_ASSIGNMENT_MODE = "assign";
     public static final String  GUI_BUTTON_PATROL_MODE     = "patrol";
     public static final String  GUI_BUTTON_RETRIEVAL_MODE  = "retrieve";
+    public static final String  GUI_BUTTON_TRAINEE_MODE    = "trainees";
     public static final String  GUI_BUTTON_SET_TARGET      = "setTarget";
     public static final String  GUI_BUTTON_RECALCULATE     = "recalculate";
     //GUI Switches
@@ -1165,6 +1171,10 @@ public final class WindowConstants
      */
     public static final String PLUS_PREFIX = "plus_";
     public static final String MINUS_PREFIX = "minus_";
+
+    public static final String LOCATE = "locate";
+
+    public static final String CLIPBOARD_TOGGLE = "important";
 
     /**
      * public constructor to hide implicit public one.

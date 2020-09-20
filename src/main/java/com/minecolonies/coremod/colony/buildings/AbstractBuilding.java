@@ -136,6 +136,16 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     private static final String TAG_MINIMUM_STOCK = "minstock";
 
     /**
+     * Whether a guard building is near
+     */
+    private boolean guardBuildingNear = false;
+
+    /**
+     * Whether we need to recheck if a guard building is near
+     */
+    private boolean recheckGuardBuildingNear = false;
+
+    /**
      * Constructor for a AbstractBuilding.
      *
      * @param colony Colony the building belongs to.
@@ -255,6 +265,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             this.customName = compound.getString(TAG_CUSTOM_NAME);
         }
 
+        if (compound.contains(TAG_GUARD_NEARBY))
+        {
+            this.guardBuildingNear = compound.getBoolean(TAG_GUARD_NEARBY);
+        }
+        else
+        {
+            recheckGuardBuildingNear = true;
+        }
+
         minimumStock.clear();
         final ListNBT minimumStockTagList = compound.getList(TAG_MINIMUM_STOCK, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < minimumStockTagList.size(); i++)
@@ -278,6 +297,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         writeRequestSystemToNBT(compound);
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
+        compound.putBoolean(TAG_GUARD_NEARBY, guardBuildingNear);
 
         @NotNull final ListNBT minimumStockTagList = new ListNBT();
         for (@NotNull final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
@@ -421,6 +441,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             colony.getBuildingManager().markBuildingsDirty();
         }
+    }
+
+    @Override
+    public void processOfflineTime(final long time)
+    {
+        // Do nothing.
     }
 
     /**
@@ -844,6 +870,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         cachedRotation = -1;
         ChunkDataHelper.claimColonyChunks(colony, true, this.getID(), this.getClaimRadius(newLevel));
+        recheckGuardBuildingNear = true;
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
         colony.getProgressManager().progressBuildBuilding(this,
@@ -870,6 +897,22 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
     }
 
+    @Override
+    public boolean isGuardBuildingNear()
+    {
+        if (recheckGuardBuildingNear)
+        {
+            guardBuildingNear = colony.getBuildingManager().hasGuardBuildingNear(this);
+            recheckGuardBuildingNear = false;
+        }
+        return guardBuildingNear;
+    }
+
+    @Override
+    public void setGuardBuildingNear(final boolean guardBuildingNear)
+    {
+        this.guardBuildingNear = guardBuildingNear;
+    }
 
     //------------------------- Starting Required Tools/Item handling -------------------------//
 
@@ -938,6 +981,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
+        if (keepFood())
+        {
+            toKeep.put(ItemStackUtils.CAN_EAT, new Tuple<>(getBuildingLevel() * 2, true));
+        }
         final IRequestManager manager = colony.getRequestManager();
         toKeep.put(stack -> this.getOpenRequestsByCitizen().values().stream()
                               .anyMatch(list -> list.stream().filter(token -> manager.getRequestForToken(token) != null)
@@ -946,6 +993,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
           new Tuple<>(Integer.MAX_VALUE, true));
 
         return toKeep;
+    }
+
+    /**
+     * If the worker should keep some food in the inventory/building.
+     * @return true if so.
+     */
+    protected boolean keepFood()
+    {
+        return true;
     }
 
     /**
@@ -1193,10 +1249,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
       final TypeToken<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                      .filter(request -> {
-                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
-                                          return requestTypes.contains(requestType);
-                                      })
+                                      .filter(request ->  request.getType().isSubtypeOf(requestType))
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
     }
@@ -1253,10 +1306,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull final ICitizenData citizenData, final TypeToken<R> requestType)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
-                                      .filter(request -> {
-                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
-                                          return requestTypes.contains(requestType);
-                                      })
+                                      .filter(request ->  request.getType().isSubtypeOf(requestType))
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
     }
@@ -1269,10 +1319,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
       final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
-                                      .filter(request -> {
-                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
-                                          return requestTypes.contains(requestType);
-                                      })
+                                      .filter(request ->  request.getType().isSubtypeOf(requestType))
                                       .map(request -> (IRequest<? extends R>) request)
                                       .filter(filter)
                                       .iterator());
@@ -1397,10 +1444,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
       final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                      .filter(request -> {
-                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
-                                          return requestTypes.contains(requestType);
-                                      })
+                                      .filter(request ->  request.getType().isSubtypeOf(requestType))
                                       .map(request -> (IRequest<? extends R>) request)
                                       .filter(filter)
                                       .iterator());

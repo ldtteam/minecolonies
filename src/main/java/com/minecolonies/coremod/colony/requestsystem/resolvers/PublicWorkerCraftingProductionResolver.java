@@ -78,7 +78,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
             final List<IRequest<?>> deliveries = Lists.newArrayList();
 
-            completedRequest.getDeliveries().forEach(parentRequest::addDelivery);
+            parentRequest.addDelivery(completedRequest.getDeliveries());
             completedRequest.getDeliveries().forEach(itemStack -> {
                 final Delivery delivery = new Delivery(getLocation(), parentRequestRequester.getLocation(), itemStack, getDefaultDeliveryPriority(true));
 
@@ -111,14 +111,12 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         }
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         //Nice!
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {

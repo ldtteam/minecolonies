@@ -1,13 +1,21 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.api.entity.pathfinding.RandomPathResult;
+import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
@@ -22,10 +30,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_BREAK_SPEED;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * This is the base class of all worker AIs. Every AI implements this class with it's job type. There are some utilities within the class: - The AI will clear a full inventory at
@@ -85,6 +97,11 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      */
     @Nullable
     private List<BlockPos> items;
+
+    /**
+     * The current path to the random position
+     */
+    private RandomPathResult pathResult;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -301,11 +318,20 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             reduction = 1 - effect.getEffect();
         }
 
-        return (int) (((MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() * Math.pow(LEVEL_MODIFIER, worker.getCitizenData().getJobModifier()))
+        return (int) (((MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() * Math.pow(LEVEL_MODIFIER, getBreakSpeedLevel() / 2.0))
                          * (double) world.getBlockState(pos).getBlockHardness(world, pos) / (double) (worker.getHeldItemMainhand()
                                                                                                         .getItem()
                                                                                                         .getDestroySpeed(worker.getHeldItemMainhand(), block.getDefaultState())))
                         * reduction);
+    }
+
+    /**
+     * Get the level that affects the break speed.
+     * @return the level.
+     */
+    public int getBreakSpeedLevel()
+    {
+        return getPrimarySkillLevel();
     }
 
     /**
@@ -389,6 +415,37 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         }
 
         return items.remove(index);
+    }
+
+    /**
+     * Search for a random position to go to.
+     * @param range the max range
+     * @return null until position was found.
+     */
+    protected BlockPos findRandomPositionToWalkTo(final int range)
+    {
+        if (pathResult == null || pathResult.failedToReachDestination())
+        {
+            pathResult = worker.getNavigator()
+                               .moveToRandomPos(range,
+                                 1.0D);
+
+        }
+
+        if (pathResult.isPathReachingDestination())
+        {
+            final BlockPos resultPos = pathResult.randomPos;
+            pathResult = null;
+            return resultPos;
+        }
+
+        if (pathResult.isCancelled())
+        {
+            pathResult = null;
+            return null;
+        }
+
+        return null;
     }
 
     /**

@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
@@ -21,6 +20,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutDyer;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobDyer;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Blocks;
@@ -33,7 +33,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -46,7 +45,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -71,38 +69,6 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     public BuildingDyer(final IColony c, final BlockPos l)
     {
         super(c, l);
-    }
-
-    @Override
-    public void checkForWorkerSpecificRecipes()
-    {
-        final IRecipeStorage cactusStorage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          ImmutableList.of(new ItemStack(Blocks.CACTUS, 1)),
-          1,
-          new ItemStack(Items.GREEN_DYE, 1),
-          Blocks.FURNACE);
-
-          final IRecipeStorage redsandStorage = StandardFactoryController.getInstance().getNewInstance(
-            TypeConstants.RECIPE,
-            StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-            ImmutableList.of(new ItemStack(Blocks.SAND, 4), new ItemStack(Items.RED_DYE)),
-            1,
-            new ItemStack(Blocks.RED_SAND, 4),
-            Blocks.AIR);
-
-        final IRecipeStorage darkPrismarineStorage = StandardFactoryController.getInstance().getNewInstance(
-            TypeConstants.RECIPE,
-            StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-            ImmutableList.of(new ItemStack(Blocks.PRISMARINE, 4), new ItemStack(Items.BLACK_DYE)),
-            1,
-            new ItemStack(Blocks.DARK_PRISMARINE, 4),
-            Blocks.AIR);
-                
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(cactusStorage));
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(redsandStorage));
-        addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(darkPrismarineStorage));
     }
 
     @NotNull
@@ -199,7 +165,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Dyer", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.DYER_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -215,29 +181,27 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
 
         if(recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
         {
-            final ResourceLocation wool = new ResourceLocation("minecraft", "wool");
             final HashMap<ItemStorage, Integer> inventoryCounts = new HashMap<>();
 
-            final Set<IBuilding> wareHouses = colony.getBuildingManager().getBuildings().values().stream()
-                                                    .filter(building -> building instanceof BuildingWareHouse)
-                                                    .collect(Collectors.toSet());
+            if (!colony.getBuildingManager().hasWarehouse())
+            {
+                return null;
+            }
             
-            final List<ItemStorage> woolItems = ItemTags.getCollection().getOrCreate(wool).getAllElements().stream()
+            final List<ItemStorage> woolItems = ItemTags.WOOL.getAllElements().stream()
                                                         .filter(item -> !item.equals(Items.WHITE_WOOL))
                                                         .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
 
             for(ItemStorage color : woolItems)
             {
-                for(IBuilding wareHouse: wareHouses)
+                for(IBuilding wareHouse: colony.getBuildingManager().getWareHouses())
                 {
                     final int colorCount = InventoryUtils.hasBuildingEnoughElseCount(wareHouse, color, 1);
-                    inventoryCounts.replace(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
+                    inventoryCounts.put(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
                 }
             }
 
-            ItemStorage woolToUse = inventoryCounts.entrySet().stream()
-                                                .sorted(Comparator.comparing(itemEntry -> itemEntry.getValue(), Comparator.reverseOrder()))
-                                                .findFirst().get().getKey();
+            ItemStorage woolToUse = inventoryCounts.entrySet().stream().min(java.util.Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
 
             recipe = StandardFactoryController.getInstance().getNewInstance(
                 TypeConstants.RECIPE,

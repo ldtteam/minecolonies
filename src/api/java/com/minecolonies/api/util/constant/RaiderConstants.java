@@ -55,7 +55,7 @@ public final class RaiderConstants
     /**
      * Barbarian Attack Damage.
      */
-    public static final double ATTACK_DAMAGE = 3.0D;
+    public static final double ATTACK_DAMAGE = 2.0D;
 
     /**
      * Raiders environmental resistance
@@ -89,10 +89,10 @@ public final class RaiderConstants
      */
     public static final double FOLLOW_RANGE                = 35.0D;
     public static final double MOVEMENT_SPEED              = 0.25D;
-    public static final double ARMOR                       = 4D;
+    public static final double ARMOR                       = 2D;
     public static final double CHIEF_BONUS_ARMOR           = 2D;
-    public static final double BARBARIAN_BASE_HEALTH       = 15;
-    public static final double BARBARIAN_HEALTH_MULTIPLIER = 0.1;
+    public static final double BARBARIAN_BASE_HEALTH       = 10;
+    public static final double BARBARIAN_HEALTH_MULTIPLIER = 0.05;
     public static final double ATTACK_SPEED_DIVIDER        = 3;
 
     /**

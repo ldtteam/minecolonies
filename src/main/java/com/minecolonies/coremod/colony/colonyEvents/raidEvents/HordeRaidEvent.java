@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
+import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
@@ -17,27 +18,32 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.BossInfo;
+import net.minecraft.world.server.ServerBossInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.colony.colonyEvents.NBTTags.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.SMALL_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_DAYS_LEFT;
-import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_KILLED;
 
 /**
  * Horde raid event for the colony, triggers a horde that spawn and attack the colony.
  */
-public abstract class HordeRaidEvent implements IColonyRaidEvent
+public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFireRaidEvent
 {
     /**
      * The max distance a babarian is allowed to spawn from the original spawn position
@@ -58,6 +64,11 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
      * The amount of entities overall
      */
     protected Horde horde;
+
+    /**
+     * The raids visual raidbar
+     */
+    protected final ServerBossInfo raidBar = new ServerBossInfo(new StringTextComponent("Colony Raid"), BossInfo.Color.RED, BossInfo.Overlay.NOTCHED_10);
 
     /**
      * The references to living raiders left
@@ -97,11 +108,6 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
     protected EventStatus status = EventStatus.STARTING;
 
     /**
-     * If a citizen was killed during the raid.
-     */
-    private boolean killedCitizenInRaid = false;
-
-    /**
      * Days the event can last, to make sure it eventually despawns.
      */
     private int daysToGo = 3;
@@ -137,12 +143,6 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
         entities.addAll(boss.keySet());
         entities.addAll(normal.keySet());
         return entities;
-    }
-
-    @Override
-    public void setKilledCitizenInRaid()
-    {
-        killedCitizenInRaid = true;
     }
 
     @Override
@@ -255,6 +255,11 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
         {
             colony.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
         }
+
+        raidBar.setVisible(false);
+        raidBar.removeAllPlayers();
+
+        colony.getRaiderManager().setNightsSinceLastRaid(0);
     }
 
     @Override
@@ -310,6 +315,8 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
 
         spawnHorde(spawnPos, colony, id, horde.numberOfBosses, horde.numberOfArchers, horde.numberOfRaiders);
 
+        updateRaidBar();
+
         LanguageHandler.sendPlayersMessage(
           colony.getImportantMessageEntityPlayers(),
           RAID_EVENT_MESSAGE + horde.getMessageID(), colony.getName(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint));
@@ -325,6 +332,27 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
         return colony;
     }
 
+    /**
+     * Updates the raid bar
+     */
+    protected void updateRaidBar()
+    {
+        final String directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint);
+        raidBar.setName(getDisplayName().appendSibling(new StringTextComponent(" - " + directionName)));
+        for (final PlayerEntity player : colony.getImportantMessageEntityPlayers())
+        {
+            raidBar.addPlayer((ServerPlayerEntity) player);
+        }
+        raidBar.setVisible(true);
+    }
+
+    /**
+     * Gets the raids display name
+     *
+     * @return
+     */
+    protected abstract ITextComponent getDisplayName();
+
     @Override
     public void onUpdate()
     {
@@ -333,9 +361,11 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
             prepareEvent();
         }
 
+        updateRaidBar();
+
         colony.getRaiderManager().setNightsSinceLastRaid(0);
 
-        if (horde.hordeSize == 0)
+        if (horde.hordeSize <= 0)
         {
             status = EventStatus.DONE;
         }
@@ -393,11 +423,12 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
                 total += ((HordeRaidEvent) event).horde.hordeSize;
             }
         }
+        raidBar.setPercent((float) horde.hordeSize / horde.initialSize);
 
         if (total == 0)
         {
             LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE);
-            if (!this.killedCitizenInRaid)
+            if (colony.getRaiderManager().getLostCitizen() == 0)
             {
                 colony.getCitizenManager().updateModifier("raidwithoutdeath");
             }
@@ -409,8 +440,9 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
     }
 
     @Override
-    public CompoundNBT writeToNBT(final CompoundNBT compound)
+    public CompoundNBT serializeNBT()
     {
+        CompoundNBT compound = new CompoundNBT();
         compound.putInt(TAG_EVENT_ID, id);
         BlockPosUtil.write(compound, TAG_SPAWN_POS, spawnPoint);
         ListNBT campFiresNBT = new ListNBT();
@@ -424,12 +456,11 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
         compound.putInt(TAG_EVENT_STATUS, status.ordinal());
         compound.putInt(TAG_DAYS_LEFT, daysToGo);
         horde.writeToNbt(compound);
-        compound.putBoolean(TAG_KILLED, killedCitizenInRaid);
         return compound;
     }
 
     @Override
-    public void readFromNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         id = compound.getInt(TAG_EVENT_ID);
         setHorde(Horde.loadFromNbt(compound));
@@ -442,7 +473,12 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent
 
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
         daysToGo = compound.getInt(TAG_DAYS_LEFT);
-        killedCitizenInRaid = compound.getBoolean(TAG_KILLED);
+    }
+
+    @Override
+    public void setCampFireTime(final int time)
+    {
+        campFireTime = time;
     }
 
     @Override

@@ -508,7 +508,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             request = getOwnBuilding().getOpenRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"), request.getShortDisplayString());
+        if (request != null)
+        {
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"), request.getShortDisplayString());
+        }
     }
 
     /**
@@ -593,7 +596,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * Get the secondary skill of this worker.
      * @return the secondary skill.
      */
-    protected int getSecondarySKill()
+    protected int getSecondarySkillLevel()
     {
         return worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getSecondarySkill());
     }
@@ -839,7 +842,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param entity   the tileEntity chest or building.
      * @param toolType the type of tool.
      * @param minLevel the min tool level.
-     * @param maxLevel the max tool lev	el.
+     * @param maxLevel the max tool level.
      * @return true if found the tool.
      */
     public boolean retrieveToolInTileEntity(final TileEntity entity, final IToolType toolType, final int minLevel, final int maxLevel)

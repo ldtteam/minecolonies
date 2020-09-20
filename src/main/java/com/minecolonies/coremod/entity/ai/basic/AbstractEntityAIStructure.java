@@ -334,13 +334,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             case REMOVE:
                 placer.getIterator().setRemoving();
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_REMOVAL,
-                  () -> placer.getIterator().decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> handler.getWorld().getBlockState(pos).getBlock() instanceof AirBlock
+                  () -> placer.getIterator().decrement((info, pos, handler) -> handler.getWorld().getBlockState(pos).getBlock() instanceof AirBlock
                                                                                                          || info.getBlockInfo().getState().getBlock() instanceof AirBlock
                                                                                                          || !handler.getWorld().getBlockState(pos).getFluidState().isEmpty()
                                                                                                          || info.getBlockInfo().getState().getBlock()
                                                                                                               == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
                                                                                                          || info.getBlockInfo().getState().getBlock()
-                                                                                                              == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution)),
+                                                                                                              == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution
+                                                                                                         || handler.getWorld().getBlockState(pos).getBlock() instanceof IBuilderUndestroyable),
                   true);
                 break;
             case CLEAR:
@@ -392,11 +393,17 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             }
 
             setDelay((int) (
-              (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (worker.getCitizenData().getJobModifier() + PROGRESS_MULTIPLIER))
+              (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (getPlaceSpeedLevel() / 2 + PROGRESS_MULTIPLIER))
                 * decrease));
         }
         return getState();
     }
+
+    /**
+     * Get the level that affects the place speed.
+     * @return the level.
+     */
+    public abstract int getPlaceSpeedLevel();
 
     /**
      * Separate step for mining.

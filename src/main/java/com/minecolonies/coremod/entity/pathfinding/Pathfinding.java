@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -36,6 +37,27 @@ public final class Pathfinding
     private static       ThreadPoolExecutor      executor;
 
     /**
+     * Minecolonies specific thread factory.
+     */
+    public static class MinecoloniesThreadFactory implements ThreadFactory
+    {
+        /**
+         * Ongoing thread IDs.
+         */
+        public static int id;
+
+        @Override
+        public Thread newThread(@NotNull final Runnable runnable)
+        {
+            final Thread thread = new Thread(runnable, "Minecolonies Pathfinding Worker #" + (id++));
+            thread.setDaemon(true);
+
+            thread.setUncaughtExceptionHandler((thread1, throwable) -> Log.getLogger().error("Minecolonies Pathfinding Thread errored! ", throwable));
+            return thread;
+        }
+    }
+
+    /**
      * Creates a new thread pool for pathfinding jobs
      *
      * @return the threadpool executor.
@@ -44,7 +66,7 @@ public final class Pathfinding
     {
         if (executor == null)
         {
-            executor = new ThreadPoolExecutor(1, MineColonies.getConfig().getCommon().pathfindingMaxThreadCount.get(), 10, TimeUnit.SECONDS, jobQueue);
+            executor = new ThreadPoolExecutor(1, MineColonies.getConfig().getCommon().pathfindingMaxThreadCount.get(), 10, TimeUnit.SECONDS, jobQueue, new MinecoloniesThreadFactory());
         }
         return executor;
     }

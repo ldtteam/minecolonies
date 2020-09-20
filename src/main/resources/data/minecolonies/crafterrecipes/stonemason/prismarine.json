@@ -1,0 +1,16 @@
+{
+  "type" : "recipe",
+  "crafter": "stonemason",
+  "inputs": [
+    {
+        "item" : "minecraft:cobblestone",
+        "count": 1
+    },
+    {
+        "item" : "minecraft:prismarine_shard",
+        "count": 1
+    }  ],
+  "result": "minecraft:prismarine",
+  "count": 1,
+  "intermediate" : "minecraft:air"
+}

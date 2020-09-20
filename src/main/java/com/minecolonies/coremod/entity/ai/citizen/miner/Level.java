@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import net.minecraft.nbt.CompoundNBT;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
 
 import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.*;
 
@@ -48,10 +50,9 @@ public class Level
      */
     private static final int              RANDOM_TYPES       = 4;
     /**
-     * Comparator to compare two nodes, for the priority queue.
+     * The number of nodes that need to be built near the main shaft before randomly picking the next
      */
-    @NotNull
-    private static final Comparator<Node> NODE_COMPARATOR    = (Node n1, Node n2) -> rand.nextInt(100) > 50 ? 1 : -1;
+    private static final int              MINIMUM_NODES_FOR_RANDOM = 10;
     /**
      * The hashMap of nodes, check for nodes with the tuple of the parent x and z.
      */
@@ -61,7 +62,7 @@ public class Level
      * The queue of open Nodes. Get a new node to work on here.
      */
     @NotNull
-    private final        Queue<Node>      openNodes          = new PriorityQueue<>(11, NODE_COMPARATOR);
+    private final        Queue<Node>      openNodes          = new ArrayDeque<>(11);
 
     /**
      * The depth of the level stored as the y coordinate.
@@ -194,7 +195,7 @@ public class Level
     public Node getRandomNode(@Nullable final Node node)
     {
         Node nextNode = null;
-        if (node != null && rand.nextInt(RANDOM_TYPES) > 0)
+        if (node != null && getNumberOfBuiltNodes() > MINIMUM_NODES_FOR_RANDOM && rand.nextInt(RANDOM_TYPES) > 0)
         {
             nextNode = node.getRandomNextNode(this, 0);
         }
@@ -230,6 +231,9 @@ public class Level
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
                 break;
+            case UNDEFINED:
+                Log.getLogger().error("Minecolonies node: " + node.getX() + ":" + node.getZ() +" style undefined creating children, Please tell the mod authors about this");
+                return;
             default:
                 return;
         }
@@ -245,8 +249,14 @@ public class Level
             nodes.put(pos, tempNodeToAdd);
             openNodes.add(tempNodeToAdd);
         }
-        nodes.get(new Vec2i(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
+        Node I = nodes.get(new Vec2i(tempNode.getX(), tempNode.getZ()));
+        if(!tempNode.equals(I))
+        {
+            Log.getLogger().warn("Minecolonies node: " + node.getX() + ":" + node.getZ() + " not equal to storage during close, Please tell the mod authors about this");
+        }
+        tempNode.setStatus(Node.NodeStatus.COMPLETED);
         openNodes.removeIf(tempNode::equals);
+
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -69,6 +70,11 @@ public class EntityAIGateInteract extends Goal
     private double entityPositionZ;
 
     /**
+     * The direction the entity goes through the gate.
+     */
+    private Direction direction;
+
+    /**
      * Constructor called to register the AI class with an entity.
      *
      * @param entityIn the registering entity.
@@ -127,6 +133,11 @@ public class EntityAIGateInteract extends Goal
                     this.gateBlock = this.getBlockFence(this.gatePosition);
                     if (this.gateBlock != null)
                     {
+                        if (i > 0)
+                        {
+                            final PathPoint prevPathPoint = path.getPathPointFromIndex(i-1);
+                            direction = BlockPosUtil.getFacing(new BlockPos(pathpoint.x, 0, pathpoint.z), new BlockPos(prevPathPoint.x, 0, prevPathPoint.z));
+                        }
                         return true;
                     }
                 }
@@ -164,7 +175,7 @@ public class EntityAIGateInteract extends Goal
     @Override
     public boolean shouldContinueExecuting()
     {
-        return !this.hasStoppedFenceInteraction;
+        return !this.hasStoppedFenceInteraction && direction != null;
     }
 
     /**
@@ -184,12 +195,14 @@ public class EntityAIGateInteract extends Goal
     @Override
     public void tick()
     {
-        final Direction dir = this.theEntity.getHorizontalFacing();
-        final double entityDistX = Math.abs(this.gatePosition.getX() + HALF_BLOCK - this.theEntity.getPosX() + dir.getXOffset());
-        final double entityDistZ = Math.abs(this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.getPosZ() + dir.getZOffset());
-        if ((entityDistX > HALF_BLOCK && entityDistX < 1.0 ) || (entityDistZ > HALF_BLOCK && entityDistZ < 1.0))
+        if (direction != null)
         {
-            this.hasStoppedFenceInteraction = true;
+            final double entityDistX = Math.abs(this.gatePosition.getX() + HALF_BLOCK - this.theEntity.getPosX() + direction.getXOffset());
+            final double entityDistZ = Math.abs(this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.getPosZ() + direction.getZOffset());
+            if ((entityDistX > HALF_BLOCK && entityDistX < 1.0) || (entityDistZ > HALF_BLOCK && entityDistZ < 1.0))
+            {
+                this.hasStoppedFenceInteraction = true;
+            }
         }
     }
 }

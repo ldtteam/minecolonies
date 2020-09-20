@@ -23,6 +23,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -129,6 +130,11 @@ public class Colony implements IColony
      * Event manager of the colony.
      */
     private final IEventManager eventManager = new EventManager(this);
+
+    /**
+     * Event description manager of the colony.
+     */
+    private final IEventDescriptionManager eventDescManager = new EventDescriptionManager(this);
 
     /**
      * The colony package manager.
@@ -272,6 +278,11 @@ public class Colony implements IColony
     private boolean hasChilds = false;
 
     /**
+     * Last time the server was online.
+     */
+    public long lastOnlineTime = 0;
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -404,13 +415,26 @@ public class Colony implements IColony
     private boolean worldTickSlow()
     {
         buildingManager.cleanUpBuildings(this);
-        raidManager.tryToRaidColony(this);
         citizenManager.onColonyTick(this);
         visitorManager.onColonyTick(this);
         updateAttackingPlayers();
         eventManager.onColonyTick(this);
         buildingManager.onColonyTick(this);
         workManager.onColonyTick(this);
+
+        final long currTime = System.currentTimeMillis();
+        if (lastOnlineTime != 0)
+        {
+            final long pastTime = currTime - lastOnlineTime;
+            if (pastTime > ONE_HOUR_IN_MILLIS)
+            {
+                for (final IBuilding building : buildingManager.getBuildings().values())
+                {
+                    building.processOfflineTime(pastTime/1000);
+                }
+            }
+        }
+        lastOnlineTime = currTime;
 
         updateChildTime();
         return false;
@@ -640,6 +664,7 @@ public class Colony implements IColony
         }
 
         eventManager.readFromNBT(compound);
+        eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
         if (compound.keySet().contains(TAG_RESEARCH))
         {
@@ -691,19 +716,7 @@ public class Colony implements IColony
             this.style = compound.getString(TAG_STYLE);
         }
 
-        if (compound.keySet().contains(TAG_RAIDABLE))
-        {
-            this.raidManager.setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
-        }
-        else
-        {
-            this.raidManager.setCanHaveRaiderEvents(true);
-        }
-
-        if (compound.contains(TAG_NIGHTS_SINCE_LAST_RAID))
-        {
-            raidManager.setNightsSinceLastRaid(compound.getInt(TAG_NIGHTS_SINCE_LAST_RAID));
-        }
+        raidManager.read(compound);
 
         if (compound.keySet().contains(TAG_AUTO_DELETE))
         {
@@ -729,7 +742,7 @@ public class Colony implements IColony
         {
             this.requestManager.deserializeNBT(compound.getCompound(TAG_REQUESTMANAGER));
         }
-
+        this.lastOnlineTime = compound.getLong(TAG_LAST_ONLINE);
         this.colonyTag = compound;
     }
 
@@ -786,6 +799,8 @@ public class Colony implements IColony
 
         progressManager.write(compound);
         eventManager.writeToNBT(compound);
+        compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
+        raidManager.write(compound);
 
         @NotNull final CompoundNBT researchManagerCompound = new CompoundNBT();
         researchManager.writeToNBT(researchManagerCompound);
@@ -825,11 +840,10 @@ public class Colony implements IColony
         compound.putBoolean(TAG_MOVE_IN, moveIn);
         compound.put(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
         compound.putString(TAG_STYLE, style);
-        compound.putBoolean(TAG_RAIDABLE, raidManager.canHaveRaiderEvents());
-        compound.putInt(TAG_NIGHTS_SINCE_LAST_RAID, raidManager.getNightsSinceLastRaid());
         compound.putBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
         compound.putInt(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         compound.put(TAG_FLAG_PATTERNS, colonyFlag);
+        compound.putLong(TAG_LAST_ONLINE, lastOnlineTime);
         this.colonyTag = compound;
 
         isActive = false;
@@ -1424,15 +1438,16 @@ public class Colony implements IColony
         return raidManager;
     }
 
-    /**
-     * Get the event manager of the colony.
-     *
-     * @return the event manager.
-     */
     @Override
     public IEventManager getEventManager()
     {
         return eventManager;
+    }
+
+    @Override
+    public IEventDescriptionManager getEventDescriptionManager()
+    {
+        return eventDescManager;
     }
 
     /**

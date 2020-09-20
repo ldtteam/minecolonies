@@ -32,18 +32,24 @@
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                          label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)"/>
 
-            <button id="patrolling" size="30% 14" pos="15 139"
+            <label size="164 11" pos="13 138" color="black" textalign="MIDDLE"
+                   label="$(com.minecolonies.coremod.gui.workerhuts.trainees)"/>
+            <buttonimage id="trainees" size="86 17" pos="52 149" textcolor="black"
+                         source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                         label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOn)"/>
+
+            <button id="patrolling" size="30% 14" pos="15 169"
                     label="$(com.minecolonies.coremod.gui.workerhuts.task.patrol)"/>
-            <button id="following" size="30% 14" pos="67 139"
+            <button id="following" size="30% 14" pos="67 169"
                     label="$(com.minecolonies.coremod.gui.workerhuts.task.follow)"/>
-            <button id="guarding" size="30% 14" pos="119 139"
+            <button id="guarding" size="30% 14" pos="119 169"
                     label="$(com.minecolonies.coremod.gui.workerhuts.task.guard)"/>
 
-            <buttonimage id="setTarget" size="129 17" pos="30 164" textcolor="black"
+            <buttonimage id="setTarget" size="129 17" pos="30 184" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                          label="$(com.minecolonies.coremod.gui.workerhuts.setTarget)"/>
 
-            <list id="positions" size="164 30" pos="13 184">
+            <list id="positions" size="134 30" pos="13 201">
                 <box size="100% 15" linewidth="2">
                     <label id="position" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                 </box>

@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.ICitizenData;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
@@ -16,13 +17,6 @@ public interface IRaiderManager
      * @return true if so.
      */
     boolean canHaveRaiderEvents();
-
-    /**
-     * Checks if the raider raid has been calculated already.
-     *
-     * @return true if so.
-     */
-    boolean hasRaidBeenCalculated();
 
     /**
      * Checks if raiders will raid tonight.
@@ -46,18 +40,11 @@ public interface IRaiderManager
     void addRaiderSpawnPoint(final BlockPos pos);
 
     /**
-     * Set if the raid has been calculated.
-     *
-     * @param hasSet true or false.
-     */
-    void setHasRaidBeenCalculated(final boolean hasSet);
-
-    /**
      * Set if raiders will raid tonight.
      *
      * @param willRaid true or false.
      */
-    void setWillRaidTonight(final boolean willRaid);
+    void setRaidNextNight(final boolean willRaid);
 
     /**
      * Returns whether spies are enabled
@@ -95,9 +82,10 @@ public interface IRaiderManager
     /**
      * Calculates the barbarian amount for raids
      *
+     * @param raidLevel the colonies raidlevel
      * @return the number of barbs.
      */
-    int calcBarbarianAmount();
+    int calculateRaiderAmount(final int raidLevel);
 
     /**
      * Whether the colony is currently raided.
@@ -126,25 +114,11 @@ public interface IRaiderManager
     void setNightsSinceLastRaid(int nightsSinceLastRaid);
 
     /**
-     * Tries to raid the colony, if possible.
-     *
-     * @param colony the colony to try.
-     */
-    void tryToRaidColony(final IColony colony);
-
-    /**
      * Whether the colony can be raided.
      *
      * @return true if possible.
      */
     boolean canRaid();
-
-    /**
-     * Returns true when it is time to raid
-     *
-     * @return when its time to raid.
-     */
-    boolean isItTimeToRaid();
 
     /**
      * calculates the colonies raid level
@@ -159,4 +133,36 @@ public interface IRaiderManager
      * @return a random building.
      */
     BlockPos getRandomBuilding();
+
+    /**
+     * Gets the difficulty modifier for raids, default difficulty is 1.0
+     *
+     * @return difficulty
+     */
+    double getRaidDifficultyModifier();
+
+    /**
+     * Called on loosing a citizen, to record deaths during raids
+     * @param citizen that died
+     */
+    void onLostCitizen(ICitizenData citizen);
+
+    /**
+     * Writes the raid manager to nbt
+     * @param compound to write to
+     */
+    void write(CompoundNBT compound);
+
+    /**
+     * Reads the raid manager form nbt
+     * @param compound to read from
+     */
+    void read(CompoundNBT compound);
+
+    /**
+     * Gets the amount of citizens lost in a raid.
+     *
+     * @return weighted amount of list citizen
+     */
+    int getLostCitizen();
 }

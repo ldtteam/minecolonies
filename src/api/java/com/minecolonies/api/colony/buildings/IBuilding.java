@@ -198,6 +198,19 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     void onUpgradeComplete(int newLevel);
 
     /**
+     * Whether this building has a guard building nearby
+     *
+     * @return true/false
+     */
+    boolean isGuardBuildingNear();
+
+    /**
+     * Sets whether this building has a guard building nearby
+     * @param guardBuildingNear
+     */
+    void setGuardBuildingNear(boolean guardBuildingNear);
+
+    /**
      * Check if the worker requires a certain amount of that item and the alreadykept list contains it. Always leave one stack behind if the worker requires a certain amount of it.
      * Just to be sure.
      *
@@ -344,4 +357,10 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @param player the player opening it.
      */
     void openCraftingContainer(final ServerPlayerEntity player);
+
+    /**
+     * Process time the colony was offline.
+     * @param time the time in seconds.
+     */
+    void processOfflineTime(long time);
 }

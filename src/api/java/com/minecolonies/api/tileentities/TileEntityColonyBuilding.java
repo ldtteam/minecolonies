@@ -345,6 +345,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         style = compound.getString(TAG_STYLE);
         registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
         buildingPos = pos;
+        single = true;
     }
 
     @NotNull
@@ -444,6 +445,24 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public ResourceLocation getBuildingName()
     {
         return registryName;
+    }
+
+    @Override
+    public boolean isMain()
+    {
+        return true;
+    }
+
+    @Override
+    public void updateBlockState()
+    {
+        // Do nothing
+    }
+
+    @Override
+    public void setSingle(final boolean single)
+    {
+        // Do nothing, these are always single!
     }
 
     @NotNull

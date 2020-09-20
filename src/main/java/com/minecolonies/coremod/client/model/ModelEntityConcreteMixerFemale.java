@@ -92,8 +92,8 @@ public class ModelEntityConcreteMixerFemale extends CitizenModel<AbstractEntityC
         bipedBody.addChild(breast);
         setRotationAngle(breast, 0.7854F, 0.0F, 0.0F);
         breast.setTextureOffset(41, 32).addBox(-6.0F, -1.0F, -2.0F, 6.0F, 3.0F, 3.0F, 0.0F, false);
-		
-		bipedHeadwear.showModel = false;
+
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

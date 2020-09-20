@@ -23,6 +23,7 @@ import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             final AbstractEntityCitizen worker = getCitizen().getEntity().get();
             worker.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
               .setBaseValue(
-                BASE_MOVEMENT_SPEED + (getCitizen().getJobModifier()) * BONUS_SPEED_PER_LEVEL);
+                BASE_MOVEMENT_SPEED + (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill())) * BONUS_SPEED_PER_LEVEL);
         }
     }
 
@@ -157,6 +158,13 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     private IRequestSystemDeliveryManJobDataStore getDataStore()
     {
         return getCitizen().getColony().getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE);
+    }
+
+    @Override
+    public void serializeToView(final PacketBuffer buffer)
+    {
+        super.serializeToView(buffer);
+        StandardFactoryController.getInstance().serialize(buffer, rsDataStoreToken);
     }
 
     private LinkedList<IToken<?>> getTaskQueueFromDataStore()
@@ -254,7 +262,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         else if (request.getRequest() instanceof Delivery)
         {
             final List<IRequest<? extends Delivery>> taskList = getTaskListWithSameDestination((IRequest<? extends Delivery>) request);
-            for (int i = 0; i < Math.min(ongoingDeliveries, taskList.size()); i++)
+            for (int i = 0; i < Math.max(1, Math.min(ongoingDeliveries, taskList.size())); i++)
             {
                 final IRequest<? extends Delivery> req = taskList.get(i);
                 if (req.getState() == RequestState.IN_PROGRESS)
@@ -263,6 +271,11 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
                 }
                 getTaskQueueFromDataStore().remove(req.getId());
             }
+        }
+        else if (request.getRequest() instanceof Pickup)
+        {
+            getTaskQueueFromDataStore().remove(request.getId());
+            getColony().getRequestManager().updateRequestState(current, successful ? RequestState.RESOLVED : RequestState.FAILED);
         }
         else
         {
@@ -290,7 +303,10 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             getTaskQueueFromDataStore().remove(token);
         }
 
-        getCitizen().getWorkBuilding().markDirty();
+        if (getCitizen().getWorkBuilding() != null)
+        {
+            getCitizen().getWorkBuilding().markDirty();
+        }
     }
 
     /**
@@ -348,11 +364,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         }
     }
 
-    /**
-     * Check if the dman can currently accept requests.
-     *
-     * @return true if active.
-     */
+    @Override
     public boolean isActive()
     {
         return this.active;

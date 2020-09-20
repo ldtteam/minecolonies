@@ -280,7 +280,9 @@ public class CommonConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> circus;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> festival;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> nightowl;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> spectacle;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> nightowl2;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> opera;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> theater;
 
@@ -376,7 +378,7 @@ public class CommonConfiguration extends AbstractConfiguration
         allowInfiniteColonies = defineBoolean(builder, "allowinfinitecolonies", false);
         allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", false);
         citizenRespawnInterval = defineInteger(builder, "citizenrespawninterval", 60, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX);
-        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 75, 4, 500);
+        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 150, 4, 500);
         builderInfiniteResources = defineBoolean(builder, "builderinfiniteresources", false);
         limitToOneWareHousePerColony = defineBoolean(builder, "limittoonewarehousepercolony", true);
         builderBuildBlockDelay = defineInteger(builder, "builderbuildblockdelay", 15, 1, 500);
@@ -440,8 +442,8 @@ public class CommonConfiguration extends AbstractConfiguration
         spawnBarbarianSize = defineInteger(builder, "spawnbarbariansize", 5, MIN_SPAWN_BARBARIAN_HORDE_SIZE, MAX_SPAWN_BARBARIAN_HORDE_SIZE);
         maxBarbarianSize = defineInteger(builder, "maxBarbarianSize", 80, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
         doBarbariansBreakThroughWalls = defineBoolean(builder, "dobarbariansbreakthroughwalls", true);
-        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 7, 1, 10);
-        minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 5, 1, 30);
+        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 12, 1, 10);
+        minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 8, 1, 30);
         mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
         shouldRaidersBreakDoors = defineBoolean(builder, "shouldraiderbreakdoors", true);
         citizenCallForHelp = defineBoolean(builder, "citizencallforhelp", true);
@@ -493,7 +495,7 @@ public class CommonConfiguration extends AbstractConfiguration
                      "minecraft:diamond;9",
                      "minecraft:emerald;8",
                      "minecraft:baked_potato;1",
-                     "minecraft:gold;2",
+                     "minecraft:gold_ingot;2",
                      "minecraft:redstone;2",
                      "minecraft:lapis_lazuli;2",
                      "minecraft:cake;7",
@@ -1149,8 +1151,14 @@ public class CommonConfiguration extends AbstractConfiguration
         this.festival = defineList(builder, "festival",
           Collections.singletonList("minecraft:cake*9"),
           s -> s instanceof String);
+        this.nightowl = defineList(builder, "nightowl",
+          Collections.singletonList("minecraft:golden_carrot*25"),
+          s -> s instanceof String);
         this.spectacle = defineList(builder, "spectacle",
           Collections.singletonList("minecraft:cake*18"),
+          s -> s instanceof String);
+        this.nightowl2 = defineList(builder, "nightowl2",
+          Collections.singletonList("minecraft:golden_carrot*75"),
           s -> s instanceof String);
         this.opera = defineList(builder, "opera",
           Collections.singletonList("minecraft:cake*27"),

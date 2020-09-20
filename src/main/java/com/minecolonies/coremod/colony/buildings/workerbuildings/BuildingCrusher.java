@@ -21,6 +21,7 @@ import com.minecolonies.coremod.client.gui.WindowHutCrusher;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 
@@ -125,42 +126,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
               Collections.singletonList(input), 2, mode.getValue().getItemStack(), ModBlocks.blockHutCrusher);
             crusherRecipes.put(mode.getKey(), recipe);
         }
-    }
-
-    @Override
-    public void checkForWorkerSpecificRecipes()
-    {
-        loadCurrentRecipes();
-    }
-
-    /**
-     * Reload all of the current crusher recipes
-     */
-    private void loadCurrentRecipes()
-    {
-        for (final IRecipeStorage recipe : crusherRecipes.values())
-        {
-            final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
-            final IRecipeStorage oldRecipe = getFirstRecipe(recipe.getPrimaryOutput());
-            if(oldRecipe != null && !oldRecipe.getToken().equals(token))
-            {
-                replaceRecipe(oldRecipe.getToken(), token);
-            }
-            else
-            {
-                addRecipe(token);
-            }
-        }
-
-        final IRecipeStorage clayballStorage = StandardFactoryController.getInstance().getNewInstance(
-            TypeConstants.RECIPE,
-            StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-            ImmutableList.of(new ItemStack(Blocks.CLAY, 1)),
-            1,
-            new ItemStack(Items.CLAY_BALL, 4),
-            Blocks.AIR);
-  
-        addRecipe(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(clayballStorage));    
     }
 
     /**
@@ -297,11 +262,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         }
 
         this.oneByOne = compound.getBoolean(CRUSHING_11);
-
-        if (super.recipes.isEmpty())
-        {
-            loadCurrentRecipes();
-        }
     }
 
     @Override
@@ -331,8 +291,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         if (crusherRecipes.isEmpty() || oneOne && !oneByOne)
         {
             loadCrusherMode();
-
-            loadCurrentRecipes();
         }
 
         if (crusherMode == null)
@@ -362,7 +320,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Crusher", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.CRUSHER_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));

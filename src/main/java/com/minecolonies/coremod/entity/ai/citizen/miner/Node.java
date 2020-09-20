@@ -6,8 +6,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -23,6 +23,7 @@ public class Node
      */
     private static final String TAG_X       = "idX";
     private static final String TAG_Z       = "idZ";
+    private static final String TAG_ROT     = "rotation";
     private static final String TAG_STYLE   = "Style";
     private static final String TAG_STATUS  = "Status";
     private static final String TAG_PARENTX = "ParentX";
@@ -47,6 +48,11 @@ public class Node
      * Z position of the node.
      */
     private final int z;
+
+    /**
+     * The rotation that was calculated and used at build time
+     */
+    private Optional<Integer> rot = Optional.empty();
 
     /**
      * Central position of parent node.
@@ -77,7 +83,7 @@ public class Node
     {
         this.x = x;
         this.z = z;
-        this.style = NodeType.CROSSROAD;
+        this.style = NodeType.UNDEFINED;
         this.status = NodeStatus.AVAILABLE;
         this.parent = parent;
     }
@@ -127,8 +133,17 @@ public class Node
 
         //Set the node status in all directions.
         @NotNull final Node node = new Node(x, z, parent);
+        if(style == NodeType.UNDEFINED)
+        {
+            Log.getLogger().error("Minecolonies Node " + x + "," + z + " has an undefined style, please tell the mod author about this");
+        }
         node.setStyle(style);
         node.setStatus(status);
+
+        if(compound.keySet().contains(TAG_ROT))
+        {
+            node.setRot(compound.getInt(TAG_ROT));
+        }
 
         return node;
     }
@@ -142,6 +157,11 @@ public class Node
     {
         compound.putInt(TAG_X, x);
         compound.putInt(TAG_Z, z);
+        
+        if(rot.isPresent())
+        {
+            compound.putInt(TAG_ROT, rot.get());
+        }
 
         compound.putString(TAG_STYLE, style.name());
         compound.putString(TAG_STATUS, status.name());
@@ -367,6 +387,26 @@ public class Node
         //Crossroad structure
         CROSSROAD,
         //Bending tunnle
-        BEND
+        BEND,
+        //New node, undefined
+        UNDEFINED
+    }
+
+    /**
+     * Get rotation stored in the node as an optional, only set if actually stored. 
+     * @return
+     */
+    public Optional<Integer> getRot()
+    {
+        return rot;
+    }
+
+    /**
+     * Set rotation storaged in the node
+     * @param rot
+     */
+    public void setRot(int rot)
+    {
+        this.rot = Optional.of(rot);
     }
 }

@@ -258,7 +258,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
                 return;
             }
 
-            single = false;
+            setSingle(false);
             if (entity instanceof AbstractTileEntityRack)
             {
                 if (!((AbstractTileEntityRack) entity).isMain())
@@ -267,20 +267,31 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
                     ((AbstractTileEntityRack) entity).setMain(false);
                 }
                 ((AbstractTileEntityRack) entity).setNeighbor(this.getPos());
-                ((AbstractTileEntityRack) entity).setMain(false);
+
                 entity.markDirty();
             }
 
             updateItemStorage();
             this.markDirty();
+            updateBlockState();
         }
         else if (relativeNeighbor != null && this.pos.subtract(relativeNeighbor).equals(newNeighbor) && world.getBlockState(newNeighbor).getBlock() != ModBlocks.blockRack)
         {
             this.relativeNeighbor = null;
-            single = true;
+            setSingle(true);
             this.main = false;
             updateItemStorage();
+            updateBlockState();
         }
+    }
+
+    /**
+     * Set the rack as single (or unset).
+     * @param single if so.
+     */
+    public void setSingle(final boolean single)
+    {
+        this.single = single;
     }
 
     /**
