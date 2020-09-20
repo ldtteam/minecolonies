@@ -73,6 +73,7 @@ public class WindowHutCrafter extends AbstractWindowWorkerBuilding<AbstractBuild
             @Override
             public int getElementCount()
             {
+                tasks.removeIf(token -> building.getColony().getRequestManager().getRequestForToken(token) == null);
                 return tasks.size();
             }
 

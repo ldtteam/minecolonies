@@ -48,7 +48,6 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     public BuildingStoneSmeltery(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, false));
     }
 
     @NotNull

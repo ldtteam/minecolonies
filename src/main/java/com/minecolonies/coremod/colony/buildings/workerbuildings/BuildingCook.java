@@ -273,7 +273,8 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
 
         //If we didn't have a stored recipe, see if there is a smelting recipe that is also a food output, and use it. 
         storage = FurnaceRecipes.getInstance().getFirstSmeltingRecipeByResult(stackPredicate);
-        if(storage != null && ISFOOD.test(storage.getPrimaryOutput().getStack()))
+        Optional<Boolean> validRecipe =  canRecipeBeAddedBasedOnTags(storage);
+        if(storage != null && ISFOOD.test(storage.getPrimaryOutput().getStack()) && (!validRecipe.isPresent() || validRecipe.get()))
         {
             return storage;
         }
