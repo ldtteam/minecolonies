@@ -176,7 +176,7 @@ public class WindowHutBaker extends AbstractHutFilterableLists
                 resource.setCount(resource.getMaxStackSize());
 
                 final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-                resourceLabel.setLabelText(resource.getDisplayName().getFormattedText());
+                resourceLabel.setLabelText(resource.getDisplayName().getString());
 
                 final Label quantityLabel = rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Label.class);
                 quantityLabel.setLabelText(String.valueOf(tempRes.get(index).getB()));
