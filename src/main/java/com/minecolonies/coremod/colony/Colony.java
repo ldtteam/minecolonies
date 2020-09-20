@@ -415,7 +415,6 @@ public class Colony implements IColony
     private boolean worldTickSlow()
     {
         buildingManager.cleanUpBuildings(this);
-        raidManager.tryToRaidColony(this);
         citizenManager.onColonyTick(this);
         visitorManager.onColonyTick(this);
         updateAttackingPlayers();

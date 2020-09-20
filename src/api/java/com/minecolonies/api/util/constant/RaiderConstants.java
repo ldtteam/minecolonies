@@ -89,7 +89,7 @@ public final class RaiderConstants
      */
     public static final double FOLLOW_RANGE                = 35.0D;
     public static final double MOVEMENT_SPEED              = 0.25D;
-    public static final double ARMOR                       = 3D;
+    public static final double ARMOR                       = 2D;
     public static final double CHIEF_BONUS_ARMOR           = 2D;
     public static final double BARBARIAN_BASE_HEALTH       = 10;
     public static final double BARBARIAN_HEALTH_MULTIPLIER = 0.05;

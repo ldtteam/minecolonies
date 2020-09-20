@@ -31,7 +31,7 @@ public class CommandRaidTonight implements IMCOPCommand
             return 0;
         }
 
-        colony.getRaiderManager().setWillRaidTonight(true);
+        colony.getRaiderManager().setRaidNextNight(true);
         context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.raidtonight.success", colony.getName()), true);
         return 0;
     }
