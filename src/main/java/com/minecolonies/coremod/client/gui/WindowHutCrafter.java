@@ -86,20 +86,20 @@ public class WindowHutCrafter extends AbstractWindowWorkerBuilding<AbstractBuild
                 if (parent != null)
                 {
                     rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                      .setLabelText(request.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), request).getFormattedText() + " ->");
+                      .setLabelText(request.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), request).getString() + " ->");
                     rowPane.findPaneOfTypeByID(PARENT, Label.class)
-                      .setLabelText(parent.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), parent).getFormattedText());
+                      .setLabelText(parent.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), parent).getString());
                 }
                 else
                 {
                     rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                      .setLabelText(request.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), request).getFormattedText());
+                      .setLabelText(request.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), request).getString());
                     rowPane.findPaneOfTypeByID(PARENT, Label.class)
                       .setLabelText("");
                 }
 
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-                  .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
+                  .setLabelText(request.getShortDisplayString().getString().replace("§f", ""));
 
                 if (request.getRequest() instanceof IDeliverymanRequestable)
                 {

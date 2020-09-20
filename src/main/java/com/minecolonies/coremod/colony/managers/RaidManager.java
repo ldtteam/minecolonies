@@ -615,7 +615,7 @@ public class RaidManager implements IRaiderManager
                 || colony.getWorld().getBiome(colony.getCenter()).getCategory().getName().contains("desert") && colony.getWorld().isRaining()
             );
 
-        if (MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get())
+        if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
         {
             LanguageHandler.sendPlayersMessage(
               colony.getImportantMessageEntityPlayers(),
@@ -693,7 +693,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public double getRaidDifficultyModifier()
     {
-        return ((raidDifficulty / (double) 10) + MIN_DIFFICULTY_MODIFIER) * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
+        return ((raidDifficulty / (double) 10) + MIN_DIFFICULTY_MODIFIER) * (MinecoloniesAPIProxy.getInstance().getConfig().getServer().barbarianHordeDifficulty.get()
                                                                        / (double) DEFAULT_BARBARIAN_DIFFICULTY) * (colony.getWorld().getDifficulty().getId() / 2d);
     }
 
