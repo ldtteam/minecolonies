@@ -66,6 +66,7 @@ public class WindowHutDeliveryman extends AbstractWindowWorkerBuilding<BuildingD
             @Override
             public int getElementCount()
             {
+                tasks.removeIf(token -> building.getColony().getRequestManager().getRequestForToken(token) == null);
                 return tasks.size();
             }
 
