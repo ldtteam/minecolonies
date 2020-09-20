@@ -67,8 +67,8 @@ public final class StandardRequests
             combined.appendSibling(getRequest().getStack().getTextComponent());
             return combined;
         }
-        @NotNull
 
+        @NotNull
         @Override
         public List<ItemStack> getDisplayStacks()
         {
