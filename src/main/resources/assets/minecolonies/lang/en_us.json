@@ -1782,5 +1782,6 @@
   "com.minecolonies.coremod.locating": "Successfully located rack with respective item(s).",
 
   "entity.researcher.moreknowledge": "During your absence, your Researchers used the time to do some extra work. This will speed up their current research a bit!",
-  "com.minecolonies.coremod.gui.request.hideshow": "Only show important requests"
+  "com.minecolonies.coremod.gui.request.hideshow": "Only show important requests",
+  "com.minecolonies.coremod.gui.workerhuts.crafter.tasks": "Tasks:"
 }
