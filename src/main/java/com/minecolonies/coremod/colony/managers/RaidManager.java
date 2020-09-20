@@ -64,15 +64,23 @@ public class RaidManager implements IRaiderManager
     private static final String DESERT_BIOME_ID = "desert";
     private static final String JUNGLE_BIOME_ID = "jungle";
     private static final String TAIGA_BIOME_ID  = "taiga";
-    private static final double THIRTY_PERCENT  = 0.3d;
-    private static final double TEN_PERCENT     = 0.1d;
+
+    /**
+     * Thresholds for reducing or increasing raid difficulty
+     */
+    private static final double LOST_CITIZEN_DIFF_REDUCE_PCT   = 0.15d;
+    private static final double LOST_CITIZEN_DIFF_INCREASE_PCT = 0.05d;
 
     /**
      * Min and max for raid difficulty
      */
-    private static final int MIN_RAID_DIFFICULTY    = 1;
-    private static final int NORMAL_RAID_DIFFICULTY = 5;
-    private static final int MAX_RAID_DIFFICULTY    = 10;
+    private static final int MIN_RAID_DIFFICULTY = 1;
+    private static final int MAX_RAID_DIFFICULTY = 14;
+
+    /**
+     * The minumum raid difficulty modifier
+     */
+    private static final double MIN_DIFFICULTY_MODIFIER = 0.2;
 
     /**
      * Difficulty nbt tag
@@ -104,11 +112,6 @@ public class RaidManager implements IRaiderManager
      * Whether there will be a raid in this colony tonight.
      */
     private boolean raidTonight = false;
-
-    /**
-     * Whether or not the raid has been calculated for today.
-     */
-    private boolean raidBeenCalculated = false;
 
     /**
      * Whether or not this colony may have Raider events. (set via command)
@@ -167,12 +170,6 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public boolean hasRaidBeenCalculated()
-    {
-        return this.raidBeenCalculated;
-    }
-
-    @Override
     public boolean willRaidTonight()
     {
         return this.raidTonight;
@@ -191,13 +188,7 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void setHasRaidBeenCalculated(final boolean hasSet)
-    {
-        this.raidBeenCalculated = hasSet;
-    }
-
-    @Override
-    public void setWillRaidTonight(final boolean willRaid)
+    public void setRaidNextNight(final boolean willRaid)
     {
         this.raidTonight = willRaid;
     }
@@ -254,6 +245,7 @@ public class RaidManager implements IRaiderManager
             return;
         }
 
+        nightsSinceLastRaid = 0;
         amount = (int) Math.ceil((float) amount / spawnPoints.size());
 
         for (final BlockPos targetSpawnPoint : spawnPoints)
@@ -555,11 +547,11 @@ public class RaidManager implements IRaiderManager
             if (nightsSinceLastRaid == 0)
             {
                 final double lostPct = (double) lostCitizens / colony.getCitizenManager().getMaxCitizens();
-                if (lostPct > THIRTY_PERCENT)
+                if (lostPct > LOST_CITIZEN_DIFF_REDUCE_PCT)
                 {
-                    raidDifficulty = Math.max(MIN_RAID_DIFFICULTY, raidDifficulty - 1);
+                    raidDifficulty = Math.max(MIN_RAID_DIFFICULTY, raidDifficulty - (int) (lostPct / LOST_CITIZEN_DIFF_REDUCE_PCT));
                 }
-                else if (lostPct < TEN_PERCENT)
+                else if (lostPct < LOST_CITIZEN_DIFF_INCREASE_PCT)
                 {
                     raidDifficulty = Math.min(MAX_RAID_DIFFICULTY, raidDifficulty + 1);
                 }
@@ -571,6 +563,16 @@ public class RaidManager implements IRaiderManager
         else
         {
             nightsSinceLastRaid = 0;
+        }
+
+        if (raidTonight)
+        {
+            raidTonight = false;
+            raiderEvent();
+        }
+        else
+        {
+            determineRaidForNextDay();
         }
     }
 
@@ -584,15 +586,6 @@ public class RaidManager implements IRaiderManager
     public void setNightsSinceLastRaid(final int nightsSinceLastRaid)
     {
         this.nightsSinceLastRaid = nightsSinceLastRaid;
-    }
-
-    @Override
-    public void tryToRaidColony(final IColony colony)
-    {
-        if (canRaid() && isItTimeToRaid())
-        {
-            raiderEvent();
-        }
     }
 
     /**
@@ -609,48 +602,27 @@ public class RaidManager implements IRaiderManager
                  && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();
     }
 
-    @Override
-    public boolean isItTimeToRaid()
+    /**
+     * Determines whether we raid on the next day
+     */
+    private void determineRaidForNextDay()
     {
-        if (WorldUtil.isDayTime(colony.getWorld()) && !colony.getRaiderManager().hasRaidBeenCalculated())
-        {
-            colony.getRaiderManager().setHasRaidBeenCalculated(true);
-            if (!colony.getRaiderManager().willRaidTonight())
-            {
-                final boolean raid = raidThisNight(colony.getWorld(), colony);
-                if (MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get())
-                {
-                    LanguageHandler.sendPlayersMessage(
-                      colony.getImportantMessageEntityPlayers(),
-                      "Will raid tonight: " + raid);
-                }
-                colony.getRaiderManager().setWillRaidTonight(raid);
+        final boolean raid =
+          canRaid()
+            &&
+            (
+              raidThisNight(colony.getWorld(), colony)
+                || colony.getWorld().getBiome(colony.getCenter()).getCategory().getName().contains("desert") && colony.getWorld().isRaining()
+            );
 
-                if (colony.getWorld().getBiome(colony.getCenter()).getRegistryName().getPath().contains("desert") && colony.getWorld().isRaining())
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        else if (colony.getRaiderManager().willRaidTonight() && !WorldUtil.isDayTime(colony.getWorld()) && colony.getRaiderManager().hasRaidBeenCalculated())
+        if (MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get())
         {
-            colony.getRaiderManager().setHasRaidBeenCalculated(false);
-            colony.getRaiderManager().setWillRaidTonight(false);
-            if (MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get())
-            {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessagePlayerEntities(),
-                  "Night reached: raiding");
-            }
-            return true;
-        }
-        else if (!WorldUtil.isDayTime(colony.getWorld()) && colony.getRaiderManager().hasRaidBeenCalculated())
-        {
-            colony.getRaiderManager().setHasRaidBeenCalculated(false);
+            LanguageHandler.sendPlayersMessage(
+              colony.getImportantMessageEntityPlayers(),
+              "Will raid tomorrow: " + raid);
         }
 
-        return false;
+        setRaidNextNight(raid);
     }
 
     /**
@@ -721,7 +693,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public double getRaidDifficultyModifier()
     {
-        return (raidDifficulty / (double) NORMAL_RAID_DIFFICULTY) * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
+        return ((raidDifficulty / (double) 10) + MIN_DIFFICULTY_MODIFIER) * (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get()
                                                                        / (double) DEFAULT_BARBARIAN_DIFFICULTY) * (colony.getWorld().getDifficulty().getId() / 2d);
     }
 

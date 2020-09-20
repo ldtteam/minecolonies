@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 
@@ -18,13 +17,6 @@ public interface IRaiderManager
      * @return true if so.
      */
     boolean canHaveRaiderEvents();
-
-    /**
-     * Checks if the raider raid has been calculated already.
-     *
-     * @return true if so.
-     */
-    boolean hasRaidBeenCalculated();
 
     /**
      * Checks if raiders will raid tonight.
@@ -48,18 +40,11 @@ public interface IRaiderManager
     void addRaiderSpawnPoint(final BlockPos pos);
 
     /**
-     * Set if the raid has been calculated.
-     *
-     * @param hasSet true or false.
-     */
-    void setHasRaidBeenCalculated(final boolean hasSet);
-
-    /**
      * Set if raiders will raid tonight.
      *
      * @param willRaid true or false.
      */
-    void setWillRaidTonight(final boolean willRaid);
+    void setRaidNextNight(final boolean willRaid);
 
     /**
      * Returns whether spies are enabled
@@ -129,25 +114,11 @@ public interface IRaiderManager
     void setNightsSinceLastRaid(int nightsSinceLastRaid);
 
     /**
-     * Tries to raid the colony, if possible.
-     *
-     * @param colony the colony to try.
-     */
-    void tryToRaidColony(final IColony colony);
-
-    /**
      * Whether the colony can be raided.
      *
      * @return true if possible.
      */
     boolean canRaid();
-
-    /**
-     * Returns true when it is time to raid
-     *
-     * @return when its time to raid.
-     */
-    boolean isItTimeToRaid();
 
     /**
      * calculates the colonies raid level
