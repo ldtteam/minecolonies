@@ -209,7 +209,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    protected void updateBlockState()
+    public void updateBlockState()
     {
         if (world != null && world.getBlockState(pos).getBlock() instanceof AbstractBlockMinecoloniesRack)
         {
@@ -218,7 +218,7 @@ public class TileEntityRack extends AbstractTileEntityRack
                 main = true;
             }
 
-            if ((main || single))
+            if (main || single)
             {
                 final BlockState typeHere;
                 final BlockState typeNeighbor;
@@ -264,7 +264,7 @@ public class TileEntityRack extends AbstractTileEntityRack
                 }
                 if (typeNeighbor != null)
                 {
-                    if (!world.getBlockState(this.pos.subtract(relativeNeighbor)).equals(typeHere))
+                    if (!world.getBlockState(this.pos.subtract(relativeNeighbor)).equals(typeNeighbor))
                     {
                         world.setBlockState(this.pos.subtract(relativeNeighbor), typeNeighbor);
                     }
@@ -318,15 +318,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             }
         }
 
-        if (compound.keySet().contains(TAG_NEIGHBOR))
-        {
-            final BlockPos neighbor = BlockPosUtil.read(compound, TAG_NEIGHBOR);
-            if (neighbor != BlockPos.ZERO)
-            {
-                relativeNeighbor = pos.subtract(neighbor);
-            }
-        }
-        else if (compound.keySet().contains(TAG_RELATIVE_NEIGHBOR))
+        if (compound.keySet().contains(TAG_RELATIVE_NEIGHBOR))
         {
             relativeNeighbor = BlockPosUtil.read(compound, TAG_RELATIVE_NEIGHBOR);
         }

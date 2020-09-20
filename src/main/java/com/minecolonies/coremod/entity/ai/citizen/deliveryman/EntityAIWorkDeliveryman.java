@@ -234,6 +234,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
+        if (InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= 0)
+        {
+            return true;
+        }
+
         final ItemStack activeStack = handler.extractItem(currentSlot, amount, false);
         InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, worker.getInventoryCitizen());
         building.markDirty();

@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers.core;
 
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -26,11 +27,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getDefaultDeliveryPriority;
 import static com.minecolonies.api.util.RSConstants.CONST_WAREHOUSE_RESOLVER_PRIORITY;
@@ -258,10 +255,16 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
      */
     protected static Set<TileEntityWareHouse> getWareHousesInColony(final Colony colony)
     {
-        return colony.getBuildingManager().getBuildings().values().stream()
-                 .filter(building -> building instanceof BuildingWareHouse)
-                 .map(building -> (TileEntityWareHouse) building.getTileEntity())
-                 .collect(Collectors.toSet());
+        final Set<TileEntityWareHouse> wareHouses = new HashSet<>();
+        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        {
+            if (building instanceof BuildingWareHouse && building.getTileEntity() != null)
+            {
+                wareHouses.add((TileEntityWareHouse) building.getTileEntity());
+            }
+        }
+
+        return wareHouses;
     }
 
     @Override
