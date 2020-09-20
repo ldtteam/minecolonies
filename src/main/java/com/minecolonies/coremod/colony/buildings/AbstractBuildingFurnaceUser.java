@@ -32,6 +32,11 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
     private static final String TAG_POS = "pos";
 
     /**
+     * Tag to store the furnace position in compatibility (Baker)
+     */
+    private static final String TAG_POS_COMPAT = "furnacePos";
+
+    /**
      * Tag to store the furnace list.
      */
     private static final String TAG_FURNACES = "furnaces";
@@ -74,7 +79,14 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
         final ListNBT furnaceTagList = compound.getList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < furnaceTagList.size(); ++i)
         {
-            furnaces.add(NBTUtil.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
+            if(furnaceTagList.getCompound(i).contains(TAG_POS))
+            {
+                furnaces.add(NBTUtil.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
+            }
+            if(furnaceTagList.getCompound(i).contains(TAG_POS_COMPAT))
+            {
+                furnaces.add(NBTUtil.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS_COMPAT)));
+            }
         }
     }
 

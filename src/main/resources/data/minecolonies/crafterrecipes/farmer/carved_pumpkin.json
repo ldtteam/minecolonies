@@ -4,10 +4,10 @@
   "inputs": [
     {
         "item" : "minecraft:pumpkin",
-        "count": "1"
+        "count": 1
     }
   ],
   "result": "minecraft:carved_pumpkin",
-  "count": "4",
+  "count": 4,
   "intermediate" : "minecraft:air"
 }

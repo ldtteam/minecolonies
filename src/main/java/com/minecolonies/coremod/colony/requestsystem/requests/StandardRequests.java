@@ -68,6 +68,13 @@ public final class StandardRequests
             combined.append(getRequest().getStack().getDisplayName());
             return combined;
         }
+
+        @NotNull
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            return getRequest().getRequestedItems();
+        }    
     }
 
     /**

@@ -20,28 +20,20 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import io.netty.buffer.Unpooled;
-import net.minecraft.block.Block;
-import net.minecraft.block.FurnaceBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,28 +41,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser.FUEL_LIST;
 
 /**
  * Class of the crafter building.
  */
 public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFurnaceUser implements IBuildingPublicCrafter
 {
-    /**
-     * Tag to store the furnace position.
-     */
-    private static final String TAG_POS = "pos";
-
-    /**
-     * Tag to store the furnace list.
-     */
-    private static final String TAG_FURNACES = "furnaces";
-
-    /**
-     * List of registered furnaces.
-     */
-    private final List<BlockPos> furnaces = new ArrayList<>();
-
     /**
      * Extra amount of recipes the crafters can learn.
      */
@@ -141,70 +117,6 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
         return toKeep;
     }
 
-    /**
-     * Return a list of furnaces assigned to this hut.
-     *
-     * @return copy of the list
-     */
-    public List<BlockPos> getFurnaces()
-    {
-        return new ArrayList<>(furnaces);
-    }
-
-    @Override
-    public void deserializeNBT(final CompoundNBT compound)
-    {
-        super.deserializeNBT(compound);
-        final ListNBT furnaceTagList = compound.getList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < furnaceTagList.size(); ++i)
-        {
-            furnaces.add(NBTUtil.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
-        }
-    }
-
-    @Override
-    public CompoundNBT serializeNBT()
-    {
-        final CompoundNBT compound = super.serializeNBT();
-
-        @NotNull final ListNBT furnacesTagList = new ListNBT();
-        for (@NotNull final BlockPos entry : furnaces)
-        {
-            @NotNull final CompoundNBT furnaceCompound = new CompoundNBT();
-            furnaceCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
-            furnacesTagList.add(furnaceCompound);
-        }
-
-        compound.put(TAG_FURNACES, furnacesTagList);
-
-        return compound;
-    }
-
-    @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
-    {
-        super.registerBlockPosition(block, pos, world);
-        if (block instanceof FurnaceBlock && !furnaces.contains(pos))
-        {
-            furnaces.add(pos);
-        }
-        markDirty();
-    }
-
-    /**
-     * Getter for all allowed fuel from the building.
-     *
-     * @return the list of itemStacks.
-     */
-    public List<ItemStack> getAllowedFuel()
-    {
-        if (!getCopyOfAllowedItems().containsKey(FUEL_LIST))
-        {
-            return new ArrayList<>();
-        }
-        return getCopyOfAllowedItems().get(FUEL_LIST).stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList());
-    }
-
     @Override
     public boolean canCraftComplexRecipes()
     {
@@ -215,16 +127,6 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
         return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
-    }
-
-    /**
-     * Remove the furnace from the list.
-     *
-     * @param pos the pos of the furnace.
-     */
-    public void removeFromFurnaces(final BlockPos pos)
-    {
-        this.furnaces.remove(pos);
     }
 
     @Override
