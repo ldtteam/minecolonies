@@ -6,6 +6,7 @@
     "#forge:storage_blocks/redstone",
     "minecraft:blaze_rod",
     "minecraft:ender_pearl",
-    "minecraft:ender_eye"
+    "minecraft:ender_eye",
+    "minecraft:redstone_torch"
   ]
 }
