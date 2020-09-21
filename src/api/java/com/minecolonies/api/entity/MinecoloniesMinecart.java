@@ -11,19 +11,20 @@ import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.IPacket;
 import net.minecraft.state.properties.RailShape;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Util;
+import net.minecraft.util.*;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.shapes.IBooleanFunction;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Special minecolonies minecart that doesn't collide.
@@ -112,18 +113,6 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         double veloc = Math.min(2.0D, Math.sqrt(horizontalMag(motion)));
         motion = new Vector3d(veloc * xDif / difSq, motion.y, veloc * zDif / difSq);
         this.setMotion(motion);
-        Entity entity = this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
-        if (entity instanceof PlayerEntity)
-        {
-            Vector3d mot = entity.getMotion();
-            double horMot = horizontalMag(mot);
-            double tempMot = horizontalMag(this.getMotion());
-            if (horMot > 1.0E-4D && tempMot < 0.01D)
-            {
-                this.setMotion(this.getMotion().add(mot.x * 0.1D, 0.0D, mot.z * 0.1D));
-                flag = false;
-            }
-        }
 
         if (flag && shouldDoRailFunctions())
         {
@@ -280,6 +269,50 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
     public void applyEntityCollision(@NotNull final Entity entityIn)
     {
         // Do nothing
+    }
+
+    @Override
+    public void onCollideWithPlayer(final PlayerEntity entityIn)
+    {
+        // Do nothing
+    }
+
+    @Override
+    public boolean canBePushed()
+    {
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public Vector3d getAllowedMovement(Vector3d vec)
+    {
+        final AxisAlignedBB axisalignedbb = this.getBoundingBox();
+        final ISelectionContext iselectioncontext = ISelectionContext.forEntity(this);
+        final VoxelShape voxelshape = this.world.getWorldBorder().getShape();
+        final Stream<VoxelShape> stream = VoxelShapes.compare(voxelshape, VoxelShapes.create(axisalignedbb.shrink(1.0E-7D)), IBooleanFunction.AND) ? Stream.empty() : Stream.of(voxelshape);
+        final ReuseableStream<VoxelShape> reuseablestream = new ReuseableStream<>(stream);
+        final Vector3d vector3d = vec.lengthSquared() == 0.0D ? vec : collideBoundingBoxHeuristically(this, vec, axisalignedbb, this.world, iselectioncontext, reuseablestream);
+        final boolean xDif = vec.x != vector3d.x;
+        final boolean yDif = vec.y != vector3d.y;
+        final boolean zDif = vec.z != vector3d.z;
+        final boolean groundDif = this.onGround || yDif && vec.y < 0.0D;
+        if (this.stepHeight > 0.0F && groundDif && (xDif || zDif)) {
+            Vector3d vector3d1 = collideBoundingBoxHeuristically(this, new Vector3d(vec.x, (double)this.stepHeight, vec.z), axisalignedbb, this.world, iselectioncontext, reuseablestream);
+            final Vector3d vector3d2 = collideBoundingBoxHeuristically(this, new Vector3d(0.0D, (double)this.stepHeight, 0.0D), axisalignedbb.expand(vec.x, 0.0D, vec.z), this.world, iselectioncontext, reuseablestream);
+            if (vector3d2.y < (double)this.stepHeight) {
+                Vector3d vector3d3 = collideBoundingBoxHeuristically(this, new Vector3d(vec.x, 0.0D, vec.z), axisalignedbb.offset(vector3d2), this.world, iselectioncontext, reuseablestream).add(vector3d2);
+                if (horizontalMag(vector3d3) > horizontalMag(vector3d1)) {
+                    vector3d1 = vector3d3;
+                }
+            }
+
+            if (horizontalMag(vector3d1) > horizontalMag(vector3d)) {
+                return vector3d1.add(collideBoundingBoxHeuristically(this, new Vector3d(0.0D, -vector3d1.y + vec.y, 0.0D), axisalignedbb.offset(vector3d1), this.world, iselectioncontext, reuseablestream));
+            }
+        }
+
+        return vector3d;
     }
 
     @Override

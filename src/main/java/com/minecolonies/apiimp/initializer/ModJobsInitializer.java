@@ -66,7 +66,7 @@ public final class ModJobsInitializer
 
         ModJobs.baker = new JobEntry.Builder()
                           .setJobProducer(JobBaker::new)
-                          .setJobViewProducer(() -> DefaultJobView::new)
+                          .setJobViewProducer(() -> CrafterJobView::new)
                           .setRegistryName(ModJobs.BAKER_ID)
                           .createJobEntry();
 

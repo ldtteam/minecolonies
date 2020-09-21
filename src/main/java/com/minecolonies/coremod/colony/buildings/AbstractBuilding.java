@@ -84,7 +84,6 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
 import static com.minecolonies.api.research.util.ResearchConstants.MINIMUM_STOCK;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
@@ -873,6 +872,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         cachedRotation = -1;
         ChunkDataHelper.claimColonyChunks(colony, true, this.getID(), this.getClaimRadius(newLevel));
+        recheckGuardBuildingNear = true;
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
         colony.getProgressManager().progressBuildBuilding(this,
@@ -905,6 +905,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         if (recheckGuardBuildingNear)
         {
             guardBuildingNear = colony.getBuildingManager().hasGuardBuildingNear(this);
+            recheckGuardBuildingNear = false;
         }
         return guardBuildingNear;
     }
