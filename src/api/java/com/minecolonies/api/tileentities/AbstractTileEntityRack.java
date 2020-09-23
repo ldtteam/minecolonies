@@ -267,12 +267,13 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
                     ((AbstractTileEntityRack) entity).setMain(false);
                 }
                 ((AbstractTileEntityRack) entity).setNeighbor(this.getPos());
-                ((AbstractTileEntityRack) entity).setMain(false);
+
                 entity.markDirty();
             }
 
             updateItemStorage();
             this.markDirty();
+            updateBlockState();
         }
         else if (relativeNeighbor != null && this.pos.subtract(relativeNeighbor).equals(newNeighbor) && world.getBlockState(newNeighbor).getBlock() != ModBlocks.blockRack)
         {
@@ -280,6 +281,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
             setSingle(true);
             this.main = false;
             updateItemStorage();
+            updateBlockState();
         }
     }
 

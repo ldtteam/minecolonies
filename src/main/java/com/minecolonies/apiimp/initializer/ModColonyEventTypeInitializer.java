@@ -17,7 +17,7 @@ public final class ModColonyEventTypeInitializer
 {
     private ModColonyEventTypeInitializer()
     {
-        throw new IllegalStateException("Tried to initialize: RaidTypeRegistration but this is a Utility class.");
+        throw new IllegalStateException("Tried to initialize: ModColonyEventTypeInitializer but this is a Utility class.");
     }
 
     public static void init(final RegistryEvent.Register<ColonyEventTypeRegistryEntry> event)

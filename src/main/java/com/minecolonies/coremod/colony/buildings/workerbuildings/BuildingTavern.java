@@ -12,6 +12,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutTavern;
+import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.coremod.network.messages.client.colony.PlayMusicAtPosMessage;
 import net.minecraft.block.material.Material;
@@ -224,6 +225,7 @@ public class BuildingTavern extends BuildingHome
         colony.getVisitorManager().spawnOrCreateCivilian(newCitizen, colony.getWorld(), spawnPos, true);
         Tuple<Item, Integer> cost = recruitCosts.get(colony.getWorld().rand.nextInt(recruitCosts.size()));
 
+        colony.getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
 
         if (newCitizen.getEntity().isPresent())
         {

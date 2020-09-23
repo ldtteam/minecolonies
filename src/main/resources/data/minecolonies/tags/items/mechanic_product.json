@@ -15,6 +15,8 @@
     "#minecraft:wooden_pressure_plates",
     "minecraft:light_weighted_pressure_plate",
     "minecraft:heavy_weighted_pressure_plate",
-    "minecraft:sticky_piston"
+    "minecraft:sticky_piston",
+    "minecraft:trapped_chest",
+    "minecraft:ender_chest"
   ]
 }

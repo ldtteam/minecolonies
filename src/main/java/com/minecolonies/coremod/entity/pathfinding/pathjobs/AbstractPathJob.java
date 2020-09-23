@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
+import com.ldtteam.structurize.blocks.decorative.BlockFloatingCarpet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
@@ -877,14 +878,14 @@ public abstract class AbstractPathJob implements Callable<Path>
         //  lower body (headroom drop) or lower body (jump up)
         if (checkHeadBlock(parent, pos))
         {
-            return -1;
+            return handleTargetNotPassable(parent, pos.up(), world.getBlockState(pos.up()));
         }
 
         //  Now check the block we want to move to
         final BlockState target = world.getBlockState(pos);
-        if (!isPassable(target))
+        if (!isPassable(target, pos))
         {
-            return handleTargeNotPassable(parent, pos, target);
+            return handleTargetNotPassable(parent, pos, target);
         }
 
         //  Do we have something to stand on in the target space?
@@ -964,7 +965,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return -1;
     }
 
-    private int handleTargeNotPassable(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final BlockState target)
+    private int handleTargetNotPassable(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final BlockState target)
     {
         final boolean canJump = parent != null && !parent.isLadder() && !parent.isSwimming();
         //  Need to try jumping up one, if we can
@@ -1085,7 +1086,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param block the block we are checking.
      * @return true if the block does not block movement.
      */
-    protected boolean isPassable(@NotNull final BlockState block)
+    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos)
     {
         if (block.getMaterial() != Material.AIR)
         {
@@ -1105,7 +1106,12 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
             else
             {
-                return !block.getMaterial().isLiquid() && (block.getBlock() != Blocks.SNOW || block.get(SnowBlock.LAYERS) == 1) && block.getBlock() != Blocks.SWEET_BERRY_BUSH;
+                final VoxelShape shape = block.getCollisionShape(world, pos);
+                return block.getBlock() instanceof LadderBlock ||
+                         ((shape.isEmpty() || shape.getEnd(Direction.Axis.Y) <= 0.1)
+                         && !block.getMaterial().isLiquid()
+                         && (block.getBlock() != Blocks.SNOW || block.get(SnowBlock.LAYERS) == 1)
+                         && block.getBlock() != Blocks.SWEET_BERRY_BUSH);
             }
         }
 
@@ -1115,11 +1121,14 @@ public abstract class AbstractPathJob implements Callable<Path>
     protected boolean isPassable(final BlockPos pos, final boolean head)
     {
         final BlockState state = world.getBlockState(pos);
-        if (!state.getMaterial().blocksMovement())
+        final VoxelShape shape = state.getCollisionShape(world, pos);
+        if (shape.isEmpty() || shape.getEnd(Direction.Axis.Y) <= 0.1)
         {
-            return !head || !(state.getBlock() instanceof CarpetBlock);
+            return !head
+                     || !(state.getBlock() instanceof CarpetBlock || state.getBlock() instanceof BlockFloatingCarpet)
+                     || state.getBlock() instanceof LadderBlock;
         }
-        return isPassable(state);
+        return isPassable(state, pos);
     }
 
     /**
@@ -1157,7 +1166,10 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.DROPABLE;
         }
 
-        if (blockState.getMaterial().isSolid() || (blockState.getBlock() == Blocks.SNOW && blockState.get(SnowBlock.LAYERS) > 1))
+        if (blockState.getMaterial().isSolid()
+              || (blockState.getBlock() == Blocks.SNOW && blockState.get(SnowBlock.LAYERS) > 1)
+              || block instanceof BlockFloatingCarpet
+              || block instanceof CarpetBlock)
         {
             return SurfaceType.WALKABLE;
         }

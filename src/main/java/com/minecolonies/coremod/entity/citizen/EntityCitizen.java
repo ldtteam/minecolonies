@@ -32,6 +32,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
@@ -72,6 +73,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -248,7 +250,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.moveController = new MovementHandler(this);
         this.enablePersistence();
         this.setCustomNameVisible(MineColonies.getConfig().getCommon().alwaysRenderNameTag.get());
-        initTasks();
 
         entityStatemachine.addTransition(new TickingTransition<>(EntityState.INIT, () -> true, this::initialize, 40));
 
@@ -299,6 +300,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                     this.citizenDataView = colonyView.getCitizen(citizenId);
                     if (citizenDataView != null)
                     {
+                        initTasks();
                         return EntityState.ACTIVE_CLIENT;
                     }
                 }
@@ -309,6 +311,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
             if (citizenData != null && isAlive() && citizenColonyHandler.getColony() != null)
             {
+                initTasks();
                 return EntityState.ACTIVE_SERVER;
             }
         }
@@ -1472,6 +1475,9 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
             InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) posX, (int) posY, (int) posZ);
+
+            String deathCause = damageSource.getDeathMessage(this).setStyle(new Style()).getFormattedText().replaceFirst(this.getDisplayName().getFormattedText(), "Citizen");
+            citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(getPosition(), citizenData.getName(), deathCause));
         }
         super.onDeath(damageSource);
     }
@@ -1599,15 +1605,17 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public Team getTeam()
     {
+        if (world == null || world.isRemote)
+        {
+            return null;
+        }
+
         if (getCitizenColonyHandler().getColony() != null)
         {
             return getCitizenColonyHandler().getColony().getTeam();
         }
-        else
-        {
-            // Note: This function has always returned null on the client-side when the colony is not available yet.
-            return null;
-        }
+
+        return null;
     }
 
     @Override

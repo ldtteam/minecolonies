@@ -15,6 +15,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -78,6 +79,13 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
     public IModelType getModel()
     {
         return BipedModelType.CRAFTER;
+    }
+
+    @Override
+    public void serializeToView(final PacketBuffer buffer)
+    {
+        super.serializeToView(buffer);
+        StandardFactoryController.getInstance().serialize(buffer, rsDataStoreToken);
     }
 
     @Override

@@ -454,7 +454,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     }
 
     @Override
-    protected void updateBlockState()
+    public void updateBlockState()
     {
         // Do nothing
     }

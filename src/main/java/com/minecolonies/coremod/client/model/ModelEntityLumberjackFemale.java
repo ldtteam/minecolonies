@@ -154,8 +154,8 @@ public class ModelEntityLumberjackFemale extends CitizenModel<AbstractEntityCiti
         BasketBB.setRotationPoint(0.0F, 0.0F, 0.0F);
         bipedBody.addChild(BasketBB);
         BasketBB.setTextureOffset(0, 38).addBox(-2.0F, 11.0F, 6.0F, 4.0F, 1.0F, 1.0F, 0.0F, true);
-		
-		bipedHeadwear.showModel = false;
+
+        bipedHeadwear.showModel = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -11,6 +12,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -52,6 +54,16 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     private static final double BASE_XP_GAIN = 5;
 
     /**
+     * Furnace to fuel
+     */
+    private BlockPos fuelPos = null;
+
+    /**
+     * State before we decided to fuel
+     */
+    private IAIState preFuelState = null;
+
+    /**
      * Initialize the stone smeltery and add all his tasks.
      *
      * @param smelteryJob the job he has.
@@ -63,20 +75,12 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
           /*
            * Check if tasks should be executed.
            */
-          new AITarget(START_USING_FURNACE, this::fillUpFurnace, 1),
-          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, 5),
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::accelerateFurnaces, TICKS_SECOND)
-          );
-    }
-
-    @Override
-    protected int getActionsDoneUntilDumping()
-    {
-        if(currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
-        {
-            return 32;
-        }
-        return super.getActionsDoneUntilDumping();
+          new AITarget(START_USING_FURNACE, this::fillUpFurnace, TICKS_SECOND),
+          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, TICKS_SECOND),
+          new AITarget(ADD_FUEL_TO_FURNACE, this::addFuelToFurnace, TICKS_SECOND),
+          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::isFuelNeeded, this::checkFurnaceFuel, TICKS_SECOND),
+          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::accelerateFurnaces, TICKS_SECOND)
+        );
     }
 
     @Override
@@ -121,6 +125,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         if (currentTask == null)
         {
+            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
             return START_WORKING;
         }
 
@@ -216,6 +221,163 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             }
         }
         return getState();
+    }
+
+    /**
+     * Get the list of possible fuels, adjusted for any inputs/outputs of the current recipe to avoid interference
+     */
+    private List<ItemStack> getActivePossibleFuels()
+    {
+        final List<ItemStack> possibleFuels = getOwnBuilding().getAllowedFuel();
+        if (possibleFuels.isEmpty())
+        {
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(FURNACE_USER_NO_FUEL), ChatPriority.IMPORTANT));
+            }
+            return ImmutableList.of();
+        }
+
+        if(currentRecipeStorage != null)
+        {
+            possibleFuels.removeIf(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()));
+            // There is always only one input.
+            possibleFuels.removeIf(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getCleanedInput().get(0).getItemStack()));
+        }
+        return possibleFuels;
+    }
+
+    /**
+     * Quick check to see if there is a furnace that needs fuel
+     */
+    private boolean isFuelNeeded()
+    {
+        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+                if (!furnace.isBurning() && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)) && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE) 
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * Predicate for checking fuel in inventories
+     */
+    private static Predicate<ItemStack> isCorrectFuel(List<ItemStack> possibleFuels)
+    {
+        return  item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> ItemStackUtils.compareItemStacksIgnoreStackSize(candidate, item));
+    }
+
+    /**
+     * Check Fuel levels in the furnace
+     */
+    private IAIState checkFurnaceFuel()
+    {
+        final World world = getOwnBuilding().getColony().getWorld();
+        final List<ItemStack> possibleFuels = getActivePossibleFuels();
+
+        if(!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),  isCorrectFuel(possibleFuels)) && !InventoryUtils.hasItemInProvider(getOwnBuilding(), isCorrectFuel(possibleFuels)) && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)) && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE )
+        {
+            worker.getCitizenData().createRequestAsync(new StackList(possibleFuels, COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE, 1));
+            return getState();
+        }
+
+        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof FurnaceTileEntity)
+                {
+                    final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+                    if (!furnace.isBurning() && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)) && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE) 
+                    {
+                        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),  isCorrectFuel(possibleFuels)))
+                        {
+                            if(InventoryUtils.hasItemInProvider(getOwnBuilding(), isCorrectFuel(possibleFuels)))
+                            {
+                                needsCurrently = new Tuple<>(isCorrectFuel(possibleFuels), STACKSIZE);
+                                return GATHERING_REQUIRED_MATERIALS;
+                            }
+                            //We need to wait for Fuel to arrive
+                            return getState();
+                        }
+
+                        fuelPos = pos;
+                        if(preFuelState == null)
+                        {
+                            preFuelState = getState();
+                        }
+                        return ADD_FUEL_TO_FURNACE;
+                    }
+                }
+            }
+        }
+        return getState();
+    }
+
+    /**
+     * Add furnace fuel when necessary
+     * @return
+     */
+    private IAIState addFuelToFurnace()
+    {
+        final List<ItemStack> possibleFuels = getActivePossibleFuels();
+
+        if(!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),  isCorrectFuel(possibleFuels)))
+        {
+            if (InventoryUtils.hasItemInProvider(getOwnBuilding(), isCorrectFuel(possibleFuels)))
+            {
+                needsCurrently = new Tuple<>(isCorrectFuel(possibleFuels), STACKSIZE);
+                return GATHERING_REQUIRED_MATERIALS;
+            }
+            //We shouldn't get here, unless something changed between the checkFurnaceFuel and the addFueltoFurnace calls
+            preFuelState = null;
+            fuelPos = null;
+            return START_WORKING;
+        }   
+
+        if (fuelPos == null || walkToBlock(fuelPos))
+        {
+            return getState();
+        }
+
+        if (WorldUtil.isBlockLoaded(world, fuelPos))
+        {
+            final TileEntity entity = world.getTileEntity(fuelPos);
+            if (entity instanceof FurnaceTileEntity)
+            {
+                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+                //Stoke the furnaces
+                if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), isCorrectFuel(possibleFuels))
+                        && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
+                {
+                    InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
+                        worker.getInventoryCitizen(), isCorrectFuel(possibleFuels), STACKSIZE,
+                        new InvWrapper(furnace), FUEL_SLOT);
+                    if(preFuelState != null && preFuelState != ADD_FUEL_TO_FURNACE)
+                    {
+                        IAIState returnState = preFuelState;
+                        preFuelState = null;
+                        fuelPos = null;
+                        return returnState;
+                    } 
+                }
+            }
+        }
+
+        //Fueling is confused, start over. 
+        preFuelState = null;
+        fuelPos = null;
+        return START_WORKING;
     }
 
     private int getMaxUsableFurnaces()
@@ -339,7 +501,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                 resetValues();
                 currentRecipeStorage = null;
                 incrementActionsDoneAndDecSaturation();
-                return IDLE;
+                return INVENTORY_FULL;
             }
         }
 
@@ -361,12 +523,11 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     }
 
     /**
-     * Checks if the worker has enough fuel and/or smeltable to start smelting.
+     * Checks if the furnaces are ready to start smelting.
      *
-     * @param amountOfFuel the total amount of fuel.
      * @return START_USING_FURNACE if enough, else check for additional worker specific jobs.
      */
-    private IAIState checkIfAbleToSmelt(final int amountOfFuel, final boolean checkSmeltables)
+    private IAIState checkIfAbleToSmelt()
     {
         // We're fully committed currently, try again later.
         final int burning = countOfBurningFurnaces();
@@ -384,15 +545,8 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             {
                 if (!((FurnaceTileEntity) entity).isBurning())
                 {
-                    final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-                    
-                    if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
-                          || (hasFuelInFurnaceAndNoSmeltable(furnace) && checkSmeltables)
-                          || (amountOfFuel > 0 && hasNeitherFuelNorSmeltAble(furnace)))
-                    {
-                        walkTo = pos;
-                        return START_USING_FURNACE;
-                    }
+                    walkTo = pos;
+                    return START_USING_FURNACE;
                 }
             }
             else
@@ -441,21 +595,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         if (entity instanceof FurnaceTileEntity && currentRecipeStorage != null)
         {
             final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-            final List<ItemStack> possibleFuels = getOwnBuilding().getAllowedFuel();
-
-            possibleFuels.removeIf(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()));
-            // There is always only one input.
-            possibleFuels.removeIf(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getCleanedInput().get(0).getItemStack()));
-
-            //Stoke the furnaces
-            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, item)))
-                  && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
-            {
-                InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                  worker.getInventoryCitizen(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, item)), STACKSIZE,
-                  new InvWrapper(furnace), FUEL_SLOT);
-            }
-
             final int maxFurnaces = getMaxUsableFurnaces();
             final Predicate<ItemStack> smeltable = stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(currentRecipeStorage.getCleanedInput().get(0).getItemStack(), stack);
             final int smeltableInFurnaces = getExtendedCount(currentRecipeStorage.getCleanedInput().get(0).getItemStack());
@@ -554,14 +693,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             possibleFuels.removeIf(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getCleanedInput().get(0).getItemStack()));
         }
 
-        final int amountOfFuelInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> ItemStackUtils.compareItemStacksIgnoreStackSize(candidate, item)));
-        final int amountOfFuelInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> ItemStackUtils.compareItemStacksIgnoreStackSize(candidate, item)));
-
-        if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)))
-        {
-            worker.getCitizenData().createRequestAsync(new StackList(possibleFuels, COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE, 1));
-        }
-
         if (walkToBuilding())
         {
             setDelay(STANDARD_DELAY);
@@ -597,12 +728,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return RETRIEVING_END_PRODUCT_FROM_FURNACE;
         }
 
-        if (amountOfFuelInBuilding > 0 && amountOfFuelInInv == 0)
-        {
-            needsCurrently = new Tuple<>(item -> FurnaceTileEntity.isFuel(item) && possibleFuels.stream().anyMatch(candidate -> ItemStackUtils.compareItemStacksIgnoreStackSize(candidate, item)), STACKSIZE);
-            return GATHERING_REQUIRED_MATERIALS;
-        }
-
         // Safety net, should get caught removing things from the furnace.
         if(currentRequest != null && job.getMaxCraftingCount() > 0 && job.getCraftCounter() >= job.getMaxCraftingCount())
         {
@@ -610,7 +735,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             currentRecipeStorage = null;
             currentRequest = null;
             resetValues();
-            return START_WORKING;
+            return INVENTORY_FULL;
         }
 
         if (currentRequest != null && (currentRequest.getState() == RequestState.CANCELLED || currentRequest.getState() == RequestState.FAILED))
@@ -622,6 +747,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
-        return checkIfAbleToSmelt(amountOfFuelInBuilding + amountOfFuelInInv, true);
+        return checkIfAbleToSmelt();
     }
 }

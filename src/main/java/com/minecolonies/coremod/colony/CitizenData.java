@@ -20,6 +20,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
@@ -31,6 +32,7 @@ import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandl
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
@@ -605,7 +607,11 @@ public class CitizenData implements ICitizenData
     {
         if (getEntity().isPresent())
         {
-            return;
+            final Entity entity = getEntity().get();
+            if (entity.isAlive() && entity.addedToChunk && WorldUtil.isEntityBlockLoaded(entity.world, entity.getPosition()))
+            {
+                return;
+            }
         }
 
         colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), lastPosition, true);
@@ -705,6 +711,12 @@ public class CitizenData implements ICitizenData
         buf.writeCompoundTag(happinessCompound);
 
         buf.writeInt(status != null ? status.getId() : -1);
+
+        buf.writeBoolean(job != null);
+        if (job != null)
+        {
+            job.serializeToView(buf);
+        }
     }
 
     @Override
@@ -1181,12 +1193,12 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-        if (!colony.getBuildingManager().hasGuardBuildingNear(workBuilding))
+        if (workBuilding != null && !workBuilding.isGuardBuildingNear())
         {
             triggerInteraction(new SimpleNotificationInteraction(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.noguardnearwork"), ChatPriority.CHITCHAT));
         }
 
-        if (!colony.getBuildingManager().hasGuardBuildingNear(homeBuilding))
+        if (homeBuilding != null && !homeBuilding.isGuardBuildingNear())
         {
             triggerInteraction(new SimpleNotificationInteraction(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.noguardnearhome"), ChatPriority.CHITCHAT));
         }

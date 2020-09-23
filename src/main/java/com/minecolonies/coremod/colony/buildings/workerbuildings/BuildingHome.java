@@ -14,6 +14,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.client.gui.WindowHutCitizen;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenBornEvent;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
@@ -241,14 +242,14 @@ public class BuildingHome extends AbstractBuilding implements IBuildingBedProvid
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        if (childCreationTimer <= 0)
+        if (getBuildingLevel() > 0 && (childCreationTimer -= TWENTYFIVESEC) <= 0)
         {
             childCreationTimer =
-              (int) (colony.getWorld().rand.nextInt(500) + CHILD_SPAWN_INTERVAL * (1.0 - colony.getCitizenManager().getCurrentCitizenCount() / colony.getCitizenManager()
-                                                                                                                                                 .getMaxCitizens()));
+              (int) (colony.getWorld().rand.nextInt(500) + CHILD_SPAWN_INTERVAL * (1.0 - colony.getCitizenManager().getCurrentCitizenCount() / Math.max(4,
+                colony.getCitizenManager()
+                  .getMaxCitizens())));
             trySpawnChild();
         }
-        childCreationTimer -= TWENTYFIVESEC;
 
         if (getAssignedCitizen().size() < getMaxInhabitants() && !getColony().isManualHousing())
         {
@@ -354,6 +355,8 @@ public class BuildingHome extends AbstractBuilding implements IBuildingBedProvid
 
             LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild");
             colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), this.getPosition());
+
+            colony.getEventDescriptionManager().addEventDescription(new CitizenBornEvent(getPosition(), newCitizen.getName()));
         }
     }
 

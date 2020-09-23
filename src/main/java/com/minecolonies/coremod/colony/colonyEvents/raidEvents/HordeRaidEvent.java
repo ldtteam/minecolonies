@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.colony.colonyEvents.NBTTags.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.SMALL_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -440,8 +440,9 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     }
 
     @Override
-    public CompoundNBT writeToNBT(final CompoundNBT compound)
+    public CompoundNBT serializeNBT()
     {
+        CompoundNBT compound = new CompoundNBT();
         compound.putInt(TAG_EVENT_ID, id);
         BlockPosUtil.write(compound, TAG_SPAWN_POS, spawnPoint);
         ListNBT campFiresNBT = new ListNBT();
@@ -459,13 +460,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     }
 
     @Override
-    public void setCampFireTime(final int time)
-    {
-        campFireTime = time;
-    }
-
-    @Override
-    public void readFromNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         id = compound.getInt(TAG_EVENT_ID);
         setHorde(Horde.loadFromNbt(compound));
@@ -478,6 +473,12 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
         daysToGo = compound.getInt(TAG_DAYS_LEFT);
+    }
+
+    @Override
+    public void setCampFireTime(final int time)
+    {
+        campFireTime = time;
     }
 
     @Override

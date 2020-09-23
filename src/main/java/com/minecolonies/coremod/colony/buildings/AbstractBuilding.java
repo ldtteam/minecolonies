@@ -870,6 +870,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         cachedRotation = -1;
         ChunkDataHelper.claimColonyChunks(colony, true, this.getID(), this.getClaimRadius(newLevel));
+        recheckGuardBuildingNear = true;
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
         colony.getProgressManager().progressBuildBuilding(this,
@@ -902,6 +903,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         if (recheckGuardBuildingNear)
         {
             guardBuildingNear = colony.getBuildingManager().hasGuardBuildingNear(this);
+            recheckGuardBuildingNear = false;
         }
         return guardBuildingNear;
     }
@@ -979,6 +981,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
+        if (keepFood())
+        {
+            toKeep.put(ItemStackUtils.CAN_EAT, new Tuple<>(getBuildingLevel() * 2, true));
+        }
         final IRequestManager manager = colony.getRequestManager();
         toKeep.put(stack -> this.getOpenRequestsByCitizen().values().stream()
                               .anyMatch(list -> list.stream().filter(token -> manager.getRequestForToken(token) != null)
@@ -987,6 +993,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
           new Tuple<>(Integer.MAX_VALUE, true));
 
         return toKeep;
+    }
+
+    /**
+     * If the worker should keep some food in the inventory/building.
+     * @return true if so.
+     */
+    protected boolean keepFood()
+    {
+        return true;
     }
 
     /**

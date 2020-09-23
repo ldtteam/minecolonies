@@ -63,6 +63,7 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -299,7 +300,17 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * @param token
      * @return whether the recipe can bee added based on tokens.
      */
-    protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
+    protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken<?> token)
+    {
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+        return canRecipeBeAddedBasedOnTags(storage);
+    }
+
+    /**
+     * @param storage
+     * @return whether the recipe can bee added based on tokens.
+     */
+    protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IRecipeStorage storage)
     {
 
         ResourceLocation products = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(PRODUCT));
@@ -307,7 +318,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         ResourceLocation productsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(PRODUCT_EXCLUDED));
         ResourceLocation ingredientsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(INGREDIENT_EXCLUDED));
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
         if (storage == null)
         {
             return Optional.of(false);
@@ -617,8 +627,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public void removeRecipe(final IToken<?> token)
     {
-        recipes.remove(token);
-        markDirty();
+        if(recipes.remove(token))
+        {
+            markDirty();
+        }
+        else
+        {
+            Log.getLogger().warn("Failure to remove recipe, please tell the mod authors about this");
+            recipes.clear();
+        }
     }
 
     /**

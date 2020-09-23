@@ -71,6 +71,11 @@ public final class ModItemsInitializer
         ModItems.firearrow = new ItemFireArrow(new Item.Properties());
         ModItems.scepterBeekeeper = new ItemScepterBeekeeper(new Item.Properties());
 
+        ModItems.breadDough = new ItemBreadDough(new Item.Properties());
+        ModItems.cookieDough = new ItemCookieDough(new Item.Properties());
+        ModItems.cakeBatter = new ItemCakeBatter(new Item.Properties());
+        ModItems.rawPumpkinPie = new ItemRawPumpkinPie(new Item.Properties());
+
         ModItems.santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, EquipmentSlotType.HEAD, new Item.Properties());
         ModItems.irongate = new ItemGate(IRON_GATE, ModBlocks.blockIronGate, ModCreativeTabs.MINECOLONIES, new Item.Properties());
         ModItems.woodgate = new ItemGate(WOODEN_GATE, ModBlocks.blockWoodenGate, ModCreativeTabs.MINECOLONIES, new Item.Properties());
@@ -102,6 +107,11 @@ public final class ModItemsInitializer
         registry.register(ModItems.pharaoscepter);
         registry.register(ModItems.firearrow);
         registry.register(ModItems.scepterBeekeeper);
+
+        registry.register(ModItems.breadDough);
+        registry.register(ModItems.cookieDough);
+        registry.register(ModItems.cakeBatter);
+        registry.register(ModItems.rawPumpkinPie);
 
         registry.register(ModItems.pirateHelmet_1);
         registry.register(ModItems.pirateChest_1);
