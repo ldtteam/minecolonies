@@ -65,7 +65,7 @@ public class BuildToolPlaceMessage implements IMessage
     private BlockPos pos;
     private boolean  isHut;
     private boolean  mirror;
-    public BlockPos builder = null;
+    public BlockPos builder = BlockPos.ZERO;
 
     /**
      * Empty constructor used when registering the
