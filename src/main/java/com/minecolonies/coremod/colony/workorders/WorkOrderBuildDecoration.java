@@ -95,7 +95,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      */
     public String getName()
     {
-        return workOrderName;
+        return workOrderName.replace("schematics/decorations/","");
     }
 
     /**
@@ -243,18 +243,18 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         else
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                                                                          AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
+                AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
 
             if (citizen.getName().isEmpty())
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, getStructureName());
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, this.getName());
             }
             else
             {
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                   COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC,
                   citizen.getName(),
-                  getStructureName());
+                  this.getName());
             }
         }
 
