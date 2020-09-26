@@ -45,14 +45,14 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-        if (compound.keySet().contains(TAG_TREE))
+        @NotNull final CompoundNBT treeTag = new CompoundNBT();
+
+        if (tree != null)
         {
-            tree = Tree.read(compound.getCompound(TAG_TREE));
-            if (!tree.isTree())
-            {
-                tree = null;
-            }
+            tree.write(treeTag);
         }
+
+        compound.put(TAG_TREE, treeTag);
         return compound;
     }
 
@@ -80,14 +80,14 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        @NotNull final CompoundNBT treeTag = new CompoundNBT();
-
-        if (tree != null)
+        if (compound.keySet().contains(TAG_TREE))
         {
-            tree.write(treeTag);
+            tree = Tree.read(compound.getCompound(TAG_TREE));
+            if (!tree.isTree())
+            {
+                tree = null;
+            }
         }
-
-        compound.put(TAG_TREE, treeTag);
     }
 
     @Override
