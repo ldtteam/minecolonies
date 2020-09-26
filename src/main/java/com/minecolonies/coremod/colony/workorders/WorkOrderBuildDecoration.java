@@ -95,7 +95,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      */
     public String getName()
     {
-        return workOrderName.replace("schematics/decorations/","");
+        return workOrderName.replaceAll("schematics/(?:decorations/)?","");
     }
 
     /**
