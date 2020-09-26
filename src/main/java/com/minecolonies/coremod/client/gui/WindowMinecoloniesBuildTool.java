@@ -72,7 +72,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         if (structureName.isHut())
             Network.getNetwork().sendToServer(msg);
         else
-            Minecraft.getInstance().enqueue(new WindowBuildDecoration(msg, structureName)::open);
+            Minecraft.getInstance().enqueue(new WindowBuildDecoration(msg, Settings.instance.getPosition(), structureName)::open);
     }
 
     @Override

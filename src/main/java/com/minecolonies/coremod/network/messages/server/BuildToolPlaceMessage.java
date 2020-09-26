@@ -105,8 +105,6 @@ public class BuildToolPlaceMessage implements IMessage
         this.state = state;
     }
 
-    public BlockPos getPos() { return pos; }
-
     /**
      * Reads this packet from a {@link PacketBuffer}.
      *
@@ -310,7 +308,10 @@ public class BuildToolPlaceMessage implements IMessage
             }
 
             WorkOrderBuildDecoration woDeco = new WorkOrderBuildDecoration(schem, woName, rotation, buildPos, mirror);
-            if (!builder.equals(BlockPos.ZERO)) woDeco.setClaimedBy(builder);
+            if (!builder.equals(BlockPos.ZERO))
+            {
+                woDeco.setClaimedBy(builder);
+            }
 
             colony.getWorkManager().addWorkOrder(woDeco, false);
         }

@@ -84,13 +84,19 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private final StructureName structureName;
 
     /**
+     * The position of the decoration anchor
+     */
+    private final BlockPos structurePos;
+
+    /**
      * Constructs the decoration build confirmation dialog
      */
-    public WindowBuildDecoration(BuildToolPlaceMessage msg, StructureName structure)
+    public WindowBuildDecoration(BuildToolPlaceMessage msg, BlockPos pos, StructureName structure)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         placementMessage = msg;
         structureName = structure;
+        structurePos = pos;
 
         registerButton(BUTTON_BUILD, this::confirmedBuild);
         registerButton(BUTTON_CANCEL, this::close);
@@ -117,7 +123,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private void updateBuilders()
     {
         IColonyView colony = (IColonyView) IColonyManager.getInstance()
-                .getIColony(Minecraft.getInstance().world, placementMessage.getPos());
+                .getIColony(Minecraft.getInstance().world, structurePos);
 
         if (colony == null)
         {
@@ -174,7 +180,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
 
         final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(
                 world,
-                placementMessage.getPos(),
+                structurePos,
                 structureName.toString(),
                 new PlacementSettings(),
                 true);
