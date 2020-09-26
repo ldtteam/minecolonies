@@ -53,11 +53,19 @@ public class EventDescriptionManager implements IEventDescriptionManager
             eventDescs.removeFirst();
         }
         eventDescs.add(colonyEventDescription);
-        colony.getBuildingManager().getTownHall().markDirty();
+        if (colony.getBuildingManager().getTownHall() != null)
+        {
+            colony.getBuildingManager().getTownHall().markDirty();
+        }
+        else
+        {
+            colony.markDirty();
+        }
     }
 
     @Override
-    public List<IColonyEventDescription> getEventDescriptions() {
+    public List<IColonyEventDescription> getEventDescriptions()
+    {
         return eventDescs;
     }
 
