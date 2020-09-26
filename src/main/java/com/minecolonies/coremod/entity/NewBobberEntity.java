@@ -492,12 +492,13 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             }
             else if (this.ticksCatchable > 0)
             {
-                final LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld) this.world))
-                                                                  .withParameter(LootParameters.TOOL, this.getAngler().getHeldItemMainhand())
-                                                                  .withParameter(LootParameters.field_237457_g_, getAngler().getPositionVec())
+                LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.world))
+                                                            .withParameter(LootParameters.field_237457_g_, this.getPositionVec())
+                                                            .withParameter(LootParameters.TOOL, this.getAngler().getHeldItemMainhand())
+                                                            .withParameter(LootParameters.THIS_ENTITY, this)
+                                                            .withRandom(this.rand)
+                                                            .withLuck((float)this.luck);
 
-                                                                  .withRandom(this.rand)
-                                                                  .withLuck((float) this.luck);
                 lootcontext$builder.withParameter(LootParameters.KILLER_ENTITY, this.angler).withParameter(LootParameters.THIS_ENTITY, this);
                 final LootTable loottable = this.world.getServer().getLootTableManager().getLootTableFromLocation(LootTables.GAMEPLAY_FISHING);
                 final List<ItemStack> list = loottable.generate(lootcontext$builder.build(LootParameterSets.FISHING));
