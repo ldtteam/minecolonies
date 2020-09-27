@@ -449,14 +449,15 @@ public class Colony implements IColony
         lastOnlineTime = currTime;
 
         updateChildTime();
-        checkForUnload();
+        updateChunkLoadTimer();
         return false;
     }
 
     /**
      * Check if we can unload the colony now.
+     * Update chunk unload timer and releases chunks when it hits 0.
      */
-    private void checkForUnload()
+    private void updateChunkLoadTimer()
     {
         for (final ServerPlayerEntity sub : getPackageManager().getCloseSubscribers())
         {
@@ -502,7 +503,7 @@ public class Colony implements IColony
     private boolean worldTickUnloaded()
     {
         updateChildTime();
-        checkForUnload();
+        updateChunkLoadTimer();
         return false;
     }
 
