@@ -23,6 +23,7 @@ public final class PlacementHandlerInitializer
         PlacementHandlers.handlers.add(new PlacementHandlers.AirPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.FirePlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.GrassPlacementHandler());
+        PlacementHandlers.handlers.add(new NetherrackPlacementHandler());
         PlacementHandlers.handlers.add(new GatePlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.DoorPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.BedPlacementHandler());
