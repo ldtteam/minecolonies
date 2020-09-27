@@ -189,13 +189,20 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             Vector3d vec3d = new Vector3d(citizen.getPosX() - orb.getPosX(), citizen.getPosY() + (double) this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
             double d1 = vec3d.lengthSquared();
 
-            if (d1 < 1.0D || counterMovedXp > MAX_XP_PICKUP_ATTEMPTS)
+            if (d1 < 1.0D)
+            {
+                addExperience(orb.getXpValue() / 2.0D);
+                orb.remove();
+                counterMovedXp = 0;
+            }
+            else if (counterMovedXp > MAX_XP_PICKUP_ATTEMPTS)
             {
                 addExperience(orb.getXpValue() / 2.0D);
                 orb.remove();
                 counterMovedXp = 0;
                 return;
             }
+
             double d2 = 1.0D - Math.sqrt(d1) / 8.0D;
             orb.setMotion(orb.getMotion().add(vec3d.normalize().scale(d2 * d2 * 0.1D)));
             movedXp = true;
