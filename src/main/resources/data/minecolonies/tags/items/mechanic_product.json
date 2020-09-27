@@ -17,6 +17,8 @@
     "minecraft:heavy_weighted_pressure_plate",
     "minecraft:sticky_piston",
     "minecraft:trapped_chest",
-    "minecraft:ender_chest"
+    "minecraft:ender_chest",
+    "minecraft:lever",
+    "minecraft:daylight_detector"
   ]
 }
