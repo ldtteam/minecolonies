@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -208,7 +209,7 @@ public class Level
      * @param rotation the rotation of the node.
      * @param node     the node to close.
      */
-    public void closeNextNode(final int rotation, final Node node)
+    public void closeNextNode(final int rotation, final Node node, final World world)
     {
         final Node tempNode = node == null ? openNodes.peek() : node;
         final List<Vec2i> nodeCenterList = new ArrayList<>(3);
@@ -244,6 +245,12 @@ public class Level
             {
                 continue;
             }
+
+            if (!world.getFluidState(new BlockPos(pos.getX(), getDepth() + 2, pos.getZ())).isEmpty())
+            {
+                continue;
+            }
+
             final Node tempNodeToAdd = new Node(pos.getX(), pos.getZ(), new Vec2i(tempNode.getX(), tempNode.getZ()));
             tempNodeToAdd.setStyle(getRandomNodeType());
             nodes.put(pos, tempNodeToAdd);
