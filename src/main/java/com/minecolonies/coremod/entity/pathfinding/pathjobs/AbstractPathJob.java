@@ -1098,7 +1098,8 @@ public abstract class AbstractPathJob implements Callable<Path>
                          || block.getBlock() instanceof PressurePlateBlock
                          || block.getBlock() instanceof BlockDecorationController
                          || block.getBlock() instanceof AbstractSignBlock
-                         || block.getBlock() instanceof VineBlock;
+                         || block.getBlock() instanceof VineBlock
+                         || block.getBlock() instanceof BannerBlock;
             }
             else if (block.getBlock() instanceof FireBlock)
             {
