@@ -46,10 +46,7 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
@@ -208,10 +205,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         builders.clear();
         builders.add(new Tuple<>(LanguageHandler.format("com.minecolonies.coremod.job.Builder") + ":", BlockPos.ZERO));
         builders.addAll(building.getColony().getBuildings().stream()
-                          .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
-                                             && !(build instanceof BuildingMiner.View))
-                          .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
-                          .collect(Collectors.toList()));
+                .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
+                        && !(build instanceof BuildingMiner.View))
+                .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
+                .sorted(Comparator.comparing(item -> item.getB().distanceSq(building.getPosition())))
+                .collect(Collectors.toList()));
 
         initBuilderNavigation();
     }

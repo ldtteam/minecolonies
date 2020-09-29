@@ -1,6 +1,8 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.nbt.CompoundNBT;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Citizen disease handler interface.
@@ -44,4 +46,9 @@ public interface ICitizenDiseaseHandler
      * Cure the citizen.
      */
     void cure();
+
+    /**
+     * Called when two citizens collide.
+     */
+    void onCollission(@NotNull final AbstractEntityCitizen citizen);
 }

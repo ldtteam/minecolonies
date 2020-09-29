@@ -1440,6 +1440,16 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
     }
 
+    @Override
+    protected void collideWithEntity(final Entity entity)
+    {
+        super.collideWithEntity(entity);
+        if (!world.isRemote && entity instanceof AbstractEntityCitizen)
+        {
+            getCitizenDiseaseHandler().onCollission((AbstractEntityCitizen) entity);
+        }
+    }
+
     /**
      * Called when the mob's health reaches 0.
      *
@@ -1473,7 +1483,8 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
             InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
 
-            final String deathCause = new StringTextComponent(damageSource.getDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
+            final String deathCause =
+              new StringTextComponent(damageSource.getDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
             citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(getPosition(), citizenData.getName(), deathCause));
         }
         super.onDeath(damageSource);

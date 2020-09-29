@@ -67,7 +67,7 @@ public class WorkOrderView
      */
     public String get()
     {
-        return value;
+        return value.replaceAll("schematics/(?:decorations/)?", "");
     }
 
     /**

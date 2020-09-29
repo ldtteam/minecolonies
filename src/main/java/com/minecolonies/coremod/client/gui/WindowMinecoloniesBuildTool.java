@@ -17,7 +17,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
@@ -59,16 +58,21 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     public void place(final StructureName structureName)
     {
         final BlockPos offset =Settings.instance.getActiveStructure().getPrimaryBlockOffset();
-        ;
         final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
-        Network.getNetwork().sendToServer(new BuildToolPlaceMessage(
-          structureName.toString(),
-          structureName.toString(),
-          Settings.instance.getPosition(),
-          Settings.instance.getRotation(),
-          structureName.isHut(),
-          Settings.instance.getMirror(),
-          state));
+
+        BuildToolPlaceMessage msg = new BuildToolPlaceMessage(
+                structureName.toString(),
+                structureName.toString(),
+                Settings.instance.getPosition(),
+                Settings.instance.getRotation(),
+                structureName.isHut(),
+                Settings.instance.getMirror(),
+                state);
+
+        if (structureName.isHut())
+            Network.getNetwork().sendToServer(msg);
+        else
+            Minecraft.getInstance().enqueue(new WindowBuildDecoration(msg, Settings.instance.getPosition(), structureName)::open);
     }
 
     @Override

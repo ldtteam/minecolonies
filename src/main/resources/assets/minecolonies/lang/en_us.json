@@ -29,6 +29,9 @@
   "minecolonies.config.generatesupplyloot": "Supply loot",
   "minecolonies.config.generatesupplyloot.comment": "Whether to generate supply ship/camps in chests occasionally. [Default: true]",
 
+  "minecolonies.config.forceloadcolony": "Force Load Colony",
+  "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, the entire colony should be kept loaded. [Default: false]",
+
   "minecolonies.config.listofplantables": "Florist Flowers",
   "minecolonies.config.listofplantables.comment": "The items and item-tags that the Florist can plant.",
 
@@ -548,7 +551,9 @@
   "com.minecolonies.coremod.gui.townhall.tp": "Do you really want to teleport to %s? [YES]",
 
   "com.minecolonies.coremod.gui.warehouse.tostonemason": "Deliver to Stonemason:",
-  "com.minecolonies.coremod.workorderadded": "Build Request Created!",
+  "com.minecolonies.coremod.workorderadded": "Build request created!",
+  "com.minecolonies.coremod.decoorderadded": "Decoration request created!",
+
   "com.minecolonies.coremod.gui.hiring.on": "Manual",
   "com.minecolonies.coremod.gui.requestfert.on": "Enabled",
   "com.minecolonies.coremod.gui.requestfert.off": "Disabled",
