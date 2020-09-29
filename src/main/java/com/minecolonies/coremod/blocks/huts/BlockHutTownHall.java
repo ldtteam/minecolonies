@@ -76,7 +76,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
          */
         if (worldIn.isRemote)
         {
-            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimensionKey().func_240901_a_(), pos);
+            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimensionKey().getLocation(), pos);
 
             if (building != null
                   && building.getColony() != null

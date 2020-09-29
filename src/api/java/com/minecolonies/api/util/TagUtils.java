@@ -18,10 +18,10 @@ public final class TagUtils
     }
 
     public static Optional<ITag<Item>> getItem(final ResourceLocation resourceLocation) {
-        return Optional.ofNullable(ItemTags.getCollection().func_241833_a().getOrDefault(resourceLocation, null));
+        return Optional.ofNullable(ItemTags.getCollection().getIDTagMap().getOrDefault(resourceLocation, null));
     }
 
     public static Optional<ITag<Block>> getBlock(final ResourceLocation resourceLocation) {
-        return Optional.ofNullable(BlockTags.getCollection().func_241833_a().getOrDefault(resourceLocation, null));
+        return Optional.ofNullable(BlockTags.getCollection().getIDTagMap().getOrDefault(resourceLocation, null));
     }
 }

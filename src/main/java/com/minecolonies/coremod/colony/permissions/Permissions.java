@@ -721,7 +721,7 @@ public class Permissions implements IPermissions
                     final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                     if (colonyCap != null)
                     {
-                        if (colonyCap.getOwningColony() == colony.getID() && world.getDimensionKey().func_240901_a_() == colony.getDimension())
+                        if (colonyCap.getOwningColony() == colony.getID() && world.getDimensionKey().getLocation() == colony.getDimension())
                         {
                             colony.getPackageManager().addCloseSubscriber(playerEntity);
                             colony.getPackageManager().updateSubscribers();

@@ -77,11 +77,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     {
         if (ctx.getWorld().isRemote)
         {
-            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !ctx.getWorld().getDimensionKey().func_240901_a_().equals(World.OVERWORLD.func_240901_a_()))
+            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !ctx.getWorld().getDimensionKey().getLocation().equals(World.OVERWORLD.getLocation()))
             {
                 return ActionResultType.FAIL;
             }
-            placeSupplyShip(ctx.getWorld().func_230315_m_().func_242725_p(), ctx.getPos(), ctx.getPlayer().getHorizontalFacing());
+            placeSupplyShip(ctx.getWorld().getDimensionType().getEffects(), ctx.getPos(), ctx.getPlayer().getHorizontalFacing());
         }
 
         return ActionResultType.FAIL;
@@ -94,12 +94,12 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         final ItemStack stack = playerIn.getHeldItem(hand);
         if (worldIn.isRemote)
         {
-            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !worldIn.getDimensionKey().func_240901_a_().equals(World.OVERWORLD.func_240901_a_()))
+            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !worldIn.getDimensionKey().getLocation().equals(World.OVERWORLD.getLocation()))
             {
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return new ActionResult<>(ActionResultType.FAIL, stack);
             }
-            placeSupplyShip(worldIn.func_230315_m_().func_242725_p(), null, playerIn.getHorizontalFacing());
+            placeSupplyShip(worldIn.getDimensionType().getEffects(), null, playerIn.getHorizontalFacing());
         }
 
         return new ActionResult<>(ActionResultType.FAIL, stack);
@@ -113,7 +113,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private void placeSupplyShip(ResourceLocation dim, @Nullable final BlockPos pos, @NotNull final Direction direction)
     {
-        final String name = dim.equals(DimensionType.THE_NETHER.func_240901_a_())
+        final String name = dim.equals(DimensionType.THE_NETHER.getLocation())
                 ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
                 : SUPPLY_SHIP_STRUCTURE_NAME;
 
@@ -203,7 +203,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private static void checkFluidAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final PlayerEntity placer)
     {
-        final boolean isOverworld = world.func_230315_m_().func_242725_p().equals(DimensionType.OVERWORLD.func_240901_a_());
+        final boolean isOverworld = world.getDimensionType().getEffects().equals(DimensionType.OVERWORLD.getLocation());
         final boolean isWater = BlockUtils.isWater(world.getBlockState(pos));
         final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
         if (!isWater && isOverworld)

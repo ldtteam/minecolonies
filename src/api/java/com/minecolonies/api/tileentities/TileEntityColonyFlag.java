@@ -82,7 +82,7 @@ public class TileEntityColonyFlag extends TileEntity
         // Structurize will cause the second condition to be false
         if (world != null && world.getDimensionKey() != null)
         {
-            IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, world.getDimensionKey().func_240901_a_());
+            IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, world.getDimensionKey().getLocation());
             if (colony != null && this.flag != colony.getColonyFlag())
             {
                 this.flag = colony.getColonyFlag();

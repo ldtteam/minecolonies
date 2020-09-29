@@ -261,7 +261,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getColonyByDimension(final int id, final ResourceLocation dimension)
     {
-        final World world = ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.func_240903_a_(Registry.WORLD_KEY, dimension));
+        final World world = ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, dimension));
         final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
         if (cap == null)
         {
@@ -333,7 +333,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public IColony getColonyByPosFromDim(final ResourceLocation dim, @NotNull final BlockPos pos)
     {
-        final World w = ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.func_240903_a_(Registry.WORLD_KEY, dim));
+        final World w = ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, dim));
         return getColonyByPosFromWorld(w, pos);
     }
 
@@ -468,7 +468,7 @@ public final class ColonyManager implements IColonyManager
         {
             return null;
         }
-        return getColonyView(id, w.getDimensionKey().func_240901_a_());
+        return getColonyView(id, w.getDimensionKey().getLocation());
     }
 
     /**
@@ -505,7 +505,7 @@ public final class ColonyManager implements IColonyManager
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
         if (cap.getOwningColony() != 0)
         {
-            return getColonyView(cap.getOwningColony(), w.getDimensionKey().func_240901_a_());
+            return getColonyView(cap.getOwningColony(), w.getDimensionKey().getLocation());
         }
         else if (!cap.getAllCloseColonies().isEmpty())
         {
@@ -514,8 +514,8 @@ public final class ColonyManager implements IColonyManager
 
             for (final int cId : cap.getAllCloseColonies())
             {
-                final IColonyView c = getColonyView(cId, w.getDimensionKey().func_240901_a_());
-                if (c != null && c.getDimension().equals(w.getDimensionKey().func_240901_a_()))
+                final IColonyView c = getColonyView(cId, w.getDimensionKey().getLocation());
+                if (c != null && c.getDimension().equals(w.getDimensionKey().getLocation()))
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -531,11 +531,11 @@ public final class ColonyManager implements IColonyManager
         @Nullable IColonyView closestColony = null;
         long closestDist = Long.MAX_VALUE;
 
-        if (colonyViews.containsKey(w.getDimensionKey().func_240901_a_()))
+        if (colonyViews.containsKey(w.getDimensionKey().getLocation()))
         {
-            for (@NotNull final IColonyView c : colonyViews.get(w.getDimensionKey().func_240901_a_()))
+            for (@NotNull final IColonyView c : colonyViews.get(w.getDimensionKey().getLocation()))
             {
-                if (c.getDimension().equals(w.getDimensionKey().func_240901_a_()) && c.getCenter() != null)
+                if (c.getDimension().equals(w.getDimensionKey().getLocation()) && c.getCenter() != null)
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -574,7 +574,7 @@ public final class ColonyManager implements IColonyManager
             for (final int cId : cap.getAllCloseColonies())
             {
                 final IColony c = getColonyByWorld(cId, w);
-                if (c != null && c.getDimension().equals(w.getDimensionKey().func_240901_a_()))
+                if (c != null && c.getDimension().equals(w.getDimensionKey().getLocation()))
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -592,7 +592,7 @@ public final class ColonyManager implements IColonyManager
 
         for (@NotNull final IColony c : getColonies(w))
         {
-            if (c.getDimension().equals(w.getDimensionKey().func_240901_a_()))
+            if (c.getDimension().equals(w.getDimensionKey().getLocation()))
             {
                 final long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
@@ -635,7 +635,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getIColonyByOwner(@NotNull final World w, final UUID owner)
     {
-        return w.isRemote ? getColonyViewByOwner(owner, w.getDimensionKey().func_240901_a_()) : getColonyByOwner(owner);
+        return w.isRemote ? getColonyViewByOwner(owner, w.getDimensionKey().getLocation()) : getColonyByOwner(owner);
     }
 
     /**

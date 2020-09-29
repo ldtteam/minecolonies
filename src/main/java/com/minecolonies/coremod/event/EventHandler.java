@@ -387,7 +387,7 @@ public class EventHandler
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
             if (cap != null && cap.getOwningColony() != 0)
             {
-                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), player.world.getDimensionKey().func_240901_a_());
+                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), player.world.getDimensionKey().getLocation());
                 if (colony != null)
                 {
                     colony.addVisitingPlayer(player);
@@ -482,7 +482,7 @@ public class EventHandler
 
             final IColony colony = IColonyManager.getInstance()
                                      .getColonyByDimension(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_COLONY_ID),
-                                       world.getDimensionKey().func_240901_a_());
+                                       world.getDimensionKey().getLocation());
             if (colony != null)
             {
                 colony.getEventManager().onTileEntityBreak(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_EVENT_ID), spawner);
@@ -657,7 +657,7 @@ public class EventHandler
      */
     public static boolean onBlockHutPlaced(@NotNull final World world, @NotNull final PlayerEntity player, final Block block, final BlockPos pos)
     {
-        if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !world.getDimensionKey().func_240901_a_().equals(World.OVERWORLD.func_240901_a_()))
+        if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !world.getDimensionKey().getLocation().equals(World.OVERWORLD.getLocation()))
         {
             LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_IN_OTHER_DIM);
             return false;

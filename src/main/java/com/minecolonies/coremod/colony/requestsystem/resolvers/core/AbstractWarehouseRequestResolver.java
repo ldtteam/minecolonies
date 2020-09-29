@@ -215,7 +215,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                 final ItemStack deliveryStack = matchingStack.copy();
                 completedRequest.addDelivery(deliveryStack);
 
-                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, tuple.getB(), wareHouse.getWorld().getDimensionKey().func_240901_a_());
+                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, tuple.getB(), wareHouse.getWorld().getDimensionKey().getLocation());
 
                 final Delivery delivery =
                   new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack, getDefaultDeliveryPriority(true));

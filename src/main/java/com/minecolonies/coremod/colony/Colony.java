@@ -322,7 +322,7 @@ public class Colony implements IColony
         this.id = id;
         if (world != null)
         {
-            this.dimensionId = world.getDimensionKey().func_240901_a_();
+            this.dimensionId = world.getDimensionKey().getLocation();
             onWorldLoad(world);
             checkOrCreateTeam();
         }
@@ -942,7 +942,7 @@ public class Colony implements IColony
     @Override
     public void onWorldLoad(@NotNull final World w)
     {
-        if (w.getDimensionKey().func_240901_a_().equals(dimensionId))
+        if (w.getDimensionKey().getLocation().equals(dimensionId))
         {
             this.world = w;
             // Register a new event handler
@@ -1165,7 +1165,7 @@ public class Colony implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        if (!w.getDimensionKey().func_240901_a_().equals(this.dimensionId))
+        if (!w.getDimensionKey().getLocation().equals(this.dimensionId))
         {
             return false;
         }

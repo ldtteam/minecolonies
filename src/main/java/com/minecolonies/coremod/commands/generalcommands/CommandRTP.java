@@ -83,7 +83,7 @@ public class CommandRTP implements IMCCommand
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.notallowed");
             return false;
         }
-        else if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !context.getSource().getWorld().getDimensionKey().func_240901_a_().equals(World.OVERWORLD.func_240901_a_()))
+        else if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !context.getSource().getWorld().getDimensionKey().getLocation().equals(World.OVERWORLD.getLocation()))
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.wrongdim");
             return false;

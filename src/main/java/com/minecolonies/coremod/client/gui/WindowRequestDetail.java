@@ -153,7 +153,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         {
             final String labelText = "§r§0" + s;
             // Temporary workaround until Labels support multi-line rendering
-            final List<ITextProperties> multilineLabelStrings = mc.fontRenderer.func_238420_b_().func_238362_b_(new StringTextComponent(labelText), availableLabelWidth, Style.EMPTY);
+            final List<ITextProperties> multilineLabelStrings = mc.fontRenderer.getCharacterManager().func_238362_b_(new StringTextComponent(labelText), availableLabelWidth, Style.EMPTY);
             for (final ITextProperties splitLabelText : multilineLabelStrings)
             {
                 final Label descriptionLabel = new Label();
@@ -179,13 +179,13 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             logo.setImage(request.getDisplayIcon());
         }
 
-        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().func_240901_a_());
+        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().getLocation());
         findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getRequesterDisplayName(view.getRequestManager(), request).getString());
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getLocation().toString());
 
 
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().func_240901_a_());
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().getLocation());
         if (colony == null)
         {
             Log.getLogger().warn("---Colony Null in WindowRequestDetail---");

@@ -65,7 +65,7 @@ public class ColonyViewRemoveWorkOrderMessage implements IMessage
     {
         if (Minecraft.getInstance().world != null)
         {
-            IColonyManager.getInstance().handleColonyViewRemoveWorkOrderMessage(colonyId, workOrderId, Minecraft.getInstance().world.getDimensionKey().func_240901_a_());
+            IColonyManager.getInstance().handleColonyViewRemoveWorkOrderMessage(colonyId, workOrderId, Minecraft.getInstance().world.getDimensionKey().getLocation());
         }
     }
 }

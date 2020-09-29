@@ -183,7 +183,7 @@ public class MineColonies
     @SubscribeEvent
     public static void registerAttributes(RegistryEvent.Register<Attribute> event)
     {
-        RaiderMobUtils.MOB_ATTACK_DAMAGE.setRegistryName(Constants.MOD_ID, RaiderMobUtils.MOB_ATTACK_DAMAGE.func_233754_c_());
+        RaiderMobUtils.MOB_ATTACK_DAMAGE.setRegistryName(Constants.MOD_ID, RaiderMobUtils.MOB_ATTACK_DAMAGE.getAttributeName());
         event.getRegistry().register(RaiderMobUtils.MOB_ATTACK_DAMAGE);
     }
 

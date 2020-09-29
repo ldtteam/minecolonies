@@ -68,24 +68,24 @@ public final class BackUpHelper
             ServerLifecycleHooks.getCurrentServer().worlds.keySet().forEach(dimensionType -> {
                 for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
                 {
-                    @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.func_240901_a_()));
-                    @NotNull final File fileDeleted = new File(saveDir, String.format(FILENAME_COLONY_DELETED, i, dimensionType.func_240901_a_()));
+                    @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.getLocation()));
+                    @NotNull final File fileDeleted = new File(saveDir, String.format(FILENAME_COLONY_DELETED, i, dimensionType.getLocation()));
                     if (file.exists())
                     {
                         // mark existing files
-                        if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType.func_240901_a_()) == null)
+                        if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType.getLocation()) == null)
                         {
-                            markColonyDeleted(i, dimensionType.func_240901_a_());
-                            addToZipFile(String.format(FILENAME_COLONY_DELETED, i, dimensionType.func_240901_a_()), zos, saveDir);
+                            markColonyDeleted(i, dimensionType.getLocation());
+                            addToZipFile(String.format(FILENAME_COLONY_DELETED, i, dimensionType.getLocation()), zos, saveDir);
                         }
                         else
                         {
-                            addToZipFile(String.format(FILENAME_COLONY, i, dimensionType.func_240901_a_()), zos, saveDir);
+                            addToZipFile(String.format(FILENAME_COLONY, i, dimensionType.getLocation()), zos, saveDir);
                         }
                     }
                     else if (fileDeleted.exists())
                     {
-                        addToZipFile(String.format(FILENAME_COLONY_DELETED, i, dimensionType.func_240901_a_()), zos, saveDir);
+                        addToZipFile(String.format(FILENAME_COLONY_DELETED, i, dimensionType.getLocation()), zos, saveDir);
                     }
                 }
             });
@@ -116,14 +116,14 @@ public final class BackUpHelper
             for (int i = 1; i <= MAX_COLONY_LOAD && missingFilesInRow < 5; i++)
             {
                 // Check non-deleted files for colony id + dim
-                @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.func_240901_a_()));
+                @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.getLocation()));
                 if (file.exists())
                 {
                     missingFilesInRow = 0;
                     // Load colony if null
-                    if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType.func_240901_a_()) == null)
+                    if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType.getLocation()) == null)
                     {
-                        loadColonyBackup(i, dimensionType.func_240901_a_(), false, false);
+                        loadColonyBackup(i, dimensionType.getLocation(), false, false);
                     }
                 }
                 else
@@ -288,10 +288,10 @@ public final class BackUpHelper
         ServerLifecycleHooks.getCurrentServer().worlds.keySet().forEach(dimensionType -> {
             for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
             {
-                @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.func_240901_a_()));
+                @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.getLocation()));
                 if (file.exists())
                 {
-                    loadColonyBackup(i, dimensionType.func_240901_a_(), false, false);
+                    loadColonyBackup(i, dimensionType.getLocation(), false, false);
                 }
             }
         });
@@ -330,7 +330,7 @@ public final class BackUpHelper
         else
         {
             Log.getLogger().warn("Colony:" + colonyId + " is missing, loading backup!");
-            final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.func_240903_a_(Registry.WORLD_KEY, dimension));
+            final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, dimension));
             colony = Colony.loadColony(compound, colonyWorld);
             if (colony == null)
             {

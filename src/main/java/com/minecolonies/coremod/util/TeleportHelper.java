@@ -124,7 +124,7 @@ public final class TeleportHelper
             position = colony.getCenter();
         }
 
-        final ServerWorld world = player.getServer().getWorld(RegistryKey.func_240903_a_(Registry.WORLD_KEY, colony.getDimension()));
+        final ServerWorld world = player.getServer().getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, colony.getDimension()));
 
 
         ChunkPos chunkpos = new ChunkPos(position);

@@ -162,7 +162,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
                 switch (placementErrorType)
                 {
                     case NOT_WATER:
-                        final String dim = Minecraft.getInstance().world.func_230315_m_().func_242725_p().equals(DimensionType.THE_NETHER.func_240901_a_())
+                        final String dim = Minecraft.getInstance().world.getDimensionType().getEffects().equals(DimensionType.THE_NETHER.getLocation())
                                 ? TranslationConstants.SUPPLY_CAMP_INVALID_NOT_LAVA_MESSAGE_KEY
                                 : TranslationConstants.SUPPLY_CAMP_INVALID_NOT_WATER_MESSAGE_KEY;
                         errorMessage = String.format(dim, outputList);

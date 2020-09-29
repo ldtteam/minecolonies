@@ -25,6 +25,6 @@ public class ServerProxy extends CommonProxy
     @Override
     public World getWorld(final ResourceLocation dimension)
     {
-        return ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.func_240903_a_(Registry.WORLD_KEY, dimension));
+        return ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, dimension));
     }
 }

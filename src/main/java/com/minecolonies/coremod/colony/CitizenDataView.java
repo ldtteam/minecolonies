@@ -302,7 +302,7 @@ public class CitizenDataView implements ICitizenDataView
 
         if (buf.readBoolean())
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().func_240901_a_());
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().getLocation());
             jobView = IJobDataManager.getInstance().createViewFrom(colonyView, this, buf);
         }
     }

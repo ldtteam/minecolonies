@@ -1212,7 +1212,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             if (entry.getValue().getClassification() == EntityClassification.MONSTER)
             {
                 i++;
-                mobsToAttack.put(entry.getKey().func_240901_a_(), new MobEntryView(entry.getKey().func_240901_a_(), true, i));
+                mobsToAttack.put(entry.getKey().getLocation(), new MobEntryView(entry.getKey().getLocation(), true, i));
             }
             else
             {
@@ -1221,7 +1221,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                     if (entry.getKey() != null && entry.getKey().toString().equals(location))
                     {
                         i++;
-                        mobsToAttack.put(entry.getKey().func_240901_a_(), new MobEntryView(entry.getKey().func_240901_a_(), true, i));
+                        mobsToAttack.put(entry.getKey().getLocation(), new MobEntryView(entry.getKey().getLocation(), true, i));
                     }
                 }
             }

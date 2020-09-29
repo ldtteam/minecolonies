@@ -114,7 +114,7 @@ public final class ChunkDataHelper
         {
             if (closeCap.getOwningColony() != 0)
             {
-                final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeCap.getOwningColony(), world.getDimensionKey().func_240901_a_());
+                final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeCap.getOwningColony(), world.getDimensionKey().getLocation());
                 if (colony != null)
                 {
                     colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));
@@ -136,7 +136,7 @@ public final class ChunkDataHelper
         {
             if (closeCap.getOwningColony() != 0)
             {
-                final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeCap.getOwningColony(), world.getDimensionKey().func_240901_a_());
+                final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeCap.getOwningColony(), world.getDimensionKey().getLocation());
                 if (colony != null)
                 {
                     colony.removeLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));
@@ -487,7 +487,7 @@ public final class ChunkDataHelper
 
         if (add)
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, world.getDimensionKey().func_240901_a_());
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, world.getDimensionKey().getLocation());
             if (colony != null)
             {
                 colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));

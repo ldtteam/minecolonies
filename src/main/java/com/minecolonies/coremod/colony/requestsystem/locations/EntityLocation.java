@@ -94,11 +94,11 @@ public class EntityLocation implements ILocation
         final Entity entityRef = entity.get();
         if (entityRef == null)
         {
-            return World.OVERWORLD.func_240901_a_();
+            return World.OVERWORLD.getLocation();
         }
         else
         {
-            return entityRef.getEntityWorld().getDimensionKey().func_240901_a_();
+            return entityRef.getEntityWorld().getDimensionKey().getLocation();
         }
     }
 

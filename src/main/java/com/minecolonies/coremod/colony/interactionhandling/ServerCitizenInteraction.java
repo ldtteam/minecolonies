@@ -150,7 +150,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
             windowCitizen.open();
         }
 
-        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.world.getDimensionKey().func_240901_a_(), this.getInquiry(), response));
+        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.world.getDimensionKey().getLocation(), this.getInquiry(), response));
         return true;
     }
 
@@ -180,9 +180,9 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         final ListNBT list = compoundNBT.getList(TAG_PARENTS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
-            this.parents.add(ITextComponent.Serializer.func_240644_b_(compoundNBT.getString(TAG_PARENT)));
+            this.parents.add(ITextComponent.Serializer.getComponentFromJson(compoundNBT.getString(TAG_PARENT)));
         }
-        this.validatorId = ITextComponent.Serializer.func_240644_b_(compoundNBT.getString(TAG_VALIDATOR_ID));
+        this.validatorId = ITextComponent.Serializer.getComponentFromJson(compoundNBT.getString(TAG_VALIDATOR_ID));
         loadValidator();
     }
 
