@@ -78,7 +78,6 @@ public class ColonyStylesMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        Structures.setAllowPlayerSchematics(allowPlayerSchematics);
         Structures.setMD5s(md5Map);
     }
 }
