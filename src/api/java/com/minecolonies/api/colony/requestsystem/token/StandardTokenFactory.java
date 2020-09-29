@@ -31,4 +31,10 @@ public class StandardTokenFactory extends AbstractTokenFactory<UUID>
     {
         return new StandardToken(input);
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 0;
+    }
 }

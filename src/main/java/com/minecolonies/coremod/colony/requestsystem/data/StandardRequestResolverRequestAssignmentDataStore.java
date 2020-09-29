@@ -159,5 +159,11 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
 
             return new StandardRequestResolverRequestAssignmentDataStore(token, assignments);
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 35;
+        }
     }
 }

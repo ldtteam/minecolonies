@@ -159,5 +159,11 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
 
             return new StandardRequestResolversIdentitiesDataStore(token, biMap);
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 33;
+        }
     }
 }

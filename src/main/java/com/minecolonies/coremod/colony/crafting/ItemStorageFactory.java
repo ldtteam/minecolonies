@@ -82,4 +82,10 @@ public class ItemStorageFactory implements IItemStorageFactory
         final int size = buffer.readInt();
         return this.getNewInstance(stack, size);
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 27;
+    }
 }

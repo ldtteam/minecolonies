@@ -127,4 +127,10 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
         return research;
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 28;
+    }
 }
