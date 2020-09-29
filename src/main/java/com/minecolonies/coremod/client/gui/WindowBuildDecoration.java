@@ -31,7 +31,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -122,7 +121,6 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     {
         IColonyView colony = (IColonyView) IColonyManager.getInstance()
                 .getIColony(Minecraft.getInstance().world, structurePos);
-        IBlockReader world = Minecraft.getInstance().world;
 
         if (colony == null)
         {
