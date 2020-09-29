@@ -31,15 +31,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
@@ -124,6 +122,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     {
         IColonyView colony = (IColonyView) IColonyManager.getInstance()
                 .getIColony(Minecraft.getInstance().world, structurePos);
+        IBlockReader world = Minecraft.getInstance().world;
 
         if (colony == null)
         {
@@ -138,6 +137,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
                 .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
                         && !(build instanceof BuildingMiner.View))
                 .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
+                .sorted(Comparator.comparing(item -> item.getB().distanceSq(structurePos)))
                 .collect(Collectors.toList()));
 
         initBuilderNavigation();
