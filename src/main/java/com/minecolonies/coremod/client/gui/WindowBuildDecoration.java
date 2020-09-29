@@ -285,7 +285,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
                 final ItemStorage resource = tempRes.get(index);
                 final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
                 final Label quantityLabel = rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
-                resourceLabel.setLabelText(resource.getItemStack().getDisplayName().getFormattedText());
+                resourceLabel.setLabelText(resource.getItemStack().getDisplayName().getString());
                 quantityLabel.setLabelText(Integer.toString(resource.getAmount()));
                 resourceLabel.setColor(WHITE, WHITE);
                 quantityLabel.setColor(WHITE, WHITE);

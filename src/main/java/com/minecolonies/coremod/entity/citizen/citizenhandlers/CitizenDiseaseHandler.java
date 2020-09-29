@@ -72,7 +72,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
         if (canBecomeSick())
         {
             final int citizenModifier = citizen.getCitizenJobHandler().getColonyJob() == null ? 1 : citizen.getCitizenJobHandler().getColonyJob().getDiseaseModifier();
-            final int configModifier = MineColonies.getConfig().getCommon().diseaseModifier.get();
+            final int configModifier = MineColonies.getConfig().getServer().diseaseModifier.get();
             if (citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier)
             {
                 this.disease = IColonyManager.getInstance().getCompatibilityManager().getRandomDisease();
@@ -97,7 +97,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
              && immunityTicks <= 0
              && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > IMinecoloniesAPI.getInstance()
                                                                                                                .getConfig()
-                                                                                                               .getCommon().initialCitizenAmount.get();
+                                                                                                               .getServer().initialCitizenAmount.get();
     }
 
     @Override

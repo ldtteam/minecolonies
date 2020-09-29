@@ -55,6 +55,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
     public final ForgeConfigSpec.DoubleValue  foodModifier;
     public final ForgeConfigSpec.IntValue     diseaseModifier;
+    public final ForgeConfigSpec.BooleanValue forceLoadColony;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -409,6 +410,7 @@ public class ServerConfiguration extends AbstractConfiguration
         suggestBuildToolPlacement = defineBoolean(builder, "suggestbuildtoolplacement", true);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
+        forceLoadColony = defineBoolean(builder, "forceloadcolony", false);
 
         swapToCategory(builder, "commands");
 
