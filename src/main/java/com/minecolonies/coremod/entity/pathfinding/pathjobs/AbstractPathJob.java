@@ -263,19 +263,19 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             if (state.get(VineBlock.SOUTH))
             {
-                p.setLadderFacing(Direction.SOUTH);
+                p.setLadderFacing(Direction.NORTH);
             }
             else if (state.get(VineBlock.WEST))
             {
-                p.setLadderFacing(Direction.WEST);
+                p.setLadderFacing(Direction.EAST);
             }
             else if (state.get(VineBlock.NORTH))
             {
-                p.setLadderFacing(Direction.NORTH);
+                p.setLadderFacing(Direction.SOUTH);
             }
             else if (state.get(VineBlock.EAST))
             {
-                p.setLadderFacing(Direction.EAST);
+                p.setLadderFacing(Direction.WEST);
             }
         }
         else if (state.getBlock() instanceof ScaffoldingBlock)
@@ -1098,7 +1098,8 @@ public abstract class AbstractPathJob implements Callable<Path>
                          || block.getBlock() instanceof PressurePlateBlock
                          || block.getBlock() instanceof BlockDecorationController
                          || block.getBlock() instanceof AbstractSignBlock
-                         || block.getBlock() instanceof VineBlock;
+                         || isLadder(block.getBlock(), pos)
+                         || block.getBlock() instanceof AbstractBannerBlock;
             }
             else if (block.getBlock() instanceof FireBlock)
             {
@@ -1107,7 +1108,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             else
             {
                 final VoxelShape shape = block.getCollisionShape(world, pos);
-                return block.getBlock() instanceof LadderBlock ||
+                return isLadder(block.getBlock(), pos) ||
                          ((shape.isEmpty() || shape.getEnd(Direction.Axis.Y) <= 0.1)
                          && !block.getMaterial().isLiquid()
                          && (block.getBlock() != Blocks.SNOW || block.get(SnowBlock.LAYERS) == 1)
@@ -1126,7 +1127,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             return !head
                      || !(state.getBlock() instanceof CarpetBlock || state.getBlock() instanceof BlockFloatingCarpet)
-                     || state.getBlock() instanceof LadderBlock;
+                     || isLadder(state.getBlock(), pos);
         }
         return isPassable(state, pos);
     }

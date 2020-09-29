@@ -48,10 +48,12 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.TickEvent;
@@ -69,6 +71,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.coremod.MineColonies.getConfig;
 
 /**
  * This class describes a colony and contains all the data and methods for manipulating a Colony.
@@ -95,6 +98,11 @@ public class Colony implements IColony
      * List of loaded chunks for the colony.
      */
     private Set<Long> loadedChunks = new HashSet<>();
+
+    /**
+     * List of chunks that have to be be force loaded.
+     */
+    private Set<Long> pendingChunks = new HashSet<>();
 
     /**
      * List of waypoints of the colony.
@@ -217,7 +225,6 @@ public class Colony implements IColony
      * The request manager assigned to the colony.
      */
     private IResearchManager researchManager = new ResearchManager();
-    ;
 
     /**
      * The NBTTag compound of the colony itself.
@@ -281,6 +288,11 @@ public class Colony implements IColony
      * Last time the server was online.
      */
     public long lastOnlineTime = 0;
+
+    /**
+     * The force chunk load timer.
+     */
+    private int forceLoadTimer = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -437,7 +449,50 @@ public class Colony implements IColony
         lastOnlineTime = currTime;
 
         updateChildTime();
+        updateChunkLoadTimer();
         return false;
+    }
+
+    /**
+     * Check if we can unload the colony now.
+     * Update chunk unload timer and releases chunks when it hits 0.
+     */
+    private void updateChunkLoadTimer()
+    {
+        for (final ServerPlayerEntity sub : getPackageManager().getCloseSubscribers())
+        {
+            if (getPermissions().hasPermission(sub, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY))
+            {
+                this.forceLoadTimer = CHUNK_UNLOAD_DELAY;
+                for (final long pending : pendingChunks)
+                {
+                    final int chunkX = ChunkPos.getX(pending);
+                    final int chunkZ = ChunkPos.getZ(pending);
+                    if (world instanceof ServerWorld)
+                    {
+                        ((ServerWorld) world).forceChunk(chunkX, chunkZ, true);
+                    }
+                }
+                return;
+            }
+        }
+
+        if (this.forceLoadTimer > 0)
+        {
+            this.forceLoadTimer -= MAX_TICKRATE;
+            if (this.forceLoadTimer <= 0)
+            {
+                for (final long chunkPos : this.loadedChunks)
+                {
+                    final int chunkX = ChunkPos.getX(chunkPos);
+                    final int chunkZ = ChunkPos.getZ(chunkPos);
+                    if (world instanceof ServerWorld)
+                    {
+                        ((ServerWorld) world).forceChunk(chunkX, chunkZ, false);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -448,6 +503,7 @@ public class Colony implements IColony
     private boolean worldTickUnloaded()
     {
         updateChildTime();
+        updateChunkLoadTimer();
         return false;
     }
 
@@ -1494,6 +1550,20 @@ public class Colony implements IColony
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
             LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName().getString(), this.getName());
         }
+
+        if (getPermissions().hasPermission(rank, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY) && this.forceLoadTimer <= 0)
+        {
+            for (final long chunkPos : this.loadedChunks)
+            {
+                final int chunkX = ChunkPos.getX(chunkPos);
+                final int chunkZ = ChunkPos.getZ(chunkPos);
+                if (world instanceof ServerWorld)
+                {
+                    ((ServerWorld) world).forceChunk(chunkX, chunkZ, true);
+                }
+            }
+            this.forceLoadTimer = CHUNK_UNLOAD_DELAY;
+        }
     }
 
     @Override
@@ -1731,7 +1801,13 @@ public class Colony implements IColony
     @Override
     public void addLoadedChunk(final long chunkPos)
     {
-        loadedChunks.add(chunkPos);
+        if (this.forceLoadTimer > 0
+              && world instanceof ServerWorld
+              && getConfig().getCommon().forceLoadColony.get())
+        {
+            this.pendingChunks.add(chunkPos);
+        }
+        this.loadedChunks.add(chunkPos);
     }
 
     @Override
