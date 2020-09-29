@@ -548,7 +548,9 @@
   "com.minecolonies.coremod.gui.townhall.tp": "Do you really want to teleport to %s? [YES]",
 
   "com.minecolonies.coremod.gui.warehouse.tostonemason": "Deliver to Stonemason:",
-  "com.minecolonies.coremod.workorderadded": "Build Request Created!",
+  "com.minecolonies.coremod.workorderadded": "Build request created!",
+  "com.minecolonies.coremod.decoorderadded": "Decoration request created!",
+
   "com.minecolonies.coremod.gui.hiring.on": "Manual",
   "com.minecolonies.coremod.gui.requestfert.on": "Enabled",
   "com.minecolonies.coremod.gui.requestfert.off": "Disabled",
