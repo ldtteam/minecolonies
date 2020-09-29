@@ -58,16 +58,21 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     public void place(final StructureName structureName)
     {
         final BlockPos offset =Settings.instance.getActiveStructure().getPrimaryBlockOffset();
-        ;
         final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
-        Network.getNetwork().sendToServer(new BuildToolPlaceMessage(
-          structureName.toString(),
-          structureName.toString(),
-          Settings.instance.getPosition(),
-          Settings.instance.getRotation(),
-          structureName.isHut(),
-          Settings.instance.getMirror(),
-          state));
+
+        BuildToolPlaceMessage msg = new BuildToolPlaceMessage(
+                structureName.toString(),
+                structureName.toString(),
+                Settings.instance.getPosition(),
+                Settings.instance.getRotation(),
+                structureName.isHut(),
+                Settings.instance.getMirror(),
+                state);
+
+        if (structureName.isHut())
+            Network.getNetwork().sendToServer(msg);
+        else
+            Minecraft.getInstance().enqueue(new WindowBuildDecoration(msg, Settings.instance.getPosition(), structureName)::open);
     }
 
     @Override
