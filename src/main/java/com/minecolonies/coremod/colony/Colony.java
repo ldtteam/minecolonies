@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
+import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
@@ -459,36 +460,39 @@ public class Colony implements IColony
      */
     private void updateChunkLoadTimer()
     {
-        for (final ServerPlayerEntity sub : getPackageManager().getCloseSubscribers())
+        if (getConfig().getCommon().forceLoadColony.get())
         {
-            if (getPermissions().hasPermission(sub, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY))
+            for (final ServerPlayerEntity sub : getPackageManager().getCloseSubscribers())
             {
-                this.forceLoadTimer = CHUNK_UNLOAD_DELAY;
-                for (final long pending : pendingChunks)
+                if (getPermissions().hasPermission(sub, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY))
                 {
-                    final int chunkX = ChunkPos.getX(pending);
-                    final int chunkZ = ChunkPos.getZ(pending);
-                    if (world instanceof ServerWorld)
+                    this.forceLoadTimer = CHUNK_UNLOAD_DELAY;
+                    for (final long pending : pendingChunks)
                     {
-                        ((ServerWorld) world).forceChunk(chunkX, chunkZ, true);
+                        final int chunkX = ChunkPos.getX(pending);
+                        final int chunkZ = ChunkPos.getZ(pending);
+                        if (world instanceof ServerWorld)
+                        {
+                            ((ServerWorld) world).forceChunk(chunkX, chunkZ, true);
+                        }
                     }
+                    return;
                 }
-                return;
             }
-        }
 
-        if (this.forceLoadTimer > 0)
-        {
-            this.forceLoadTimer -= MAX_TICKRATE;
-            if (this.forceLoadTimer <= 0)
+            if (this.forceLoadTimer > 0)
             {
-                for (final long chunkPos : this.loadedChunks)
+                this.forceLoadTimer -= MAX_TICKRATE;
+                if (this.forceLoadTimer <= 0)
                 {
-                    final int chunkX = ChunkPos.getX(chunkPos);
-                    final int chunkZ = ChunkPos.getZ(chunkPos);
-                    if (world instanceof ServerWorld)
+                    for (final long chunkPos : this.loadedChunks)
                     {
-                        ((ServerWorld) world).forceChunk(chunkX, chunkZ, false);
+                        final int chunkX = ChunkPos.getX(chunkPos);
+                        final int chunkZ = ChunkPos.getZ(chunkPos);
+                        if (world instanceof ServerWorld)
+                        {
+                            ((ServerWorld) world).forceChunk(chunkX, chunkZ, false);
+                        }
                     }
                 }
             }
@@ -1549,7 +1553,7 @@ public class Colony implements IColony
             LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName().getFormattedText(), this.getName());
         }
 
-        if (getPermissions().hasPermission(rank, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY) && this.forceLoadTimer <= 0)
+        if (getPermissions().hasPermission(rank, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY) && this.forceLoadTimer <= 0 && getConfig().getCommon().forceLoadColony.get())
         {
             for (final long chunkPos : this.loadedChunks)
             {
