@@ -59,10 +59,6 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
         if (building.getTileEntity() != null)
         {
             building.getTileEntity().setStyle(style);
-            if (building.getBuildingLevel() > 0)
-            {
-                building.onUpgradeComplete(building.getBuildingLevel());
-            }
         }
     }
 }
