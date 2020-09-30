@@ -211,6 +211,12 @@ public class StaticLocation implements ILocation
         {
             return StaticLocation.deserialize(buffer);
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 3;
+        }
     }
 
     /**

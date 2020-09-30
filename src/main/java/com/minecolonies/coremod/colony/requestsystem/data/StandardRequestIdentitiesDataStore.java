@@ -155,5 +155,11 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
 
             return new StandardRequestIdentitiesDataStore(token, biMap);
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 32;
+        }
     }
 }

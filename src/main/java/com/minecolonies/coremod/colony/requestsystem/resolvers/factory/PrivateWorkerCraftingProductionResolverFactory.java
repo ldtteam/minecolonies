@@ -78,4 +78,10 @@ public class PrivateWorkerCraftingProductionResolverFactory implements IRequestR
 
         return new PrivateWorkerCraftingProductionResolver(location, token);
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 21;
+    }
 }
