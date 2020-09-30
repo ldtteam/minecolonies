@@ -122,4 +122,10 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
 
         return resolver;
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 24;
+    }
 }

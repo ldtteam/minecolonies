@@ -160,5 +160,11 @@ public class StandardRequestableTypeRequestResolverAssignmentDataStore implement
 
             return new StandardRequestableTypeRequestResolverAssignmentDataStore(token, assignments);
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 36;
+        }
     }
 }

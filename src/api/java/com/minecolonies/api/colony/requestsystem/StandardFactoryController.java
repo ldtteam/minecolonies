@@ -71,6 +71,11 @@ public final class StandardFactoryController implements IFactoryController
     private final BiMap<String, String> classRenamingHandlers = HashBiMap.create();
 
     /**
+     * Specific serialization mappings.
+     */
+    private Map<Short, IFactory<?, ?>> serializationMappings = new HashMap<>();
+
+    /**
      * Private constructor. Throws IllegalStateException if already created.
      * <p>
      * We suppress warning squid:S2583 which makes sure that no null checks are executed on notnull fields. In this case it makes sense since we need to make sure.
@@ -194,10 +199,21 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
+    public <OUTPUT> IFactory<?, OUTPUT> getFactoryForSerializationId(final short id) throws IllegalArgumentException
+    {
+        return (IFactory<?, OUTPUT>) serializationMappings.get(id);
+    }
+
+    @Override
     public <INPUT, OUTPUT> void registerNewFactory(@NotNull final IFactory<INPUT, OUTPUT> factory) throws IllegalArgumentException
     {
         primaryInputMappings.putIfAbsent(factory.getFactoryInputType(), new HashSet<>());
         primaryOutputMappings.putIfAbsent(factory.getFactoryOutputType(), new HashSet<>());
+        if (serializationMappings.containsKey(factory.getSerializationId()))
+        {
+            throw new IllegalArgumentException("Cannot register two factories with the same serialization id!");
+        }
+        serializationMappings.put(factory.getSerializationId(), factory);
 
         final Set<IFactory<?, ?>> primaryInputFactories = primaryInputMappings.get(factory.getFactoryInputType());
         final Set<IFactory<?, ?>> primaryOutputFactories = primaryOutputMappings.get(factory.getFactoryOutputType());
@@ -284,21 +300,19 @@ public final class StandardFactoryController implements IFactoryController
     public <OUTPUT> void serialize(@NotNull final PacketBuffer buffer, @NotNull final OUTPUT object) throws IllegalArgumentException
     {
         final IFactory<?, OUTPUT> factory = getFactoryForOutput((TypeToken<? extends OUTPUT>) TypeToken.of(object.getClass()));
-        buffer.writeString(object.getClass().getName());
+        buffer.writeShort(factory.getSerializationId());
         factory.serialize(this, object, buffer);
     }
 
     @Override
     public <OUTPUT> OUTPUT deserialize(@NotNull final PacketBuffer buffer) throws IllegalArgumentException
     {
-        String className = buffer.readString(32767);
-        className = processClassRenaming(className);
-
+        short classId = buffer.readShort();
         final IFactory<?, OUTPUT> factory;
 
         try
         {
-            factory = getFactoryForOutput(className);
+            factory = getFactoryForOutput(classId);
         }
         catch (final IllegalArgumentException e)
         {

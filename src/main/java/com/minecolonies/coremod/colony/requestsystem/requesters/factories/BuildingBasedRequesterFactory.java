@@ -69,4 +69,10 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
     {
         return BuildingBasedRequester.deserialize(controller, buffer);
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 14;
+    }
 }

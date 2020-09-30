@@ -94,4 +94,10 @@ public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
             throw new IllegalStateException("Failed to create TypeToken", e);
         }
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 31;
+    }
 }

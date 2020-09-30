@@ -145,4 +145,10 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate);
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 26;
+    }
 }

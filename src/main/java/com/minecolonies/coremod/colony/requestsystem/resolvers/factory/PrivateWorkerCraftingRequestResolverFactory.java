@@ -78,4 +78,10 @@ public class PrivateWorkerCraftingRequestResolverFactory implements IRequestReso
 
         return new PrivateWorkerCraftingRequestResolver(location, token);
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 19;
+    }
 }

@@ -63,4 +63,10 @@ public class IntegerFactory implements IFactory<FactoryVoidInput, Integer>
     {
         return buffer.readInt();
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 30;
+    }
 }

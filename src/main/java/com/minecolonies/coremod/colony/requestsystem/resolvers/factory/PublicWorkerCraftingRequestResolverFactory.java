@@ -77,4 +77,10 @@ public class PublicWorkerCraftingRequestResolverFactory implements IRequestResol
 
         return new PublicWorkerCraftingRequestResolver(location, token);
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 20;
+    }
 }
