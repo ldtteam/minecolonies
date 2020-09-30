@@ -131,7 +131,6 @@ public class EntityLocation implements ILocation
      */
     public static class Factory implements ILocationFactory<Entity, EntityLocation>
     {
-
         ////// --------------------------- NBTConstants --------------------------- \\\\\\
         private static final String NBT_MSB = "Id_MSB";
         private static final String NBT_LSB = "Id_LSB";
@@ -218,6 +217,12 @@ public class EntityLocation implements ILocation
         public EntityLocation deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
         {
             return EntityLocation.deserialize(buffer);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 4;
         }
     }
 

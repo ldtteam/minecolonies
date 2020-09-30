@@ -175,5 +175,11 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
 
             return new StandardRequestSystemCrafterJobDataStore(id, queue, tasks);
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 39;
+        }
     }
 }

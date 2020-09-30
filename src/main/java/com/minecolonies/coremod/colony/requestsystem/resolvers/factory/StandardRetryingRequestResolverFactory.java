@@ -156,4 +156,10 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
         resolver.updateData(requests, delays);
         return resolver;
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 25;
+    }
 }

@@ -139,6 +139,12 @@ public final class StandardRequestFactories
                 requester,
                 requestState));
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 5;
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -230,6 +236,12 @@ public final class StandardRequestFactories
                 token,
                 requester,
                 requestState));
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 6;
         }
     }
 
@@ -325,6 +337,12 @@ public final class StandardRequestFactories
                 requester,
                 requestState));
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 7;
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -418,6 +436,12 @@ public final class StandardRequestFactories
                 requester,
                 requestState));
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 8;
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -510,6 +534,12 @@ public final class StandardRequestFactories
                 token,
                 requester,
                 requestState));
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 9;
         }
     }
 
@@ -617,6 +647,12 @@ public final class StandardRequestFactories
               PrivateCrafting::serialize,
               PrivateCrafting::deserialize);
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 42;
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -632,6 +668,12 @@ public final class StandardRequestFactories
               PublicCrafting::deserialize,
               PublicCrafting::serialize,
               PublicCrafting::deserialize);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 41;
         }
     }
 
@@ -700,6 +742,12 @@ public final class StandardRequestFactories
                 requester,
                 requestState));
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 10;
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -766,6 +814,12 @@ public final class StandardRequestFactories
                 token,
                 requester,
                 requestState));
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 11;
         }
     }
 
@@ -834,6 +888,12 @@ public final class StandardRequestFactories
                 requester,
                 requestState));
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 12;
+        }
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -900,6 +960,12 @@ public final class StandardRequestFactories
                 token,
                 requester,
                 requestState));
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 13;
         }
     }
 
