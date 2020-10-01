@@ -176,7 +176,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        if (building.getBuildingLevel() > 0 && !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex())))
+        if (building.getBuildingLevel() > 0
+            && !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
+            && !building.isDeconstructed())
             return;
 
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
@@ -259,6 +261,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
                     LanguageHandler.format(
                             !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
+                            && !building.isDeconstructed()
                                 ? "com.minecolonies.coremod.gui.workerhuts.bad_style"
                                 : "com.minecolonies.coremod.gui.workerhuts.upgrade"));
         }

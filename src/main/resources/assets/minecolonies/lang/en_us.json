@@ -1264,7 +1264,7 @@
   "advancements.minecolonies.create_build_request_1_builder.title": "The Builder Begins",
   "advancements.minecolonies.create_build_request_1_builder.description": "Craft and place a Builder's Hut with the Build Tool, hire a Builder (automatic by default), and tell them to build their hut!",
   "advancements.minecolonies.click_gui_button_fulfill.title": "Fulfillment Comes Cheap",
-  "advancements.minecolonies.click_gui_button_fulfill.description": "Fulfil one of the Builder's requests for tools or resources using the buttons in their request screen",
+  "advancements.minecolonies.click_gui_button_fulfill.description": "Fulfill one of the Builder's requests for tools or resources using the buttons in their request screen",
   "advancements.minecolonies.citizen_eat_food_first.title": "Another Mouth to Feed",
   "advancements.minecolonies.citizen_eat_food_first.description": "Citizens need to eat to be able to work. Put some food in your citizens' inventories so they can eat it when they need to!",
   "advancements.minecolonies.building_add_recipe_torch.title": "Never Craft Again",
