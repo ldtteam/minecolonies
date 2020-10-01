@@ -102,7 +102,7 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
                         InventoryUtils.removeStackFromItemHandler(new InvWrapper(player.inventory), cost.getItemStack(), cost.getAmount());
                     }
 
-                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started"), player.getUniqueID());
+                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started", research.getDesc()), player.getUniqueID());
                     research.startResearch(player, colony.getResearchManager().getResearchTree());
                 }
                 colony.markDirty();
