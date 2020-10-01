@@ -8,6 +8,8 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
+import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -37,6 +39,17 @@ public class CustomRecipe
      * The recipe type
      */
     public static final String RECIPE_TYPE_RECIPE = "recipe";
+
+    /**
+     * The multiple output recipe type
+     */
+    public static final String RECIPE_TYPE_RECIPE_MULT_OUT = "recipe-multi-out";
+
+    /**
+     * The multiple input recipe type
+     */
+    public static final String RECIPE_TYPE_RECIPE_MULT_IN = "recipe-multi-in";
+
 
     /**
      * The remove type
@@ -329,7 +342,9 @@ public class CustomRecipe
             inputs,
             1,
             result,
-            intermediate);
+            intermediate,
+            this.getRecipeId().toString()
+            );
     }
 
     @Override
