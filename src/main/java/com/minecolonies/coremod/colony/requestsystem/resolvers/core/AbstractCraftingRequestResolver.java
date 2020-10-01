@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
@@ -242,20 +243,46 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             return null;
         }
 
-        return createRequestsForRecipe(manager, craftableCrafting.getPrimaryOutput(), count, minCount);
+        return createRequestsForRecipe(manager, craftableCrafting, count, minCount);
     }
 
     @Nullable
     protected List<IToken<?>> createRequestsForRecipe(
       @NotNull final IRequestManager manager,
-      final ItemStack requestStack,
+      final IRecipeStorage recipeRequest,
       final int count,
       final int minCount)
     {
-        final int recipeExecutionsCount = (int) Math.ceil((double) count / requestStack.getCount());
-        final int minRecipeExecutionsCount = (int) Math.ceil((double) minCount / requestStack.getCount());
+        final List<ItemStorage> inputs = recipeRequest.getCleanedInput();
+        final ItemStack requestStack = recipeRequest.getPrimaryOutput();
+        int recipeExecutionsCount = (int) Math.ceil((double) count / requestStack.getCount());
+        int minRecipeExecutionsCount = (int) Math.ceil((double) minCount / requestStack.getCount());
 
-        return ImmutableList.of(manager.createRequest(this, createNewRequestableForStack(requestStack.copy(), recipeExecutionsCount, Math.max(1, minRecipeExecutionsCount))));
+        int batchSize = recipeExecutionsCount;
+        int totalSlots = Integer.MAX_VALUE;
+
+        while (totalSlots > 24) {
+            int stacksNeeded = 0;
+            for(ItemStorage ingredient : inputs)
+            {
+                stacksNeeded += (ingredient.getAmount() * batchSize) / ingredient.getItemStack().getMaxStackSize();
+            }
+            if (stacksNeeded > 24)
+            {
+                batchSize = (int) Math.floor((double) batchSize * (24.0D / stacksNeeded));
+            }
+            totalSlots = Math.min(totalSlots, stacksNeeded);
+        }
+
+        List<IToken<?>> requests = new ArrayList<>();
+        while(recipeExecutionsCount > 0)
+        {
+            requests.add(manager.createRequest(this, createNewRequestableForStack(requestStack.copy(), Math.min(batchSize, recipeExecutionsCount), Math.max(1, Math.min(batchSize, minRecipeExecutionsCount)))));
+            recipeExecutionsCount -= batchSize;
+            minRecipeExecutionsCount  = minRecipeExecutionsCount > batchSize ? minRecipeExecutionsCount - batchSize : 0; 
+        }
+
+        return ImmutableList.copyOf(requests);
     }
 
     /**
