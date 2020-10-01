@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +21,28 @@ import java.util.List;
  */
 public class RecipeStorage implements IRecipeStorage
 {
+
+    /**
+     * Enum of the different types of storage
+     */
+    public enum RecipeStorageType
+    {
+        CLASSIC,
+        MULTI_OUTPUT,
+        MULTI_INPUT
+    }
+
+    /**
+     * Type of storage this recipe represents
+     */
+    private final RecipeStorageType recipeType;
+
+    /**
+     * Where this recipe came from
+     * For custom recipes, it's the id of the recipe
+     */
+    private final String recipeSource;
+
     /**
      * Input required for the recipe.
      */
@@ -34,6 +57,12 @@ public class RecipeStorage implements IRecipeStorage
      */
     @NotNull
     private final ItemStack primaryOutput;
+
+    /**
+     * Alternate output generated for the recipe.
+     */
+    @Nullable
+    private final List<ItemStack> alternateOutputs;
 
     /**
      * The intermediate required for the recipe (e.g furnace).
@@ -58,16 +87,22 @@ public class RecipeStorage implements IRecipeStorage
      * @param gridSize      the required grid size to make it.
      * @param primaryOutput the primary output of the recipe.
      * @param intermediate  the intermediate to use (e.g furnace).
+     * @param source        the source of this recipe (ie: minecolonies:crafter/recipename, "player name", "improvement", etc)
+     * @param type          What type of recipe this is.
+     * @param altOutputs    List of alternate outputs for a multi-output recipe
      */
-    public RecipeStorage(final IToken<?> token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
+    public RecipeStorage(final IToken<?> token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final String source, final RecipeStorageType type, final List<ItemStack> altOutputs)
     {
         this.input = Collections.unmodifiableList(input);
         this.cleanedInput = new ArrayList<>();
         this.cleanedInput.addAll(this.calculateCleanedInput());
         this.primaryOutput = primaryOutput;
+        this.alternateOutputs = altOutputs;
         this.gridSize = gridSize;
         this.intermediate = intermediate;
         this.token = token;
+        this.recipeSource = source;
+        this.recipeType = type == null ? RecipeStorageType.CLASSIC : type;
     }
 
     @Override
@@ -314,7 +349,7 @@ public class RecipeStorage implements IRecipeStorage
             }
         }
 
-        insertCraftedItems(handlers);
+        insertCraftedItems(handlers, getPrimaryOutput());
         return true;
     }
 
@@ -329,11 +364,11 @@ public class RecipeStorage implements IRecipeStorage
      *
      * @param handlers the handlers.
      */
-    private void insertCraftedItems(final List<IItemHandler> handlers)
+    private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack)
     {
         for (final IItemHandler handler : handlers)
         {
-            if (InventoryUtils.addItemStackToItemHandler(handler, getPrimaryOutput().copy()))
+            if (InventoryUtils.addItemStackToItemHandler(handler, outputStack.copy()))
             {
                 break;
             }
@@ -364,5 +399,20 @@ public class RecipeStorage implements IRecipeStorage
                 }
             }
         }
+    }
+
+    public RecipeStorageType getRecipeType()
+    {
+        return recipeType;
+    }
+
+    public String getRecipeSource()
+    {
+        return recipeSource;
+    }
+
+    public List<ItemStack> getAlternateOutputs()
+    {
+        return alternateOutputs != null ? alternateOutputs : ImmutableList.of();
     }
 }
