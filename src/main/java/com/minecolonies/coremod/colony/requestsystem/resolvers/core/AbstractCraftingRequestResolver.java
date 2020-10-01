@@ -275,7 +275,8 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         int totalSlots = Integer.MAX_VALUE;
 
         //Calculate how many slots are needed, and figure out the maximum number of iterations we can load inputs for into inventory
-        while (totalSlots > maxSlots) {
+        while (totalSlots > maxSlots)
+        {
             int stacksNeeded = 0;
             for(ItemStorage ingredient : inputs)
             {
