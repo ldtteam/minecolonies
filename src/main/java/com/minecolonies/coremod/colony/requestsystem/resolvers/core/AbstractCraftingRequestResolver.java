@@ -277,7 +277,8 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         //Calculate how many slots are needed, and figure out the maximum number of iterations we can load ingredients for into inventory
         while (totalSlots > maxSlots)
         {
-            int stacksNeeded = 0;
+            //Start with how much space needed for the output, it's a little naive, as it assumes we need full output and ingredients at the same time
+            int stacksNeeded = (int) Math.ceil((double)(requestStack.getCount() * batchSize) / requestStack.getMaxStackSize());
             for(ItemStorage ingredient : inputs)
             {
                 stacksNeeded += (int) Math.ceil((double)(ingredient.getAmount() * batchSize) / ingredient.getItemStack().getMaxStackSize());
