@@ -353,7 +353,6 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     {
                         for (int dif = 1; dif < nextHeight - parentHeight + 1; dif++)
                         {
-                            System.out.println(dif);
                             final Image corner = new Image();
                             corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_down.png"));
                             corner.setSize(X_SPACING, GRADIENT_HEIGHT + Y_SPACING);
