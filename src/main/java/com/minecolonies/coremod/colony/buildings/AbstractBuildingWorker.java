@@ -233,7 +233,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         for(IBuilding wareHouse: wareHouses)
         {
-            count += InventoryUtils.hasBuildingEnoughElseCount(wareHouse, item, 1);
+            count += InventoryUtils.hasBuildingEnoughElseCount(wareHouse, item, 0);
         }
         return count;
     }
