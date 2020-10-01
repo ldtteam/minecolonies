@@ -270,6 +270,7 @@ public final class ModJobsInitializer
 
         ModJobs.witch = new JobEntry.Builder()
                           .setJobProducer(JobWitch::new)
+                          .setJobViewProducer(() -> DefaultJobView::new)
                           .setRegistryName(ModJobs.WITCH_ID)
                           .createJobEntry();
 
