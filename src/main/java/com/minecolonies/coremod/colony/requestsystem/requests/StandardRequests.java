@@ -343,11 +343,9 @@ public final class StandardRequests
         public final ITextComponent getShortDisplayString()
         {
             final ITextComponent result = new NonSiblingFormattingTextComponent();
-            final ITextComponent preType = new TranslationTextComponent(getTranslationKey());
 
-            result.appendSibling(preType);
-
-            preType.appendSibling(getRequest().getStack().getTextComponent());
+            result.appendSibling(new StringTextComponent(getRequest().getMinCount() + " * Recipe:"));
+            result.appendSibling(getRequest().getStack().getTextComponent());
 
             return result;
         }
