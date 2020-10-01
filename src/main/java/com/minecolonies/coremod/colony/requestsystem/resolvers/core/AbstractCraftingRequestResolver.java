@@ -248,6 +248,15 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         return createRequestsForRecipe(manager, craftableCrafting, count, minCount);
     }
 
+    /**
+     * Create the crafting request entries for the overall request
+     * Will produce multiple, if the inputs don't all fit in the crafters inventory. 
+     * @param manager
+     * @param recipeRequest
+     * @param count
+     * @param minCount
+     * @return
+     */
     @Nullable
     protected List<IToken<?>> createRequestsForRecipe(
       @NotNull final IRequestManager manager,
@@ -257,14 +266,15 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     {
         final List<ItemStorage> inputs = recipeRequest.getCleanedInput();
         final ItemStack requestStack = recipeRequest.getPrimaryOutput();
-        int recipeExecutionsCount = (int) Math.ceil((double) count / requestStack.getCount());
-        int minRecipeExecutionsCount = (int) Math.ceil((double) minCount / requestStack.getCount());
         final AbstractResearchEffect<Double> researchEffect =  manager.getColony().getResearchManager().getResearchEffects().getEffect(INV_SLOTS, AbstractResearchEffect.class);
         final int maxSlots = (27 + researchEffect.getEffect().intValue()) - (27 + researchEffect.getEffect().intValue()) % 8;  // retaining 1 slot per row for 'overhead'
 
+        int recipeExecutionsCount = (int) Math.ceil((double) count / requestStack.getCount());
+        int minRecipeExecutionsCount = (int) Math.ceil((double) minCount / requestStack.getCount());
         int batchSize = recipeExecutionsCount;
         int totalSlots = Integer.MAX_VALUE;
 
+        //Calculate how many slots are needed, and figure out the maximum number of iterations we can load inputs for into inventory
         while (totalSlots > maxSlots) {
             int stacksNeeded = 0;
             for(ItemStorage ingredient : inputs)
@@ -273,11 +283,13 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             }
             if (stacksNeeded > maxSlots)
             {
+                //We can't fit everything into inventory. Reduce the batch size by the ratio of what we calculated and what we have available. 
                 batchSize = (int) Math.floor((double) batchSize * ((double) maxSlots / stacksNeeded));
             }
             totalSlots = Math.min(totalSlots, stacksNeeded);
         }
 
+        //Create a crafting request for each batch needed to supply the full request
         List<IToken<?>> requests = new ArrayList<>();
         while(recipeExecutionsCount > 0)
         {
