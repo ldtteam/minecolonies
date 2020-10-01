@@ -1,12 +1,15 @@
 package com.minecolonies.coremod.util;
 
+
 import com.ldtteam.blockout.Log;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.UpdateClientWithRecipesMessage;
 import net.minecraft.block.Blocks;
@@ -54,7 +57,13 @@ public class FurnaceRecipes implements IFurnaceRecipes
             final NonNullList<Ingredient> list = recipe.getIngredients();
             if (list.size() == 1)
             {
-                final RecipeStorage storage = new RecipeStorage(new StandardToken(), Arrays.asList(list.get(0).getMatchingStacks()), 1, recipe.getRecipeOutput(), Blocks.FURNACE);
+                final RecipeStorage storage =StandardFactoryController.getInstance().getNewInstance(
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN), 
+                    Arrays.asList(list.get(0).getMatchingStacks()), 
+                    1, 
+                    recipe.getRecipeOutput(), 
+                    Blocks.FURNACE);
 
                 recipes.put(storage.getCleanedInput().get(0), storage);
 
