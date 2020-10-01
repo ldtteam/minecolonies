@@ -136,7 +136,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
         else if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
-            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.switchStyle"));
+            buttonBuild.hide();
         }
         else
         {
@@ -173,7 +173,13 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
+        if (building.getBuildingLevel() > 0
+            && !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
+            && !building.isDeconstructed())
+            return;
+
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
+
         Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
         if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
@@ -192,7 +198,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void repairClicked()
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
-        Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
+        Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, building.getStyle()));
         Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder));
         cancelClicked();
     }
@@ -247,6 +253,17 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
+        // Ensure the player cannot change a style of an already constructed building
+        if (building.getBuildingLevel() > 0)
+        {
+            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
+                    LanguageHandler.format(
+                            !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
+                            && !building.isDeconstructed()
+                                ? "com.minecolonies.coremod.gui.workerhuts.bad_style"
+                                : "com.minecolonies.coremod.gui.workerhuts.upgrade"));
+        }
+
         final World world = Minecraft.getInstance().world;
         resources.clear();
 
