@@ -13,9 +13,10 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.research.effects.AbstractResearchEffect;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 
 import net.minecraft.block.Blocks;
@@ -29,6 +30,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DEPTH;
+import static com.minecolonies.api.research.util.ResearchConstants.INV_SLOTS;
 
 /**
  * Abstract crafting resolver for all crafting tasks.
@@ -257,19 +259,21 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         final ItemStack requestStack = recipeRequest.getPrimaryOutput();
         int recipeExecutionsCount = (int) Math.ceil((double) count / requestStack.getCount());
         int minRecipeExecutionsCount = (int) Math.ceil((double) minCount / requestStack.getCount());
+        final AbstractResearchEffect<Double> researchEffect =  manager.getColony().getResearchManager().getResearchEffects().getEffect(INV_SLOTS, AbstractResearchEffect.class);
+        final int maxSlots = (27 + researchEffect.getEffect().intValue()) - (27 + researchEffect.getEffect().intValue()) % 8;  // retaining 1 slot per row for 'overhead'
 
         int batchSize = recipeExecutionsCount;
         int totalSlots = Integer.MAX_VALUE;
 
-        while (totalSlots > 24) {
+        while (totalSlots > maxSlots) {
             int stacksNeeded = 0;
             for(ItemStorage ingredient : inputs)
             {
                 stacksNeeded += (ingredient.getAmount() * batchSize) / ingredient.getItemStack().getMaxStackSize();
             }
-            if (stacksNeeded > 24)
+            if (stacksNeeded > maxSlots)
             {
-                batchSize = (int) Math.floor((double) batchSize * (24.0D / stacksNeeded));
+                batchSize = (int) Math.floor((double) batchSize * ((double) maxSlots / stacksNeeded));
             }
             totalSlots = Math.min(totalSlots, stacksNeeded);
         }
