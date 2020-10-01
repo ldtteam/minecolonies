@@ -250,7 +250,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
     /**
      * Create the crafting request entries for the overall request
-     * Will produce multiple, if the inputs don't all fit in the crafters inventory. 
+     * Will produce multiple, if the ingredients don't all fit in the crafters inventory. 
      * @param manager
      * @param recipeRequest
      * @param count
@@ -274,7 +274,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         int batchSize = recipeExecutionsCount;
         int totalSlots = Integer.MAX_VALUE;
 
-        //Calculate how many slots are needed, and figure out the maximum number of iterations we can load inputs for into inventory
+        //Calculate how many slots are needed, and figure out the maximum number of iterations we can load ingredients for into inventory
         while (totalSlots > maxSlots)
         {
             int stacksNeeded = 0;
