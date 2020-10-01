@@ -88,6 +88,30 @@ public interface IFactoryController
     }
 
     /**
+     * Method used to get a factory for a given Output class name.
+     *
+     * @param id The class id of the Output type of the requested factory.
+     * @param <Output>  The type of Output for the requested factory.
+     * @return The factory that can handle the given Output class.
+     * @throws IllegalArgumentException is thrown when the given Output name is unknown to this Factory Controller.
+     */
+    default <Output> IFactory<?, Output> getFactoryForOutput(final short id) throws IllegalArgumentException
+    {
+        try
+        {
+            return getFactoryForSerializationId(id);
+        }
+        catch (final IllegalArgumentException ex)
+        {
+            throw ex;
+        }
+        catch (final Exception ex)
+        {
+            throw new IllegalArgumentException("The given output name is unknown", ex);
+        }
+    }
+
+    /**
      * Method used to get a factory for a given output class.
      *
      * @param clazz    The class of the output type of the requested factory.
@@ -96,6 +120,16 @@ public interface IFactoryController
      * @throws IllegalArgumentException is thrown when the given output class is unknown to this Factory Controller.
      */
     <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final TypeToken<? extends Output> clazz) throws IllegalArgumentException;
+
+    /**
+     * Method used to get a factory for a given output class.
+     *
+     * @param id    The id of the output type of the requested factory.
+     * @param <Output> The type of output for the requested factory.
+     * @return The factory that can handle the given output class.
+     * @throws IllegalArgumentException is thrown when the given output class is unknown to this Factory Controller.
+     */
+    <Output> IFactory<?, Output> getFactoryForSerializationId(final short id) throws IllegalArgumentException;
 
     /**
      * Method used to register a new factory to this controller.

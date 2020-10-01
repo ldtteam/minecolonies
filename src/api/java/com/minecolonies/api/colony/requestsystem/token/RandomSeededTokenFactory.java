@@ -23,4 +23,10 @@ public class RandomSeededTokenFactory extends AbstractTokenFactory<Integer>
     {
         return TypeToken.of(Integer.class);
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 2;
+    }
 }

@@ -82,4 +82,10 @@ public class PickupRequestResolverFactory implements IRequestResolverFactory<Pic
 
         return new PickupRequestResolver(location, token);
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 16;
+    }
 }

@@ -312,5 +312,11 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
 
             return new StandardRequestSystemBuildingDataStore(id, openRequestsByRequestableType, openRequestsByCitizen, completedRequestsByCitizen, citizenByOpenRequest);
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 37;
+        }
     }
 }

@@ -242,7 +242,7 @@ public final class ConstructionTapeHelper
             final BlockPos newBlock = new BlockPos(block.getX(), y, block.getZ());
             if (world.getBlockState(newBlock).getBlock() == tapeOrTapeCorner)
             {
-                world.setBlockState(newBlock, Blocks.AIR.getDefaultState());
+                world.removeBlock(newBlock, false);
                 break;
             }
         }

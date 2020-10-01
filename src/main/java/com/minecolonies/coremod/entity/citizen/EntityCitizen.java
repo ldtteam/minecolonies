@@ -1443,6 +1443,16 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
     }
 
+    @Override
+    protected void collideWithEntity(final Entity entity)
+    {
+        super.collideWithEntity(entity);
+        if (!world.isRemote && entity instanceof AbstractEntityCitizen)
+        {
+            getCitizenDiseaseHandler().onCollission((AbstractEntityCitizen) entity);
+        }
+    }
+
     /**
      * Called when the mob's health reaches 0.
      *

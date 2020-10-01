@@ -146,5 +146,11 @@ public class StandardDataStoreManager implements IDataStoreManager
 
             return new StandardDataStoreManager(storeMap);
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 40;
+        }
     }
 }

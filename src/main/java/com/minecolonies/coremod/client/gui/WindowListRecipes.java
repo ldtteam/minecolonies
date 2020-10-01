@@ -153,21 +153,21 @@ public class WindowListRecipes extends Window implements ButtonHandler
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        final int row = recipeList.getListElementIndexByPane(button) - 1;
+        final int row = recipeList.getListElementIndexByPane(button);
         if (button.getID().equals(BUTTON_REMOVE) && building.isRecipeAlterationAllowed())
         {
-            final IRecipeStorage data = recipes.get(row + 1);
-            building.removeRecipe(row + 1);
+            final IRecipeStorage data = recipes.get(row);
+            building.removeRecipe(row);
             Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, true, data));
         }
         else if (button.getID().equals(BUTTON_FORWARD))
         {
-            building.switchIndex(row, row + 1);
+            building.switchIndex(row, row - 1);
             Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(building, row, true));
         }
         else if (button.getID().equals(BUTTON_BACKWARD))
         {
-            building.switchIndex(row, row - 1);
+            building.switchIndex(row + 1, row);
             Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(building, row, false));
         }
         else if (button.getID().equals(BUTTON_CANCEL))

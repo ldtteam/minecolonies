@@ -79,4 +79,10 @@ public class DeliveryRequestResolverFactory implements IRequestResolverFactory<D
 
         return new DeliveryRequestResolver(location, token);
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 15;
+    }
 }

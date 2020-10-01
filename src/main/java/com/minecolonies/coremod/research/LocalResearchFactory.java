@@ -93,4 +93,10 @@ public class LocalResearchFactory implements ILocalResearchFactory
         research.setProgress(progress);
         return research;
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 29;
+    }
 }

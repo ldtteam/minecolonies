@@ -128,5 +128,11 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
 
             return new StandardRequestSystemDeliveryManJobDataStore(id, queue);
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 38;
+        }
     }
 }

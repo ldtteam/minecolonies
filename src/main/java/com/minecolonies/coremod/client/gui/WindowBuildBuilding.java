@@ -46,10 +46,7 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
@@ -139,7 +136,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
         else if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
-            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.switchStyle"));
+            buttonBuild.hide();
         }
         else
         {
@@ -176,7 +173,13 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
+        if (building.getBuildingLevel() > 0
+            && !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
+            && !building.isDeconstructed())
+            return;
+
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
+
         Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
         if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
@@ -195,7 +198,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void repairClicked()
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
-        Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
+        Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, building.getStyle()));
         Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder));
         cancelClicked();
     }
@@ -208,10 +211,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         builders.clear();
         builders.add(new Tuple<>(LanguageHandler.format("com.minecolonies.coremod.job.Builder") + ":", BlockPos.ZERO));
         builders.addAll(building.getColony().getBuildings().stream()
-                          .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
-                                             && !(build instanceof BuildingMiner.View))
-                          .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
-                          .collect(Collectors.toList()));
+                .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
+                        && !(build instanceof BuildingMiner.View))
+                .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
+                .sorted(Comparator.comparing(item -> item.getB().distanceSq(building.getPosition())))
+                .collect(Collectors.toList()));
 
         initBuilderNavigation();
     }
@@ -249,6 +253,17 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
+        // Ensure the player cannot change a style of an already constructed building
+        if (building.getBuildingLevel() > 0)
+        {
+            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
+                    LanguageHandler.format(
+                            !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
+                            && !building.isDeconstructed()
+                                ? "com.minecolonies.coremod.gui.workerhuts.bad_style"
+                                : "com.minecolonies.coremod.gui.workerhuts.upgrade"));
+        }
+
         final World world = Minecraft.getInstance().world;
         resources.clear();
 

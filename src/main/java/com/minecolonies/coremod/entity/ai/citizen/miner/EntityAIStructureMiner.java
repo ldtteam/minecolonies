@@ -928,7 +928,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             final Level currentLevel = minerBuilding.getCurrentLevel();
 
-            currentLevel.closeNextNode(structurePlacer.getB().getSettings().rotation.ordinal(), getOwnBuilding().getActiveNode());
+            currentLevel.closeNextNode(structurePlacer.getB().getSettings().rotation.ordinal(), getOwnBuilding().getActiveNode(), world);
             getOwnBuilding().setActiveNode(null);
             getOwnBuilding().setOldNode(workingNode);
             WorkerUtil.updateLevelSign(world, currentLevel, minerBuilding.getLevelId(currentLevel));

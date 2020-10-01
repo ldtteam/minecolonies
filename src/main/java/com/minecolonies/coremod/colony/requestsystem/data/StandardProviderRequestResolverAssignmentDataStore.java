@@ -159,5 +159,11 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
 
             return new StandardProviderRequestResolverAssignmentDataStore(token, assignments);
         }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 34;
+        }
     }
 }

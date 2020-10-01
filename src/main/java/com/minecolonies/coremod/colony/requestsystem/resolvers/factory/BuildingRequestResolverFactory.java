@@ -79,4 +79,10 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
 
         return new BuildingRequestResolver(location, token);
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 23;
+    }
 }

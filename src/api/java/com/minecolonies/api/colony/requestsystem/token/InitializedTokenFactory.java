@@ -23,4 +23,10 @@ public class InitializedTokenFactory extends AbstractTokenFactory<FactoryVoidInp
     {
         return TypeConstants.FACTORYVOIDINPUT;
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 1;
+    }
 }

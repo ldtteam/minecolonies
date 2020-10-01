@@ -30,6 +30,12 @@ public interface IFactory<Input, Output>
     TypeToken<? extends Input> getFactoryInputType();
 
     /**
+     * Get a serialization id for the factory.
+     * @return the short id.
+     */
+    short getSerializationId();
+
+    /**
      * Method to get a new instance of the output given the input and additional context data.
      *
      * @param factoryController The controller calling this factory method.

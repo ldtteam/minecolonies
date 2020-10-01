@@ -363,6 +363,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         WorkOrderBuild workOrder;
         if (removal)
         {
+            if (!canDeconstruct())
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                  "entity.builder.cantdeconstruct");
+                return;
+            }
             workOrder = new WorkOrderBuildRemoval(this, level);
         }
         else
@@ -373,27 +379,27 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         if (!removal && !canBeBuiltByBuilder(level) && !workOrder.canBeResolved(colony, level))
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-              "entity.builder.messageBuilderNecessary", Integer.toString(level));
+              "entity.builder.messagebuildernecessary", Integer.toString(level));
             return;
         }
 
         if (workOrder.tooFarFromAnyBuilder(colony, level) && builder.equals(BlockPos.ZERO))
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-              "entity.builder.messageBuildersTooFar");
+              "entity.builder.messagebuilderstoofar");
             return;
         }
 
         if (getPosition().getY() + getHeight() >= MAX_BUILD_HEIGHT)
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-              "entity.builder.messageBuildTooHigh");
+              "entity.builder.messagebuildtoohigh");
             return;
         }
         else if (getPosition().getY() <= MIN_BUILD_HEIGHT)
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-              "entity.builder.messageBuildTooLow");
+              "entity.builder.messagebuildtoolow");
             return;
         }
 
@@ -407,7 +413,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             else
             {
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                  "entity.builder.messageBuilderNecessary", Integer.toString(level));
+                  "entity.builder.messagebuildernecessary", Integer.toString(level));
                 return;
             }
         }
@@ -417,9 +423,18 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         if (workOrder.getID() != 0)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.workorderadded");
         }
         markDirty();
+    }
+
+    /**
+     * Check if this particular building can be deconstructed.
+     * @return true if so.
+     */
+    public boolean canDeconstruct()
+    {
+        return true;
     }
 
     /**

@@ -79,4 +79,10 @@ public class WarehouseConcreteRequestResolverFactory implements IRequestResolver
 
         return new WarehouseConcreteRequestResolver(location, token);
     }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 18;
+    }
 }
