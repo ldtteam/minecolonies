@@ -269,7 +269,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             int stacksNeeded = 0;
             for(ItemStorage ingredient : inputs)
             {
-                stacksNeeded += (ingredient.getAmount() * batchSize) / ingredient.getItemStack().getMaxStackSize();
+                stacksNeeded += (int) Math.ceil((double)(ingredient.getAmount() * batchSize) / ingredient.getItemStack().getMaxStackSize());
             }
             if (stacksNeeded > maxSlots)
             {
