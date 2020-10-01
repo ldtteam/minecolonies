@@ -257,6 +257,11 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
+                if(!(entity instanceof FurnaceTileEntity))
+                {
+                    getOwnBuilding().removeFromFurnaces(pos);
+                    continue;
+                }
                 final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
                 if (!furnace.isBurning() && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)) && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE) 
                 {
