@@ -17,6 +17,7 @@ import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -686,6 +687,17 @@ public class VisitorCitizen extends AbstractEntityCitizen
             {
                 citizenItemHandler.entityDropItem(itemstack);
             }
+        }
+    }
+
+    // TODO:REMOVE DEBUG
+    @Override
+    public void setRawPosition(double x, double y, double z)
+    {
+        super.setRawPosition(x, y, z);
+        if (citizenStatusHandler != null && x < 1 && x > -1 && z < 1 && z > -1)
+        {
+            Log.getLogger().error("Visitor entity set to zero pos, report to mod author:", new Exception());
         }
     }
 }

@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
 import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.BreakDoorGoal;
@@ -10,6 +12,8 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.EnumSet;
+
+import static com.minecolonies.coremod.research.ResearchInitializer.MECHANIC_ENHANCED_GATES;
 
 /**
  * Break door entity AI with mutex.
@@ -86,7 +90,20 @@ public class EntityAIBreakDoor extends BreakDoorGoal
         }
         else
         {
-            breakChance = Math.max(1, hardness / ((entity.world.getEntitiesWithinAABB(AbstractEntityMinecoloniesMob.class, entity.getBoundingBox().grow(5)).size() / 5) + 1));
+            int fasterBreakPerXNearby = 5;
+
+            if (entity instanceof AbstractEntityMinecoloniesMob && !entity.world.isRemote())
+            {
+                final IColony colony = ((AbstractEntityMinecoloniesMob) entity).getColony();
+                final AdditionModifierResearchEffect effect =
+                  colony.getResearchManager().getResearchEffects().getEffect(MECHANIC_ENHANCED_GATES, AdditionModifierResearchEffect.class);
+                if (effect != null)
+                {
+                    fasterBreakPerXNearby += effect.getEffect().intValue();
+                }
+            }
+            breakChance = Math.max(1,
+              hardness / (1 + (entity.world.getEntitiesWithinAABB(AbstractEntityMinecoloniesMob.class, entity.getBoundingBox().grow(5)).size() / fasterBreakPerXNearby)));
         }
 
         if (this.breakingTime == this.func_220697_f() - 1)
