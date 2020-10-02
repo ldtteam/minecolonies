@@ -333,7 +333,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
 
             final boolean firstSibling = i == 0;
-            final boolean secondSibling = i == 1;
+            final boolean secondSibling = i >= 1;
 
             final boolean lastSibling = i + 1 >= researchList.size();
 
@@ -351,12 +351,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 {
                     if (secondSibling)
                     {
-                        for (int dif = 1; dif < (nextHeight + Math.min(i, 1)) - parentHeight; dif++)
+                        for (int dif = 1; dif < nextHeight - parentHeight + 1; dif++)
                         {
                             final Image corner = new Image();
                             corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_down.png"));
                             corner.setSize(X_SPACING, GRADIENT_HEIGHT + Y_SPACING);
-                            corner.setPosition(gradient.getX() - X_SPACING, (dif) * (gradient.getHeight() + Y_SPACING) + Y_SPACING);
+                            corner.setPosition(gradient.getX() - X_SPACING, gradient.getY() - (dif * corner.getHeight()));
                             view.addChild(corner);
                         }
                     }
