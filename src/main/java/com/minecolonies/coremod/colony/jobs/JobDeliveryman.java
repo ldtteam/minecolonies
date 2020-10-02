@@ -349,12 +349,12 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             if (r != null)
             {
                 getColony().getRequestManager().updateRequestState(t, RequestState.FAILED);
-                getTaskQueueFromDataStore().remove(t);
             }
             else
             {
                 Log.getLogger().warn("Oops, the request with ID: " + t.toString() + " couldn't be cancelled by the deliveryman because it doesn't exist");
             }
+            getTaskQueueFromDataStore().remove(t);
         }
     }
 
