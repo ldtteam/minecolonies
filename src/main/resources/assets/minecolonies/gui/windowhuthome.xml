@@ -13,6 +13,9 @@
                     <button id="remove" size="100 12" pos="5 15" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.unassign)"/>
                 </box>
             </list>
+            <buttonimage id="recall" size="129 17" pos="30 130" textcolor="black"
+                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                         label="$(com.minecolonies.coremod.gui.townhall.recall)"/>
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
