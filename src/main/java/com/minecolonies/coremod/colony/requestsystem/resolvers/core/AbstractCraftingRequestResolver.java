@@ -251,11 +251,11 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     /**
      * Create the crafting request entries for the overall request
      * Will produce multiple, if the ingredients don't all fit in the crafters inventory. 
-     * @param manager
-     * @param recipeRequest
-     * @param count
-     * @param minCount
-     * @return
+     * @param manager request manager
+     * @param recipeRequest requested recipe instance
+     * @param count count of item requested
+     * @param minCount minimum count required
+     * @return list of crafting requests necessary to fulfill the overall requests
      */
     @Nullable
     protected List<IToken<?>> createRequestsForRecipe(
