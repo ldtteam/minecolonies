@@ -414,19 +414,19 @@ public class ResearchInitializer
         hamlet.addChild(village);
         village.addChild(city);
 
-        final GlobalResearch diligent = new GlobalResearch("diligent", "civilian", "Diligent", 2, new MultiplierModifierResearchEffect("Leveling", 0.1));
+        final GlobalResearch diligent = new GlobalResearch("diligent", "civilian", "Diligent", 2, new MultiplierModifierResearchEffect("Leveling", 0.05));
         diligent.setRequirement(new BuildingResearchRequirement(2, "library"));
 
-        final GlobalResearch studious = new GlobalResearch("studious", "civilian", "Studious", 3, new MultiplierModifierResearchEffect("Leveling", 0.25));
+        final GlobalResearch studious = new GlobalResearch("studious", "civilian", "Studious", 3, new MultiplierModifierResearchEffect("Leveling", 0.1));
         studious.setRequirement(new BuildingResearchRequirement(3, "library"));
 
-        final GlobalResearch scholarly = new GlobalResearch("scholarly", "civilian", "Scholarly", 4, new MultiplierModifierResearchEffect("Leveling", 0.5));
+        final GlobalResearch scholarly = new GlobalResearch("scholarly", "civilian", "Scholarly", 4, new MultiplierModifierResearchEffect("Leveling", 0.25));
         scholarly.setRequirement(new BuildingResearchRequirement(4, "library"));
 
-        final GlobalResearch reflective = new GlobalResearch("reflective", "civilian", "Reflective", 5, new MultiplierModifierResearchEffect("Leveling", 1.0));
+        final GlobalResearch reflective = new GlobalResearch("reflective", "civilian", "Reflective", 5, new MultiplierModifierResearchEffect("Leveling", 0.5));
         reflective.setRequirement(new BuildingResearchRequirement(5, "library"));
 
-        final GlobalResearch academic = new GlobalResearch("academic", "civilian", "Academic", 6, new MultiplierModifierResearchEffect("Leveling", 2.0));
+        final GlobalResearch academic = new GlobalResearch("academic", "civilian", "Academic", 6, new MultiplierModifierResearchEffect("Leveling", 1.0));
 
         keen.addChild(diligent);
         diligent.addChild(studious);
