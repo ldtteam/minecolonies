@@ -61,7 +61,7 @@ public class WindowHutCrafter extends AbstractWindowWorkerBuilding<AbstractBuild
         for (final int citizenId : building.getWorkerId())
         {
             ICitizenDataView citizen = building.getColony().getCitizen(citizenId);
-            if (citizen.getJobView() instanceof CrafterJobView)
+            if (citizen != null && citizen.getJobView() instanceof CrafterJobView)
             {
                 tasks.addAll(((CrafterJobView) citizen.getJobView()).getDataStore().getQueue());
             }
