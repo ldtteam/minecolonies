@@ -28,6 +28,7 @@ public class ResearchInitializer
     public static final String BLACKSMITH_RESEARCH     = "Blacksmith";
     public static final String STONEMASON_RESEARCH     = "Stonemason";
     public static final String MECHANIC_RESEARCH       = "Mechanic";
+    public static final String MECHANIC_ENHANCED_GATES = "Enhances Gate Durability";
     public static final String SCHOOL_RESEARCH         = "School";
     public static final String LIBRARY_RESEARCH        = "Library";
     public static final String HOSPITAL_RESEARCH       = "Hospital";
@@ -273,9 +274,15 @@ public class ResearchInitializer
         amazingveins.addChild(motherlode);
 
         final GlobalResearch whatyaneed = new GlobalResearch("whatyaneed", "technology", "What ya Need?", 2, new UnlockBuildingResearchEffect(MECHANIC_RESEARCH, true));
+        final GlobalResearch enhanced_gates1 =
+          new GlobalResearch("enhanced_gates1", "technology", "Enhanced Gates I", 3, new AdditionModifierResearchEffect(MECHANIC_ENHANCED_GATES, 5.0));
+        final GlobalResearch enhanced_gates2 =
+          new GlobalResearch("enhanced_gates2", "technology", "Enhanced Gates II", 4, new AdditionModifierResearchEffect(MECHANIC_ENHANCED_GATES, 15.0));
         whatyaneed.setRequirement(new BuildingResearchRequirement(3, "blacksmith"));
 
         hittingiron.addChild(whatyaneed);
+        whatyaneed.addChild(enhanced_gates1);
+        enhanced_gates1.addChild(enhanced_gates2);
 
         researchTree.addResearch(pavetheroad.getBranch(), pavetheroad);
         researchTree.addResearch(gildedhammer.getBranch(), gildedhammer);
@@ -283,6 +290,8 @@ public class ResearchInitializer
         researchTree.addResearch(doubletrouble.getBranch(), doubletrouble);
 
         researchTree.addResearch(whatyaneed.getBranch(), whatyaneed);
+        researchTree.addResearch(enhanced_gates1.getBranch(), enhanced_gates1);
+        researchTree.addResearch(enhanced_gates2.getBranch(), enhanced_gates2);
         researchTree.addResearch(stringwork.getBranch(), stringwork);
         researchTree.addResearch(thoselungs.getBranch(), thoselungs);
         researchTree.addResearch(rainbowheaven.getBranch(), rainbowheaven);

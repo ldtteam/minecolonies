@@ -296,6 +296,8 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> guardianangel2;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> whatyaneed;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> enhanced_gates1;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> enhanced_gates2;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> stringwork;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> thoselungs;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> rainbowheaven;
@@ -1193,6 +1195,11 @@ public class ServerConfiguration extends AbstractConfiguration
         whatyaneed = defineList(builder, "whatyaneed",
           Collections.singletonList("minecraft:redstone*64"),
           s -> s instanceof String);
+        enhanced_gates1 = defineList(builder, "enhanced_gates1",
+          Arrays.asList("minecolonies:gate_wood*64", "minecolonies:ancienttome*2", "minecraft:iron_block*5"),
+          s -> s instanceof String);
+        enhanced_gates2 = defineList(builder, "enhanced_gates2",
+          Arrays.asList("minecolonies:gate_iron*64", "minecolonies:ancienttome*2", "minecraft:obsidian*32"), s -> s instanceof String);
         stringwork = defineList(builder, "stringwork",
           Collections.singletonList("minecraft:string*16"),
           s -> s instanceof String);
