@@ -1,32 +1,38 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
+import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
-import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_CANCEL;
-import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_FULLFIL;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Window for the request detail.
@@ -165,6 +171,8 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             }
         }
 
+        final Image logo = findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
+
         final ItemIcon exampleStackDisplay = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
         final List<ItemStack> displayStacks = request.getDisplayStacks();
 
@@ -174,18 +182,18 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         }
         else
         {
-            final Image logo = findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
             logo.setVisible(true);
             logo.setImage(request.getDisplayIcon());
         }
 
-        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().func_240901_a_());
-        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getRequesterDisplayName(view.getRequestManager(), request).getString());
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().func_240901_a_());
+        final String requester = request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getString();
+
+        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(requester);
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getLocation().toString());
 
 
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().func_240901_a_());
         if (colony == null)
         {
             Log.getLogger().warn("---Colony Null in WindowRequestDetail---");
@@ -201,7 +209,38 @@ public class WindowRequestDetail extends Window implements ButtonHandler
                 return;
             }
 
-            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getRequesterDisplayName(view.getRequestManager(), request).getString());
+            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getRequesterDisplayName(colony.getRequestManager(), request).getString());
+            if (request instanceof StandardRequests.DeliveryRequest)
+            {
+                final BlockPos resolverPos = colony.getRequestManager().getResolverForRequest(request.getId()).getLocation().getInDimensionLocation();
+                final IBuildingView buildingView = colony.getBuilding(resolverPos);
+
+                int posInList = -1;
+                if (buildingView instanceof BuildingDeliveryman.View)
+                {
+                    for (int worker : ((BuildingDeliveryman.View) buildingView).getWorkerId())
+                    {
+                        final ICitizenDataView citizen = colony.getCitizen(worker);
+                        if (citizen != null)
+                        {
+                            if (citizen.getJobView() instanceof DmanJobView && ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().contains(request.getId()))
+                            {
+                                posInList = ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(request.getId());
+                            }
+                        }
+                    }
+                }
+
+                if (posInList >= 0)
+                {
+                    logo.setHoverToolTip(ImmutableList.of(new TranslationTextComponent(FROM, requester), new TranslationTextComponent(IN_QUEUE, posInList)));
+                }
+                else
+                {
+                    logo.setHoverToolTip(ImmutableList.of(new TranslationTextComponent(FROM, requester)));
+                }
+            }
+
         }
         catch (@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {

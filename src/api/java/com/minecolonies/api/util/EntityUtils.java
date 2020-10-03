@@ -177,7 +177,8 @@ public final class EntityUtils
           Blocks.AIR,
           Blocks.CAVE_AIR,
           Blocks.SNOW,
-          Blocks.TALL_GRASS);
+          Blocks.TALL_GRASS,
+          Blocks.WATER);
     }
 
     /**

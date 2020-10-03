@@ -202,6 +202,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     private ILocation location = null;
 
     /**
+     * Cached team name the entity belongs to.
+     */
+    private String cachedTeamName;
+
+    /**
      * The entities states
      */
     private enum EntityState implements IState
@@ -293,6 +298,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimensionKey().func_240901_a_());
                 if (colonyView != null)
                 {
+                    this.cachedTeamName = colonyView.getTeamName();
                     this.citizenDataView = colonyView.getCitizen(citizenId);
                     if (citizenDataView != null)
                     {
@@ -1613,9 +1619,14 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public Team getTeam()
     {
-        if (world == null || world.isRemote)
+        if (world == null || (world.isRemote && cachedTeamName == null))
         {
             return null;
+        }
+
+        if (world.isRemote)
+        {
+            return world.getScoreboard().getTeam(this.cachedTeamName);
         }
 
         if (getCitizenColonyHandler().getColony() != null)
