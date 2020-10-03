@@ -319,7 +319,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         LanguageHandler.sendPlayersMessage(
           colony.getImportantMessageEntityPlayers(),
-          RAID_EVENT_MESSAGE + horde.getMessageID(), colony.getName(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint));
+          RAID_EVENT_MESSAGE + horde.getMessageID(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName());
     }
 
     /**
