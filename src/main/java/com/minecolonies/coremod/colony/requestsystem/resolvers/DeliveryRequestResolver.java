@@ -3,6 +3,8 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -13,14 +15,17 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -57,18 +62,28 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
 
         final Colony colony = (Colony) manager.getColony();
-        final ICitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
-                                               .stream()
-                                               .filter(citizenData -> citizenData.getEntity()
-                                                                        .map(entityCitizen -> requestToCheck.getRequest()
-                                                                                                .getTarget()
-                                                                                                .isReachableFromLocation(entityCitizen.getLocation()))
-                                                                        .orElse(false))
-                                               .filter(c -> c.getJob() instanceof JobDeliveryman)
-                                               .findFirst()
-                                               .orElse(null);
+        final IWareHouse wareHouse = colony.getBuildingManager().getClosestWarehouseInColony(requestToCheck.getRequester().getLocation().getInDimensionLocation());
+        if (wareHouse == null)
+        {
+            return false;
+        }
 
-        return freeDeliveryMan != null;
+        for (final Vec3d hut : wareHouse.getRegisteredDeliverymen())
+        {
+            final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(hut));
+            if (building instanceof BuildingDeliveryman)
+            {
+                for (final ICitizenData data : building.getAssignedCitizen())
+                {
+                    if (data.getJob() instanceof JobDeliveryman && data.getJob().isActive())
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     @Nullable
@@ -81,33 +96,44 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
 
         final Colony colony = (Colony) manager.getColony();
-        //We can do an instant get here, since we are already filtering on anything that has no entity.
-        final ICitizenData freeDeliveryMan = colony.getCitizenManager()
-                                               .getCitizens()
-                                               .stream()
-                                               .filter(citizenData -> citizenData.getEntity()
-                                                                        .map(entityCitizen -> request.getRequest()
-                                                                                                .getTarget()
-                                                                                                .isReachableFromLocation(entityCitizen.getLocation()))
-                                                                        .orElse(false))
-                                               .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).isActive())
-                                               .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).hasSameDestinationDelivery(request))
-                                                      .thenComparing(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
-                                                                       .thenComparing(c -> {
-                                                                           BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
-                                                                           //We can do an instant get here, since we are already filtering on anything that has no entity.
-                                                                           BlockPos entityLocation = c.getEntity().get().getLocation().getInDimensionLocation();
-
-                                                                           return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
-                                                                       })))
-                                               .orElse(null);
-
-        if (freeDeliveryMan == null)
+        final IWareHouse wareHouse = colony.getBuildingManager().getClosestWarehouseInColony(request.getRequester().getLocation().getInDimensionLocation());
+        if (wareHouse == null)
         {
             return null;
         }
 
-        final JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
+        ICitizenData chosenCourier = null;
+        int taskListSize = 0;
+        double distance = 0;
+        for (final Vec3d hut : wareHouse.getRegisteredDeliverymen())
+        {
+            final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(hut));
+            if (building instanceof BuildingDeliveryman)
+            {
+                for (final ICitizenData data : building.getAssignedCitizen())
+                {
+                    if (data.getJob() instanceof JobDeliveryman && data.getJob().isActive())
+                    {
+                        final int tempListSize = ((JobDeliveryman) data.getJob()).getTaskQueue().size();
+                        final double tempDistance = BlockPosUtil.getDistanceSquared(request.getRequester().getLocation().getInDimensionLocation(), building.getPosition());
+                        if (chosenCourier == null || tempListSize < taskListSize || (tempListSize == taskListSize && tempDistance < distance))
+                        {
+                            chosenCourier = data;
+                            taskListSize = tempListSize;
+                            distance = tempDistance;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (chosenCourier == null)
+        {
+            return null;
+        }
+
+
+        final JobDeliveryman job = (JobDeliveryman) chosenCourier.getJob();
         job.addRequest(request.getId());
 
         return Lists.newArrayList();

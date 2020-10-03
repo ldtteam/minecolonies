@@ -64,7 +64,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
      * @param requestToCheck
      * @return
      */
-    protected abstract boolean internalCanResolve(final Set<TileEntityWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck);
+    protected abstract boolean internalCanResolve(final List<TileEntityWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck);
 
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
@@ -87,12 +87,10 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
             }
 
             final Colony colony = (Colony) manager.getColony();
-            final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
-            wareHouses.removeIf(Objects::isNull);
 
             try
             {
-                return internalCanResolve(wareHouses, requestToCheck);
+                return internalCanResolve(getWareHousesInColony(colony, requestToCheck.getRequester().getLocation().getInDimensionLocation()), requestToCheck);
             }
             catch (Exception e)
             {
@@ -151,7 +149,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
 
         final Colony colony = (Colony) manager.getColony();
 
-        final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
+        final List<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony, request.getRequester().getLocation().getInDimensionLocation());
 
         final int totalRequested = request.getRequest().getCount();
         int totalAvailable = 0;
@@ -193,7 +191,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         }
 
         final Colony colony = (Colony) manager.getColony();
-        final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
+        final List<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony, completedRequest.getRequester().getLocation().getInDimensionLocation());
 
         List<IRequest<?>> deliveries = Lists.newArrayList();
         int remainingCount = completedRequest.getRequest().getCount();
@@ -249,13 +247,13 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
     }
 
     /**
-     * Use to get the set of all warehouses
-     * @param colony
-     * @return
+     * Use to get the ordered list of all warehouses.
+     * @param colony the colony in question.
+     * @return the ordered list.
      */
-    protected static Set<TileEntityWareHouse> getWareHousesInColony(final Colony colony)
+    protected static List<TileEntityWareHouse> getWareHousesInColony(final Colony colony, final BlockPos requesterPosition)
     {
-        final Set<TileEntityWareHouse> wareHouses = new HashSet<>();
+        final List<TileEntityWareHouse> wareHouses = new ArrayList<>();
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
             if (building instanceof BuildingWareHouse && building.getTileEntity() != null)
@@ -263,6 +261,13 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                 wareHouses.add((TileEntityWareHouse) building.getTileEntity());
             }
         }
+
+        wareHouses.sort((w1, w2) ->
+        {
+            final double dist1 = w1.getPosition().distanceSq(requesterPosition);
+            final double dist2 = w2.getPosition().distanceSq(requesterPosition);
+            return Double.compare(dist1, dist2);
+        });
 
         return wareHouses;
     }
