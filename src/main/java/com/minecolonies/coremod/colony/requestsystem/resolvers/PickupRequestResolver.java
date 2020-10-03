@@ -99,7 +99,9 @@ public class PickupRequestResolver extends AbstractRequestResolver<Pickup>
             return null;
         }
 
-        final List<ICitizenData> courier = new ArrayList<>();
+        ICitizenData chosenCourier = null;
+        int taskListSize = 0;
+        double distance = 0;
         for (final Vec3d hut : wareHouse.getRegisteredDeliverymen())
         {
             final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(hut));
@@ -109,26 +111,34 @@ public class PickupRequestResolver extends AbstractRequestResolver<Pickup>
                 {
                     if (data.getJob() instanceof JobDeliveryman && data.getJob().isActive())
                     {
-                        courier.add(data);
+                        if (chosenCourier == null)
+                        {
+                            chosenCourier = data;
+                            taskListSize = ((JobDeliveryman) data.getJob()).getTaskQueue().size();
+                            distance = BlockPosUtil.getDistanceSquared(request.getRequester().getLocation().getInDimensionLocation(), building.getPosition());
+                        }
+                        else
+                        {
+                            final int tempListSize = ((JobDeliveryman) data.getJob()).getTaskQueue().size();
+                            final double tempDistance = BlockPosUtil.getDistanceSquared(request.getRequester().getLocation().getInDimensionLocation(), building.getPosition());
+                            if (tempListSize < taskListSize || (tempListSize == taskListSize && tempDistance < distance))
+                            {
+                                chosenCourier = data;
+                                taskListSize = tempListSize;
+                                distance = tempDistance;
+                            }
+                        }
                     }
                 }
             }
         }
 
-        courier.sort(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
-                       .thenComparing(c -> {
-                           BlockPos targetPos = request.getRequester().getLocation().getInDimensionLocation();
-                           //We can do an instant get here, since we are already filtering on anything that has no entity.
-                           BlockPos entityLocation = c.getWorkBuilding().getLocation().getInDimensionLocation();
-                           return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
-                       }));
-
-        if (courier.isEmpty())
+        if (chosenCourier == null)
         {
             return null;
         }
 
-        final JobDeliveryman job = (JobDeliveryman) courier.get(0).getJob();
+        final JobDeliveryman job = (JobDeliveryman) chosenCourier.getJob();
         job.addRequest(request.getId());
 
         return Lists.newArrayList();
