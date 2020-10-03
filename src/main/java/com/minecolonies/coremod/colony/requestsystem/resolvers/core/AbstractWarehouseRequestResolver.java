@@ -248,8 +248,8 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
 
     /**
      * Use to get the ordered list of all warehouses.
-     * @param colony
-     * @return
+     * @param colony the colony in question.
+     * @return the ordered list.
      */
     protected static List<TileEntityWareHouse> getWareHousesInColony(final Colony colony, final BlockPos requesterPosition)
     {
@@ -262,7 +262,6 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
             }
         }
 
-        wareHouses.removeIf(Objects::isNull);
         wareHouses.sort((w1, w2) ->
         {
             final double dist1 = w1.getPosition().distanceSq(requesterPosition);
