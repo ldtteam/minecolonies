@@ -111,22 +111,13 @@ public class PickupRequestResolver extends AbstractRequestResolver<Pickup>
                 {
                     if (data.getJob() instanceof JobDeliveryman && data.getJob().isActive())
                     {
-                        if (chosenCourier == null)
+                        final int tempListSize = ((JobDeliveryman) data.getJob()).getTaskQueue().size();
+                        final double tempDistance = BlockPosUtil.getDistanceSquared(request.getRequester().getLocation().getInDimensionLocation(), building.getPosition());
+                        if (chosenCourier == null || tempListSize < taskListSize || (tempListSize == taskListSize && tempDistance < distance))
                         {
                             chosenCourier = data;
-                            taskListSize = ((JobDeliveryman) data.getJob()).getTaskQueue().size();
-                            distance = BlockPosUtil.getDistanceSquared(request.getRequester().getLocation().getInDimensionLocation(), building.getPosition());
-                        }
-                        else
-                        {
-                            final int tempListSize = ((JobDeliveryman) data.getJob()).getTaskQueue().size();
-                            final double tempDistance = BlockPosUtil.getDistanceSquared(request.getRequester().getLocation().getInDimensionLocation(), building.getPosition());
-                            if (tempListSize < taskListSize || (tempListSize == taskListSize && tempDistance < distance))
-                            {
-                                chosenCourier = data;
-                                taskListSize = tempListSize;
-                                distance = tempDistance;
-                            }
+                            taskListSize = tempListSize;
+                            distance = tempDistance;
                         }
                     }
                 }
