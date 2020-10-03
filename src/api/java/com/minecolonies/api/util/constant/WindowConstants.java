@@ -983,6 +983,21 @@ public final class WindowConstants
     public static final String REQUESTER = "requester";
 
     /**
+     * Delivery origin.
+     */
+    public static final String FROM = "com.minecolonies.coremod.from";
+
+    /**
+     * Number in queue.
+     */
+    public static final String IN_QUEUE = "com.minecolonies.coremod.listentry";
+
+    /**
+     * Id of the order label.
+     */
+    public static final String ORDER = "order";
+
+    /**
      * Id of the parent label.
      */
     public static final String PARENT = "parent";

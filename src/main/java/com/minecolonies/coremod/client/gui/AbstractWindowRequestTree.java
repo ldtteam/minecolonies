@@ -6,6 +6,8 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -15,7 +17,10 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
+import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
@@ -324,8 +329,44 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                     logo.setImage(request.getDisplayIcon());
                 }
 
-                rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                  .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText());
+                final String requester = request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText();
+
+                if (request instanceof StandardRequests.DeliveryRequest)
+                {
+                    final BlockPos resolver = colony.getRequestManager().getResolverForRequest(request.getId()).getLocation().getInDimensionLocation();
+                    final IBuildingView view = colony.getBuilding(resolver);
+
+                    int posInList = -1;
+                    if (view instanceof BuildingDeliveryman.View)
+                    {
+                        for (int worker : ((BuildingDeliveryman.View) view).getWorkerId())
+                        {
+                            final ICitizenDataView citizen = colony.getCitizen(worker);
+                            if (citizen != null)
+                            {
+                                if (citizen.getJobView() instanceof DmanJobView && ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().contains(request.getId()))
+                                {
+                                    posInList = ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(request.getId());
+                                }
+                            }
+                        }
+                    }
+
+                    if (posInList >= 0)
+                    {
+                        logo.setHoverToolTip(ImmutableList.of(LanguageHandler.format(FROM, requester), LanguageHandler.format(IN_QUEUE, posInList)));
+                    }
+                    else
+                    {
+                        logo.setHoverToolTip(ImmutableList.of(LanguageHandler.format(FROM, requester)));
+                    }
+                }
+                else
+                {
+                    rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
+                      .setLabelText(requester);
+                }
+
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
                   .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
