@@ -145,7 +145,7 @@ public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
             home.removeResident(row);
             Network.getNetwork().sendToServer(new AssignUnassignMessage(building, false, citizenid));
             refreshView();
-
+        }
     }
 
     /**
