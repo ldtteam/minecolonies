@@ -67,9 +67,8 @@ public final class ExperienceUtils
      */
     public static double getXPNeededForNextLevel(final int currentLevel)
     {
-        return EXPERIENCE_MULTIPLIER
-                 * (currentLevel + 1)
-                 * (currentLevel + 1);
+        return 1 + EXPERIENCE_MULTIPLIER *
+                     5 * currentLevel + 0.005 * (currentLevel * currentLevel * currentLevel);
     }
 
     /**
