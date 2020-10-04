@@ -10,6 +10,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.minecolonies.api.research.util.ResearchConstants.HAPPINESS;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.DEMANDS;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO;
@@ -128,7 +130,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     @Override
-    public double getHappiness()
+    public double getHappiness(final IColony colony)
     {
         if (cachedHappiness == -1)
         {
@@ -140,7 +142,15 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
                 totalWeight += happinessModifier.getWeight();
             }
 
-            cachedHappiness = Math.min(10.0 * (total / totalWeight), 10);
+            double happinessResult = (total / totalWeight);
+            final MultiplierModifierResearchEffect xpBonus =
+              colony.getResearchManager().getResearchEffects().getEffect(HAPPINESS, MultiplierModifierResearchEffect.class);
+            if (xpBonus != null)
+            {
+                happinessResult *= (1 + xpBonus.getEffect());
+            }
+
+            cachedHappiness = Math.min(10.0 * happinessResult, 10);
         }
         return cachedHappiness;
     }

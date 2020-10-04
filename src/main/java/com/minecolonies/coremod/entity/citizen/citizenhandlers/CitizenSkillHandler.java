@@ -140,7 +140,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
             return;
         }
 
-        final int levelCap = (int) citizen.getCitizenHappinessHandler().getHappiness();
+        final int levelCap = (int) citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony());
         if (skillMap.get(Skill.Intelligence).getB() < levelCap * 9)
         {
             addXpToSkill(Skill.Intelligence, 10, citizen);
