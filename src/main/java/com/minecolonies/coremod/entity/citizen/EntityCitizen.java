@@ -1282,9 +1282,16 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
         }
 
-        if (sourceEntity instanceof ServerPlayerEntity && getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+        if (sourceEntity instanceof ServerPlayerEntity)
         {
-            return !IGuardBuilding.checkIfGuardShouldTakeDamage(this, (PlayerEntity) sourceEntity);
+            if (citizenColonyHandler.getColony().getRaiderManager().isRaided())
+            {
+                return false;
+            }
+            if (getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+            {
+                return !IGuardBuilding.checkIfGuardShouldTakeDamage(this, (PlayerEntity) sourceEntity);
+            }
         }
         return false;
     }

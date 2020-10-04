@@ -6,8 +6,8 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,7 +76,12 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     @Override
     public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        return new StringTextComponent(((AbstractBuildingCrafter.View) manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation())).getJobName());
+        final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
+        if (requester instanceof AbstractBuildingCrafter.View)
+        {
+            return new StringTextComponent(((AbstractBuildingCrafter.View) requester).getJobName());
+        }
+        return super.getRequesterDisplayName(manager, request);
     }
 
     @Override
