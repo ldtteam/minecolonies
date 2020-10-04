@@ -316,19 +316,17 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                     logo.setVisible(false);
                     exampleStackDisplay.setVisible(true);
                     exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
+                    rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getString());
                 }
                 else
                 {
                     exampleStackDisplay.setVisible(false);
                     logo.setVisible(true);
                     logo.setImage(request.getDisplayIcon());
+                    logo.setHoverToolTip(request.getResolverToolTip(colony));
                 }
 
-                rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                  .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getString());
-                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-                  .setLabelText(request.getShortDisplayString().getString().replace("§f", ""));
-
+                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(request.getShortDisplayString().getString().replace("§f", ""));
                 if (!cancellable(request))
                 {
                     rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();

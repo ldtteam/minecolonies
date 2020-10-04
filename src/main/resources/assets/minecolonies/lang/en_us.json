@@ -1798,5 +1798,12 @@
   "entity.researcher.moreknowledge": "During your absence, your Researchers used the time to do some extra work. This will speed up their current research a bit!",
   "com.minecolonies.coremod.gui.request.hideshow": "Only show important requests",
   "com.minecolonies.coremod.gui.workerhuts.crafter.tasks": "Tasks:",
-  "entity.builder.cantdeconstruct": "This building can't be deconstructed!"
+  "entity.builder.cantdeconstruct": "This building can't be deconstructed!",
+
+  "com.minecolonies.coremod.from": "From: %s",
+  "com.minecolonies.coremod.at": "At: %s",
+  "com.minecolonies.coremod.listentry": "#%d in queue",
+  "com.minecolonies.coremod.missingitems": "Awaiting Materials",
+  "com.minecolonies.coremod.finished": "Finished!"
+
 }

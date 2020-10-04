@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -16,6 +17,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +32,10 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractRequest<R extends IRequestable> implements IRequest<R>
 {
+    /**
+     * Default display icon (none).
+     */
+    public static final ResourceLocation MISSING = new ResourceLocation("missingno");
 
     @NotNull
     private final IToken<?>       token;
@@ -418,7 +424,13 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @Override
     public ResourceLocation getDisplayIcon()
     {
-        return new ResourceLocation("missingno");
+        return MISSING;
+    }
+
+    @Override
+    public List<IFormattableTextComponent> getResolverToolTip(final IColonyView colony)
+    {
+        return Collections.emptyList();
     }
 
     @Override

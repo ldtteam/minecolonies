@@ -322,6 +322,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         onDestroyed();
         colony.getBuildingManager().removeBuilding(this, colony.getPackageManager().getCloseSubscribers());
+        getColony().getRequestManager().getDataStoreManager().remove(this.rsDataStoreToken);
     }
 
     @Override

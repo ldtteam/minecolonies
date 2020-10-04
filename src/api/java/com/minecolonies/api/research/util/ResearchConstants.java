@@ -81,6 +81,7 @@ public final class ResearchConstants
     public static final String CAP      = "Citizen-Cap";
     public static final String RAILS    = "Rails";
     public static final String WALKING  = "Walking";
+    public static final String LEVELING  = "Leveling";
 
     public static final String HEALTH       = "Health";
     public static final String REGENERATION = "Regeneration";
