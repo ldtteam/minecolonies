@@ -76,11 +76,6 @@ public final class WindowConstants
     public static final String BUTTON_RECALL = "recall";
 
     /**
-     * Id of the hire Citizen button in the GUI.
-     */
-    public static final String BUTTON_HIRE = "hire";
-
-    /**
      * Id of the change specialization button in the GUI.
      */
     public static final String BUTTON_CHANGE_SPEC = "changeSpec";
@@ -144,11 +139,6 @@ public final class WindowConstants
      * Id of the teleport to colony button in the GUI.
      */
     public static final String BUTTON_TP = "tp";
-
-    /**
-     * Id of the rally guards button in the GUI.
-     */
-    public static final String BUTTON_RALLY_GUARDS = "rallyGuards";
 
     /**
      * Id of the up button in the GUI.
@@ -456,24 +446,9 @@ public final class WindowConstants
     public static final String BUTTON_NEXT_COLOR_ID = "nextColor";
 
     /**
-     * This button will send a packet to the server telling it to place this hut/decoration.
-     */
-    public static final String BUTTON_CONFIRM = "confirm";
-
-    /**
      * This button will remove the currently rendered structure.
      */
     public static final String BUTTON_CANCEL = "cancel";
-
-    /**
-     * This button will rotateWithMirror the structure counterclockwise.
-     */
-    public static final String BUTTON_ROTATE_LEFT = "rotateLeft";
-
-    /**
-     * This button will rotated the structure clockwise.
-     */
-    public static final String BUTTON_ROTATE_RIGHT = "rotateRight";
 
     /**
      * Move the structure preview forward.
@@ -484,26 +459,6 @@ public final class WindowConstants
      * Move the structure preview back.
      */
     public static final String BUTTON_BACKWARD = "down";
-
-    /**
-     * Move the structure preview left.
-     */
-    public static final String BUTTON_LEFT = "left";
-
-    /**
-     * Move the structure preview right.
-     */
-    public static final String BUTTON_RIGHT = "right";
-
-    /**
-     * Mirror the structure.
-     */
-    public static final String BUTTON_MIRROR = "mirror";
-
-    /**
-     * Resource suffix.
-     */
-    public static final String MOVE_BUILDING_SOURCE_SUFFIX = ":gui/windowmovebuilding.xml";
 
     /**
      * The builders gui file.
@@ -938,7 +893,7 @@ public final class WindowConstants
     public static final String LIST_ELEMENT_ID_REQUEST_STACK = "requestStack";
 
     /**
-     * Resolver string.
+     * Delivery image.
      */
     public static final String DELIVERY_IMAGE = "deliveryImage";
 
@@ -983,21 +938,6 @@ public final class WindowConstants
     public static final String REQUESTER = "requester";
 
     /**
-     * Delivery origin.
-     */
-    public static final String FROM = "com.minecolonies.coremod.from";
-
-    /**
-     * Number in queue.
-     */
-    public static final String IN_QUEUE = "com.minecolonies.coremod.listentry";
-
-    /**
-     * Id of the order label.
-     */
-    public static final String ORDER = "order";
-
-    /**
      * Id of the parent label.
      */
     public static final String PARENT = "parent";
@@ -1006,11 +946,6 @@ public final class WindowConstants
      * The divider for the life count.
      */
     public static final int LIFE_COUNT_DIVIDER = 30;
-
-    /**
-     * ID for happiness modifier view
-     */
-    public static final String HAPPINESS_MODIFIER_PANE = "happinessModifierView";
 
     /**
      * Warehouse constants
@@ -1155,8 +1090,6 @@ public final class WindowConstants
     public static final int    BUTTON_BUFFER           = 3;
     public static final String RESPONSE_BOX_ID         = "responseOptions";
     public static final String MEDIUM_SIZED_BUTTON_RES = "textures/gui/builderhut/builder_button_medium_large.png";
-
-    public static final String SMALL_SIZED_BUTTON_RES = "textures/gui/builderhut/builder_button_mini.png";
 
     /**
      * The resource string.

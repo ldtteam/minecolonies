@@ -1800,5 +1800,9 @@
   "entity.builder.cantdeconstruct": "This building can't be deconstructed!",
 
   "com.minecolonies.coremod.from": "From: %s",
-  "com.minecolonies.coremod.listentry": "#%d in queue"
+  "com.minecolonies.coremod.at": "At: %s",
+  "com.minecolonies.coremod.listentry": "#%d in queue",
+  "com.minecolonies.coremod.missingitems": "Awaiting Materials",
+  "com.minecolonies.coremod.finished": "Finished!"
+
 }
