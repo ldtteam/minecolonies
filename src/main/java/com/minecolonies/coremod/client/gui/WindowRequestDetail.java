@@ -32,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
+import static com.minecolonies.api.util.constant.TranslationConstants.FROM;
+import static com.minecolonies.api.util.constant.TranslationConstants.IN_QUEUE;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -175,6 +177,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
         final ItemIcon exampleStackDisplay = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
         final List<ItemStack> displayStacks = request.getDisplayStacks();
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().func_240901_a_());
 
         if (!displayStacks.isEmpty())
         {
@@ -184,15 +187,14 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         {
             logo.setVisible(true);
             logo.setImage(request.getDisplayIcon());
+            logo.setHoverToolTip(request.getResolverToolTip(colony));
         }
 
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().func_240901_a_());
         final String requester = request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getString();
 
         findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(requester);
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getLocation().toString());
-
 
         if (colony == null)
         {
@@ -210,37 +212,6 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             }
 
             findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getRequesterDisplayName(colony.getRequestManager(), request).getString());
-            if (request instanceof StandardRequests.DeliveryRequest)
-            {
-                final BlockPos resolverPos = colony.getRequestManager().getResolverForRequest(request.getId()).getLocation().getInDimensionLocation();
-                final IBuildingView buildingView = colony.getBuilding(resolverPos);
-
-                int posInList = -1;
-                if (buildingView instanceof BuildingDeliveryman.View)
-                {
-                    for (int worker : ((BuildingDeliveryman.View) buildingView).getWorkerId())
-                    {
-                        final ICitizenDataView citizen = colony.getCitizen(worker);
-                        if (citizen != null)
-                        {
-                            if (citizen.getJobView() instanceof DmanJobView && ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().contains(request.getId()))
-                            {
-                                posInList = ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(request.getId());
-                            }
-                        }
-                    }
-                }
-
-                if (posInList >= 0)
-                {
-                    logo.setHoverToolTip(ImmutableList.of(new TranslationTextComponent(FROM, requester), new TranslationTextComponent(IN_QUEUE, posInList)));
-                }
-                else
-                {
-                    logo.setHoverToolTip(ImmutableList.of(new TranslationTextComponent(FROM, requester)));
-                }
-            }
-
         }
         catch (@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {

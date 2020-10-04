@@ -370,6 +370,8 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         {
             Log.getLogger().warn("Active Triggered resulted in exception", ex);
         }
+
+        getColony().getRequestManager().getDataStoreManager().remove(this.rsDataStoreToken);
     }
 
     @Override

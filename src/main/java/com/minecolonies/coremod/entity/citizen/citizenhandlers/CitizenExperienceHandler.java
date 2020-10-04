@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHan
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -15,7 +16,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.GameRules;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.research.util.ResearchConstants.LEVELING;
 import static com.minecolonies.api.util.constant.Constants.XP_PARTICLE_EXPLOSION_SIZE;
 
 /**
@@ -93,27 +94,11 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             return;
         }
 
-        if (saturation < AVERAGE_SATURATION)
+        final MultiplierModifierResearchEffect xpBonus =
+          citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(LEVELING, MultiplierModifierResearchEffect.class);
+        if (xpBonus != null)
         {
-            if (saturation < LOW_SATURATION)
-            {
-                localXp -= localXp * BIG_SATURATION_FACTOR;
-            }
-            else
-            {
-                localXp -= localXp * LOW_SATURATION_FACTOR;
-            }
-        }
-        else if (saturation > AVERAGE_SATURATION)
-        {
-            if (saturation > HIGH_SATURATION)
-            {
-                localXp += localXp * BIG_SATURATION_FACTOR;
-            }
-            else
-            {
-                localXp += localXp * LOW_SATURATION_FACTOR;
-            }
+            localXp *= (1 + xpBonus.getEffect());
         }
 
         localXp = citizen.getCitizenItemHandler().applyMending(localXp);

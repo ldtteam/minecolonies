@@ -475,6 +475,17 @@ public final class TranslationConstants
     public static final String HUT_NEEDS_RESEARCH_TOOLTIP_1                                        = "com.minecolonies.coremod.research.item1";
     @NonNls
     public static final String HUT_NEEDS_RESEARCH_TOOLTIP_2                                        = "com.minecolonies.coremod.research.item2";
+    @NonNls
+    public static final String FROM = "com.minecolonies.coremod.from";
+    @NonNls
+    public static final String AT = "com.minecolonies.coremod.at";
+    @NonNls
+    public static final String IN_QUEUE = "com.minecolonies.coremod.listentry";
+    @NonNls
+    public static final String MISSING_DELIVERIES = "com.minecolonies.coremod.missingitems";
+    @NonNls
+    public static final String FINISHED = "com.minecolonies.coremod.finished";
+
 
     private TranslationConstants()
     {

@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.happiness.IHappinessModifier;
 import net.minecraft.nbt.CompoundNBT;
 
@@ -36,9 +37,10 @@ public interface ICitizenHappinessHandler
     /**
      * Get the computed happiness of the citizen.
      *
+     * @param colony the colony.
      * @return the happiness.
      */
-    double getHappiness();
+    double getHappiness(IColony colony);
 
     /**
      * Read the handler from NBT.

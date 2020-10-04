@@ -316,6 +316,7 @@ public class ServerConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> hittingiron;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> stonecake;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> strong;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> hardened;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> reinforced;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> steelbracing;
@@ -1246,6 +1247,9 @@ public class ServerConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         this.stonecake = defineList(builder, "stonecake",
           Collections.singletonList("minecraft:chiseled_stone_bricks*64"),
+          s -> s instanceof String);
+        this.strong = defineList(builder, "strong",
+          Collections.singletonList("minecraft:diamond*8"),
           s -> s instanceof String);
         this.hardened = defineList(builder, "hardened",
           Collections.singletonList("minecraft:diamond*16"),
