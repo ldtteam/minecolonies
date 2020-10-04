@@ -130,7 +130,12 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     @Override
     public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        return new StringTextComponent(((AbstractBuildingCrafter.View) manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation())).getJobName());
+        final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
+        if (requester instanceof AbstractBuildingCrafter.View)
+        {
+            return new StringTextComponent(((AbstractBuildingCrafter.View) requester).getJobName());
+        }
+        return super.getRequesterDisplayName(manager, request);
     }
 
     @Override
