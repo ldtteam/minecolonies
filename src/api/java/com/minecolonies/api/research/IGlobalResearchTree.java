@@ -30,6 +30,13 @@ public interface IGlobalResearchTree
     IGlobalResearch getResearch(final String branch, final String id);
 
     /**
+     * Get an effect id for a particular research
+     * @param id    the id of the research.
+     * @return the effect id
+     */
+    String getEffectIdForResearch(String id);
+
+    /**
      * Add a research to the tree.
      *
      * @param research the research to add.

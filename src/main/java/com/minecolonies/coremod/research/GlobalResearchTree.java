@@ -94,4 +94,18 @@ public class GlobalResearchTree implements IGlobalResearchTree
     {
         researchTree.values().forEach(b -> b.values().forEach(IGlobalResearch::loadCostFromConfig));
     }
+
+    @Override
+    public String getEffectIdForResearch(String id)
+    {
+        for(String branch: this.getBranches())
+        {
+            IGlobalResearch r = this.getResearch(branch, id);
+            if (r != null)
+            {
+                return r.getEffect().getId();
+            }
+        }
+        return null; 
+    }
 }

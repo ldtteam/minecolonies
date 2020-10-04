@@ -179,14 +179,15 @@ public class RecipeStorage implements IRecipeStorage
 
         if (gridSize != that.gridSize
               || input.size() != that.input.size()
+              || cleanedInput.size() != that.cleanedInput.size()
               || !ItemStackUtils.compareItemStacksIgnoreStackSize(primaryOutput, that.primaryOutput, false, true))
         {
             return false;
         }
 
-        for (int i = 0; i < input.size(); i++)
+        for (int i = 0; i < cleanedInput.size(); i++)
         {
-            if (!ItemStackUtils.compareItemStacksIgnoreStackSize(that.input.get(i), input.get(i), false, true) && that.input.get(i).getCount() == input.get(i).getCount())
+            if(!cleanedInput.get(i).equals(that.cleanedInput.get(i)) || cleanedInput.get(i).getAmount() != that.cleanedInput.get(i).getAmount())
             {
                 return false;
             }
