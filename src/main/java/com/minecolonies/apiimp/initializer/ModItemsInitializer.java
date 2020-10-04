@@ -18,7 +18,6 @@ import net.minecraftforge.registries.ObjectHolder;
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.IRON_GATE;
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GATE;
 
-@ObjectHolder(Constants.MOD_ID)
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class ModItemsInitializer
 {
@@ -46,7 +45,7 @@ public final class ModItemsInitializer
     }
 
     /**
-     * Initates all the blocks. At the correct time.
+     * Initates all the items. At the correct time.
      *
      * @param registry the registry.
      */
