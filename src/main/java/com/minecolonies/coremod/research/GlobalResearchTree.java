@@ -96,11 +96,11 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public String getEffectIdForResearch(String id)
+    public String getEffectIdForResearch(final String id)
     {
-        for(String branch: this.getBranches())
+        for(final String branch: this.getBranches())
         {
-            IGlobalResearch r = this.getResearch(branch, id);
+            final IGlobalResearch r = this.getResearch(branch, id);
             if (r != null)
             {
                 return r.getEffect().getId();
