@@ -210,10 +210,10 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         double xpToDiscount = xp;
         while (xpToDiscount > 0)
         {
-            if (currentXp >= xpToDiscount)
+            if (currentXp >= xpToDiscount || level <= 1)
             {
-                skillMap.put(skill, new Tuple<>(Math.max(1, level), currentXp - xpToDiscount));
-                xpToDiscount = 0;
+                skillMap.put(skill, new Tuple<>(Math.max(1, level), Math.max(0, currentXp - xpToDiscount)));
+                break;
             }
             else
             {
