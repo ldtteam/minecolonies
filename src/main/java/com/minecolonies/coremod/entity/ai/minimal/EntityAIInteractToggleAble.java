@@ -180,7 +180,10 @@ public class EntityAIInteractToggleAble extends Goal
     {
         for (final BlockPos pos : toggleAblePositions.keySet())
         {
-            entity.world.setBlockState(pos, entity.world.getBlockState(pos).with(BlockStateProperties.OPEN, false));
+            if (isValidBlockState(entity.world.getBlockState(pos)))
+            {
+                entity.world.setBlockState(pos, entity.world.getBlockState(pos).with(BlockStateProperties.OPEN, false));
+            }
         }
         toggleAblePositions.clear();
     }
