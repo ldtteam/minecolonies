@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -130,7 +131,12 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     @Override
     public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        return new StringTextComponent(((AbstractBuildingCrafter.View) manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation())).getJobName());
+        final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
+        if (requester instanceof IBuildingWorkerView)
+        {
+            return new StringTextComponent(((IBuildingWorkerView) requester).getJobName());
+        }
+        return super.getRequesterDisplayName(manager, request);
     }
 
     @Override
