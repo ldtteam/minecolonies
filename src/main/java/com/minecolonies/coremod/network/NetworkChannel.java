@@ -124,7 +124,7 @@ public class NetworkChannel
         registerMessage(++idx, GuardRecalculateMessage.class, GuardRecalculateMessage::new);
         registerMessage(++idx, MobEntryChangeMessage.class, MobEntryChangeMessage::new);
         registerMessage(++idx, GuardScepterMessage.class, GuardScepterMessage::new);
-        registerMessage(++idx, RecallTownhallMessage.class, RecallTownhallMessage::new);
+        registerMessage(++idx, RecallCitizenHutMessage.class, RecallCitizenHutMessage::new);
         registerMessage(++idx, TransferItemsRequestMessage.class, TransferItemsRequestMessage::new);
         registerMessage(++idx, MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage::new);
         registerMessage(++idx, ChangeFreeToInteractBlockMessage.class, ChangeFreeToInteractBlockMessage::new);

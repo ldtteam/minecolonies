@@ -257,6 +257,28 @@ public class BuildingManager implements IBuildingManager
         return null;
     }
 
+    @Nullable
+    @Override
+    public IWareHouse getClosestWarehouseInColony(final BlockPos pos)
+    {
+        IWareHouse wareHouse = null;
+        double dist = 0;
+        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        {
+            if (building instanceof BuildingWareHouse && building.getTileEntity() != null)
+            {
+                final double tempDist = building.getPosition().distanceSq(pos);
+                if (wareHouse == null || tempDist < dist)
+                {
+                    dist = tempDist;
+                    wareHouse= (IWareHouse) building;
+                }
+            }
+        }
+
+        return wareHouse;
+    }
+
     @Override
     public Map<BlockPos, IBuilding> getBuildings()
     {
