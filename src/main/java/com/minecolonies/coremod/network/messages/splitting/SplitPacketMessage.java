@@ -68,7 +68,7 @@ public class SplitPacketMessage implements IMessage
         buf.writeVarInt(this.packetIndex);
         buf.writeBoolean(this.terminator);
         buf.writeVarInt(this.innerMessageId);
-        buf.writeBytes(this.payload);
+        buf.writeByteArray(this.payload);
     }
 
     @Override

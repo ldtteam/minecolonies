@@ -413,8 +413,7 @@ public class NetworkChannel
         final ByteBuf buffer = Unpooled.buffer();
         final PacketBuffer innerPacketBuffer = new PacketBuffer(buffer);
         msg.toBytes(innerPacketBuffer);
-        final byte[] data = new byte[buffer.capacity()];
-        buffer.getBytes(0, data);
+        final byte[] data = buffer.array();
         buffer.release();
 
         //Some tracking variables.
