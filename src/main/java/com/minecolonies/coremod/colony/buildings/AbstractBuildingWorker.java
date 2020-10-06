@@ -212,14 +212,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             for(Map.Entry<IRecipeStorage, Integer> foo : candidates.entrySet())
             {
-                final ItemStorage checkItem = foo.getKey().getCleanedInput().stream()
-                                                .sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed())
-                                                .findFirst().get();
+                final ItemStorage checkItem = foo.getKey().getCleanedInput().stream().max(Comparator.comparingInt(ItemStorage::getAmount)).get();
                 candidates.put(foo.getKey(), getWarehouseCount(checkItem));
             }
-            return candidates.entrySet().stream()
-                            .sorted(Comparator.comparing(itemEntry -> itemEntry.getValue(), Comparator.reverseOrder()))
-                            .findFirst().get().getKey();
+            return candidates.entrySet().stream().min(Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
         }
 
         return firstFound;
@@ -810,9 +806,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     public void checkForWorkerSpecificRecipes()
     {
-        final Set<CustomRecipe> staticRecipes = CustomRecipeManager.getInstance().getRecipes(getJobName());
-
-        for(final CustomRecipe newRecipe : staticRecipes)
+        for(final CustomRecipe newRecipe : CustomRecipeManager.getInstance().getRecipes(getJobName()))
         {
             final IRecipeStorage recipeStorage = newRecipe.getRecipeStorage();
             final IToken<?> recipeToken = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipeStorage);
@@ -842,8 +836,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                         
                         if(recipeInput1.size() > 1)
                         {
-                            recipeInput1.sort(Comparator.comparing(item -> item.toString()));
-                            recipeInput2.sort(Comparator.comparing(item -> item.toString()));
+                            recipeInput1.sort(Comparator.comparing(item -> Objects.hash(item.hashCode(), item.getAmount())));
+                            recipeInput2.sort(Comparator.comparing(item -> Objects.hash(item.hashCode(), item.getAmount())));
                         }
 
                         boolean allMatch = true;
