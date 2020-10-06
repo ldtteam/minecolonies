@@ -22,7 +22,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTavern;
-import com.minecolonies.coremod.entity.ai.minimal.EntityAIOpenFenceGate;
+import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIVisitor;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
@@ -155,7 +155,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
         int priority = 0;
         this.goalSelector.addGoal(priority, new SwimGoal(this));
         this.goalSelector.addGoal(++priority, new OpenDoorGoal(this, true));
-        this.goalSelector.addGoal(priority, new EntityAIOpenFenceGate(this, true));
+        this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, EntityAIInteractToggleAble.GATE_DOOR_TRAP));
         this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, PlayerEntity.class, WATCH_CLOSEST2, 1.0F));
         this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.goalSelector.addGoal(++priority, new LookAtGoal(this, LivingEntity.class, WATCH_CLOSEST));

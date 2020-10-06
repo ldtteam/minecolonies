@@ -5,7 +5,7 @@ import com.google.common.collect.Multimap;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.IArcherMobEntity;
-import com.minecolonies.coremod.entity.ai.minimal.EntityAIOpenFenceGate;
+import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.aitasks.EntityAIAttackArcher;
 import com.minecolonies.coremod.entity.mobs.aitasks.EntityAIBreakDoor;
@@ -46,7 +46,7 @@ public class MobAIRegistry implements IMobAIRegistry
         registry
           .registerNewAiTaskForMobs(PRIORITY_ZERO, SwimGoal::new)
           .registerNewAiTaskForMobs(PRIORITY_FOUR, mob -> new EntityAIWalkToRandomHuts(mob, AI_MOVE_SPEED))
-          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIOpenFenceGate(mob, true))
+          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIInteractToggleAble(mob, EntityAIInteractToggleAble.GATE_TRAP))
           .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIBreakDoor(mob))
           .registerNewAiTargetTaskForMobs(PRIORITY_TWO, mob -> new NearestAttackableTargetGoal<>(mob, PlayerEntity.class, true, false))
           .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new NearestAttackableTargetGoal<>(mob, EntityCitizen.class, true, false))
