@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.network;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.Maps;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -40,8 +43,12 @@ import com.minecolonies.coremod.network.messages.server.colony.building.worker.B
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.*;
+import com.minecolonies.coremod.network.messages.splitting.SplitPacketMessage;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.DimensionType;
@@ -52,6 +59,11 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.PacketDistributor.TargetPoint;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -65,6 +77,29 @@ public class NetworkChannel
      * Forge network channel
      */
     private final        SimpleChannel rawChannel;
+
+    /**
+     * The messages that this channel can process, as viewed from a message id.
+     */
+    private final Map<Integer, NetworkingMessageEntry<?>> messagesTypes = Maps.newHashMap();
+
+    /**
+     * The message that this channel can process, as viewed from a message type.
+     */
+    private final Map<Class<? extends IMessage>, Integer> messageTypeToIdMap = Maps.newHashMap();
+
+    /**
+     * Cache of partially received messages, this holds the data untill it is processed.
+     */
+    private final Cache<Integer, Map<Integer, byte[]>> messageCache = CacheBuilder.newBuilder()
+                                                                  .expireAfterAccess(1, TimeUnit.MINUTES)
+                                                                  .concurrencyLevel(8)
+                                                                  .build();
+
+    /**
+     * An atomic counter which keeps track of the split messages that have been send to somewhere from this network node.
+     */
+    private final AtomicInteger messageCounter = new AtomicInteger();
 
     /**
      * Creates a new instance of network channel.
@@ -83,6 +118,8 @@ public class NetworkChannel
      */
     public void registerCommonMessages()
     {
+        setupInternalMessages();
+
         int idx = 0;
         registerMessage(++idx, ServerUUIDMessage.class, ServerUUIDMessage::new);
 
@@ -210,6 +247,19 @@ public class NetworkChannel
         registerMessage(++idx, ToggleBannerRallyGuardsMessage.class, ToggleBannerRallyGuardsMessage::new);
     }
 
+    private void setupInternalMessages() {
+        rawChannel.registerMessage(0, SplitPacketMessage.class, IMessage::toBytes, (buf) -> {
+            final SplitPacketMessage msg = new SplitPacketMessage();
+            msg.fromBytes(buf);
+            return msg;
+        }, (msg, ctxIn) -> {
+            final Context ctx = ctxIn.get();
+            final LogicalSide packetOrigin = ctx.getDirection().getOriginationSide();
+            ctx.setPacketHandled(true);
+            msg.onExecute(ctx, packetOrigin.equals(LogicalSide.CLIENT));
+        });
+    }
+
     /**
      * Register a message into rawChannel.
      *
@@ -220,22 +270,8 @@ public class NetworkChannel
      */
     private <MSG extends IMessage> void registerMessage(final int id, final Class<MSG> msgClazz, final Supplier<MSG> msgCreator)
     {
-        rawChannel.registerMessage(id, msgClazz, (msg, buf) -> msg.toBytes(buf), (buf) -> {
-            final MSG msg = msgCreator.get();
-            msg.fromBytes(buf);
-            return msg;
-        }, (msg, ctxIn) -> {
-            final Context ctx = ctxIn.get();
-            final LogicalSide packetOrigin = ctx.getDirection().getOriginationSide();
-            ctx.setPacketHandled(true);
-            if (msg.getExecutionSide() != null && packetOrigin.equals(msg.getExecutionSide()))
-            {
-                Log.getLogger().warn("Receving {} at wrong side!", msg.getClass().getName());
-                return;
-            }
-            // boolean param MUST equals true if packet arrived at logical server
-            ctx.enqueueWork(() -> msg.onExecute(ctx, packetOrigin.equals(LogicalSide.CLIENT)));
-        });
+        this.messagesTypes.put(id, new NetworkingMessageEntry<>(msgCreator));
+        this.messageTypeToIdMap.put(msgClazz, id);
     }
 
     /**
@@ -245,7 +281,7 @@ public class NetworkChannel
      */
     public void sendToServer(final IMessage msg)
     {
-        rawChannel.sendToServer(msg);
+        handleSplitting(msg, rawChannel::sendToServer);
     }
 
     /**
@@ -256,11 +292,11 @@ public class NetworkChannel
      */
     public void sendToPlayer(final IMessage msg, final ServerPlayerEntity player)
     {
-        rawChannel.send(PacketDistributor.PLAYER.with(() -> player), msg);
+        handleSplitting(msg, s -> rawChannel.send(PacketDistributor.PLAYER.with(() -> player), s));
     }
 
     /**
-     * Sends to origin client.
+     * Sends the message to the origin of a different message based on the networking context given.
      *
      * @param msg message to send
      * @param ctx network context
@@ -298,7 +334,7 @@ public class NetworkChannel
      */
     public void sendToPosition(final IMessage msg, final TargetPoint pos)
     {
-        rawChannel.send(PacketDistributor.NEAR.with(() -> pos), msg);
+        handleSplitting(msg, s -> rawChannel.send(PacketDistributor.NEAR.with(() -> pos), s));
     }
 
     /**
@@ -308,7 +344,7 @@ public class NetworkChannel
      */
     public void sendToEveryone(final IMessage msg)
     {
-        rawChannel.send(PacketDistributor.ALL.noArg(), msg);
+        handleSplitting(msg, s -> rawChannel.send(PacketDistributor.ALL.noArg(), s));
     }
 
     /**
@@ -325,7 +361,7 @@ public class NetworkChannel
      */
     public void sendToTrackingEntity(final IMessage msg, final Entity entity)
     {
-        rawChannel.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), msg);
+        handleSplitting(msg, s -> rawChannel.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), s));
     }
 
     /**
@@ -342,7 +378,7 @@ public class NetworkChannel
      */
     public void sendToTrackingEntityAndSelf(final IMessage msg, final Entity entity)
     {
-        rawChannel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), msg);
+        handleSplitting(msg, s -> rawChannel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), s));
     }
 
     /**
@@ -353,6 +389,53 @@ public class NetworkChannel
      */
     public void sendToTrackingChunk(final IMessage msg, final Chunk chunk)
     {
-        rawChannel.send(PacketDistributor.TRACKING_CHUNK.with(() -> chunk), msg);
+        handleSplitting(msg, s -> rawChannel.send(PacketDistributor.TRACKING_CHUNK.with(() -> chunk), s));
+    }
+
+    private void handleSplitting(final IMessage msg, final Consumer<IMessage> splitMessageConsumer) {
+        final ByteBuf buffer = Unpooled.buffer();
+        final PacketBuffer innerPacketBuffer = new PacketBuffer(buffer);
+        msg.toBytes(innerPacketBuffer);
+        final byte[] data = new byte[buffer.capacity()];
+        buffer.getBytes(0, data);
+        buffer.release();
+
+        int max_packet_size = 943718; //This is 90% of max packet size.
+        int currentIndex = 0;
+        int packetIndex = 0;
+        int comId = messageCounter.getAndIncrement();
+        while(currentIndex < data.length) {
+            final byte[] subPacketData = Arrays.copyOfRange(data, currentIndex, currentIndex+max_packet_size);
+            final int messageId = this.messageTypeToIdMap.getOrDefault(msg.getClass(), -1);
+
+            if (messageId == -1) {
+                throw new IllegalArgumentException("The message is unknown to this channel!");
+            }
+
+            final SplitPacketMessage splitPacketMessage = new SplitPacketMessage(comId, messageId, subPacketData, packetIndex++, (currentIndex + max_packet_size) >= data.length);
+            splitMessageConsumer.accept(splitPacketMessage);
+            currentIndex += max_packet_size;
+        }
+    }
+
+    public Cache<Integer, Map<Integer, byte[]>> getMessageCache()
+    {
+        return messageCache;
+    }
+
+    public Map<Integer, NetworkingMessageEntry<?>> getMessagesTypes()
+    {
+        return messagesTypes;
+    }
+
+    public final class NetworkingMessageEntry<MSG extends IMessage> {
+        private final Supplier<MSG>                                   creator;
+
+        private NetworkingMessageEntry(final Supplier<MSG> creator) {this.creator = creator;}
+
+        public Supplier<MSG> getCreator()
+        {
+            return creator;
+        }
     }
 }
