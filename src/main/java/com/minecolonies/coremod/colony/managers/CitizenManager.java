@@ -144,9 +144,16 @@ public class CitizenManager implements ICitizenManager
         final ICitizenData data = citizens.get(entity.getCivilianID());
         if (data != null && data.getEntity().isPresent() && data.getEntity().get() == entity)
         {
-            if (colony.getWorld().getScoreboard().getPlayersTeam(entity.getScoreboardName()) == colony.getTeam())
+            try
             {
-                colony.getWorld().getScoreboard().removePlayerFromTeam(entity.getScoreboardName(), colony.getTeam());
+                if (colony.getWorld().getScoreboard().getPlayersTeam(entity.getScoreboardName()) == colony.getTeam())
+                {
+                    colony.getWorld().getScoreboard().removePlayerFromTeam(entity.getScoreboardName(), colony.getTeam());
+                }
+            }
+            catch (Exception ignored)
+            {
+                // For some weird reason we can get an exception here, though the exception is thrown for team != colony team which we check == on before
             }
 
             citizens.get(entity.getCivilianID()).setEntity(null);
