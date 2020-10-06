@@ -30,7 +30,8 @@ public interface IMessage
      * @return CLIENT or SERVER or null (for both)
      */
     @Nullable
-    default LogicalSide getExecutionSide() {
+    default LogicalSide getExecutionSide()
+    {
         return null;
     }
 
