@@ -219,6 +219,7 @@ public class RecipeStorage implements IRecipeStorage
             final ItemStack container = stack.getItem().getContainerItem(stack);
             if (!ItemStackUtils.isEmpty(container))
             {
+                container.setCount(stack.getCount());
                 secondaryStacks.add(container);
             }
         }
@@ -334,6 +335,7 @@ public class RecipeStorage implements IRecipeStorage
             final ItemStack container = stack.getItem().getContainerItem(stack);
             if (!ItemStackUtils.isEmpty(container))
             {
+                container.setCount(stack.getCount());
                 secondaryStacks.add(container);
             }
         }
