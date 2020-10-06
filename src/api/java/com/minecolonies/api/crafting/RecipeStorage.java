@@ -62,7 +62,8 @@ public class RecipeStorage implements IRecipeStorage
     public RecipeStorage(final IToken<?> token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
     {
         this.input = Collections.unmodifiableList(input);
-        this.cleanedInput = this.calculateCleanedInput();
+        this.cleanedInput = new ArrayList<>();
+        this.cleanedInput.addAll(this.calculateCleanedInput());
         this.primaryOutput = primaryOutput;
         this.gridSize = gridSize;
         this.intermediate = intermediate;
@@ -75,13 +76,18 @@ public class RecipeStorage implements IRecipeStorage
         return new ArrayList<>(input);
     }
 
+    @NotNull
     @Override
     public List<ItemStorage> getCleanedInput()
     {
         return this.cleanedInput;
     }
 
-    public List<ItemStorage> calculateCleanedInput()
+    /**
+     * Calculate a compressed input list from the ingredients.
+     * @return a compressed and immutable list.
+     */
+    private List<ImmutableItemStorage> calculateCleanedInput()
     {
         final List<ItemStorage> items = new ArrayList<>();
 
@@ -102,7 +108,13 @@ public class RecipeStorage implements IRecipeStorage
             }
             items.add(storage);
         }
-        return items;
+
+        final List<ImmutableItemStorage> immutableItems = new ArrayList<>();
+        for (final ItemStorage storage : items)
+        {
+            immutableItems.add(new ImmutableItemStorage(storage));
+        }
+        return immutableItems;
     }
 
     @NotNull
