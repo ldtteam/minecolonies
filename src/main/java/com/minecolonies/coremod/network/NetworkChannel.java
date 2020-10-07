@@ -432,7 +432,7 @@ public class NetworkChannel
             //Tell the network message entry that we are splitting a packet.
             this.getMessagesTypes().get(messageId).onSplitting(packetIndex);
 
-            final int extra = Math.max(max_packet_size, data.length - currentIndex);
+            final int extra = Math.min(max_packet_size, data.length - currentIndex);
             //Extract the sub data array.
             final byte[] subPacketData = Arrays.copyOfRange(data, currentIndex, currentIndex + extra);
 
