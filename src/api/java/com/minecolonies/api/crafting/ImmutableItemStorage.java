@@ -20,12 +20,6 @@ public class ImmutableItemStorage extends ItemStorage
     }
 
     @Override
-    public ItemStack getItemStack()
-    {
-        return super.getItemStack().copy();
-    }
-
-    @Override
     public void setAmount(final int amount)
     {
         throw new UnsupportedOperationException("Immutable instance of ItemStorage can't set value!");
