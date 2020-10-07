@@ -432,17 +432,18 @@ public class NetworkChannel
             //Tell the network message entry that we are splitting a packet.
             this.getMessagesTypes().get(messageId).onSplitting(packetIndex);
 
+            final int extra = Math.max(max_packet_size, data.length - currentIndex);
             //Extract the sub data array.
-            final byte[] subPacketData = Arrays.copyOfRange(data, currentIndex, currentIndex + max_packet_size);
+            final byte[] subPacketData = Arrays.copyOfRange(data, currentIndex, currentIndex + extra);
 
             //Construct the wrapping packet.
-            final SplitPacketMessage splitPacketMessage = new SplitPacketMessage(comId, packetIndex++, (currentIndex + max_packet_size) >= data.length, messageId, subPacketData);
+            final SplitPacketMessage splitPacketMessage = new SplitPacketMessage(comId, packetIndex++, (currentIndex + extra) >= data.length, messageId, subPacketData);
 
             //Send the wrapping packet.
             splitMessageConsumer.accept(splitPacketMessage);
 
             //Move our working index.
-            currentIndex += max_packet_size;
+            currentIndex += extra;
         }
     }
 
