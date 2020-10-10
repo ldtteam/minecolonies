@@ -461,6 +461,10 @@ public class CitizenManager implements ICitizenManager
         if (effect != null)
         {
             max += effect.getEffect();
+            if (max >= 200)
+            {
+                return MineColonies.getConfig().getCommon().maxCitizenPerColony.get() - 25;
+            }
         }
         return max;
     }
