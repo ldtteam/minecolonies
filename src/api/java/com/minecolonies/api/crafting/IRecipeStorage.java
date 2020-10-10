@@ -8,12 +8,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Interface which describes the RecipeStorage.
  */
 public interface IRecipeStorage
 {
+    /**
+     * Enum of the different types of storage
+     */
+    public enum RecipeStorageType
+    {
+        CLASSIC,
+        MULTI_OUTPUT
+    }
+
     /**
      * Get the list of input items. Suppressing Sonar Rule Squid:S2384 The rule thinks we should return a copy of the list and not the list itself. But in this case the rule does
      * not apply because the list is an unmodifiable list already
@@ -71,6 +81,45 @@ public interface IRecipeStorage
      * @return true if succesful.
      */
     boolean fullfillRecipe(final List<IItemHandler> handlers);
+
+    /**
+     * Get which type this recipe is
+     * CLASSIC or MULTI-OUTPUT are the only valid ones currently
+     * @return The recipe type
+     */
+    public RecipeStorageType getRecipeType();
+
+    /**
+     * Get a list of alternates to getPrimaryOutput
+     * @return a list if Itemstacks that this recipe can produce instead of getPrimaryOutput
+     */
+    public List<ItemStack> getAlternateOutputs();
+
+    /**
+     * Get the classic version of this recipe with GetPrimaryOutput targetted correctly from the chosen alternate
+     * @param requiredOutput Which output wanted
+     * @return the RecipeStorage that is "right" for that output
+     */
+    public RecipeStorage getClassicForMultiOutput(ItemStack requiredOutput);
+
+    /**
+     * Get the classic version of this recipe with GetPrimaryOutput targetted correctly from the chosen alternate
+     * @param stackPredicate Predicate to select the right stack
+     * @return the RecipeStorage that is "right" for that output
+     */
+    public RecipeStorage getClassicForMultiOutput(final Predicate<ItemStack> stackPredicate);
+
+    /**
+     * Source of the recipe, ie registry name.
+     * @return
+     */
+    public String getRecipeSource();
+
+    /**
+     * Get the secondary (leave behind in grid) outputs
+     * @return list of items that weren't consumed during crafting
+     */
+    public List<ItemStack> getSecondaryOutputs();
 
     /**
      * Get the unique token of the recipe.

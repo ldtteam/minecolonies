@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorageFactory;
 import com.minecolonies.api.crafting.RecipeStorage;
-import com.minecolonies.api.crafting.RecipeStorage.RecipeStorageType;
+import com.minecolonies.api.crafting.IRecipeStorage.RecipeStorageType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -45,7 +45,12 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
     /**
      * Compound tag for the alternate outputs.
      */
-    private static final String ALTOUTPUT_TAG = "altoutput";
+    private static final String ALTOUTPUT_TAG = "alternate-output";
+
+    /**
+     * Compound tag for the alternate outputs.
+     */
+    private static final String SECOUTPUT_TAG = "secondary-output";
 
     /**
      * Compound tag for Source
@@ -81,9 +86,10 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
       final Block intermediate, 
       final String source,
       final RecipeStorageType type,
-      final List<ItemStack> altOutputs)
+      final List<ItemStack> altOutputs,
+      final List<ItemStack> secOutputs)
     {
-        return new RecipeStorage(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs);
+        return new RecipeStorage(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs);
     }
 
     @NotNull
@@ -112,6 +118,26 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             compound.putString(SOURCE_TAG, recipeStorage.getRecipeSource());
         }
         compound.putString(TYPE_TAG, recipeStorage.getRecipeType().toString());
+
+        @NotNull final ListNBT altOutputTagList = new ListNBT();
+        for (@NotNull final ItemStack stack : recipeStorage.getAlternateOutputs())
+        {
+            @NotNull final CompoundNBT neededRes = new CompoundNBT();
+            stack.write(neededRes);
+            altOutputTagList.add(neededRes);
+        }
+        compound.put(ALTOUTPUT_TAG, altOutputTagList);
+
+        @NotNull final ListNBT secOutputTagList = new ListNBT();
+        for (@NotNull final ItemStack stack : recipeStorage.getSecondaryOutputs())
+        {
+            @NotNull final CompoundNBT neededRes = new CompoundNBT();
+            stack.write(neededRes);
+            secOutputTagList.add(neededRes);
+        }
+        compound.put(SECOUTPUT_TAG, secOutputTagList);
+
+
         return compound;
     }
 
@@ -145,7 +171,16 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             altOutputs.add(ItemStack.read(altOutputTag));
         }
 
-        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs);
+        final ListNBT secOutputTagList = nbt.getList(SECOUTPUT_TAG, Constants.NBT.TAG_COMPOUND);
+
+        final List<ItemStack> secOutputs = new ArrayList<>();
+        for (int i = 0; i < secOutputTagList.size(); ++i)
+        {
+            final CompoundNBT secOutputTag = secOutputTagList.getCompound(i);
+            secOutputs.add(ItemStack.read(secOutputTag));
+        }
+
+        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs);
     }
 
     @Override
@@ -167,6 +202,9 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         packetBuffer.writeInt(input.getAlternateOutputs().size());
         input.getAlternateOutputs().forEach(stack -> packetBuffer.writeItemStack(stack));
+
+        packetBuffer.writeInt(input.getSecondaryOutputs().size());
+        input.getSecondaryOutputs().forEach(stack -> packetBuffer.writeItemStack(stack));
 
         controller.serialize(packetBuffer, input.getToken());
     }
@@ -193,9 +231,16 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             altOutputs.add(buffer.readItemStack());
         }
 
+        final List<ItemStack> secOutputs = new ArrayList<>();
+        final int secOutputSize = buffer.readInt();
+        for (int i = 0; i < secOutputSize; ++i)
+        {
+            secOutputs.add(buffer.readItemStack());
+        }
+
 
         final IToken<?> token = controller.deserialize(buffer);
-        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, null, type, altOutputs.isEmpty() ? null : altOutputs);
+        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, null, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs);
     }
 
     @Override
