@@ -13,11 +13,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Class used to represent a recipe in minecolonies.
@@ -98,7 +98,7 @@ public class RecipeStorage implements IRecipeStorage
         this.cleanedInput.addAll(this.calculateCleanedInput());
         this.primaryOutput = primaryOutput;
         this.alternateOutputs = altOutputs != null ? altOutputs : ImmutableList.of();
-        this.secondaryOutputs = secOutputs != null ? secOutputs: ImmutableList.of();
+        this.secondaryOutputs = secOutputs != null ? secOutputs.stream().filter(i -> i.getItem() != ModItems.buildTool).collect(Collectors.toList()): ImmutableList.of();
         this.gridSize = gridSize;
         this.intermediate = intermediate;
         this.token = token;
