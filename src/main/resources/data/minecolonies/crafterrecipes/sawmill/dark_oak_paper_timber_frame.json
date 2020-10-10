@@ -1,0 +1,60 @@
+{
+  "type" : "recipe",
+  "crafter": "sawmill",
+  "inputs": [
+    {
+        "item" : "minecraft:dark_dark_oak_planks",
+        "count": 1
+    },
+    {
+        "item" : "minecraft:paper",
+        "count": 1
+    },
+    {
+        "item" : "structurize:sceptergold",
+        "count": 1
+    }
+  ],
+  "alternate-output" : [
+    {
+        "item" : "structurize:double_crossed_dark_dark_oak_paper_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:framed_dark_dark_oak_paper_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:side_framed_dark_dark_oak_paper_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:up_gated_dark_dark_oak_paper_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:down_gated_dark_dark_oak_paper_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:one_crossed_lr_dark_dark_oak_paper_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:one_crossed_rl_dark_dark_oak_paper_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:horizontal_plain_dark_dark_oak_paper_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:side_framed_horizontal_dark_dark_oak_paper_timber_frame",
+        "count": 4
+    }
+  ],
+  "result": "structurize:plain_dark_dark_oak_paper_timber_frame",
+  "count": 4,
+  "intermediate" : "minecraft:air",
+  "must-exist" : true
+}
