@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.IRecipeStorage.RecipeStorageType;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.InventoryUtils;
@@ -63,7 +64,6 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -197,7 +197,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         for (final IToken<?> token : recipes)
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(i -> stackPredicate.test(i))))
             {
                 if(firstFound == null)
                 {
@@ -215,7 +215,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 final ItemStorage checkItem = foo.getKey().getCleanedInput().stream().max(Comparator.comparingInt(ItemStorage::getAmount)).get();
                 candidates.put(foo.getKey(), getWarehouseCount(checkItem));
             }
-            return candidates.entrySet().stream().min(Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
+            firstFound = candidates.entrySet().stream().min(Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
+        }
+
+        if(firstFound != null && firstFound.getRecipeType() == RecipeStorageType.MULTI_OUTPUT)
+        {
+            firstFound = firstFound.getClassicForMultiOutput(stackPredicate);
         }
 
         return firstFound;
@@ -256,12 +261,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         for (final IToken<?> token : recipes)
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(i -> stackPredicate.test(i))))
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                IRecipeStorage toTest = storage.getRecipeType() == RecipeStorageType.MULTI_OUTPUT ? storage.getClassicForMultiOutput(stackPredicate) : storage;
+                if (toTest.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
                 {
-                    return storage;
+                    return toTest;
                 }
             }
         }
@@ -813,12 +819,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
             if(newRecipe.isValidForBuilding(this))
             {   
-                boolean duplicateFound = false; 
+                IToken<?> duplicateFound = null; 
                 for(IToken<?> token : recipes)
                 {
                     if(token == recipeToken)
                     {
-                        duplicateFound = true;
+                        duplicateFound = token;
                         break;
                     }
                     final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
@@ -851,15 +857,33 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                         }
                         if(allMatch)
                         {
-                            duplicateFound = true;
+                            duplicateFound = token;
                             break;
                         }
                     }
                 }
-                if(!duplicateFound)
+                if(duplicateFound == null)
                 {
                     addRecipeToList(recipeToken);    
                     colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                }
+                else if(newRecipe.isMustExist() && duplicateFound != recipeToken)
+                {
+                    //We found the base recipe for a multi-recipe, replace it with the multi-recipe
+                    replaceRecipe(duplicateFound, recipeToken);
+                    colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+
+                    //Clean up old 'classic' recipes that the new multi-recipe replaces
+                    final List<ItemStack> alternates = recipeStorage.getAlternateOutputs();
+                    for(IToken<?> token : this.getRecipes())
+                    {
+                        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+                        if(storage.getRecipeType() == RecipeStorageType.CLASSIC && ItemStackUtils.compareItemStackListIgnoreStackSize(alternates, storage.getPrimaryOutput(), false, true))
+                        {
+                            removeRecipe(token);
+                        }
+                    }
+                    colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && recipeStorage.getAlternateOutputs().stream().anyMatch(i -> ((IDeliverable) request.getRequest()).matches(i)));
                 }
             } 
             else

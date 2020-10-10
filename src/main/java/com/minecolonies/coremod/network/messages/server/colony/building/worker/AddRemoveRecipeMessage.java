@@ -70,7 +70,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      * @param remove        true if remove.
      * @param building      the building we're executing on.
      */
-    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final boolean remove)
+    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final List<ItemStack> additionalOutputs, final boolean remove)
     {
         super(building);
         this.remove = remove;
@@ -81,7 +81,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
               StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
               input,
               gridSize,
-              primaryOutput, Blocks.FURNACE);
+              primaryOutput, Blocks.FURNACE, null, null, null, null);
         }
         else
         {
@@ -90,7 +90,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
               StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
               input,
               gridSize,
-              primaryOutput);
+              primaryOutput, null, null, null, null, additionalOutputs);
         }
     }
 

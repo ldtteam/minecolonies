@@ -9,11 +9,14 @@ import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.IRecipeStorage.RecipeStorageType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,6 +71,11 @@ public class WindowListRecipes extends Window implements ButtonHandler
     private final ScrollingList recipeList;
 
     /**
+     * Life count.
+     */
+    private int lifeCount = 0;
+
+    /**
      * Constructor for the window when the player wants to see the list of a building's recipes.
      *
      * @param c          the colony view.
@@ -111,7 +119,23 @@ public class WindowListRecipes extends Window implements ButtonHandler
             {
                 @NotNull final IRecipeStorage recipe = recipes.get(index);
                 final ItemIcon icon = rowPane.findPaneOfTypeByID(OUTPUT_ICON, ItemIcon.class);
-                icon.setItem(recipe.getPrimaryOutput());
+                if(recipe.getRecipeType() == RecipeStorageType.MULTI_OUTPUT)
+                {
+                    List<ItemStack> displayStacks = recipe.getAlternateOutputs();
+                    final int iconIndex = (lifeCount / LIFE_COUNT_DIVIDER) % (displayStacks.size() + 1);
+                    if(iconIndex == 0)
+                    {
+                        icon.setItem(recipe.getPrimaryOutput());
+                    }
+                    else
+                    {
+                        icon.setItem(displayStacks.get(iconIndex - 1));
+                    }
+                }
+                else
+                {
+                    icon.setItem(recipe.getPrimaryOutput());
+                }
 
                 if (!building.isRecipeAlterationAllowed())
                 {
@@ -147,6 +171,10 @@ public class WindowListRecipes extends Window implements ButtonHandler
     public void onUpdate()
     {
         updateRecipes();
+        if (!Screen.hasShiftDown())
+        {
+            lifeCount++;
+        }
         window.findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class).refreshElementPanes();
     }
 

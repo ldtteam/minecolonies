@@ -2,6 +2,7 @@ package com.minecolonies.api.inventory.container;
 
 import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.minecolonies.api.inventory.ModContainers;
+import net.minecraft.client.util.ClientRecipeBook;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -15,13 +16,14 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.item.crafting.RecipeBook;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
@@ -45,6 +47,11 @@ public class ContainerCrafting extends Container
      * The crafting result slot.
      */
     private final Slot craftResultSlot;
+
+    /**
+     * The secondary outputs
+     */
+    private final java.util.List<ItemStack> remainingItems;
 
     /**
      * Boolean variable defining if complete grid or not 3x3(true), 2x2(false).
@@ -163,6 +170,9 @@ public class ContainerCrafting extends Container
               PLAYER_INVENTORY_HOTBAR_OFFSET_CRAFTING
             ));
         }
+
+        
+        remainingItems = new ArrayList<>();
 
         this.onCraftMatrixChanged(this.craftMatrix);
     }
@@ -364,5 +374,39 @@ public class ContainerCrafting extends Container
     public BlockPos getPos()
     {
         return pos;
+    }
+
+    /**
+     * Get for the remaining items. 
+     * @return
+     */
+    public java.util.List<ItemStack> getRemainingItems()
+    {
+        final Optional<ICraftingRecipe> iRecipe = this.world.getRecipeManager().getRecipe(IRecipeType.CRAFTING, craftMatrix, world);
+        RecipeBook r;
+        if(world.isRemote)
+        {
+            r = new ClientRecipeBook(this.world.getRecipeManager());
+        }
+        else
+        {
+            r = new RecipeBook();
+        }
+        if (iRecipe.isPresent() && (iRecipe.get().isDynamic()
+        || !world.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING)
+        || r.isUnlocked(iRecipe.get())
+        || inv.player.isCreative()))
+        {
+            java.util.List<ItemStack> ri = iRecipe.get().getRemainingItems(this.craftMatrix);
+            remainingItems.clear();
+            for(int i = 0; i< ri.size(); i++)
+            {
+                if(!ri.get(i).isEmpty())
+                {
+                    remainingItems.add(ri.get(i));
+                }
+            }
+        }
+        return remainingItems;
     }
 }

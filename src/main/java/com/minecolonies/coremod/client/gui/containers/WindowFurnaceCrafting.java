@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui.containers;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
@@ -97,10 +98,11 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
                 final List<ItemStack> input = new ArrayList<>();
                 input.add(container.inventorySlots.get(0).getStack());
                 final ItemStack primaryOutput = container.inventorySlots.get(1).getStack().copy();
+                final List<ItemStack> alternateOutputs = ImmutableList.of();
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
-                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false));
+                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, alternateOutputs, false));
                 }
             }
         }

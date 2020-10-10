@@ -45,6 +45,11 @@ public class CrafterRecipeListener extends JsonReloadListener
                 recipeManager.addRecipe(recipeJson, key);
             }
 
+            if(recipeJson.has(RECIPE_TYPE_PROP) && recipeJson.get(RECIPE_TYPE_PROP).getAsString().equals(RECIPE_TYPE_RECIPE_MULT_OUT)) 
+            {
+                recipeManager.addRecipe(recipeJson, key);
+            }
+
             if(recipeJson.has(RECIPE_TYPE_PROP) && recipeJson.get(RECIPE_TYPE_PROP).getAsString().equals(RECIPE_TYPE_REMOVE)) 
             {
                 recipeManager.removeRecipe(recipeJson, key);
