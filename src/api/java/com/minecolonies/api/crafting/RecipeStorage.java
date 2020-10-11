@@ -62,7 +62,8 @@ public class RecipeStorage implements IRecipeStorage
     public RecipeStorage(final IToken<?> token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
     {
         this.input = Collections.unmodifiableList(input);
-        this.cleanedInput = this.calculateCleanedInput();
+        this.cleanedInput = new ArrayList<>();
+        this.cleanedInput.addAll(this.calculateCleanedInput());
         this.primaryOutput = primaryOutput;
         this.gridSize = gridSize;
         this.intermediate = intermediate;
@@ -75,13 +76,18 @@ public class RecipeStorage implements IRecipeStorage
         return new ArrayList<>(input);
     }
 
+    @NotNull
     @Override
     public List<ItemStorage> getCleanedInput()
     {
         return this.cleanedInput;
     }
 
-    public List<ItemStorage> calculateCleanedInput()
+    /**
+     * Calculate a compressed input list from the ingredients.
+     * @return a compressed and immutable list.
+     */
+    private List<ImmutableItemStorage> calculateCleanedInput()
     {
         final List<ItemStorage> items = new ArrayList<>();
 
@@ -102,7 +108,13 @@ public class RecipeStorage implements IRecipeStorage
             }
             items.add(storage);
         }
-        return items;
+
+        final List<ImmutableItemStorage> immutableItems = new ArrayList<>();
+        for (final ItemStorage storage : items)
+        {
+            immutableItems.add(new ImmutableItemStorage(storage));
+        }
+        return immutableItems;
     }
 
     @NotNull
@@ -137,22 +149,23 @@ public class RecipeStorage implements IRecipeStorage
         final int neededMultiplier = CraftingUtils.calculateMaxCraftingCount(qty, this);
         final List<ItemStorage> items = getCleanedInput();
 
-        for (final ItemStorage stack : items)
+        for (final ItemStorage storage : items)
         {
+            final ItemStack stack = storage.getItemStack();
             final int availableCount = InventoryUtils.getItemCountInItemHandlers(
               ImmutableList.copyOf(inventories),
               itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                             && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack(), false, true));
+                             && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, true));
 
-            final ItemStack container = stack.getItem().getContainerItem(stack.getItemStack());
+            final ItemStack container = stack.getItem().getContainerItem(stack);
             final int neededCount;
-            if(ItemStackUtils.isEmpty(container) || !ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), container, false, true))
+            if(ItemStackUtils.isEmpty(container) || !ItemStackUtils.compareItemStacksIgnoreStackSize(stack, container, false, true))
             {
-                neededCount = stack.getAmount() * neededMultiplier;
+                neededCount = storage.getAmount() * neededMultiplier;
             }
             else
             {
-                neededCount = stack.getAmount();
+                neededCount = storage.getAmount();
             }
 
             if (availableCount < neededCount)
@@ -251,9 +264,10 @@ public class RecipeStorage implements IRecipeStorage
             return false;
         }
 
-        for (final ItemStorage stack : getCleanedInput())
+        for (final ItemStorage storage : getCleanedInput())
         {
-            int amountNeeded = stack.getAmount();
+            final ItemStack stack = storage.getItemStack();
+            int amountNeeded = storage.getAmount();
 
             if (amountNeeded == 0)
             {
@@ -263,7 +277,7 @@ public class RecipeStorage implements IRecipeStorage
             for (final IItemHandler handler : handlers)
             {
                 int slotOfStack =
-                  InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack(), false, true));
+                  InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, true));
 
                 while (slotOfStack != -1 && amountNeeded > 0)
                 {
@@ -282,7 +296,7 @@ public class RecipeStorage implements IRecipeStorage
                     if (amountNeeded > 0)
                     {
                         slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler,
-                          itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack(), false, true));
+                          itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, true));
                     }
                 }
 
