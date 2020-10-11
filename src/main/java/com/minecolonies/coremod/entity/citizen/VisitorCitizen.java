@@ -699,6 +699,8 @@ public class VisitorCitizen extends AbstractEntityCitizen
         if (citizenStatusHandler != null && x < 1 && x > -1 && z < 1 && z > -1)
         {
             Log.getLogger().error("Visitor entity set to zero pos, report to mod author:", new Exception());
+            getCitizenData().setLastPosition(getHomePosition());
+            remove();
         }
     }
 }

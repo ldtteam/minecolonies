@@ -225,11 +225,11 @@ public class VisitorManager implements IVisitorManager
             return (IVisitorData) data;
         }
 
-        data.setEntity(citizenEntity);
-        data.initEntityValues();
-
         citizenEntity.setPosition(spawnPos.getX() + HALF_A_BLOCK, spawnPos.getY() + SLIGHTLY_UP, spawnPos.getZ() + HALF_A_BLOCK);
         world.addEntity(citizenEntity);
+
+        citizenEntity.getCitizenColonyHandler().registerWithColony(data.getColony().getID(), data.getId());
+
         return (IVisitorData) data;
     }
 
