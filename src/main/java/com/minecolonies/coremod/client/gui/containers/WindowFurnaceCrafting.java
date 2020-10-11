@@ -98,11 +98,10 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
                 final List<ItemStack> input = new ArrayList<>();
                 input.add(container.inventorySlots.get(0).getStack());
                 final ItemStack primaryOutput = container.inventorySlots.get(1).getStack().copy();
-                final List<ItemStack> alternateOutputs = ImmutableList.of();
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
-                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, alternateOutputs, false));
+                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, null, false));
                 }
             }
         }
