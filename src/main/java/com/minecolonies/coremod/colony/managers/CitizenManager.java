@@ -286,10 +286,11 @@ public class CitizenManager implements ICitizenManager
             colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(spawnPoint, citizenData.getName()));
         }
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
-        entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
 
         entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
         world.addEntity(entity);
+
+        entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
 
         colony.getProgressManager()
           .progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
@@ -460,6 +461,11 @@ public class CitizenManager implements ICitizenManager
         if (effect != null)
         {
             max += effect.getEffect();
+            // TODO research data rework
+            if (max >= 200)
+            {
+                return MineColonies.getConfig().getCommon().maxCitizenPerColony.get() - 25;
+            }
         }
         return max;
     }
