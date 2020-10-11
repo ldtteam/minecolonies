@@ -101,11 +101,12 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
                     {
                         for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
                         {
+                            int amount = itemStorage.getAmount() * request.getRequest().getCount();
                             if (recipeOutputs.containsKey(itemStorage))
                             {
-                                itemStorage.setAmount(recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount());
+                                amount += recipeOutputs.get(itemStorage).getA();
                             }
-                            recipeOutputs.put(itemStorage, new Tuple<>(itemStorage.getAmount(), true));
+                            recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
                         }
                     }
                 }
