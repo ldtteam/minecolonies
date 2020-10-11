@@ -16,6 +16,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
@@ -27,7 +28,9 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAISleep.SleepState.*;
 
@@ -211,28 +214,37 @@ public class EntityAISleep extends Goal
             if (usedBed == null)
             {
                 final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
+                //todo fix and add the module check
+                List<BlockPos> bedList = new ArrayList<>();
                 if (hut instanceof IBuildingBedProvider)
                 {
-                    for (final BlockPos pos : ((IBuildingBedProvider) hut).getBedList())
+                    bedList.addAll(((IBuildingBedProvider) hut).getBedList());
+                }
+                else if (hut.hasModule(HomeBuildingModule.class))
+                {
+                    bedList.addAll(((HomeBuildingModule) hut.getModule(HomeBuildingModule.class)).getBedList());
+                }
+
+                for (final BlockPos pos : bedList)
+                {
+                    if (WorldUtil.isEntityBlockLoaded(citizen.world, pos))
                     {
-                        if (WorldUtil.isEntityBlockLoaded(citizen.world, pos))
+                        final World world = citizen.world;
+                        BlockState state = world.getBlockState(pos);
+                        state = state.getBlock().getExtendedState(state, world, pos);
+                        if (state.getBlock().isIn(BlockTags.BEDS)
+                              && !state.get(BedBlock.OCCUPIED)
+                              && state.get(BedBlock.PART).equals(BedPart.HEAD)
+                              && !isBedOccupied(hut, pos)
+                              && !world.getBlockState(pos.up()).getMaterial().isSolid())
                         {
-                            final World world = citizen.world;
-                            BlockState state = world.getBlockState(pos);
-                            state = state.getBlock().getExtendedState(state, world, pos);
-                            if (state.getBlock().isIn(BlockTags.BEDS)
-                                  && !state.get(BedBlock.OCCUPIED)
-                                  && state.get(BedBlock.PART).equals(BedPart.HEAD)
-                                  && !isBedOccupied(hut, pos)
-                                  && !world.getBlockState(pos.up()).getMaterial().isSolid())
-                            {
-                                usedBed = pos;
-                                setBedOccupied(hut, true);
-                                return;
-                            }
+                            usedBed = pos;
+                            setBedOccupied(hut, true);
+                            return;
                         }
                     }
                 }
+
                 usedBed = citizen.getHomePosition();
             }
 

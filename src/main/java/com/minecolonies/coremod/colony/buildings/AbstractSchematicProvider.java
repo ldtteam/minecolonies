@@ -18,6 +18,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -75,11 +76,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      * The building area box of this building
      */
     private AxisAlignedBB buildingArea = null;
-
-    /**
-     * Made to check if the building has to update the server/client.
-     */
-    private boolean dirty = false;
 
     public AbstractSchematicProvider(final BlockPos pos, final IColony colony)
     {
@@ -402,35 +398,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         isDeconstructed = false;
         buildingLevel = level;
         markDirty();
-    }
-
-    /**
-     * Returns whether the instance is dirty or not.
-     *
-     * @return true if dirty, false if not.
-     */
-    @Override
-    public final boolean isDirty()
-    {
-        return dirty;
-    }
-
-    /**
-     * Sets {@link #dirty} to false, meaning that the instance is up to date.
-     */
-    @Override
-    public final void clearDirty()
-    {
-        dirty = false;
-    }
-
-    /**
-     * Marks the instance and the building dirty.
-     */
-    @Override
-    public void markDirty()
-    {
-        dirty = true;
     }
 
     @Override

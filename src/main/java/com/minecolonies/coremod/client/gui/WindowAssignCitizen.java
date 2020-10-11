@@ -14,6 +14,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.util.math.BlockPos;
@@ -129,7 +130,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
             {
                 @NotNull final ICitizenDataView citizen = citizens.get(index);
 
-                if (building instanceof BuildingHome.View)
+                if (building instanceof BuildingHome.View || building instanceof HomeBuildingModule.View)
                 {
                     rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
 
@@ -214,6 +215,10 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
             if (building instanceof BuildingHome.View)
             {
                 ((BuildingHome.View) building).addResident(data.getId());
+            }
+            else if (building instanceof HomeBuildingModule.View)
+            {
+                ((HomeBuildingModule.View) building).addResident(data.getId());
             }
             Network.getNetwork().sendToServer(new AssignUnassignMessage(this.building, true, data.getId()));
         }

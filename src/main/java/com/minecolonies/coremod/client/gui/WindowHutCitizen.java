@@ -8,7 +8,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
 import com.minecolonies.coremod.network.messages.server.colony.building.RecallCitizenHutMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.client.Minecraft;
@@ -21,7 +21,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_RECALL;
 /**
  * Window for the home building.
  */
-public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
+public class WindowHutCitizen extends AbstractWindowBuilding<HomeBuildingModule.View>
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -45,7 +45,7 @@ public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
     /**
      * The building the view is relates to.
      */
-    private final        BuildingHome.View home;
+    private final HomeBuildingModule.View home;
     /**
      * The list of citizen assigned to this hut.
      */
@@ -56,7 +56,7 @@ public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
      *
      * @param building View of the home building.
      */
-    public WindowHutCitizen(final BuildingHome.View building)
+    public WindowHutCitizen(final HomeBuildingModule.View building)
     {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
 
