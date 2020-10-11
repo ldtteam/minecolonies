@@ -129,11 +129,6 @@ public class ColonyPermissionEventHandler
             @NotNull final PlayerEntity player = EntityUtils.getPlayerOfFakePlayer((PlayerEntity) entity, entity.world);
             if (colony.isCoordInColony(entity.world, posIn))
             {
-                if (!colony.getPermissions().isColonyMember(player))
-                {
-                    return true;
-                }
-
                 if (blockState.getBlock() instanceof AbstractBlockHut
                       && colony.getPermissions().hasPermission(player, action))
                 {
