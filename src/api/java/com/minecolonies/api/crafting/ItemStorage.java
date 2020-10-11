@@ -163,6 +163,16 @@ public class ItemStorage
     }
 
     /**
+     * Getter for the ignoreNBT.
+     *
+     * @return true if should ignore.
+     */
+    public boolean ignoreNBT()
+    {
+        return shouldIgnoreNBTValue;
+    }
+
+    /**
      * Getter for the creativeTab index of the storage.
      *
      * @return the index.

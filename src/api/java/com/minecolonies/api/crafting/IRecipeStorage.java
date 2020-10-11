@@ -24,7 +24,7 @@ public interface IRecipeStorage
 
     /**
      * Get the cleaned up list of the recipes. Air gets removed and equal items get put together.
-     *
+     * This returns an list of immutable itemStorage elements that cannot be tempered with.
      * @return the list.
      */
     List<ItemStorage> getCleanedInput();
