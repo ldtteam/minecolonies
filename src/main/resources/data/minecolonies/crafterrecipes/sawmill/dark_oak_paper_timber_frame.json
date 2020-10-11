@@ -3,7 +3,7 @@
   "crafter": "sawmill",
   "inputs": [
     {
-        "item" : "minecraft:dark_dark_oak_planks",
+        "item" : "minecraft:dark_oak_planks",
         "count": 1
     },
     {

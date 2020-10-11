@@ -3,7 +3,7 @@
   "crafter": "sawmill",
   "inputs": [
     {
-        "item" : "minecraftacacia_planks",
+        "item" : "minecraft:acacia_planks",
         "count": 1
     },
     {
