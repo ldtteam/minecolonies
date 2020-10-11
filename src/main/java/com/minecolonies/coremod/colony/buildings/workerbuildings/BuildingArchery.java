@@ -188,6 +188,7 @@ public class BuildingArchery extends AbstractBuildingWorker implements IBuilding
         return compound;
     }
 
+    @NotNull
     @Override
     public String getSchematicName()
     {

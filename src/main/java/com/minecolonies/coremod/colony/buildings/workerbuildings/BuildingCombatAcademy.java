@@ -203,6 +203,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBu
         return compound;
     }
 
+    @NotNull
     @Override
     public String getSchematicName()
     {

@@ -121,6 +121,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
      *
      * @return StructureProxy name.
      */
+    @NotNull
     @Override
     public String getSchematicName()
     {
