@@ -18,7 +18,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
@@ -365,36 +364,44 @@ public final class StandardRequests
         public List<IFormattableTextComponent> getResolverToolTip(final IColonyView colony)
         {
             final String requester = getRequester().getRequesterDisplayName(colony.getRequestManager(), this).getString();
-            final BlockPos resolver = colony.getRequestManager().getResolverForRequest(getId()).getLocation().getInDimensionLocation();
-            final IBuildingView view = colony.getBuilding(resolver);
 
-            int posInList = -1;
-            if (view instanceof IBuildingWorkerView)
+            try
             {
-                for (int worker : ((IBuildingWorkerView) view).getWorkerId())
+                final BlockPos resolver = colony.getRequestManager().getResolverForRequest(getId()).getLocation().getInDimensionLocation();
+                final IBuildingView view = colony.getBuilding(resolver);
+
+                int posInList = -1;
+                if (view instanceof IBuildingWorkerView)
                 {
-                    final ICitizenDataView citizen = colony.getCitizen(worker);
-                    if (citizen != null)
+                    for (int worker : ((IBuildingWorkerView) view).getWorkerId())
                     {
-                        if (citizen.getJobView() instanceof CrafterJobView && ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().contains(getId()))
+                        final ICitizenDataView citizen = colony.getCitizen(worker);
+                        if (citizen != null)
                         {
-                            posInList = ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(getId());
+                            if (citizen.getJobView() instanceof CrafterJobView && ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().contains(getId()))
+                            {
+                                posInList = ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(getId());
+                            }
                         }
                     }
                 }
-            }
 
-            if (posInList >= 0)
-            {
-                return ImmutableList.of(new TranslationTextComponent(AT, requester), new TranslationTextComponent(IN_QUEUE, posInList));
+                if (posInList >= 0)
+                {
+                    return ImmutableList.of(new TranslationTextComponent(AT, requester), new TranslationTextComponent(IN_QUEUE, posInList));
+                }
+                else if (getState() == RequestState.FOLLOWUP_IN_PROGRESS)
+                {
+                    return ImmutableList.of(new TranslationTextComponent(AT, requester), new TranslationTextComponent(FINISHED));
+                }
+                else
+                {
+                    return ImmutableList.of(new TranslationTextComponent(AT, requester), new TranslationTextComponent(MISSING_DELIVERIES));
+                }
             }
-            else if (getState() == RequestState.FOLLOWUP_IN_PROGRESS)
+            catch (IllegalArgumentException ex)
             {
-                return ImmutableList.of(new TranslationTextComponent(AT, requester), new TranslationTextComponent(FINISHED));
-            }
-            else
-            {
-                return ImmutableList.of(new TranslationTextComponent(AT, requester), new TranslationTextComponent(MISSING_DELIVERIES));
+                return ImmutableList.of(new TranslationTextComponent(AT, requester), new TranslationTextComponent(NOT_RESOLVED));
             }
         }
 
