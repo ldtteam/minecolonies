@@ -101,7 +101,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
-                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, null, false));
+                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, ImmutableList.of(), false));
                 }
             }
         }
