@@ -363,36 +363,44 @@ public final class StandardRequests
         public List<String> getResolverToolTip(final IColonyView colony)
         {
             final String requester = getRequester().getRequesterDisplayName(colony.getRequestManager(), this).getFormattedText();
-            final BlockPos resolver = colony.getRequestManager().getResolverForRequest(getId()).getLocation().getInDimensionLocation();
-            final IBuildingView view = colony.getBuilding(resolver);
 
-            int posInList = -1;
-            if (view instanceof IBuildingWorkerView)
+            try
             {
-                for (int worker : ((IBuildingWorkerView) view).getWorkerId())
+                final BlockPos resolver = colony.getRequestManager().getResolverForRequest(getId()).getLocation().getInDimensionLocation();
+                final IBuildingView view = colony.getBuilding(resolver);
+
+                int posInList = -1;
+                if (view instanceof IBuildingWorkerView)
                 {
-                    final ICitizenDataView citizen = colony.getCitizen(worker);
-                    if (citizen != null)
+                    for (int worker : ((IBuildingWorkerView) view).getWorkerId())
                     {
-                        if (citizen.getJobView() instanceof CrafterJobView && ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().contains(getId()))
+                        final ICitizenDataView citizen = colony.getCitizen(worker);
+                        if (citizen != null)
                         {
-                            posInList = ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(getId());
+                            if (citizen.getJobView() instanceof CrafterJobView && ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().contains(getId()))
+                            {
+                                posInList = ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(getId());
+                            }
                         }
                     }
                 }
-            }
 
-            if (posInList >= 0)
-            {
-                return ImmutableList.of(LanguageHandler.format(AT, requester), LanguageHandler.format(IN_QUEUE, posInList));
+                if (posInList >= 0)
+                {
+                    return ImmutableList.of(LanguageHandler.format(AT, requester), LanguageHandler.format(IN_QUEUE, posInList));
+                }
+                else if (getState() == RequestState.FOLLOWUP_IN_PROGRESS)
+                {
+                    return ImmutableList.of(LanguageHandler.format(AT, requester), LanguageHandler.format(FINISHED));
+                }
+                else
+                {
+                    return ImmutableList.of(LanguageHandler.format(AT, requester), LanguageHandler.format(MISSING_DELIVERIES));
+                }
             }
-            else if (getState() == RequestState.FOLLOWUP_IN_PROGRESS)
+            catch (IllegalArgumentException ex)
             {
-                return ImmutableList.of(LanguageHandler.format(AT, requester), LanguageHandler.format(FINISHED));
-            }
-            else
-            {
-                return ImmutableList.of(LanguageHandler.format(AT, requester), LanguageHandler.format(MISSING_DELIVERIES));
+                return ImmutableList.of(LanguageHandler.format(AT, requester), LanguageHandler.format(NOT_RESOLVED));
             }
         }
 

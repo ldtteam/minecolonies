@@ -133,7 +133,7 @@ public class ContainerRack extends Container
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player)
     {
-        if (player instanceof ClientPlayerEntity)
+        if (player instanceof ClientPlayerEntity || slotId >= inventory.getSlots())
         {
             return super.slotClick(slotId, dragType, clickTypeIn, player);
         }
