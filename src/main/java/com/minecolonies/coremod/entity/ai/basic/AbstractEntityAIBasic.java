@@ -1606,20 +1606,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
 
         int transferamount = 0;
-
+        int transferred;
         do
         {
             transferamount = Math.min(amount, STACKSIZE);
-            amount -= transferamount;
-
-            if (!InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(entity, predicate.getA(), transferamount, worker.getInventoryCitizen()))
-            {
-                return false; // couldn't transfer
-            }
+            transferred = InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(entity, predicate.getA(), transferamount, worker.getInventoryCitizen());
+            amount -= transferred;
         }
-        while (amount > 0);
+        while (transferred > 0 && amount > 0);
 
-        return true;
+        return amount == 0;
     }
 
     /**
