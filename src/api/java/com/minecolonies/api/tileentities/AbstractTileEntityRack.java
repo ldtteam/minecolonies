@@ -80,7 +80,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
         public void setStackInSlot(final int slot, final @Nonnull ItemStack stack)
         {
             validateSlotIndex(slot);
-            final boolean changed = !stack.equals(this.stacks.get(slot));
+            final boolean changed = !ItemStack.areItemStacksEqual(stack, this.stacks.get(slot));
             this.stacks.set(slot, stack);
             if (changed)
             {
@@ -94,7 +94,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
         public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
         {
             final ItemStack result = super.insertItem(slot, stack, simulate);
-            if (result.isEmpty() || result.getCount() < stack.getCount() && !simulate)
+            if ((result.isEmpty() || result.getCount() < stack.getCount()) && !simulate)
             {
                 updateWarehouseIfAvailable(stack);
             }
@@ -107,7 +107,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      *
      * @param stack the incoming stack.
      */
-    private void updateWarehouseIfAvailable(final ItemStack stack)
+    public void updateWarehouseIfAvailable(final ItemStack stack)
     {
         if (!ItemStackUtils.isEmpty(stack) && world != null && !world.isRemote)
         {
