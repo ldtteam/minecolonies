@@ -7,7 +7,9 @@ import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -21,7 +23,7 @@ public class EntityAIInteractToggleAble extends Goal
     /**
      * Number of blocks to check for the fence gate - height.
      */
-    private static final int HEIGHT_TO_CHECK = 2;
+    private static final int DEFAULT_HEIGHT_TO_CHECK = 2;
 
     /**
      * Number of blocks to check for the fence gate - length.
@@ -32,6 +34,11 @@ public class EntityAIInteractToggleAble extends Goal
      * The min distance the gate has to be from the citizen.
      */
     private static final double MIN_DISTANCE = 2.25D;
+
+    /**
+     * The max distance the gate has to be from the citizen.
+     */
+    private static final double MAX_DISTANCE = 6.25D;
 
     /**
      * Default predicate for all 3 vanilla blocks
@@ -112,8 +119,8 @@ public class EntityAIInteractToggleAble extends Goal
         // Occasional checks for current path, collisions do not cover all cases
         if (executeTimerSlow-- <= 0)
         {
-            executeTimerSlow = 100;
-            return checkPath();
+            executeTimerSlow = 50;
+            return checkPathBlocksBelow();
         }
 
         return false;
@@ -128,17 +135,17 @@ public class EntityAIInteractToggleAble extends Goal
     {
         @NotNull final GroundPathNavigator pathnavigateground = (GroundPathNavigator) this.entity.getNavigator();
         final Path path = pathnavigateground.getPath();
-        checkPathBlocks(path);
+        checkPathBlocksCollided(path);
         return !toggleAblePositions.isEmpty();
     }
 
     /**
-     * Checks if the citizen is close enough to an existing fence gate.
+     * Checks the path blocks when collided with something
      *
      * @param path the path through the fence.
      * @return true if the gate can be passed
      */
-    private void checkPathBlocks(final Path path)
+    private void checkPathBlocksCollided(final Path path)
     {
         if (path == null || path.isFinished())
         {
@@ -150,16 +157,132 @@ public class EntityAIInteractToggleAble extends Goal
         for (int i = Math.max(0, path.getCurrentPathIndex() - 1); i < maxLengthToCheck; ++i)
         {
             final PathPoint pathpoint = path.getPathPointFromIndex(i);
-            for (int level = 0; level < HEIGHT_TO_CHECK; level++)
+
+            for (int level = 0; level < getHeightToCheck(path, i); level++)
             {
                 BlockPos pos = new BlockPos(pathpoint.x, pathpoint.y + level, pathpoint.z);
                 BlockState state = entity.world.getBlockState(pos);
                 if (this.entity.getDistanceSq(pos.getX(), this.entity.getPosY(), pos.getZ()) <= MIN_DISTANCE && isValidBlockState(state))
                 {
-                    toggleAblePositions.put(pos, state.get(BlockStateProperties.OPEN));
+                    if (i < path.getCurrentPathLength() - 1)
+                    {
+                        final PathPoint next = path.getPathPointFromIndex(i + 1);
+
+                        // Skip same nodes
+                        if (next.x == pathpoint.x && next.y == pathpoint.y && next.z == pathpoint.z)
+                        {
+                            continue;
+                        }
+
+                        final Direction dir;
+                        if (pathpoint.x == next.x && pathpoint.z == next.z)
+                        {
+                            // Up/Down we just use east
+                            dir = Direction.EAST;
+                        }
+                        else
+                        {
+                            dir = Direction.getFacingFromVector(pathpoint.x - next.x, 0, pathpoint.z - next.z).rotateY();
+                        }
+
+                        // See if collision shape can fit our entity in
+                        final VoxelShape collisionShape = state.getCollisionShape(entity.world, pos);
+                        if (collisionShape.getStart(dir.getAxis()) + 0.1 < entity.getWidth() && collisionShape.getEnd(dir.getAxis()) + 0.1 + entity.getWidth() > 1)
+                        {
+                            toggleAblePositions.put(pos, state.get(BlockStateProperties.OPEN));
+                        }
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * Checks the path for toggleables below, where we need to go through
+     *
+     * @return true if there is a toggleable block below us we need to go through
+     */
+    private boolean checkPathBlocksBelow()
+    {
+        @NotNull final GroundPathNavigator pathnavigateground = (GroundPathNavigator) this.entity.getNavigator();
+        final Path path = pathnavigateground.getPath();
+
+        if (path == null || path.isFinished())
+        {
+            resetAll();
+            return false;
+        }
+
+        final int maxLengthToCheck = Math.min(path.getCurrentPathIndex() + LENGTH_TO_CHECK, path.getCurrentPathLength());
+        for (int i = Math.max(0, path.getCurrentPathIndex() - 1); i < maxLengthToCheck; ++i)
+        {
+            final PathPoint pathpoint = path.getPathPointFromIndex(i);
+
+            for (int level = 0; level < getHeightToCheck(path, i); level++)
+            {
+                BlockPos pos = new BlockPos(pathpoint.x, pathpoint.y + level, pathpoint.z);
+
+                // We only allows blocks we're on or right above
+                if (!entity.getPosition().equals(pos) && !entity.getPosition().down().equals(pos))
+                {
+                    continue;
+                }
+
+                BlockState state = entity.world.getBlockState(pos);
+                if (this.entity.getDistanceSq(pos.getX(), entity.getPosY(), pos.getZ()) <= MIN_DISTANCE && isValidBlockState(state))
+                {
+                    if (level > 0)
+                    {
+                        // Above current pathing node, so need to use this toggleable block
+                        toggleAblePositions.put(pos, entity.world.getBlockState(pos).get(BlockStateProperties.OPEN));
+                    }
+                    else if (i < path.getCurrentPathLength() - 1)
+                    {
+                        // Check if the next pathing node is below
+                        final PathPoint nextPoint = path.getPathPointFromIndex(i + 1);
+                        if (pos.getX() == nextPoint.x && pos.getY() > nextPoint.y && pos.getZ() == nextPoint.z)
+                        {
+                            toggleAblePositions.put(pos, entity.world.getBlockState(pos).get(BlockStateProperties.OPEN));
+                        }
+                    }
+                }
+            }
+        }
+
+        return !toggleAblePositions.isEmpty();
+    }
+
+    /**
+     * Gets the required height to check for the given index. By default it is two blocks, and increases by the y diff if the next or previous node are higher
+     *
+     * @param path  to check
+     * @param index to use
+     * @return height to check
+     */
+    private int getHeightToCheck(final Path path, final int index)
+    {
+        if (path == null || index < 0 || index >= path.getCurrentPathLength())
+        {
+            return DEFAULT_HEIGHT_TO_CHECK;
+        }
+
+        final PathPoint current = path.getPathPointFromIndex(index);
+
+        int prevDist = 0;
+        if (index > 0)
+        {
+            final PathPoint prev = path.getPathPointFromIndex(index - 1);
+            prevDist = prev.y - current.y;
+        }
+
+        int nextDist = 0;
+        if (index + 1 < path.getCurrentPathLength())
+        {
+            final PathPoint next = path.getPathPointFromIndex(index + 1);
+            nextDist = next.y - current.y;
+        }
+
+        return Math.max(DEFAULT_HEIGHT_TO_CHECK, DEFAULT_HEIGHT_TO_CHECK + Math.max(prevDist, nextDist));
     }
 
     /**
@@ -211,7 +334,7 @@ public class EntityAIInteractToggleAble extends Goal
         {
             return;
         }
-        updateTimer = 10;
+        updateTimer = 20;
 
         if (!checkPath())
         {
@@ -233,7 +356,7 @@ public class EntityAIInteractToggleAble extends Goal
                 continue;
             }
 
-            if (this.entity.getDistanceSq(pos.getX(), this.entity.getPosY(), pos.getZ()) > MIN_DISTANCE)
+            if (this.entity.getDistanceSq(pos.getX(), pos.getY(), pos.getZ()) > MAX_DISTANCE)
             {
                 it.remove();
                 entity.world.setBlockState(pos, entity.world.getBlockState(pos).with(BlockStateProperties.OPEN, false));
