@@ -464,7 +464,7 @@ public class CustomRecipe
     /**
      * Does this require it to already be there? 
      */
-    public boolean isMustExist()
+    public boolean getMustExist()
     {
         return mustExist;
     }

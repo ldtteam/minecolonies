@@ -16,7 +16,6 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.RecipeBook;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraft.util.math.BlockPos;
@@ -24,6 +23,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
@@ -51,7 +51,7 @@ public class ContainerCrafting extends Container
     /**
      * The secondary outputs
      */
-    private final java.util.List<ItemStack> remainingItems;
+    private final List<ItemStack> remainingItems;
 
     /**
      * Boolean variable defining if complete grid or not 3x3(true), 2x2(false).
@@ -380,24 +380,12 @@ public class ContainerCrafting extends Container
      * Get for the remaining items. 
      * @return
      */
-    public java.util.List<ItemStack> getRemainingItems()
+    public List<ItemStack> getRemainingItems()
     {
         final Optional<ICraftingRecipe> iRecipe = this.world.getRecipeManager().getRecipe(IRecipeType.CRAFTING, craftMatrix, world);
-        RecipeBook r;
-        if(world.isRemote)
+        if (iRecipe.isPresent())
         {
-            r = new ClientRecipeBook(this.world.getRecipeManager());
-        }
-        else
-        {
-            r = new RecipeBook();
-        }
-        if (iRecipe.isPresent() && (iRecipe.get().isDynamic()
-        || !world.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING)
-        || r.isUnlocked(iRecipe.get())
-        || inv.player.isCreative()))
-        {
-            java.util.List<ItemStack> ri = iRecipe.get().getRemainingItems(this.craftMatrix);
+            List<ItemStack> ri = iRecipe.get().getRemainingItems(this.craftMatrix);
             remainingItems.clear();
             for(int i = 0; i< ri.size(); i++)
             {
