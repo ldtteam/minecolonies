@@ -9,8 +9,10 @@
 
             <list id="assignedCitizen" size="164 60" pos="13 49">
                 <box size="100% 30" linewidth="2">
-                    <label id="name" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
-                    <button id="remove" size="100 12" pos="5 15" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.unassign)"/>
+                    <label id="name" size="100 12" pos="5 2" color="black"/>
+                    <button id="remove" size="80 12" pos="75 15" label="$(com.minecolonies.coremod.gui.workerhuts.unassign)"/>
+                    <label id="dist" size="100 12" pos="5 15" color="black"/>
+
                 </box>
             </list>
             <buttonimage id="recall" size="129 17" pos="30 130" textcolor="black"
