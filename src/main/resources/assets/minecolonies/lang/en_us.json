@@ -1804,6 +1804,6 @@
   "com.minecolonies.coremod.listentry": "#%d in queue",
   "com.minecolonies.coremod.missingitems": "Awaiting Materials",
   "com.minecolonies.coremod.finished": "Finished!",
+  "com.minecolonies.coremod.dist.blocks": "%d blocks"
   "com.minecolonies.coremod.notresolved": "Awaiting Resolvers!"
-
 }
