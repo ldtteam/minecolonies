@@ -189,7 +189,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Nullable
     public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
     {
-        IRecipeStorage firstFound = null;
+        IRecipeStorage foundRecipe = null;
         final HashMap<IRecipeStorage, Integer> candidates = new HashMap<>();
 
 
@@ -199,9 +199,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(i -> stackPredicate.test(i))))
             {
-                if(firstFound == null)
+                if(foundRecipe == null)
                 {
-                    firstFound = storage;
+                    foundRecipe = storage;
                 }
                 candidates.put(storage, 0);
             }
@@ -215,15 +215,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 final ItemStorage checkItem = foo.getKey().getCleanedInput().stream().max(Comparator.comparingInt(ItemStorage::getAmount)).get();
                 candidates.put(foo.getKey(), getWarehouseCount(checkItem));
             }
-            firstFound = candidates.entrySet().stream().min(Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
+            foundRecipe = candidates.entrySet().stream().min(Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
         }
 
-        if(firstFound != null && firstFound.getRecipeType() == RecipeStorageType.MULTI_OUTPUT)
+        if(foundRecipe != null && foundRecipe.getRecipeType() == RecipeStorageType.MULTI_OUTPUT)
         {
-            firstFound = firstFound.getClassicForMultiOutput(stackPredicate);
+            foundRecipe = foundRecipe.getClassicForMultiOutput(stackPredicate);
         }
 
-        return firstFound;
+        return foundRecipe;
     }
 
     /**
