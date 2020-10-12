@@ -378,6 +378,30 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBu
         return ModBuildings.combatAcademy;
     }
 
+    @Override
+    public void onWakeUp()
+    {
+        super.onWakeUp();
+        
+        final World world = getColony().getWorld();
+        if (world == null)
+        {
+            return;
+        }
+
+        for (final BlockPos pos : bedList)
+        {
+            BlockState state = world.getBlockState(pos);
+            state = state.getBlock().getExtendedState(state, world, pos);
+            if (state.getBlock() instanceof BedBlock
+                  && state.get(BedBlock.OCCUPIED)
+                  && state.get(BedBlock.PART).equals(BedPart.HEAD))
+            {
+                world.setBlockState(pos, state.with(BedBlock.OCCUPIED, false), 0x03);
+            }
+        }
+    }    
+
     /**
      * The client view for the bakery building.
      */
