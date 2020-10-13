@@ -4,13 +4,16 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.ItemIcon;
+import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
@@ -28,9 +31,14 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 public class WindowListRecipes extends Window implements ButtonHandler
 {
     /**
-     * Id of the citizen list in the GUI.
+     * Id of the recipe list in the GUI.
      */
     private static final String RECIPE_LIST = "recipes";
+
+    /**
+     * Id of the recipe status label in the GUI.
+     */
+    private static final String RECIPE_STATUS="recipestatus";
 
     /**
      * Link to the xml file of the window.
@@ -67,6 +75,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
      */
     private final ScrollingList recipeList;
 
+    private final Label recipeStatus;
     /**
      * Constructor for the window when the player wants to see the list of a building's recipes.
      *
@@ -78,6 +87,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.building = (AbstractBuildingWorker.View) c.getBuilding(buildingId);
         recipeList = findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class);
+        recipeStatus = findPaneOfTypeByID(RECIPE_STATUS,Label.class);
         updateRecipes();
     }
 
@@ -147,6 +157,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
     public void onUpdate()
     {
         updateRecipes();
+        recipeStatus.setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.recipestatus",building.getRecipes().size(),AbstractBuildingCrafter.buildingMaxRecipes(building.getBuildingLevel())));
         window.findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class).refreshElementPanes();
     }
 
