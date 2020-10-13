@@ -819,7 +819,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
             if(newRecipe.isValidForBuilding(this))
             {   
-                IToken<?> duplicateFound = null; 
+                IToken<?> duplicateFound = null;
+                boolean forceReplace = false;  
                 for(IToken<?> token : recipes)
                 {
                     if(token == recipeToken)
@@ -858,6 +859,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                         if(allMatch)
                         {
                             duplicateFound = token;
+                            if(storage.getRecipeType() == RecipeStorageType.CLASSIC && recipeStorage.getRecipeType() == RecipeStorageType.MULTI_OUTPUT)
+                            {
+                                //This catches the old recipes without a RecipeSource
+                                forceReplace = true;
+                            }
+                            if(storage.getRecipeSource().equals(recipeStorage.getRecipeSource()))
+                            {
+                                //This will only happen if the tokens don't match, aka: the recipe has changed.
+                                forceReplace = true;
+                            }
                             break;
                         }
                     }
@@ -867,7 +878,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                     addRecipeToList(recipeToken);    
                     colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
                 }
-                else if(newRecipe.getMustExist() && duplicateFound != recipeToken)
+                else if((forceReplace || newRecipe.getMustExist()) && duplicateFound != recipeToken)
                 {
                     //We found the base recipe for a multi-recipe, replace it with the multi-recipe
                     replaceRecipe(duplicateFound, recipeToken);

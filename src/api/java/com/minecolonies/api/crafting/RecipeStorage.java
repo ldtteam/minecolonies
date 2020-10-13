@@ -278,7 +278,9 @@ public class RecipeStorage implements IRecipeStorage
             }
             for(int i = 0; i< alternateOutputs.size(); i++)
             {
-                if(!ItemStackUtils.compareItemStacksIgnoreStackSize(alternateOutputs.get(i),that.alternateOutputs.get(i), false, true))
+                ItemStack left = alternateOutputs.get(i);
+                ItemStack right = that.alternateOutputs.get(i);
+                if(!ItemStackUtils.compareItemStacksIgnoreStackSize(left, right, false, true) || left.getCount() != right.getCount())
                 {
                     return false;
                 }
