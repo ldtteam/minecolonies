@@ -2,7 +2,6 @@ package com.minecolonies.api.inventory.container;
 
 import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.minecolonies.api.inventory.ModContainers;
-import net.minecraft.client.util.ClientRecipeBook;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;

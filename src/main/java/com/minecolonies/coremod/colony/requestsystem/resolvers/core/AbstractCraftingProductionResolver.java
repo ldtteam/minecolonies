@@ -148,13 +148,13 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
                 {
                     materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount(), ingredient.getAmount()));
                 }
-                else if (ItemStackUtils.isEmpty(container) || ItemStackUtils.compareItemStacksIgnoreStackSize(container, craftingHelperStack, false, true))
+                else if (!ItemStackUtils.isEmpty(container) && ItemStackUtils.compareItemStacksIgnoreStackSize(container, craftingHelperStack, false, true))
                 {
-                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount() * count, ingredient.getAmount() * minCount ));
+                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount(), ingredient.getAmount()));
                 } 
                 else
                 {
-                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount(), ingredient.getAmount()));
+                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount() * count, ingredient.getAmount() * minCount ));
                 }
             }
         }

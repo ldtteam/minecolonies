@@ -75,6 +75,10 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
      * @param gridSize      the grid size.
      * @param primaryOutput the primary output.
      * @param intermediate  the intermediate.
+     * @param source        the source of this recipe, either a registry name or the player name
+     * @param type          What type this recipe is, classic or multi-recipe
+     * @param altOutputs    possible alternate outputs other than the primaryOutput
+     * @param secOutputs    Leave-behind items in the grid. ie: bucket, pot, juicer, or hammer
      * @return a new Instance of IRecipeStorage.
      */
     @NotNull
