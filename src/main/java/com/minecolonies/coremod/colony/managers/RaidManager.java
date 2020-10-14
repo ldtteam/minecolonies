@@ -419,7 +419,7 @@ public class RaidManager implements IRaiderManager
                           && WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir1, 32))
                           && WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir2, 16)))
                     {
-                        if (isValidSpawnPoint(tempPos.offset(dir1, 16), loadedBuildings))
+                        if (isValidSpawnPoint(tempPos.offset(dir1, 16)))
                         {
                             spawnPos = tempPos.offset(dir1, 16);
                         }
@@ -436,7 +436,7 @@ public class RaidManager implements IRaiderManager
                           && WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir2, 32))
                           && WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir1, 16)))
                     {
-                        if (isValidSpawnPoint(tempPos.offset(dir2, 16), loadedBuildings))
+                        if (isValidSpawnPoint(tempPos.offset(dir2, 16)))
                         {
                             spawnPos = tempPos.offset(dir2, 16);
                         }
@@ -449,7 +449,7 @@ public class RaidManager implements IRaiderManager
                 }
             }
 
-            if (isValidSpawnPoint(spawnPos, loadedBuildings))
+            if (isValidSpawnPoint(spawnPos))
             {
                 return spawnPos;
             }
@@ -465,9 +465,9 @@ public class RaidManager implements IRaiderManager
      * @param loadedBuildings the loaded buildings
      * @return true if valid
      */
-    private boolean isValidSpawnPoint(final BlockPos spawnPos, final List<IBuilding> loadedBuildings)
+    private boolean isValidSpawnPoint(final BlockPos spawnPos)
     {
-        for (final IBuilding building : loadedBuildings)
+        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
             if (building.getBuildingLevel() == 0)
             {
