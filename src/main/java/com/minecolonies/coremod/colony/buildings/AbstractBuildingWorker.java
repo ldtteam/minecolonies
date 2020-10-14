@@ -118,6 +118,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     private HiringMode hiringMode = HiringMode.DEFAULT;
 
     /**
+     * The display name of the job - post localization
+     */
+    private String jobDisplayName = "";
+
+    /**
      * The abstract constructor of the building.
      *
      * @param c the colony
@@ -719,6 +724,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         buf.writeInt(getMaxInhabitants());
         buf.writeBoolean(hasSpaceForMoreRecipes());
         buf.writeBoolean(isRecipeAlterationAllowed());
+        buf.writeString(jobDisplayName);
     }
 
     @Override
@@ -873,6 +879,27 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         markDirty();
     }
 
+
+    /**
+     * Get the Job DisplayName
+     */
+    public String getJobDisplayName()
+    {
+        return jobDisplayName;
+    }
+
+    /**
+     * Set the job Display name
+     * @param jobDisplayName the localization ID for the display name
+     */
+    public void setJobDisplayName(String jobDisplayName)
+    {
+        if(this.jobDisplayName.isEmpty())
+        {
+            this.jobDisplayName = jobDisplayName;
+        }
+    }
+    
     /**
      * AbstractBuildingWorker View for clients.
      */
@@ -929,6 +956,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         private boolean isRecipeAlterationAllowed;
 
         /**
+         * The job display name
+         */
+        private String jobDisplayName;
+
+        /**
          * Creates the view representation of the building.
          *
          * @param c the colony.
@@ -982,6 +1014,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             this.maxInhabitants = buf.readInt();
             this.canAddMoreRecipes = buf.readBoolean();
             this.isRecipeAlterationAllowed = buf.readBoolean();
+            this.jobDisplayName = buf.readString();
         }
 
         @Override
@@ -1092,6 +1125,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         public int getMaxInhabitants()
         {
             return this.maxInhabitants;
+        }
+
+        @Override
+        public String getJobDisplayName()
+        {
+            return jobDisplayName;
         }
     }
 }
