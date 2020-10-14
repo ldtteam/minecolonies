@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -85,19 +86,13 @@ public abstract class AbstractBuildingModule implements IBuildingModule
     @Override
     public boolean assignCitizen(ICitizenData citizen)
     {
-        return building.assignCitizen(citizen);
+        return false;
     }
 
     @Override
     public int getMaxBuildingLevel()
     {
         return building.getMaxBuildingLevel();
-    }
-
-    @Override
-    public int getMaxInhabitants()
-    {
-        return building.getMaxInhabitants();
     }
 
     @Override
@@ -134,5 +129,11 @@ public abstract class AbstractBuildingModule implements IBuildingModule
     public boolean checkDirty()
     {
         return this.isDirty;
+    }
+
+    @Override
+    public void onPlayerEnterBuilding(PlayerEntity player)
+    {
+
     }
 }

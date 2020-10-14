@@ -8,6 +8,8 @@ import com.minecolonies.api.colony.managers.interfaces.IProgressManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import net.minecraft.block.Block;
@@ -128,7 +130,7 @@ public class ProgressManager implements IProgressManager
         {
             trigger(FOOD_PROD_BUILT);
         }
-        else if (totalHousing == 4 && (building instanceof BuildingTownHall || building instanceof BuildingHome))
+        else if (totalHousing == 4 && (building instanceof BuildingTownHall || building.hasModule(LivingBuildingModule.class)))
         {
             trigger(ALL_CITIZENS_HOMED);
         }

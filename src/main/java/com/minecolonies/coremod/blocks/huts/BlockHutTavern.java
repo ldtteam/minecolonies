@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.blocks.huts;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,5 +29,12 @@ public class BlockHutTavern extends AbstractBlockHut<com.minecolonies.coremod.bl
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.tavern;
+    }
+
+    @Override
+    public void registerBuildingModules(final IBuilding building)
+    {
+        building.registerModule(new LivingBuildingModule(building));
+        building.registerModule(new TavernBuildingModule(building));
     }
 }

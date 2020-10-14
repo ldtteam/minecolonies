@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building.home;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the messages assigning or unassigning of citizens.
  */
-public class AssignUnassignMessage extends AbstractBuildingServerMessage<BuildingHome>
+public class AssignUnassignMessage extends AbstractBuildingServerMessage<DefaultBuildingInstance>
 {
     /**
      * If assigning (true) else unassigning.
@@ -80,7 +80,7 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Buildin
 
     @Override
     public void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingHome building)
+      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final DefaultBuildingInstance building)
     {
         final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
         if (assign && !building.isFull() && !building.equals(citizen.getHomeBuilding()))

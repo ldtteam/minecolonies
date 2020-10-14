@@ -191,7 +191,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @Override
     protected void updateRenderMetaData()
     {
-        //TODO: Have pickaxe etc. displayed?
         worker.setRenderMetadata(getRenderMetaStone() + getRenderMetaTorch());
     }
 

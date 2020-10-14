@@ -283,15 +283,7 @@ public class CompatibilityManager implements ICompatibilityManager
             }
 
             String[] split = string.split(":");
-            //todo, this is backwards compatibility, remove in 1.16
-            if (split.length == 1)
-            {
-                final String[] newSplit = new String[2];
 
-                newSplit[1] = split[0];
-                newSplit[0] = "minecraft";
-                split = newSplit;
-            }
             if (split.length == 2)
             {
                 for (final ResourceLocation tag : itemStack.getItem().getTags())

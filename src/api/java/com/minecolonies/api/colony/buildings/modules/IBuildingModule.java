@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -45,4 +46,6 @@ public interface IBuildingModule
     void serializeToView(PacketBuffer buf);
 
     void clearDirty();
+
+    void onPlayerEnterBuilding(PlayerEntity player);
 }

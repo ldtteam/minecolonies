@@ -16,8 +16,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
 import net.minecraft.block.BedBlock;
@@ -214,15 +213,10 @@ public class EntityAISleep extends Goal
             if (usedBed == null)
             {
                 final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
-                //todo fix and add the module check
                 List<BlockPos> bedList = new ArrayList<>();
-                if (hut instanceof IBuildingBedProvider)
+                if (hut.hasModule(LivingBuildingModule.class))
                 {
-                    bedList.addAll(((IBuildingBedProvider) hut).getBedList());
-                }
-                else if (hut.hasModule(HomeBuildingModule.class))
-                {
-                    bedList.addAll(((HomeBuildingModule) hut.getModule(HomeBuildingModule.class)).getBedList());
+                    bedList.addAll(((LivingBuildingModule) hut.getModule(LivingBuildingModule.class)).getBedList());
                 }
 
                 for (final BlockPos pos : bedList)
@@ -239,7 +233,7 @@ public class EntityAISleep extends Goal
                               && !world.getBlockState(pos.up()).getMaterial().isSolid())
                         {
                             usedBed = pos;
-                            setBedOccupied(hut, true);
+                            setBedOccupied(true);
                             return;
                         }
                     }
@@ -289,10 +283,9 @@ public class EntityAISleep extends Goal
     /**
      * Sets the used beds occupied state.
      *
-     * @param hut      the hut in which the citizen is sleeping.
      * @param occupied whether the bed should be occupied.
      */
-    private void setBedOccupied(IBuilding hut, boolean occupied)
+    private void setBedOccupied(boolean occupied)
     {
         final BlockState headState = citizen.world.getBlockState(usedBed);
         citizen.world.setBlockState(usedBed, headState.with(BedBlock.OCCUPIED, occupied), 0x03);
@@ -353,9 +346,9 @@ public class EntityAISleep extends Goal
                 if (colony != null && colony.getBuildingManager().getBuilding(citizen.getHomePosition()) != null)
                 {
                     final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
-                    if (hut instanceof BuildingHome)
+                    if (hut.hasModule(LivingBuildingModule.class))
                     {
-                        setBedOccupied((BuildingHome) hut, false);
+                        setBedOccupied(false);
                     }
                 }
             }

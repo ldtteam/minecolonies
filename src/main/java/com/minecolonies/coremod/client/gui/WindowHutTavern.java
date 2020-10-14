@@ -8,8 +8,8 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTavern;
+import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
+import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Window for the tavern
  */
-public class WindowHutTavern extends AbstractWindowBuilding<BuildingTavern.View>
+public class WindowHutTavern extends AbstractWindowBuilding<TavernBuildingModule.View>
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -40,22 +40,24 @@ public class WindowHutTavern extends AbstractWindowBuilding<BuildingTavern.View>
     /**
      * Id to identify the list of the citizen in the view.
      */
-    private static final String            LIST_CITIZEN = "assignedCitizen";
+    private static final String LIST_CITIZEN = "assignedCitizen";
+
     /**
      * The building the view is relates to.
      */
-    private final        BuildingHome.View home;
+    private final LivingBuildingView home;
+
     /**
      * The list of citizen assigned to this hut.
      */
-    private              ScrollingList     citizen;
+    private ScrollingList citizen;
 
     /**
      * Creates the Window object.
      *
      * @param building View of the home building.
      */
-    public WindowHutTavern(final BuildingTavern.View building)
+    public WindowHutTavern(final TavernBuildingModule.View building)
     {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
 

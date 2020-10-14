@@ -113,6 +113,29 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
         return new ArrayList<>(assignedCitizen);
     }
 
+    // --------------------------- Used by the Modules for now --------------------------- //
+
+    /**
+     * Add a citizen directly to the assignment list.
+     * @param data the citizen.
+     */
+    public void addAssignedCitizen(final ICitizenData data)
+    {
+        this.assignedCitizen.add(data);
+    }
+
+    /**
+     * Remove a citizen directly from the assignment list.
+     * @param data the citizen.
+     */
+    public void removeAssignedCitizen(final ICitizenData data)
+    {
+        this.assignedCitizen.add(data);
+    }
+
+    // ---------------------------------------------------------------------------------- //
+
+
     /**
      * Method to remove a citizen.
      *

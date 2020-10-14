@@ -14,8 +14,8 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGuardTower;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.amazonevent.AmazonRaidEvent;
@@ -482,7 +482,7 @@ public class RaidManager implements IRaiderManager
                 // 47/59/71/83/95
                 minDist += building.getBuildingLevel() * 12;
             }
-            else if (building instanceof BuildingHome)
+            else if (building.hasModule(LivingBuildingModule.class))
             {
                 // 39/43/47/51/55
                 minDist += building.getBuildingLevel() * 4;

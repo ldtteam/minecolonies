@@ -32,6 +32,7 @@ public class DefaultBuildingInstance extends AbstractBuilding
         super(colony, pos);
         this.schematicName = schematicName;
         this.entry = entry;
+        entry.getBuildingBlock().registerBuildingModules(this);
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
 import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.util.ResourceLocation;
@@ -300,8 +301,8 @@ public final class ModBuildingsInitializer
 
         ModBuildings.tavern = new BuildingEntry.Builder()
                                 .setBuildingBlock(ModBlocks.blockHutTavern)
-                                .setBuildingProducer(BuildingTavern::new)
-                                .setBuildingViewProducer(() -> BuildingTavern.View::new)
+                                .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "tavern", ModBuildings.tavern))
+                                .setBuildingViewProducer(() -> TavernBuildingModule.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.TAVERN_ID))
                                 .createBuildingEntry();
 

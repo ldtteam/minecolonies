@@ -37,7 +37,7 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
@@ -249,6 +249,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
+    public void onPlayerEnterBuilding(final PlayerEntity player)
+    {
+        for (final IBuildingModule module : modules.values())
+        {
+            module.onPlayerEnterBuilding(player);
+        }
+    }
+
+    @Override
     public void onPlayerEnterNearby(final PlayerEntity player)
     {
         if (getBuildingLevel() == 0 || getSchematicName() == null || getSchematicName().isEmpty())
@@ -408,42 +417,44 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public boolean assignCitizen(final ICitizenData citizen)
     {
-        final boolean result = super.assignCitizen(citizen);
         for (final IBuildingModule module : modules.values())
         {
-            module.assignCitizen(citizen);
+            if (module.assignCitizen(citizen))
+            {
+                return true;
+            }
         }
-        return result;
+        return super.assignCitizen(citizen);
     }
 
     @Override
     public int getMaxInhabitants()
     {
-        int max = super.getMaxInhabitants();
+        int min = super.getMaxInhabitants();
         for (final IBuildingModule module : modules.values())
         {
-            int moduleMax = module.getMaxInhabitants();
-            if (moduleMax > max)
+            int moduleMin = module.getMaxInhabitants();
+            if (moduleMin < min)
             {
-                max = moduleMax;
+                min = moduleMin;
             }
         }
-        return max;
+        return min;
     }
 
     @Override
     public int getMaxBuildingLevel()
     {
-        int max = 0;
+        int min = 0;
         for (final IBuildingModule module : modules.values())
         {
-            int moduleMax = module.getMaxBuildingLevel();
-            if (moduleMax > max)
+            int moduleMin = module.getMaxBuildingLevel();
+            if (moduleMin < min)
             {
-                max = moduleMax;
+                min = moduleMin;
             }
         }
-        return max;
+        return min;
     }
 
     /**
@@ -1036,7 +1047,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
           colony.getBuildingManager().getBuildings().values().stream()
             .filter(building -> building instanceof AbstractBuildingWorker).mapToInt(ISchematicProvider::getBuildingLevel).sum(),
           colony.getBuildingManager().getBuildings().values().stream()
-            .filter(building -> building instanceof BuildingHome).mapToInt(ISchematicProvider::getBuildingLevel).sum()
+            .filter(building -> building.hasModule(LivingBuildingModule.class)).mapToInt(ISchematicProvider::getBuildingLevel).sum()
         );
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, newLevel);
         final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
