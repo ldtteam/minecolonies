@@ -1125,6 +1125,26 @@ public final class WindowConstants
     public static final String CLIPBOARD_TOGGLE = "important";
 
     /**
+     * Id of the hire/fire button in the GUI.
+     */
+    public static final String BUTTON_ASSIGN = "assign";
+
+    /**
+     * Id of the hire/fire button in the GUI.
+     */
+    public static final String LABEL_NAME = "name";
+
+    /**
+     * Id of the hire/fire button in the GUI.
+     */
+    public static final String LABEL_DIST = "dist";
+
+    /**
+     * Id to identify the list of the citizen in the view.
+     */
+    public static final String LIST_CITIZEN = "assignedCitizen";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()
