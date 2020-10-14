@@ -18,7 +18,9 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.NotNull;
 
@@ -173,13 +175,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             {
                 remaining = inputStorage.getAmount();
             }
-            else if (!ItemStackUtils.isEmpty(container) && ItemStackUtils.compareItemStacksIgnoreStackSize(inputStorage.getItemStack(), container , false, true))
+            else if (ItemStackUtils.isEmpty(container) || !ItemStackUtils.compareItemStacksIgnoreStackSize(inputStorage.getItemStack(), container , false, true))
             {
-                remaining = inputStorage.getAmount();
+                remaining = inputStorage.getAmount() * remainingOpsCount;
             }
             else
             {
-                remaining = inputStorage.getAmount() * remainingOpsCount;
+                remaining = inputStorage.getAmount();
             }
             if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
                   + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
@@ -191,7 +193,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 return START_WORKING;
             }
         }
-
+        
         job.setCraftCounter(doneOpsCount);
         return QUERY_ITEMS;
     }
@@ -251,13 +253,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             {
                 remaining = inputStorage.getAmount();
             }
-            else if(!ItemStackUtils.isEmpty(container) && ItemStackUtils.compareItemStacksIgnoreStackSize(inputStorage.getItemStack(), container , false, true))
+            else if(ItemStackUtils.isEmpty(container) || !ItemStackUtils.compareItemStacksIgnoreStackSize(inputStorage.getItemStack(), container , false, true))
             {
-                remaining = inputStorage.getAmount();
+                remaining = inputStorage.getAmount() * job.getMaxCraftingCount();
             }
             else
             {
-                remaining = inputStorage.getAmount() * job.getMaxCraftingCount();
+                remaining = inputStorage.getAmount();
             }
 
             if (invCount <= 0 || invCount + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount())
