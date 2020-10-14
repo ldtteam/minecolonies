@@ -14,7 +14,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraf
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,7 +79,8 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
         final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
         if (requester instanceof IBuildingWorkerView)
         {
-            return new StringTextComponent(((IBuildingWorkerView) requester).getJobName());
+            final IBuildingWorkerView bwv = (IBuildingWorkerView) requester;
+            return new TranslationTextComponent(bwv.getJobDisplayName().toLowerCase());
         }
         return super.getRequesterDisplayName(manager, request);
     }

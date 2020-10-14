@@ -1677,8 +1677,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return new StringTextComponent("<UNKNOWN>");
         }
 
-        final Integer citizenData = getCitizensByRequest().get(request.getId());
-        return new StringTextComponent(this.getSchematicName() + " " + getColony().getCitizenManager().getCivilian(citizenData).getName());
+        final Integer citizenId = getCitizensByRequest().get(request.getId());
+        final ICitizenData citizenData = getColony().getCitizenManager().getCivilian(citizenId);
+        final ITextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getName().toLowerCase());
+        return jobName.appendSibling(new StringTextComponent(" " + citizenData.getName()));
     }
 
     @Override
