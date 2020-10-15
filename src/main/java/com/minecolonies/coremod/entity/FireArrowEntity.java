@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity;
 import com.minecolonies.api.items.ModItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.IPacket;
 import net.minecraft.world.World;
@@ -15,9 +15,9 @@ import javax.annotation.Nullable;
 /**
  * Custom arrow entity for the fire arrows.
  */
-public class FireArrowEntity extends AbstractArrowEntity
+public class FireArrowEntity extends CustomArrowEntity
 {
-    public FireArrowEntity(EntityType<? extends AbstractArrowEntity> entity, World world)
+    public FireArrowEntity(EntityType<? extends ArrowEntity> entity, World world)
     {
         super(entity, world);
     }

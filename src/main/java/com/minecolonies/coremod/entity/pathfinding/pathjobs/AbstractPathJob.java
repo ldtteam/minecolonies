@@ -25,6 +25,7 @@ import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.state.properties.Half;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -202,9 +203,30 @@ public abstract class AbstractPathJob implements Callable<Path>
     public static BlockPos prepareStart(@NotNull final LivingEntity entity)
     {
         @NotNull final BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.getPosX()),
-          MathHelper.ceil(entity.getPosY()),
+          MathHelper.floor(entity.getPosY()),
           MathHelper.floor(entity.getPosZ()));
         BlockState bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
+
+        // 1 Up when we're standing within this collision shape
+        final VoxelShape collisionShape = bs.getCollisionShape(entity.world, pos);
+        if (bs.getMaterial().blocksMovement() && collisionShape.getEnd(Direction.Axis.Y) > 0)
+        {
+            final double relPosX = Math.abs(entity.getPosX() % 1);
+            final double relPosZ = Math.abs(entity.getPosZ() % 1);
+
+            for (final AxisAlignedBB box : collisionShape.toBoundingBoxList())
+            {
+                if (relPosX >= box.minX && relPosX <= box.maxX
+                      && relPosZ >= box.minZ && relPosZ <= box.maxZ
+                      && box.maxY > 0)
+                {
+                    pos.setPos(pos.getX(), pos.getY() + 1, pos.getZ());
+                    bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
+                    break;
+                }
+            }
+        }
+
         final Block b = bs.getBlock();
 
         if (entity.isInWater())

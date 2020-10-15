@@ -96,6 +96,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
 import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
 import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
+import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 /**
  * The Class used to represent the citizen entities.
@@ -338,7 +339,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.goalSelector.addGoal(++priority, new EntityAIEatTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISickTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISleep(this));
-        this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, EntityAIInteractToggleAble.GATE_DOOR_TRAP));
+        this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
         this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, PlayerEntity.class, WATCH_CLOSEST2, 1.0F));
         this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.goalSelector.addGoal(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED, 1.0D));
