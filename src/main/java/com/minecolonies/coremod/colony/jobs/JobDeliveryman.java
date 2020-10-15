@@ -543,7 +543,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param existing   the existing request
      * @return 1 for inserting after existing, 0 for infront
      */
-    private int getPickupOrRequestOffset(final IRequest<?> newRequest, final IRequest<?> existing)
+    private static int getPickupOrRequestOffset(final IRequest<?> newRequest, final IRequest<?> existing)
     {
         if (newRequest.getRequest() instanceof Delivery && existing.getRequest() instanceof Pickup)
         {
@@ -560,7 +560,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param existing   existing request
      * @return better score for when alternating deliveries and pickups nicely
      */
-    private int getPickUpRequestScore(final IRequest<?> newRequest, final IRequest<?> existing)
+    private static int getPickUpRequestScore(final IRequest<?> newRequest, final IRequest<?> existing)
     {
         if (newRequest.getRequest() instanceof Pickup && existing.getRequest() instanceof Delivery
               || newRequest.getRequest() instanceof Delivery && existing.getRequest() instanceof Pickup)
@@ -580,7 +580,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param target2 target of second request
      * @return closeness factor, representing how close these positions are to eachother. The lower the closer they are.
      */
-    private double getClosenessFactorTo(final BlockPos source1, final BlockPos target1, final BlockPos source2, final BlockPos target2)
+    public static double getClosenessFactorTo(final BlockPos source1, final BlockPos target1, final BlockPos source2, final BlockPos target2)
     {
         final double newLength = BlockPosUtil.getDistance(target1, source1);
         if (newLength <= 0)
