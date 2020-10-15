@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -24,6 +27,19 @@ public class PickupRequestResolver extends DeliverymenRequestResolver<Pickup>
     {
         super(location, token);
     }
+
+    @Override
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends Pickup> requestToCheck)
+    {
+        final IWareHouse wareHouse = manager.getColony().getBuildingManager().getClosestWarehouseInColony(requestToCheck.getRequester().getLocation().getInDimensionLocation());
+        if (wareHouse == null || !wareHouse.getID().equals(getLocation().getInDimensionLocation()))
+        {
+            return false;
+        }
+
+        return super.canResolveRequest(manager, requestToCheck);
+    }
+
 
     @Override
     public TypeToken<? extends Pickup> getRequestType()
