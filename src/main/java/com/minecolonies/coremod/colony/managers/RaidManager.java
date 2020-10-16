@@ -51,7 +51,7 @@ public class RaidManager implements IRaiderManager
     /**
      * Spawn modifier to decrease the spawn-rate.
      */
-    public static final double SPAWN_MODIFIER = 50;
+    public static final double SPAWN_MODIFIER = 60;
 
     /**
      * Min distance to keep while spawning near buildings
@@ -636,7 +636,7 @@ public class RaidManager implements IRaiderManager
 
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            levels += building.getBuildingLevel() * building.getBuildingLevel();
+            levels += building.getBuildingLevel() * 2;
         }
 
         return levels;

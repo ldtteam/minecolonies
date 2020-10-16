@@ -10,10 +10,10 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * AI Task for toggling blocks open/closed when collided
@@ -41,30 +41,12 @@ public class EntityAIInteractToggleAble extends Goal
     private static final double MAX_DISTANCE = 6.25D;
 
     /**
-     * Default predicate for all 3 vanilla blocks
+     * Default toggleables which can be used in this AI
      */
-    public static final Predicate<BlockState> GATE_DOOR_TRAP = new Predicate<BlockState>()
-    {
-        @Override
-        public boolean test(final BlockState state)
-        {
-            final Block block = state.getBlock();
-            return block instanceof DoorBlock || block instanceof FenceGateBlock || block instanceof TrapDoorBlock;
-        }
-    };
+    public static final ToggleAble FENCE_TOGGLE = new FenceToggle();
+    public static final ToggleAble TRAP_TOGGLE  = new TrapToggle();
+    public static final ToggleAble DOOR_TOGGLE  = new DoorToggle();
 
-    /**
-     * Only trapdoors and fence gates
-     */
-    public static final Predicate<BlockState> GATE_TRAP = new Predicate<BlockState>()
-    {
-        @Override
-        public boolean test(final BlockState state)
-        {
-            final Block block = state.getBlock();
-            return block instanceof DoorBlock || block instanceof FenceGateBlock || block instanceof TrapDoorBlock;
-        }
-    };
 
     /**
      * Our citizen.
@@ -77,9 +59,9 @@ public class EntityAIInteractToggleAble extends Goal
     private Map<BlockPos, Boolean> toggleAblePositions = new HashMap<>();
 
     /**
-     * Predice to check which blocks we interact with
+     * List of toggleAbles
      */
-    private final Predicate<BlockState> useableBlocksPredicate;
+    private final List<ToggleAble> toggleAbles;
 
     /**
      * Update timer while active, delay between toggle actions
@@ -91,11 +73,11 @@ public class EntityAIInteractToggleAble extends Goal
      */
     private int executeTimerSlow = 100;
 
-    public EntityAIInteractToggleAble(@NotNull final MobEntity entityIn, Predicate<BlockState> useableBlocksPredicate)
+    public EntityAIInteractToggleAble(@NotNull final MobEntity entityIn, final ToggleAble... toggleAbles)
     {
         super();
         this.entity = entityIn;
-        this.useableBlocksPredicate = useableBlocksPredicate;
+        this.toggleAbles = Arrays.asList(toggleAbles);
         if (!(entityIn.getNavigator() instanceof GroundPathNavigator))
         {
             throw new IllegalArgumentException("Unsupported mob type for EntityAIInteractToggleAble");
@@ -319,9 +301,20 @@ public class EntityAIInteractToggleAble extends Goal
      */
     private boolean isValidBlockState(final BlockState state)
     {
-        return state.getBlock() != Blocks.AIR
-                 && useableBlocksPredicate.test(state)
-                 && state.has(BlockStateProperties.OPEN);
+        if (state.getBlock() == Blocks.AIR)
+        {
+            return false;
+        }
+
+        for (final ToggleAble toggleAble : toggleAbles)
+        {
+            if (toggleAble.isBlockToggleAble(state) && state.has(BlockStateProperties.OPEN))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -359,7 +352,15 @@ public class EntityAIInteractToggleAble extends Goal
             if (this.entity.getDistanceSq(pos.getX(), pos.getY(), pos.getZ()) > MAX_DISTANCE)
             {
                 it.remove();
-                entity.world.setBlockState(pos, entity.world.getBlockState(pos).with(BlockStateProperties.OPEN, false));
+                final BlockState blockState = entity.world.getBlockState(pos);
+                for (final ToggleAble toggleAble : toggleAbles)
+                {
+                    if (toggleAble.isBlockToggleAble(blockState))
+                    {
+                        toggleAble.toggleBlockClosed(blockState, entity.world, pos);
+                        break;
+                    }
+                }
                 continue;
             }
 
@@ -370,8 +371,121 @@ public class EntityAIInteractToggleAble extends Goal
         {
             final BlockPos chosen = posList.get(entity.world.rand.nextInt(posList.size()));
             {
-                entity.world.setBlockState(chosen, entity.world.getBlockState(chosen).cycle(BlockStateProperties.OPEN));
+                final BlockState state = entity.world.getBlockState(chosen);
+                for (final ToggleAble toggleAble : toggleAbles)
+                {
+                    if (toggleAble.isBlockToggleAble(state))
+                    {
+                        toggleAble.toggleBlock(state, entity.world, chosen);
+                        break;
+                    }
+                }
             }
         }
     }
+
+    /**
+     * Helper class for determining toggleables and toggling them.
+     */
+    public static abstract class ToggleAble
+    {
+        /**
+         * Determines whether the given blockstate is valid
+         *
+         * @param state state to check
+         * @return true if valid
+         */
+        public abstract boolean isBlockToggleAble(final BlockState state);
+
+        /**
+         * Toggles the given state
+         *
+         * @param state state to toggle
+         * @param world world to use
+         * @param pos   position the block is at
+         */
+        public abstract void toggleBlock(final BlockState state, final World world, final BlockPos pos);
+
+        /**
+         * Toggles the given state to closed
+         *
+         * @param state state to toggle
+         * @param world world to use
+         * @param pos   position the block is at
+         */
+        public abstract void toggleBlockClosed(final BlockState state, final World world, final BlockPos pos);
+    }
+
+    /**
+     * Toggle for fence gates
+     */
+    private static class FenceToggle extends ToggleAble
+    {
+        @Override
+        public boolean isBlockToggleAble(final BlockState state)
+        {
+            return state.getBlock() instanceof FenceGateBlock;
+        }
+
+        @Override
+        public void toggleBlock(final BlockState state, final World world, final BlockPos pos)
+        {
+            world.setBlockState(pos, state.cycle(BlockStateProperties.OPEN));
+        }
+
+        @Override
+        public void toggleBlockClosed(final BlockState state, final World world, final BlockPos pos)
+        {
+            world.setBlockState(pos, state.with(BlockStateProperties.OPEN, false));
+        }
+    }
+
+    /**
+     * Toggle for trap doors
+     */
+    private static class TrapToggle extends ToggleAble
+    {
+        @Override
+        public boolean isBlockToggleAble(final BlockState state)
+        {
+            return state.getBlock() instanceof TrapDoorBlock;
+        }
+
+        @Override
+        public void toggleBlock(final BlockState state, final World world, final BlockPos pos)
+        {
+            world.setBlockState(pos, state.cycle(BlockStateProperties.OPEN));
+        }
+
+        @Override
+        public void toggleBlockClosed(final BlockState state, final World world, final BlockPos pos)
+        {
+            world.setBlockState(pos, state.with(BlockStateProperties.OPEN, false));
+        }
+    }
+
+    /**
+     * Toggle for Doors
+     */
+    private static class DoorToggle extends ToggleAble
+    {
+        @Override
+        public boolean isBlockToggleAble(final BlockState state)
+        {
+            return state.getBlock() instanceof DoorBlock;
+        }
+
+        @Override
+        public void toggleBlock(final BlockState state, final World world, final BlockPos pos)
+        {
+            ((DoorBlock) state.getBlock()).toggleDoor(world, pos, !state.get(BlockStateProperties.OPEN));
+        }
+
+        @Override
+        public void toggleBlockClosed(final BlockState state, final World world, final BlockPos pos)
+        {
+            ((DoorBlock) state.getBlock()).toggleDoor(world,pos,false);
+        }
+    }
+
 }

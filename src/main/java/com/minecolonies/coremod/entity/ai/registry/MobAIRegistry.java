@@ -25,6 +25,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
+import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.FENCE_TOGGLE;
+import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.TRAP_TOGGLE;
 
 public class MobAIRegistry implements IMobAIRegistry
 {
@@ -46,7 +48,7 @@ public class MobAIRegistry implements IMobAIRegistry
         registry
           .registerNewAiTaskForMobs(PRIORITY_ZERO, SwimGoal::new)
           .registerNewAiTaskForMobs(PRIORITY_FOUR, mob -> new EntityAIWalkToRandomHuts(mob, AI_MOVE_SPEED))
-          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIInteractToggleAble(mob, EntityAIInteractToggleAble.GATE_TRAP))
+          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIInteractToggleAble(mob, FENCE_TOGGLE, TRAP_TOGGLE))
           .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIBreakDoor(mob))
           .registerNewAiTargetTaskForMobs(PRIORITY_TWO, mob -> new NearestAttackableTargetGoal<>(mob, PlayerEntity.class, true, false))
           .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new NearestAttackableTargetGoal<>(mob, EntityCitizen.class, true, false))

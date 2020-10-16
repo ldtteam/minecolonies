@@ -52,6 +52,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TIME;
 import static com.minecolonies.api.util.constant.RaiderConstants.FOLLOW_RANGE;
+import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 /**
  * Class for Mercenary entities, which can be spawned to protect the colony
@@ -134,7 +135,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(1, new EntityMercenaryAI(this));
-        this.goalSelector.addGoal(4, new EntityAIInteractToggleAble(this, EntityAIInteractToggleAble.GATE_DOOR_TRAP));
+        this.goalSelector.addGoal(4, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, MonsterEntity.class, 10, true, false, e -> e instanceof IMob && !(e instanceof LlamaEntity)));
 
         this.forceSpawn = true;
