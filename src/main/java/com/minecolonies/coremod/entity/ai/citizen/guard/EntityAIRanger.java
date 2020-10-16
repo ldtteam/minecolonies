@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -23,7 +24,6 @@ import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ArrowItem;
@@ -354,7 +354,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
 
                 for (int i = 0; i < amountOfArrows; i++)
                 {
-                    final ArrowEntity arrow = EntityType.ARROW.create(world);
+                    final ArrowEntity arrow = ModEntities.MC_NORMAL_ARROW.create(world);
                     arrow.setShooter(worker);
 
                     final UnlockAbilityResearchEffect arrowPierceEffect =

@@ -34,9 +34,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.SMALL_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent.TAG_DAYS_LEFT;
 
@@ -259,7 +259,10 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         raidBar.setVisible(false);
         raidBar.removeAllPlayers();
 
-        colony.getRaiderManager().setNightsSinceLastRaid(0);
+        if (horde.hordeSize > 0)
+        {
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE);
+        }
     }
 
     @Override
@@ -391,6 +394,11 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
             {
                 spawnHorde(spawnPos, colony, id, horde.numberOfBosses - boss.size(), horde.numberOfArchers - archers.size(), horde.numberOfRaiders - normal.size());
             }
+        }
+
+        if (horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers < horde.initialSize * 0.05)
+        {
+            status = EventStatus.DONE;
         }
 
         for (final Entity entity : getEntities())

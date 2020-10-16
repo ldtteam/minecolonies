@@ -3,6 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.entity.CustomArrowEntity;
 import com.minecolonies.coremod.entity.FireArrowEntity;
 import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.SittingEntity;
@@ -153,6 +154,13 @@ public class EntityInitializer
             .size(0.5F, 0.5F)
             .setShouldReceiveVelocityUpdates(true));
 
+        ModEntities.MC_NORMAL_ARROW = build("mcnormalarrow",
+          EntityType.Builder.create(CustomArrowEntity::new, EntityClassification.MISC)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
+            .size(0.5F, 0.5F)
+            .setShouldReceiveVelocityUpdates(true));
+
         ModEntities.SHIELDMAIDEN = build("shieldmaiden",
           EntityType.Builder.create(EntityShieldmaiden::new, EntityClassification.MONSTER)
             .setTrackingRange(ENTITY_TRACKING_RANGE)
@@ -202,6 +210,7 @@ public class EntityInitializer
             ModEntities.AMAZON,
             ModEntities.AMAZONCHIEF,
             ModEntities.FIREARROW,
+            ModEntities.MC_NORMAL_ARROW,
             ModEntities.SHIELDMAIDEN,
             ModEntities.NORSEMEN_ARCHER,
             ModEntities.NORSEMEN_CHIEF);
