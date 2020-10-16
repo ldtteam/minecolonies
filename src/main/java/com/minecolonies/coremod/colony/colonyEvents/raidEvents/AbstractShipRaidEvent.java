@@ -293,7 +293,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             // remove at nightfall after spawners are killed.
             if (spawners.isEmpty())
             {
-                daysToGo = 1;
+                daysToGo = 2;
                 LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE);
             }
         }
