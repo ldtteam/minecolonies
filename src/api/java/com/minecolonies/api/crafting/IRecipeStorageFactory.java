@@ -4,9 +4,9 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage.RecipeStorageType;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,7 +60,7 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
         final int gridSize = (int) context[1];
         final ItemStack primaryOutput = (ItemStack) context[2];
         final Block intermediate = context.length < 4 ? null : (Block) context[3];
-        final String source = context.length < 5 ? null : (String) context[4];
+        final ResourceLocation source = context.length < 5 ? null : (ResourceLocation) context[4];
         final RecipeStorageType type  = context.length < 6 ? null : (RecipeStorageType) context[5];
         final List<ItemStack> altOutputs = context.length < 7 ? null :  (List<ItemStack>) context[6];
         final List<ItemStack> secOutputs = context.length < 8 ? null :  (List<ItemStack>) context[7];
@@ -88,7 +88,7 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
       final int gridSize,
       @NotNull final ItemStack primaryOutput,
       @Nullable final Block intermediate,
-      @Nullable final String source,
+      @Nullable final ResourceLocation source,
       @Nullable final RecipeStorageType type,
       @Nullable final List<ItemStack> altOutputs,
       @Nullable final List<ItemStack> secOutputs

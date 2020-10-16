@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,7 +85,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
       final int gridSize,
       @NotNull final ItemStack primaryOutput,
       final Block intermediate, 
-      final String source,
+      final ResourceLocation source,
       final RecipeStorageType type,
       final List<ItemStack> altOutputs,
       final List<ItemStack> secOutputs)
@@ -115,7 +116,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(recipeStorage.getToken()));
         if(recipeStorage.getRecipeSource() != null)
         {
-            compound.putString(SOURCE_TAG, recipeStorage.getRecipeSource());
+            compound.putString(SOURCE_TAG, recipeStorage.getRecipeSource().getPath());
         }
         compound.putString(TYPE_TAG, recipeStorage.getRecipeType().toString());
 
@@ -158,7 +159,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         final int gridSize = nbt.getInt(TAG_GRID);
         final IToken<?> token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
 
-        final String source = nbt.contains(SOURCE_TAG) ? nbt.getString(SOURCE_TAG) : null; 
+        final ResourceLocation source = nbt.contains(SOURCE_TAG) ? new ResourceLocation(nbt.getString(SOURCE_TAG)) : null; 
 
         final RecipeStorageType type = nbt.contains(TYPE_TAG) ? Enum.valueOf(RecipeStorageType.class, nbt.getString(TYPE_TAG)) : null; 
 

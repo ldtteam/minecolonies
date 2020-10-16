@@ -3,6 +3,7 @@ package com.minecolonies.api.crafting;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -113,7 +114,7 @@ public interface IRecipeStorage
      * Source of the recipe, ie registry name.
      * @return
      */
-    public String getRecipeSource();
+    public ResourceLocation getRecipeSource();
 
     /**
      * Get the secondary (leave behind in grid) outputs

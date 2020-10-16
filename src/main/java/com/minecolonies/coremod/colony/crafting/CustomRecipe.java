@@ -374,7 +374,7 @@ public class CustomRecipe
         {
             boolean found = false;
             final IRecipeStorage compareStorage = this.getRecipeStorage();
-            final String recipeSource = this.getRecipeId().toString();
+            final ResourceLocation recipeSource = this.getRecipeId();
             for(IToken<?> recipeToken: building.getRecipes())
             {
                 final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(recipeToken);
@@ -411,7 +411,7 @@ public class CustomRecipe
                 1,
                 result,
                 intermediate,
-                this.getRecipeId().toString(),
+                this.getRecipeId(),
                 RecipeStorageType.CLASSIC,
                 null, //alternate outputs
                 null //secondary output
@@ -426,7 +426,7 @@ public class CustomRecipe
                 1,
                 result,
                 intermediate,
-                this.getRecipeId().toString(),
+                this.getRecipeId(),
                 RecipeStorageType.MULTI_OUTPUT,
                 altOutputs, //alternate outputs
                 null //secondary output

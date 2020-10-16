@@ -10,6 +10,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,7 @@ public class RecipeStorage implements IRecipeStorage
      * Where this recipe came from
      * For custom recipes, it's the id of the recipe
      */
-    private final String recipeSource;
+    private final ResourceLocation recipeSource;
 
     /**
      * Input required for the recipe.
@@ -91,7 +92,7 @@ public class RecipeStorage implements IRecipeStorage
      * @param altOutputs    List of alternate outputs for a multi-output recipe
      * @param secOutputs    List of secondary outputs for a recipe. this includes containers, etc. 
      */
-    public RecipeStorage(final IToken<?> token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final String source, final RecipeStorageType type, final List<ItemStack> altOutputs, final List<ItemStack> secOutputs)
+    public RecipeStorage(final IToken<?> token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final ResourceLocation source, final RecipeStorageType type, final List<ItemStack> altOutputs, final List<ItemStack> secOutputs)
     {
         this.input = Collections.unmodifiableList(input);
         this.cleanedInput = new ArrayList<>();
@@ -102,7 +103,7 @@ public class RecipeStorage implements IRecipeStorage
         this.gridSize = gridSize;
         this.intermediate = intermediate;
         this.token = token;
-        this.recipeSource = source != null ? source : "";
+        this.recipeSource = source;
         this.recipeType = type == null ? RecipeStorageType.CLASSIC : type;
     }
 
@@ -312,7 +313,7 @@ public class RecipeStorage implements IRecipeStorage
         result = 31 * result + primaryOutput.hashCode();
         result = 31 * result + (intermediate != null ? intermediate.hashCode() : 0);
         result = 31 * result + gridSize;
-        if(recipeSource != null && !recipeSource.isEmpty())
+        if(recipeSource != null)
         {
             result = 31 * result + recipeSource.hashCode();
         }
@@ -495,8 +496,7 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public RecipeStorage getClassicForMultiOutput(final ItemStack requiredOutput)
     {
-        return StandardFactoryController.getInstance().getNewInstance(
-            TypeConstants.RECIPE,
+        return new RecipeStorage(
             StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
             this.input,
             this.gridSize,
@@ -505,7 +505,7 @@ public class RecipeStorage implements IRecipeStorage
             this.recipeSource,
             RecipeStorageType.CLASSIC,
             null, //alternate outputs
-            null //secondary output
+            this.secondaryOutputs //secondary output
             );
 
     }
@@ -536,9 +536,9 @@ public class RecipeStorage implements IRecipeStorage
     }
 
     @Override
-    public String getRecipeSource()
+    public ResourceLocation getRecipeSource()
     {
-        return recipeSource != null ? recipeSource : "";
+        return recipeSource;
     }
 
     @Override
