@@ -21,7 +21,7 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
       final World world,
       @NotNull final BlockPos start, final int range, final LivingEntity entity)
     {
-        super(world, start, start, range, entity);
+        super(world, AbstractPathJob.prepareStart(entity), start, range, entity);
     }
 
     @Override
