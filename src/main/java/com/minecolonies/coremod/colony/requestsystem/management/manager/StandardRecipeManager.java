@@ -55,6 +55,10 @@ public class StandardRecipeManager implements IRecipeManager
         recipes.put(storage.getToken(), storage);
         usedRecipes.add(storage.getToken());
         cache = null;
+        if(!usedRecipes.contains(storage.getToken()))
+        {
+            usedRecipes.add(storage.getToken());
+        }
         return storage.getToken();
     }
 
