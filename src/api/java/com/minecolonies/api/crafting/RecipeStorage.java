@@ -2,16 +2,20 @@ package com.minecolonies.api.crafting;
 
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.items.ModItems;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -29,7 +33,7 @@ public class RecipeStorage implements IRecipeStorage
     /**
      * Type of storage this recipe represents
      */
-    private final RecipeStorageType recipeType;
+    private final AbstractRecipeType<IRecipeStorage> recipeType;
 
     /**
      * Where this recipe came from
@@ -88,11 +92,11 @@ public class RecipeStorage implements IRecipeStorage
      * @param primaryOutput the primary output of the recipe.
      * @param intermediate  the intermediate to use (e.g furnace).
      * @param source        the source of this recipe (ie: minecolonies:crafter/recipename, "player name", "improvement", etc)
-     * @param type          What type of recipe this is.
+     * @param type          What type of recipe this is. (ie: minecolonies:classic)
      * @param altOutputs    List of alternate outputs for a multi-output recipe
      * @param secOutputs    List of secondary outputs for a recipe. this includes containers, etc. 
      */
-    public RecipeStorage(final IToken<?> token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final ResourceLocation source, final RecipeStorageType type, final List<ItemStack> altOutputs, final List<ItemStack> secOutputs)
+    public RecipeStorage(final IToken<?> token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final ResourceLocation source, final ResourceLocation type, final List<ItemStack> altOutputs, final List<ItemStack> secOutputs)
     {
         this.input = Collections.unmodifiableList(input);
         this.cleanedInput = new ArrayList<>();
@@ -104,7 +108,15 @@ public class RecipeStorage implements IRecipeStorage
         this.intermediate = intermediate;
         this.token = token;
         this.recipeSource = source;
-        this.recipeType = type == null ? RecipeStorageType.CLASSIC : type;
+        IForgeRegistry<RecipeTypeEntry> recipeTypes = MinecoloniesAPIProxy.getInstance().getRecipeTypeRegistry();
+        if(type != null && recipeTypes.containsKey(type))
+        {
+            this.recipeType = recipeTypes.getValue(type).getHandlerProducer().apply(this);
+        }
+        else
+        {
+            this.recipeType = recipeTypes.getValue(recipeTypes.getDefaultKey()).getHandlerProducer().apply(this);
+        }
     }
 
     @Override
@@ -244,7 +256,7 @@ public class RecipeStorage implements IRecipeStorage
         if (gridSize != that.gridSize
               || input.size() != that.input.size()
               || cleanedInput.size() != that.cleanedInput.size()
-              || (alternateOutputs != null && that.alternateOutputs != null && alternateOutputs.size() != that.alternateOutputs.size())
+              || (alternateOutputs.size() != that.alternateOutputs.size())
               || (secondaryOutputs != null && that.secondaryOutputs != null && secondaryOutputs.size() != that.secondaryOutputs.size())
               || !ItemStackUtils.compareItemStacksIgnoreStackSize(primaryOutput, that.primaryOutput, false, true))
         {
@@ -260,31 +272,30 @@ public class RecipeStorage implements IRecipeStorage
         }
 
         
-        if(!this.recipeSource.equals(that.recipeSource))
+        if(this.recipeSource != null && !this.recipeSource.equals(that.recipeSource))
         {
             return false;
         }
 
-        if(!this.recipeType.equals(that.recipeType))
+        if(this.recipeSource == null && that.recipeSource != null)
+        {
+            return false; 
+        }
+
+        if(!this.recipeType.getId().equals(that.recipeType.getId()))
         {
             return false;
         }
         
 
-        if(alternateOutputs != null)
+
+        for(int i = 0; i< alternateOutputs.size(); i++)
         {
-            if(that.alternateOutputs == null)
+            ItemStack left = alternateOutputs.get(i);
+            ItemStack right = that.alternateOutputs.get(i);
+            if(!ItemStackUtils.compareItemStacksIgnoreStackSize(left, right, false, true) || left.getCount() != right.getCount())
             {
                 return false;
-            }
-            for(int i = 0; i< alternateOutputs.size(); i++)
-            {
-                ItemStack left = alternateOutputs.get(i);
-                ItemStack right = that.alternateOutputs.get(i);
-                if(!ItemStackUtils.compareItemStacksIgnoreStackSize(left, right, false, true) || left.getCount() != right.getCount())
-                {
-                    return false;
-                }
             }
         }
 
@@ -317,7 +328,7 @@ public class RecipeStorage implements IRecipeStorage
         {
             result = 31 * result + recipeSource.hashCode();
         }
-        if(recipeType != null && recipeType != RecipeStorageType.CLASSIC)
+        if(recipeType != null && !(recipeType instanceof ClassicRecipe))
         {
             result = 31 * result + recipeType.hashCode();
         }
@@ -503,7 +514,7 @@ public class RecipeStorage implements IRecipeStorage
             requiredOutput,
             intermediate,
             this.recipeSource,
-            RecipeStorageType.CLASSIC,
+            ModRecipeTypes.CLASSIC_ID,
             null, //alternate outputs
             this.secondaryOutputs //secondary output
             );
@@ -530,15 +541,15 @@ public class RecipeStorage implements IRecipeStorage
     }
 
     @Override
-    public RecipeStorageType getRecipeType()
+    public AbstractRecipeType<IRecipeStorage> getRecipeType()
     {
-        return recipeType != null ? recipeType : RecipeStorageType.CLASSIC;
+        return recipeType;
     }
 
     @Override
     public ResourceLocation getRecipeSource()
     {
-        return recipeSource;
+        return recipeSource; 
     }
 
     @Override

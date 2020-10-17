@@ -12,9 +12,10 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ClassicRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.crafting.IRecipeStorage.RecipeStorageType;
+import com.minecolonies.api.crafting.MultiOutputRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.InventoryUtils;
@@ -218,7 +219,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             foundRecipe = candidates.entrySet().stream().min(Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
         }
 
-        if(foundRecipe != null && foundRecipe.getRecipeType() == RecipeStorageType.MULTI_OUTPUT)
+        if(foundRecipe != null && foundRecipe.getRecipeType() instanceof MultiOutputRecipe)
         {
             foundRecipe = foundRecipe.getClassicForMultiOutput(stackPredicate);
         }
@@ -264,7 +265,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(i -> stackPredicate.test(i))))
             {
                 final List<IItemHandler> handlers = getHandlers();
-                IRecipeStorage toTest = storage.getRecipeType() == RecipeStorageType.MULTI_OUTPUT ? storage.getClassicForMultiOutput(stackPredicate) : storage;
+                IRecipeStorage toTest = storage.getRecipeType() instanceof MultiOutputRecipe ? storage.getClassicForMultiOutput(stackPredicate) : storage;
                 if (toTest.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
                 {
                     return toTest;
@@ -859,12 +860,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                         if(allMatch)
                         {
                             duplicateFound = token;
-                            if(storage.getRecipeType() == RecipeStorageType.CLASSIC && recipeStorage.getRecipeType() == RecipeStorageType.MULTI_OUTPUT)
+                            if(storage.getRecipeType() instanceof ClassicRecipe && recipeStorage.getRecipeType() instanceof MultiOutputRecipe)
                             {
-                                //This catches the old recipes without a RecipeSource
+                                //This catches the old custom recipes without a RecipeSource
                                 forceReplace = true;
                             }
-                            if(storage.getRecipeSource().equals(recipeStorage.getRecipeSource()))
+                            if(storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeStorage.getRecipeSource()))
                             {
                                 //This will only happen if the tokens don't match, aka: the recipe has changed.
                                 forceReplace = true;
@@ -889,7 +890,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                     for(IToken<?> token : this.getRecipes())
                     {
                         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-                        if(storage.getRecipeType() == RecipeStorageType.CLASSIC && ItemStackUtils.compareItemStackListIgnoreStackSize(alternates, storage.getPrimaryOutput(), false, true))
+                        if(storage.getRecipeType() instanceof ClassicRecipe && ItemStackUtils.compareItemStackListIgnoreStackSize(alternates, storage.getPrimaryOutput(), false, true))
                         {
                             removeRecipe(token);
                         }

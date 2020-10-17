@@ -9,7 +9,6 @@ import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.IRecipeStorage.RecipeStorageType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -119,23 +118,8 @@ public class WindowListRecipes extends Window implements ButtonHandler
             {
                 @NotNull final IRecipeStorage recipe = recipes.get(index);
                 final ItemIcon icon = rowPane.findPaneOfTypeByID(OUTPUT_ICON, ItemIcon.class);
-                if(recipe.getRecipeType() == RecipeStorageType.MULTI_OUTPUT)
-                {
-                    List<ItemStack> displayStacks = recipe.getAlternateOutputs();
-                    final int iconIndex = (lifeCount / LIFE_COUNT_DIVIDER) % (displayStacks.size() + 1);
-                    if(iconIndex == 0)
-                    {
-                        icon.setItem(recipe.getPrimaryOutput());
-                    }
-                    else
-                    {
-                        icon.setItem(displayStacks.get(iconIndex - 1));
-                    }
-                }
-                else
-                {
-                    icon.setItem(recipe.getPrimaryOutput());
-                }
+                List<ItemStack> displayStacks = recipe.getRecipeType().getOutputDisplayStacks();
+                icon.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % (displayStacks.size())));
 
                 if (!building.isRecipeAlterationAllowed())
                 {

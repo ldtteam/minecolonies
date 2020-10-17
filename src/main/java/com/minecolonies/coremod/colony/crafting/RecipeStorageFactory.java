@@ -5,8 +5,8 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorageFactory;
+import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
-import com.minecolonies.api.crafting.IRecipeStorage.RecipeStorageType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -86,7 +86,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
       @NotNull final ItemStack primaryOutput,
       final Block intermediate, 
       final ResourceLocation source,
-      final RecipeStorageType type,
+      final ResourceLocation type,
       final List<ItemStack> altOutputs,
       final List<ItemStack> secOutputs)
     {
@@ -116,9 +116,9 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(recipeStorage.getToken()));
         if(recipeStorage.getRecipeSource() != null)
         {
-            compound.putString(SOURCE_TAG, recipeStorage.getRecipeSource().getPath());
+            compound.putString(SOURCE_TAG, recipeStorage.getRecipeSource().toString());
         }
-        compound.putString(TYPE_TAG, recipeStorage.getRecipeType().toString());
+        compound.putString(TYPE_TAG, recipeStorage.getRecipeType().getId().toString());
 
         @NotNull final ListNBT altOutputTagList = new ListNBT();
         for (@NotNull final ItemStack stack : recipeStorage.getAlternateOutputs())
@@ -161,7 +161,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         final ResourceLocation source = nbt.contains(SOURCE_TAG) ? new ResourceLocation(nbt.getString(SOURCE_TAG)) : null; 
 
-        final RecipeStorageType type = nbt.contains(TYPE_TAG) ? Enum.valueOf(RecipeStorageType.class, nbt.getString(TYPE_TAG)) : null; 
+        final ResourceLocation type = nbt.contains(TYPE_TAG) ? new ResourceLocation(nbt.getString(TYPE_TAG).toLowerCase()): ModRecipeTypes.CLASSIC_ID;
 
         final ListNBT altOutputTagList = nbt.getList(ALTOUTPUT_TAG, Constants.NBT.TAG_COMPOUND);
 
@@ -199,7 +199,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         packetBuffer.writeInt(input.getGridSize());
 
-        packetBuffer.writeEnumValue(input.getRecipeType());
+        packetBuffer.writeResourceLocation(input.getRecipeType().getId());
 
         packetBuffer.writeInt(input.getAlternateOutputs().size());
         input.getAlternateOutputs().forEach(stack -> packetBuffer.writeItemStack(stack));
@@ -223,7 +223,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         final ItemStack primaryOutput = buffer.readItemStack();
         final Block intermediate = buffer.readBoolean() ? Block.getStateById(buffer.readInt()).getBlock() : null;
         final int gridSize = buffer.readInt();
-        final RecipeStorageType type = buffer.readEnumValue(RecipeStorageType.class);
+        final ResourceLocation type = buffer.readResourceLocation();
 
         final List<ItemStack> altOutputs = new ArrayList<>();
         final int altOutputSize = buffer.readInt();

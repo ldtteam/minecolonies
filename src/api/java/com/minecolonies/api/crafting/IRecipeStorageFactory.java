@@ -3,7 +3,6 @@ package com.minecolonies.api.crafting;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.crafting.IRecipeStorage.RecipeStorageType;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -49,19 +48,32 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
             throw new IllegalArgumentException("Fourth parameter is supposed to be a Block or Null!");
         }
 
-        if (context.length > MIN_PARAMS_IRECIPESTORAGE + 1 && context[4] != null && !(context[4] instanceof String))
+        if (context.length > MIN_PARAMS_IRECIPESTORAGE + 1 && context[4] != null && !(context[4] instanceof ResourceLocation))
         {
-            throw new IllegalArgumentException("Fifth parameter is supposed to be a String or Null!");
+            throw new IllegalArgumentException("Fifth parameter is supposed to be a ResourceLocation or Null!");
         }
 
-        //TODO: Add remaining parameters
+        if (context.length > MIN_PARAMS_IRECIPESTORAGE + 2 && context[5] != null && !(context[5] instanceof ResourceLocation))
+        {
+            throw new IllegalArgumentException("Sixth parameter is supposed to be a ResourceLocation or Null!");
+        }
+
+        if (context.length > MIN_PARAMS_IRECIPESTORAGE + 3 && context[6] != null && !(context[6] instanceof List))
+        {
+            throw new IllegalArgumentException("Seventh parameter is supposed to be a List<ItemStack> or Null!");
+        }
+
+        if (context.length > MIN_PARAMS_IRECIPESTORAGE + 4 && context[7] != null && !(context[7] instanceof List))
+        {
+            throw new IllegalArgumentException("Eighth parameter is supposed to be a List<ItemStack> or Null!");
+        }
 
         final List<ItemStack> input = (List<ItemStack>) context[0];
         final int gridSize = (int) context[1];
         final ItemStack primaryOutput = (ItemStack) context[2];
         final Block intermediate = context.length < 4 ? null : (Block) context[3];
         final ResourceLocation source = context.length < 5 ? null : (ResourceLocation) context[4];
-        final RecipeStorageType type  = context.length < 6 ? null : (RecipeStorageType) context[5];
+        final ResourceLocation type  = context.length < 6 ? null : (ResourceLocation) context[5];
         final List<ItemStack> altOutputs = context.length < 7 ? null :  (List<ItemStack>) context[6];
         final List<ItemStack> secOutputs = context.length < 8 ? null :  (List<ItemStack>) context[7];
         return getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs);
@@ -89,7 +101,7 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
       @NotNull final ItemStack primaryOutput,
       @Nullable final Block intermediate,
       @Nullable final ResourceLocation source,
-      @Nullable final RecipeStorageType type,
+      @Nullable final ResourceLocation type,
       @Nullable final List<ItemStack> altOutputs,
       @Nullable final List<ItemStack> secOutputs
       );

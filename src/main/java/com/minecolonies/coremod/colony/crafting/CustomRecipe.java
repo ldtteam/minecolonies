@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.IRecipeStorage.RecipeStorageType;
+import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.Log;
@@ -378,7 +378,7 @@ public class CustomRecipe
             for(IToken<?> recipeToken: building.getRecipes())
             {
                 final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(recipeToken);
-                if(storage.getRecipeSource().equals(recipeSource) || (storage.getCleanedInput().containsAll(compareStorage.getCleanedInput()) && compareStorage.getCleanedInput().containsAll(storage.getCleanedInput())))
+                if((storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeSource)) || (storage.getCleanedInput().containsAll(compareStorage.getCleanedInput()) && compareStorage.getCleanedInput().containsAll(storage.getCleanedInput())))
                 {
                     found = true;
                     break;
@@ -412,7 +412,7 @@ public class CustomRecipe
                 result,
                 intermediate,
                 this.getRecipeId(),
-                RecipeStorageType.CLASSIC,
+                ModRecipeTypes.CLASSIC_ID,
                 null, //alternate outputs
                 null //secondary output
                 );
@@ -427,7 +427,7 @@ public class CustomRecipe
                 result,
                 intermediate,
                 this.getRecipeId(),
-                RecipeStorageType.MULTI_OUTPUT,
+                ModRecipeTypes.MULTI_OUTPUT_ID,
                 altOutputs, //alternate outputs
                 null //secondary output
                 );
