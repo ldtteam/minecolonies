@@ -247,7 +247,7 @@ public class CustomRecipe
         {
             for (JsonElement e : recipeJson.get(RECIPE_INPUTS_PROP).getAsJsonArray())
             {
-                if (e instanceof JsonElement && e.isJsonObject())
+                if (e.isJsonObject())
                 {
                     JsonObject ingredient = e.getAsJsonObject();
                     if (ingredient.has(ITEM_PROP))

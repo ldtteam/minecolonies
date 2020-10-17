@@ -342,12 +342,7 @@ public final class StandardRequests
         @Override
         public final ITextComponent getShortDisplayString()
         {
-            final ITextComponent result = new NonSiblingFormattingTextComponent();
-
-            result.appendSibling(new StringTextComponent(getRequest().getMinCount() + " * Recipe:"));
-            result.appendSibling(getRequest().getStack().getTextComponent());
-
-            return result;
+            return new TranslationTextComponent(TranslationConstants.REQUEST_CRAFTING_DISPLAY, new StringTextComponent(String.valueOf(getRequest().getMinCount())), getRequest().getStack().getTextComponent());
         }
 
         protected abstract String getTranslationKey();
