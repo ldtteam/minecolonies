@@ -228,20 +228,29 @@ public class CitizenManager implements ICitizenManager
         }
 
         BlockPos spawnLocation = spawnPos;
-        if (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO))
+        if (colony.hasTownHall() && (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO)))
         {
             spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
         }
 
         if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), spawnLocation))
         {
-            final BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+            BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
             if (calculatedSpawn != null)
             {
                 return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
             }
             else
             {
+                if (colony.hasTownHall())
+                {
+                    calculatedSpawn = EntityUtils.getSpawnPoint(world, colony.getBuildingManager().getTownHall().getID());
+                    if (calculatedSpawn != null)
+                    {
+                        return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
+                    }
+                }
+
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                   "com.minecolonies.coremod.citizens.nospace",
                   spawnLocation.getX(),
