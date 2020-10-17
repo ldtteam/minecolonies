@@ -257,7 +257,8 @@ public class RecipeStorage implements IRecipeStorage
               || input.size() != that.input.size()
               || cleanedInput.size() != that.cleanedInput.size()
               || (alternateOutputs.size() != that.alternateOutputs.size())
-              || (secondaryOutputs != null && that.secondaryOutputs != null && secondaryOutputs.size() != that.secondaryOutputs.size())
+              || ((secondaryOutputs == null) != (that.secondaryOutputs == null))
+              || (secondaryOutputs != null && secondaryOutputs.size() != that.secondaryOutputs.size())
               || !ItemStackUtils.compareItemStacksIgnoreStackSize(primaryOutput, that.primaryOutput, false, true))
         {
             return false;
