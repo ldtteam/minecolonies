@@ -53,11 +53,8 @@ public class StandardRecipeManager implements IRecipeManager
     public IToken<?> addRecipe(final IRecipeStorage storage)
     {
         recipes.put(storage.getToken(), storage);
+        usedRecipes.add(storage.getToken());
         cache = null;
-        if(!usedRecipes.contains(storage.getToken()))
-        {
-            usedRecipes.add(storage.getToken());
-        }
         return storage.getToken();
     }
 
@@ -69,10 +66,7 @@ public class StandardRecipeManager implements IRecipeManager
         {
             return addRecipe(storage);
         }
-        if (!usedRecipes.contains(token))
-        {
-            usedRecipes.add(token);
-        }
+        usedRecipes.add(token);
         return token;
     }
 
@@ -122,9 +116,6 @@ public class StandardRecipeManager implements IRecipeManager
     @Override
     public void registerUse(final IToken<?> token)
     {
-        if(!usedRecipes.contains(token))
-        {
-            usedRecipes.add(token);
-        }
+        usedRecipes.add(token);
     }
 }
