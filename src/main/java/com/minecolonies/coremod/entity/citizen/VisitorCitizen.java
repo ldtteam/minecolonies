@@ -660,6 +660,11 @@ public class VisitorCitizen extends AbstractEntityCitizen
             if (colony != null && getCitizenData() != null)
             {
                 colony.getVisitorManager().removeCivilian(getCitizenData());
+
+                if (cause == DamageSource.OUT_OF_WORLD) {
+                    return;
+                }
+
                 if (getCitizenData().getHomeBuilding() instanceof BuildingTavern)
                 {
                     BuildingTavern tavern = (BuildingTavern) getCitizenData().getHomeBuilding();
