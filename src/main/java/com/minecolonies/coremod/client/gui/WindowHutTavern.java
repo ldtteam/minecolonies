@@ -10,12 +10,14 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
+import com.minecolonies.coremod.network.messages.server.colony.building.RecallCitizenHutMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_RECALL;
 
 /**
  * Window for the tavern
@@ -63,7 +65,17 @@ public class WindowHutTavern extends AbstractWindowBuilding<TavernBuildingModule
 
         super.registerButton(BUTTON_ASSIGN, this::assignClicked);
         super.registerButton(BUTTON_REMOVE, this::removeClicked);
+        super.registerButton(BUTTON_RECALL, this::recallClicked);
+
         this.home = building;
+    }
+
+    /**
+     * On recall clicked.
+     */
+    private void recallClicked()
+    {
+        Network.getNetwork().sendToServer(new RecallCitizenHutMessage(building));
     }
 
     @Override

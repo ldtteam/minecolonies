@@ -19,7 +19,7 @@ public interface IBuildingModule
 
     void onDestroyed();
 
-    void removeCitizen(@NotNull ICitizenData citizen);
+    boolean removeCitizen(@NotNull ICitizenData citizen);
 
     void onColonyTick(@NotNull IColony colony);
 

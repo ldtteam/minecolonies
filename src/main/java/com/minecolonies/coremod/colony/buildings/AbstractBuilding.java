@@ -407,11 +407,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void removeCitizen(final ICitizenData citizen)
     {
-        super.removeCitizen(citizen);
         for (final IBuildingModule module : modules.values())
         {
             module.removeCitizen(citizen);
         }
+        super.removeCitizen(citizen);
     }
 
     @Override

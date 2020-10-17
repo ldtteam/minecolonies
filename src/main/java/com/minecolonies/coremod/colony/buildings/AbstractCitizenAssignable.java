@@ -130,7 +130,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      */
     public void removeAssignedCitizen(final ICitizenData data)
     {
-        this.assignedCitizen.add(data);
+        this.assignedCitizen.remove(data);
     }
 
     // ---------------------------------------------------------------------------------- //

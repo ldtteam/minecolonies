@@ -72,9 +72,9 @@ public abstract class AbstractBuildingModule implements IBuildingModule
     }
 
     @Override
-    public void removeCitizen(@NotNull ICitizenData citizen)
+    public boolean removeCitizen(@NotNull ICitizenData citizen)
     {
-
+        return false;
     }
 
     @Override

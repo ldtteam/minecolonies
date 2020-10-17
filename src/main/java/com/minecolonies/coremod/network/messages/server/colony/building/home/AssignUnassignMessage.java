@@ -67,7 +67,6 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeBoolean(assign);
         buf.writeInt(citizenID);
     }

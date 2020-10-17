@@ -182,7 +182,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
     }
 
     @Override
-    public void removeCitizen(@NotNull final ICitizenData citizen)
+    public boolean removeCitizen(@NotNull final ICitizenData citizen)
     {
         if (building.isCitizenAssigned(citizen))
         {
@@ -207,10 +207,13 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
 
                 if (femalePresent && malePresent)
                 {
-                    return;
+                    return true;
                 }
             }
+
+            return true;
         }
+        return false;
     }
 
     @Override

@@ -394,9 +394,10 @@ public class TavernBuildingModule extends AbstractBuildingModule
      *
      * @param id to remove
      */
-    public void removeCitizen(final Integer id)
+    public boolean removeCitizen(final Integer id)
     {
         externalCitizens.remove(id);
+        return false;
     }
 
     /**
