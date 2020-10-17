@@ -23,7 +23,8 @@ public class UpdateHandler implements IUpdateHandler
       new ResetRSToCleanCompletedRequests(),
       new ResetRSToAddFarmerCrafter(),
       new ResetRSToAddSecondWarehouseResolver(),
-      new ResetRSToAddBaker()
+      new ResetRSToAddBaker(),
+      new ResetRSForDeliveryResolverChange()
     );
 
     private final IStandardRequestManager manager;

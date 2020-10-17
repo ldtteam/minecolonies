@@ -122,7 +122,8 @@ public class VisitorData extends CitizenData implements IVisitorData
             }
         }
 
-        if (getLastPosition() != BlockPos.ZERO && WorldUtil.isEntityBlockLoaded(getColony().getWorld(), getLastPosition()))
+        if (getLastPosition() != BlockPos.ZERO && (getLastPosition().getX() != 0 && getLastPosition().getZ() != 0) && WorldUtil.isEntityBlockLoaded(getColony().getWorld(),
+          getLastPosition()))
         {
             getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), getLastPosition(), true);
         }

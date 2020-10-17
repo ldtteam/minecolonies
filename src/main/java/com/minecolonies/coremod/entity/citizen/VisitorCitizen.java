@@ -51,6 +51,7 @@ import org.jetbrains.annotations.Nullable;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 /**
  * Visitor citizen entity
@@ -155,7 +156,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
         int priority = 0;
         this.goalSelector.addGoal(priority, new SwimGoal(this));
         this.goalSelector.addGoal(++priority, new OpenDoorGoal(this, true));
-        this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, EntityAIInteractToggleAble.GATE_DOOR_TRAP));
+        this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
         this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, PlayerEntity.class, WATCH_CLOSEST2, 1.0F));
         this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.goalSelector.addGoal(++priority, new LookAtGoal(this, LivingEntity.class, WATCH_CLOSEST));
@@ -699,7 +700,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         if (citizenStatusHandler != null && x < 1 && x > -1 && z < 1 && z > -1)
         {
             Log.getLogger().error("Visitor entity set to zero pos, report to mod author:", new Exception());
-            getCitizenData().setLastPosition(getHomePosition());
             remove();
         }
     }

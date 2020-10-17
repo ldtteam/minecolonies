@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
@@ -128,7 +128,7 @@ public class EntityAIAttackArcher extends Goal
 
             if (lastAttack <= 0 && entity.canEntityBeSeen(target))
             {
-                AbstractArrowEntity arrowEntity = EntityType.ARROW.create(target.world);
+                AbstractArrowEntity arrowEntity = ModEntities.MC_NORMAL_ARROW.create(target.world);
                 arrowEntity.setShooter(entity);
 
                 final ItemStack bow = entity.getHeldItem(Hand.MAIN_HAND);
