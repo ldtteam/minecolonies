@@ -121,4 +121,11 @@ public interface IBuildingWorkerView extends IBuildingView
      * @return job name.
      */
     String getJobName();
+
+    /**
+     * Get the name of the job.
+     *
+     * @return job name.
+     */
+    String getJobDisplayName();
 }

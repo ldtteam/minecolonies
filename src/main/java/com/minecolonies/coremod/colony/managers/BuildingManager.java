@@ -263,15 +263,15 @@ public class BuildingManager implements IBuildingManager
     {
         IWareHouse wareHouse = null;
         double dist = 0;
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        for (final IWareHouse building : wareHouses)
         {
-            if (building instanceof BuildingWareHouse && building.getTileEntity() != null)
+            if (building.getBuildingLevel() > 0 && building.getTileEntity() != null)
             {
                 final double tempDist = building.getPosition().distanceSq(pos);
                 if (wareHouse == null || tempDist < dist)
                 {
                     dist = tempDist;
-                    wareHouse= (IWareHouse) building;
+                    wareHouse = building;
                 }
             }
         }

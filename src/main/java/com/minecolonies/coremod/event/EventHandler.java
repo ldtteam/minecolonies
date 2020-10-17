@@ -80,7 +80,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static net.minecraftforge.eventbus.api.EventPriority.HIGHEST;
@@ -112,7 +113,8 @@ public class EventHandler
     {
         if (!event.getWorld().isRemote)
         {
-            if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof IMob) && !(event.getEntity() instanceof LlamaEntity) && !(event.getEntity() instanceof EndermanEntity))
+            if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof IMob) && !(event.getEntity() instanceof LlamaEntity)
+                  && !(event.getEntity() instanceof EndermanEntity))
             {
                 ((MobEntity) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityCitizen.class, true));
                 ((MobEntity) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityMercenary.class, true));
@@ -323,10 +325,13 @@ public class EventHandler
                     oldColony.removeVisitingPlayer(player);
                     oldColony.getPackageManager().removeCloseSubscriber(player);
                 }
+            }
 
-                // Add visiting/subscriber to new colony
+            // Add visiting/subscriber to new colony
+            if (newCloseColonies.getOwningColony() != 0)
+            {
                 final IColony newColony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), world);
-                if (newColony != null)
+                if (newColony != null && !newColony.getPackageManager().getCloseSubscribers().contains(player))
                 {
                     newColony.addVisitingPlayer(player);
                     newColony.getPackageManager().addCloseSubscriber(player);

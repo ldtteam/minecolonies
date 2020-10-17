@@ -3,7 +3,6 @@ package com.minecolonies.api.inventory.container;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -133,7 +132,7 @@ public class ContainerRack extends Container
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player)
     {
-        if (player instanceof ClientPlayerEntity || slotId >= inventory.getSlots())
+        if (player.world.isRemote || slotId >= inventory.getSlots() || slotId < 0)
         {
             return super.slotClick(slotId, dragType, clickTypeIn, player);
         }
