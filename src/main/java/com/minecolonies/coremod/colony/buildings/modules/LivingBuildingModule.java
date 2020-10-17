@@ -440,7 +440,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
     @Override
     public int getMaxInhabitants()
     {
-        return 5;
+        return 0;
     }
 
     private boolean buildingAssignmentLogic(final ICitizenData citizen)

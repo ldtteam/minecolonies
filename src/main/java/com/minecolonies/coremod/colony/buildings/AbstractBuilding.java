@@ -430,16 +430,17 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public int getMaxInhabitants()
     {
-        int min = super.getMaxInhabitants();
+        if (modules.isEmpty())
+        {
+            return super.getMaxInhabitants();
+        }
+
+        int maxInhabitants = 0;
         for (final IBuildingModule module : modules.values())
         {
-            int moduleMin = module.getMaxInhabitants();
-            if (moduleMin < min)
-            {
-                min = moduleMin;
-            }
+            maxInhabitants += module.getMaxInhabitants();
         }
-        return min;
+        return maxInhabitants;
     }
 
     @Override
