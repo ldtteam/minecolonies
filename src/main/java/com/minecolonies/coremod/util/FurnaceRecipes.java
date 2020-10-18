@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.util;
 
-import com.ldtteam.blockout.Log;
-import com.minecolonies.api.colony.requestsystem.token.StandardToken;
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.UpdateClientWithRecipesMessage;
 import net.minecraft.block.Blocks;
@@ -22,7 +23,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.registries.ObjectHolder;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -54,13 +54,22 @@ public class FurnaceRecipes implements IFurnaceRecipes
             final NonNullList<Ingredient> list = recipe.getIngredients();
             if (list.size() == 1)
             {
-                final RecipeStorage storage = new RecipeStorage(new StandardToken(), Arrays.asList(list.get(0).getMatchingStacks()), 1, recipe.getRecipeOutput(), Blocks.FURNACE);
+                for(ItemStack smeltable: list.get(0).getMatchingStacks())
+                {
+                    final RecipeStorage storage =StandardFactoryController.getInstance().getNewInstance(
+                        TypeConstants.RECIPE,
+                        StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN), 
+                        ImmutableList.of(smeltable), 
+                        1, 
+                        recipe.getRecipeOutput(), 
+                        Blocks.FURNACE);
 
-                recipes.put(storage.getCleanedInput().get(0), storage);
+                    recipes.put(storage.getCleanedInput().get(0), storage);
 
-                final ItemStack output = recipe.getRecipeOutput().copy();
-                output.setCount(1);
-                reverseRecipes.put(new ItemStorage(output), storage);
+                    final ItemStack output = recipe.getRecipeOutput().copy();
+                    output.setCount(1);
+                    reverseRecipes.put(new ItemStorage(output), storage);
+                }
             }
         });
     }
