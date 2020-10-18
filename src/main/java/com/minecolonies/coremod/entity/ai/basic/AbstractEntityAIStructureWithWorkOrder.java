@@ -24,6 +24,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
 import net.minecraft.block.CoralBlock;
+import net.minecraft.block.LanternBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -219,7 +220,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   () -> placer.getIterator()
                           .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || info.getBlockInfo()
                                                                                                                                                   .getState()
-                                                                                                                                                  .getBlock() instanceof CoralBlock)),
+                                                                                                                                                  .getBlock() instanceof CoralBlock 
+                                                                                                                                             || info.getBlockInfo()
+                                                                                                                                                  .getState()
+                                                                                                                                                  .getBlock() instanceof LanternBlock)),
                   false);
                 requestProgress = result.getIteratorPos();
 
@@ -241,7 +245,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   () -> placer.getIterator()
                           .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !(info.getBlockInfo()
                                                                                                                                                    .getState()
-                                                                                                                                                   .getBlock() instanceof CoralBlock))),
+                                                                                                                                                   .getBlock() instanceof CoralBlock)
+                                                                                                                                            && !(info.getBlockInfo()
+                                                                                                                                                    .getState()
+                                                                                                                                                    .getBlock() instanceof LanternBlock))),
                   false);
                 requestProgress = result.getIteratorPos();
 
