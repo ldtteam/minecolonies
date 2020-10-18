@@ -483,7 +483,10 @@ public final class TranslationConstants
     public static final String MISSING_DELIVERIES = "com.minecolonies.coremod.missingitems";
     @NonNls
     public static final String FINISHED = "com.minecolonies.coremod.finished";
-
+    @NonNls
+    public static final String DIST = "com.minecolonies.coremod.dist.blocks";
+    @NonNls
+    public static final String NOT_RESOLVED = "com.minecolonies.coremod.notresolved";
 
     private TranslationConstants()
     {

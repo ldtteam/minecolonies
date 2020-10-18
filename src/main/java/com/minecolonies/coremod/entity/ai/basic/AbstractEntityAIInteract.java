@@ -114,6 +114,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         super.registerTargets(
           //no new targets for now
         );
+        this.getOwnBuilding().setJobDisplayName(job.getName());
     }
 
     /**
