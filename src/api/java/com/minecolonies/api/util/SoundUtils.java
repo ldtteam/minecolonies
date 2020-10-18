@@ -3,8 +3,12 @@ package com.minecolonies.api.util;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.sounds.EventType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -134,6 +138,44 @@ public final class SoundUtils
           SoundCategory.NEUTRAL,
           (float) VOLUME,
           (float) PITCH);
+    }
+
+    /**
+     * Play a success sound.
+     * @param player the player to play it for.
+     * @param position the position it is played at.
+     */
+    public static void playSuccessSound(@NotNull final PlayerEntity player, @NotNull final BlockPos position)
+    {
+        if (player instanceof ServerPlayerEntity)
+        {
+            ((ServerPlayerEntity) player).connection.sendPacket(new SPlaySoundEffectPacket(SoundEvents.BLOCK_NOTE_BLOCK_BELL,
+              SoundCategory.NEUTRAL,
+              position.getX(),
+              position.getY(),
+              position.getZ(),
+              (float) VOLUME * 2,
+              (float) 1.0));
+        }
+    }
+
+    /**
+     * Play an error sound.
+     * @param player the player to play it for.
+     * @param position the position it is played at.
+     */
+    public static void playErrorSound(@NotNull final PlayerEntity player, @NotNull final BlockPos position)
+    {
+        if (player instanceof ServerPlayerEntity)
+        {
+            ((ServerPlayerEntity) player).connection.sendPacket(new SPlaySoundEffectPacket(SoundEvents.BLOCK_NOTE_BLOCK_DIDGERIDOO,
+              SoundCategory.NEUTRAL,
+              position.getX(),
+              position.getY(),
+              position.getZ(),
+              (float) VOLUME * 2,
+              (float) 0.3));
+        }
     }
 
     /**
