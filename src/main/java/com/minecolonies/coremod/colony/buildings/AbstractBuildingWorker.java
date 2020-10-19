@@ -553,6 +553,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             if (!recipes.contains(token))
             {
                 recipes.add(token);
+                IColonyManager.getInstance().getRecipeManager().registerUse(token);
             }
         }
     }
