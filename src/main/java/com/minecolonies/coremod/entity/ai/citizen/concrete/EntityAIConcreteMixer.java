@@ -72,7 +72,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             return START_WORKING;
         }
 
-        if (walkToBuilding())
+        if (walkTo == null && walkToBuilding())
         {
             return START_WORKING;
         }
@@ -132,9 +132,10 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             {
                 if (walkToBlock(posToPlace))
                 {
+                    walkTo = posToPlace;
                     return START_WORKING;
                 }
-
+                walkTo = null; 
                 if (InventoryUtils.attemptReduceStackInItemHandler(worker.getInventoryCitizen(), stack, 1))
                 {
                     world.setBlockState(posToPlace, block.getDefaultState().updatePostPlacement(Direction.DOWN, block.getDefaultState(), world, posToPlace, posToPlace), 0x03);
@@ -148,9 +149,10 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
         {
             if (walkToBlock(pos))
             {
+                walkTo = pos;
                 return START_WORKING;
             }
-
+            walkTo = null;
             if (mineBlock(pos))
             {
                 this.resetActionsDone();
@@ -185,7 +187,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             return GET_RECIPE;
         }
 
-        if (walkToBuilding())
+        if (walkTo == null && walkToBuilding())
         {
             return getState();
         }
