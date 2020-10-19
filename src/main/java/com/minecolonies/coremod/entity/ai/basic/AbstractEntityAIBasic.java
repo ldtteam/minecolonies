@@ -1605,17 +1605,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true; // has already needed transfers...
         }
 
-        int transferamount = 0;
-        int transferred;
-        do
-        {
-            transferamount = Math.min(amount, STACKSIZE);
-            transferred = InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(entity, predicate.getA(), transferamount, worker.getInventoryCitizen());
-            amount -= transferred;
-        }
-        while (transferred > 0 && amount > 0);
-
-        return amount == 0;
+        return InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(entity, predicate.getA(), amount, worker.getInventoryCitizen()) == 0;
     }
 
     /**
