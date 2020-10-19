@@ -472,12 +472,13 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
 
         if (requestTokens.isEmpty())
         {
-            // No task, compare with dman to warehouse pos
-            final IWareHouse wareHouse = findWareHouse();
+            // No task, compare with dman pos
             totalScore = getClosenessFactorTo(getSource(newRequest),
               getTarget(newRequest),
-              wareHouse != null ? findWareHouse().getID() : getCitizen().getLastPosition(),
-              getCitizen().getLastPosition());
+              getCitizen().getLastPosition(),
+              getTarget(newRequest));
+
+            totalScore -= ((AbstractDeliverymanRequestable) newRequest.getRequest()).getPriority();
         }
 
         for (int i = 0; i < requestTokens.size(); i++)
@@ -524,13 +525,13 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         // Closeness compared to the existing request
         double score = getClosenessFactorTo(getSource(source), getTarget(source), getSource(comparing), getTarget(comparing));
         // Priority of the existing request in diff to priority of the newly incomming one
-        score += (((AbstractDeliverymanRequestable) comparing.getRequest()).getPriority() - ((AbstractDeliverymanRequestable) source.getRequest()).getPriority()) * 0.3;
+        score += (((AbstractDeliverymanRequestable) comparing.getRequest()).getPriority() - ((AbstractDeliverymanRequestable) source.getRequest()).getPriority()) * 0.5;
 
         // Additional score for alternating between pickup and delivery
         score += getPickUpRequestScore(source, comparing);
 
         // Worse score the more requests we have to overtake
-        score += (getTaskQueue().size() - comparingIndex) * 0.5;
+        score += getTaskQueue().size() - comparingIndex;
 
         return score;
     }
@@ -592,7 +593,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         final double targetCloseness = BlockPosUtil.getDistance(target1, target2) / newLength;
         final double sourceCloseness = BlockPosUtil.getDistance(source1, source2) / newLength;
 
-        return (targetCloseness + sourceCloseness) * 10;
+        return (targetCloseness + sourceCloseness) * 5;
     }
 
     /**
