@@ -18,7 +18,6 @@ import com.minecolonies.api.util.TagUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutCrafter;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
 import com.minecolonies.coremod.research.ResearchInitializer;
@@ -69,12 +68,17 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     /**
      * How deep the water can max be to place concrete in it.
      */
-    private static final int WATER_DEPTH_SUPPORT = 3;
+    private static final int WATER_DEPTH_SUPPORT = 5;
 
     /**
      * Water position list.
      */
     private final Map<Integer, List<BlockPos>> waterPos = new HashMap<>();
+
+    /**
+     * The minimum found water level
+     */
+    private int minWaterLevel = WATER_DEPTH_SUPPORT;
 
     /**
      * Instantiates a new concrete mason building.
@@ -142,6 +146,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
                     fluidPos.add(pos);
                 }
                 waterPos.put(blockState.getFluidState().getLevel(), fluidPos);
+                minWaterLevel = Math.min(minWaterLevel, blockState.getFluidState().getLevel());
             }
         }
 
@@ -183,6 +188,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         {
             final CompoundNBT waterCompound = waterMapList.getCompound(i);
             final int level = waterCompound.getInt(TAG_LEVEL);
+            minWaterLevel = Math.min(minWaterLevel, level);
 
             final ListNBT waterTagList = waterCompound.getList(TAG_WATER, Constants.NBT.TAG_COMPOUND);
             final List<BlockPos> water = new ArrayList<>();
@@ -273,7 +279,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     @Nullable
     public BlockPos getBlockToMine()
     {
-        for (int i = 1; i <= WATER_DEPTH_SUPPORT; i++)
+        for (int i = 1; i <= minWaterLevel; i++)
         {
             for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
             {
@@ -283,19 +289,19 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
                 }
             }
         }
-
+        
         return null;
     }
 
     /**
-     * Check if there are open positions to mine.
+     * Check if there are open positions to place.
      *
      * @return the open position if so.
      */
     @Nullable
     public BlockPos getBlockToPlace()
     {
-        for (int i = 1; i <= WATER_DEPTH_SUPPORT; i++)
+        for (int i = 1; i <= minWaterLevel; i++)
         {
             for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
             {
@@ -305,7 +311,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
                 }
             }
         }
-
+ 
         return null;
     }
 
@@ -320,7 +326,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         int count = 0;
         if (primaryOutput.getItem() instanceof BlockItem)
         {
-            for (int i = 1; i <= WATER_DEPTH_SUPPORT; i++)
+            for (int i = 1; i <= minWaterLevel; i++)
             {
                 for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
                 {
