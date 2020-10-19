@@ -52,6 +52,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -68,6 +69,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMPROVED;
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 ;
 
@@ -480,7 +482,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             final TileEntity entity = colony.getWorld().getTileEntity(pos);
             if (entity != null)
             {
-                handlers.addAll(InventoryUtils.getItemHandlersFromProvider(entity));
+                final LazyOptional<IItemHandler> handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null);
+                handler.ifPresent(handlers::add);
             }
         }
         return ImmutableList.copyOf(handlers);
