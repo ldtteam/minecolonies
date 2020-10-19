@@ -797,7 +797,9 @@ public final class ColonyManager implements IColonyManager
                 @Nullable final CompoundNBT data = BackUpHelper.loadNBTFromPath(file);
                 if (data != null)
                 {
+                    Log.getLogger().info("Loading Minecolonies Data");
                     read(data);
+                    Log.getLogger().info("Load Complete");
                 }
 
                 if (serverUUID == null)
@@ -859,6 +861,7 @@ public final class ColonyManager implements IColonyManager
             if (loaded)
             {
                 BackUpHelper.backupColonyData();
+                recipeManager.reset();
                 loaded = false;
             }
         }
