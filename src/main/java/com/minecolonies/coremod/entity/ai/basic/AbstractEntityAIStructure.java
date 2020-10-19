@@ -288,7 +288,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   () -> placer.getIterator()
                           .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || info.getBlockInfo()
                                                                                                                                                   .getState()
-                                                                                                                                                  .getBlock() instanceof CoralBlock)),
+                                                                                                                                                  .getBlock() instanceof CoralBlock
+                                                                                                                                             || info.getBlockInfo()
+                                                                                                                                                  .getState()
+                                                                                                                                                  .getBlock() instanceof LanternBlock)),
                   false);
                 break;
             case CLEAR_WATER:
@@ -317,7 +320,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   () -> placer.getIterator()
                           .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !(info.getBlockInfo()
                                                                                                                                                    .getState()
-                                                                                                                                                   .getBlock() instanceof CoralBlock))),
+                                                                                                                                                   .getBlock() instanceof CoralBlock)
+                                                                                                                                            && !(info.getBlockInfo()
+                                                                                                                                                    .getState()
+                                                                                                                                                    .getBlock() instanceof LanternBlock))),
                   false);
                 break;
             case SPAWN:
