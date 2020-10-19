@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
+import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
@@ -26,7 +27,6 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
@@ -238,11 +238,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     protected int getWarehouseCount(ItemStorage item)
     {
         int count = 0;
-        final Set<IBuilding> wareHouses = colony.getBuildingManager().getBuildings().values().stream()
-                                                .filter(building -> building instanceof BuildingWareHouse)
-                                                .collect(Collectors.toSet());
+        final List<IWareHouse> wareHouses = colony.getBuildingManager().getWareHouses();
 
-        for(IBuilding wareHouse: wareHouses)
+        for(IWareHouse wareHouse: wareHouses)
         {
             count += InventoryUtils.hasBuildingEnoughElseCount(wareHouse, item, 0);
         }

@@ -8,6 +8,9 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * The mult-output recipe type
+ */
 public class MultiOutputRecipe extends AbstractRecipeType<IRecipeStorage>
 {
     /**

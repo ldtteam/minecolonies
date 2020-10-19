@@ -352,10 +352,11 @@ public class RecipeStorage implements IRecipeStorage
      */
     private boolean checkForFreeSpace(final List<IItemHandler> handlers)
     {
-        final List<ItemStack> secondaryStacks = new ArrayList<>();
+        final List<ItemStack> resultStacks = new ArrayList<>();
+        //Calculate space needed by the secondary outputs
         if(!secondaryOutputs.isEmpty())
         {
-            secondaryStacks.addAll(secondaryOutputs);
+            resultStacks.addAll(secondaryOutputs);
         }
         else
         {
@@ -365,12 +366,13 @@ public class RecipeStorage implements IRecipeStorage
                 if (!ItemStackUtils.isEmpty(container))
                 {
                     container.setCount(stack.getCount());
-                    secondaryStacks.add(container);
+                    resultStacks.add(container);
                 }
             }
         }
-        secondaryStacks.add(getPrimaryOutput());
-        if (secondaryStacks.size() > getInput().size())
+        //Include the primary output in the space check
+        resultStacks.add(getPrimaryOutput());
+        if (resultStacks.size() > getInput().size())
         {
             int freeSpace = 0;
             for (final IItemHandler handler : handlers)
@@ -378,7 +380,7 @@ public class RecipeStorage implements IRecipeStorage
                 freeSpace += handler.getSlots() - InventoryUtils.getAmountOfStacksInItemHandler(handler);
             }
 
-            return freeSpace >= secondaryStacks.size() - getInput().size();
+            return freeSpace >= resultStacks.size() - getInput().size();
         }
         return true;
     }

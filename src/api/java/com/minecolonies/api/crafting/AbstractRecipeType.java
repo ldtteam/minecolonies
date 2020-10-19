@@ -5,6 +5,9 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * Base class for RecipeStorage types
+ */
 public abstract class AbstractRecipeType<R extends IRecipeStorage>
 {
     final IRecipeStorage recipe;
