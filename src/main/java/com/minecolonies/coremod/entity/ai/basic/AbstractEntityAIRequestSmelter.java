@@ -75,11 +75,11 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
           /*
            * Check if tasks should be executed.
            */
+          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::isFuelNeeded, this::checkFurnaceFuel, TICKS_SECOND * 10),
+          new AIEventTarget(AIBlockingEventType.EVENT, this::accelerateFurnaces, this::getState, TICKS_SECOND),
           new AITarget(START_USING_FURNACE, this::fillUpFurnace, TICKS_SECOND),
           new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, TICKS_SECOND),
-          new AITarget(ADD_FUEL_TO_FURNACE, this::addFuelToFurnace, TICKS_SECOND),
-          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::isFuelNeeded, this::checkFurnaceFuel, TICKS_SECOND),
-          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::accelerateFurnaces, TICKS_SECOND)
+          new AITarget(ADD_FUEL_TO_FURNACE, this::addFuelToFurnace, TICKS_SECOND)
         );
     }
 
@@ -198,7 +198,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     /**
      * Actually accelerate the furnaces
      */
-    private IAIState accelerateFurnaces()
+    private boolean accelerateFurnaces()
     {
         final int accelerationTicks = (worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getSecondarySkill()) / 10) * 2;
         final World world = getOwnBuilding().getColony().getWorld();
@@ -220,7 +220,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                 }
             }
         }
-        return getState();
+        return false;
     }
 
     /**
@@ -265,7 +265,8 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                 final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
                 if (!furnace.isBurning() && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)) && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE) 
                 {
-                    return true;
+                    //We only want to return true if we're not already gathering materials.
+                    return getState() != GATHERING_REQUIRED_MATERIALS;
                 }
             }
         }
