@@ -73,6 +73,11 @@ public class EntityAIInteractToggleAble extends Goal
      */
     private int executeTimerSlow = 100;
 
+    /**
+     * Offset delay to prevent toggling at exactly the same rates
+     */
+    private final int offSet;
+
     public EntityAIInteractToggleAble(@NotNull final MobEntity entityIn, final ToggleAble... toggleAbles)
     {
         super();
@@ -82,6 +87,8 @@ public class EntityAIInteractToggleAble extends Goal
         {
             throw new IllegalArgumentException("Unsupported mob type for EntityAIInteractToggleAble");
         }
+
+        offSet = entityIn.world.rand.nextInt(20);
     }
 
     /**
@@ -284,9 +291,14 @@ public class EntityAIInteractToggleAble extends Goal
     {
         for (final BlockPos pos : toggleAblePositions.keySet())
         {
-            if (isValidBlockState(entity.world.getBlockState(pos)))
+            for (final ToggleAble toggleAble : toggleAbles)
             {
-                entity.world.setBlockState(pos, entity.world.getBlockState(pos).with(BlockStateProperties.OPEN, false));
+                final BlockState state = entity.world.getBlockState(pos);
+                if (toggleAble.isBlockToggleAble(state))
+                {
+                    toggleAble.toggleBlockClosed(state, entity.world, pos);
+                    break;
+                }
             }
         }
         toggleAblePositions.clear();
@@ -326,7 +338,7 @@ public class EntityAIInteractToggleAble extends Goal
         {
             return;
         }
-        updateTimer = 20;
+        updateTimer = 20 + offSet;
 
         if (!checkPath())
         {
