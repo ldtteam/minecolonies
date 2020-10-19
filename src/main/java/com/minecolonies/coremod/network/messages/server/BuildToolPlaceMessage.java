@@ -320,6 +320,7 @@ public class BuildToolPlaceMessage implements IMessage
         }
         else
         {
+            SoundUtils.playErrorSound(player, player.getPosition());
             Log.getLogger().error("handleDecoration: Could not build " + sn, new Exception());
         }
     }
@@ -347,11 +348,13 @@ public class BuildToolPlaceMessage implements IMessage
         {
             if (!sn.getHutName().equals(ModBuildings.TOWNHALL_ID))
             {
+            SoundUtils.playErrorSound(player, player.getPosition());
                 Log.getLogger().error("BuildTool: building is null!", new Exception());
             }
         }
         else
         {
+            SoundUtils.playSuccessSound(player, player.getPosition());
             if (building.getTileEntity() != null)
             {
                 final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, buildPos);
