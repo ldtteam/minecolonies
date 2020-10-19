@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
@@ -134,15 +135,18 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
         if (remove)
         {
             building.removeRecipe(token);
+            SoundUtils.playSuccessSound(player, player.getPosition());
         }
         else
         {
             if (!building.addRecipe(token))
             {
+                SoundUtils.playErrorSound(player, player.getPosition());
                 LanguageHandler.sendPlayerMessage(player, UNABLE_TO_ADD_RECIPE_MESSAGE, building.getJobName());
             }
             else
             {
+                SoundUtils.playSuccessSound(player, player.getPosition());
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.BUILDING_ADD_RECIPE.trigger(playerMP, this.storage));
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.recipe.done");
             }
