@@ -305,6 +305,34 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         return storage;
     }
 
+    /**
+     * Get the list of items that the assistant needs to craft the currently queued tasks
+     */
+    public Set<ItemStack> getAssistantItems()
+    {
+        final Set<ItemStack> recipeOutputs = new HashSet<>();
+        for (final ICitizenData citizen : getAssignedCitizen())
+        {
+            if (citizen.getJob() instanceof AbstractJobCrafter)
+            {
+                final List<IToken<?>> assignedTasks = citizen.getJob(AbstractJobCrafter.class).getAssignedTasks();
+                for (final IToken<?> taskToken : assignedTasks)
+                {
+                    final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
+                    final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
+                    if (recipeStorage != null)
+                    {
+                        for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
+                        {
+                            recipeOutputs.add(itemStorage.getItemStack());
+                        }
+                    }
+                }
+            }
+        }
+        return recipeOutputs;
+    }
+
     @Override
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
