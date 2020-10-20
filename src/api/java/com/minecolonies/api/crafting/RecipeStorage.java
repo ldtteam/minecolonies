@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class used to represent a recipe in minecolonies.
@@ -136,15 +137,8 @@ public class RecipeStorage implements IRecipeStorage
         return this.intermediate;
     }
 
-    /**
-     * Method to check if with the help of inventories this recipe can be fullfilled.
-     *
-     * @param qty         the quantity to craft.
-     * @param inventories the inventories to check.
-     * @return true if possible, else false.
-     */
     @Override
-    public boolean canFullFillRecipe(final int qty, @NotNull final IItemHandler... inventories)
+    public boolean canFullFillRecipe(final int qty, final Map<ItemStorage, Integer> existingRequirements, @NotNull final IItemHandler... inventories)
     {
         final int neededMultiplier = CraftingUtils.calculateMaxCraftingCount(qty, this);
         final List<ItemStorage> items = getCleanedInput();
@@ -168,7 +162,7 @@ public class RecipeStorage implements IRecipeStorage
                 neededCount = storage.getAmount();
             }
 
-            if (availableCount < neededCount)
+            if (availableCount < neededCount + existingRequirements.getOrDefault(storage, 0))
             {
                 return false;
             }
@@ -260,7 +254,7 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public boolean fullfillRecipe(final List<IItemHandler> handlers)
     {
-        if (!checkForFreeSpace(handlers) || !canFullFillRecipe(1, handlers.toArray(new IItemHandler[0])))
+        if (!checkForFreeSpace(handlers) || !canFullFillRecipe(1, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
         {
             return false;
         }

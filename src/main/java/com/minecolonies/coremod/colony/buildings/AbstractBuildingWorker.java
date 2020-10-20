@@ -63,13 +63,10 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMPROVED;
-
-;
 
 /**
  * The abstract class for each worker building.
@@ -264,7 +261,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                if (storage.canFullFillRecipe(count, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
                 {
                     return storage;
                 }

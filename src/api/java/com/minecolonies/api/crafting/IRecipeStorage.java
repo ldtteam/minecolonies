@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface which describes the RecipeStorage.
@@ -52,12 +53,14 @@ public interface IRecipeStorage
 
     /**
      * Method to check if with the help of inventories this recipe can be fullfilled.
+     * Also check if the inventory has enough to fulfill the existing requirements.
      *
      * @param qty         the quantity to craft.
+     * @param existingRequirements map of existing requirements (pending requests).
      * @param inventories the inventories to check.
      * @return true if possible, else false.
      */
-    boolean canFullFillRecipe(final int qty, @NotNull final IItemHandler... inventories);
+    boolean canFullFillRecipe(final int qty, final Map<ItemStorage, Integer> existingRequirements, @NotNull final IItemHandler... inventories);
 
     default boolean fullFillRecipe(@NotNull final IItemHandler... inventories)
     {

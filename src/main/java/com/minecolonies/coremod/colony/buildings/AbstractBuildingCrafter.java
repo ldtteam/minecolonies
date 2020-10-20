@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -22,6 +23,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraft
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -88,46 +90,95 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<ItemStorage, Tuple<Integer, Boolean>> recipeOutputs = new HashMap<>();
+        for (final Tuple<IRecipeStorage, Integer> recipeStorage : getPendingRequestQueue())
+        {
+            for (final ItemStorage itemStorage : recipeStorage.getA().getCleanedInput())
+            {
+                int amount = itemStorage.getAmount() * recipeStorage.getB();
+                if (recipeOutputs.containsKey(itemStorage))
+                {
+                    amount += recipeOutputs.get(itemStorage).getA();
+                }
+                recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
+            }
+
+            final ItemStorage output = new ItemStorage(recipeStorage.getA().getPrimaryOutput());
+            int amount = output.getAmount() * recipeStorage.getB();
+            if (recipeOutputs.containsKey(output))
+            {
+                amount += recipeOutputs.get(output).getA();
+            }
+            recipeOutputs.put(output, new Tuple<>(amount, false));
+        }
+
+        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
+        toKeep.putAll(recipeOutputs.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
+        return toKeep;
+    }
+
+    @Override
+    public Map<ItemStorage, Integer> reservedStacks()
+    {
+        final Map<ItemStorage, Integer> recipeOutputs = new HashMap<>();
+        for (final Tuple<IRecipeStorage, Integer> recipeStorage : getPendingRequestQueue())
+        {
+            for (final ItemStorage itemStorage : recipeStorage.getA().getCleanedInput())
+            {
+                int amount = itemStorage.getAmount() * recipeStorage.getB();
+                if (recipeOutputs.containsKey(itemStorage))
+                {
+                    amount += recipeOutputs.get(itemStorage);
+                }
+                recipeOutputs.put(itemStorage, amount);
+            }
+        }
+        return recipeOutputs;
+    }
+
+    /**
+     * Get a list of all recipeStorages of the pending requests in the crafters queues.
+     * @return the list.
+     */
+    private List<Tuple<IRecipeStorage, Integer>> getPendingRequestQueue()
+    {
+        final List<Tuple<IRecipeStorage, Integer>> recipes = new ArrayList<>();
         for (final ICitizenData citizen : getAssignedCitizen())
         {
             if (citizen.getJob() instanceof AbstractJobCrafter)
             {
                 final List<IToken<?>> assignedTasks = new ArrayList<>(citizen.getJob(AbstractJobCrafter.class).getAssignedTasks());
-                if (((AbstractJobCrafter) citizen.getJob()).getCurrentTask() != null)
-                {
-                    assignedTasks.add(((AbstractJobCrafter) citizen.getJob()).getCurrentTask().getId());
-                }
+                assignedTasks.addAll(citizen.getJob(AbstractJobCrafter.class).getTaskQueue());
+
                 for (final IToken<?> taskToken : assignedTasks)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
                     final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
                     if (recipeStorage != null)
                     {
-                        for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
-                        {
-                            int amount = itemStorage.getAmount() * request.getRequest().getCount();
-                            if (recipeOutputs.containsKey(itemStorage))
-                            {
-                                amount += recipeOutputs.get(itemStorage).getA();
-                            }
-                            recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
-                        }
-
-                        final ItemStorage output = new ItemStorage(recipeStorage.getPrimaryOutput());
-                        int amount = output.getAmount() * request.getRequest().getCount();
-                        if (recipeOutputs.containsKey(output))
-                        {
-                            amount += recipeOutputs.get(output).getA();
-                        }
-                        recipeOutputs.put(output, new Tuple<>(amount, false));
+                        recipes.add(new Tuple<>(recipeStorage, request.getRequest().getCount()));
                     }
                 }
             }
         }
+        return recipes;
+    }
 
-        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(recipeOutputs.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
-        return toKeep;
+    @Override
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
+    {
+        for (final IToken<?> token : recipes)
+        {
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            {
+                final List<IItemHandler> handlers = getHandlers();
+                if (storage.canFullFillRecipe(count, reservedStacks(), handlers.toArray(new IItemHandler[0])))
+                {
+                    return storage;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
