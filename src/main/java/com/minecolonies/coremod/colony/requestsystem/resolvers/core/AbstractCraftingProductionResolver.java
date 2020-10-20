@@ -109,7 +109,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             return null;
         }
 
-        final IRecipeStorage fullfillableCrafting = building.getFirstFullFillableRecipe(stack, count);
+        final IRecipeStorage fullfillableCrafting = building.getFirstFullFillableRecipe(stack, count, true);
         if (fullfillableCrafting != null)
         {
             return ImmutableList.of();
@@ -208,7 +208,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack(), request.getRequest().getCount());
+        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack(), request.getRequest().getCount(), false);
 
         if (storage == null)
         {

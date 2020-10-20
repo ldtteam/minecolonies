@@ -96,7 +96,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
                 for (final IToken<?> taskToken : assignedTaskIds)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
-                    final IRecipeStorage recipeStorage = getFirstFullFillableRecipe(request.getRequest().getStack());
+                    final IRecipeStorage recipeStorage = getFirstFullFillableRecipe(request.getRequest().getStack(), false);
                     if (recipeStorage != null)
                     {
                         for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())

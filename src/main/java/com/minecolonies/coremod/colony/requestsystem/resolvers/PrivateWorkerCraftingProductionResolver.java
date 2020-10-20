@@ -66,7 +66,7 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
         manager.updateRequestState(request.getId(), RequestState.FINALIZING);
 
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack(), 1);
+        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack(), 1, false);
 
         if (storage == null)
         {
