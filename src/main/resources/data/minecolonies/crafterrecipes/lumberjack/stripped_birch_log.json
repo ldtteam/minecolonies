@@ -7,6 +7,16 @@
         "count": 1
     }
   ],
+  "alternate-output" : [
+    {
+        "item" : "minecraft:birch_wood",
+        "count": 1
+    },
+    {
+        "item" : "minecraft:stripped_birch_wood",
+        "count": 1
+    }
+  ],
   "result": "minecraft:stripped_birch_log",
   "count": 1,
   "intermediate" : "minecraft:air"
