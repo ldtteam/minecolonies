@@ -3,9 +3,12 @@ package com.minecolonies.coremod.colony.crafting;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.Log;
@@ -39,6 +42,17 @@ public class CustomRecipe
     public static final String RECIPE_TYPE_RECIPE = "recipe";
 
     /**
+     * The multiple output recipe type
+     */
+    public static final String RECIPE_TYPE_RECIPE_MULT_OUT = "recipe-multi-out";
+
+    /**
+     * The multiple input recipe type
+     */
+    public static final String RECIPE_TYPE_RECIPE_MULT_IN = "recipe-multi-in";
+
+
+    /**
      * The remove type
      */
     public static final String RECIPE_TYPE_REMOVE = "remove";
@@ -57,6 +71,11 @@ public class CustomRecipe
      * The property name for the inputs array
      */
     public static final String RECIPE_INPUTS_PROP = "inputs";
+
+    /**
+     * The property name for the alternate output array
+     */
+    public static final String RECIPE_ALTERNATE_PROP = "alternate-output";
 
     /**
      * The property name for the result item
@@ -99,6 +118,11 @@ public class CustomRecipe
     public static final String RECIPE_BUILDING_MAX_LEVEL_PROP = "max-building-level";
 
     /**
+     * The property name for if a recipe of the inputs must exist for the recipe to be valid
+     */
+    public static final String RECIPE_MUST_EXIST = "must-exist";
+
+    /**
      * The crafter name for this instance, defaults to 'unknown'
      */
     private String crafter = "unknown";
@@ -112,6 +136,11 @@ public class CustomRecipe
      * The list of ItemStacks for input to the recipe
      */
     private ArrayList<ItemStack> inputs = new ArrayList<>();
+
+    /**
+     * The list of ItemStacks for input to the recipe
+     */
+    private ArrayList<ItemStack> altOutputs = new ArrayList<>();
 
     /**
      * the result ItemStack
@@ -142,6 +171,11 @@ public class CustomRecipe
      * The Maximum Level the building can to be for this recipe to be valid
      */
     private int maxBldgLevel = 5;
+
+    /**
+     * If true, the recipe inputs must match an already existing recipe's inputs
+     */
+    private boolean mustExist = false;
 
     /**
      * This class can only be created by the parse static
@@ -213,7 +247,7 @@ public class CustomRecipe
         {
             for (JsonElement e : recipeJson.get(RECIPE_INPUTS_PROP).getAsJsonArray())
             {
-                if (e instanceof JsonElement && e.isJsonObject())
+                if (e.isJsonObject())
                 {
                     JsonObject ingredient = e.getAsJsonObject();
                     if (ingredient.has(ITEM_PROP))
@@ -232,6 +266,27 @@ public class CustomRecipe
         if (recipeJson.has(RECIPE_RESULT_PROP))
         {
             recipe.result = idToItemStack(recipeJson.get(RECIPE_RESULT_PROP).getAsString());
+        }
+
+        if (recipeJson.has(RECIPE_ALTERNATE_PROP))
+        {
+            for (JsonElement e : recipeJson.get(RECIPE_ALTERNATE_PROP).getAsJsonArray())
+            {
+                if (e.isJsonObject())
+                {
+                    JsonObject ingredient = e.getAsJsonObject();
+                    if (ingredient.has(ITEM_PROP))
+                    {
+                        final ItemStack stack = idToItemStack(ingredient.get(ITEM_PROP).getAsString());
+                        if(ingredient.has(COUNT_PROP))
+                        {
+                            stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
+                        }
+                        recipe.altOutputs.add(stack);
+                    }
+
+                }
+            }
         }
 
         if (recipeJson.has(COUNT_PROP) && recipe.result != null)
@@ -258,6 +313,10 @@ public class CustomRecipe
         if(recipeJson.has(RECIPE_BUILDING_MAX_LEVEL_PROP))
         {
             recipe.maxBldgLevel= recipeJson.get(RECIPE_BUILDING_MAX_LEVEL_PROP).getAsInt();
+        }
+        if(recipeJson.has(RECIPE_MUST_EXIST))
+        {
+            recipe.mustExist = recipeJson.get(RECIPE_MUST_EXIST).getAsBoolean();
         }
 
         return recipe;
@@ -293,7 +352,7 @@ public class CustomRecipe
      * Check to see if the recipe is currently valid for the building
      * This does research checks, to verify that the appropriate researches are in the correct states
      */
-    public boolean isValidForBuilding(IBuilding building)
+    public boolean isValidForBuilding(IBuildingWorker building)
     {
         AbstractResearchEffect<?> requiredEffect = null;
         AbstractResearchEffect<?> excludedEffect = null;
@@ -311,6 +370,26 @@ public class CustomRecipe
             excludedEffect = colony.getResearchManager().getResearchEffects().getEffect(gr.getEffectIdForResearch(excludedResearchId), AbstractResearchEffect.class);
         }
 
+        if(mustExist)
+        {
+            boolean found = false;
+            final IRecipeStorage compareStorage = this.getRecipeStorage();
+            final ResourceLocation recipeSource = this.getRecipeId();
+            for(IToken<?> recipeToken: building.getRecipes())
+            {
+                final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(recipeToken);
+                if((storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeSource)) || (storage.getCleanedInput().containsAll(compareStorage.getCleanedInput()) && compareStorage.getCleanedInput().containsAll(storage.getCleanedInput())))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found)
+            {
+                return false; 
+            }
+        }
+
         return (researchId == null || requiredEffect != null) 
             && (excludedResearchId == null || excludedEffect == null)
             && (bldgLevel >= minBldgLevel)
@@ -323,13 +402,36 @@ public class CustomRecipe
      */
     public IRecipeStorage getRecipeStorage()
     {
-        return StandardFactoryController.getInstance().getNewInstance(
-            TypeConstants.RECIPE,
-            StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-            inputs,
-            1,
-            result,
-            intermediate);
+        if(altOutputs.isEmpty())
+        {
+            return StandardFactoryController.getInstance().getNewInstance(
+                TypeConstants.RECIPE,
+                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                inputs,
+                1,
+                result,
+                intermediate,
+                this.getRecipeId(),
+                ModRecipeTypes.CLASSIC_ID,
+                null, //alternate outputs
+                null //secondary output
+                );
+        }
+        else
+        {
+            return StandardFactoryController.getInstance().getNewInstance(
+                TypeConstants.RECIPE,
+                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                inputs,
+                1,
+                result,
+                intermediate,
+                this.getRecipeId(),
+                ModRecipeTypes.MULTI_OUTPUT_ID,
+                altOutputs, //alternate outputs
+                null //secondary output
+                );
+        }
     }
 
     @Override
@@ -357,6 +459,14 @@ public class CustomRecipe
             && researchId.equals(that.researchId)
             && excludedResearchId.equals(that.excludedResearchId)
             && inputs.equals(that.inputs);
+    }
+
+    /**
+     * Does this require it to already be there? 
+     */
+    public boolean getMustExist()
+    {
+        return mustExist;
     }
 
 }

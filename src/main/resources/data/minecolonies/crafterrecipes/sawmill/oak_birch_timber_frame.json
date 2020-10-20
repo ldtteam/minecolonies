@@ -1,0 +1,60 @@
+{
+  "type" : "recipe",
+  "crafter": "sawmill",
+  "inputs": [
+    {
+        "item" : "minecraft:oak_planks",
+        "count": 1
+    },
+    {
+        "item" : "minecraft:birch_planks",
+        "count": 1
+    },
+    {
+        "item" : "structurize:sceptergold",
+        "count": 1
+    }
+  ],
+  "alternate-output" : [
+    {
+        "item" : "structurize:double_crossed_oak_birch_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:framed_oak_birch_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:side_framed_oak_birch_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:up_gated_oak_birch_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:down_gated_oak_birch_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:one_crossed_lr_oak_birch_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:one_crossed_rl_oak_birch_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:horizontal_plain_oak_birch_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:side_framed_horizontal_oak_birch_timber_frame",
+        "count": 4
+    }
+  ],
+  "result": "structurize:plain_oak_birch_timber_frame",
+  "count": 4,
+  "intermediate" : "minecraft:air",
+  "must-exist" : true
+}

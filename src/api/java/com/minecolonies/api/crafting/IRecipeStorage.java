@@ -3,12 +3,14 @@ package com.minecolonies.api.crafting;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Interface which describes the RecipeStorage.
@@ -74,6 +76,45 @@ public interface IRecipeStorage
      * @return true if succesful.
      */
     boolean fullfillRecipe(final List<IItemHandler> handlers);
+
+    /**
+     * Get which type this recipe is
+     * This type comes from the RecipeTypes registry
+     * @return The recipe type
+     */
+    public AbstractRecipeType<IRecipeStorage> getRecipeType();
+
+    /**
+     * Get a list of alternates to getPrimaryOutput
+     * @return a list if Itemstacks that this recipe can produce instead of getPrimaryOutput
+     */
+    public List<ItemStack> getAlternateOutputs();
+
+    /**
+     * Get the classic version of this recipe with GetPrimaryOutput targetted correctly from the chosen alternate
+     * @param requiredOutput Which output wanted
+     * @return the RecipeStorage that is "right" for that output
+     */
+    public RecipeStorage getClassicForMultiOutput(ItemStack requiredOutput);
+
+    /**
+     * Get the classic version of this recipe with GetPrimaryOutput targetted correctly from the chosen alternate
+     * @param stackPredicate Predicate to select the right stack
+     * @return the RecipeStorage that is "right" for that output
+     */
+    public RecipeStorage getClassicForMultiOutput(final Predicate<ItemStack> stackPredicate);
+
+    /**
+     * Source of the recipe, ie registry name.
+     * @return
+     */
+    public ResourceLocation getRecipeSource();
+
+    /**
+     * Get the secondary (leave behind in grid) outputs
+     * @return list of items that weren't consumed during crafting
+     */
+    public List<ItemStack> getSecondaryOutputs();
 
     /**
      * Get the unique token of the recipe.

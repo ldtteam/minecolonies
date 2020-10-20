@@ -480,6 +480,8 @@
   "com.minecolonies.coremod.job.miner": "Miner",
   "com.minecolonies.coremod.job.fisherman": "Fisher",
   "com.minecolonies.coremod.job.guard": "Guard",
+  "com.minecolonies.coremod.job.archertraining": "Archer Trainee",
+  "com.minecolonies.coremod.job.combattraining": "Combat Trainee",
 
   "com.minecolonies.coremod.error.supplychestalreadyplaced": "You have already placed a Supply Ship or Camp in this world!",
   "com.minecolonies.coremod.supplyneed": "Start off MineColonies by crafting a Supply Camp or Ship and placing it via right clicking the item on the ground!!",
@@ -1805,5 +1807,7 @@
   "com.minecolonies.coremod.missingitems": "Awaiting Materials",
   "com.minecolonies.coremod.finished": "Finished!",
   "com.minecolonies.coremod.dist.blocks": "%d blocks",
-  "com.minecolonies.coremod.notresolved": "Awaiting Resolvers!"
+  "com.minecolonies.coremod.notresolved": "Awaiting Resolvers!",
+  "com.minecolonies.coremod.request.crafting.display": "%d * Recipe:%s"
+
 }

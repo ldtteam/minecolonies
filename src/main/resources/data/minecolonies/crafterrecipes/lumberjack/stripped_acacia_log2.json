@@ -9,5 +9,6 @@
   ],
   "result": "minecraft:stripped_acacia_log",
   "count": 1,
-  "intermediate" : "minecraft:air"
+  "intermediate" : "minecraft:air",
+  "research-id" : "dummyresearch"
 }

@@ -1,0 +1,60 @@
+{
+  "type" : "recipe",
+  "crafter": "sawmill",
+  "inputs": [
+    {
+        "item" : "minecraft:birch_planks",
+        "count": 1
+    },
+    {
+        "item" : "minecraft:stone",
+        "count": 1
+    },
+    {
+        "item" : "structurize:sceptergold",
+        "count": 1
+    }
+  ],
+  "alternate-output" : [
+    {
+        "item" : "structurize:double_crossed_birch_stone_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:framed_birch_stone_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:side_framed_birch_stone_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:up_gated_birch_stone_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:down_gated_birch_stone_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:one_crossed_lr_birch_stone_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:one_crossed_rl_birch_stone_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:horizontal_plain_birch_stone_timber_frame",
+        "count": 4
+    },
+    {
+        "item" : "structurize:side_framed_horizontal_birch_stone_timber_frame",
+        "count": 4
+    }
+  ],
+  "result": "structurize:plain_birch_stone_timber_frame",
+  "count": 4,
+  "intermediate" : "minecraft:air",
+  "must-exist" : true
+}
