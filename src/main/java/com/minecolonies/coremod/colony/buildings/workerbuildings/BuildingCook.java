@@ -282,10 +282,10 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
     {
         //Try to fulfill normally
-        IRecipeStorage storage = super.getFirstFullFillableRecipe(stackPredicate, count);
+        IRecipeStorage storage = super.getFirstFullFillableRecipe(stackPredicate, count, considerReservation);
 
         //Couldn't fulfill normally, let's try to fulfill with a temporary smelting recipe. 
         if(storage == null)

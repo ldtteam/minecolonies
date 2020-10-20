@@ -212,9 +212,9 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, int count)
+    public IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, int count, final boolean considerReservation)
     {
-        IRecipeStorage recipe =  super.getFirstFullFillableRecipe(stackPredicate, count);
+        IRecipeStorage recipe =  super.getFirstFullFillableRecipe(stackPredicate, count, considerReservation);
 
         if(recipe == null)
         {
