@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -112,6 +113,15 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
                 {
                     totalAvailable += stack.getCount();
                 }
+            }
+        }
+
+        for (final Map.Entry<ItemStorage, Integer> reserved : building.reservedStacks().entrySet())
+        {
+            if (request.getRequest().matches(reserved.getKey().getItemStack()))
+            {
+                totalAvailable = Math.max(0, totalAvailable - reserved.getValue());
+                break;
             }
         }
 

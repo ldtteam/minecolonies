@@ -19,7 +19,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
@@ -283,10 +282,10 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
     {
         //Try to fulfill normally
-        IRecipeStorage storage = super.getFirstFullFillableRecipe(stackPredicate, count);
+        IRecipeStorage storage = super.getFirstFullFillableRecipe(stackPredicate, count, considerReservation);
 
         //Couldn't fulfill normally, let's try to fulfill with a temporary smelting recipe. 
         if(storage == null)
@@ -295,7 +294,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             if (storage != null)
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if (!storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                if (!storage.canFullFillRecipe(count, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
                 {
                     return null;
                 }
