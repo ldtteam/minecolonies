@@ -73,27 +73,32 @@ public interface IBuildingWorker extends IBuilding
      * Get a fullfillable recipe to execute.
      *
      * @param tempStack the stack which should be crafted.
+     * @param considerReservation if reservations should be considered.
+
      * @return the recipe or null.
      */
-    IRecipeStorage getFirstFullFillableRecipe(ItemStack tempStack);
+    IRecipeStorage getFirstFullFillableRecipe(ItemStack tempStack, final boolean considerReservation);
 
     /**
      * Get a fullfillable recipe to execute, with at least a given count.
      *
      * @param tempStack The temp stack to match.
      * @param count     The count to craft.
+     * @param considerReservation if reservations should be considered.
+
      * @return The recipe or null.
      */
-    IRecipeStorage getFirstFullFillableRecipe(ItemStack tempStack, int count);
+    IRecipeStorage getFirstFullFillableRecipe(ItemStack tempStack, int count, final boolean considerReservation);
 
     /**
      * Get a fullfillable recipe to execute.
      *
      * @param stackPredicate the predicate to check for fullfillment.
      * @param count          the count to produce.
+     * @param considerReservation if reservations should be considered.
      * @return the recipe or null.
      */
-    IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, final int count);
+    IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation);
 
     /**
      * Try to fullfill a recipe.

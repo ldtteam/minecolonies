@@ -245,19 +245,19 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack)
+    public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack, final boolean considerReservation)
     {
-        return getFirstFullFillableRecipe(tempStack, tempStack.getCount());
+        return getFirstFullFillableRecipe(tempStack, tempStack.getCount(), considerReservation);
     }
 
     @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack, int count)
+    public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack, int count, final boolean considerReservation)
     {
-        return getFirstFullFillableRecipe(itemStack -> !itemStack.isEmpty() && itemStack.isItemEqual(tempStack), count * tempStack.getCount());
+        return getFirstFullFillableRecipe(itemStack -> !itemStack.isEmpty() && itemStack.isItemEqual(tempStack), count * tempStack.getCount(), considerReservation);
     }
 
     @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
     {
         for (final IToken<?> token : recipes)
         {
@@ -266,7 +266,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             {
                 final List<IItemHandler> handlers = getHandlers();
                 IRecipeStorage toTest = storage.getRecipeType() instanceof MultiOutputRecipe ? storage.getClassicForMultiOutput(stackPredicate) : storage;
-                if (toTest.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                if (toTest.canFullFillRecipe(count, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
                 {
                     return toTest;
                 }
