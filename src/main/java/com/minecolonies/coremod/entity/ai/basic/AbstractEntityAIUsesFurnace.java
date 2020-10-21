@@ -188,7 +188,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
           req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(COM_MINECOLONIES_REQUESTS_BURNABLE))))
         {
-            worker.getCitizenData().createRequestAsync(new StackList(getOwnBuilding().getAllowedFuel(), COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE, 1));
+            worker.getCitizenData().createRequestAsync(new StackList(getOwnBuilding().getAllowedFuel(), COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE * getOwnBuilding().getFurnaces().size(), 1));
         }
 
         if (amountOfSmeltableInBuilding > 0 && amountOfSmeltableInInv == 0)
