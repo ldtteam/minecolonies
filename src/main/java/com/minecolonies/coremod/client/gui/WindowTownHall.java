@@ -1065,7 +1065,9 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     }
                 }
 
-                rowPane.findPaneOfTypeByID(WORK_LABEL, Label.class).setLabelText(workOrder.get());
+                final String[] split = workOrder.get().split("/");
+
+                rowPane.findPaneOfTypeByID(WORK_LABEL, Label.class).setLabelText(split[split.length - 1]);
                 rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Label.class).setLabelText(claimingCitizen);
                 rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Label.class).setLabelText(Integer.toString(workOrder.getId()));
             }

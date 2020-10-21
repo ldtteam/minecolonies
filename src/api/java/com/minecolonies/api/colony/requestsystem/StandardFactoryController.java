@@ -271,7 +271,7 @@ public final class StandardFactoryController implements IFactoryController
         }
         catch (final IllegalArgumentException e)
         {
-            throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller").initCause(e);
+            throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller: " + className).initCause(e);
         }
 
         try
