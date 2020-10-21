@@ -290,7 +290,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         if(!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),  isCorrectFuel(possibleFuels)) && !InventoryUtils.hasItemInProvider(getOwnBuilding(), isCorrectFuel(possibleFuels)) && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)) && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE )
         {
-            worker.getCitizenData().createRequestAsync(new StackList(possibleFuels, COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE, 1));
+            worker.getCitizenData().createRequestAsync(new StackList(possibleFuels, COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE * getOwnBuilding().getFurnaces().size(), 1));
             return getState();
         }
 
