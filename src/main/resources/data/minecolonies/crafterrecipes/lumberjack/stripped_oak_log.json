@@ -7,6 +7,16 @@
         "count": 1
     }
   ],
+  "alternate-output" : [
+    {
+        "item" : "minecraft:oak_wood",
+        "count": 1
+    },
+    {
+        "item" : "minecraft:stripped_oak_wood",
+        "count": 1
+    }
+  ],
   "result": "minecraft:stripped_oak_log",
   "count": 1,
   "intermediate" : "minecraft:air"

@@ -30,7 +30,7 @@ public class JobArcherTraining extends AbstractJob<EntityAIArcherTraining, JobAr
     @Override
     public String getName()
     {
-        return "ArcherTraining";
+        return "com.minecolonies.coremod.job.archertraining";
     }
 
     @Override

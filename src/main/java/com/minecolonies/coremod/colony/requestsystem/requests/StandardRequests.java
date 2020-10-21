@@ -341,14 +341,7 @@ public final class StandardRequests
         @Override
         public final ITextComponent getShortDisplayString()
         {
-            final IFormattableTextComponent result = new NonSiblingFormattingTextComponent();
-            final IFormattableTextComponent preType = new TranslationTextComponent(getTranslationKey());
-
-            result.append(preType);
-
-            preType.append(getRequest().getStack().getTextComponent());
-
-            return result;
+            return new TranslationTextComponent(TranslationConstants.REQUEST_CRAFTING_DISPLAY, new StringTextComponent(String.valueOf(getRequest().getMinCount())), getRequest().getStack().getTextComponent());
         }
 
         protected abstract String getTranslationKey();

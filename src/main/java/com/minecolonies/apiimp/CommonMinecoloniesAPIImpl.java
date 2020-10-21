@@ -17,6 +17,7 @@ import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.configuration.Configuration;
+import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.research.IGlobalResearchTree;
@@ -54,6 +55,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<ColonyEventTypeRegistryEntry>            colonyEventRegistry;
     private        IForgeRegistry<ColonyEventDescriptionTypeRegistryEntry> colonyEventDescriptionRegistry;
     private static IGlobalResearchTree                                     globalResearchTree     = new GlobalResearchTree();
+    private        IForgeRegistry<RecipeTypeEntry>                         recipeTypeEntryRegistry;
 
     @Override
     @NotNull
@@ -207,6 +209,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                 .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                 .disableSaving().allowModification().setType(ColonyEventDescriptionTypeRegistryEntry.class)
                 .setIDRange(0, Integer.MAX_VALUE - 1).create();
+
+        recipeTypeEntryRegistry = new RegistryBuilder<RecipeTypeEntry>()
+                                    .setName(new ResourceLocation(Constants.MOD_ID, "recipetypeentries"))
+                                    .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "classic"))
+                                    .disableSaving().allowModification().setType(RecipeTypeEntry.class)
+                                    .setIDRange(0, Integer.MAX_VALUE - 1).create();
     }
 
     @Override
@@ -219,6 +227,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public IForgeRegistry<ColonyEventDescriptionTypeRegistryEntry> getColonyEventDescriptionRegistry()
     {
         return colonyEventDescriptionRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<RecipeTypeEntry> getRecipeTypeRegistry()
+    {
+        return recipeTypeEntryRegistry;
     }
 }
 

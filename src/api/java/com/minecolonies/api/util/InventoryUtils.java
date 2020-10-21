@@ -725,7 +725,7 @@ public class InventoryUtils
             totalCount += provider.getTileEntity().getAllContent().getOrDefault(stack, 0);
         }
 
-        if (totalCount > count)
+        if (totalCount > count && count > 0)
         {
             return Integer.MAX_VALUE;
         }
