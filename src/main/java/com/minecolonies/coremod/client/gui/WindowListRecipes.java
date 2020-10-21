@@ -83,7 +83,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
      * Life count.
      */
     private int lifeCount = 0;
-    
+
     /**
      * Constructor for the window when the player wants to see the list of a building's recipes.
      *

@@ -208,16 +208,6 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
 
     }
 
-    /**
-     * Returns the maximum number of recipes a building may have
-     * @param buildingLevel the building level
-     * @return maxinum number of recipes
-     */
-    public static int buildingMaxRecipes(final int buildingLevel)
-    {
-        return (int) (Math.pow(2,buildingLevel) * EXTRA_RECIPE_MULTIPLIER);
-    }
-
     @Override
     protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
     {
