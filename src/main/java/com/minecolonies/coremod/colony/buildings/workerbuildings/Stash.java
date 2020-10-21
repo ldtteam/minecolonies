@@ -52,6 +52,12 @@ public class Stash extends AbstractBuilding implements IRSComponent
     }
 
     @Override
+    public int getRotation()
+    {
+        return 0;
+    }
+
+    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.stash;

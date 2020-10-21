@@ -86,6 +86,12 @@ public class PostBox extends AbstractBuilding implements IRSComponent
         }
     }
 
+    @Override
+    public int getRotation()
+    {
+        return 0;
+    }
+
     /**
      * ClientSide representation of the building.
      */
