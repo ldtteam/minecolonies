@@ -321,7 +321,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        return new SmeltableOre(STACKSIZE);
+        return new SmeltableOre(STACKSIZE * getOwnBuilding().getFurnaces().size());
     }
 
     /**
@@ -361,7 +361,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                 }
                 else
                 {
-                    worker.getCitizenData().createRequestAsync(new StackList(requests, COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE, STACKSIZE, 1));
+                    worker.getCitizenData().createRequestAsync(new StackList(requests, COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE, STACKSIZE * getOwnBuilding().getFurnaces().size(),1));
                 }
             }
             else
