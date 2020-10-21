@@ -924,6 +924,7 @@
   "com.minecolonies.coremod.gui.workerhuts.crafting": "Teach Recipe",
   "com.minecolonies.coremod.gui.recipe.done": "Successfully saved recipe!",
   "com.minecolonies.coremod.gui.workerhuts.listrecipes": "List of Recipes",
+  "com.minecolonies.coremod.gui.workerhuts.recipestatus": "%s of %s",
   "com.minecolonies.coremod.resolvers.crafter.private": "Crafting",
   "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingson": "Replant on",
   "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingsoff": "Replant off",
