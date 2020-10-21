@@ -468,7 +468,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         final List<IRequest<? extends Delivery>> taskList = job.getTaskListWithSameDestination((IRequest<? extends Delivery>) currentTask);
         final List<ItemStack> alreadyInInv = new ArrayList<>();
-        Delivery nextPickUp = null;
+        IRequest<? extends Delivery> nextPickUp = null;
 
         int parallelDeliveryCount = 0;
         for (final IRequest<? extends Delivery> task : taskList)
@@ -487,7 +487,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
             if (totalCount < hasCount + task.getRequest().getStack().getCount())
             {
-                nextPickUp = task.getRequest();
+                nextPickUp = task;
                 break;
             }
             else
@@ -496,13 +496,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
 
-        if (nextPickUp == null || parallelDeliveryCount > 1 + (getSecondarySkillLevel() / 5.0))
+        if (nextPickUp == null || parallelDeliveryCount > 1 + (getSecondarySkillLevel() / 5))
         {
-            job.setParallelDeliveries(parallelDeliveryCount - 1);
             return DELIVERY;
         }
 
-        final ILocation location = nextPickUp.getStart();
+        final ILocation location = nextPickUp.getRequest().getStart();
 
         if (!location.isReachableFromLocation(worker.getLocation()))
         {
@@ -530,18 +529,20 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockState().getBlock());
         }
 
-        if (gatherIfInTileEntity(tileEntity, nextPickUp.getStack()))
+        job.addConcurrentDelivery(nextPickUp.getId());
+        if (gatherIfInTileEntity(tileEntity, nextPickUp.getRequest().getStack()))
         {
             return PREPARE_DELIVERY;
         }
 
         if (parallelDeliveryCount > 1)
         {
-            job.setParallelDeliveries(parallelDeliveryCount - 1);
+            job.removeConcurrentDelivery(nextPickUp.getId());
             return DELIVERY;
         }
 
         job.finishRequest(false);
+        job.removeConcurrentDelivery(nextPickUp.getId());
         return START_WORKING;
     }
 

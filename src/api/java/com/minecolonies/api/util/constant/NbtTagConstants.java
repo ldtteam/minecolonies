@@ -272,6 +272,11 @@ public final class NbtTagConstants
      */
     public static final String TAG_LIST = "List";
 
+    /**
+     * Tag for the ongoing list of deliveries.
+     */
+    public static final String TAG_ONGOING_LIST = "OngoingList";
+
     public static final String TAG_ASSIGNED_LIST = "AssignedList";
 
     /**
