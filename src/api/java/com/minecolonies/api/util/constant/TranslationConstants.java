@@ -489,6 +489,8 @@ public final class TranslationConstants
     public static final String NOT_RESOLVED = "com.minecolonies.coremod.notresolved";
     @NonNls
     public static final String REQUEST_CRAFTING_DISPLAY = "com.minecolonies.coremod.request.crafting.display";
+    @NonNls
+    public static final String RECIPE_STATUS="com.minecolonies.coremod.gui.workerhuts.recipestatus";
 
     private TranslationConstants()
     {

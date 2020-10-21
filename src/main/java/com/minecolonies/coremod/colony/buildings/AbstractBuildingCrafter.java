@@ -189,11 +189,6 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
         return true;
     }
 
-    @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-        return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
-    }
 
     /**
      * Crafter building View.
@@ -211,37 +206,6 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
             super(c, l);
         }
 
-        /**
-         * Check if an additional recipe can be added.
-         *
-         * @return true if so.
-         */
-        public boolean canRecipeBeAdded()
-        {
-            return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
-        }
-    }
-
-    /**
-     * Check if an additional recipe can be added.
-     *
-     * @param learnedRecipes the learned recipes.
-     * @param buildingLevel  the building level.
-     * @return true if so.
-     */
-    public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)
-    {
-        return (Math.pow(2, buildingLevel) * EXTRA_RECIPE_MULTIPLIER) >= (learnedRecipes + 1);
-    }
-
-    /**
-     * Returns the maximum number of recipes a building may have
-     * @param buildingLevel the building level
-     * @return maxinum number of recipes
-     */
-    public static int buildingMaxRecipes(final int buildingLevel)
-    {
-        return (int) (Math.pow(2,buildingLevel) * EXTRA_RECIPE_MULTIPLIER);
     }
 
     @Override

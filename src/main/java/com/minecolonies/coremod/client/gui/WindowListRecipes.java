@@ -12,6 +12,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -169,7 +170,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
         {
             lifeCount++;
         }
-        recipeStatus.setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.recipestatus",building.getRecipes().size(),AbstractBuildingCrafter.buildingMaxRecipes(building.getBuildingLevel())));
+        recipeStatus.setLabelText(LanguageHandler.format(TranslationConstants.RECIPE_STATUS,building.getRecipes().size(),building.getMaxRecipes()));
         window.findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class).refreshElementPanes();
     }
 
