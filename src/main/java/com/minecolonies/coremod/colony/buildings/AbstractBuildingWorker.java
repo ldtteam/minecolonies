@@ -446,13 +446,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     private boolean hasSpaceForMoreRecipes()
     {
 
-        return maxRecipes() > getRecipes().size() + 1;
+        return getMaxRecipes() > getRecipes().size() + 1;
     }
 
     /**
      * Gets the maximum number of recipes a building may have at the current time.
      */
-    private int maxRecipes() {
+    private int getMaxRecipes()
+    {
         double increase = 1;
         final MultiplierModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(RECIPES, MultiplierModifierResearchEffect.class);
         if (effect != null)
@@ -739,7 +740,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         buf.writeInt(getMaxInhabitants());
         buf.writeBoolean(isRecipeAlterationAllowed());
         buf.writeString(jobDisplayName);
-        buf.writeInt(maxRecipes());
+        buf.writeInt(getMaxRecipes());
     }
 
     @Override
@@ -1124,8 +1125,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             return getMaxRecipes() > getRecipes().size() + 1;
         }
-
-        public int getMaxRecipes() {
+        
+        public int getMaxRecipes()
+        {
             return maxRecipes;
         }
 
