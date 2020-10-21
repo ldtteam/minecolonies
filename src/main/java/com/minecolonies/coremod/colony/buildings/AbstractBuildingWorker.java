@@ -445,13 +445,22 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     private boolean hasSpaceForMoreRecipes()
     {
+
+        return getMaxRecipes() > getRecipes().size() + 1;
+    }
+
+    /**
+     * Gets the maximum number of recipes a building may have at the current time.
+     */
+    private int getMaxRecipes()
+    {
         double increase = 1;
         final MultiplierModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(RECIPES, MultiplierModifierResearchEffect.class);
         if (effect != null)
         {
             increase = 1 + effect.getEffect();
         }
-        return Math.pow(2, getBuildingLevel()) * increase > getRecipes().size() + 1;
+        return (int) (Math.pow(2, getBuildingLevel()) * increase);
     }
 
     /**
@@ -729,9 +738,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         buf.writeInt(getPrimarySkill().ordinal());
         buf.writeInt(getSecondarySkill().ordinal());
         buf.writeInt(getMaxInhabitants());
-        buf.writeBoolean(hasSpaceForMoreRecipes());
         buf.writeBoolean(isRecipeAlterationAllowed());
         buf.writeString(jobDisplayName);
+        buf.writeInt(getMaxRecipes());
     }
 
     @Override
@@ -982,9 +991,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         private Skill secondary = Skill.Intelligence;
 
         /**
-         * If the building can add more recipes.
+         * The maximum number of recipes this building can have currently
          */
-        private boolean canAddMoreRecipes;
+        private int maxRecipes;
 
         /**
          * If the building allows altering of recipes
@@ -1048,9 +1057,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             this.primary = Skill.values()[buf.readInt()];
             this.secondary = Skill.values()[buf.readInt()];
             this.maxInhabitants = buf.readInt();
-            this.canAddMoreRecipes = buf.readBoolean();
             this.isRecipeAlterationAllowed = buf.readBoolean();
             this.jobDisplayName = buf.readString();
+            this.maxRecipes=buf.readInt();
         }
 
         @Override
@@ -1114,7 +1123,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         @Override
         public boolean canRecipeBeAdded()
         {
-            return canAddMoreRecipes;
+            return getMaxRecipes() > getRecipes().size() + 1;
+        }
+        
+        public int getMaxRecipes()
+        {
+            return maxRecipes;
         }
 
         @Override

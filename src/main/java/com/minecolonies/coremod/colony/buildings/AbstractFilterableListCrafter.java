@@ -134,11 +134,6 @@ public abstract class AbstractFilterableListCrafter extends AbstractFilterableLi
         return true;
     }
 
-    @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-        return AbstractFilterableListCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
-    }
 
     @Override
     public Skill getCraftSpeedSkill()
@@ -162,27 +157,6 @@ public abstract class AbstractFilterableListCrafter extends AbstractFilterableLi
             super(c, l);
         }
 
-        /**
-         * Check if an additional recipe can be added.
-         *
-         * @return true if so.
-         */
-        @Override
-        public boolean canRecipeBeAdded()
-        {
-            return AbstractFilterableListCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
-        }
     }
 
-    /**
-     * Check if an additional recipe can be added.
-     *
-     * @param learnedRecipes the learned recipes.
-     * @param buildingLevel  the building level.
-     * @return true if so.
-     */
-    public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)
-    {
-        return (Math.pow(2, buildingLevel) * EXTRA_RECIPE_MULTIPLIER) >= (learnedRecipes + 1);
-    }
 }
