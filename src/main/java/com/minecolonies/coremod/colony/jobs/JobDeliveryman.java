@@ -60,7 +60,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     private boolean active = false;
 
     /**
-     * How many deliveries are ongoing in parallel.
+     * Old field for backwards compatibility.
      */
     private int ongoingDeliveries;
 
@@ -126,7 +126,6 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         final CompoundNBT compound = super.serializeNBT();
         compound.put(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
         compound.putBoolean(TAG_ACTIVE, this.active);
-        compound.putInt(TAG_ONGOING, this.ongoingDeliveries);
         return compound;
     }
 
@@ -258,14 +257,30 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         else if (request.getRequest() instanceof Delivery)
         {
             final List<IRequest<? extends Delivery>> taskList = getTaskListWithSameDestination((IRequest<? extends Delivery>) request);
-            for (int i = 0; i < Math.max(1, Math.min(ongoingDeliveries, taskList.size())); i++)
+            if (ongoingDeliveries != 0)
             {
-                final IRequest<? extends Delivery> req = taskList.get(i);
-                if (req.getState() == RequestState.IN_PROGRESS)
+                for (int i = 0; i < Math.max(1, Math.min(ongoingDeliveries, taskList.size())); i++)
                 {
-                    getColony().getRequestManager().updateRequestState(req.getId(), successful ? RequestState.RESOLVED : RequestState.FAILED);
+                    final IRequest<? extends Delivery> req = taskList.get(i);
+                    if (req.getState() == RequestState.IN_PROGRESS)
+                    {
+                        getColony().getRequestManager().updateRequestState(req.getId(), successful ? RequestState.RESOLVED : RequestState.FAILED);
+                    }
+                    getTaskQueueFromDataStore().remove(req.getId());
                 }
-                getTaskQueueFromDataStore().remove(req.getId());
+            }
+            else
+            {
+                for (final IToken<?> token : new ArrayList<>(getDataStore().getOngoingDeliveries()))
+                {
+                    final IRequest<?> req = getColony().getRequestManager().getRequestForToken(token);
+                    if (req != null && req.getState() == RequestState.IN_PROGRESS)
+                    {
+                        getColony().getRequestManager().updateRequestState(req.getId(), successful ? RequestState.RESOLVED : RequestState.FAILED);
+                    }
+                    getTaskQueueFromDataStore().remove(token);
+                    getDataStore().getOngoingDeliveries().remove(token);
+                }
             }
         }
         else if (request.getRequest() instanceof Pickup)
@@ -662,12 +677,20 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     }
 
     /**
-     * Set how many parallel deliveries are ongoing.
-     *
-     * @param i the quantity.
+     * Add a concurrent delivery that is going on.
+     * @param requestToken the token of the request.
      */
-    public void setParallelDeliveries(final int i)
+    public void addConcurrentDelivery(final IToken<?> requestToken)
     {
-        this.ongoingDeliveries = i;
+        getDataStore().getOngoingDeliveries().add(requestToken);
+    }
+
+    /**
+     * Remove a concurrent delivery that is going on.
+     * @param requestToken the token of the request.
+     */
+    public void removeConcurrentDelivery(final IToken<?> requestToken)
+    {
+        getDataStore().getOngoingDeliveries().remove(requestToken);
     }
 }

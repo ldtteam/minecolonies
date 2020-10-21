@@ -391,8 +391,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBu
 
         for (final BlockPos pos : bedList)
         {
-            BlockState state = world.getBlockState(pos);
-            state = state.getBlock().getExtendedState(state, world, pos);
+            final BlockState state = world.getBlockState(pos);
             if (state.getBlock() instanceof BedBlock
                   && state.get(BedBlock.OCCUPIED)
                   && state.get(BedBlock.PART).equals(BedPart.HEAD))
