@@ -21,7 +21,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
@@ -45,6 +46,11 @@ public class ContainerCrafting extends Container
      * The crafting result slot.
      */
     private final Slot craftResultSlot;
+
+    /**
+     * The secondary outputs
+     */
+    private final List<ItemStack> remainingItems;
 
     /**
      * Boolean variable defining if complete grid or not 3x3(true), 2x2(false).
@@ -163,6 +169,9 @@ public class ContainerCrafting extends Container
               PLAYER_INVENTORY_HOTBAR_OFFSET_CRAFTING
             ));
         }
+
+        
+        remainingItems = new ArrayList<>();
 
         this.onCraftMatrixChanged(this.craftMatrix);
     }
@@ -364,5 +373,27 @@ public class ContainerCrafting extends Container
     public BlockPos getPos()
     {
         return pos;
+    }
+
+    /**
+     * Get for the remaining items. 
+     * @return
+     */
+    public List<ItemStack> getRemainingItems()
+    {
+        final Optional<ICraftingRecipe> iRecipe = this.world.getRecipeManager().getRecipe(IRecipeType.CRAFTING, craftMatrix, world);
+        if (iRecipe.isPresent())
+        {
+            List<ItemStack> ri = iRecipe.get().getRemainingItems(this.craftMatrix);
+            remainingItems.clear();
+            for(int i = 0; i< ri.size(); i++)
+            {
+                if(!ri.get(i).isEmpty())
+                {
+                    remainingItems.add(ri.get(i));
+                }
+            }
+        }
+        return remainingItems;
     }
 }

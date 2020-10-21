@@ -23,7 +23,7 @@ public class CustomRecipeManager
     /**
      * The map of loaded recipes
      */
-    private HashMap<String, HashMap<ResourceLocation, CustomRecipe>> recipeMap = new HashMap<>();
+    private HashMap<String, Map<ResourceLocation, CustomRecipe>> recipeMap = new HashMap<>();
 
     /**
      * The recipes that are marked for removal after loading all resource packs
@@ -93,7 +93,7 @@ public class CustomRecipeManager
         {
             for(ResourceLocation toRemove: removedRecipes)
             {
-                final Optional<HashMap<ResourceLocation, CustomRecipe>> crafterMap = recipeMap.entrySet().stream().map(r -> r.getValue()).filter(r1 -> r1.keySet().contains(toRemove)).findFirst();
+                final Optional<Map<ResourceLocation, CustomRecipe>> crafterMap = recipeMap.entrySet().stream().map(r -> r.getValue()).filter(r1 -> r1.keySet().contains(toRemove)).findFirst();
                 if(crafterMap.isPresent())
                 {
                     crafterMap.get().remove(toRemove);
@@ -107,6 +107,14 @@ public class CustomRecipeManager
             return recipeMap.get(crafter).entrySet().stream().map(x -> x.getValue()).collect(Collectors.toSet());
         }
         return new HashSet<>();
+    }
+
+    /**
+     * The complete list of custom recipes, by crafter. 
+     */
+    public Map<String, Map<ResourceLocation, CustomRecipe>> getAllRecipes()
+    {
+        return recipeMap;
     }
     
 }
