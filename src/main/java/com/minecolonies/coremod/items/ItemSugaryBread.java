@@ -44,11 +44,7 @@ public class ItemSugaryBread extends AbstractItemMinecolonies
         {
             entityLiving.removePotionEffect(Effects.POISON);
         }
-
-        if (entityLiving instanceof PlayerEntity && !((PlayerEntity)entityLiving).abilities.isCreativeMode) {
-           stack.shrink(1);
-        }
   
-        return stack;
+        return super.onItemUseFinish(stack, worldIn, entityLiving);
      }    
 }

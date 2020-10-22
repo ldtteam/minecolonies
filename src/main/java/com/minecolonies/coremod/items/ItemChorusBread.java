@@ -49,10 +49,6 @@ public class ItemChorusBread extends AbstractItemMinecolonies
             TeleportHelper.surfaceTeleport((ServerPlayerEntity)entityLiving);
         }
 
-        if (entityLiving instanceof PlayerEntity && !((PlayerEntity)entityLiving).abilities.isCreativeMode) {
-           stack.shrink(1);
-        }
-  
-        return stack;
+        return super.onItemUseFinish(stack, worldIn, entityLiving);
      }    
 }
