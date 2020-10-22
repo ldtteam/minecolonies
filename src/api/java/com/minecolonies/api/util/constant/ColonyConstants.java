@@ -1,7 +1,10 @@
 package com.minecolonies.api.util.constant;
 
 import com.minecolonies.api.colony.IColony;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.server.TicketType;
+
+import java.util.Comparator;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
@@ -10,6 +13,16 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
  */
 public final class ColonyConstants
 {
+    /**
+     * Constant string id of our ticket type.
+     */
+    private static final String TICKET_ID = Constants.MOD_ID + ":" + "initial_chunkload";
+
+    /**
+     * Specific ticket type for minecolonies tickets.
+     */
+    public static final TicketType<ChunkPos> KEEP_LOADED_TYPE = TicketType.create(TICKET_ID, Comparator.comparingLong(ChunkPos::asLong));
+
     //  Settings
     public static final int CLEANUP_TICK_INCREMENT = 5 * TICKS_SECOND;
 
@@ -81,7 +94,6 @@ public final class ColonyConstants
     /**
      * Barbarian Constants.
      */
-    public static final ResourceLocation SITTING_ENTITY               = new ResourceLocation(Constants.MOD_ID, "SITTING_ENTITY");
     public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.30;
     public static final double           CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
     public static final int              MIN_CITIZENS_FOR_RAID        = 5;
