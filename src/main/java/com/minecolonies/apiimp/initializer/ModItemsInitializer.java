@@ -76,6 +76,12 @@ public final class ModItemsInitializer
         ModItems.cakeBatter = new ItemCakeBatter(new Item.Properties());
         ModItems.rawPumpkinPie = new ItemRawPumpkinPie(new Item.Properties());
 
+        ModItems.milkyBread = new ItemMilkyBread(new Item.Properties());
+        ModItems.sugaryBread = new ItemSugaryBread(new Item.Properties());
+        ModItems.goldenBread = new ItemGoldenBread(new Item.Properties());
+        ModItems.chorusBread= new ItemChorusBread(new Item.Properties());
+
+
         ModItems.santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, EquipmentSlotType.HEAD, new Item.Properties());
         ModItems.irongate = new ItemGate(IRON_GATE, ModBlocks.blockIronGate, ModCreativeTabs.MINECOLONIES, new Item.Properties());
         ModItems.woodgate = new ItemGate(WOODEN_GATE, ModBlocks.blockWoodenGate, ModCreativeTabs.MINECOLONIES, new Item.Properties());
@@ -112,6 +118,11 @@ public final class ModItemsInitializer
         registry.register(ModItems.cookieDough);
         registry.register(ModItems.cakeBatter);
         registry.register(ModItems.rawPumpkinPie);
+
+        registry.register(ModItems.milkyBread);
+        registry.register(ModItems.sugaryBread);
+        registry.register(ModItems.goldenBread);
+        registry.register(ModItems.chorusBread);
 
         registry.register(ModItems.pirateHelmet_1);
         registry.register(ModItems.pirateChest_1);

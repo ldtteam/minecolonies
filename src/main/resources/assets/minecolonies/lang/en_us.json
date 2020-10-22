@@ -324,6 +324,12 @@
   "item.minecolonies.cake_batter": "Cake Batter",
   "item.minecolonies.raw_pumpkin_pie": "Raw Pumpkin Pie",
 
+  "item.minecolonies.milky_bread": "Milk-Infused Bread",
+  "item.minecolonies.sugary_bread": "Sweet Bread",
+  "item.minecolonies.golden_bread": "Golden Bread",
+  "item.minecolonies.chorus_bread": "Chorus Fruit Bread",
+
+
   "entity.worker.inventoryfullchestfull": "Please make space in my chests/racks. I am not able to dump my inventory.",
 
   "entity.builder.messagebuildstart": " started building %s.",
