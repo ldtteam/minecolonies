@@ -51,7 +51,7 @@ public class ItemChorusBread extends AbstractItemMinecolonies
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving)
     {
-        if (!worldIn.isRemote && entityLiving instanceof ServerPlayerEntity && worldIn.getDimensionType().getEffects().equals(DimensionType.OVERWORLD.getLocation()))
+        if (!worldIn.isRemote && entityLiving instanceof ServerPlayerEntity && worldIn.func_230315_m_().func_242725_p().equals(DimensionType.OVERWORLD.func_240901_a_()))
         {
             TeleportHelper.surfaceTeleport((ServerPlayerEntity)entityLiving);
         }
