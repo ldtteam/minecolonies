@@ -1815,6 +1815,11 @@
   "com.minecolonies.coremod.finished": "Finished!",
   "com.minecolonies.coremod.dist.blocks": "%d blocks",
   "com.minecolonies.coremod.notresolved": "Awaiting Resolvers!",
-  "com.minecolonies.coremod.request.crafting.display": "%d * Recipe:%s"
+  "com.minecolonies.coremod.request.crafting.display": "%d * Recipe:%s",
 
+  "com.minecolonies.coremod.item.sugary.bread.gui": "Boosts speed and removes poison effect",
+  "com.minecolonies.coremod.item.milky.bread.gui":  "Removes potion effects",
+  "com.minecolonies.coremod.item.golden.bread.gui": "Instantly heals 2 hearts",
+  "com.minecolonies.coremod.item.chorus.bread.gui": "Teleports you to the surface",
+  "com.minecolonies.coremod.item.bread.available.gui": "Only available from a MineColonies Bakery"
 }
