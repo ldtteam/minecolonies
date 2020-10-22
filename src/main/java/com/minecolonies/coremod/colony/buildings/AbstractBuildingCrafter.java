@@ -37,10 +37,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
  */
 public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
-    /**
-     * Extra amount of recipes the crafters can learn.
-     */
-    private static final int EXTRA_RECIPE_MULTIPLIER = 10;
+
 
     /**
      * Instantiates a new crafter building.
@@ -188,7 +185,6 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
     {
         return true;
     }
-
 
     /**
      * Crafter building View.
