@@ -21,7 +21,6 @@ public class ItemGoldenBread extends AbstractItemMinecolonies
     private static Food goldenBread = (new Food.Builder())
                                         .hunger(5)
                                         .saturation(0.6F)
-                                        //.effect(() -> new EffectInstance(Effects.REGENERATION, 100, 1), 1.0F)
                                         .build(); 
 
     /**
