@@ -284,6 +284,10 @@ public class ResearchInitializer
         whatyaneed.addChild(enhanced_gates1);
         enhanced_gates1.addChild(enhanced_gates2);
 
+        final GlobalResearch knowtheend = new GlobalResearch("knowtheend", "technology", "Know the End?", 3, new UnlockAbilityResearchEffect(END_KNOWLEGE, true));
+        knowtheend.setRequirement(new BuildingResearchRequirement(3, "bakery"));
+        theflintstones.addChild(knowtheend);
+
         researchTree.addResearch(pavetheroad.getBranch(), pavetheroad);
         researchTree.addResearch(gildedhammer.getBranch(), gildedhammer);
         researchTree.addResearch(hotboots.getBranch(), hotboots);
@@ -352,6 +356,8 @@ public class ResearchInitializer
         researchTree.addResearch(compost.getBranch(), compost);
         researchTree.addResearch(fertilizer.getBranch(), fertilizer);
         researchTree.addResearch(magicCompost.getBranch(), magicCompost);
+
+        researchTree.addResearch(knowtheend.getBranch(), knowtheend);
     }
 
     private static void buildCivilianTree(final IGlobalResearchTree researchTree)

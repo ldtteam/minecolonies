@@ -48,6 +48,11 @@ public final class ModItems
     public static Item cakeBatter;
     public static Item rawPumpkinPie;
 
+    public static Item milkyBread;
+    public static Item sugaryBread;
+    public static Item goldenBread;
+    public static Item chorusBread;
+
     /**
      * Private constructor to hide the implicit public one.
      */
