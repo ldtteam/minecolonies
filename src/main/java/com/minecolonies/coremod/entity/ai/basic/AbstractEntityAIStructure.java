@@ -239,6 +239,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     }
 
     /**
+     * Checks for blocks that need to be treated as deco
+     */
+    protected boolean isDecoItem(Block block)
+    {
+        return block instanceof CoralBlock || block instanceof LanternBlock || block instanceof BannerBlock || block instanceof WallSignBlock;
+    }
+
+    /**
      * The Structure step to execute the actual placement actions etc.
      *
      * @return the next step to go to.
@@ -286,12 +294,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || info.getBlockInfo()
+                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || isDecoItem(info.getBlockInfo()
                                                                                                                                                   .getState()
-                                                                                                                                                  .getBlock() instanceof CoralBlock
-                                                                                                                                             || info.getBlockInfo()
-                                                                                                                                                  .getState()
-                                                                                                                                                  .getBlock() instanceof LanternBlock)),
+                                                                                                                                                  .getBlock()))),
                   false);
                 break;
             case CLEAR_WATER:
@@ -318,12 +323,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !(info.getBlockInfo()
+                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !isDecoItem(info.getBlockInfo()
                                                                                                                                                    .getState()
-                                                                                                                                                   .getBlock() instanceof CoralBlock)
-                                                                                                                                            && !(info.getBlockInfo()
-                                                                                                                                                    .getState()
-                                                                                                                                                    .getBlock() instanceof LanternBlock))),
+                                                                                                                                                   .getBlock()))),
                   false);
                 break;
             case SPAWN:
