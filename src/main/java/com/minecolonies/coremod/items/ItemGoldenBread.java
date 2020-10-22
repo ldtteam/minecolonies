@@ -17,7 +17,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import java.util.List;
 
 /**
- * Class handling Golden Bread.
+ * Golden Bread, made by the Baker. Heals 2 hearts 
  */
 public class ItemGoldenBread extends AbstractItemMinecolonies
 {

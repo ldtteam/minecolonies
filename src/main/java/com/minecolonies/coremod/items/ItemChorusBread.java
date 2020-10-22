@@ -21,7 +21,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import java.util.List;
 
 /**
- * Class handling Chorus Bread.
+ * Chorus Bread, made by the baker. Teleports user to surface.
  */
 public class ItemChorusBread extends AbstractItemMinecolonies
 {

@@ -18,7 +18,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import java.util.List;
 
 /**
- * Class handling Milk Bread.
+ * Milk Bread item, made by the baker, with milk bucket effect
  */
 public class ItemMilkyBread extends AbstractItemMinecolonies
 {

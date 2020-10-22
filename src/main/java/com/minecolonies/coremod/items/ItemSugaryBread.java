@@ -19,7 +19,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import java.util.List;
 
 /**
- * Class handling Milk Bread.
+ * Sweet Bread, made by the baker. Adds speed, removes poison
  */
 public class ItemSugaryBread extends AbstractItemMinecolonies
 {
