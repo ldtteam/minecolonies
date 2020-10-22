@@ -366,6 +366,8 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> arrowpierce;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> knockbackaoe;
 
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> knowtheend;
+
     /**
      * Builds common configuration.
      *
@@ -1388,6 +1390,11 @@ public class CommonConfiguration extends AbstractConfiguration
         this.pavetheroad = defineList(builder, "pavetheroad",
           Collections.singletonList("minecraft:white_concrete*32"),
           s -> s instanceof String);
+
+        this.knowtheend = defineList(builder, "knowtheend",
+          Arrays.asList("minecraft:chorus_fruit*64"),
+          s -> s instanceof String);
+
 
         finishCategory(builder);
     }
