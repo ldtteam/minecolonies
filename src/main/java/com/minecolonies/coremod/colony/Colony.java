@@ -14,7 +14,6 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
-import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
@@ -54,6 +53,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -473,7 +473,8 @@ public class Colony implements IColony
                         final int chunkZ = ChunkPos.getZ(pending);
                         if (world instanceof ServerWorld)
                         {
-                            ((ServerWorld) world).forceChunk(chunkX, chunkZ, true);
+                            final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
+                            ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 31, pos);
                         }
                     }
                     return;
@@ -491,7 +492,8 @@ public class Colony implements IColony
                         final int chunkZ = ChunkPos.getZ(chunkPos);
                         if (world instanceof ServerWorld)
                         {
-                            ((ServerWorld) world).forceChunk(chunkX, chunkZ, false);
+                            final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
+                            ((ServerChunkProvider) world.getChunkProvider()).releaseTicket(KEEP_LOADED_TYPE, pos, 31, pos);
                         }
                     }
                 }
@@ -1561,7 +1563,8 @@ public class Colony implements IColony
                 final int chunkZ = ChunkPos.getZ(chunkPos);
                 if (world instanceof ServerWorld)
                 {
-                    ((ServerWorld) world).forceChunk(chunkX, chunkZ, true);
+                    final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
+                    ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 31, pos);
                 }
             }
             this.forceLoadTimer = CHUNK_UNLOAD_DELAY;
