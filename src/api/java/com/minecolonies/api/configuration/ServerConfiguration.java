@@ -367,6 +367,8 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> arrowpierce;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> knockbackaoe;
 
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> knowtheend;
+
     /**
      * Builds server configuration.
      *
@@ -1370,6 +1372,10 @@ public class ServerConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         knockbackaoe = defineList(builder, "knockbackaoe",
           Arrays.asList("minecraft:redstone*64", "minecraft:gold_ingot*64", "minecraft:lapis_lazuli*128"),
+          s -> s instanceof String);
+
+        this.knowtheend = defineList(builder, "knowtheend",
+          Arrays.asList("minecraft:chorus_fruit*64"),
           s -> s instanceof String);
 
         this.gildedhammer = defineList(builder, "gildedhammer",
