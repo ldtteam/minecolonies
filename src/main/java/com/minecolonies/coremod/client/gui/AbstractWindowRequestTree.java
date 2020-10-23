@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest.MISSING;
 
 /**
  * Window for the request trees.
@@ -321,9 +322,12 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 else
                 {
                     exampleStackDisplay.setVisible(false);
-                    logo.setVisible(true);
-                    logo.setImage(request.getDisplayIcon());
-                    logo.setHoverToolTip(request.getResolverToolTip(colony));
+                    if (!request.getDisplayIcon().equals(MISSING))
+                    {
+                        logo.setVisible(true);
+                        logo.setImage(request.getDisplayIcon());
+                        logo.setHoverToolTip(request.getResolverToolTip(colony));
+                    }
                 }
 
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
