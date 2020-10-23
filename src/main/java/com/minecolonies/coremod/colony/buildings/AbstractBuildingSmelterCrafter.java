@@ -47,10 +47,6 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
  */
 public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFurnaceUser implements IBuildingPublicCrafter
 {
-    /**
-     * Extra amount of recipes the crafters can learn.
-     */
-    private static final int EXTRA_RECIPE_MULTIPLIER = 10;
 
     /**
      * Instantiates a new crafter building.
@@ -125,12 +121,6 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-        return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
-    }
-
-    @Override
     public Skill getCraftSpeedSkill()
     {
         return getSecondarySkill();
@@ -158,6 +148,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
         }, getID());
     }
 
+
     /**
      * Crafter building View.
      */
@@ -174,26 +165,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
             super(c, l);
         }
 
-        /**
-         * Check if an additional recipe can be added.
-         *
-         * @return true if so.
-         */
-        public boolean canRecipeBeAdded()
-        {
-            return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
-        }
     }
 
-    /**
-     * Check if an additional recipe can be added.
-     *
-     * @param learnedRecipes the learned recipes.
-     * @param buildingLevel  the building level.
-     * @return true if so.
-     */
-    public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)
-    {
-        return (Math.pow(2, buildingLevel) * EXTRA_RECIPE_MULTIPLIER) >= (learnedRecipes + 1);
-    }
+
 }

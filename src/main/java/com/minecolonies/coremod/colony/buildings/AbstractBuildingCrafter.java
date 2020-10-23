@@ -37,10 +37,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
  */
 public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
-    /**
-     * Extra amount of recipes the crafters can learn.
-     */
-    private static final int EXTRA_RECIPE_MULTIPLIER = 10;
+
 
     /**
      * Instantiates a new crafter building.
@@ -189,12 +186,6 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
         return true;
     }
 
-    @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-        return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
-    }
-
     /**
      * Crafter building View.
      */
@@ -211,27 +202,6 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
             super(c, l);
         }
 
-        /**
-         * Check if an additional recipe can be added.
-         *
-         * @return true if so.
-         */
-        public boolean canRecipeBeAdded()
-        {
-            return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
-        }
-    }
-
-    /**
-     * Check if an additional recipe can be added.
-     *
-     * @param learnedRecipes the learned recipes.
-     * @param buildingLevel  the building level.
-     * @return true if so.
-     */
-    public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)
-    {
-        return (Math.pow(2, buildingLevel) * EXTRA_RECIPE_MULTIPLIER) >= (learnedRecipes + 1);
     }
 
     @Override

@@ -3,7 +3,8 @@
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
 
     <label size="100% 11" pos="0 50" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.workerhuts.listRecipes)"/>
-    <list id="recipes" size="70% 120" pos="60 70" align="TOP_MIDDLE">
+    <label size="100% 11" pos="0 70" textalign="TOP_MIDDLE" color="white" id="recipestatus" />
+    <list id="recipes" size="70% 100" pos="60 90" align="TOP_MIDDLE">
         <view size="70% 50">
             <itemicon id="output" size="16 16" pos="80 5"/>
             <box id="2x2" size="100% 30" linewidth="2">

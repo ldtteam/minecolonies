@@ -103,6 +103,8 @@ public final class ResearchConstants
     public static final String CRUSHING_11 = "1:1 Crushing";
     public static final String FIRE_RES    = "Miner Fire Res";
 
+    public static final String END_KNOWLEGE = "Knowledge of The End";
+
     /**
      * Private constructor to hide implicit public one.
      */

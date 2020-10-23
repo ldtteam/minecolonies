@@ -324,6 +324,12 @@
   "item.minecolonies.cake_batter": "Cake Batter",
   "item.minecolonies.raw_pumpkin_pie": "Raw Pumpkin Pie",
 
+  "item.minecolonies.milky_bread": "Milk-Infused Bread",
+  "item.minecolonies.sugary_bread": "Sweet Bread",
+  "item.minecolonies.golden_bread": "Golden Bread",
+  "item.minecolonies.chorus_bread": "Chorus Fruit Bread",
+
+
   "entity.worker.inventoryfullchestfull": "Please make space in my chests/racks. I am not able to dump my inventory.",
 
   "entity.builder.messagebuildstart": " started building %s.",
@@ -923,6 +929,7 @@
   "com.minecolonies.coremod.gui.workerhuts.crafting": "Teach Recipe",
   "com.minecolonies.coremod.gui.recipe.done": "Successfully saved recipe!",
   "com.minecolonies.coremod.gui.workerhuts.listrecipes": "List of Recipes",
+  "com.minecolonies.coremod.gui.workerhuts.recipestatus": "%s of %s",
   "com.minecolonies.coremod.resolvers.crafter.private": "Crafting",
   "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingson": "Replant on",
   "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingsoff": "Replant off",
@@ -1808,6 +1815,11 @@
   "com.minecolonies.coremod.finished": "Finished!",
   "com.minecolonies.coremod.dist.blocks": "%d blocks",
   "com.minecolonies.coremod.notresolved": "Awaiting Resolvers!",
-  "com.minecolonies.coremod.request.crafting.display": "%d * Recipe:%s"
+  "com.minecolonies.coremod.request.crafting.display": "%d * Recipe:%s",
 
+  "com.minecolonies.coremod.item.sugary.bread.gui": "Boosts speed and removes poison effect",
+  "com.minecolonies.coremod.item.milky.bread.gui":  "Removes potion effects",
+  "com.minecolonies.coremod.item.golden.bread.gui": "Instantly heals 2 hearts",
+  "com.minecolonies.coremod.item.chorus.bread.gui": "Teleports you to the surface",
+  "com.minecolonies.coremod.item.bread.available.gui": "Only available from a MineColonies Bakery"
 }
