@@ -86,12 +86,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     /**
      * Tagname for decoration blocks
      */
-    private final String DECOBLOCK_TAG = "decoblocks";
+    private static String DECOBLOCK_TAG = "decoblocks";
 
     /**
      * Tag of all the blocks that need to be in the deco phase of the builder
      */
-    protected final Tag<Block> decoItems;
+    protected static Tag<Block> decoItems;
 
     /**
      * Predicate defining things we don't want the builders to ever touch.
@@ -161,7 +161,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
           new AITarget(COMPLETE_BUILD, this::completeBuild, STANDARD_DELAY)
         );
 
-        decoItems = BlockTags.getCollection().getOrCreate(new ResourceLocation(MOD_ID, DECOBLOCK_TAG));
     }
 
     /**
@@ -256,8 +255,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     /**
      * Checks for blocks that need to be treated as deco
      */
-    protected boolean isDecoItem(Block block)
+    protected static boolean isDecoItem(Block block)
     {
+        if(decoItems == null)
+        {
+            decoItems = BlockTags.getCollection().getOrCreate(new ResourceLocation(MOD_ID, DECOBLOCK_TAG));
+        }
         return decoItems.contains(block);
     }
 
