@@ -34,9 +34,11 @@ import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -50,6 +52,7 @@ import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure.ItemCheckResult.*;
 import static com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler.Stage.*;
@@ -79,6 +82,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         SUCCESS,
         RECALC
     }
+
+    /**
+     * Tagname for decoration blocks
+     */
+    private final String DECOBLOCK_TAG = "decoblocks";
+
+    /**
+     * Tag of all the blocks that need to be in the deco phase of the builder
+     */
+    protected final Tag<Block> decoItems;
 
     /**
      * Predicate defining things we don't want the builders to ever touch.
@@ -147,6 +160,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
            */
           new AITarget(COMPLETE_BUILD, this::completeBuild, STANDARD_DELAY)
         );
+
+        decoItems = BlockTags.getCollection().getOrCreate(new ResourceLocation(MOD_ID, DECOBLOCK_TAG));
     }
 
     /**
@@ -243,7 +258,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     protected boolean isDecoItem(Block block)
     {
-        return block instanceof CoralBlock || block instanceof LanternBlock || block instanceof BannerBlock || block instanceof WallSignBlock;
+        return decoItems.contains(block);
     }
 
     /**
