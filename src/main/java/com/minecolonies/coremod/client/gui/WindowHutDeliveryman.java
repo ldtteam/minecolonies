@@ -54,7 +54,7 @@ public class WindowHutDeliveryman extends AbstractWindowWorkerBuilding<BuildingD
         for (final int citizenId : building.getWorkerId())
         {
             ICitizenDataView citizen = building.getColony().getCitizen(citizenId);
-            if (citizen.getJobView() instanceof DmanJobView)
+            if (citizen != null && citizen.getJobView() instanceof DmanJobView)
             {
                 tasks.addAll(((DmanJobView) citizen.getJobView()).getDataStore().getQueue());
             }
