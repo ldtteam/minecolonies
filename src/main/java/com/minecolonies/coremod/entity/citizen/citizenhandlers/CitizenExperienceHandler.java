@@ -9,18 +9,14 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.LEVELING;
-import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
-import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.XP_PARTICLE_EXPLOSION_SIZE;
 
 /**
@@ -87,11 +83,11 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         }
 
         final double workBuildingLevel = workBuilding.getBuildingLevel();
-        final double bonusXp = 1 + (workBuildingLevel * citizenHutLevel) / 10;
-        double localXp = xp * bonusXp;
+        final double buildingXPModifier = 1 + (workBuildingLevel + citizenHutLevel) / 10;
+        double localXp = xp * buildingXPModifier;
         final double saturation = citizen.getCitizenData().getSaturation();
         final int intelligenceLevel = data.getCitizenSkillHandler().getLevel(Skill.Intelligence);
-        localXp += localXp * (intelligenceLevel / 10.0);
+        localXp += localXp * (intelligenceLevel / 100.0);
 
         if (saturation <= 0)
         {
