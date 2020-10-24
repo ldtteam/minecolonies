@@ -26,7 +26,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue allowOtherDimColonies;
     public final ForgeConfigSpec.IntValue     citizenRespawnInterval;
     public final ForgeConfigSpec.IntValue     maxCitizenPerColony;
-    public final ForgeConfigSpec.BooleanValue builderInfiniteResources;
+    public final ForgeConfigSpec.IntValue     builderInfiniteResourcesLevel;
     public final ForgeConfigSpec.BooleanValue limitToOneWareHousePerColony;
     public final ForgeConfigSpec.IntValue     builderBuildBlockDelay;
     public final ForgeConfigSpec.IntValue     blockMiningDelayModifier;
@@ -385,7 +385,7 @@ public class CommonConfiguration extends AbstractConfiguration
         allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", false);
         citizenRespawnInterval = defineInteger(builder, "citizenrespawninterval", 60, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX);
         maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 150, 4, 500);
-        builderInfiniteResources = defineBoolean(builder, "builderinfiniteresources", false);
+        builderInfiniteResourcesLevel = defineInteger(builder, "builderinfiniteresources",0,0,5);
         limitToOneWareHousePerColony = defineBoolean(builder, "limittoonewarehousepercolony", true);
         builderBuildBlockDelay = defineInteger(builder, "builderbuildblockdelay", 15, 1, 500);
         blockMiningDelayModifier = defineInteger(builder, "blockminingdelaymodifier", 500, 1, 10000);

@@ -173,25 +173,25 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     /**
      * State for material requesting.
      */
-    private void requestMaterialsState()
-    {
-        if (MineColonies.getConfig().getCommon().builderInfiniteResources.get() || job.getWorkOrder().isRequested() || job.getWorkOrder() instanceof WorkOrderBuildRemoval)
-        {
+    private void requestMaterialsState() {
+        if (job.getWorkOrder().isRequested() || job.getWorkOrder() instanceof WorkOrderBuildRemoval) {
             return;
         }
+        final int currentUpgradeLevel = ((WorkOrderBuild) job.getWorkOrder()).getUpgradeLevel();
+        if (MineColonies.getConfig().getCommon().builderInfiniteResourcesLevel.get() <= currentUpgradeLevel) {
 
-        if (requestMaterials())
-        {
-            final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
-            job.getWorkOrder().setRequested(true);
+            if (requestMaterials()) {
+                final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
+                job.getWorkOrder().setRequested(true);
 
-            int newQuantity = buildingWorker.getNeededResources().values().stream().mapToInt(ItemStorage::getAmount).sum();
-            if (job.getWorkOrder().getAmountOfRes() == 0 || newQuantity > job.getWorkOrder().getAmountOfRes())
-            {
-                job.getWorkOrder().setAmountOfRes(newQuantity);
+                int newQuantity = buildingWorker.getNeededResources().values().stream().mapToInt(ItemStorage::getAmount).sum();
+                if (job.getWorkOrder().getAmountOfRes() == 0 || newQuantity > job.getWorkOrder().getAmountOfRes()) {
+                    job.getWorkOrder().setAmountOfRes(newQuantity);
+                }
             }
         }
     }
+
 
     @Override
     public boolean requestMaterials()
