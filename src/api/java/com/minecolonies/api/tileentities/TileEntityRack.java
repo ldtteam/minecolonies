@@ -3,6 +3,7 @@ package com.minecolonies.api.tileentities;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -18,7 +19,6 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -29,7 +29,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -40,11 +39,12 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.RACK;
 
 /**
  * Tile entity for the warehouse shelves.
  */
-public class TileEntityRack extends AbstractTileEntityRack implements ITickableTileEntity
+public class TileEntityRack extends AbstractTileEntityRack
 {
     /**
      * The content of the chest.
@@ -59,7 +59,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements ITickableT
     /**
      * The combined inv wrapper for double racks.
      */
-    private CombinedInvWrapper combinedHandler;
+    private CombinedItemHandler combinedHandler;
 
     public TileEntityRack(final TileEntityType<? extends TileEntityRack> type)
     {
@@ -93,12 +93,6 @@ public class TileEntityRack extends AbstractTileEntityRack implements ITickableT
             freeSlots -= (int) Math.ceil(slotsNeeded);
         }
         return freeSlots;
-    }
-
-    @Override
-    public void tick()
-    {
-        combinedHandler = null;
     }
 
     @Override
@@ -156,7 +150,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements ITickableT
 
         if (main && combinedHandler == null && getOtherChest() != null)
         {
-            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
+            combinedHandler = new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory());
         }
     }
 
@@ -446,7 +440,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements ITickableT
                 {
                     if (combinedHandler == null)
                     {
-                        combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
+                        combinedHandler = new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory());
                     }
                     return LazyOptional.of(() -> (T) combinedHandler);
                 }
@@ -462,7 +456,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements ITickableT
 
                         if (combinedHandler == null)
                         {
-                            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
+                            combinedHandler = new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory());
                         }
                         markDirty();
                         return LazyOptional.of(() -> (T) combinedHandler);

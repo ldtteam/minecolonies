@@ -10,10 +10,13 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+
+import java.util.Arrays;
 
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
@@ -201,6 +204,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      * @param slot Slot to query
      * @return ItemStack in given slot. May be null.
      **/
+    @NotNull
     @Override
     public ItemStack getStackInSlot(final int slot)
     {
@@ -216,7 +220,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
             activeSlot -= modifiable.getSlots();
         }
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
     /**
@@ -229,8 +233,9 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return null). May be the same as the input ItemStack if unchanged, otherwise a
      * new ItemStack.
      **/
+    @NotNull
     @Override
-    public ItemStack insertItem(final int slot, final ItemStack stack, final boolean simulate)
+    public ItemStack insertItem(final int slot, @NotNull final ItemStack stack, final boolean simulate)
     {
         int activeSlot = slot;
 
@@ -256,6 +261,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      * @param simulate If true, the extraction is only simulated
      * @return ItemStack extracted from the slot, must be null, if nothing can be extracted
      **/
+    @NotNull
     @Override
     public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
     {
@@ -274,7 +280,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
             }
         }
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -297,7 +303,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     }
 
     @Override
-    public boolean isItemValid(final int slot, @Nonnull final ItemStack stack)
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
     {
         return false;
     }
@@ -318,5 +324,41 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     public ITextComponent getName()
     {
         return new StringTextComponent(customName.isEmpty() ? defaultName : customName);
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        final CombinedItemHandler that = (CombinedItemHandler) o;
+
+        if (handlers.length != that.handlers.length)
+        {
+            return false;
+        }
+
+        final int length = handlers.length;
+        for (int i = 0; i < length; i++)
+        {
+            if (handlers[i] != that.handlers[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Arrays.hashCode(handlers);
     }
 }
