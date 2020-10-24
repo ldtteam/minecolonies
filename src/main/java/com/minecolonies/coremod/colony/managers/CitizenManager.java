@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
+import com.minecolonies.api.colony.buildings.IWorkerLivingBuilding;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
@@ -380,20 +381,17 @@ public class CitizenManager implements ICitizenManager
         {
             if (b.getBuildingLevel() > 0)
             {
-                if (b instanceof IBuildingBedProvider)
+                if (b instanceof IWorkerLivingBuilding)
                 {
-                    newMaxCitizens += b.getMaxInhabitants();
-                }
-                else if (b instanceof AbstractBuildingGuards && b.getBuildingLevel() > 0)
-                {
-                    if (b.getAssignedCitizen().size() != 0)
-                    {
-                        newMaxCitizens += b.getAssignedCitizen().size();
-                    }
-                    else
+                    newMaxCitizens += b.getAssignedCitizen().size();
+                    if ((b instanceof AbstractBuildingGuards) && b.getAssignedCitizen().size() == 0 && b.getBuildingLevel() > 0)
                     {
                         potentialMax += 1;
                     }
+                }
+                else if (b instanceof IBuildingBedProvider)
+                {
+                    newMaxCitizens += b.getMaxInhabitants();
                 }
             }
         }

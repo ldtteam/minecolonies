@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
+import com.minecolonies.api.colony.buildings.IWorkerLivingBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -20,11 +21,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.CarvedPumpkinBlock;
-import net.minecraft.block.HayBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -47,7 +44,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Building class for the Combat Academy.
  */
-public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBuildingBedProvider
+public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBuildingBedProvider, IWorkerLivingBuilding
 {
     /**
      * The Schematic name.
