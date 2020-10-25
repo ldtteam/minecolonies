@@ -469,8 +469,8 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
                 entityCitizen.get().getCitizenJobHandler().setModelDependingOnJob(null);
             }
         }
+        building.getColony().getCitizenManager().calculateMaxCitizens();
     }
-
 
     @Override
     public void serializeToView(@NotNull final PacketBuffer buf)
@@ -482,13 +482,6 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
         {
             buf.writeInt(citizen.getId());
         }
-    }
-
-    @Override
-    public void setBuildingLevel(final int level)
-    {
-        super.setBuildingLevel(level);
-        building.getColony().getCitizenManager().calculateMaxCitizens();
     }
 
     @NotNull

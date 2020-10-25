@@ -66,15 +66,6 @@ public interface IBuildingModule
     }
 
     /**
-     * Set the building level hook for modules.
-     * @param level the level to set it.
-     */
-    default void setBuildingLevel(int level)
-    {
-
-    }
-
-    /**
      * On building move hook for modules.
      * @param oldBuilding the building that is going to be moved.
      */
