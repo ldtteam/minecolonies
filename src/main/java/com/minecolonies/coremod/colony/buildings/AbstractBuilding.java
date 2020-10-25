@@ -11,8 +11,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
-import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
@@ -409,7 +408,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         for (final IBuildingModule module : modules.values())
         {
-            module.removeCitizen(citizen);
+            if (module instanceof IAssignsCitizen)
+            {
+                ((IAssignsCitizen) module).removeCitizen(citizen);
+            }
         }
         super.removeCitizen(citizen);
     }
@@ -419,9 +421,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         for (final IBuildingModule module : modules.values())
         {
-            if (module.assignCitizen(citizen))
+            if (module instanceof IAssignsCitizen)
             {
-                return true;
+                if (((IAssignsCitizen) module).assignCitizen(citizen))
+                {
+                    return true;
+                }
             }
         }
         return super.assignCitizen(citizen);
@@ -438,7 +443,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         int maxInhabitants = 0;
         for (final IBuildingModule module : modules.values())
         {
-            maxInhabitants += module.getMaxInhabitants();
+            if (module instanceof IDefinesBuildingModule)
+            {
+                maxInhabitants = ((IDefinesBuildingModule) module).getMaxInhabitants();
+            }
         }
         return maxInhabitants;
     }
@@ -446,16 +454,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public int getMaxBuildingLevel()
     {
-        int min = 0;
+        int maxBuildingLevel = 0;
         for (final IBuildingModule module : modules.values())
         {
-            int moduleMin = module.getMaxBuildingLevel();
-            if (moduleMin < min)
+            if (module instanceof IDefinesBuildingModule)
             {
-                min = moduleMin;
+                maxBuildingLevel = ((IDefinesBuildingModule) module).getMaxInhabitants();
             }
         }
-        return min;
+        return maxBuildingLevel;
     }
 
     /**
@@ -1348,7 +1355,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         super.registerBlockPosition(blockState, pos, world);
         for (final IBuildingModule module : modules.values())
         {
-            module.registerBlockPosition(blockState, pos, world);
+            if (module instanceof IRegistersBlockModule)
+            {
+                ((IRegistersBlockModule) module).registerBlockPosition(blockState, pos, world);
+            }
         }
     }
 

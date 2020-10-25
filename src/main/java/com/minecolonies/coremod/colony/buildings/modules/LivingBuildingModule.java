@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IAssignsCitizen;
+import com.minecolonies.api.colony.buildings.modules.IRegistersBlockModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.buildings.AbstractCitizenAssignable;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenBornEvent;
@@ -32,7 +34,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RESIDENTS;
 /**
  * The class of the citizen hut.
  */
-public class LivingBuildingModule extends AbstractBuildingModule implements IBuildingBedProvider
+public class LivingBuildingModule extends AbstractBuildingModule implements IBuildingBedProvider, IAssignsCitizen, IRegistersBlockModule
 {
     /**
      * List of all beds.
@@ -155,8 +157,6 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
     @Override
     public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        super.registerBlockPosition(blockState, pos, world);
-
         BlockPos registrationPosition = pos;
         if (blockState.getBlock() instanceof BedBlock)
         {
@@ -228,7 +228,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
             trySpawnChild();
         }
 
-        if (building.getAssignedCitizen().size() < getMaxInhabitants() && !building.getColony().isManualHousing())
+        if (building.getAssignedCitizen().size() < building.getMaxInhabitants() && !building.getColony().isManualHousing())
         {
             // 'Capture' as many citizens into this house as possible
             addHomelessCitizens();
@@ -438,12 +438,6 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
 
         citizen.setHomeBuilding(building);
         return true;
-    }
-
-    @Override
-    public int getMaxInhabitants()
-    {
-        return 0;
     }
 
     private boolean buildingAssignmentLogic(final ICitizenData citizen)

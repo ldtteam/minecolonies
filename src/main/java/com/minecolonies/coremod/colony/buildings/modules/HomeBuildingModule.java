@@ -4,17 +4,16 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IDefinesBuildingModule;
 import com.minecolonies.coremod.client.gui.WindowHutCitizen;
 import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
-
 /**
  * The class of the citizen hut.
  */
-public class HomeBuildingModule extends AbstractBuildingModule
+public class HomeBuildingModule extends AbstractBuildingModule implements IDefinesBuildingModule
 {
     /**
      * Creates a new home building module.
@@ -23,12 +22,6 @@ public class HomeBuildingModule extends AbstractBuildingModule
     public HomeBuildingModule(final IBuilding building)
     {
         super(building);
-    }
-
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_BUILDING_LEVEL;
     }
 
     @Override
