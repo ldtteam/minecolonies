@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.colony.jobs.IAffectsWalkingSpeed;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
@@ -1172,7 +1173,12 @@ public class CitizenData implements ICitizenData
               colony.getResearchManager().getResearchEffects().getEffect(WALKING, MultiplierModifierResearchEffect.class);
             if (speedEffect != null)
             {
-                citizen.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED + (BASE_MOVEMENT_SPEED * speedEffect.getEffect()));
+                double speed = BASE_MOVEMENT_SPEED + (BASE_MOVEMENT_SPEED * speedEffect.getEffect());
+                if (job instanceof IAffectsWalkingSpeed)
+                {
+                    speed = ((IAffectsWalkingSpeed) job).getWalkingSpeed() * (1.0 + speedEffect.getEffect());
+                }
+                citizen.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(speed);
             }
 
             final AdditionModifierResearchEffect healthEffect =
