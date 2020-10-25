@@ -7,9 +7,11 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.healer.EntityAIWorkHealer;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.entity.SharedMonsterAttributes;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 
 /**
@@ -87,7 +89,14 @@ public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer> implem
     @Override
     public double getWalkingSpeed()
     {
-        return BASE_MOVEMENT_SPEED + (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill())) * BONUS_SPEED_PER_LEVEL;
+        final MultiplierModifierResearchEffect speedEffect =
+          getColony().getResearchManager().getResearchEffects().getEffect(WALKING, MultiplierModifierResearchEffect.class);
+        double effect = BASE_MOVEMENT_SPEED + (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill())) * BONUS_SPEED_PER_LEVEL;
+        if (speedEffect != null)
+        {
+            effect = effect * (1.0 + speedEffect.getEffect());
+        }
+        return effect;
     }
 
     @Override
