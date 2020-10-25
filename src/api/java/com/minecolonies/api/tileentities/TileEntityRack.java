@@ -3,10 +3,10 @@ package com.minecolonies.api.tileentities;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
@@ -29,7 +29,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -40,6 +40,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.RACK;
 
 /**
  * Tile entity for the warehouse shelves.
@@ -57,9 +58,9 @@ public class TileEntityRack extends AbstractTileEntityRack
     private int size = 0;
 
     /**
-     * The combined inv wrapper for double racks.
+     * Last optional we created.
      */
-    private CombinedInvWrapper combinedHandler;
+    private LazyOptional<IItemHandler> lastOptional;
 
     public TileEntityRack(final TileEntityType<? extends TileEntityRack> type)
     {
@@ -147,11 +148,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         inventory = tempInventory;
         final BlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 0x03);
-
-        if (main && combinedHandler == null && getOtherChest() != null)
-        {
-            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
-        }
     }
 
     @Override
@@ -428,38 +424,37 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final Direction dir)
     {
+        if (lastOptional != null)
+        {
+            lastOptional.invalidate();
+        }
+
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
             if (single)
             {
-                return LazyOptional.of(() -> (T) inventory);
+                lastOptional = LazyOptional.of(() -> inventory);
+                return (LazyOptional<T>) lastOptional;
             }
             else if (getOtherChest() != null)
             {
                 if (isMain())
                 {
-                    if (combinedHandler == null)
-                    {
-                        combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
-                    }
-                    return LazyOptional.of(() -> (T) combinedHandler);
+                    lastOptional = LazyOptional.of(() -> new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory()));
+                    return (LazyOptional<T>) lastOptional;
                 }
                 else
                 {
                     if (getOtherChest().isMain())
                     {
-                        return (LazyOptional<T>) getOtherChest().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+                        lastOptional = getOtherChest().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+                        return (LazyOptional<T>) lastOptional;
                     }
                     else
                     {
                         this.main = true;
-
-                        if (combinedHandler == null)
-                        {
-                            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
-                        }
-                        markDirty();
-                        return LazyOptional.of(() -> (T) combinedHandler);
+                        lastOptional = LazyOptional.of(() -> new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory()));
+                        return (LazyOptional<T>) lastOptional;
                     }
                 }
             }

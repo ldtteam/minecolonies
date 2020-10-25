@@ -763,7 +763,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public boolean canWorkDuringTheRain()
     {
-        return false;
+        return getBuildingLevel() >= getMaxBuildingLevel();
     }
 
     @Override

@@ -93,7 +93,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     /**
      * Create the combined inv wrapper for the building.
      */
-    private CombinedItemHandler combinedInv;
+    private LazyOptional<CombinedItemHandler> combinedInv;
 
     /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
@@ -364,7 +364,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public void tick()
     {
-        combinedInv = null;
+        if (combinedInv != null)
+        {
+            combinedInv.invalidate();
+            combinedInv = null;
+        }
         if (!getWorld().isRemote && colonyId == 0)
         {
             final IColony tempColony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), this.getPosition());
@@ -504,9 +508,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 }
 
                 handlers.add(getInventory());
-                combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0]));
+                combinedInv = LazyOptional.of(() -> new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0])));
             }
-            return LazyOptional.of(() -> (T) combinedInv);
+            return (LazyOptional<T>) combinedInv;
         }
         return super.getCapability(capability, side);
     }
