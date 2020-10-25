@@ -229,6 +229,11 @@ public final class CitizenConstants
     public static final String GUARD_HEALTH_MOD_BUILDING_NAME = "MinecoloniesGuardBuildingHP";
 
     /**
+     * The Research health modifier name.
+     */
+    public static final String RESEARCH_BONUS_MULTIPLIER = "ResearchSpeedBonus";
+
+    /**
      * The Config guard health modifier name
      */
     public static final String GUARD_HEALTH_MOD_CONFIG_NAME = "MinecoloniesGuardConfigHP";
