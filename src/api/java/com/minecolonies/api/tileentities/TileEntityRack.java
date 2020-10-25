@@ -29,6 +29,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -55,6 +56,11 @@ public class TileEntityRack extends AbstractTileEntityRack
      * Size multiplier of the inventory. 0 = default value. 1 = 1*9 additional slots, and so on.
      */
     private int size = 0;
+
+    /**
+     * Last optional we created.
+     */
+    private LazyOptional<IItemHandler> lastOptional;
 
     public TileEntityRack(final TileEntityType<? extends TileEntityRack> type)
     {
@@ -418,28 +424,37 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final Direction dir)
     {
+        if (lastOptional != null)
+        {
+            lastOptional.invalidate();
+        }
+
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
             if (single)
             {
-                return LazyOptional.of(() -> (T) inventory);
+                lastOptional = LazyOptional.of(() -> inventory);
+                return (LazyOptional<T>) lastOptional;
             }
             else if (getOtherChest() != null)
             {
                 if (isMain())
                 {
-                    return LazyOptional.of(() -> (T) new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory()));
+                    lastOptional = LazyOptional.of(() -> new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory()));
+                    return (LazyOptional<T>) lastOptional;
                 }
                 else
                 {
                     if (getOtherChest().isMain())
                     {
-                        return (LazyOptional<T>) getOtherChest().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+                        lastOptional = getOtherChest().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+                        return (LazyOptional<T>) lastOptional;
                     }
                     else
                     {
                         this.main = true;
-                        return LazyOptional.of(() -> (T) new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory()));
+                        lastOptional = LazyOptional.of(() -> new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory()));
+                        return (LazyOptional<T>) lastOptional;
                     }
                 }
             }
