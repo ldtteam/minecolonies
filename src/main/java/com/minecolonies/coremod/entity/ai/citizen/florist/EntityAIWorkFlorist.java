@@ -3,11 +3,15 @@ package com.minecolonies.coremod.entity.ai.citizen.florist;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
@@ -15,7 +19,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Tuple;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -74,6 +78,12 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     private static final double MAX_BONUS = 5;
 
     /**
+     * Gardening icon
+     */
+    private final static VisibleCitizenStatus GARDENING =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/florist.png"), "com.minecolonies.gui.visiblestatus.florist");
+
+    /**
      * Position the florist should harvest a flower at now.
      */
     private BlockPos harvestPosition;
@@ -115,9 +125,10 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
      */
     private IAIState decide()
     {
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         if (getOwnBuilding().getPlantGround().isEmpty())
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST), ChatPriority.BLOCKING));
             return IDLE;
         }
 
@@ -153,7 +164,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         {
             if (!isThereCompostedLand(getOwnBuilding(), world))
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_COMPOST), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_COMPOST), ChatPriority.BLOCKING));
                 return START_WORKING;
             }
             return DECIDE;
@@ -177,6 +188,8 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             return START_WORKING;
         }
 
+        worker.getCitizenData().setVisibleStatus(GARDENING);
+
         if (walkToBlock(compostPosition))
         {
             return getState();
@@ -186,13 +199,16 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         if (entity instanceof TileEntityCompostedDirt)
         {
             @Nullable final ItemStack stack = getOwnBuilding().getFlowerToGrow();
-            if (stack != null && InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST))
+            if (stack != null)
             {
-                ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH, getOwnBuilding().getFlowerToGrow());
+                if (worker.getRandom().nextInt(200 - getPrimarySkillLevel()) < 0 || InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST))
+                {
+                    ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH, getOwnBuilding().getFlowerToGrow());
+                }
             }
             else
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_FLOWERS_IN_CONFIG), ChatPriority.BLOCKING));
             }
         }
 
@@ -214,6 +230,8 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         {
             return START_WORKING;
         }
+
+        worker.getCitizenData().setVisibleStatus(GARDENING);
 
         if (walkToBlock(harvestPosition))
         {
@@ -250,7 +268,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     @Override
     public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
-        return BASE_BLOCK_MINING_DELAY * (int) (1 + Math.max(0, MAX_BONUS - PER_LEVEL_BONUS * worker.getCitizenData().getJobModifier()));
+        return BASE_BLOCK_MINING_DELAY * (int) (1 + Math.max(0, MAX_BONUS - PER_LEVEL_BONUS * (getSecondarySkillLevel() / 2.0)));
     }
 
     /**
@@ -280,7 +298,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     {
         for (final BlockPos pos : getOwnBuilding().getPlantGround())
         {
-            if (world.isBlockPresent(pos))
+            if (WorldUtil.isEntityBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityCompostedDirt)

@@ -1,28 +1,37 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.Window;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
+import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
-import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_CANCEL;
-import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_FULLFIL;
+import static com.minecolonies.api.util.constant.TranslationConstants.FROM;
+import static com.minecolonies.api.util.constant.TranslationConstants.IN_QUEUE;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Window for the request detail.
@@ -86,11 +95,11 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * The colony id.
      */
-    private final int colonyId;
+    private final int         colonyId;
     /**
      * Life count.
      */
-    private int lifeCount = 0;
+    private       int         lifeCount = 0;
 
     /**
      * The previous window.
@@ -161,8 +170,11 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             }
         }
 
+        final Image logo = findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
+
         final ItemIcon exampleStackDisplay = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
         final List<ItemStack> displayStacks = request.getDisplayStacks();
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
 
         if (!displayStacks.isEmpty())
         {
@@ -170,18 +182,17 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         }
         else
         {
-            final Image logo = findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
             logo.setVisible(true);
             logo.setImage(request.getDisplayIcon());
+            logo.setHoverToolTip(request.getResolverToolTip(colony));
         }
 
-        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
-        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getRequesterDisplayName(view.getRequestManager(), request).getFormattedText());
+        final String requester = request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText();
+
+        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(requester);
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getLocation().toString());
 
-
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
         if (colony == null)
         {
             Log.getLogger().warn("---Colony Null in WindowRequestDetail---");
@@ -197,7 +208,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
                 return;
             }
 
-            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getRequesterDisplayName(view.getRequestManager(), request).getFormattedText());
+            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText());
         }
         catch (@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {

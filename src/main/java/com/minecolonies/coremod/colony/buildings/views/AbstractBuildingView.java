@@ -35,7 +35,8 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RS_BUILDING_DATASTORE;
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * The AbstractBuilding View is the client-side representation of a AbstractBuilding. Views contain the AbstractBuilding's data that is relevant to a Client, in a more
@@ -323,7 +324,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public List<BlockPos> getContainerList()
     {
-        return containerlist;
+        return new ArrayList<>(containerlist);
     }
 
     /**
@@ -461,10 +462,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull final ICitizenDataView citizenData, final Class<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                      .filter(request -> {
-                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
-                                          return requestTypes.contains(TypeToken.of(requestType));
-                                      })
+                                      .filter(request ->  request.getType().isSubtypeOf(requestType))
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
     }
@@ -523,10 +521,7 @@ public abstract class AbstractBuildingView implements IBuildingView
       final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                      .filter(request -> {
-                                          final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
-                                          return requestTypes.contains(TypeToken.of(requestType));
-                                      })
+                                      .filter(request ->  request.getType().isSubtypeOf(requestType))
                                       .map(request -> (IRequest<? extends R>) request)
                                       .filter(filter)
                                       .iterator());

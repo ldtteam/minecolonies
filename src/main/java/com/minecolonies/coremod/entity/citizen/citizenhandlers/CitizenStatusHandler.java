@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenStatusHandler;
+import com.minecolonies.coremod.MineColonies;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.Objects;
@@ -25,12 +26,18 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
     protected Status status = Status.IDLE;
 
     /**
+     * Whether the status display is enabled
+     */
+    private boolean enabled = MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get();
+
+    /**
      * The 4 lines of the latest status.
      */
     private final ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
     public CitizenStatusHandler(final AbstractEntityCitizen citizen)
@@ -57,6 +64,11 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
     @Override
     public void setLatestStatus(final ITextComponent... status)
     {
+        if (!enabled)
+        {
+            return;
+        }
+
         boolean hasChanged = false;
         for (int i = 0; i < latestStatus.length; i++)
         {
@@ -84,8 +96,7 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
     }
 
     /**
-     * Append to the existing latestStatus list.
-     * This will override the oldest one if full and move the others one down in the array.
+     * Append to the existing latestStatus list. This will override the oldest one if full and move the others one down in the array.
      *
      * @param status the latest status to append
      */
@@ -99,6 +110,7 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
 
     /**
      * Getter for the current status.
+     *
      * @return the status.
      */
     @Override
@@ -109,6 +121,7 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
 
     /**
      * Setter for the current status.
+     *
      * @param status the status to set.
      */
     @Override

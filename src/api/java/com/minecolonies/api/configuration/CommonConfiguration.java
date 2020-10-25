@@ -10,8 +10,7 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
- * Mod common configuration.
- * Loaded everywhere, not synced.
+ * Mod common configuration. Loaded everywhere, not synced.
  */
 public class CommonConfiguration extends AbstractConfiguration
 {
@@ -19,40 +18,42 @@ public class CommonConfiguration extends AbstractConfiguration
      *  ------------------- ######## Gameplay settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.IntValue initialCitizenAmount;
+    public final ForgeConfigSpec.IntValue     initialCitizenAmount;
     public final ForgeConfigSpec.BooleanValue builderPlaceConstructionTape;
     public final ForgeConfigSpec.BooleanValue playerGetsGuidebookOnFirstJoin;
     public final ForgeConfigSpec.BooleanValue allowInfiniteSupplyChests;
     public final ForgeConfigSpec.BooleanValue allowInfiniteColonies;
     public final ForgeConfigSpec.BooleanValue allowOtherDimColonies;
-    public final ForgeConfigSpec.IntValue citizenRespawnInterval;
-    public final ForgeConfigSpec.IntValue maxCitizenPerColony;
+    public final ForgeConfigSpec.IntValue     citizenRespawnInterval;
+    public final ForgeConfigSpec.IntValue     maxCitizenPerColony;
     public final ForgeConfigSpec.BooleanValue builderInfiniteResources;
     public final ForgeConfigSpec.BooleanValue limitToOneWareHousePerColony;
-    public final ForgeConfigSpec.IntValue builderBuildBlockDelay;
-    public final ForgeConfigSpec.IntValue blockMiningDelayModifier;
-    public final ForgeConfigSpec.IntValue maxBlocksCheckedByBuilder;
-    public final ForgeConfigSpec.IntValue chatFrequency;
+    public final ForgeConfigSpec.IntValue     builderBuildBlockDelay;
+    public final ForgeConfigSpec.IntValue     blockMiningDelayModifier;
+    public final ForgeConfigSpec.IntValue     maxBlocksCheckedByBuilder;
+    public final ForgeConfigSpec.IntValue     chatFrequency;
     public final ForgeConfigSpec.BooleanValue enableInDevelopmentFeatures;
     public final ForgeConfigSpec.BooleanValue alwaysRenderNameTag;
-    public final ForgeConfigSpec.DoubleValue growthModifier;
+    public final ForgeConfigSpec.DoubleValue  growthModifier;
     public final ForgeConfigSpec.BooleanValue workersAlwaysWorkInRain;
     public final ForgeConfigSpec.BooleanValue sendEnteringLeavingMessages;
     public final ForgeConfigSpec.BooleanValue allowPlayerSchematics;
-    public final ForgeConfigSpec.IntValue allowGlobalNameChanges;
+    public final ForgeConfigSpec.IntValue     allowGlobalNameChanges;
     public final ForgeConfigSpec.BooleanValue holidayFeatures;
-    public final ForgeConfigSpec.IntValue updateRate;
-    public final ForgeConfigSpec.IntValue dirtFromCompost;
-    public final ForgeConfigSpec.IntValue luckyBlockChance;
+    public final ForgeConfigSpec.IntValue     updateRate;
+    public final ForgeConfigSpec.IntValue     dirtFromCompost;
+    public final ForgeConfigSpec.IntValue     luckyBlockChance;
     public final ForgeConfigSpec.BooleanValue fixOrphanedChunks;
     public final ForgeConfigSpec.BooleanValue restrictBuilderUnderground;
     public final ForgeConfigSpec.DoubleValue  fisherSpongeChance;
+    public final ForgeConfigSpec.DoubleValue  fisherPrismarineChance;
     public final ForgeConfigSpec.IntValue     minThLevelToTeleport;
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
     public final ForgeConfigSpec.DoubleValue  foodModifier;
     public final ForgeConfigSpec.BooleanValue disableCitizenVoices;
     public final ForgeConfigSpec.IntValue     diseaseModifier;
     public final ForgeConfigSpec.BooleanValue generateSupplyLoot;
+    public final ForgeConfigSpec.BooleanValue forceLoadColony;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -70,7 +71,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue canPlayerUseKillCitizensCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseAddOfficerCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseDeleteColonyCommand;
-    public final ForgeConfigSpec.IntValue numberOfAttemptsForSafeTP;
+    public final ForgeConfigSpec.IntValue     numberOfAttemptsForSafeTP;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Claim settings ######## ------------------- *
@@ -111,11 +112,11 @@ public class CommonConfiguration extends AbstractConfiguration
      *  ------------------- ######## Permission Settings ######## ------------------- *
      *  ----------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.BooleanValue enableColonyProtection;
-    public final ForgeConfigSpec.BooleanValue turnOffExplosionsInColonies;
+    public final ForgeConfigSpec.BooleanValue                        enableColonyProtection;
+    public final ForgeConfigSpec.BooleanValue                        turnOffExplosionsInColonies;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> specialPermGroup;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> freeToInteractBlocks;
-    public final ForgeConfigSpec.IntValue secondsBetweenPermissionMessages;
+    public final ForgeConfigSpec.IntValue                            secondsBetweenPermissionMessages;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
@@ -124,10 +125,11 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> extraOres;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> guardResourceLocations;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> listOfCompostableItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyBlocks;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyOres;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> crusherProduction ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> crusherProduction;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> sifterMeshes;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> siftableBlocks;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> sifterDrops;
@@ -136,6 +138,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.DoubleValue                         enchanterExperienceMultiplier;
     public final ForgeConfigSpec.IntValue                            dynamicTreeHarvestSize;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> diseases;
+    public final ForgeConfigSpec.BooleanValue                        debugInventories;
 
 
     /*  ------------------------------------------------------------------------------ *
@@ -143,20 +146,20 @@ public class CommonConfiguration extends AbstractConfiguration
      *  ------------------------------------------------------------------------------ */
 
     public final ForgeConfigSpec.BooleanValue pathfindingDebugDraw;
-    public final ForgeConfigSpec.IntValue pathfindingDebugVerbosity;
-    public final ForgeConfigSpec.IntValue pathfindingMaxThreadCount;
-    public final ForgeConfigSpec.IntValue pathfindingMaxNodes;
-    public final ForgeConfigSpec.IntValue minimumRailsToPath;
+    public final ForgeConfigSpec.IntValue     pathfindingDebugVerbosity;
+    public final ForgeConfigSpec.IntValue     pathfindingMaxThreadCount;
+    public final ForgeConfigSpec.IntValue     pathfindingMaxNodes;
+    public final ForgeConfigSpec.IntValue     minimumRailsToPath;
 
     /*  --------------------------------------------------------------------------------- *
      *  ------------------- ######## Request System Settings ######## ------------------- *
      *  --------------------------------------------------------------------------------- */
 
     public final ForgeConfigSpec.BooleanValue enableDebugLogging;
-    public final ForgeConfigSpec.IntValue maximalRetries;
-    public final ForgeConfigSpec.IntValue delayBetweenRetries;
-    public final ForgeConfigSpec.IntValue maximalBuildingsToGather;
-    public final ForgeConfigSpec.IntValue minimalBuildingsToGather;
+    public final ForgeConfigSpec.IntValue     maximalRetries;
+    public final ForgeConfigSpec.IntValue     delayBetweenRetries;
+    public final ForgeConfigSpec.IntValue     maximalBuildingsToGather;
+    public final ForgeConfigSpec.IntValue     minimalBuildingsToGather;
     public final ForgeConfigSpec.BooleanValue creativeResolve;
     public final ForgeConfigSpec.BooleanValue canPlayerUseResetCommand;
 
@@ -178,49 +181,49 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> rapidshot;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> masterbowman;
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> avoidance ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> avoidance;
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> parry ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> repost ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> duelist ;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> provost ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> parry;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> repost;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> duelist;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> provost;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> masterswordsman;
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> dodge ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> dodge;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> taunt;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> improveddodge;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> evasion ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> evasion;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedevasion;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> agilearcher;
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedleather ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> improvedleather;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> boiledleather;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> ironskin ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> ironskin;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> ironarmour;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> steelarmour;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> diamondskin ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> diamondskin;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> regeneration;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> avoid;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> evade ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> evade;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> flee;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> hotfoot;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> feint;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> fear ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> fear;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> retreat;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> fullretreat;
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> accuracy ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> accuracy;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> quickdraw;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> powerattack ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> powerattack;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> cleave;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> mightycleave;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> whirlwind;
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> preciseshot ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> preciseshot;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> penetratingshot;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> piercingshot ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> piercingshot;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> woundingshot;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> deadlyaim;
 
@@ -278,7 +281,9 @@ public class CommonConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> circus;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> festival;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> nightowl;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> spectacle;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> nightowl2;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> opera;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> theater;
 
@@ -290,6 +295,8 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> guardianangel2;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> whatyaneed;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> enhanced_gates1;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> enhanced_gates2;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> stringwork;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> thoselungs;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> rainbowheaven;
@@ -308,6 +315,7 @@ public class CommonConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> hittingiron;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> stonecake;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> strong;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> hardened;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> reinforced;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> steelbracing;
@@ -354,6 +362,11 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> doubletrouble;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> hotboots;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> pavetheroad;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> arrowuse;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> arrowpierce;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> knockbackaoe;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> knowtheend;
 
     /**
      * Builds common configuration.
@@ -371,7 +384,7 @@ public class CommonConfiguration extends AbstractConfiguration
         allowInfiniteColonies = defineBoolean(builder, "allowinfinitecolonies", false);
         allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", false);
         citizenRespawnInterval = defineInteger(builder, "citizenrespawninterval", 60, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX);
-        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 75, 4, 500);
+        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 150, 4, 500);
         builderInfiniteResources = defineBoolean(builder, "builderinfiniteresources", false);
         limitToOneWareHousePerColony = defineBoolean(builder, "limittoonewarehousepercolony", true);
         builderBuildBlockDelay = defineInteger(builder, "builderbuildblockdelay", 15, 1, 500);
@@ -386,18 +399,20 @@ public class CommonConfiguration extends AbstractConfiguration
         allowPlayerSchematics = defineBoolean(builder, "allowplayerschematics", false);
         allowGlobalNameChanges = defineInteger(builder, "allowglobalnamechanges", 1, -1, 1);
         holidayFeatures = defineBoolean(builder, "holidayfeatures", true);
-        updateRate = defineInteger(builder, "updaterate", 1, 0, 100);
+        updateRate = defineInteger(builder, "updaterate", 1, 1, 100);
         dirtFromCompost = defineInteger(builder, "dirtfromcompost", 1, 0, 100);
         luckyBlockChance = defineInteger(builder, "luckyblockchance", 1, 0, 100);
         fixOrphanedChunks = defineBoolean(builder, "fixorphanedchunks", false);
         restrictBuilderUnderground = defineBoolean(builder, "restrictbuilderunderground", true);
         fisherSpongeChance = defineDouble(builder, "fisherspongechance", 0.1, 0, 100);
+        fisherPrismarineChance = defineDouble(builder, "fisherprismarinechance", 2.5, 0, 100);
         minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
         suggestBuildToolPlacement = defineBoolean(builder, "suggestbuildtoolplacement", true);
-        foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0, 100);
+        foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
         disableCitizenVoices = defineBoolean(builder, "disablecitizenvoices", false);
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
         generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
+        forceLoadColony = defineBoolean(builder, "forceloadcolony", false);
 
         swapToCategory(builder, "commands");
 
@@ -431,36 +446,36 @@ public class CommonConfiguration extends AbstractConfiguration
 
         doBarbariansSpawn = defineBoolean(builder, "dobarbariansspawn", true);
         barbarianHordeDifficulty = defineInteger(builder, "barbarianhordedifficulty", DEFAULT_BARBARIAN_DIFFICULTY, MIN_BARBARIAN_DIFFICULTY, MAX_BARBARIAN_DIFFICULTY);
-        spawnBarbarianSize = defineInteger(builder,  "spawnbarbariansize", 5, MIN_SPAWN_BARBARIAN_HORDE_SIZE, MAX_SPAWN_BARBARIAN_HORDE_SIZE);
+        spawnBarbarianSize = defineInteger(builder, "spawnbarbariansize", 5, MIN_SPAWN_BARBARIAN_HORDE_SIZE, MAX_SPAWN_BARBARIAN_HORDE_SIZE);
         maxBarbarianSize = defineInteger(builder, "maxBarbarianSize", 80, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
         doBarbariansBreakThroughWalls = defineBoolean(builder, "dobarbariansbreakthroughwalls", true);
-        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 7, 1, 10);
-        minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 5, 1, 30);
+        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 12, 1, 10);
+        minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 8, 1, 30);
         mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
         shouldRaidersBreakDoors = defineBoolean(builder, "shouldraiderbreakdoors", true);
         citizenCallForHelp = defineBoolean(builder, "citizencallforhelp", true);
         rangerEnchants = defineBoolean(builder, "rangerenchants", true);
-        rangerDamageMult = defineDouble(builder,  "rangerdamagemult", 1.0, 0.1, 5.0);
-        knightDamageMult = defineDouble(builder,  "knightdamagemult", 1.0, 0.1, 5.0);
-        guardHealthMult = defineDouble(builder,  "guardhealthmult", 1.0, 0.1, 5.0);
-        pvp_mode = defineBoolean(builder,   "pvp_mode", false);
-        daysUntilPirateshipsDespawn = defineInteger(builder,  "daysuntilpirateshipsdespawn", 3, 1, 10);
-        maxYForBarbarians = defineInteger(builder,  "maxyforbarbarians", 200, 1, 500);
+        rangerDamageMult = defineDouble(builder, "rangerdamagemult", 1.0, 0.1, 5.0);
+        knightDamageMult = defineDouble(builder, "knightdamagemult", 1.0, 0.1, 5.0);
+        guardHealthMult = defineDouble(builder, "guardhealthmult", 1.0, 0.1, 5.0);
+        pvp_mode = defineBoolean(builder, "pvp_mode", false);
+        daysUntilPirateshipsDespawn = defineInteger(builder, "daysuntilpirateshipsdespawn", 3, 1, 10);
+        maxYForBarbarians = defineInteger(builder, "maxyforbarbarians", 200, 1, 500);
 
         swapToCategory(builder, "permissions");
 
-        enableColonyProtection = defineBoolean(builder,  "enablecolonyprotection", true);
+        enableColonyProtection = defineBoolean(builder, "enablecolonyprotection", true);
         turnOffExplosionsInColonies = defineBoolean(builder, "turnoffexplosionsincolonies", true);
         specialPermGroup = defineList(builder, "specialpermgroup",
           Arrays.asList
-                   ("_Raycoms_" ),
+                   ("_Raycoms_"),
           s -> s instanceof String);
         freeToInteractBlocks = defineList(builder, "freetointeractblocks",
           Arrays.asList
                    ("dirt",
-                     "0 0 0" ),
+                     "0 0 0"),
           s -> s instanceof String);
-        secondsBetweenPermissionMessages = defineInteger(builder, "secondsBetweenPermissionMessages",  30, 1, 1000);
+        secondsBetweenPermissionMessages = defineInteger(builder, "secondsBetweenPermissionMessages", 30, 1, 1000);
 
 
         swapToCategory(builder, "compatibility");
@@ -468,16 +483,32 @@ public class CommonConfiguration extends AbstractConfiguration
         extraOres = defineList(builder, "extraOres",
           Arrays.asList
                    ("minestuck:ore_cruxite",
-                     "minestuck:ore_uranium" ),
+                     "minestuck:ore_uranium"),
           s -> s instanceof String);
         guardResourceLocations = defineList(builder, "guardresourcelocations",
           Arrays.asList
                    ("minecraft:slime",
-                     "tconstruct:blueslime" ),
+                     "tconstruct:blueslime"),
           s -> s instanceof String);
         configListStudyItems = defineList(builder, "configliststudyitems",
           Arrays.asList
-                   ("minecraft:paper;400;100"),
+                   ("minecraft:paper;400;100", "minecraft:book;600;10"),
+          s -> s instanceof String);
+        configListRecruitmentItems = defineList(builder, "configlistrecruitmentitems",
+          Arrays.asList
+                   ("minecraft:hay_block;2",
+                     "minecraft:book;2",
+                     "minecraft:enchanted_book;9",
+                     "minecraft:diamond;9",
+                     "minecraft:emerald;8",
+                     "minecraft:baked_potato;1",
+                     "minecraft:gold_ingot;2",
+                     "minecraft:redstone;2",
+                     "minecraft:lapis_lazuli;2",
+                     "minecraft:cake;7",
+                     "minecraft:sunflower;5",
+                     "minecraft:honeycomb;6",
+                     "minecraft:quartz;3"),
           s -> s instanceof String);
         listOfCompostableItems = defineList(builder, "listOfCompostableItems",
           Arrays.asList
@@ -529,14 +560,14 @@ public class CommonConfiguration extends AbstractConfiguration
           Arrays.asList
                    ("minecraft:cobblestone!minecraft:gravel",
                      "minecraft:gravel!minecraft:sand",
-                     "minecraft:sand!minecraft:clay" ),
+                     "minecraft:sand!minecraft:clay"),
           s -> s instanceof String);
         sifterMeshes = defineList(builder, "siftermeshes",
           Arrays.asList
                    ("minecraft:string,0",
                      "minecraft:flint,0.1",
                      "minecraft:iron_ingot,0.1",
-                     "minecraft:diamond,0.1" ),
+                     "minecraft:diamond,0.1"),
           s -> s instanceof String);
         siftableBlocks = defineList(builder, "siftableblocks",
           Arrays.asList
@@ -677,7 +708,8 @@ public class CommonConfiguration extends AbstractConfiguration
                      "minecraft:tall_grass",
                      "minecraft:large_fern",
                      "minecraft:fern",
-                     "small_flowers"
+                     "biomesoplenty:small_flowers",
+                     "minecraft:small_flowers"
                    ),
           s -> s instanceof String);
 
@@ -794,34 +826,36 @@ public class CommonConfiguration extends AbstractConfiguration
                    ),
           s -> s instanceof String);
 
-        enchanterExperienceMultiplier = defineDouble(builder,  "enchanterexperiencemultiplier", 2, 1, 10);
+        enchanterExperienceMultiplier = defineDouble(builder, "enchanterexperiencemultiplier", 2, 1, 10);
 
-        dynamicTreeHarvestSize = defineInteger(builder,  "dynamictreeharvestsize", 5, 1, 5);
+        dynamicTreeHarvestSize = defineInteger(builder, "dynamictreeharvestsize", 5, 1, 5);
 
         diseases = defineList(builder, "diseases",
           Arrays.asList("Influenza,100,minecraft:carrot,minecraft:potato",
-                        "Measles,10,minecraft:dandelion,minecraft:kelp,minecraft:poppy",
-                        "Smallpox,1,minecraft:honeycomb,minecraft:golden_apple"),
+            "Measles,10,minecraft:dandelion,minecraft:kelp,minecraft:poppy",
+            "Smallpox,1,minecraft:honeycomb,minecraft:golden_apple"),
           s -> s instanceof String);
+
+        debugInventories = defineBoolean(builder, "debuginventories", false);
 
         swapToCategory(builder, "pathfinding");
 
-        minimumRailsToPath = defineInteger(builder,  "minimumrailstopath", 5, 5, 100);
-        pathfindingDebugDraw = defineBoolean(builder,  "pathfindingdebugdraw", false);
-        pathfindingDebugVerbosity = defineInteger(builder,  "pathfindingdebugverbosity", 0, 0, 10);
-        pathfindingMaxThreadCount = defineInteger(builder,  "pathfindingmaxthreadcount", 2, 1, 10);
-        pathfindingMaxNodes = defineInteger(builder,  "pathfindingmaxnodes", 5000, 1, 10000);
+        minimumRailsToPath = defineInteger(builder, "minimumrailstopath", 5, 5, 100);
+        pathfindingDebugDraw = defineBoolean(builder, "pathfindingdebugdraw", false);
+        pathfindingDebugVerbosity = defineInteger(builder, "pathfindingdebugverbosity", 0, 0, 10);
+        pathfindingMaxThreadCount = defineInteger(builder, "pathfindingmaxthreadcount", 2, 1, 10);
+        pathfindingMaxNodes = defineInteger(builder, "pathfindingmaxnodes", 5000, 1, 10000);
 
 
         swapToCategory(builder, "requestSystem");
 
-        enableDebugLogging = defineBoolean(builder,  "enabledebuglogging", false);
-        maximalRetries = defineInteger(builder,  "maximalretries", 3, 1, 10);
-        delayBetweenRetries = defineInteger(builder,  "delaybetweenretries", 1200, 30, 10000);
-        maximalBuildingsToGather = defineInteger(builder,  "maximalbuildingstogather", 6, 1, 50);
-        minimalBuildingsToGather = defineInteger(builder,  "minimalbuildingstogather", 3, 1, 50);
-        creativeResolve = defineBoolean(builder,  "creativeresolve", false);
-        canPlayerUseResetCommand = defineBoolean(builder,  "canplayeruseresetcommand", false);
+        enableDebugLogging = defineBoolean(builder, "enabledebuglogging", false);
+        maximalRetries = defineInteger(builder, "maximalretries", 3, 1, 10);
+        delayBetweenRetries = defineInteger(builder, "delaybetweenretries", 1200, 30, 10000);
+        maximalBuildingsToGather = defineInteger(builder, "maximalbuildingstogather", 6, 1, 50);
+        minimalBuildingsToGather = defineInteger(builder, "minimalbuildingstogather", 3, 1, 50);
+        creativeResolve = defineBoolean(builder, "creativeresolve", false);
+        canPlayerUseResetCommand = defineBoolean(builder, "canplayeruseresetcommand", false);
 
         swapToCategory(builder, "research");
 
@@ -1124,8 +1158,14 @@ public class CommonConfiguration extends AbstractConfiguration
         this.festival = defineList(builder, "festival",
           Collections.singletonList("minecraft:cake*9"),
           s -> s instanceof String);
+        this.nightowl = defineList(builder, "nightowl",
+          Collections.singletonList("minecraft:golden_carrot*25"),
+          s -> s instanceof String);
         this.spectacle = defineList(builder, "spectacle",
           Collections.singletonList("minecraft:cake*18"),
+          s -> s instanceof String);
+        this.nightowl2 = defineList(builder, "nightowl2",
+          Collections.singletonList("minecraft:golden_carrot*75"),
           s -> s instanceof String);
         this.opera = defineList(builder, "opera",
           Collections.singletonList("minecraft:cake*27"),
@@ -1154,17 +1194,22 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
 
         whatyaneed = defineList(builder, "whatyaneed",
-                  Collections.singletonList("minecraft:redstone*64"),
-                  s -> s instanceof String);
+          Collections.singletonList("minecraft:redstone*64"),
+          s -> s instanceof String);
+        enhanced_gates1 = defineList(builder, "enhanced_gates1",
+          Arrays.asList("minecolonies:gate_wood*64", "minecolonies:ancienttome*2", "minecraft:iron_block*5"),
+          s -> s instanceof String);
+        enhanced_gates2 = defineList(builder, "enhanced_gates2",
+          Arrays.asList("minecolonies:gate_iron*64", "minecolonies:ancienttome*2", "minecraft:obsidian*32"), s -> s instanceof String);
         stringwork = defineList(builder, "stringwork",
-                  Collections.singletonList("minecraft:string*16"),
-                  s -> s instanceof String);
+          Collections.singletonList("minecraft:string*16"),
+          s -> s instanceof String);
         thoselungs = defineList(builder, "thoselungs",
-                  Collections.singletonList("minecraft:glass*64"),
-                  s -> s instanceof String);
+          Collections.singletonList("minecraft:glass*64"),
+          s -> s instanceof String);
         rainbowheaven = defineList(builder, "rainbowheaven",
-                  Collections.singletonList("minecraft:poppy*64"),
-                  s -> s instanceof String);
+          Collections.singletonList("minecraft:poppy*64"),
+          s -> s instanceof String);
 
         this.veinminer = defineList(builder, "veinminer",
           Collections.singletonList("minecraft:iron_ore*32"),
@@ -1203,6 +1248,9 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         this.stonecake = defineList(builder, "stonecake",
           Collections.singletonList("minecraft:chiseled_stone_bricks*64"),
+          s -> s instanceof String);
+        this.strong = defineList(builder, "strong",
+          Collections.singletonList("minecraft:diamond*8"),
           s -> s instanceof String);
         this.hardened = defineList(builder, "hardened",
           Collections.singletonList("minecraft:diamond*16"),
@@ -1319,6 +1367,15 @@ public class CommonConfiguration extends AbstractConfiguration
         taunt = defineList(builder, "taunt",
           tauntCosts,
           s -> s instanceof String);
+        arrowuse = defineList(builder, "arrowuse",
+          Collections.singletonList("minecraft:arrow*64"),
+          s -> s instanceof String);
+        arrowpierce = defineList(builder, "arrowpierce",
+          Arrays.asList("minecraft:arrow*64", "minecraft:redstone*64"),
+          s -> s instanceof String);
+        knockbackaoe = defineList(builder, "knockbackaoe",
+          Arrays.asList("minecraft:redstone*64", "minecraft:gold_ingot*64", "minecraft:lapis_lazuli*128"),
+          s -> s instanceof String);
 
         this.gildedhammer = defineList(builder, "gildedhammer",
           Arrays.asList("minecraft:gravel*64", "minecraft:sand*64", "minecraft:clay*64"),
@@ -1333,6 +1390,11 @@ public class CommonConfiguration extends AbstractConfiguration
         this.pavetheroad = defineList(builder, "pavetheroad",
           Collections.singletonList("minecraft:white_concrete*32"),
           s -> s instanceof String);
+
+        this.knowtheend = defineList(builder, "knowtheend",
+          Arrays.asList("minecraft:chorus_fruit*64"),
+          s -> s instanceof String);
+
 
         finishCategory(builder);
     }

@@ -3,20 +3,24 @@ package com.minecolonies.coremod.colony.managers;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
+import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
+import com.minecolonies.api.colony.buildings.IWorkerLivingBuilding;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizenViewMessage;
@@ -26,7 +30,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -100,59 +103,61 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void registerCitizen(final AbstractEntityCitizen citizen)
+    public void registerCivilian(final AbstractCivilianEntity entity)
     {
-        if (citizen.getCitizenId() == 0 || citizens.get(citizen.getCitizenId()) == null)
+        if (entity.getCivilianID() == 0 || citizens.get(entity.getCivilianID()) == null)
         {
-            citizen.remove();
+            entity.remove();
             return;
         }
 
-        final ICitizenData data = citizens.get(citizen.getCitizenId());
-        final Optional<AbstractEntityCitizen> existingCitizen = data.getCitizenEntity();
+        final ICitizenData data = citizens.get(entity.getCivilianID());
+        final Optional<AbstractEntityCitizen> existingCitizen = data.getEntity();
 
         if (!existingCitizen.isPresent())
         {
-            data.setCitizenEntity(citizen);
-            citizen.setCitizenData(data);
-            colony.getWorld().getScoreboard().addPlayerToTeam(citizen.getScoreboardName(), colony.getTeam());
+            data.setEntity(entity);
+            colony.getWorld().getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
             return;
         }
 
-        if (existingCitizen.get() == citizen)
+        if (existingCitizen.get() == entity)
         {
-            colony.getWorld().getScoreboard().addPlayerToTeam(citizen.getScoreboardName(), colony.getTeam());
+            colony.getWorld().getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
             return;
         }
 
-        if (!existingCitizen.get().isAlive() || !existingCitizen.get().world.isBlockPresent(existingCitizen.get().getPosition()))
+        if (entity.isAlive())
         {
             existingCitizen.get().remove();
-            data.setCitizenEntity(citizen);
-            citizen.setCitizenData(data);
-            colony.getWorld().getScoreboard().addPlayerToTeam(citizen.getScoreboardName(), colony.getTeam());
+            data.setEntity(entity);
+            entity.setCivilianData(data);
+            colony.getWorld().getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
             return;
         }
 
-        citizen.remove();
+        entity.remove();
     }
 
     @Override
-    public void unregisterCitizen(final AbstractEntityCitizen citizen)
+    public void unregisterCivilian(final AbstractCivilianEntity entity)
     {
-        final ICitizenData data = citizens.get(citizen.getCitizenId());
-        if (data != null && data.getCitizenEntity().isPresent() && data.getCitizenEntity().get() == citizen)
+        final ICitizenData data = citizens.get(entity.getCivilianID());
+        if (data != null && data.getEntity().isPresent() && data.getEntity().get() == entity)
         {
             try
             {
-                colony.getWorld().getScoreboard().removePlayerFromTeam(citizen.getScoreboardName(), colony.getTeam());
+                if (colony.getWorld().getScoreboard().getPlayersTeam(entity.getScoreboardName()) == colony.getTeam())
+                {
+                    colony.getWorld().getScoreboard().removePlayerFromTeam(entity.getScoreboardName(), colony.getTeam());
+                }
             }
-            catch (final IllegalArgumentException e)
+            catch (Exception ignored)
             {
-                Log.getLogger().error("A citizen spent his life without joining the colony team, and now died.");
+                // For some weird reason we can get an exception here, though the exception is thrown for team != colony team which we check == on before
             }
-            citizens.get(citizen.getCitizenId()).setCitizenEntity(null);
 
+            citizens.get(entity.getCivilianID()).setEntity(null);
         }
     }
 
@@ -183,10 +188,10 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void write(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compoundNBT)
     {
         @NotNull final ListNBT citizenTagList = citizens.values().stream().map(citizen -> citizen.serializeNBT()).collect(NBTUtils.toListNBT());
-        compound.put(TAG_CITIZENS, citizenTagList);
+        compoundNBT.put(TAG_CITIZENS, citizenTagList);
     }
 
     @Override
@@ -204,7 +209,7 @@ public class CitizenManager implements ICitizenManager
             players.addAll(newSubscribers);
             for (@NotNull final ICitizenData citizen : citizens.values())
             {
-                if (citizen.getCitizenEntity().isPresent())
+                if (citizen.getEntity().isPresent())
                 {
                     if (citizen.isDirty() || !newSubscribers.isEmpty())
                     {
@@ -216,49 +221,46 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public ICitizenData spawnOrCreateCitizen(@Nullable final ICitizenData data, final World world, final BlockPos spawnPos, final boolean force)
+    public ICitizenData spawnOrCreateCivilian(@Nullable final ICivilianData data, final World world, final BlockPos spawnPos, final boolean force)
     {
         if (!colony.getBuildingManager().hasTownHall() || (!colony.canMoveIn() && !force))
         {
-            return data;
+            return (ICitizenData) data;
         }
 
         BlockPos spawnLocation = spawnPos;
-        if (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO))
+        if (colony.hasTownHall() && (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO)))
         {
             spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
         }
 
-
-        BlockPos calculatedSpawn = null;
-
-        if (world.getChunkProvider().isChunkLoaded(new ChunkPos(spawnLocation.getX() >> 4, spawnLocation.getZ() >> 4)))
+        if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), spawnLocation))
         {
-            calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
-        }
-
-        if (calculatedSpawn == null)
-        {
-            spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
-            if (world.getChunkProvider().isChunkLoaded(new ChunkPos(spawnLocation.getX() >> 4, spawnLocation.getZ() >> 4)))
+            BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+            if (calculatedSpawn != null)
             {
-                calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+                return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
+            }
+            else
+            {
+                if (colony.hasTownHall())
+                {
+                    calculatedSpawn = EntityUtils.getSpawnPoint(world, colony.getBuildingManager().getTownHall().getID());
+                    if (calculatedSpawn != null)
+                    {
+                        return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
+                    }
+                }
+
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                  "com.minecolonies.coremod.citizens.nospace",
+                  spawnLocation.getX(),
+                  spawnLocation.getY(),
+                  spawnLocation.getZ());
             }
         }
 
-        if (calculatedSpawn != null)
-        {
-            return spawnCitizenOnPosition(data, world, force, calculatedSpawn);
-        }
-        else
-        {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-              "com.minecolonies.coremod.citizens.nospace",
-              spawnLocation.getX(),
-              spawnLocation.getY(),
-              spawnLocation.getZ());
-        }
-        return data;
+        return (ICitizenData) data;
     }
 
     @NotNull
@@ -271,7 +273,7 @@ public class CitizenManager implements ICitizenManager
         ICitizenData citizenData = data;
         if (citizenData == null)
         {
-            citizenData = createAndRegisterNewCitizenData();
+            citizenData = createAndRegisterCivilianData();
 
             if (getMaxCitizens() == getCitizens().size() && !force)
             {
@@ -290,27 +292,30 @@ public class CitizenManager implements ICitizenManager
                       colony.getName());
                 }
             }
+
+            colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(spawnPoint, citizenData.getName()));
         }
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
-        entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
 
         entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
         world.addEntity(entity);
 
+        entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
+
         colony.getProgressManager()
           .progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
-        markCitizensDirty();
+        markDirty();
         return citizenData;
     }
 
     @Override
-    public CitizenData createAndRegisterNewCitizenData()
+    public ICitizenData createAndRegisterCivilianData()
     {
         //This ensures that citizen IDs are getting reused.
         //That's needed to prevent bugs when calling IDs that are not used.
         for (int i = 1; i <= this.getCurrentCitizenCount() + 1; i++)
         {
-            if (this.getCitizen(i) == null)
+            if (this.getCivilian(i) == null)
             {
                 topCitizenId = i;
                 break;
@@ -318,24 +323,29 @@ public class CitizenManager implements ICitizenManager
         }
 
         final CitizenData citizenData = new CitizenData(topCitizenId, colony);
-        citizenData.initForNewCitizen();
+        citizenData.initForNewCivilian();
         citizens.put(citizenData.getId(), citizenData);
 
         return citizenData;
     }
 
     @Override
-    public void removeCitizen(@NotNull final ICitizenData citizen)
+    public void removeCivilian(@NotNull final ICivilianData citizen)
     {
+        if (!(citizen instanceof ICitizenData))
+        {
+            return;
+        }
+
         //Remove the Citizen
         citizens.remove(citizen.getId());
 
         for (@NotNull final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            building.removeCitizen(citizen);
+            building.removeCitizen((ICitizenData) citizen);
         }
 
-        colony.getWorkManager().clearWorkForCitizen(citizen);
+        colony.getWorkManager().clearWorkForCitizen((ICitizenData) citizen);
 
         //  Inform Subscribers of removed citizen
         for (final ServerPlayerEntity player : colony.getPackageManager().getCloseSubscribers())
@@ -371,20 +381,17 @@ public class CitizenManager implements ICitizenManager
         {
             if (b.getBuildingLevel() > 0)
             {
-                if (b instanceof BuildingHome)
+                if (b instanceof IWorkerLivingBuilding)
                 {
-                    newMaxCitizens += b.getMaxInhabitants();
-                }
-                else if (b instanceof AbstractBuildingGuards && b.getBuildingLevel() > 0)
-                {
-                    if (b.getAssignedCitizen().size() != 0)
-                    {
-                        newMaxCitizens += b.getAssignedCitizen().size();
-                    }
-                    else
+                    newMaxCitizens += b.getAssignedCitizen().size();
+                    if ((b instanceof AbstractBuildingGuards) && b.getAssignedCitizen().size() == 0 && b.getBuildingLevel() > 0)
                     {
                         potentialMax += 1;
                     }
+                }
+                else if (b instanceof IBuildingBedProvider)
+                {
+                    newMaxCitizens += b.getMaxInhabitants();
                 }
             }
         }
@@ -406,20 +413,20 @@ public class CitizenManager implements ICitizenManager
 
     @NotNull
     @Override
-    public Map<Integer, ICitizenData> getCitizenMap()
+    public Map<Integer, ICivilianData> getCivilianDataMap()
     {
         return Collections.unmodifiableMap(citizens);
     }
 
     @Override
-    public void markCitizensDirty()
+    public void markDirty()
     {
         colony.markDirty();
         isCitizensDirty = true;
     }
 
     @Override
-    public ICitizenData getCitizen(final int citizenId)
+    public ICitizenData getCivilian(final int citizenId)
     {
         return citizens.get(citizenId);
     }
@@ -451,6 +458,7 @@ public class CitizenManager implements ICitizenManager
 
     /**
      * Get the max citizens based on the research.
+     *
      * @return the max.
      */
     private double maxCitizensFromResearch()
@@ -460,6 +468,11 @@ public class CitizenManager implements ICitizenManager
         if (effect != null)
         {
             max += effect.getEffect();
+            // TODO research data rework
+            if (max >= 200)
+            {
+                return MineColonies.getConfig().getCommon().maxCitizenPerColony.get() - 25;
+            }
         }
         return max;
     }
@@ -521,7 +534,7 @@ public class CitizenManager implements ICitizenManager
     {
         if (colony.hasTownHall())
         {
-            getCitizens().stream().filter(Objects::nonNull).forEach(ICitizenData::updateCitizenEntityIfNecessary);
+            getCitizens().stream().filter(Objects::nonNull).forEach(ICitizenData::updateEntityIfNecessary);
         }
 
         //  Spawn initial Citizens
@@ -533,7 +546,7 @@ public class CitizenManager implements ICitizenManager
             {
                 respawnInterval = MineColonies.getConfig().getCommon().citizenRespawnInterval.get() * TICKS_SECOND;
                 // Make sure the initial citizen contain both genders
-                final CitizenData newCitizen = createAndRegisterNewCitizenData();
+                final ICitizenData newCitizen = createAndRegisterCivilianData();
 
                 // 50 - 50 Female male ratio for initial citizens
                 if (citizens.size() % 2 == 0)
@@ -545,7 +558,10 @@ public class CitizenManager implements ICitizenManager
                     newCitizen.setIsFemale(false);
                 }
 
-                spawnOrCreateCitizen(newCitizen, colony.getWorld(), null, true);
+                spawnOrCreateCivilian(newCitizen, colony.getWorld(), null, true);
+
+                colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(colony.getBuildingManager().getTownHall().getPosition(),
+                      newCitizen.getName()));
             }
         }
     }
@@ -555,9 +571,9 @@ public class CitizenManager implements ICitizenManager
     {
         for (final ICitizenData citizen : getCitizens())
         {
-            if (citizen.getCitizenEntity().isPresent() && !(citizen.getJob() instanceof AbstractJobGuard))
+            if (citizen.getEntity().isPresent() && !(citizen.getJob() instanceof AbstractJobGuard))
             {
-                citizen.getCitizenEntity().get().setMourning(mourn);
+                citizen.getEntity().get().setMourning(mourn);
             }
         }
     }

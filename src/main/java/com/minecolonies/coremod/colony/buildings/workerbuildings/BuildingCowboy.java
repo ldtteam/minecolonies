@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutCowboy;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
 import com.minecolonies.coremod.network.messages.server.colony.building.cowboy.CowboySetMilkCowsMessage;
 import net.minecraft.item.ItemStack;
@@ -20,20 +20,17 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MILK_COWS;
+
 /**
  * Creates a new building for the Cowboy.
  */
-public class BuildingCowboy extends AbstractBuildingWorker
+public class BuildingCowboy extends AbstractBuildingHerder
 {
     /**
      * Description of the job executed in the hut.
      */
-    private static final String COWBOY          = "cowboy";
-
-    /**
-     * NBT Tag for milkCows boolean.
-     */
-    private static final String NBT_MILK_COWS = "MILK_COWS";
+    private static final String COWBOY = "cowboy";
 
     /**
      * Max building level of the hut.
@@ -47,6 +44,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     *
      * @param c the colony.
      * @param l the location.
      */
@@ -119,16 +117,14 @@ public class BuildingCowboy extends AbstractBuildingWorker
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        this.milkCows = compound.getBoolean(NBT_MILK_COWS);
+        this.milkCows = compound.getBoolean(TAG_MILK_COWS);
     }
 
     @Override
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-
-        compound.putBoolean(NBT_MILK_COWS, this.milkCows);
-
+        compound.putBoolean(TAG_MILK_COWS, this.milkCows);
         return compound;
     }
 
@@ -156,7 +152,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingHerder.View
     {
         /**
          * Milk Cows or not.
@@ -165,6 +161,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
 
         /**
          * Instantiates the view of the building.
+         *
          * @param c the colonyView.
          * @param l the location of the block.
          */

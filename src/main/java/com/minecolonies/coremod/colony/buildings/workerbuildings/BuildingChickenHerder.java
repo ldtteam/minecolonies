@@ -8,8 +8,8 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.client.gui.WindowHutChickenHerder;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
 import com.minecolonies.coremod.colony.jobs.JobChickenHerder;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -17,17 +17,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates a new building for the Chicken Herder.
  */
-public class BuildingChickenHerder extends AbstractBuildingWorker
+public class BuildingChickenHerder extends AbstractBuildingHerder
 {
     /**
      * Description of the job executed in the hut.
      */
-    private static final String JOB          = "chickenherder";
-
-    /**
-     * Description of the block used to set this block.
-     */
-    private static final String HUT_NAME = "chickenHerderHut";
+    private static final String JOB = "chickenherder";
 
     /**
      * Max building level of the hut.
@@ -36,6 +31,7 @@ public class BuildingChickenHerder extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     *
      * @param c the colony.
      * @param l the location.
      */
@@ -94,10 +90,11 @@ public class BuildingChickenHerder extends AbstractBuildingWorker
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingHerder.View
     {
         /**
          * Instantiates the view of the building.
+         *
          * @param c the colonyView.
          * @param l the location of the block.
          */
@@ -110,7 +107,7 @@ public class BuildingChickenHerder extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, HUT_NAME);
+            return new WindowHutChickenHerder(this);
         }
     }
 }

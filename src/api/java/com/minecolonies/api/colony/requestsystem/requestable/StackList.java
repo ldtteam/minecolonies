@@ -1,23 +1,34 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.LIST_REQUEST_DISPLAY_STRING;
 
 /**
  * Deliverable that can only be fulfilled by a single stack with a given minimal amount of items matching one of a list of stacks.
  */
-public class StackList implements IDeliverable
+public class StackList implements IConcreteDeliverable
 {
+    /**
+     * Set of type tokens belonging to this class.
+     */
+    private final static Set<TypeToken<?>> TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(StackList.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
+
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_STACK_LIST  = "StackList";
     private static final String NBT_MATCHMETA   = "MatchMeta";
@@ -74,9 +85,10 @@ public class StackList implements IDeliverable
 
     /**
      * Create a Stacks deliverable.
-     * @param stacks the required stacks.
+     *
+     * @param stacks      the required stacks.
      * @param description the description.
-     * @param count the count.
+     * @param count       the count.
      */
     public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count)
     {
@@ -85,10 +97,11 @@ public class StackList implements IDeliverable
 
     /**
      * Create a Stacks deliverable.
-     * @param stacks the required stacks.
+     *
+     * @param stacks      the required stacks.
      * @param description the description.
-     * @param count the count.
-     * @param minCount the min count.
+     * @param count       the count.
+     * @param minCount    the min count.
      */
     public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count, final int minCount)
     {
@@ -97,24 +110,25 @@ public class StackList implements IDeliverable
 
     /**
      * Create a Stacks deliverable.
-     * @param stacks the required stacks.
-     * @param matchMeta if meta has to be matched.
-     * @param matchNBT if NBT has to be matched.
+     *
+     * @param stacks      the required stacks.
+     * @param matchMeta   if meta has to be matched.
+     * @param matchNBT    if NBT has to be matched.
      * @param matchOreDic if the oredict has to be matched.
-     * @param result the result stack.
+     * @param result      the result stack.
      * @param description the description.
-     * @param count the count.
-     * @param minCount the min count.
+     * @param count       the count.
+     * @param minCount    the min count.
      */
     public StackList(
-            @NotNull final List<ItemStack> stacks,
-            final boolean matchMeta,
-            final boolean matchNBT,
-            final boolean matchOreDic,
-            @NotNull final ItemStack result,
-            final String description,
-            final int count,
-            final int minCount)
+      @NotNull final List<ItemStack> stacks,
+      final boolean matchMeta,
+      final boolean matchNBT,
+      final boolean matchOreDic,
+      @NotNull final ItemStack result,
+      final String description,
+      final int count,
+      final int minCount)
     {
         this.description = description;
         for (final ItemStack stack : stacks)
@@ -135,8 +149,9 @@ public class StackList implements IDeliverable
 
     /**
      * Serialize the deliverable.
+     *
      * @param controller the controller.
-     * @param input the input.
+     * @param input      the input.
      * @return the compound.
      */
     public static CompoundNBT serialize(final IFactoryController controller, final StackList input)
@@ -166,8 +181,9 @@ public class StackList implements IDeliverable
 
     /**
      * Deserialize the deliverable.
+     *
      * @param controller the controller.
-     * @param compound the compound.
+     * @param compound   the compound.
      * @return the deliverable.
      */
     public static StackList deserialize(final IFactoryController controller, final CompoundNBT compound)
@@ -193,6 +209,60 @@ public class StackList implements IDeliverable
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);
         }
+
+        return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result, desc, count, minCount);
+    }
+
+    /**
+     * Serialize the deliverable.
+     *
+     * @param controller the controller.
+     * @param buffer     the the buffer to write to.
+     * @param input      the input to serialize.
+     */
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final StackList input)
+    {
+        buffer.writeInt(input.theStacks.size());
+        input.theStacks.forEach(res -> buffer.writeItemStack(res));
+
+        buffer.writeBoolean(input.matchMeta);
+        buffer.writeBoolean(input.matchNBT);
+        buffer.writeBoolean(input.matchOreDic);
+
+        buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
+        if (!ItemStackUtils.isEmpty(input.result))
+        {
+            buffer.writeItemStack(input.result);
+        }
+        buffer.writeString(input.description);
+        buffer.writeInt(input.getCount());
+        buffer.writeInt(input.getMinimumCount());
+    }
+
+    /**
+     * Deserialize the deliverable.
+     *
+     * @param controller the controller.
+     * @param buffer     the buffer to read.
+     * @return the deliverable.
+     */
+    public static StackList deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    {
+        final List<ItemStack> stacks = new ArrayList<>();
+
+        final int stacksSize = buffer.readInt();
+        for (int i = 0; i < stacksSize; ++i)
+        {
+            stacks.add(buffer.readItemStack());
+        }
+
+        final boolean matchMeta = buffer.readBoolean();
+        final boolean matchNBT = buffer.readBoolean();
+        final boolean matchOreDic = buffer.readBoolean();
+        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
+        final String desc = buffer.readString();
+        int count = buffer.readInt();
+        int minCount = buffer.readInt();
 
         return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result, desc, count, minCount);
     }
@@ -308,10 +378,23 @@ public class StackList implements IDeliverable
 
     /**
      * Getter for the display description of the list.
+     *
      * @return the description.
      */
     public String getDescription()
     {
         return description;
+    }
+
+    @Override
+    public List<ItemStack> getRequestedItems() 
+    {
+        return theStacks;
+    }
+
+    @Override
+    public Set<TypeToken<?>> getSuperClasses()
+    {
+        return TYPE_TOKENS;
     }
 }

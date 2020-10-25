@@ -5,6 +5,8 @@ import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
@@ -13,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
 
@@ -43,9 +46,10 @@ public class ContainerRack extends Container
 
     /**
      * The container constructor.
+     *
      * @param windowId the window id.
-     * @param inv the inventory.
-     * @param extra some extra data.
+     * @param inv      the inventory.
+     * @param extra    some extra data.
      */
     public ContainerRack(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
@@ -54,7 +58,7 @@ public class ContainerRack extends Container
         final BlockPos neighbor = extra.readBlockPos();
 
         final AbstractTileEntityRack abstractTileEntityRack = (AbstractTileEntityRack) inv.player.world.getTileEntity(rack);
-        final AbstractTileEntityRack  neighborRack = (AbstractTileEntityRack) inv.player.world.getTileEntity(neighbor);
+        final AbstractTileEntityRack neighborRack = (AbstractTileEntityRack) inv.player.world.getTileEntity(neighbor);
 
         if (neighborRack != null)
         {
@@ -89,8 +93,8 @@ public class ContainerRack extends Container
                 {
                     this.addSlot(
                       new SlotItemHandler(inventory, index,
-                                           INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
-                                           PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH));
+                        INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
+                        PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH));
                     index++;
                 }
             }
@@ -105,10 +109,10 @@ public class ContainerRack extends Container
             {
                 addSlot(new Slot(
                   inv,
-                                             j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
-                                             PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                                             PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
-                                               + i * PLAYER_INVENTORY_OFFSET_EACH
+                  j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
+                  PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                  PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
+                    + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -117,13 +121,34 @@ public class ContainerRack extends Container
         {
             addSlot(new Slot(
               inv, i,
-                                         PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                                         PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
-                                           INVENTORY_BAR_SIZE)
+              PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+              PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
+                INVENTORY_BAR_SIZE)
             ));
         }
     }
 
+    @NotNull
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player)
+    {
+        if (player.world.isRemote || slotId >= inventory.getSlots() || slotId < 0)
+        {
+            return super.slotClick(slotId, dragType, clickTypeIn, player);
+        }
+        final ItemStack currentStack = inventory.getStackInSlot(slotId).copy();
+        final ItemStack result = super.slotClick(slotId, dragType, clickTypeIn, player);
+        final ItemStack afterStack = inventory.getStackInSlot(slotId).copy();
+
+        if (!ItemStack.areItemStacksEqual(currentStack, afterStack))
+        {
+            this.updateRacks(afterStack);
+        }
+
+        return result;
+    }
+
+    @NotNull
     @Override
     public ItemStack transferStackInSlot(final PlayerEntity playerIn, final int index)
     {
@@ -160,12 +185,39 @@ public class ContainerRack extends Container
             slot.onSlotChanged();
         }
 
+        if (playerIn instanceof ServerPlayerEntity)
+        {
+            this.updateRacks(stackCopy);
+        }
+
+        return stackCopy;
+    }
+
+    @Override
+    protected boolean mergeItemStack(final ItemStack stack, final int startIndex, final int endIndex, final boolean reverseDirection)
+    {
+        final ItemStack before = stack.copy();
+        final boolean merge =  super.mergeItemStack(stack, startIndex, endIndex, reverseDirection);
+        if (merge)
+        {
+            this.updateRacks(before);
+        }
+        return merge;
+    }
+
+    /**
+     * Update the racks (combined inv and warehouse).
+     * @param stack the stack to set.
+     */
+    private void updateRacks(final ItemStack stack)
+    {
         rack.updateItemStorage();
+        rack.updateWarehouseIfAvailable(stack);
         if (neighborRack != null)
         {
             neighborRack.updateItemStorage();
+            neighborRack.updateWarehouseIfAvailable(stack);
         }
-        return stackCopy;
     }
 
     @Override

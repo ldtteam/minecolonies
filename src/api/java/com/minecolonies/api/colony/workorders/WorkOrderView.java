@@ -5,10 +5,8 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The WorkOrderView is the client-side representation of a WorkOrders. Views
- * contain the WorkOrder's data that is relevant to a Client, in a more
- * client-friendly form Mutable operations on a View result in a message to the
- * server to perform the operation
+ * The WorkOrderView is the client-side representation of a WorkOrders. Views contain the WorkOrder's data that is relevant to a Client, in a more client-friendly form Mutable
+ * operations on a View result in a message to the server to perform the operation
  */
 public class WorkOrderView
 {
@@ -69,7 +67,7 @@ public class WorkOrderView
      */
     public String get()
     {
-        return value;
+        return value.replaceAll("schematics/(?:decorations/)?", "");
     }
 
     /**
@@ -113,8 +111,7 @@ public class WorkOrderView
     }
 
     /**
-     * Deserialize the attributes and variables from transition.
-     * Buffer may be not readable because the workOrderView may be null.
+     * Deserialize the attributes and variables from transition. Buffer may be not readable because the workOrderView may be null.
      *
      * @param buf Byte buffer to deserialize.
      */
@@ -130,6 +127,7 @@ public class WorkOrderView
 
     /**
      * Get the position of the workorder.
+     *
      * @return the position
      */
     public BlockPos getPos()

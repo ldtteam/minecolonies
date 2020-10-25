@@ -8,13 +8,14 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
 import net.minecraft.block.BedBlock;
@@ -147,6 +148,11 @@ public class EntityAISickTask extends Goal
             return true;
         }
 
+        if (citizen.getCitizenJobHandler().getColonyJob() != null && !citizen.getCitizenJobHandler().getColonyJob().canAIBeInterrupted())
+        {
+            return false;
+        }
+
         return citizen.getCitizenDiseaseHandler().isSick();
     }
 
@@ -242,7 +248,7 @@ public class EntityAISickTask extends Goal
                           && world.isAirBlock(pos.up()))
                     {
                         usedBed = pos;
-                        ((BuildingHospital) hospital).registerPatient(usedBed, citizen.getCitizenId());
+                        ((BuildingHospital) hospital).registerPatient(usedBed, citizen.getCivilianID());
                         return FIND_EMPTY_BED;
                     }
                 }
@@ -292,11 +298,11 @@ public class EntityAISickTask extends Goal
 
         citizen.swingArm(Hand.MAIN_HAND);
         citizen.playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
-            Network.getNetwork().sendToTrackingEntity(
-              new CircleParticleEffectMessage(
-                citizen.getPositionVec().add(0, 2, 0),
-                ParticleTypes.HAPPY_VILLAGER,
-                waitingTicks), citizen);
+        Network.getNetwork().sendToTrackingEntity(
+          new CircleParticleEffectMessage(
+            citizen.getPositionVec().add(0, 2, 0),
+            ParticleTypes.HAPPY_VILLAGER,
+            waitingTicks), citizen);
 
 
         waitingTicks++;
@@ -311,7 +317,7 @@ public class EntityAISickTask extends Goal
 
     /**
      * Cure the citizen.
-     * 
+     *
      * @param citizenData the data of the citizen to cure.
      */
     private void cure(final ICitizenData citizenData)
@@ -376,6 +382,19 @@ public class EntityAISickTask extends Goal
         {
             cure(citizenData);
             return IDLE;
+        }
+
+        if (citizen.getCitizenSleepHandler().isAsleep())
+        {
+            final BlockPos hospital = colony.getBuildingManager().getBestHospital(citizen);
+            if (hospital != null)
+            {
+                final IBuilding building = colony.getBuildingManager().getBuilding(hospital);
+                if (building instanceof BuildingHospital && !((BuildingHospital) building).getBedList().contains(citizen.getCitizenSleepHandler().getBedLocation()))
+                {
+                    citizen.getCitizenSleepHandler().onWakeUp();
+                }
+            }
         }
 
         if (!citizen.getCitizenSleepHandler().isAsleep() && BlockPosUtil.getDistance2D(placeToPath, citizen.getPosition()) > MINIMUM_DISTANCE_TO_HOSPITAL)
@@ -450,22 +469,19 @@ public class EntityAISickTask extends Goal
                 return IDLE;
             }
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(id);
-            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_HOSPITAL, disease.getName(), disease.getCureString()), new TranslationTextComponent(NO_HOSPITAL),
+            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_HOSPITAL, disease.getName(), disease.getCureString()),
+              new TranslationTextComponent(NO_HOSPITAL),
               ChatPriority.BLOCKING));
             return IDLE;
         }
         else if (!citizen.getCitizenDiseaseHandler().getDisease().isEmpty())
         {
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease());
-            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(WAITING_FOR_CURE, disease.getName(), disease.getCureString()), new TranslationTextComponent(WAITING_FOR_CURE),
+            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(WAITING_FOR_CURE, disease.getName(), disease.getCureString()),
+              new TranslationTextComponent(WAITING_FOR_CURE),
               ChatPriority.BLOCKING));
         }
 
-        // Reset AI when starting to go to the hospital.
-        if (citizen.getCitizenJobHandler().getColonyJob() != null)
-        {
-            citizen.getCitizenJobHandler().getColonyJob().resetAI();
-        }
         return GO_TO_HOSPITAL;
     }
 
@@ -518,5 +534,11 @@ public class EntityAISickTask extends Goal
         citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
         placeToPath = null;
         currentState = CHECK_FOR_CURE;
+    }
+
+    @Override
+    public void startExecuting()
+    {
+        citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SICK);
     }
 }

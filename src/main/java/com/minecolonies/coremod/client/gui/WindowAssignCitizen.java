@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.client.gui.WindowHutBuilder.DARKGREEN;
+import static com.minecolonies.coremod.client.gui.WindowHutBuilder.RED;
 
 /**
  * Window for the hiring or firing of a worker.
@@ -32,7 +34,11 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 public class WindowAssignCitizen extends Window implements ButtonHandler
 {
     /**
-     *
+     * Threshold that defines when the living quarters are too far away.
+     */
+    private static final double FAR_DISTANCE_THRESHOLD = 250;
+
+    /**
      * The view of the current building.
      */
     private final IBuildingView building;
@@ -77,14 +83,22 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
 
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
-                     .filter(cit -> cit.getHomeBuilding() == null || !(colony.getBuilding(cit.getHomeBuilding()) instanceof AbstractBuildingGuards.View) && !cit.getHomeBuilding()
-                                                                                                                                                               .equals(building.getID()))
-                     .sorted(Comparator.comparing(ICitizenDataView::getName)).collect(Collectors.toList());
+                     .filter(cit -> cit.getHomeBuilding() == null
+                                      || !(colony.getBuilding(cit.getHomeBuilding()) instanceof AbstractBuildingGuards.View)
+                                           && !cit.getHomeBuilding().equals(building.getID()))
+                     .sorted(Comparator.comparing(cit -> ((ICitizenDataView) cit).getHomeBuilding() == null ? 0 : 1)
+                               .thenComparingLong(cit -> {
+                                   if (((ICitizenDataView) cit).getWorkBuilding() == null)
+                                   {
+                                       return 0;
+                                   }
+
+                                   return BlockPosUtil.getDistance2D(((ICitizenDataView) cit).getWorkBuilding(), building.getPosition());
+                               })).collect(Collectors.toList());
     }
 
     /**
-     * Called when the GUI has been opened.
-     * Will fill the fields and lists.
+     * Called when the GUI has been opened. Will fill the fields and lists.
      */
     @Override
     public void onOpened()
@@ -95,7 +109,6 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
         //Creates a dataProvider for the homeless citizenList.
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
-
             /**
              * The number of rows of the list.
              * @return the number.
@@ -122,19 +135,28 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
 
                     final BlockPos work = citizen.getWorkBuilding();
                     String workString = "";
+                    double newDistance = 0;
                     if (work != null)
                     {
-                        workString = " " + BlockPosUtil.getDistance2D(work, building.getPosition()) + " blocks";
+                        newDistance = BlockPosUtil.getDistance2D(work, building.getPosition());;
+                        workString = " " + newDistance + " blocks";
                     }
 
                     final BlockPos home = citizen.getHomeBuilding();
                     String homeString = "";
+                    boolean better = false;
+                    boolean badCurrentLiving = false;
                     if (home != null)
                     {
                         if (work != null)
                         {
-                            homeString = LanguageHandler.format("com.minecolonies.coremod.gui.homeHut.currently", BlockPosUtil.getDistance2D(work, home));
-
+                            final double oldDistance = BlockPosUtil.getDistance2D(work, home);
+                            homeString = LanguageHandler.format("com.minecolonies.coremod.gui.homeHut.currently", oldDistance);
+                            better = newDistance < oldDistance;
+                            if (oldDistance >= 220)
+                            {
+                                badCurrentLiving = true;
+                            }
                         }
                         else
                         {
@@ -142,8 +164,19 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
                         }
                     }
 
-                    rowPane.findPaneOfTypeByID(CITIZEN_JOB, Label.class).setLabelText(LanguageHandler.format(citizen.getJob()) + workString);
-                    rowPane.findPaneOfTypeByID(CITIZEN_LIVING, Label.class).setLabelText(homeString);
+                    final Label newLivingLabel = rowPane.findPaneOfTypeByID(CITIZEN_JOB, Label.class);
+                    newLivingLabel.setLabelText(LanguageHandler.format(citizen.getJob()) + workString);
+                    if (better)
+                    {
+                        newLivingLabel.setColor(DARKGREEN, DARKGREEN);
+                    }
+
+                    final Label currentLivingLabel = rowPane.findPaneOfTypeByID(CITIZEN_LIVING, Label.class);
+                    currentLivingLabel.setLabelText(homeString);
+                    if (badCurrentLiving)
+                    {
+                        currentLivingLabel.setColor(RED, RED);
+                    }
 
                     final Button done = rowPane.findPaneOfTypeByID(CITIZEN_DONE, Button.class);
                     if (colony.isManualHousing())

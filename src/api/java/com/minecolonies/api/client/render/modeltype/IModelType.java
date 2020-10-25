@@ -1,17 +1,17 @@
 package com.minecolonies.api.client.render.modeltype;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-
 import net.minecraft.util.ResourceLocation;
 
 /**
- * Defines a model type and its textures.
- * Use the {@link com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry} to register it, together with a Citizen model for both male and female.
+ * Defines a model type and its textures. Use the {@link com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry} to register it, together with a Citizen model for
+ * both male and female.
  */
 public interface IModelType
 {
     /**
      * The name of the model type.
+     *
      * @return The name.
      */
     String getName();

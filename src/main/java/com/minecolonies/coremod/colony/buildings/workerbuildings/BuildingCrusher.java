@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
@@ -20,10 +21,14 @@ import com.minecolonies.coremod.client.gui.WindowHutCrusher;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
+
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
@@ -125,6 +130,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
     /**
      * Get the recipe storage of the current mode.
+     *
      * @return the storage.
      */
     public IRecipeStorage getCurrentRecipe()
@@ -213,6 +219,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
     /**
      * Calculate the max quantity to be crafted per day.
+     *
      * @return the max.
      */
     public int getMaxDailyQuantity()
@@ -255,15 +262,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         }
 
         this.oneByOne = compound.getBoolean(CRUSHING_11);
-
-        if (super.recipes.isEmpty())
-        {
-            for (final IRecipeStorage recipe : crusherRecipes.values())
-            {
-                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
-                addRecipe(token);
-            }
-        }
     }
 
     @Override
@@ -293,13 +291,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         if (crusherRecipes.isEmpty() || oneOne && !oneByOne)
         {
             loadCrusherMode();
-
-            super.recipes.clear();
-            for (final IRecipeStorage recipe : crusherRecipes.values())
-            {
-                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
-                addRecipe(token);
-            }
         }
 
         if (crusherMode == null)
@@ -321,36 +312,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     }
 
     @Override
-    public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
-    {
-        for(final IRecipeStorage storage : crusherRecipes.values())
-        {
-            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
-            {
-                return storage;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
-    {
-        for(final IRecipeStorage storage : crusherRecipes.values())
-        {
-            if(storage != null && stackPredicate.test(storage.getPrimaryOutput()))
-            {
-                final List<IItemHandler> handlers = getHandlers();
-                if(storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
-                {
-                    return storage;
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.crusher;
@@ -359,7 +320,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Crusher", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.CRUSHER_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -443,6 +404,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
         /**
          * Get all the possible crusher modes.
+         *
          * @return the modes.
          */
         public List<ItemStorage> getCrusherModes()

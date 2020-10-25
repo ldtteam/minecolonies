@@ -13,17 +13,19 @@ import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDelive
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
-import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteractionResponseHandler;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.DeliveryRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.PickupRequest;
@@ -32,6 +34,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -77,6 +80,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * Completing a request with a priority of at least PRIORITY_FORCING_DUMP will force a dump.
      */
     private static final int PRIORITY_FORCING_DUMP = 10;
+
+    /**
+     * Delivery icon
+     */
+    private final static VisibleCitizenStatus DELIVERING =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/delivery.png"), "com.minecolonies.gui.visiblestatus.delivery");
 
     /**
      * Amount of stacks left to gather from the inventory at the gathering step.
@@ -139,10 +148,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return DUMPING;
         }
 
+        worker.getCitizenData().setVisibleStatus(DELIVERING);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.gathering"));
 
         final BlockPos pickupTarget = currentTask.getRequester().getLocation().getInDimensionLocation();
-        if (!worker.isWorkerAtSiteWithMove(pickupTarget, MIN_DISTANCE_TO_WAREHOUSE))
+        if (pickupTarget != BlockPos.ZERO && !worker.isWorkerAtSiteWithMove(pickupTarget, MIN_DISTANCE_TO_WAREHOUSE))
         {
             setDelay(WALK_DELAY);
             return PICKUP;
@@ -224,6 +234,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
+        if (InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= 0)
+        {
+            return true;
+        }
+
         final ItemStack activeStack = handler.extractItem(currentSlot, amount, false);
         InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, worker.getInventoryCitizen());
         building.markDirty();
@@ -236,10 +251,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if the worker can hold that much items.
-     * It depends on his building level.
-     * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
-     * That's 2^buildingLevel-1.
+     * Check if the worker can hold that much items. It depends on his building level. Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited. That's 2^buildingLevel-1.
      *
      * @return whether this deliveryman can hold more items
      */
@@ -253,8 +265,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if worker of a certain building requires the item now.
-     * Or the builder for the current task.
+     * Check if worker of a certain building requires the item now. Or the builder for the current task.
      *
      * @param building         the building to check for.
      * @param stack            the stack to stack with.
@@ -295,7 +306,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     @Nullable
     private IWareHouse getAndCheckWareHouse()
     {
-        for (final IWareHouse wareHouse : job.getColony().getBuildingManager().getWareHouses())
+        final List<IWareHouse> wareHouses = new ArrayList<>(job.getColony().getBuildingManager().getWareHouses());
+        wareHouses.sort((wh1, wh2) -> (int) (wh1.getPosition().distanceSq(getOwnBuilding().getPosition()) - wh2.getPosition().distanceSq(getOwnBuilding().getPosition())));
+        for (final IWareHouse wareHouse : wareHouses)
+        {
+           wareHouse.unregisterFromWareHouse(this.getOwnBuilding());
+        }
+
+        for (final IWareHouse wareHouse : wareHouses)
         {
             if (wareHouse.registerWithWareHouse(this.getOwnBuilding()))
             {
@@ -306,8 +324,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Deliver the items to the hut.
-     * TODO: Current precondition: The dman's inventory may only consist of the requested itemstack.
+     * Deliver the items to the hut. TODO: Current precondition: The dman's inventory may only consist of the requested itemstack.
      *
      * @return the next state.
      */
@@ -322,6 +339,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return DUMPING;
         }
 
+        worker.getCitizenData().setVisibleStatus(DELIVERING);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.delivering"));
 
         final ILocation targetBuildingLocation = ((Delivery) currentTask.getRequest()).getTarget();
@@ -391,7 +409,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     if (targetBuilding instanceof AbstractBuildingWorker)
                     {
                         worker.getCitizenData()
-                          .triggerInteraction(new PosBasedInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
+                          .triggerInteraction(new PosBasedInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
                             targetBuilding.getMainCitizen().getName()),
                             ChatPriority.IMPORTANT,
                             new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
@@ -400,7 +418,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     else
                     {
                         worker.getCitizenData()
-                          .triggerInteraction(new PosBasedInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
+                          .triggerInteraction(new PosBasedInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
                             new StringTextComponent(" :" + targetBuilding.getSchematicName())),
                             ChatPriority.IMPORTANT,
                             new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
@@ -434,8 +452,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Prepare deliveryman for delivery.
-     * Check if the building still needs the item and if the required items are still in the warehouse.
+     * Prepare deliveryman for delivery. Check if the building still needs the item and if the required items are still in the warehouse.
      *
      * @return the next state to go to.
      */
@@ -449,14 +466,42 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        final Delivery delivery = (Delivery) currentTask.getRequest();
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
-          itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(delivery.getStack(), itemStack)))
+        final List<IRequest<? extends Delivery>> taskList = job.getTaskListWithSameDestination((IRequest<? extends Delivery>) currentTask);
+        final List<ItemStack> alreadyInInv = new ArrayList<>();
+        IRequest<? extends Delivery> nextPickUp = null;
+
+        int parallelDeliveryCount = 0;
+        for (final IRequest<? extends Delivery> task : taskList)
+        {
+            parallelDeliveryCount++;
+            int totalCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+              itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(task.getRequest().getStack(), itemStack));
+            int hasCount = 0;
+            for (final ItemStack stack : alreadyInInv)
+            {
+                if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, task.getRequest().getStack()))
+                {
+                    hasCount += stack.getCount();
+                }
+            }
+
+            if (totalCount < hasCount + task.getRequest().getStack().getCount())
+            {
+                nextPickUp = task;
+                break;
+            }
+            else
+            {
+                alreadyInInv.add(task.getRequest().getStack());
+            }
+        }
+
+        if (nextPickUp == null || parallelDeliveryCount > 1 + (getSecondarySkillLevel() / 5))
         {
             return DELIVERY;
         }
 
-        final ILocation location = delivery.getStart();
+        final ILocation location = nextPickUp.getRequest().getStart();
 
         if (!location.isReachableFromLocation(worker.getLocation()))
         {
@@ -484,20 +529,26 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockState().getBlock());
         }
 
-        if (gatherIfInTileEntity(tileEntity, delivery.getStack()))
+        job.addConcurrentDelivery(nextPickUp.getId());
+        if (gatherIfInTileEntity(tileEntity, nextPickUp.getRequest().getStack()))
         {
+            return PREPARE_DELIVERY;
+        }
+
+        if (parallelDeliveryCount > 1)
+        {
+            job.removeConcurrentDelivery(nextPickUp.getId());
             return DELIVERY;
         }
 
         job.finishRequest(false);
+        job.removeConcurrentDelivery(nextPickUp.getId());
         return START_WORKING;
     }
 
     /**
-     * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the worker inventory.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the stack.
+     * Finds the first @see ItemStack the type of {@code is}. It will be taken from the chest and placed in the worker inventory. Make sure that the worker stands next the chest to
+     * not break immersion. Also make sure to have inventory space for the stack.
      *
      * @param entity the tileEntity chest or building or rack.
      * @param is     the itemStack.
@@ -509,7 +560,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                  && InventoryFunctions
                       .matchFirstInProviderWithAction(
                         entity,
-                        stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
+                        stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true, true),
                         (provider, index) -> InventoryUtils.transferXOfItemStackIntoNextFreeSlotFromProvider(provider,
                           index,
                           is.getCount(),
@@ -524,6 +575,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private IAIState decide()
     {
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         final IRequest<? extends IDeliverymanRequestable> currentTask = job.getCurrentTask();
         if (currentTask == null)
         {
@@ -564,8 +616,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if the deliveryman code should be executed.
-     * More concretely if he has a warehouse to work at.
+     * Check if the deliveryman code should be executed. More concretely if he has a warehouse to work at.
      *
      * @return false if should continue as planned.
      */
@@ -582,7 +633,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if (worker.getCitizenData() != null)
         {
             worker.getCitizenData()
-              .triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
+              .triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
                 ChatPriority.BLOCKING));
         }
         return false;

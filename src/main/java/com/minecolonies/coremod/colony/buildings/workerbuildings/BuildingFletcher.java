@@ -14,9 +14,11 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.client.gui.WindowHutCrafter;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobFletcher;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,19 +50,7 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     public BuildingFletcher(final IColony c, final BlockPos l)
     {
         super(c, l);
-        if (recipes.isEmpty())
-        {
-            final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              ImmutableList.of(new ItemStack(Items.WHITE_WOOL, 1)),
-                      1,
-                      new ItemStack(Items.STRING, 4),
-                      Blocks.AIR);
-            recipes.add(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
-        }
     }
-
 
     @NotNull
     @Override
@@ -104,6 +94,20 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     }
 
     @Override
+    @NotNull
+    public Skill getCraftSpeedSkill()
+    {
+        return getPrimarySkill();
+    }
+
+    @Override
+    @NotNull
+    public Skill getRecipeImprovementSkill()
+    {
+        return getSecondarySkill();
+    }
+    
+    @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
         Optional<Boolean> isRecipeAllowed;
@@ -123,19 +127,12 @@ public class BuildingFletcher extends AbstractBuildingCrafter
             // Additional recipe rules
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
 
-            boolean hasValidItem = false;
-
-            if (storage.getPrimaryOutput().getItem() instanceof ArrowItem
-                  || (storage.getPrimaryOutput().getItem() instanceof DyeableArmorItem
-                        && ((DyeableArmorItem) storage.getPrimaryOutput().getItem()).getArmorMaterial() == ArmorMaterial.LEATHER))
-            {
-                return true;
-            }
+            return storage.getPrimaryOutput().getItem() instanceof ArrowItem
+                     || (storage.getPrimaryOutput().getItem() instanceof DyeableArmorItem
+                           && ((DyeableArmorItem) storage.getPrimaryOutput().getItem()).getArmorMaterial() == ArmorMaterial.LEATHER);
 
             // End Additional recipe rules
         }
-
-        return false;
     }
 
     @Override
@@ -147,7 +144,7 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Fletcher", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.FLETCHER_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -177,7 +174,7 @@ public class BuildingFletcher extends AbstractBuildingCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, FLETCHER);
+            return new WindowHutCrafter(this, FLETCHER);
         }
     }
 }

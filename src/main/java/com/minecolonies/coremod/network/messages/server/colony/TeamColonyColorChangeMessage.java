@@ -58,7 +58,6 @@ public class TeamColonyColorChangeMessage extends AbstractColonyServerMessage
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeInt(colorOrdinal);
     }
 

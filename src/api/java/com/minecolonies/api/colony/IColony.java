@@ -8,11 +8,11 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
-import com.minecolonies.coremod.colony.ColonyState;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -29,8 +29,7 @@ import java.util.Map;
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 
 /**
- * Interface of the Colony and ColonyView which will have to implement the
- * following methods.
+ * Interface of the Colony and ColonyView which will have to implement the following methods.
  */
 public interface IColony
 {
@@ -70,8 +69,7 @@ public interface IColony
     IPermissions getPermissions();
 
     /**
-     * Determine if a given chunk coordinate is considered to be within the
-     * colony's bounds.
+     * Determine if a given chunk coordinate is considered to be within the colony's bounds.
      *
      * @param w   World to check.
      * @param pos Block Position.
@@ -119,6 +117,20 @@ public interface IColony
     }
 
     /**
+     * Returns this colony's banner patterns, as a List
+     *
+     * @return a list of pattern-color pairs
+     */
+    ListNBT getColonyFlag();
+
+    /**
+     * Whether it is day for the colony
+     *
+     * @return true if it is day
+     */
+    boolean isDay();
+
+    /**
      * Retrieves the team of the colony
      *
      * @return Team of the colony
@@ -140,8 +152,7 @@ public interface IColony
     World getWorld();
 
     /**
-     * Get the current {@link IRequestManager} for this Colony.
-     * Returns null if the current Colony does not support the request system.
+     * Get the current {@link IRequestManager} for this Colony. Returns null if the current Colony does not support the request system.
      *
      * @return the {@link IRequestManager} for this colony, null if not supported.
      */
@@ -226,9 +237,28 @@ public interface IColony
 
     ICitizenManager getCitizenManager();
 
+    /**
+     * Gets the visitor manager
+     *
+     * @return manager
+     */
+    IVisitorManager getVisitorManager();
+
     IRaiderManager getRaiderManager();
 
+    /**
+     * Get the event manager of the colony.
+     *
+     * @return the event manager.
+     */
     IEventManager getEventManager();
+
+    /**
+     * Get the event description manager of the colony.
+     *
+     * @return the event description manager.
+     */
+    IEventDescriptionManager getEventDescriptionManager();
 
     IColonyPackageManager getPackageManager();
 
@@ -290,6 +320,8 @@ public interface IColony
 
     void setColonyColor(TextFormatting color);
 
+    void setColonyFlag(ListNBT patterns);
+
     void setManualHousing(boolean manualHousing);
 
     void addWayPoint(BlockPos pos, BlockState newWayPointState);
@@ -313,10 +345,6 @@ public interface IColony
     void read(CompoundNBT compound);
 
     void setMoveIn(boolean newMoveIn);
-
-    int getBoughtCitizenCost();
-
-    void increaseBoughtCitizenCost();
 
     /**
      * Returns a set of players receiving important messages for the colony.
@@ -372,4 +400,11 @@ public interface IColony
      * @return the state.
      */
     ColonyState getState();
+
+    /**
+     * Is the colony active currently.
+     *
+     * @return true if so.
+     */
+    boolean isActive();
 }

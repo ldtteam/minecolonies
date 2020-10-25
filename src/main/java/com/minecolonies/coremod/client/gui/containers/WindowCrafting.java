@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -86,9 +87,10 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
 
     /**
      * Create a crafting gui window.
-     * @param container the container.
+     *
+     * @param container       the container.
      * @param playerInventory the player inv.
-     * @param iTextComponent the display text component.
+     * @param iTextComponent  the display text component.
      */
     public WindowCrafting(final ContainerCrafting container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
@@ -108,7 +110,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
         final Button
           doneButton = new Button(guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new WindowCrafting.OnButtonPress());
         this.addButton(doneButton);
-        if(!building.canRecipeBeAdded())
+        if (!building.canRecipeBeAdded())
         {
             doneButton.active = false;
         }
@@ -123,7 +125,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
             {
                 final List<ItemStack> input = new LinkedList<>();
 
-                for(int i = 0; i < (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
+                for (int i = 0; i < (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
                 {
                     final ItemStack stack = container.craftMatrix.getStackInSlot(i);
                     final ItemStack copy = stack.copy();
@@ -132,11 +134,12 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
                     input.add(copy);
                 }
 
-                final ItemStack primaryOutput =  container.craftResult.getStackInSlot(0).getStack().copy();
+                final ItemStack primaryOutput = container.craftResult.getStackInSlot(0).getStack().copy();
+                final List<ItemStack> secondaryOutputs = container.getRemainingItems();
 
-                if(!ItemStackUtils.isEmpty(primaryOutput))
+                if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
-                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, false));
+                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutputs, false));
                 }
             }
             onClose();
@@ -159,7 +162,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        if(completeCrafting)
+        if (completeCrafting)
         {
             this.minecraft.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES3X3);
         }

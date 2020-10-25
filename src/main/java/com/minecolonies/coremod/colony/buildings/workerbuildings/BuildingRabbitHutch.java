@@ -9,17 +9,20 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
 import com.minecolonies.coremod.colony.jobs.JobRabbitHerder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
  * Creates a new building for the rabbit hutch.
  */
-public class BuildingRabbitHutch extends AbstractBuildingWorker
+public class BuildingRabbitHutch extends AbstractBuildingHerder
 {
     /**
      * Description of the job executed in the hut.
@@ -33,12 +36,14 @@ public class BuildingRabbitHutch extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     *
      * @param c the colony.
      * @param l the location.
      */
     public BuildingRabbitHutch(final IColony c, final BlockPos l)
     {
         super(c, l);
+        keepX.put(stack -> Items.CARROT == stack.getItem(), new Tuple<>(STACKSIZE, true));
     }
 
     @NotNull
@@ -107,10 +112,11 @@ public class BuildingRabbitHutch extends AbstractBuildingWorker
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingHerder.View
     {
         /**
          * Instantiates the view of the building.
+         *
          * @param c the colonyView.
          * @param l the location of the block.
          */
@@ -123,7 +129,7 @@ public class BuildingRabbitHutch extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, RABBIT_HUTCH);
+            return new WindowHutWorkerPlaceholder<AbstractBuildingHerder.View>(this, RABBIT_HUTCH);
         }
     }
 }

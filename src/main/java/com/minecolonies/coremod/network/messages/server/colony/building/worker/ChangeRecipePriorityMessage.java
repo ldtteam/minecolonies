@@ -77,11 +77,11 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
     {
         if (up)
         {
-            building.switchIndex(recipeLocation, recipeLocation + 1);
+            building.switchIndex(recipeLocation, recipeLocation - 1);
         }
         else
         {
-            building.switchIndex(recipeLocation, recipeLocation - 1);
+            building.switchIndex(recipeLocation, recipeLocation + 1);
         }
     }
 }

@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutShepherd;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
 import com.minecolonies.coremod.network.messages.server.colony.building.shepherd.ShepherdSetDyeSheepsMessage;
 import net.minecraft.item.ItemStack;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates a new building for the Shepherd.
  */
-public class BuildingShepherd extends AbstractBuildingWorker
+public class BuildingShepherd extends AbstractBuildingHerder
 {
     /**
      * Description of the job executed in the hut.
@@ -47,6 +47,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     *
      * @param c the colony.
      * @param l the location.
      */
@@ -132,6 +133,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
 
     /**
      * Returns current state of automatical sheep dyeing, true = enabled
+     *
      * @return true if so.
      */
     public boolean isDyeSheeps()
@@ -141,6 +143,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
 
     /**
      * Sets state of automatical sheep dyeing, true = enabled
+     *
      * @param dyeSheeps true if sheeps should be dyed.
      */
     public void setDyeSheeps(final boolean dyeSheeps)
@@ -162,7 +165,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingHerder.View
     {
         /**
          * Dye sheeps automatically or not.
@@ -171,6 +174,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
 
         /**
          * Instantiates the view of the building.
+         *
          * @param c the colonyView.
          * @param l the location of the block.
          */
@@ -188,6 +192,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
 
         /**
          * Called from button handler
+         *
          * @param dyeSheeps true if the sheeps should be dyed.
          */
         public void setDyeSheeps(final boolean dyeSheeps)
@@ -198,6 +203,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
 
         /**
          * Returns current state of automatical sheep dyeing.
+         *
          * @return true if so.
          */
         public boolean isDyeSheeps()

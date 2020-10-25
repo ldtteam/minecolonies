@@ -9,10 +9,12 @@ import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
@@ -24,6 +26,7 @@ import net.minecraft.item.*;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -84,6 +87,12 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     public static final String ORE_LIST = "ores";
 
     /**
+     * Smelting icon
+     */
+    private final static VisibleCitizenStatus SMELTING =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/smelting.png"), "com.minecolonies.gui.visiblestatus.smelting");
+
+    /**
      * Progress in hitting the product.
      */
     private int progress = 0;
@@ -99,8 +108,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     private static final int MAX_ENCHANTED_BOOK_CHANCE = 100;
 
     /**
-     * Constructor for the Smelter.
-     * Defines the tasks the cook executes.
+     * Constructor for the Smelter. Defines the tasks the cook executes.
      *
      * @param job a cook job to use.
      */
@@ -127,6 +135,8 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     private IAIState smeltStuff()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(SMELTING_DOWN));
+        worker.getCitizenData().setVisibleStatus(SMELTING);
+
         if (walkToBuilding())
         {
             return getState();
@@ -259,7 +269,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     protected void extractFromFurnace(final FurnaceTileEntity furnace)
     {
         final ItemStack ingots = new InvWrapper(furnace).extractItem(RESULT_SLOT, STACKSIZE, false);
-        final int multiplier = getOwnBuilding().ingotMultiplier(worker.getCitizenData().getJobModifier(), worker.getRandom());
+        final int multiplier = getOwnBuilding().ingotMultiplier((int) (getSecondarySkillLevel()/2.0), worker.getRandom());
         int amount = ingots.getCount() * multiplier;
 
         while (amount > 0)
@@ -311,7 +321,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        return new SmeltableOre(STACKSIZE);
+        return new SmeltableOre(STACKSIZE * getOwnBuilding().getFurnaces().size());
     }
 
     /**
@@ -341,16 +351,17 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                                                    .map(ItemStorage::getItemStack)
                                                    .collect(Collectors.toList());
 
-                if ( requests.isEmpty() )
+                if (requests.isEmpty())
                 {
                     if (worker.getCitizenData() != null)
                     {
-                        worker.getCitizenData().triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(FURNACE_USER_NO_ORE), ChatPriority.BLOCKING));
+                        worker.getCitizenData()
+                          .triggerInteraction(new StandardInteraction(new TranslationTextComponent(FURNACE_USER_NO_ORE), ChatPriority.BLOCKING));
                     }
                 }
                 else
                 {
-                    worker.getCitizenData().createRequestAsync(new StackList(requests, COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE, STACKSIZE, 1));
+                    worker.getCitizenData().createRequestAsync(new StackList(requests, COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE, STACKSIZE * getOwnBuilding().getFurnaces().size(),1));
                 }
             }
             else
@@ -381,7 +392,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
      */
     private int getRequiredProgressForMakingRawMaterial()
     {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL) * HITTING_TIME;
+        return PROGRESS_MULTIPLIER / Math.min((int) (getPrimarySkillLevel()/2.0) + 1, MAX_LEVEL) * HITTING_TIME;
     }
 
     private ItemStack extractEnchantFromItem(final ItemStack item)

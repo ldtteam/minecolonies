@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.minimal;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
@@ -18,7 +19,6 @@ import java.util.EnumSet;
 
 /**
  * @author kevin
- *
  */
 public class EntityAIMournCitizen extends Goal
 {
@@ -30,22 +30,22 @@ public class EntityAIMournCitizen extends Goal
     /**
      * Speed at which the citizen will move around
      */
-    private final double        speed;
+    private final double speed;
 
     /**
      * X location of the next position to move to
      */
-    private       double        xPosition = 0;
+    private double xPosition = 0;
 
     /**
      * Y location of the next position to move to
      */
-    private       double        yPosition = 0;
+    private double yPosition = 0;
 
     /**
      * Z location of the next position to move to
      */
-    private       double        zPosition = 0;
+    private double zPosition = 0;
 
     /**
      * Indicated the citizen reach the mourn location
@@ -70,7 +70,7 @@ public class EntityAIMournCitizen extends Goal
     /**
      * Length of time the citizen will mourn.
      */
-    private int mourningTime;
+    private int     mourningTime;
     /**
      * Indicate to look at the citizen or not.
      */
@@ -85,8 +85,8 @@ public class EntityAIMournCitizen extends Goal
      * Constant values of mourning
      */
     private static final int MIN_DESTINATION_TO_LOCATION = 225;
-    private static final int MIN_MOURN_TIME = 2000;
-    private static final int MIN_MOURN_RANDOM_TIME = 1000;
+    private static final int MIN_MOURN_TIME              = 2000;
+    private static final int MIN_MOURN_RANDOM_TIME       = 1000;
 
     /**
      * Instantiates this task.
@@ -104,13 +104,9 @@ public class EntityAIMournCitizen extends Goal
     }
 
     /**
-     * {@inheritDoc}
-     * Returns whether the Goal should begin execution.
-     * This will execute if the status for the citizen is set to MOURN
-     * It will determine the location of the mourn location and start to move
-     * entity toward that location.   Once there it will random move the citizen around.
-     * It will determine a nearby citizen and look at that citizen.  To appear they are communicating.
-     * If citizen gets to far away then they will move back to the mourn location.
+     * {@inheritDoc} Returns whether the Goal should begin execution. This will execute if the status for the citizen is set to MOURN It will determine the location of the mourn
+     * location and start to move entity toward that location.   Once there it will random move the citizen around. It will determine a nearby citizen and look at that citizen.  To
+     * appear they are communicating. If citizen gets to far away then they will move back to the mourn location.
      */
     @Override
     public boolean shouldExecute()
@@ -121,9 +117,15 @@ public class EntityAIMournCitizen extends Goal
         }
 
         if ((citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
-            || (reachedFinalDestination && checkForRandom()))
+              || (reachedFinalDestination && checkForRandom()))
         {
-            closestEntity = this.citizen.world.getClosestEntityWithinAABB(EntityCitizen.class, EntityPredicate.DEFAULT, citizen, citizen.posX, citizen.posY, citizen.posZ, citizen.getBoundingBox().grow(maxDistanceForPlayer, 3.0D, maxDistanceForPlayer));
+            closestEntity = this.citizen.world.getClosestEntityWithinAABB(EntityCitizen.class,
+              EntityPredicate.DEFAULT,
+              citizen,
+              citizen.posX,
+              citizen.posY,
+              citizen.posZ,
+              citizen.getBoundingBox().grow(maxDistanceForPlayer, 3.0D, maxDistanceForPlayer));
             if (closestEntity == null)
             {
                 continueLooking = false;
@@ -143,8 +145,7 @@ public class EntityAIMournCitizen extends Goal
     }
 
     /**
-     * {@inheritDoc}
-     * Returns whether an in-progress Goal should continue executing.
+     * {@inheritDoc} Returns whether an in-progress Goal should continue executing.
      */
     @Override
     public boolean shouldContinueExecuting()
@@ -153,13 +154,13 @@ public class EntityAIMournCitizen extends Goal
     }
 
     /**
-     * {@inheritDoc}
-     * Execute a one shot task or start executing a continuous task.
+     * {@inheritDoc} Execute a one shot task or start executing a continuous task.
      */
     @Override
     public void startExecuting()
     {
         citizen.getCitizenItemHandler().removeHeldItem();
+        citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.MOURNING);
         citizen.getNavigator().tryMoveToXYZ(this.xPosition, this.yPosition, this.zPosition, this.speed);
     }
 
@@ -272,14 +273,13 @@ public class EntityAIMournCitizen extends Goal
         if (continueLooking && closestEntity != null)
         {
             citizen.getLookController().setLookPosition(closestEntity.posX, closestEntity.posY + (double) closestEntity.getEyeHeight(),
-                    closestEntity.posZ, (float) citizen.getHorizontalFaceSpeed(), (float) citizen.getVerticalFaceSpeed());
+              closestEntity.posZ, (float) citizen.getHorizontalFaceSpeed(), (float) citizen.getVerticalFaceSpeed());
         }
         else
         {
             citizen.getLookController().setLookPosition(citizen.posX, citizen.posY - 10, citizen.posZ, (float) citizen.getHorizontalFaceSpeed(),
-                    (float) citizen.getVerticalFaceSpeed());
+              (float) citizen.getVerticalFaceSpeed());
         }
         super.tick();
     }
-
 }

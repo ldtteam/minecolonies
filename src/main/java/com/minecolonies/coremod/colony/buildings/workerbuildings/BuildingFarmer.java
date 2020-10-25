@@ -1,25 +1,33 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutFarmer;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.farmer.RequestFertilizerMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -37,13 +45,11 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE;
 
 /**
  * Class which handles the farmer building.
  */
-public class BuildingFarmer extends AbstractBuildingWorker
+public class BuildingFarmer extends AbstractBuildingCrafter
 {
     /**
      * Descriptive string of the profession.
@@ -71,9 +77,14 @@ public class BuildingFarmer extends AbstractBuildingWorker
     private static final String TAG_ASSIGN_MANUALLY = "assign";
 
     /**
+     * NBT tag to store requestFert
+     */
+    private static final String TAG_REQUEST_FERTILIZER = "requestFert";
+
+    /**
      * Flag used to be notified about block updates.
      */
-    private static final int                       BLOCK_UPDATE_FLAG = 3;
+    private static final int BLOCK_UPDATE_FLAG = 3;
 
     /**
      * The last field tag.
@@ -106,6 +117,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * Fields should be assigned manually to the farmer.
      */
     private boolean shouldAssignManually = false;
+
+    /**
+     * Farmer should request fertilizer
+     */
+    private boolean shouldRequestFertilizer = true;
 
     /**
      * Public constructor which instantiates the building.
@@ -160,7 +176,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
         if (scareCrow instanceof ScarecrowTileEntity)
         {
-            ((ScarecrowTileEntity) scareCrow).calculateSize(getColony().getWorld(), field.down());
             farmerFields.add(field);
             this.markDirty();
         }
@@ -189,6 +204,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     /**
      * Retrieves a random field to work on for the farmer.
+     *
      * @param world the world it is in.
      * @return a field to work on.
      */
@@ -249,6 +265,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
 
+        if (compound.keySet().contains(TAG_REQUEST_FERTILIZER))
+        {
+            shouldRequestFertilizer = compound.getBoolean(TAG_REQUEST_FERTILIZER);
+        }
+
         if (compound.keySet().contains(LAST_FIELD_TAG))
         {
             final BlockPos pos = BlockPosUtil.read(compound, LAST_FIELD_TAG);
@@ -269,6 +290,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
         compound.put(TAG_FIELDS, fieldTagList);
         compound.putBoolean(TAG_ASSIGN_MANUALLY, shouldAssignManually);
+        compound.putBoolean(TAG_REQUEST_FERTILIZER, shouldRequestFertilizer);
 
         if (lastField != null)
         {
@@ -291,12 +313,10 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 ((ScarecrowTileEntity) scareCrow).setOwner(0);
 
                 getColony().getWorld()
-                        .notifyBlockUpdate(scareCrow.getPos(),
-                                getColony().getWorld().getBlockState(scareCrow.getPos()),
-                                getColony().getWorld().getBlockState(scareCrow.getPos()),
-                                BLOCK_UPDATE_FLAG);
-                ((ScarecrowTileEntity) scareCrow).setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
-                        LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
+                  .notifyBlockUpdate(scareCrow.getPos(),
+                    getColony().getWorld().getBlockState(scareCrow.getPos()),
+                    getColony().getWorld().getBlockState(scareCrow.getPos()),
+                    BLOCK_UPDATE_FLAG);
             }
         }
     }
@@ -322,10 +342,38 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return Skill.Athletics;
     }
 
+    @Override
+    public boolean canRecipeBeAdded(final IToken<?> token)
+    {
+
+        Optional<Boolean> isRecipeAllowed;
+
+        if (!super.canRecipeBeAdded(token))
+        {
+            return false;
+        }
+
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        return isRecipeAllowed.orElse(false);
+    }    
+    
+    @Override
+    public boolean canCraftComplexRecipes()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean canBeGathered()
+    {
+        // Normal crafters are only gatherable when they have a task, i.e. while producing stuff.
+        // BUT, the farmer both gathers and crafts things now, like the lumberjack
+        return true;
+    }
+
     /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
+     * Override this method if you want to keep an amount of items in inventory. When the inventory is full, everything get's dumped into the building chest. But you can use this
+     * method to hold some stacks back.
      *
      * @return a list of objects which should be kept.
      */
@@ -386,6 +434,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     {
         super.serializeToView(buf);
         buf.writeBoolean(shouldAssignManually);
+        buf.writeBoolean(shouldRequestFertilizer);
 
         int size = 0;
 
@@ -444,7 +493,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
             if (scareCrow instanceof ScarecrowTileEntity)
             {
                 ((ScarecrowTileEntity) scareCrow).setNeedsWork(true);
-                ((ScarecrowTileEntity) scareCrow).calculateSize(getColony().getWorld(), field.down());
             }
         }
     }
@@ -465,17 +513,13 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 final TileEntity scarecrow = world.getTileEntity(field);
                 if (scarecrow instanceof ScarecrowTileEntity)
                 {
-                    ((ScarecrowTileEntity) scarecrow).setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER, getMainCitizen().getName()));
                     getColony().getWorld()
-                            .notifyBlockUpdate(scarecrow.getPos(),
-                                    getColony().getWorld().getBlockState(scarecrow.getPos()),
-                                    getColony().getWorld().getBlockState(scarecrow.getPos()),
-                                    BLOCK_UPDATE_FLAG);
+                      .notifyBlockUpdate(scarecrow.getPos(),
+                        getColony().getWorld().getBlockState(scarecrow.getPos()),
+                        getColony().getWorld().getBlockState(scarecrow.getPos()),
+                        BLOCK_UPDATE_FLAG);
                     ((ScarecrowTileEntity) scarecrow).setTaken(true);
-                    if (getMainCitizen() != null)
-                    {
-                        ((ScarecrowTileEntity) scarecrow).setOwner(getMainCitizen().getId());
-                    }
+                    ((ScarecrowTileEntity) scarecrow).setOwner(getMainCitizen() != null? getMainCitizen().getId() : 0);
                     ((ScarecrowTileEntity) scarecrow).setColony(colony);
                 }
                 else
@@ -514,13 +558,10 @@ public class BuildingFarmer extends AbstractBuildingWorker
             ((ScarecrowTileEntity) scarecrow).setTaken(false);
             ((ScarecrowTileEntity) scarecrow).setOwner(0);
             getColony().getWorld()
-                        .notifyBlockUpdate(scarecrow.getPos(),
-                                getColony().getWorld().getBlockState(scarecrow.getPos()),
-                                getColony().getWorld().getBlockState(scarecrow.getPos()),
-                                BLOCK_UPDATE_FLAG);
-            ((ScarecrowTileEntity) scarecrow).setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
-                        LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
-
+              .notifyBlockUpdate(scarecrow.getPos(),
+                getColony().getWorld().getBlockState(scarecrow.getPos()),
+                getColony().getWorld().getBlockState(scarecrow.getPos()),
+                BLOCK_UPDATE_FLAG);
         }
     }
 
@@ -554,6 +595,22 @@ public class BuildingFarmer extends AbstractBuildingWorker
         this.shouldAssignManually = assignManually;
     }
 
+    /**
+     * Getter for request fertilizer
+     */
+    public boolean requestFertilizer()
+    {
+        return shouldRequestFertilizer;
+    }
+
+    /**
+     * Setter for request fertilizer
+     */
+    public void setRequestFertilizer(final boolean shouldRequestFertilizer)
+    {
+        this.shouldRequestFertilizer = shouldRequestFertilizer;
+    }
+
     @Override
     public boolean canEat(final ItemStack stack)
     {
@@ -565,14 +622,19 @@ public class BuildingFarmer extends AbstractBuildingWorker
     }
 
     /**
-     * Provides a view of the miner building class.
+     * Provides a view of the farmer building class.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingCrafter.View
     {
         /**
          * Checks if fields should be assigned manually.
          */
         private boolean shouldAssignFieldManually;
+
+        /**
+         * Checks if fertilizer should be requested
+         */
+        private boolean shouldRequestFertilizer;
 
         /**
          * Contains a view object of all the fields in the colony.
@@ -609,6 +671,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             fields = new ArrayList<>();
             super.deserialize(buf);
             shouldAssignFieldManually = buf.readBoolean();
+            shouldRequestFertilizer = buf.readBoolean();
             final int size = buf.readInt();
             for (int i = 1; i <= size; i++)
             {
@@ -626,6 +689,16 @@ public class BuildingFarmer extends AbstractBuildingWorker
         public boolean assignFieldManually()
         {
             return shouldAssignFieldManually;
+        }
+
+        /**
+         * Should the farmer request fertilizer
+         *
+         * @return true if yes
+         */
+        public boolean requestFertilizer()
+        {
+            return shouldRequestFertilizer;
         }
 
         /**
@@ -661,11 +734,22 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
 
         /**
+         * Sets shouldRequestFertilizer in the view
+         *
+         * @param shouldRequestFertilizer variable to set
+         */
+        public void setRequestFertilizer(final boolean shouldRequestFertilizer)
+        {
+            Network.getNetwork().sendToServer(new RequestFertilizerMessage(this, shouldRequestFertilizer));
+            this.shouldRequestFertilizer = shouldRequestFertilizer;
+        }
+
+        /**
          * Change a field at a certain position.
          *
-         * @param id          the position of the field.
-         * @param addNewField should new field be added.
-         * @param scarecrowTileEntity         the tileEntity.
+         * @param id                  the position of the field.
+         * @param addNewField         should new field be added.
+         * @param scarecrowTileEntity the tileEntity.
          */
         public void changeFields(final BlockPos id, final boolean addNewField, final ScarecrowTileEntity scarecrowTileEntity)
         {

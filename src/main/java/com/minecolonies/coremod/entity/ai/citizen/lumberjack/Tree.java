@@ -120,8 +120,7 @@ public class Tree
     private boolean dynamicTree = false;
 
     /**
-     * Private constructor of the tree.
-     * Used by the equals and createFromNBt method.
+     * Private constructor of the tree. Used by the equals and createFromNBt method.
      */
     private Tree()
     {
@@ -129,8 +128,7 @@ public class Tree
     }
 
     /**
-     * Creates a new tree Object for the lumberjack.
-     * Since the same type of variant of the block old log or new log do not match we have to separate them.
+     * Creates a new tree Object for the lumberjack. Since the same type of variant of the block old log or new log do not match we have to separate them.
      *
      * @param world The world where the tree is in.
      * @param log   the position of the found log.
@@ -270,7 +268,8 @@ public class Tree
 
     /**
      * Fills the list of drops for a leaf.
-     * @param world world reference
+     *
+     * @param world    world reference
      * @param position position of the leaf
      * @return the list of saplings.
      */
@@ -282,9 +281,9 @@ public class Tree
         for (int i = 1; i < 100; i++)
         {
             list.addAll(state.getDrops(new LootContext.Builder(world).withParameter(LootParameters.POSITION, position)
-                                              .withParameter(LootParameters.TOOL,
-                                                new ItemStack(Items.WOODEN_AXE))
-                                              .withLuck(100)));
+                                         .withParameter(LootParameters.TOOL,
+                                           new ItemStack(Items.WOODEN_AXE))
+                                         .withLuck(100)));
             if (!list.isEmpty())
             {
                 for (ItemStack stack : list)
@@ -580,8 +579,7 @@ public class Tree
     }
 
     /**
-     * Checks if the tree has been planted from more than 1 saplings.
-     * Meaning that more than 1 log is on the lowest level.
+     * Checks if the tree has been planted from more than 1 saplings. Meaning that more than 1 log is on the lowest level.
      *
      * @param yLevel The base y.
      */
@@ -799,8 +797,7 @@ public class Tree
     }
 
     /**
-     * Get's the variant of a tree.
-     * A tree may only have 1 variant.
+     * Get's the variant of a tree. A tree may only have 1 variant.
      *
      * @return the EnumType variant.
      */

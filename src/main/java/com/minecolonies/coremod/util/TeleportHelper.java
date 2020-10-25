@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -69,6 +70,7 @@ public final class TeleportHelper
 
     /**
      * Teleports the player to his home colony.
+     *
      * @param player the player to teleport home.
      */
     public static void homeTeleport(@NotNull final ServerPlayerEntity player)
@@ -84,10 +86,32 @@ public final class TeleportHelper
     }
 
     /**
+     * Teleports the player to the nearest safe surface location above their current location
+     */
+    public static void surfaceTeleport(@NotNull final ServerPlayerEntity player)
+    {
+        BlockPos position = new BlockPos(player.getPosX(), 250, player.getPosZ()); //start at current position
+        final ServerWorld world = player.getServerWorld();
+
+        position = BlockPosUtil.findLand(position, world);
+
+        ChunkPos chunkpos = new ChunkPos(position);
+        world.getChunkProvider().registerTicket(TicketType.POST_TELEPORT, chunkpos, 1, player.getEntityId());
+        player.stopRiding();
+        if (player.isSleeping())
+        {
+            player.stopSleepInBed(true, true);
+        }
+
+        player.teleport(world, position.getX(), position.getY() + 2.0, position.getZ(), player.rotationYaw, player.rotationPitch);
+    }
+
+    /**
      * Teleports the player to his home colony.
+     *
      * @param dimension the dimension the colony is in.
-     * @param player the player to teleport.
-     * @param id the colony id.
+     * @param player    the player to teleport.
+     * @param id        the colony id.
      */
     public static void colonyTeleportByID(@NotNull final ServerPlayerEntity player, final int id, final int dimension)
     {
@@ -103,6 +127,7 @@ public final class TeleportHelper
 
     /**
      * Teleports the player to the given colony.
+     *
      * @param colony the colony to teleport to.
      * @param player the player to teleport.
      */

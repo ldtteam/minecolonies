@@ -2,6 +2,7 @@ package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -29,7 +30,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     /**
      * The schematic name of the placerholder block.
      */
-    private String schematicName        = "";
+    private String schematicName = "";
 
     /**
      * The current level.
@@ -59,6 +60,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     /**
      * Geter for the name stored in this.
+     *
      * @return String name.
      */
     public String getSchematicName()
@@ -68,16 +70,21 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     /**
      * Setter for the schematic name connected to this.
+     *
      * @param schematicName the name to set.
      */
     public void setSchematicName(final String schematicName)
     {
         this.schematicName = schematicName;
-        this.update();
+        if (world != null)
+        {
+            this.update();
+        }
     }
 
     /**
      * Getter for the deco level associated.
+     *
      * @return the level.
      */
     public int getLevel()
@@ -87,6 +94,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     /**
      * Set the deco level.
+     *
      * @param level the max.
      */
     public void setLevel(final int level)
@@ -97,6 +105,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     /**
      * Set the basic facing of this block.
+     *
      * @param basicFacing the basic facing.
      */
     public void setBasicFacing(final Direction basicFacing)
@@ -106,6 +115,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     /**
      * Get the basic facing of the block.
+     *
      * @return the basic facing.
      */
     public Direction getBasicFacing()
@@ -119,6 +129,12 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     private void update()
     {
         this.markDirty();
+    }
+
+    @Override
+    public void markDirty()
+    {
+        WorldUtil.markChunkDirty(world, pos);
     }
 
     @Override

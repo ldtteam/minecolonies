@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
@@ -15,8 +16,8 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,7 +61,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, SIFT, 1),
+          new AITarget(IDLE, START_WORKING, 10),
           new AITarget(START_WORKING, SIFT, 1),
           new AITarget(SIFT, this::sift, TICK_DELAY)
         );
@@ -130,7 +131,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
 
         if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
         {
-            return DUMPING;
+            return INVENTORY_FULL;
         }
 
         if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity())
@@ -139,7 +140,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
         }
 
         final IAIState check = checkForSievableBlock(sifterBuilding.getSievableBlock(), sifterBuilding);
-        if (progress > MAX_LEVEL - Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL))
+        if (progress > MAX_LEVEL - Math.min((getSecondarySkillLevel()/2) + 1, MAX_LEVEL))
         {
             progress = 0;
             if (check == SIFT)
@@ -151,7 +152,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
                 }
 
                 final ItemStack result =
-                  IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock());
+                  IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock(), 1 +  (int) Math.round(getPrimarySkillLevel()/10.0));
                 if (!result.isEmpty())
                 {
                     InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), result);
@@ -161,7 +162,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
                 if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
                 {
                     sifterBuilding.resetMesh();
-                    worker.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.meshBroke"));
+                    worker.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.meshbroke"));
                 }
 
                 worker.decreaseSaturationForContinuousAction();
@@ -181,6 +182,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
             Network.getNetwork()
               .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), worker);
 
+            worker.swingArm(Hand.MAIN_HAND);
             SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.ENTITY_LEASH_KNOT_BREAK);
         }
         return getState();

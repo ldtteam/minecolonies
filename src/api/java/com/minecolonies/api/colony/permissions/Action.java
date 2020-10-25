@@ -43,9 +43,7 @@ public enum Action
     private final int flag;
 
     /**
-     * Stores the action as byte.
-     * {@link #ACCESS_HUTS} has value 0000 0000
-     * {@link #SEND_MESSAGES} has value 0100 0000
+     * Stores the action as byte. {@link #ACCESS_HUTS} has value 0000 0000 {@link #SEND_MESSAGES} has value 0100 0000
      *
      * @param bit how many bits should be shifted and set
      */

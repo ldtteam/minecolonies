@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
  * @param <B> Class extending {@link AbstractBuildingWorker.View}
  */
 public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWorker.View> extends AbstractWindowBuilding<B>
-
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -94,7 +93,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     /**
      * Constructor for the window of the worker building.
      *
-     * @param building class extending {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}.
+     * @param building class extending {@link AbstractBuildingWorker.View}.
      * @param resource Resource of the window.
      */
     AbstractWindowWorkerBuilding(final B building, final String resource)
@@ -185,9 +184,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     }
 
     /**
-     * Action when a hire button is clicked.
-     * If there is no worker (worker.Id == 0) then Contract someone.
-     * Else then Fire the current worker.
+     * Action when a hire button is clicked. If there is no worker (worker.Id == 0) then Contract someone. Else then Fire the current worker.
      *
      * @param button the clicked button.
      */

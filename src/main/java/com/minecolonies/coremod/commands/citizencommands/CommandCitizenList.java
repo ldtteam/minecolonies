@@ -110,10 +110,10 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         for (final ICitizenData citizen : citizensPage)
         {
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.desc", citizen.getId(), citizen.getName())
-                                 .setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                   String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId())))), true);
+                                               .setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                                 String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId())))), true);
 
-            citizen.getCitizenEntity().ifPresent(entityCitizen ->
+            citizen.getEntity().ifPresent(entityCitizen ->
             {
                 final BlockPos position = entityCitizen.getPosition();
                 context.getSource()
@@ -149,8 +149,8 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         final ITextComponent endLine = LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pageline");
 
         context.getSource().sendFeedback(beginLine.appendSibling(prevButton)
-                             .appendSibling(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pagestyle"))
-                             .appendSibling(nextButton)
+                                           .appendSibling(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pagestyle"))
+                                           .appendSibling(nextButton)
                                            .appendSibling(endLine), true);
     }
 

@@ -71,6 +71,11 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     private boolean tightGrouping = true;
 
     /**
+     * Whether to hire from training facilities
+     */
+    private boolean hireTrainees = true;
+
+    /**
      * The GuardTask of the guard.
      */
     private GuardTask task = GuardTask.GUARD;
@@ -103,6 +108,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         registerButton(GUI_BUTTON_ASSIGNMENT_MODE, this::switchAssignmentMode);
         registerButton(GUI_BUTTON_PATROL_MODE, this::switchPatrolMode);
         registerButton(GUI_BUTTON_RETRIEVAL_MODE, this::switchRetrievalMode);
+        registerButton(GUI_BUTTON_TRAINEE_MODE, this::switchTraineeMode);
         registerButton(GUI_BUTTON_SET_TARGET, this::setTarget);
         registerButton(GUI_BUTTON_RECALCULATE, this::recalculate);
         registerButton(BUTTON_GET_TOOL, this::getTool);
@@ -411,6 +417,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         this.patrolManually = building.isPatrolManually();
         this.retrieveOnLowHealth = building.isRetrieveOnLowHealth();
         this.tightGrouping = building.isTightGrouping();
+        this.hireTrainees = building.isHireTrainees();
         this.task = building.getTask();
         this.job = building.getGuardType();
         this.patrolTargets = building.getPatrolTargets();
@@ -524,6 +531,17 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     }
 
     /**
+     * Switch the trainee mode.
+     */
+    private void switchTraineeMode()
+    {
+        building.setHireTrainees(!building.isHireTrainees());
+        pullInfoFromHut();
+        sendChangesToServer();
+        this.findPaneOfTypeByID(GUI_BUTTON_TRAINEE_MODE, Button.class).setLabel(hireTrainees ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
+    }
+
+    /**
      * Switch the patrol mode.
      */
     private void switchPatrolMode()
@@ -549,6 +567,6 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     private void sendChangesToServer()
     {
         final ResourceLocation resourceName = building.getGuardType() == null ? new ResourceLocation("") : building.getGuardType().getRegistryName();
-        Network.getNetwork().sendToServer(new GuardTaskMessage(building, resourceName, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping));
+        Network.getNetwork().sendToServer(new GuardTaskMessage(building, resourceName, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping, hireTrainees));
     }
 }

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.coremod.generation.DataGeneratorConstants;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
@@ -74,17 +75,21 @@ public class DefaultSoundProvider implements IDataProvider
             sounds.add("mob.child.female." + soundEvents.name().toLowerCase(Locale.US), createSoundJson("neutral", getDefaultProperties(), childSounds));
         }
 
-        sounds.add("mob.barbarian.death", createSoundJson("hostile", getDefaultProperties(), ImmutableList.of("minecolonies:mob/barbarian/death")));
-        sounds.add("mob.barbarian.say", createSoundJson("hostile", getDefaultProperties(), ImmutableList.of("minecolonies:mob/barbarian/say")));
-        sounds.add("mob.barbarian.hurt",
-          createSoundJson("hostile",
-            getDefaultProperties(),
-            ImmutableList.of("minecolonies:mob/barbarian/hurt1", "minecolonies:mob/barbarian/hurt2", "minecolonies:mob/barbarian/hurt3", "minecolonies:mob/barbarian/hurt4")));
+        for (final RaiderType type : RaiderType.values())
+        {
+            sounds.add("mob." + type.name().toLowerCase(Locale.US) + ".death", createSoundJson("hostile", getDefaultProperties(), ImmutableList.of("minecolonies:mob/barbarian/death")));
+            sounds.add("mob." + type.name().toLowerCase(Locale.US) + ".say", createSoundJson("hostile", getDefaultProperties(), ImmutableList.of("minecolonies:mob/barbarian/say")));
+            
+            sounds.add("mob." + type.name().toLowerCase(Locale.US) + ".hurt",
+              createSoundJson("hostile",
+                getDefaultProperties(),
+                ImmutableList.of("minecolonies:mob/barbarian/hurt1", "minecolonies:mob/barbarian/hurt2", "minecolonies:mob/barbarian/hurt3", "minecolonies:mob/barbarian/hurt4")));
+        }
 
         sounds.add("mob.citizen.snore", createSoundJson("neutral", getDefaultProperties(), ImmutableList.of("minecolonies:mob/citizen/snore")));
 
         JsonObject tavernProperties = getDefaultProperties();
-        tavernProperties.addProperty("attenuation_distance", 13);
+        tavernProperties.addProperty("attenuation_distance", 23);
         tavernProperties.addProperty("stream", true);
         tavernProperties.addProperty("comment", "Credits to Darren Curtis - Fireside Tales");
         sounds.add("tile.tavern.tavern_theme", createSoundJson("music", tavernProperties, ImmutableList.of("minecolonies:tile/tavern/tavern_theme")));

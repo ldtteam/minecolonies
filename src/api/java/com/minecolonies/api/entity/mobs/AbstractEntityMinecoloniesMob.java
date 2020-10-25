@@ -3,15 +3,20 @@ package com.minecolonies.api.entity.mobs;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
+import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
-import com.minecolonies.api.sounds.BarbarianSounds;
+import com.minecolonies.api.sounds.RaiderSounds;
 import net.minecraft.entity.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
@@ -23,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
@@ -31,8 +35,13 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends MobEntity
+public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements IStuckHandlerEntity
 {
+    /**
+     * Difficulty at which raiders team up
+     */
+    private static final double TEAM_DIFFICULTY = 2.0d;
+
     /**
      * The New PathNavigate navigator.
      */
@@ -104,6 +113,27 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     private boolean envDamageImmunity = false;
 
     /**
+     * Counts entity collisions
+     */
+    private int collisionCounter = 0;
+
+    /**
+     * Whether the entity is possibly stuck
+     */
+    private boolean canBeStuck = true;
+
+    /**
+     * The collision threshold
+     */
+    private final static int    COLL_THRESHOLD = 50;
+    private final static String RAID_TEAM      = "RAIDERS_TEAM";
+
+    /**
+     * Mob difficulty
+     */
+    private double difficulty = 1.0d;
+
+    /**
      * Constructor method for Abstract Barbarians.
      *
      * @param world the world.
@@ -126,9 +156,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     @Override
     public void applyEntityCollision(@NotNull final Entity entityIn)
     {
-        if (invulTime < 0 && entityIn instanceof AbstractEntityMinecoloniesMob
-              && ((stuckCounter > 0 || ladderCounter > 0 || ((AbstractEntityMinecoloniesMob) entityIn).stuckCounter > 0
-                     || ((AbstractEntityMinecoloniesMob) entityIn).ladderCounter > 0)))
+        if (invulTime > 0 || (collisionCounter += 3) > COLL_THRESHOLD)
         {
             return;
         }
@@ -146,18 +174,18 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         }
     }
 
-    @Nullable
-    @Override
-    protected SoundEvent getAmbientSound()
-    {
-        return BarbarianSounds.barbarianSay;
-    }
-
     @Override
     public boolean canDespawn(final double distanceToClosestPlayer)
     {
         return shouldDespawn() || (world != null && world.isAreaLoaded(this.getPosition(), 3) && getColony() == null);
     }
+
+    /**
+     * Get the specific raider type of this raider.
+     *
+     * @return the type enum.
+     */
+    public abstract RaiderType getRaiderType();
 
     /**
      * Should the barbs despawn.
@@ -180,6 +208,18 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
             this.newNavigator.setCanSwim(true);
             this.newNavigator.getNodeProcessor().setCanEnterDoors(true);
             newNavigator.getPathingOptions().withJumpDropCost(1.1D);
+            PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
+                                                 .withTakeDamageOnStuck(0.4f)
+                                                 .withBuildLeafBridges()
+                                                 .withPlaceLadders();
+
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().doBarbariansBreakThroughWalls.get())
+            {
+                stuckHandler.withBlockBreaks();
+                stuckHandler.withCompleteStuckBlockBreak(6);
+            }
+
+            newNavigator.setStuckHandler(stuckHandler);
         }
         return newNavigator;
     }
@@ -227,16 +267,22 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     @Override
     protected SoundEvent getHurtSound(final DamageSource damageSourceIn)
     {
-        return BarbarianSounds.barbarianHurt;
+        return RaiderSounds.raiderSounds.get(getRaiderType()).get(RaiderSounds.RaiderSoundTypes.HURT);
     }
 
     @Override
     protected SoundEvent getDeathSound()
     {
-        return BarbarianSounds.barbarianDeath;
+        return RaiderSounds.raiderSounds.get(getRaiderType()).get(RaiderSounds.RaiderSoundTypes.DEATH);
     }
 
-    @NotNull
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound()
+    {
+        return RaiderSounds.raiderSounds.get(getRaiderType()).get(RaiderSounds.RaiderSoundTypes.SAY);
+    }
+
     @Override
     public void writeAdditional(final CompoundNBT compound)
     {
@@ -288,6 +334,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         else
         {
             this.setInvulnerable(false);
+        }
+
+        if (collisionCounter > 0)
+        {
+            collisionCounter--;
         }
 
         if (world.isRemote)
@@ -409,6 +460,14 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
                 return false;
             }
         }
+        else if (!world.isRemote())
+        {
+            final IColonyEvent event = colony.getEventManager().getEventByID(eventID);
+            if (event instanceof IColonyCampFireRaidEvent)
+            {
+                ((IColonyCampFireRaidEvent) event).setCampFireTime(0);
+            }
+        }
 
         return super.attackEntityFrom(damageSource, damage);
     }
@@ -474,6 +533,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     {
         this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage);
 
+        this.difficulty = difficulty;
         final double armor = difficulty * ARMOR;
         this.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
         this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * difficulty));
@@ -483,7 +543,63 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
             this.setEnvDamageImmunity(true);
         }
 
+        if (difficulty >= TEAM_DIFFICULTY)
+        {
+            world.getScoreboard().addPlayerToTeam(getScoreboardName(), checkOrCreateTeam());
+        }
+
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(baseHealth);
         this.setHealth(this.getMaxHealth());
+    }
+
+    /**
+     * Creates or gets the scoreboard team
+     *
+     * @return Scoreboard team
+     */
+    private ScorePlayerTeam checkOrCreateTeam()
+    {
+        if (this.world.getScoreboard().getTeam(getTeamName()) == null)
+        {
+            this.world.getScoreboard().createTeam(getTeamName());
+            this.world.getScoreboard().getTeam(getTeamName()).setAllowFriendlyFire(false);
+        }
+        return this.world.getScoreboard().getTeam(getTeamName());
+    }
+
+    /**
+     * Gets the scoreboard team name
+     *
+     * @return
+     */
+    protected String getTeamName()
+    {
+        return RAID_TEAM;
+    }
+
+    /**
+     * Get the mobs difficulty
+     *
+     * @return difficulty
+     */
+    public double getDifficulty()
+    {
+        return difficulty;
+    }
+
+    @Override
+    public boolean canBeStuck()
+    {
+        return canBeStuck;
+    }
+
+    /**
+     * Sets whether the entity currently could be stuck
+     *
+     * @param canBeStuck true if its possible to be stuck
+     */
+    public void setCanBeStuck(final boolean canBeStuck)
+    {
+        this.canBeStuck = canBeStuck;
     }
 }

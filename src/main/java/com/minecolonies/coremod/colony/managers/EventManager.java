@@ -34,9 +34,9 @@ public class EventManager implements IEventManager
     /**
      * NBT tags
      */
-    private static final String TAG_EVENT_ID      = "event_currentID";
-    private static final String TAG_EVENT_MANAGER = "event_manager";
-    private static final String TAG_EVENT_LIST    = "events_list";
+    private static final String TAG_EVENT_ID        = "event_currentID";
+    private static final String TAG_EVENT_MANAGER   = "event_manager";
+    private static final String TAG_EVENT_LIST      = "events_list";
 
     /**
      * The current event ID this colony is at, unique for each event
@@ -64,11 +64,6 @@ public class EventManager implements IEventManager
         structureManager = new EventStructureManager(this, colony);
     }
 
-    /**
-     * Adds a event event to the colony.
-     *
-     * @param colonyEvent the event to add
-     */
     @Override
     public void addEvent(final IColonyEvent colonyEvent)
     {
@@ -102,7 +97,7 @@ public class EventManager implements IEventManager
     /**
      * Registers an entity with the given event.
      *
-     * @param entity the entity to register.
+     * @param entity  the entity to register.
      * @param eventID the event id to register it to.
      */
     @Override
@@ -120,7 +115,7 @@ public class EventManager implements IEventManager
     /**
      * Unregisters an entity with the given event
      *
-     * @param entity the entity.
+     * @param entity  the entity.
      * @param eventID the id of th eevent.
      */
     @Override
@@ -136,7 +131,7 @@ public class EventManager implements IEventManager
     /**
      * Triggers on entity death(killed by player/environment) of an entity
      *
-     * @param entity the entity.
+     * @param entity  the entity.
      * @param eventID the id of the event.
      */
     @Override
@@ -241,7 +236,7 @@ public class EventManager implements IEventManager
                     continue;
                 }
 
-                final IColonyEvent colonyEvent = registryEntry.getEventCreator().apply(colony, tagCompound);
+                final IColonyEvent colonyEvent = registryEntry.deserializeEvent(colony, tagCompound);
                 events.put(colonyEvent.getID(), colonyEvent);
             }
 
@@ -257,9 +252,8 @@ public class EventManager implements IEventManager
         final ListNBT eventListNBT = new ListNBT();
         for (final IColonyEvent event : events.values())
         {
-            final CompoundNBT eventNBT = new CompoundNBT();
+            final CompoundNBT eventNBT = event.serializeNBT();
             eventNBT.putString(TAG_NAME, event.getEventTypeID().getPath());
-            event.writeToNBT(eventNBT);
             eventListNBT.add(eventNBT);
         }
 
@@ -275,4 +269,3 @@ public class EventManager implements IEventManager
         return structureManager;
     }
 }
-

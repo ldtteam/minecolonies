@@ -4,6 +4,9 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
+import com.minecolonies.api.colony.buildings.IWorkerLivingBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -13,13 +16,14 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FenceBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.state.properties.BedPart;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -36,7 +40,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Building class for the Archery.
  */
-public class BuildingArchery extends AbstractBuildingWorker
+public class BuildingArchery extends AbstractBuildingWorker implements IBuildingBedProvider, IWorkerLivingBuilding
 {
     /**
      * The Schematic name.
@@ -59,6 +63,12 @@ public class BuildingArchery extends AbstractBuildingWorker
     private final List<BlockPos> shootingTargets = new ArrayList<>();
 
     /**
+     * List of all beds.
+     */
+    @NotNull
+    private final List<BlockPos> bedList = new ArrayList<>();
+
+    /**
      * The abstract constructor of the building.
      *
      * @param c the colony
@@ -74,6 +84,30 @@ public class BuildingArchery extends AbstractBuildingWorker
     public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobArcherTraining(citizen);
+    }
+
+    @NotNull
+    @Override
+    public List<BlockPos> getBedList()
+    {
+        return new ArrayList<>(bedList);
+    }
+
+    @Override
+    public boolean assignCitizen(final ICitizenData citizen)
+    {
+        if (super.assignCitizen(citizen) && citizen != null)
+        {
+            // Set new home, since guards are housed at their workerbuilding.
+            final IBuilding building = citizen.getHomeBuilding();
+            if (building != null && !building.getID().equals(this.getID()))
+            {
+                building.removeCitizen(citizen);
+            }
+            citizen.setHomeBuilding(this);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -93,7 +127,7 @@ public class BuildingArchery extends AbstractBuildingWorker
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Archery", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.ARCHERY_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -114,6 +148,17 @@ public class BuildingArchery extends AbstractBuildingWorker
 
         final ListNBT standTagList = compound.getList(TAG_ARCHERY_STANDS, Constants.NBT.TAG_COMPOUND);
         shootingStands.addAll(NBTUtils.streamCompound(standTagList).map(targetCompound -> BlockPosUtil.read(targetCompound, TAG_STAND)).collect(Collectors.toList()));
+
+        final ListNBT bedTagList = compound.getList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < bedTagList.size(); ++i)
+        {
+            final CompoundNBT bedCompound = bedTagList.getCompound(i);
+            final BlockPos bedPos = NBTUtil.readBlockPos(bedCompound);
+            if (!bedList.contains(bedPos))
+            {
+                bedList.add(bedPos);
+            }
+        }
     }
 
     @Override
@@ -126,6 +171,16 @@ public class BuildingArchery extends AbstractBuildingWorker
 
         final ListNBT standTagList = shootingStands.stream().map(target -> BlockPosUtil.write(new CompoundNBT(), TAG_STAND, target)).collect(NBTUtils.toListNBT());
         compound.put(TAG_ARCHERY_STANDS, standTagList);
+        
+        if (!bedList.isEmpty())
+        {
+            @NotNull final ListNBT bedTagList = new ListNBT();
+            for (@NotNull final BlockPos pos : bedList)
+            {
+                bedTagList.add(NBTUtil.writeBlockPos(pos));
+            }
+            compound.put(TAG_BEDS, bedTagList);
+        }
 
         return compound;
     }
@@ -201,10 +256,54 @@ public class BuildingArchery extends AbstractBuildingWorker
     }
 
     @Override
+    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        super.registerBlockPosition(blockState, pos, world);
+
+        BlockPos registrationPosition = pos;
+        if (blockState.getBlock() instanceof BedBlock)
+        {
+            if (blockState.get(BedBlock.PART) == BedPart.FOOT)
+            {
+                registrationPosition = registrationPosition.offset(blockState.get(BedBlock.HORIZONTAL_FACING));
+            }
+
+            if (!bedList.contains(registrationPosition))
+            {
+                bedList.add(registrationPosition);
+            }
+        }
+    }    
+
+    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.archery;
     }
+
+    @Override
+    public void onWakeUp()
+    {
+        super.onWakeUp();
+        
+        final World world = getColony().getWorld();
+        if (world == null)
+        {
+            return;
+        }
+
+        for (final BlockPos pos : bedList)
+        {
+            BlockState state = world.getBlockState(pos);
+            state = state.getBlock().getExtendedState(state, world, pos);
+            if (state.getBlock() instanceof BedBlock
+                  && state.get(BedBlock.OCCUPIED)
+                  && state.get(BedBlock.PART).equals(BedPart.HEAD))
+            {
+                world.setBlockState(pos, state.with(BedBlock.OCCUPIED, false), 0x03);
+            }
+        }
+    }    
 
     /**
      * The client view for the bakery building.

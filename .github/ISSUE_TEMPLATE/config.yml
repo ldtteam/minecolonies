@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Schematic Issues - If schematic contains an error
+    about: Issue listing all recent schematic issues
+    url: https://github.com/ldtteam/minecolonies/issues/5006
+  - name: Mod Compatibility - If MineColonies does not work well with other mods	
+    about: Issue listing all requested/implemented mod compatibilities
+    url: https://github.com/ldtteam/minecolonies/issues/4510
+  - name: Minecolonies Feature/Change Tracker
+    about: Please follow the given template
+    url: https://github.com/ldtteam/minecolonies-features/issues/new/choose
+  - name: Structurize Bug Tracker
+    about: Please follow the given template
+    url: https://github.com/ldtteam/structurize/issues/new/choose

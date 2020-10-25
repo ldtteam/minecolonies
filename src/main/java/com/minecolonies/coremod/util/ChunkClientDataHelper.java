@@ -31,6 +31,7 @@ public class ChunkClientDataHelper
 
     /**
      * Applies saved data for late loading on client side
+     *
      * @param chunk the chunk to apply it to.
      */
     public static void applyLate(final Chunk chunk)

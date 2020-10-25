@@ -1,0 +1,18 @@
+{
+  "type" : "recipe",
+  "crafter": "baker",
+  "inputs": [
+    {
+        "item" : "minecraft:wheat",
+        "count": 8
+    },
+    {
+        "item" : "minecraft:chorus_fruit",
+        "count": 1
+    }
+  ],
+  "result": "minecolonies:chorus_bread",
+  "count": 4,
+  "intermediate" : "minecraft:air",
+  "research-id" : "knowtheend"
+}

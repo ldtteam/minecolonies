@@ -12,9 +12,11 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.coremod.client.gui.WindowHutCrafter;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobBlacksmith;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
@@ -89,6 +91,20 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
     }
 
     @Override
+    @NotNull
+    public Skill getCraftSpeedSkill()
+    {
+        return getPrimarySkill();
+    }
+
+    @Override
+    @NotNull
+    public Skill getRecipeImprovementSkill()
+    {
+        return getSecondarySkill();
+    }
+
+    @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
 
@@ -99,28 +115,31 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
             return false;
         }
 
+        // Additional recipe rules
+
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+        final ItemStack output = storage.getPrimaryOutput();
+
+        boolean matchOverride;
+        matchOverride= output.getItem() instanceof ToolItem ||
+                    output.getItem() instanceof SwordItem ||
+                    output.getItem() instanceof ArmorItem ||
+                    output.getItem() instanceof HoeItem ||
+                    output.getItem() instanceof ShieldItem ||
+                    Compatibility.isTinkersWeapon(output);
+
+        // End Additional recipe rules
+
         isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
         if (isRecipeAllowed.isPresent())
         {
-            return isRecipeAllowed.get();
+            return matchOverride || isRecipeAllowed.get();
         }
         else
         {
-            // Additional recipe rules
-
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-
-            final ItemStack output = storage.getPrimaryOutput();
-            return output.getItem() instanceof ToolItem ||
-                     output.getItem() instanceof SwordItem ||
-                     output.getItem() instanceof ArmorItem ||
-                     output.getItem() instanceof HoeItem ||
-                     output.getItem() instanceof ShieldItem ||
-                     Compatibility.isTinkersWeapon(output);
-
-            // End Additional recipe rules
+            return matchOverride;
         }
-
     }
 
     @Override
@@ -132,7 +151,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Blacksmith", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.BLACKSMITH_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -160,7 +179,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
         @NotNull
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, BLACKSMITH);
+            return new WindowHutCrafter(this, BLACKSMITH);
         }
     }
 }

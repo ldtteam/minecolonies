@@ -3,8 +3,7 @@ package com.minecolonies.api.util;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Data structure to hold a two dimensional point. Uses x and z,
- * because y is typically the third dimension in minecraft.
+ * Data structure to hold a two dimensional point. Uses x and z, because y is typically the third dimension in minecraft.
  *
  * @author Colton
  */

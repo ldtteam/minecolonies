@@ -57,8 +57,6 @@ public class ModelEntityStudentFemale extends CitizenModel<AbstractEntityCitizen
         setRotation(right, 0F, 0F, 0F);
 
 
-
-
         armCHorizontal = new ModelRenderer(this, 0, 56);
         armCHorizontal.addBox(0F, 0F, 0F, 16, 4, 4);
         armCHorizontal.setRotationPoint(-8F, 3.8F, -3.5F);
@@ -133,7 +131,7 @@ public class ModelEntityStudentFemale extends CitizenModel<AbstractEntityCitizen
         chest.addBox(0F, 0F, 0F, 7, 3, 4);
         chest.setRotationPoint(-3.5F, 1.7F, -2.7F);
         chest.setTextureSize(128, 64);
-        chest.mirror = true;
+        chest.mirror = false;
         setRotation(chest, -0.4537856F, 0F, 0F);
 
         ponytailBase = new ModelRenderer(this, 32, 49);
@@ -173,7 +171,6 @@ public class ModelEntityStudentFemale extends CitizenModel<AbstractEntityCitizen
 
         this.bipedBody.addChild(leftArmC);
         this.bipedBody.addChild(rightArmC);
-
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)

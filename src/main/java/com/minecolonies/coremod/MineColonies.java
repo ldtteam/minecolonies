@@ -23,17 +23,17 @@ import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarba
 import com.minecolonies.coremod.client.render.mobs.egyptians.RendererArcherMummy;
 import com.minecolonies.coremod.client.render.mobs.egyptians.RendererMummy;
 import com.minecolonies.coremod.client.render.mobs.egyptians.RendererPharao;
-import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
-import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
-import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
 import com.minecolonies.coremod.client.render.mobs.norsemen.RendererArcherNorsemen;
 import com.minecolonies.coremod.client.render.mobs.norsemen.RendererChiefNorsemen;
 import com.minecolonies.coremod.client.render.mobs.norsemen.RendererShieldmaidenNorsemen;
+import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
+import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
+import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.event.*;
-import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
+import com.minecolonies.coremod.placementhandlers.PlacementHandlerInitializer;
 import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
@@ -42,6 +42,7 @@ import com.minecolonies.coremod.research.ResearchInitializer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
+import net.minecraft.client.renderer.entity.TippedArrowRenderer;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -84,7 +85,7 @@ public class MineColonies
     /**
      * The proxy.
      */
-    public static final IProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+    public static final IProxy proxy = DistExecutor.unsafeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
     public MineColonies()
     {
@@ -94,6 +95,8 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(EventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(FMLEventHandler.class);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(HighlightManager.class));
+
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DebugRendererChunkBorder.class));
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(CommonProxy.class);
 
@@ -106,8 +109,7 @@ public class MineColonies
     }
 
     /**
-     * Called when registering sounds,
-     * we have to register all our mod items here.
+     * Called when registering sounds, we have to register all our mod items here.
      *
      * @param event the registery event for items.
      */
@@ -138,7 +140,7 @@ public class MineColonies
     @SubscribeEvent
     public static void preInit(@NotNull final FMLCommonSetupEvent event)
     {
-        StructureLoadingUtils.originFolders.add(Constants.MOD_ID);
+        StructureLoadingUtils.addOriginMod(Constants.MOD_ID);
         CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IColonyManagerCapability.class, new IColonyManagerCapability.Storage(), IColonyManagerCapability.Impl::new);
@@ -161,7 +163,7 @@ public class MineColonies
     public static void onLoadComplete(final FMLLoadCompleteEvent event)
     {
         Log.getLogger().warn("FMLLoadCompleteEvent");
-        MinecoloniesPlacementHandlers.initHandlers();
+        PlacementHandlerInitializer.initHandlers();
         RequestSystemInitializer.onPostInit();
         MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().loadCost();
     }
@@ -171,8 +173,10 @@ public class MineColonies
     public static void doClientStuff(final FMLClientSetupEvent event)
     {
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.CITIZEN, RenderBipedCitizen::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.VISITOR, RenderBipedCitizen::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.FISHHOOK, RenderFishHook::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.FIREARROW, FireArrowRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.MC_NORMAL_ARROW, TippedArrowRenderer::new);
 
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.BARBARIAN, RendererBarbarian::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERBARBARIAN, RendererBarbarian::new);
@@ -199,8 +203,10 @@ public class MineColonies
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.BUILDING, EmptyTileEntitySpecialRenderer::new);
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.COLONY_FLAG, TileEntityColonyFlagRenderer::new);
 
-        Arrays.stream(ModBlocks.getHuts()).forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.getCutout()) || renderType.equals(RenderType.getSolid())));
+        Arrays.stream(ModBlocks.getHuts())
+          .forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.getCutout()) || renderType.equals(RenderType.getSolid())));
         RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.getCutout());

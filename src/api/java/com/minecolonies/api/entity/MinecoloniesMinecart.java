@@ -59,7 +59,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
     {
         super(type, world);
     }
-    
+
     @Override
     protected void moveAlongTrack(BlockPos pos, BlockState state)
     {

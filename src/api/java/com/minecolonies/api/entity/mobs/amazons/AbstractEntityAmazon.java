@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity.mobs.amazons;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.RaiderType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.util.SoundEvent;
@@ -20,7 +21,8 @@ public abstract class AbstractEntityAmazon extends AbstractEntityMinecoloniesMob
 {
     /**
      * Constructor method for Abstract egyptian..
-     * @param type the type.
+     *
+     * @param type  the type.
      * @param world the world.
      */
     public AbstractEntityAmazon(final EntityType<? extends AbstractEntityAmazon> type, final World world)
@@ -39,16 +41,15 @@ public abstract class AbstractEntityAmazon extends AbstractEntityMinecoloniesMob
         }
     }
 
-    @Nullable
-    @Override
-    protected SoundEvent getAmbientSound()
-    {
-        return SoundEvents.ENTITY_WITCH_AMBIENT;
-    }
-
     @Override
     public boolean canSpawn(final IWorld worldIn, final SpawnReason spawnReasonIn)
     {
         return true;
+    }
+
+    @Override
+    public RaiderType getRaiderType()
+    {
+        return RaiderType.AMAZON;
     }
 }

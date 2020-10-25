@@ -3,8 +3,12 @@ package com.minecolonies.api.util;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.sounds.EventType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +18,6 @@ import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.api.sounds.ModSoundEvents.SOUND_EVENTS;
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * Utilities for playing sounds.
@@ -68,13 +71,14 @@ public final class SoundUtils
 
     /**
      * Play a random sound at the citizen.
+     *
      * @param worldIn the world to play it in.
-     * @param pos the pos to play it at.
+     * @param pos     the pos to play it at.
      * @param citizen the citizen to play it for.
      */
     public static void playRandomSound(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final ICitizenData citizen)
     {
-        final double v = rand.nextDouble() * TICKS_SECOND;
+        final double v = rand.nextDouble();
         if (v <= 0.1)
         {
             if (citizen.getSaturation() < 2)
@@ -88,7 +92,7 @@ public final class SoundUtils
         }
         else if (v <= 0.2)
         {
-            if (citizen.getCitizenHappinessHandler().getHappiness() < 5)
+            if (citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony()) < 5)
             {
                 playSoundAtCitizenWith(worldIn, pos, EventType.UNHAPPY, citizen);
             }
@@ -101,7 +105,7 @@ public final class SoundUtils
         {
             playSoundAtCitizenWith(worldIn, pos, EventType.GENERAL, citizen);
         }
-        else if (v <= 0.4 && citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick())
+        else if (v <= 0.4 && citizen.getEntity().isPresent() && citizen.getEntity().get().getCitizenDiseaseHandler().isSick())
         {
             playSoundAtCitizenWith(worldIn, pos, EventType.SICKNESS, citizen);
         }
@@ -137,14 +141,56 @@ public final class SoundUtils
     }
 
     /**
+     * Play a success sound.
+     * @param player the player to play it for.
+     * @param position the position it is played at.
+     */
+    public static void playSuccessSound(@NotNull final PlayerEntity player, @NotNull final BlockPos position)
+    {
+        if (player instanceof ServerPlayerEntity)
+        {
+            ((ServerPlayerEntity) player).connection.sendPacket(new SPlaySoundEffectPacket(SoundEvents.BLOCK_NOTE_BLOCK_BELL,
+              SoundCategory.NEUTRAL,
+              position.getX(),
+              position.getY(),
+              position.getZ(),
+              (float) VOLUME * 2,
+              (float) 1.0));
+        }
+    }
+
+    /**
+     * Play an error sound.
+     * @param player the player to play it for.
+     * @param position the position it is played at.
+     */
+    public static void playErrorSound(@NotNull final PlayerEntity player, @NotNull final BlockPos position)
+    {
+        if (player instanceof ServerPlayerEntity)
+        {
+            ((ServerPlayerEntity) player).connection.sendPacket(new SPlaySoundEffectPacket(SoundEvents.BLOCK_NOTE_BLOCK_DIDGERIDOO,
+              SoundCategory.NEUTRAL,
+              position.getX(),
+              position.getY(),
+              position.getZ(),
+              (float) VOLUME * 2,
+              (float) 0.3));
+        }
+    }
+
+    /**
      * Plays a sound with a certain chance at a certain position.
      *
-     * @param worldIn  the world to play the sound in.
-     * @param position position to play the sound at.
-     * @param type    sound to play.
+     * @param worldIn     the world to play the sound in.
+     * @param position    position to play the sound at.
+     * @param type        sound to play.
      * @param citizenData the citizen.
      */
-    public static void playSoundAtCitizenWith(@NotNull final World worldIn, @NotNull final BlockPos position, @Nullable final EventType type, @Nullable final ICitizenData citizenData)
+    public static void playSoundAtCitizenWith(
+      @NotNull final World worldIn,
+      @NotNull final BlockPos position,
+      @Nullable final EventType type,
+      @Nullable final ICitizenData citizenData)
     {
         if (citizenData == null)
         {
@@ -181,6 +227,7 @@ public final class SoundUtils
 
     /**
      * Get a random pitch for a sound.
+     *
      * @param random the random method.
      * @return a random double for the pitch.
      */

@@ -5,13 +5,17 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
+import com.minecolonies.api.items.ItemBlockHut;
+import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
@@ -19,6 +23,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
@@ -34,6 +39,10 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.IForgeRegistry;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,6 +80,12 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * Smaller shape.
      */
     private static final VoxelShape SHAPE = VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
+
+    /**
+     * Whether this hut is yet to be researched in the current colony.
+     * This is only ever used client side, but adding @OnlyIn(Dist.CLIENT) causes the server to crash, so its not there.
+     */
+    protected boolean needsResearch = false;
 
     /**
      * Constructor for a hut block.
@@ -219,9 +234,13 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
 
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
-        if (tileEntity instanceof AbstractTileEntityColonyBuilding)
+        if (tileEntity instanceof TileEntityColonyBuilding)
         {
-            @NotNull final AbstractTileEntityColonyBuilding hut = (AbstractTileEntityColonyBuilding) tileEntity;
+            @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
+            if (hut.getBuildingName() != getBuildingEntry().getRegistryName())
+            {
+                hut.registryName = getBuildingEntry().getRegistryName();
+            }
             @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, hut.getPosition());
 
             if (colony != null)
@@ -264,5 +283,51 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
 
         onBlockPlacedBy(worldIn, pos, state, placer, stack);
+    }
+
+    /**
+     * Checks whether this block is yet to be researched.
+     * 
+     * @param colony a view of the colony this is crafted in.
+     * @return true if this block needs to be researched before building its hut.
+     */
+    @OnlyIn(Dist.CLIENT)
+    public void checkResearch(final IColonyView colony)
+    {
+        needsResearch = false;
+    }
+
+    /**
+     * Checks whether the research with the given id is already researched in the given colony.
+     * 
+     * @param colony     the colony to check.
+     * @param researchId the id of the research to look for.
+     */
+    @OnlyIn(Dist.CLIENT)
+    protected void checkResearch(final IColonyView colony, final String researchId)
+    {
+        if (colony == null)
+        {
+            needsResearch = false;
+            return;
+        }
+        needsResearch = colony.getResearchManager().getResearchEffects().getEffect(researchId, AbstractResearchEffect.class) == null;
+    }
+
+    @Override
+    public void registerBlockItem(final IForgeRegistry<Item> registry, final net.minecraft.item.Item.Properties properties)
+    {
+        registry.register((new ItemBlockHut(this, properties)).setRegistryName(this.getRegistryName()));
+    }
+
+    /**
+     * Whether this hut blocks building needs to be researched.
+     * 
+     * @return true if this building needs to be researched, but isn't yet.
+     */
+    @OnlyIn(Dist.CLIENT)
+    public boolean needsResearch()
+    {
+        return needsResearch;
     }
 }

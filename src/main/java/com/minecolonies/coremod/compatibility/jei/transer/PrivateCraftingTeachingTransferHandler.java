@@ -43,14 +43,13 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
     @Nullable
     @Override
     public IRecipeTransferError transferRecipe(
-            final ContainerCrafting craftingGUIBuilding,
-            final IRecipeLayout recipeLayout,
-            final PlayerEntity player,
-            final boolean b,
-            final boolean b1)
+      final ContainerCrafting craftingGUIBuilding,
+      final IRecipeLayout recipeLayout,
+      final PlayerEntity player,
+      final boolean b,
+      final boolean b1)
     {
         final IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-
 
 
         // compact the crafting grid into a 2x2 area
@@ -62,7 +61,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
 
         // indexes that do not fit into the player crafting grid
         final Set<Integer> badIndexes;
-        if(craftingGUIBuilding.isComplete())
+        if (craftingGUIBuilding.isComplete())
         {
             guiIngredients.put(2, ItemStackUtils.EMPTY);
             guiIngredients.put(5, ItemStackUtils.EMPTY);
@@ -97,7 +96,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
         buffer.writeBoolean(craftingGUIBuilding.isComplete());
         final CraftingInventory craftMatrix = craftingGUIBuilding.getInv();
 
-        if(craftingGUIBuilding.isComplete())
+        if (craftingGUIBuilding.isComplete())
         {
             craftMatrix.setInventorySlotContents(0, guiIngredients.get(0));
             craftMatrix.setInventorySlotContents(1, guiIngredients.get(1));

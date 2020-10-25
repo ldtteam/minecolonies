@@ -33,6 +33,7 @@ public final class InteractionValidatorRegistry
 
     /**
      * Get the StandardInteractionValidatorPredicate.
+     *
      * @param key the key of it.
      * @return the predicate.
      */
@@ -43,6 +44,7 @@ public final class InteractionValidatorRegistry
 
     /**
      * Get the PosBasedInteractionValidatorPredicate.
+     *
      * @param key the key of it.
      * @return the predicate.
      */
@@ -53,6 +55,7 @@ public final class InteractionValidatorRegistry
 
     /**
      * Get the PosBasedInteractionValidatorPredicate.
+     *
      * @param key the key of it.
      * @return the predicate.
      */
@@ -63,7 +66,8 @@ public final class InteractionValidatorRegistry
 
     /**
      * Add a new StandardInteractionValidatorPredicate.
-     * @param key it's key.
+     *
+     * @param key       it's key.
      * @param predicate it's predicate.
      */
     public static void registerStandardPredicate(final ITextComponent key, final Predicate<ICitizenData> predicate)
@@ -73,7 +77,8 @@ public final class InteractionValidatorRegistry
 
     /**
      * Add a new PosBasedInteractionValidatorPredicate.
-     * @param key it's key.
+     *
+     * @param key       it's key.
      * @param predicate it's predicate.
      */
     public static void registerPosBasedPredicate(final ITextComponent key, final BiPredicate<ICitizenData, BlockPos> predicate)
@@ -83,7 +88,8 @@ public final class InteractionValidatorRegistry
 
     /**
      * Add a new TokenBasedInteractionValidatorPredicate.
-     * @param key it's key.
+     *
+     * @param key       it's key.
      * @param predicate it's predicate.
      */
     public static void registerTokenBasedPredicate(final ITextComponent key, final BiPredicate<ICitizenData, IToken<?>> predicate)
@@ -93,6 +99,7 @@ public final class InteractionValidatorRegistry
 
     /**
      * Check if there is a validator with a certain key.
+     *
      * @param component the key to check.
      * @return true if so.
      */

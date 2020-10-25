@@ -6,15 +6,18 @@ import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.network.messages.server.colony.building.RecallCitizenHutMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Window for the home building.
@@ -22,24 +25,10 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
 {
     /**
-     * Id of the hire/fire button in the GUI.
-     */
-    private static final String BUTTON_ASSIGN = "assign";
-
-    /**
-     * Id of the hire/fire button in the GUI.
-     */
-    private static final String BUTTON_REMOVE = "remove";
-
-    /**
      * Suffix describing the window xml.
      */
     private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowhuthome.xml";
 
-    /**
-     * Id to identify the list of the citizen in the view.
-     */
-    private static final String LIST_CITIZEN = "assignedCitizen";
     /**
      * The building the view is relates to.
      */
@@ -47,7 +36,7 @@ public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
     /**
      * The list of citizen assigned to this hut.
      */
-    private ScrollingList citizen;
+    private       ScrollingList     citizen;
 
     /**
      * Creates the Window object.
@@ -60,6 +49,8 @@ public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
 
         super.registerButton(BUTTON_ASSIGN, this::assignClicked);
         super.registerButton(BUTTON_REMOVE, this::removeClicked);
+        super.registerButton(BUTTON_RECALL, this::recallClicked);
+
         this.home = building;
     }
 
@@ -83,8 +74,15 @@ public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
                 final ICitizenDataView citizenDataView = home.getColony().getCitizen((home.getResidents().get(index)));
                 if (citizenDataView != null)
                 {
-                    rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(citizenDataView.getName());
+                    rowPane.findPaneOfTypeByID(LABEL_NAME, Label.class).setLabelText(citizenDataView.getName());
                     rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class).setEnabled(isManualHousing);
+
+                    if (citizenDataView.getWorkBuilding() != null)
+                    {
+                        final BlockPos work = citizenDataView.getWorkBuilding();
+                        final double distance2D = BlockPosUtil.getDistance2D(work, home.getPosition());
+                        rowPane.findPaneOfTypeByID(LABEL_DIST, Label.class).setLabelText(LanguageHandler.format(DIST, distance2D));
+                    }
                 }
             }
         });
@@ -142,6 +140,14 @@ public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
             Network.getNetwork().sendToServer(new AssignUnassignMessage(building, false, citizenid));
             refreshView();
         }
+    }
+
+    /**
+     * On recall clicked.
+     */
+    private void recallClicked()
+    {
+        Network.getNetwork().sendToServer(new RecallCitizenHutMessage(building));
     }
 
     /**

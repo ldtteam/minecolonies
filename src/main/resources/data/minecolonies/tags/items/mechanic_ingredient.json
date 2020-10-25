@@ -3,6 +3,10 @@
   "values": [
     "#forge:dusts/redstone",
     "#forge:ores/redstone",
-    "#forge:storage_blocks/redstone"
+    "#forge:storage_blocks/redstone",
+    "minecraft:blaze_rod",
+    "minecraft:ender_pearl",
+    "minecraft:ender_eye",
+    "minecraft:redstone_torch"
   ]
 }

@@ -30,14 +30,15 @@ public class ContainerCitizenInventory extends Container
     /**
      * Amount of rows.
      */
-    private final int inventorySize;
-    private String displayName;
+    private final int    inventorySize;
+    private       String displayName;
 
     /**
      * Creating the citizen inventory container.
+     *
      * @param windowId the window id.
-     * @param inv the inventory.
-     * @param extra extra data.
+     * @param inv      the inventory.
+     * @param extra    extra data.
      */
     public ContainerCitizenInventory(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
@@ -74,7 +75,16 @@ public class ContainerCitizenInventory extends Container
         }
         else
         {
-            final ICitizenData data = colony.getCitizenManager().getCitizen(citizenId);
+            final ICitizenData data;
+            if (citizenId > 0)
+            {
+                data = colony.getCitizenManager().getCivilian(citizenId);
+            }
+            else
+            {
+                data = colony.getVisitorManager().getCivilian(citizenId);
+            }
+
             inventory = data.getInventory();
             this.displayName = data.getName();
             workBuilding = data.getWorkBuilding() == null ? null : data.getWorkBuilding().getID();
@@ -94,24 +104,24 @@ public class ContainerCitizenInventory extends Container
                 if (index < size)
                 {
                     this.addSlot(
-                            new SlotItemHandler(inventory, index,
-                                    INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
-                                    PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH)
-                            {
-                                @Override
-                                public void putStack(@NotNull final ItemStack stack)
-                                {
-                                    if (workBuilding != null && !playerInventory.player.world.isRemote && !ItemStackUtils.isEmpty(stack))
-                                    {
-                                        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.world);
-                                        final IBuilding building = colony.getBuildingManager().getBuilding(workBuilding);
-                                        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
+                      new SlotItemHandler(inventory, index,
+                        INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
+                        PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH)
+                      {
+                          @Override
+                          public void putStack(@NotNull final ItemStack stack)
+                          {
+                              if (workBuilding != null && !playerInventory.player.world.isRemote && !ItemStackUtils.isEmpty(stack))
+                              {
+                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.world);
+                                  final IBuilding building = colony.getBuildingManager().getBuilding(workBuilding);
+                                  final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
 
-                                        building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
-                                    }
-                                    super.putStack(stack);
-                                }
-                            });
+                                  building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
+                              }
+                              super.putStack(stack);
+                          }
+                      });
                     index++;
                 }
             }
@@ -125,11 +135,11 @@ public class ContainerCitizenInventory extends Container
             for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
                 addSlot(new Slot(
-                        playerInventory,
-                        j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
-                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
-                                + i * PLAYER_INVENTORY_OFFSET_EACH
+                  playerInventory,
+                  j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
+                  PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                  PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
+                    + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -137,21 +147,19 @@ public class ContainerCitizenInventory extends Container
         for (i = 0; i < INVENTORY_COLUMNS; i++)
         {
             addSlot(new Slot(
-                    playerInventory, i,
-                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                    PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
-                            INVENTORY_BAR_SIZE)
+              playerInventory, i,
+              PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+              PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
+                INVENTORY_BAR_SIZE)
             ));
         }
     }
 
     /**
-     * Handle when the stack in slot {@code index} is shift-clicked. Normally this moves the stack between the player
-     * inventory and the other inventory(s).
+     * Handle when the stack in slot {@code index} is shift-clicked. Normally this moves the stack between the player inventory and the other inventory(s).
      *
      * @param playerIn Player that interacted with this {@code Container}.
-     * @param index    Index of the {@link Slot}. This index is relative to the list of slots in this {@code Container},
-     *                 {@link #inventorySlots}.
+     * @param index    Index of the {@link Slot}. This index is relative to the list of slots in this {@code Container}, {@link #inventorySlots}.
      */
     @NotNull
     @Override
@@ -203,6 +211,7 @@ public class ContainerCitizenInventory extends Container
 
     /**
      * Getter for the display name.
+     *
      * @return the display name.
      */
     public String getDisplayName()

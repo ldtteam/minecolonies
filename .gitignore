@@ -1,25 +1,33 @@
-.idea/
-.gradle/
-.vscode/
-classes/
-build/
-eclipse/
-logs/
-mods/
-out/
-run/
-*.iml
+# eclipse
+/bin
+*.launch
+/.settings
+/.metadata
+/.classpath
+/.project
+/eclipse
+
+# idea
+/out
 *.ipr
 *.iws
-MinecraftForge*.txt
-CREDITS*
-LICENSE-fml*
-*changelog.txt
-README.txt
-/bin/
-*.hprof
-/.gradle/
-/build/
+*.iml
+/.idea
+/classes
+
+# gradle
+/build
+/.gradle
+
+# other
+/.vscode
+/run
+/runData
+/runClient
+/runServer
+.cache
+/libs
+gradle\.properties
 
 # Exclude all Mac DS_Store files
 /**/.DS_Store
@@ -27,25 +35,13 @@ README.txt
 # Exclude all Windows stuff
 /**/Thumbs.db
 
-# Eclipse stuff
-/.settings/
-/.project
-/.classpath
-/.checkstyle
-/*.launch
+README.txt
+*.hprof
 
-
+# Build stuff
+*changelog.txt
 tools/export_lang/.api_key
 tools/fix_model_angle/*.class
-
-run2/
-
-runClient/
-
-libs/
-
-runServer/
-
-gradle\.properties
-
 src/main/generated/resources/.cache/cache
+
+logs/

@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class PlaceStructureCriterionInstance extends CriterionInstance
 {
-    private String hutName;
+    private String        hutName;
     private StructureName structureName;
 
     public PlaceStructureCriterionInstance()

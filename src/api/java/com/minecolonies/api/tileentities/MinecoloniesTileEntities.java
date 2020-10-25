@@ -9,7 +9,7 @@ import net.minecraftforge.registries.ObjectHolder;
 public class MinecoloniesTileEntities
 {
     @ObjectHolder("scarecrow")
-    public static TileEntityType<? extends AbstractScarescrowTileEntity> SCARECROW;
+    public static TileEntityType<? extends AbstractScarecrowTileEntity> SCARECROW;
 
     @ObjectHolder("barrel")
     public static TileEntityType<? extends AbstractTileEntityBarrel> BARREL;
@@ -34,4 +34,7 @@ public class MinecoloniesTileEntities
 
     @ObjectHolder("stash")
     public static TileEntityType<TileEntityStash> STASH;
+
+    @ObjectHolder("colony_flag")
+    public static TileEntityType<TileEntityColonyFlag> COLONY_FLAG;
 }

@@ -7,24 +7,26 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
 import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Creates a new building for the Swine Herder.
  */
-public class BuildingSwineHerder extends AbstractBuildingWorker
+public class BuildingSwineHerder extends AbstractBuildingHerder
 {
     /**
      * Description of the job executed in the hut.
      */
-    private static final String JOB          = "swineherder";
+    private static final String JOB = "swineherder";
 
     /**
      * Description of the block used to set this block.
@@ -38,6 +40,7 @@ public class BuildingSwineHerder extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     *
      * @param c the colony.
      * @param l the location.
      */
@@ -103,13 +106,24 @@ public class BuildingSwineHerder extends AbstractBuildingWorker
         return super.canEat(stack);
     }
 
+    @Override
+    public void deserializeNBT(final CompoundNBT compound)
+    {
+        super.deserializeNBT(compound);
+        if (!isBreeding())
+        {
+            setBreeding(true);
+        }
+    }
+
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingHerder.View
     {
         /**
          * Instantiates the view of the building.
+         *
          * @param c the colonyView.
          * @param l the location of the block.
          */
@@ -122,7 +136,7 @@ public class BuildingSwineHerder extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, HUT_NAME);
+            return new WindowHutWorkerPlaceholder<AbstractBuildingHerder.View>(this, HUT_NAME);
         }
     }
 }

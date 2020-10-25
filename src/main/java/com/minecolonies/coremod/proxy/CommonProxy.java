@@ -4,10 +4,12 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
@@ -19,7 +21,6 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.RecipeBook;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -62,8 +63,7 @@ public abstract class CommonProxy implements IProxy
      * Adds an entity's custom data to the map for temporary storage.
      *
      * @param name     player UUID + Properties name, HashMap key.
-     * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties
-     *                 data only.
+     * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties data only.
      */
     public static void storeEntityData(final String name, final CompoundNBT compound)
     {
@@ -71,8 +71,7 @@ public abstract class CommonProxy implements IProxy
     }
 
     /**
-     * Removes the compound from the map and returns the NBT tag stored for name
-     * or null if none exists.
+     * Removes the compound from the map and returns the NBT tag stored for name or null if none exists.
      *
      * @param name player UUID + Properties name, HashMap key.
      * @return CompoundNBT PlayerProperties NBT compound.
@@ -113,15 +112,27 @@ public abstract class CommonProxy implements IProxy
     }
 
     @SubscribeEvent
-    public static void registerRaidEventTypes(@NotNull final RegistryEvent.Register<ColonyEventTypeRegistryEntry> event)
+    public static void registerColonyEventTypes(@NotNull final RegistryEvent.Register<ColonyEventTypeRegistryEntry> event)
     {
         ModColonyEventTypeInitializer.init(event);
+    }
+
+    @SubscribeEvent
+    public static void registerColonyEventDescriptionTypes(@NotNull final RegistryEvent.Register<ColonyEventDescriptionTypeRegistryEntry> event)
+    {
+        ModColonyEventDescriptionTypeInitializer.init(event);
     }
 
     @SubscribeEvent
     public static void registerJobTypes(final RegistryEvent.Register<JobEntry> event)
     {
         ModJobsInitializer.init(event);
+    }
+
+    @SubscribeEvent
+    public static void registerRecipeTypes(final RegistryEvent.Register<RecipeTypeEntry> event)
+    {
+        ModRecipeTypesInitializer.init(event);
     }
 
     @Override

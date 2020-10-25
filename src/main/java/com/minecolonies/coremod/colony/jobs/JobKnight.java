@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIKnight;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
@@ -53,12 +54,15 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
     public void onLevelUp()
     {
         // Bonus Health for knights(gets reset upon Firing)
-        if (getCitizen().getCitizenEntity().isPresent())
+        if (getCitizen().getEntity().isPresent())
         {
-            final AbstractEntityCitizen citizen = getCitizen().getCitizenEntity().get();
+            final AbstractEntityCitizen citizen = getCitizen().getEntity().get();
 
-            // +1 half Heart every 3 level
-            final AttributeModifier healthModLevel = new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME, getCitizen().getJobModifier() / 3 + KNIGHT_HP_BONUS, AttributeModifier.Operation.ADDITION);
+            // +1 Heart every 2 level
+            final AttributeModifier healthModLevel =
+              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
+                getCitizen().getCitizenSkillHandler().getLevel(Skill.Stamina) + KNIGHT_HP_BONUS,
+                AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
     }

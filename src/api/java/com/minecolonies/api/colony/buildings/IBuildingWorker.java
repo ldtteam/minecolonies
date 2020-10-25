@@ -73,27 +73,32 @@ public interface IBuildingWorker extends IBuilding
      * Get a fullfillable recipe to execute.
      *
      * @param tempStack the stack which should be crafted.
+     * @param considerReservation if reservations should be considered.
+
      * @return the recipe or null.
      */
-    IRecipeStorage getFirstFullFillableRecipe(ItemStack tempStack);
+    IRecipeStorage getFirstFullFillableRecipe(ItemStack tempStack, final boolean considerReservation);
 
     /**
      * Get a fullfillable recipe to execute, with at least a given count.
      *
      * @param tempStack The temp stack to match.
      * @param count     The count to craft.
+     * @param considerReservation if reservations should be considered.
+
      * @return The recipe or null.
      */
-    IRecipeStorage getFirstFullFillableRecipe(ItemStack tempStack, int count);
+    IRecipeStorage getFirstFullFillableRecipe(ItemStack tempStack, int count, final boolean considerReservation);
 
     /**
      * Get a fullfillable recipe to execute.
      *
      * @param stackPredicate the predicate to check for fullfillment.
      * @param count          the count to produce.
+     * @param considerReservation if reservations should be considered.
      * @return the recipe or null.
      */
-    IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, final int count);
+    IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation);
 
     /**
      * Try to fullfill a recipe.
@@ -112,9 +117,7 @@ public interface IBuildingWorker extends IBuilding
     void switchIndex(int i, int j);
 
     /**
-     * Check if a recipe can be added.
-     * This is only important for 3x3 crafting.
-     * Workers shall override this if necessary.
+     * Check if a recipe can be added. This is only important for 3x3 crafting. Workers shall override this if necessary.
      *
      * @param ignored the token of the recipe.
      * @return true if so.
@@ -124,10 +127,9 @@ public interface IBuildingWorker extends IBuilding
     /**
      * Check if players can change the building's recipe list.
      * <p>
-     * This is the case for most current buildings, but some buildings might only work on built-in recipes.
-     * It's recommended to turn this off for buildings that make no use of player-thaught recipes, to avoid confusion for new players.
-     * Turning this on will hide the "Teach recipes" button, hide the remove-buttons in the recipe list,
-     * and also hide the recipe list altogether if no recipes are present.
+     * This is the case for most current buildings, but some buildings might only work on built-in recipes. It's recommended to turn this off for buildings that make no use of
+     * player-thaught recipes, to avoid confusion for new players. Turning this on will hide the "Teach recipes" button, hide the remove-buttons in the recipe list, and also hide
+     * the recipe list altogether if no recipes are present.
      * </p>
      *
      * @return true if player is allowed to alter  recipes, false if not
@@ -211,7 +213,15 @@ public interface IBuildingWorker extends IBuilding
     Skill getSecondarySkill();
 
     /**
+     *  Recipe Improvement skill getter
+     * @return the recipe improvement skill
+     */
+    @NotNull
+    Skill getRecipeImprovementSkill();
+
+    /**
      * Check if the worker is allowed to eat the following stack.
+     *
      * @param stack the stack to test.
      * @return true if so.
      */

@@ -8,6 +8,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -65,5 +66,26 @@ public class ItemStorageFactory implements IItemStorageFactory
         final ItemStack stack = ItemStack.read(nbt.getCompound(TAG_STACK));
         final int size = nbt.getInt(TAG_SIZE);
         return this.getNewInstance(stack, size);
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, ItemStorage input, PacketBuffer packetBuffer)
+    {
+        packetBuffer.writeItemStack(input.getItemStack());
+        packetBuffer.writeInt(input.getAmount());
+    }
+
+    @Override
+    public ItemStorage deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
+        final ItemStack stack = buffer.readItemStack();
+        final int size = buffer.readInt();
+        return this.getNewInstance(stack, size);
+    }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 27;
     }
 }

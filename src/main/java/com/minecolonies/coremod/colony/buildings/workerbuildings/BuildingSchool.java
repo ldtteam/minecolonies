@@ -16,6 +16,7 @@ import com.minecolonies.coremod.client.gui.WindowHutSchool;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.colony.jobs.JobTeacher;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Block;
 import net.minecraft.block.CarpetBlock;
@@ -54,7 +55,7 @@ public class BuildingSchool extends AbstractBuildingWorker
     /**
      * NBT value to store the carpet pos.
      */
-    private static final String TAG_CARPET  = "carpet";
+    private static final String TAG_CARPET = "carpet";
 
     /**
      * If the school has a teacher.
@@ -74,6 +75,7 @@ public class BuildingSchool extends AbstractBuildingWorker
 
     /**
      * Instantiates the building.
+     *
      * @param c the colony.
      * @param l the location.
      */
@@ -190,7 +192,6 @@ public class BuildingSchool extends AbstractBuildingWorker
         }
     }
 
-
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
@@ -255,7 +256,7 @@ public class BuildingSchool extends AbstractBuildingWorker
             }
         }
 
-        for (final ICitizenData citizenData: getAssignedCitizen())
+        for (final ICitizenData citizenData : getAssignedCitizen())
         {
             if (citizenData.getJob() instanceof JobPupil && !citizenData.isChild())
             {
@@ -266,6 +267,7 @@ public class BuildingSchool extends AbstractBuildingWorker
 
     /**
      * Get a random place to sit from the school.
+     *
      * @return the place to sit.
      */
     @Nullable
@@ -287,7 +289,7 @@ public class BuildingSchool extends AbstractBuildingWorker
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("School", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.SCHOOL_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -308,6 +310,7 @@ public class BuildingSchool extends AbstractBuildingWorker
 
         /**
          * Instantiates the view of the building.
+         *
          * @param c the colonyView.
          * @param l the location of the block.
          */

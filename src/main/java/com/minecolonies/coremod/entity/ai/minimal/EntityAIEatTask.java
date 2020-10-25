@@ -8,13 +8,14 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
@@ -152,7 +153,7 @@ public class EntityAIEatTask extends Goal
 
         final ICitizenData citizenData = citizen.getCitizenData();
         if (citizenData == null || citizen.getCitizenData().getSaturation() >= HIGH_SATURATION || (!citizen.isOkayToEat()
-                                                                                                                      && citizen.getCitizenData().getSaturation() > 0))
+                                                                                                     && citizen.getCitizenData().getSaturation() > 0))
         {
             return false;
         }
@@ -216,8 +217,9 @@ public class EntityAIEatTask extends Goal
 
     /**
      * Check if a citizen can eat something.
+     *
      * @param citizenData the citizen to check.
-     * @param stack the stack to check.
+     * @param stack       the stack to check.
      * @return true if so.
      */
     private boolean canEat(final ICitizenData citizenData, final ItemStack stack)
@@ -249,13 +251,13 @@ public class EntityAIEatTask extends Goal
         citizen.swingArm(Hand.MAIN_HAND);
         citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
         Network.getNetwork()
-              .sendToTrackingEntity(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(),
-                citizen.posX,
-                citizen.posY,
-                citizen.posZ,
-                citizen.rotationPitch,
-                citizen.rotationYaw,
-                citizen.getEyeHeight()), citizen);
+          .sendToTrackingEntity(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(),
+            citizen.posX,
+            citizen.posY,
+            citizen.posZ,
+            citizen.rotationPitch,
+            citizen.rotationYaw,
+            citizen.getEyeHeight()), citizen);
 
         waitingTicks++;
         if (waitingTicks < REQUIRED_TIME_TO_EAT)
@@ -267,7 +269,8 @@ public class EntityAIEatTask extends Goal
         final Food itemFood = stack.getItem().getFood();
 
         double satIncrease = itemFood.getHealing();
-        final AdditionModifierResearchEffect satLimitDecrease = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SATURATION, AdditionModifierResearchEffect.class);
+        final AdditionModifierResearchEffect satLimitDecrease =
+          citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SATURATION, AdditionModifierResearchEffect.class);
         if (satLimitDecrease != null)
         {
             satIncrease *= (1.0 + satLimitDecrease.getEffect());
@@ -277,7 +280,7 @@ public class EntityAIEatTask extends Goal
         citizenData.getInventory().extractItem(foodSlot, 1, false);
 
         IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
-        if (citizenColony != null )
+        if (citizenColony != null)
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, stack));
         }
@@ -357,8 +360,7 @@ public class EntityAIEatTask extends Goal
     }
 
     /**
-     * Wander around the placeToPath a bit while waiting for the cook to deliver food.
-     * After waiting for a certain time, get the food yourself.
+     * Wander around the placeToPath a bit while waiting for the cook to deliver food. After waiting for a certain time, get the food yourself.
      *
      * @param citizenData the citizen to check.
      * @return the next state to go to.
@@ -465,11 +467,11 @@ public class EntityAIEatTask extends Goal
         if (uncookedFood != -1)
         {
             complained = true;
-            citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
+            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
         }
 
         final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-        if (job != null)
+        if (job != null && job.isActive())
         {
             job.setActive(false);
         }
@@ -478,14 +480,9 @@ public class EntityAIEatTask extends Goal
         {
             if (!complained)
             {
-                citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
             }
             return IDLE;
-        }
-        // Reset AI when going to the restaurant to eat
-        if (citizen.getCitizenJobHandler().getColonyJob() != null)
-        {
-            citizen.getCitizenJobHandler().getColonyJob().resetAI();
         }
         return GO_TO_RESTAURANT;
     }
@@ -527,5 +524,19 @@ public class EntityAIEatTask extends Goal
         citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
         placeToPath = null;
         currentState = CHECK_FOR_FOOD;
+    }
+
+    @Override
+    public void resetTask()
+    {
+        reset();
+        currentState = IDLE;
+        citizen.getCitizenData().setVisibleStatus(null);
+    }
+
+    @Override
+    public void startExecuting()
+    {
+        citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.EAT);
     }
 }

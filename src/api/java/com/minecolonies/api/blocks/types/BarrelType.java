@@ -13,7 +13,8 @@ public enum BarrelType implements IStringSerializable
     EIGHTY(4, "80perc", MaterialColor.WOOD),
     HUNDRED(5, "100perc", MaterialColor.WOOD),
     WORKING(6, "working", MaterialColor.WOOD),
-    DONE(7, "done", MaterialColor.WOOD),;
+    DONE(7, "done", MaterialColor.WOOD),
+    ;
 
     private static final BarrelType[] META_LOOKUP = new BarrelType[values().length];
     static
@@ -23,9 +24,9 @@ public enum BarrelType implements IStringSerializable
             META_LOOKUP[enumtype.getMetadata()] = enumtype;
         }
     }
-    private final int      meta;
-    private final String   name;
-    private final String   unlocalizedName;
+    private final int    meta;
+    private final String name;
+    private final String unlocalizedName;
 
     private final MaterialColor mapColor;
 
@@ -57,6 +58,7 @@ public enum BarrelType implements IStringSerializable
 
     /**
      * Returns a type by a given metadata
+     *
      * @param meta the metadata
      * @return the type
      */

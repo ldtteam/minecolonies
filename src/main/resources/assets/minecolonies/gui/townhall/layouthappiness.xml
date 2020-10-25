@@ -1,6 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="374 243" pause="false" lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
-        
+
     <switch id="switchpageHappiness" size="100% 100%">
         <view id="happinesspage">
 

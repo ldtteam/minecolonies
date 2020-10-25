@@ -1,9 +1,12 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import com.minecolonies.api.colony.jobs.IJobView;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +48,7 @@ public interface ICitizenDataView extends ICitizen
 
     /**
      * DEPRECATED
+     *
      * @param bp the position.
      */
     void setWorkBuilding(BlockPos bp);
@@ -73,8 +77,7 @@ public interface ICitizenDataView extends ICitizen
     /**
      * Deserialize the attributes and variables from transition.
      *
-     * @param buf
-     *            Byte buffer to deserialize.
+     * @param buf Byte buffer to deserialize.
      */
     void deserialize(@NotNull PacketBuffer buf);
 
@@ -90,12 +93,14 @@ public interface ICitizenDataView extends ICitizen
 
     /**
      * Get the list of ordered interactions.
+     *
      * @return the list.
      */
     List<IInteractionResponseHandler> getOrderedInteractions();
 
     /**
      * Get a specific interaction by key.
+     *
      * @param component the key.
      * @return the interaction or null.
      */
@@ -104,25 +109,50 @@ public interface ICitizenDataView extends ICitizen
 
     /**
      * Check if the citizen has important interactions.
+     *
      * @return true if so.
      */
     boolean hasBlockingInteractions();
 
     /**
      * Check if the citizen has any interactions.
+     *
      * @return true if so.
      */
     boolean hasPendingInteractions();
 
     /**
      * Get an instance of the skill handler.
+     *
      * @return the instance.
      */
     ICitizenSkillHandler getCitizenSkillHandler();
 
     /**
      * The citizen happiness handler.
+     *
      * @return the handler.
      */
     ICitizenHappinessHandler getHappinessHandler();
+
+    /**
+     * The texture to render for interactions
+     *
+     * @return resourcelocation
+     */
+    ResourceLocation getInteractionIcon();
+
+    /**
+     * Get the visible citizen status
+     *
+     * @return status
+     */
+    VisibleCitizenStatus getVisibleStatus();
+
+    /**
+     * Get the job view that belongs to this citizen (or null).
+     * @return the job.
+     */
+    @Nullable
+    IJobView getJobView();
 }

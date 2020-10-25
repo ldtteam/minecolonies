@@ -11,6 +11,9 @@ import com.minecolonies.api.colony.CompactColonyReference;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
+import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
+import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.colony.permissions.Player;
@@ -20,6 +23,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -27,13 +31,14 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.*;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallSingleCitizenMessage;
-import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallTownhallMessage;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.BlockPos;
@@ -102,7 +107,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     /**
      * The ScrollingList of the users.
      */
-    private ScrollingList permEventList;
+    private ScrollingList eventList;
 
     /**
      * The ScrollingList of the users.
@@ -128,6 +133,11 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      * The ScrollingList of all feuds.
      */
     private final ScrollingList feudsList;
+
+    /**
+     * Whether the event list should display permission events, or colony events.
+     */
+    private boolean permissionEvents;
 
     /**
      * Constructor for the town hall window.
@@ -162,13 +172,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         registerButton(BUTTON_REMOVE_PLAYER, this::removePlayerClicked);
         registerButton(BUTTON_PROMOTE, this::promoteDemoteClicked);
         registerButton(BUTTON_DEMOTE, this::promoteDemoteClicked);
-        registerButton(BUTTON_RECALL, this::recallClicked);
-        registerButton(BUTTON_HIRE, this::hireClicked);
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
         registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
         registerButton(BUTTON_TOGGLE_MOVE_IN, this::toggleMoveIn);
         registerButton(BUTTON_TOGGLE_PRINT_PROGRESS, this::togglePrintProgress);
+        registerButton("bannerPicker", this::openBannerPicker);
 
         registerButton(NAME_LABEL, this::fillCitizenInfo);
         registerButton(RECALL_ONE, this::recallOneClicked);
@@ -177,6 +186,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         registerButton(BUTTON_MANAGE_FRIEND, this::editFriend);
         registerButton(BUTTON_MANAGE_NEUTRAL, this::editNeutral);
         registerButton(BUTTON_MANAGE_HOSTILE, this::editHostile);
+        registerButton(BUTTON_PERMISSION_EVENTS, this::permissionEventsClicked);
         registerButton(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, this::addPlayerToColonyClicked);
         registerButton(BUTTON_TP, this::teleportToColony);
         registerButton(BUTTON_UP, this::updatePriority);
@@ -280,8 +290,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     }
 
     /**
-     * Executed when <code>WindowTownHall</code> is opened.
-     * Does tasks like setting buttons.
+     * Executed when <code>WindowTownHall</code> is opened. Does tasks like setting buttons.
      */
     @Override
     public void onOpened()
@@ -307,7 +316,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         fillWorkOrderList();
         fillFreeBlockList();
         fillAlliesAndFeudsList();
-        fillPermEventsList();
+        fillEventsList();
         updateHappiness();
 
         if (townHall.getColony().isManualHiring())
@@ -331,7 +340,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         }
 
         if (townHall.getColony().getMercenaryUseTime() != 0
-                && townHall.getColony().getWorld().getGameTime() - townHall.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
+              && townHall.getColony().getWorld().getGameTime() - townHall.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
             findPaneOfTypeByID(BUTTON_MERCENARY, Button.class).disable();
         }
@@ -423,8 +432,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     }
 
     /**
-     * Called when the "addBlock" button has been triggered.
-     * Tries to add the content of the input field as block or position to the colony.
+     * Called when the "addBlock" button has been triggered. Tries to add the content of the input field as block or position to the colony.
      */
     private void addBlock()
     {
@@ -490,7 +498,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
     /**
      * Fills the permission list in the GUI.
-     * 
+     *
      * @param category the category to fill.
      */
     private void fillPermissionList(@NotNull final String category)
@@ -583,7 +591,8 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
         final int citizensSize = townHall.getColony().getCitizens().size();
 
-        final String numberOfCitizens = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalcitizens", citizensSize, townHall.getColony().getCitizenCount());
+        final String numberOfCitizens =
+          LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS, citizensSize, townHall.getColony().getCitizenCount());
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
         int children = 0;
@@ -609,9 +618,10 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     int maxTeachers = 1;
                     max = max - 1;
                     int teachers = workers = 0;
-                    for(@NotNull final Integer workerId : ((BuildingSchool.View) building).getWorkerId())
+                    for (@NotNull final Integer workerId : ((BuildingSchool.View) building).getWorkerId())
                     {
-                        if (townHall.getColony().getCitizen(workerId).isChild())
+                        final ICitizenDataView view = townHall.getColony().getCitizen(workerId);
+                        if (view != null && view.isChild())
                         {
                             workers += 1;
                         }
@@ -625,7 +635,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     totalWorkers += teachers;
                     final Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new Tuple<>(0, 0));
                     jobMaxCountMap.put(jobName, new Tuple<>(tuple.getA() + workers, tuple.getB() + max));
-
                 }
                 else
                 {
@@ -638,15 +647,15 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
 
         //calculate number of children
-        for(ICitizenDataView iCitizenDataView : townHall.getColony().getCitizens().values())
+        for (ICitizenDataView iCitizenDataView : townHall.getColony().getCitizens().values())
         {
             if (iCitizenDataView.isChild())
             {
                 children++;
             }
         }
-        final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", citizensSize - totalWorkers - children);
-        final String numberOfKids = LanguageHandler.format("com.minecolonies.coremod.gui.townhall.population.childs", children);
+        final String numberOfUnemployed = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED, citizensSize - totalWorkers - children);
+        final String numberOfKids = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS, children);
 
         final ScrollingList list = findPaneOfTypeByID("citizen-stats", ScrollingList.class);
         if (list == null)
@@ -676,7 +685,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     final Map.Entry<String, Tuple<Integer, Integer>> entry = theList.get(index);
                     final String job = LanguageHandler.format(entry.getKey());
                     final String numberOfWorkers =
-                      LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.each", job, entry.getValue().getA(), entry.getValue().getB());
+                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH, job, entry.getValue().getA(), entry.getValue().getB());
                     label.setLabelText(numberOfWorkers);
                 }
                 else
@@ -772,38 +781,64 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         });
     }
 
-    private void fillPermEventsList()
+    private void fillEventsList()
     {
-        permEventList = findPaneOfTypeByID(LIST_PERM_EVENT, ScrollingList.class);
-        permEventList.setDataProvider(new ScrollingList.DataProvider()
+        eventList = findPaneOfTypeByID(EVENTS_LIST, ScrollingList.class);
+        eventList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
             public int getElementCount()
             {
-                return building.getPermissionEvents().size();
+                return permissionEvents ? building.getPermissionEvents().size() : building.getColonyEvents().size();
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final PermissionEvent event = building.getPermissionEvents().get(index);
-
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(event.getName() + (event.getId() == null ? " <fake>" : ""));
-                rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ());
-
-                if (event.getId() == null)
+                if (permissionEvents)
                 {
+                    final PermissionEvent event = building.getPermissionEvents().get(index);
+
+                    rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(event.getName() + (event.getId() == null ? " <fake>" : ""));
+                    rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ());
+
+                    if (event.getId() == null)
+                    {
+                        rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
+                    }
+
+                    final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US));
+
+                    if (name.contains(KEY_TO_PERMISSIONS))
+                    {
+                        Log.getLogger().warn("Didn't work for:" + name);
+                        return;
+                    }
+                    rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(name);
+                }
+                else
+                {
+                    final IColonyEventDescription event = building.getColonyEvents().get(index);
+                    if (event instanceof CitizenDiedEvent)
+                    {
+                        rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(((CitizenDiedEvent) event).getDeathCause());
+                    }
+                    else
+                    {
+                        rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(event.getName());
+                    }
+                    if (event instanceof ICitizenEventDescription)
+                    {
+                        rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(((ICitizenEventDescription) event).getCitizenName());
+                    }
+                    else if (event instanceof IBuildingEventDescription)
+                    {
+                        IBuildingEventDescription buildEvent = (IBuildingEventDescription) event;
+                        rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(buildEvent.getBuildingName() + " " + buildEvent.getLevel());
+                    }
+                    rowPane.findPaneOfTypeByID(POS_LABEL, Label.class).setLabelText(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ());
                     rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
                 }
-
-                final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US));
-
-                if (name.contains(KEY_TO_PERMISSIONS))
-                {
-                    Log.getLogger().warn("Didn't work for:" + name);
-                    return;
-                }
-                rowPane.findPaneOfTypeByID(ACTION_LABEL, Label.class).setLabelText(name);
             }
         });
     }
@@ -835,7 +870,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             image.setPosition(25, yPos);
 
             final Label label = new Label();
-            label.setSize(136,11);
+            label.setSize(136, 11);
             label.setPosition(50, yPos);
             label.setColor(BLACK);
             label.setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + entry.getKey()));
@@ -859,7 +894,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             pane.addChild(image);
             pane.addChild(label);
 
-            yPos+=12;
+            yPos += 12;
         }
     }
 
@@ -937,13 +972,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         WindowCitizen.createHappinessBar(view, this);
         WindowCitizen.createSkillContent(view, this);
         findPaneOfTypeByID(JOB_LABEL, Label.class).setLabelText(
-          "§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED : view.getJob()));
+          "§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : view.getJob()));
         findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Label.class).setLabelText(String.valueOf(view.getId()));
     }
 
     /**
-     * Executed when the recall one button has been clicked.
-     * Recalls one specific citizen.
+     * Executed when the recall one button has been clicked. Recalls one specific citizen.
      *
      * @param button the clicked button.
      */
@@ -1031,7 +1065,9 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     }
                 }
 
-                rowPane.findPaneOfTypeByID(WORK_LABEL, Label.class).setLabelText(workOrder.get());
+                final String[] split = workOrder.get().split("/");
+
+                rowPane.findPaneOfTypeByID(WORK_LABEL, Label.class).setLabelText(split[split.length - 1]);
                 rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Label.class).setLabelText(claimingCitizen);
                 rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Label.class).setLabelText(Integer.toString(workOrder.getId()));
             }
@@ -1103,7 +1139,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
     /**
      * Toggles printing progress.
-     * 
+     *
      * @param button the button to toggle.
      */
     private void togglePrintProgress(@NotNull final Button button)
@@ -1117,6 +1153,16 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             button.setLabel(LanguageHandler.format(OFF_STRING));
         }
         Network.getNetwork().sendToServer(new ToggleHelpMessage(this.building.getColony()));
+    }
+
+    /**
+     * Opens the banner picker window. Window does not use BlockOut, so is started manually.
+     * @param button the trigger button
+     */
+    private void openBannerPicker(@NotNull final Button button)
+    {
+        Screen window = new WindowBannerPicker(townHall.getColony(), this);
+        Minecraft.getInstance().execute(() -> Minecraft.getInstance().displayGuiScreen(window));
     }
 
     /**
@@ -1227,7 +1273,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void addPlayerToColonyClicked(@NotNull final Button button)
     {
-        final int row = permEventList.getListElementIndexByPane(button);
+        final int row = eventList.getListElementIndexByPane(button);
         if (row >= 0 && row < building.getPermissionEvents().size())
         {
             final PermissionEvent user = building.getPermissionEvents().get(row);
@@ -1261,23 +1307,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     }
 
     /**
-     * Action when a recall button is clicked.
-     */
-    private void recallClicked()
-    {
-        Network.getNetwork().sendToServer(new RecallTownhallMessage(townHall.getColony()));
-    }
-
-    /**
-     * Action when the hire button is clicked
-     */
-    private void hireClicked()
-    {
-        @NotNull final WindowTownHallHireCitizen window = new WindowTownHallHireCitizen(townHall.getColony());
-        window.open();
-    }
-
-    /**
      * For switches inside of tabs
      */
     @Override
@@ -1293,5 +1322,16 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         {
             editOfficer();
         }
+    }
+
+    /**
+     * Switching between permission and colony events.
+     * 
+     * @param button the clicked button.
+     */
+    public void permissionEventsClicked(@NotNull final Button button)
+    {
+        permissionEvents = !permissionEvents;
+        button.setLabel(LanguageHandler.format(permissionEvents ? TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS : TranslationConstants.COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS));
     }
 }

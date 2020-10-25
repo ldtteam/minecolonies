@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.WAREHOUSE_SORTED;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
 
@@ -38,8 +38,6 @@ import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
  */
 public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse.View>
 {
-
-
 
     /**
      * The Warehouse view
@@ -118,8 +116,6 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
             new WindowSelectRes(this, building, stack -> true).open();
         }
     }
-
-
 
     @Override
     public void onOpened()
@@ -211,7 +207,9 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         neededLabel.setLabelText(resource.getAvailable() + " / " + resource.getAmount());
         findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
-        findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(new ItemStack(resource.getItem(), 1));
+        final ItemStack image = new ItemStack(resource.getItem(), 1);
+        image.setTag(resource.getItemStack().getTag());
+        findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(image);
     }
 
     /**

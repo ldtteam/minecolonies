@@ -16,6 +16,7 @@ import com.minecolonies.coremod.blocks.BlockBarracksTowerSubstitution;
 import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -107,18 +108,26 @@ public class BuildingBarracks extends AbstractBuilding
             }
         }
         super.onDestroyed();
+        colony.getBuildingManager().guardBuildingChangedAt(this, 0);
     }
 
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Barracks", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.BARRACKS_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
             return;
         }
         super.requestUpgrade(player, builder);
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+        colony.getBuildingManager().guardBuildingChangedAt(this, newLevel);
     }
 
     @Override
@@ -133,6 +142,7 @@ public class BuildingBarracks extends AbstractBuilding
                 final TileEntity tile = world.getTileEntity(pos);
                 if (tile instanceof TileEntityColonyBuilding)
                 {
+                    ((TileEntityColonyBuilding) tile).setMirror(this.isMirrored());
                     ((TileEntityColonyBuilding) tile).setStyle(this.getStyle());
                 }
                 getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(pos), world);

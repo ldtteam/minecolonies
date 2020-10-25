@@ -45,7 +45,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
     /**
      * Whether to retrieve the worker on low health.
      */
-    private boolean retrieveOnLowHealth = false;
+    private boolean       retrieveOnLowHealth = false;
 
     /**
      * Whether to patrol manually or not.
@@ -56,6 +56,11 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      * Whether tight grouping is used on type of Follow.
      */
     private boolean tightGrouping = true;
+
+    /**
+     * Whether to hire from training facility
+     */
+    private boolean hireTrainees = true;
 
     /**
      * The GuardTask of the guard.
@@ -90,6 +95,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
 
         registerButton(GUI_BUTTON_PATROL_MODE, this::switchPatrolMode);
         registerButton(GUI_BUTTON_RETRIEVAL_MODE, this::switchRetrievalMode);
+        registerButton(GUI_BUTTON_TRAINEE_MODE, this::switchTraineeMode);
         registerButton(GUI_BUTTON_RECALCULATE, this::recalculate);
         registerButton(GUI_BUTTON_SET_TARGET, this::setTarget);
 
@@ -205,6 +211,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
     {
         this.patrolManually = building.isPatrolManually();
         this.retrieveOnLowHealth = building.isRetrieveOnLowHealth();
+        this.hireTrainees = building.isHireTrainees();
         this.tightGrouping = building.isTightGrouping();
         this.task = building.getTask();
         this.patrolTargets = building.getPatrolTargets();
@@ -217,7 +224,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
     {
         final ResourceLocation resourceName = building.getGuardType() == null ? new ResourceLocation("") : building.getGuardType().getRegistryName();
         Network.getNetwork()
-          .sendToServer(new GuardTaskMessage(building, resourceName, building.isAssignManually(), patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping));
+          .sendToServer(new GuardTaskMessage(building, resourceName, building.isAssignManually(), patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping, hireTrainees));
     }
 
     /**
@@ -365,6 +372,17 @@ public class WindowGuardControl extends AbstractWindowSkeleton
         pullInfoFromHut();
         sendChangesToServer();
         this.findPaneOfTypeByID(GUI_BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
+    }
+
+    /**
+     * Switch the trainee mode.
+     */
+    private void switchTraineeMode()
+    {
+        building.setHireTrainees(!building.isHireTrainees());
+        pullInfoFromHut();
+        sendChangesToServer();
+        this.findPaneOfTypeByID(GUI_BUTTON_TRAINEE_MODE, Button.class).setLabel(hireTrainees ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
     }
 
     /**

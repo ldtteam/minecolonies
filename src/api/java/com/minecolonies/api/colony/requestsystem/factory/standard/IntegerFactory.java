@@ -7,9 +7,10 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
-public class IntegerFactory implements IFactory<FactoryVoidInput,Integer>
+public class IntegerFactory implements IFactory<FactoryVoidInput, Integer>
 {
     @NotNull
     @Override
@@ -49,5 +50,23 @@ public class IntegerFactory implements IFactory<FactoryVoidInput,Integer>
     public Integer deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
         return nbt.getInt(NbtTagConstants.TAG_VALUE);
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, Integer input, PacketBuffer packetBuffer)
+    {
+        packetBuffer.writeInt(input);
+    }
+
+    @Override
+    public Integer deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
+        return buffer.readInt();
+    }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 30;
     }
 }

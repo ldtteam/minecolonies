@@ -36,8 +36,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
     private BlockPos studyPos = null;
 
     /**
-     * Constructor for the student.
-     * Defines the tasks the student executes.
+     * Constructor for the student. Defines the tasks the student executes.
      *
      * @param job a student job to use.
      */
@@ -59,8 +58,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
     }
 
     /**
-     * The AI task for the student to study.
-     * For this he should walk between the different bookcase hit them once and then stand around for a while.
+     * The AI task for the student to study. For this he should walk between the different bookcase hit them once and then stand around for a while.
      *
      * @return the next IAIState.
      */
@@ -99,7 +97,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
         if (currentItems.isEmpty())
         {
             // Default levelup
-            data.getCitizenSkillHandler().tryLevelUpIntelligence(world.rand, 50, data);
+            data.getCitizenSkillHandler().tryLevelUpIntelligence(world.rand, 25, data);
             worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
 
             for (final StudyItem studyItem : getOwnBuilding().getStudyItems())
@@ -126,7 +124,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             final StudyItem chosenItem = currentItems.get(world.rand.nextInt(currentItems.size()));
 
             worker.setHeldItem(Hand.MAIN_HAND, new ItemStack(chosenItem.getItem(), 1));
-            data.getCitizenSkillHandler().tryLevelUpIntelligence(world.rand, 50 * 100 / chosenItem.getSkillIncreasePct(), data);
+            data.getCitizenSkillHandler().tryLevelUpIntelligence(world.rand, 25 * (100 / chosenItem.getSkillIncreasePct()), data);
             // Break item rand
             if (world.rand.nextInt(100) <= chosenItem.getBreakPct())
             {

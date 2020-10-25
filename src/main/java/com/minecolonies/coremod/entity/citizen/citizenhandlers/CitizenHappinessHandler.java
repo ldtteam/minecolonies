@@ -7,9 +7,10 @@ import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegis
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.happiness.*;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.minecolonies.api.research.util.ResearchConstants.HAPPINESS;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.DEMANDS;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO;
@@ -33,16 +35,33 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     public Map<String, IHappinessModifier> happinessFactors = new HashMap<>();
 
     /**
+     * The cached happiness value.
+     */
+    private double cachedHappiness = -1.0;
+
+    /**
      * Create a new instance of the citizen happiness handler.
      *
      * @param data the data to handle.
      */
     public CitizenHappinessHandler(final ICitizenData data)
     {
-        add(new TimeBasedHappinessModifier(HOMELESSNESS, 4.0, () -> data.getHomeBuilding() == null ? 0.25 : data.getHomeBuilding().getBuildingLevel() / 2.5, new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_HOUSE, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_HOUSE, 0.5)}));
-        add(new TimeBasedHappinessModifier(UNEMPLOYMENT, 2.0, () -> data.isChild() ? 1.0 : (data.getWorkBuilding() == null ? 0.5 : data.getWorkBuilding().getBuildingLevel() > 3 ? 2.0 : 1.0), new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_JOB, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_JOB, 0.5)}));
-        add(new TimeBasedHappinessModifier(HEALTH, 2.0, () -> data.getCitizenEntity().isPresent() ? (data.getCitizenEntity().get().getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0, new Tuple[] {new Tuple<>(COMPLAIN_DAYS_SICK, 0.5), new Tuple<>(DEMANDS_CURE_SICK, 0.1)}));
-        add(new TimeBasedHappinessModifier(IDLEATJOB, 1.0, () -> data.isIdleAtJob() ? 0.5 : 1.0, new Tuple[] {new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)}));
+        add(new TimeBasedHappinessModifier(HOMELESSNESS,
+          4.0,
+          () -> data.getHomeBuilding() == null ? 0.25 : data.getHomeBuilding().getBuildingLevel() / 2.5,
+          new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_HOUSE, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_HOUSE, 0.5)}));
+        add(new TimeBasedHappinessModifier(UNEMPLOYMENT,
+          2.0,
+          () -> data.isChild() ? 1.0 : (data.getWorkBuilding() == null ? 0.5 : data.getWorkBuilding().getBuildingLevel() > 3 ? 2.0 : 1.0),
+          new Tuple[] {new Tuple<>(COMPLAIN_DAYS_WITHOUT_JOB, 0.75), new Tuple<>(DEMANDS_DAYS_WITHOUT_JOB, 0.5)}));
+        add(new TimeBasedHappinessModifier(HEALTH,
+          2.0,
+          () -> data.getEntity().isPresent() ? (data.getEntity().get().getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0,
+          new Tuple[] {new Tuple<>(COMPLAIN_DAYS_SICK, 0.5), new Tuple<>(DEMANDS_CURE_SICK, 0.1)}));
+        add(new TimeBasedHappinessModifier(IDLEATJOB,
+          1.0,
+          () -> data.isIdleAtJob() ? 0.5 : 1.0,
+          new Tuple[] {new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)}));
 
         add(new StaticHappinessModifier(SCHOOL, 1.0, () -> data.isChild() ? data.getJob() instanceof JobPupil ? 2 : 0 : 1));
         add(new StaticHappinessModifier(SECURITY, 5.0, () -> getGuardFactor(data.getColony())));
@@ -83,11 +102,10 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         {
             happinessFactors.get(name).reset();
         }
+        cachedHappiness = -1;
     }
 
     @Override
-
-
     public IHappinessModifier getModifier(final String name)
     {
         return happinessFactors.get(name);
@@ -101,27 +119,40 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             happinessModifier.dayEnd();
             if (InteractionValidatorRegistry.hasValidator(new TranslationTextComponent(NO + happinessModifier.getId())))
             {
-                citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(NO + happinessModifier.getId()), ChatPriority.CHITCHAT));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
             if (InteractionValidatorRegistry.hasValidator(new TranslationTextComponent(DEMANDS + happinessModifier.getId())))
             {
-                citizenData.triggerInteraction(new StandardInteractionResponseHandler(new TranslationTextComponent(DEMANDS + happinessModifier.getId()), ChatPriority.CHITCHAT));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(DEMANDS + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
         }
+        cachedHappiness = -1;
     }
 
     @Override
-    public double getHappiness()
+    public double getHappiness(final IColony colony)
     {
-        double total = 0.0;
-        double totalWeight = 0.0;
-        for (final IHappinessModifier happinessModifier : happinessFactors.values())
+        if (cachedHappiness == -1)
         {
-            total += happinessModifier.getFactor() * happinessModifier.getWeight();
-            totalWeight += happinessModifier.getWeight();
-        }
+            double total = 0.0;
+            double totalWeight = 0.0;
+            for (final IHappinessModifier happinessModifier : happinessFactors.values())
+            {
+                total += happinessModifier.getFactor() * happinessModifier.getWeight();
+                totalWeight += happinessModifier.getWeight();
+            }
 
-        return Math.min(10.0 * ( total / totalWeight ), 10);
+            double happinessResult = (total / totalWeight);
+            final MultiplierModifierResearchEffect xpBonus =
+              colony.getResearchManager().getResearchEffects().getEffect(HAPPINESS, MultiplierModifierResearchEffect.class);
+            if (xpBonus != null)
+            {
+                happinessResult *= (1 + xpBonus.getEffect());
+            }
+
+            cachedHappiness = Math.min(10.0 * happinessResult, 10);
+        }
+        return cachedHappiness;
     }
 
     @Override
@@ -194,7 +225,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
                 homelessness++;
             }
 
-            if (citizen.getCitizenEntity().isPresent() && citizen.getCitizenEntity().get().getCitizenDiseaseHandler().isSick())
+            if (citizen.getEntity().isPresent() && citizen.getEntity().get().getCitizenDiseaseHandler().isSick())
             {
                 sickPeople++;
             }
@@ -222,13 +253,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         {
             if (citizen.getJob() instanceof AbstractJobGuard)
             {
-                guards += citizen.getJobModifier();
+                guards++;
             }
             else
             {
-                workers += citizen.getJobModifier();
+                workers++;
             }
         }
-        return Math.min(guards / workers, 2);
+        return Math.min(guards / (workers * 2 / 3), 2);
     }
 }

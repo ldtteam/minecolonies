@@ -10,9 +10,11 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractBuildingDependentRequestResolver;
@@ -21,10 +23,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.minecolonies.api.util.RSConstants.CONST_BUILDING_RESOLVER_PRIORITY;
@@ -70,30 +69,36 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
 
         if (building instanceof BuildingWareHouse
               || (building instanceof BuildingCook && building.isMinimumStockRequest(request))
+              || (building instanceof BuildingBaker && building.isMinimumStockRequest(request))
               || (building.getCitizenForRequest(request.getId()).isPresent() && building.getCitizenForRequest(request.getId()).get().isRequestAsync(request.getId())))
         {
             return false;
         }
 
         return tileEntities.stream()
-          .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
-          .filter(itemStack -> !itemStack.isEmpty())
-          .flatMap(List::stream)
-          .filter(itemStack -> {
-              if (!request.hasParent())
-                  return true;
+                 .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
+                 .filter(itemStack -> !itemStack.isEmpty())
+                 .flatMap(List::stream)
+                 .filter(itemStack -> {
+                     if (!request.hasParent())
+                     {
+                         return true;
+                     }
 
-              final IRequest<?> requestParent = manager.getRequestForToken(request.getParent());
+                     final IRequest<?> requestParent = manager.getRequestForToken(request.getParent());
 
-              return !requestParent.getRequestOfType(IDeliverable.class).map(d -> d.matches(itemStack)).orElse(false);
-          })
-          .mapToInt(ItemStack::getCount)
-          .sum() > 0;
+                     return !requestParent.getRequestOfType(IDeliverable.class).map(d -> d.matches(itemStack)).orElse(false);
+                 })
+                 .mapToInt(ItemStack::getCount)
+                 .sum() > 0;
     }
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
+    public List<IToken<?>> attemptResolveForBuilding(
+      @NotNull final IRequestManager manager,
+      @NotNull final IRequest<? extends IDeliverable> request,
+      @NotNull final AbstractBuilding building)
     {
         final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
 
@@ -108,6 +113,15 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
                 {
                     totalAvailable += stack.getCount();
                 }
+            }
+        }
+
+        for (final Map.Entry<ItemStorage, Integer> reserved : building.reservedStacks().entrySet())
+        {
+            if (request.getRequest().matches(reserved.getKey().getItemStack()))
+            {
+                totalAvailable = Math.max(0, totalAvailable - reserved.getValue());
+                break;
             }
         }
 
@@ -132,20 +146,23 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
         final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
 
         final int total = request.getRequest().getCount();
-        final AtomicInteger current = new AtomicInteger(0);
+        int current = 0;
+        final List<ItemStack> deliveries = new ArrayList<>();
 
         for (final ICapabilityProvider tile : tileEntities)
         {
             final List<ItemStack> inv = InventoryUtils.filterProvider(tile, itemStack -> request.getRequest().matches(itemStack));
             for (final ItemStack stack : inv)
             {
-                if (!stack.isEmpty() && current.get() < total)
+                if (!stack.isEmpty() && current < total)
                 {
-                    request.addDelivery(stack);
-                    current.getAndAdd(stack.getCount());
+                    deliveries.add(stack);
+                    current += stack.getCount();
                 }
             }
         }
+
+        request.addDelivery(deliveries);
 
         manager.updateRequestState(request.getId(), RequestState.RESOLVED);
     }
@@ -182,8 +199,9 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
 
     @NotNull
     private Set<ICapabilityProvider> getCapabilityProviders(
-            @NotNull final IRequestManager manager,
-            @NotNull final AbstractBuilding building) {
+      @NotNull final IRequestManager manager,
+      @NotNull final AbstractBuilding building)
+    {
         final Set<ICapabilityProvider> tileEntities = Sets.newHashSet();
         tileEntities.add(building.getTileEntity());
         tileEntities.removeIf(Objects::isNull);

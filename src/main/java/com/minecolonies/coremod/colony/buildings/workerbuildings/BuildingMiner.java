@@ -169,6 +169,16 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     }
 
     /**
+     * The Miner wants to get multiple nodes/levels worth of stuff when requesting.
+     */
+    @Override
+    public int getResourceBatchMultiplier() 
+    {
+        //Ask for 10x the resources if possible
+        return 10;
+    }
+
+    /**
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
@@ -211,7 +221,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         {
             activeNode = Node.createFromNBT(compound.getCompound(TAG_ACTIVE));
         }
-        else if(compound.keySet().contains(TAG_OLD))
+        else if (compound.keySet().contains(TAG_OLD))
         {
             oldNode = Node.createFromNBT(compound.getCompound(TAG_OLD));
         }
@@ -252,7 +262,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         if (oldNode != null)
         {
             final CompoundNBT nodeCompound = new CompoundNBT();
-            oldNode.write(new CompoundNBT());
+            oldNode.write(nodeCompound);
             compound.put(TAG_OLD, nodeCompound);
         }
         compound.putInt(TAG_CURRENT_LEVEL, currentLevel);
@@ -363,6 +373,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Find given level in the levels array.
+     *
      * @param level the level.
      * @return position in the levels array.
      */
@@ -384,8 +395,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     }
 
     /**
-     * Returns the depth limit.
-     * Limitted by building level.
+     * Returns the depth limit. Limitted by building level.
      * <pre>
      * - Level 1: 50
      * - Level 2: 30
@@ -541,6 +551,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Resets the starting level of the shaft to 0.
+     *
      * @param level the level o set it to.
      */
     public void setStartingLevelShaft(final int level)
@@ -550,6 +561,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Getter to check if the shaft has been cleared.
+     *
      * @return true if so.
      */
     public boolean hasClearedShaft()
@@ -559,6 +571,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Setter if the shaft has been cleared.
+     *
      * @param clearedShaft true if so.
      */
     public void setClearedShaft(final boolean clearedShaft)
@@ -568,16 +581,23 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Getter for the active node.
+     *
      * @return the int id of the active node.
      */
     @NotNull
     public Node getActiveNode()
     {
-        return activeNode == null || activeNode.getStatus() == Node.NodeStatus.COMPLETED ? levels.get(currentLevel).getRandomNode(oldNode) : activeNode;
+        Node calcNode = activeNode == null || activeNode.getStatus() == Node.NodeStatus.COMPLETED ? levels.get(currentLevel).getRandomNode(oldNode) : activeNode;
+        if (activeNode != calcNode)
+        {
+            activeNode = calcNode;
+        }
+        return activeNode;
     }
 
     /**
      * Setter for the active node.
+     *
      * @param activeNode the int id of the active node.
      */
     public void setActiveNode(final Node activeNode)
@@ -587,6 +607,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Getter for the old node.
+     *
      * @return the int id of the old node.
      */
     public Node getOldNode()
@@ -596,6 +617,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     /**
      * Setter for the old node.
+     *
      * @param oldNode the int id of the old node.
      */
     public void setOldNode(final Node oldNode)
@@ -637,7 +659,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         /**
          * The level the miner currently works on.
          */
-        public int   current;
+        public int                           current;
 
         /**
          * Public constructor of the view, creates an instance of it.

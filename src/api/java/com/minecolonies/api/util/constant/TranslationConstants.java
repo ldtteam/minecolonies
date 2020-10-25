@@ -188,6 +188,16 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_DISMISS                    = "com.minecolonies.coremod.item.bannerrallyguards.gui.dismiss";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_SUGARY_BREAD_TOOLTIP_GUI                   = "com.minecolonies.coremod.item.sugary.bread.gui";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_MILKY_BREAD_TOOLTIP_GUI                    = "com.minecolonies.coremod.item.milky.bread.gui";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GOLDEN_BREAD_TOOLTIP_GUI                   = "com.minecolonies.coremod.item.golden.bread.gui";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_CHORUS_BREAD_TOOLTIP_GUI                   = "com.minecolonies.coremod.item.chorus.bread.gui";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_BREAD_AVAILABLE_TOOLTIP_GUI                = "com.minecolonies.coremod.item.bread.available.gui";
+    @NonNls
     public static final String CITIZEN_RENAME_SAME                                                 = "com.minecolonies.coremod.citizen.rename.same";
     @NonNls
     public static final String CITIZEN_RENAME_NOT_ALLOWED                                          = "com.minecolonies.coremod.citizen.rename.notallowed";
@@ -218,11 +228,15 @@ public final class TranslationConstants
     @NonNls
     public static final String LEAVING_COLONY_MESSAGE_NOTIFY                                       = "com.minecolonies.coremod.leavingcolonynotify";
     @NonNls
+    public static final String COLONY_SIZE_CHANGE                                                  = "com.minecolonies.coremod.colonysizechange";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_WAITING_FOR                         = "com.minecolonies.coremod.status.waiting";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT                   = "com.minecolonies.coremod.status.worker.goingtohut";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING                     = "com.minecolonies.coremod.status.herder.breeding";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_FEEDING                      = "com.minecolonies.coremod.status.herder.feeding";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_HERDER_SEARCHING                    = "com.minecolonies.coremod.status.herder.searching";
     @NonNls
@@ -274,6 +288,10 @@ public final class TranslationConstants
     @NonNls
     public static final String REALLY_FAR_DESC                                                     = "com.minecolonies.coremod.max.schematic.reallyfar";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HERDER_BREEDING                        = "com.minecolonies.coremod.gui.herder.breeding";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HERDER_NOTBREEDING                     = "com.minecolonies.coremod.gui.herder.notbreeding";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT                         = "com.minecolonies.coremod.gui.cowboy.collect";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT                      = "com.minecolonies.coremod.gui.cowboy.notcollect";
@@ -292,6 +310,16 @@ public final class TranslationConstants
     @NonNls
     public static final String RAID_EVENT_MESSAGE_PIRATE                                           = "event.minecolonies.raidmessage_p";
     @NonNls
+    public static final String RAID_AMAZON                                                         = "com.minecolonies.coremod.raid.amazon.name";
+    @NonNls
+    public static final String RAID_EGYPTIAN                                                       = "com.minecolonies.coremod.raid.egyptian.name";
+    @NonNls
+    public static final String RAID_BARBARIAN                                                      = "com.minecolonies.coremod.raid.barbarian.name";
+    @NonNls
+    public static final String RAID_PIRATE                                                         = "com.minecolonies.coremod.raid.pirate.name";
+    @NonNls
+    public static final String RAID_NORSEMEN                                                       = "com.minecolonies.coremod.raid.norsemen.name";
+    @NonNls
     public static final String ONLY_X_BARBARIANS_LEFT_MESSAGE                                      = "com.minecolonies.coremod.barbarians.left";
     @NonNls
     public static final String ALL_BARBARIANS_KILLED_MESSAGE                                       = "com.minecolonies.coremod.barbarians.killed";
@@ -300,7 +328,19 @@ public final class TranslationConstants
     @NonNls
     public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                = "com.minecolonies.coremod.toofar";
     @NonNls
-    public static final String GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED                                 = "com.minecolonies.coremod.gui.townHall.citizens.unemployed";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS      = "com.minecolonies.coremod.gui.townHall.population.totalcitizens";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS             = "com.minecolonies.coremod.gui.townHall.population.childs";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH               = "com.minecolonies.coremod.gui.townHall.population.each";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED         = "com.minecolonies.coremod.gui.townHall.population.unemployed";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED            = "com.minecolonies.coremod.gui.townHall.citizens.unemployed";
+    @NonNls
+    public static final String COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS              = "com.minecolonies.coremod.gui.townHall.permissionevents";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS                  = "com.minecolonies.coremod.gui.townHall.colonyevents";
     @NonNls
     public static final String LIST_REQUEST_DISPLAY_STRING                                         = "com.minecolonies.coremod.request.stacklist";
     @NonNls
@@ -420,16 +460,47 @@ public final class TranslationConstants
     @NonNls
     public static final String RESEARCH_CONCLUDED                                                  = "com.minecolonies.coremod.university.researchconcluded.";
     @NonNls
+    public static final String RECIPE_IMPROVED                                                     = "com.minecolonies.coremod.crafters.recipeimproved.";
+    @NonNls
     public static final String OUT_OF_COLONY                                                       = "com.minecolonies.coremod.workorder.outofcolony";
     @NonNls
-    public static final String NO                                                                  = "com.minecolonies.coremod.entity.citizen.no.";
+    public static final String NO                        = "com.minecolonies.coremod.entity.citizen.no.";
     @NonNls
-    public static final String DEMANDS                                                             = "com.minecolonies.coremod.entity.citizen.demands.";
+    public static final String DEMANDS                   = "com.minecolonies.coremod.entity.citizen.demands.";
     @NonNls
-    public static final String WAREHOUSE_SORTED                                                    = "com.minecolonies.coremod.gui.warehouse.sorted";
+    public static final String WAREHOUSE_SORTED          = "com.minecolonies.coremod.gui.warehouse.sorted";
     @NonNls
-    public static final String ALL_CITIZENS_ARE_SLEEPING                                           = "com.minecolonies.coremod.entity.citizen.sleep";
-
+    public static final String ALL_CITIZENS_ARE_SLEEPING = "com.minecolonies.coremod.entity.citizen.sleep";
+    @NonNls
+    public static final String GATE_CRAFTING_TOOLTIP     = "com.minecolonies.coremod.item.gate.craft";
+    @NonNls
+    public static final String GATE_PLACEMENT_TOOLTIP    = "com.minecolonies.coremod.item.gate.place";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF                        = "com.minecolonies.coremod.gui.requestfert.off";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_ON                         = "com.minecolonies.coremod.gui.requestfert.on";
+    @NonNls
+    public static final String HUT_NEEDS_RESEARCH_TOOLTIP_1                                        = "com.minecolonies.coremod.research.item1";
+    @NonNls
+    public static final String HUT_NEEDS_RESEARCH_TOOLTIP_2                                        = "com.minecolonies.coremod.research.item2";
+    @NonNls
+    public static final String FROM = "com.minecolonies.coremod.from";
+    @NonNls
+    public static final String AT = "com.minecolonies.coremod.at";
+    @NonNls
+    public static final String IN_QUEUE = "com.minecolonies.coremod.listentry";
+    @NonNls
+    public static final String MISSING_DELIVERIES = "com.minecolonies.coremod.missingitems";
+    @NonNls
+    public static final String FINISHED = "com.minecolonies.coremod.finished";
+    @NonNls
+    public static final String DIST = "com.minecolonies.coremod.dist.blocks";
+    @NonNls
+    public static final String NOT_RESOLVED = "com.minecolonies.coremod.notresolved";
+    @NonNls
+    public static final String REQUEST_CRAFTING_DISPLAY = "com.minecolonies.coremod.request.crafting.display";
+    @NonNls
+    public static final String RECIPE_STATUS="com.minecolonies.coremod.gui.workerhuts.recipestatus";
 
     private TranslationConstants()
     {

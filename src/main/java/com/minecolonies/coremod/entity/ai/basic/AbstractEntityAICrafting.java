@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
@@ -9,13 +10,15 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -31,7 +34,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     /**
      * Time the worker delays until the next hit.
      */
-    protected static final int HIT_DELAY = 20;
+    protected static final int HIT_DELAY = 10;
 
     /**
      * Increase this value to make the product creation progress way slower.
@@ -59,9 +62,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     protected IRecipeStorage currentRecipeStorage;
 
     /**
-     * The number of actions a crafting "success" is worth.
-     * By default, that's 1 action for 1 crafting success.
-     * Override this in your subclass to make crafting recipes worth more actions :-)
+     * The number of actions a crafting "success" is worth. By default, that's 1 action for 1 crafting success. Override this in your subclass to make crafting recipes worth more
+     * actions :-)
      *
      * @return The number of actions a crafting "success" is worth.
      */
@@ -98,6 +100,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     protected IAIState decide()
     {
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         if (job.getTaskQueue().isEmpty())
         {
             return START_WORKING;
@@ -113,7 +116,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return START_WORKING;
         }
 
-        if (job.getActionsDone() > 0)
+        if (job.getActionsDone() >= getActionsDoneUntilDumping())
         {
             // Wait to dump before continuing.
             return getState();
@@ -141,7 +144,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return START_WORKING;
         }
         final IBuildingWorker buildingWorker = getOwnBuilding();
-        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(stack -> stack.isItemEqual(currentTask.getRequest().getStack()), 1);
+        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(stack -> stack.isItemEqual(currentTask.getRequest().getStack()), 1, false);
         if (currentRecipeStorage == null)
         {
             job.finishRequest(false);
@@ -152,7 +155,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         currentRequest = currentTask;
         job.setMaxCraftingCount(currentRequest.getRequest().getCount());
         final int currentCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> stack.isItemEqual(currentRecipeStorage.getPrimaryOutput()));
-        final int inProgressCount = getExtendedOutputCount(currentRecipeStorage.getPrimaryOutput());
+        final int inProgressCount = getExtendedCount(currentRecipeStorage.getPrimaryOutput());
 
         final int countPerIteration = currentRecipeStorage.getPrimaryOutput().getCount();
         final int doneOpsCount = currentCount / countPerIteration;
@@ -163,9 +166,24 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         final List<ItemStorage> input = currentRecipeStorage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
         {
+            final ItemStack container = inputStorage.getItem().getContainerItem(inputStorage.getItemStack());
+            final int remaining;
+            if(!currentRecipeStorage.getSecondaryOutputs().isEmpty() && ItemStackUtils.compareItemStackListIgnoreStackSize(currentRecipeStorage.getSecondaryOutputs(), inputStorage.getItemStack(), false, true))
+            {
+                remaining = inputStorage.getAmount();
+            }
+            else if (!ItemStackUtils.isEmpty(container) && ItemStackUtils.compareItemStacksIgnoreStackSize(inputStorage.getItemStack(), container , false, true))
+            {
+                remaining = inputStorage.getAmount();
+            }
+            else
+            {
+                remaining = inputStorage.getAmount() * remainingOpsCount;
+            }
             if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
                   + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
-                  < inputStorage.getAmount() * remainingOpsCount)
+                  + getExtendedCount(inputStorage.getItemStack())
+                  < remaining)
             {
                 job.finishRequest(false);
                 incrementActionsDone(getActionRewardForCraftingSuccess());
@@ -178,11 +196,12 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     }
 
     /**
-     * Get an extended output count that can be overriden.
-     * @param primaryOutput the type of output.
-     * @return the output count that should be added too.
+     * Get an extended count that can be overriden.
+     *
+     * @param stack the stack to add.
+     * @return the additional quantities (for example in a furnace).
      */
-    protected int getExtendedOutputCount(final ItemStack primaryOutput)
+    protected int getExtendedCount(final ItemStack stack)
     {
         return 0;
     }
@@ -216,7 +235,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     protected IAIState checkForItems(@NotNull final IRecipeStorage storage)
     {
-        final int inProgressCount = getExtendedOutputCount(currentRecipeStorage.getPrimaryOutput());
+        final int inProgressCount = getExtendedCount(currentRecipeStorage.getPrimaryOutput());
         final int countPerIteration = currentRecipeStorage.getPrimaryOutput().getCount();
         final int progressOpsCount = inProgressCount / countPerIteration;
 
@@ -224,12 +243,28 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + ((job.getCraftCounter() + progressOpsCount ) * inputStorage.getAmount())
-                  < inputStorage.getAmount() * job.getMaxCraftingCount())
+            final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate);
+            final ItemStack container = inputStorage.getItem().getContainerItem(inputStorage.getItemStack());
+            final int remaining;
+            if(!currentRecipeStorage.getSecondaryOutputs().isEmpty() && ItemStackUtils.compareItemStackListIgnoreStackSize(currentRecipeStorage.getSecondaryOutputs(), inputStorage.getItemStack(), false, true))
+            {
+                remaining = inputStorage.getAmount();
+            }
+            else if(!ItemStackUtils.isEmpty(container) && ItemStackUtils.compareItemStacksIgnoreStackSize(inputStorage.getItemStack(), container , false, true))
+            {
+                remaining = inputStorage.getAmount();
+            }
+            else
+            {
+                remaining = inputStorage.getAmount() * job.getMaxCraftingCount();
+            }
+
+            if (invCount <= 0 || invCount + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount())
+                  < remaining)
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
-                    needsCurrently = new Tuple<>(predicate, inputStorage.getAmount() * job.getMaxCraftingCount());
+                    needsCurrently = new Tuple<>(predicate, remaining);
                     return GATHERING_REQUIRED_MATERIALS;
                 }
                 currentRecipeStorage = null;
@@ -300,6 +335,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 if (job.getCraftCounter() >= job.getMaxCraftingCount())
                 {
                     incrementActionsDone(getActionRewardForCraftingSuccess());
+                    getOwnBuilding().improveRecipe(currentRecipeStorage, job.getCraftCounter(), worker.getCitizenData());
                     currentRecipeStorage = null;
                     resetValues();
 
@@ -373,7 +409,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     private int getRequiredProgressForMakingRawMaterial()
     {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getCitizenData().getJobModifier() + 1, MAX_LEVEL) * HITTING_TIME;
+        final int jobModifier = worker.getCitizenData().getCitizenSkillHandler().getLevel(((IBuildingPublicCrafter) getOwnBuilding()).getCraftSpeedSkill()) / 2;
+        return PROGRESS_MULTIPLIER / Math.min(jobModifier + 1, MAX_LEVEL) * HITTING_TIME;
     }
 
     @Override

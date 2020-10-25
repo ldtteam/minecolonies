@@ -15,9 +15,10 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
+import com.minecolonies.coremod.client.gui.WindowHutCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -43,7 +44,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WATER;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -60,17 +62,22 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
      * Resource location for concrete tag.
      */
     private static final ResourceLocation CONCRETE_POWDER = new ResourceLocation("minecolonies", "concrete_powder");
-    private static final ResourceLocation CONCRETE_BLOCK = new ResourceLocation("minecolonies", "concrete");
+    private static final ResourceLocation CONCRETE_BLOCK  = new ResourceLocation("minecolonies", "concrete");
 
     /**
      * How deep the water can max be to place concrete in it.
      */
-    private static final int WATER_DEPTH_SUPPORT = 3;
+    private static final int WATER_DEPTH_SUPPORT = 5;
 
     /**
      * Water position list.
      */
     private final Map<Integer, List<BlockPos>> waterPos = new HashMap<>();
+
+    /**
+     * The minimum found water level
+     */
+    private int minWaterLevel = WATER_DEPTH_SUPPORT;
 
     /**
      * Instantiates a new concrete mason building.
@@ -82,7 +89,11 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     {
         super(c, l);
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+    }
 
+    @Override
+    public void checkForWorkerSpecificRecipes()
+    {
         final List<ItemStack> input = new ArrayList<>();
         input.add(new ItemStack(Items.SAND, 4));
         input.add(new ItemStack(Items.GRAVEL, 4));
@@ -103,11 +114,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
               new ItemStack(item, 8),
               Blocks.AIR);
 
-            final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
-            if (!recipes.contains(token))
-            {
-                recipes.add(token);
-            }
+            addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
 
             final Block block = item instanceof BlockItem ? ((BlockItem) item).getBlock() : null;
             if (block instanceof ConcretePowderBlock)
@@ -120,11 +127,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
                   new ItemStack(((ConcretePowderBlock) block).solidifiedState.getBlock(), 1),
                   Blocks.AIR);
 
-                final IToken<?> token2 = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage2);
-                if (!recipes.contains(token2))
-                {
-                    recipes.add(token2);
-                }
+                addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage2));
             }
         }
     }
@@ -142,6 +145,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
                     fluidPos.add(pos);
                 }
                 waterPos.put(blockState.getFluidState().getLevel(), fluidPos);
+                minWaterLevel = Math.min(minWaterLevel, blockState.getFluidState().getLevel());
             }
         }
 
@@ -183,6 +187,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         {
             final CompoundNBT waterCompound = waterMapList.getCompound(i);
             final int level = waterCompound.getInt(TAG_LEVEL);
+            minWaterLevel = Math.min(minWaterLevel, level);
 
             final ListNBT waterTagList = waterCompound.getList(TAG_WATER, Constants.NBT.TAG_COMPOUND);
             final List<BlockPos> water = new ArrayList<>();
@@ -256,7 +261,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Concrete Mixer", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.CONCRETE_MIXER_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -267,12 +272,13 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
 
     /**
      * Check if there are open positions to mine.
+     *
      * @return the open position if so.
      */
     @Nullable
     public BlockPos getBlockToMine()
     {
-        for (int i = 1; i <= WATER_DEPTH_SUPPORT; i++)
+        for (int i = 1; i <= minWaterLevel; i++)
         {
             for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
             {
@@ -282,18 +288,19 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
                 }
             }
         }
-
+        
         return null;
     }
 
     /**
-     * Check if there are open positions to mine.
+     * Check if there are open positions to place.
+     *
      * @return the open position if so.
      */
     @Nullable
     public BlockPos getBlockToPlace()
     {
-        for (int i = 1; i <= WATER_DEPTH_SUPPORT; i++)
+        for (int i = 1; i <= minWaterLevel; i++)
         {
             for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
             {
@@ -303,12 +310,13 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
                 }
             }
         }
-
+ 
         return null;
     }
 
     /**
      * Get how much of an itemStack we already placed in the world.
+     *
      * @param primaryOutput the block to check for.
      * @return the total count.
      */
@@ -317,7 +325,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         int count = 0;
         if (primaryOutput.getItem() instanceof BlockItem)
         {
-            for (int i = 1; i <= WATER_DEPTH_SUPPORT; i++)
+            for (int i = 1; i <= minWaterLevel; i++)
             {
                 for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
                 {
@@ -353,7 +361,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, CONCRETE_MIXER);
+            return new WindowHutCrafter(this, CONCRETE_MIXER);
         }
     }
 }

@@ -23,7 +23,8 @@ import static com.minecolonies.coremod.commands.CommandArgumentNames.*;
 /**
  * Forces a citizen to walk to a chosen position..
  */
-public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand {
+public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand
+{
 
     /**
      * What happens when the command is executed after preConditions are successful.
@@ -31,27 +32,31 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand {
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context) {
+    public int onExecute(final CommandContext<CommandSource> context)
+    {
 
         final Entity sender = context.getSource().getEntity();
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender == null ? 0 : context.getSource().getWorld().dimension.getType().getId());
-        if (colony == null) {
+        if (colony == null)
+        {
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
-        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(IntegerArgumentType.getInteger(context, CITIZENID_ARG));
+        final ICitizenData citizenData = colony.getCitizenManager().getCivilian(IntegerArgumentType.getInteger(context, CITIZENID_ARG));
 
-        if (citizenData == null) {
+        if (citizenData == null)
+        {
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.notfound"), true);
             return 0;
         }
 
-        final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+        final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();
 
-        if (!optionalEntityCitizen.isPresent()) {
+        if (!optionalEntityCitizen.isPresent())
+        {
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.notloaded"), true);
             return 0;
         }
@@ -60,7 +65,8 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand {
         final ILocationArgument targetLocation = Vec3Argument.getLocation(context, POS_ARG);
         final BlockPos targetPos = targetLocation.getBlockPos(context.getSource());
 
-        if (context.getSource().getWorld() == entityCitizen.world) {
+        if (context.getSource().getWorld() == entityCitizen.world)
+        {
             entityCitizen.getNavigator().tryMoveToXYZ(targetPos.getX(), targetPos.getY(), targetPos.getZ(), 1f);
         }
 
@@ -71,16 +77,18 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand {
      * Name string of the command.
      */
     @Override
-    public String getName() {
+    public String getName()
+    {
         return "walk";
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build() {
+    public LiteralArgumentBuilder<CommandSource> build()
+    {
         return IMCCommand.newLiteral(getName())
-                .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
-                        .then(IMCCommand.newArgument(CITIZENID_ARG, IntegerArgumentType.integer(1))
-                                .then(IMCCommand.newArgument(POS_ARG, Vec3Argument.vec3())
-                                        .executes(executePreConditionCheck().then(this::onExecute)))));
+                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
+                         .then(IMCCommand.newArgument(CITIZENID_ARG, IntegerArgumentType.integer(1))
+                                 .then(IMCCommand.newArgument(POS_ARG, Vec3Argument.vec3())
+                                         .executes(executePreConditionCheck().then(this::onExecute)))));
     }
 }

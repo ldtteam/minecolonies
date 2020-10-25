@@ -6,6 +6,9 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
+import com.minecolonies.api.colony.buildings.IWorkerLivingBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -16,13 +19,14 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
-import net.minecraft.block.Block;
-import net.minecraft.block.CarvedPumpkinBlock;
-import net.minecraft.block.HayBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.state.properties.BedPart;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -40,7 +44,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Building class for the Combat Academy.
  */
-public class BuildingCombatAcademy extends AbstractBuildingWorker
+public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBuildingBedProvider, IWorkerLivingBuilding
 {
     /**
      * The Schematic name.
@@ -52,7 +56,6 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
      */
     private static final String DESC = "combatacademy";
 
-
     /**
      * List of shooting targets in the building.
      */
@@ -62,6 +65,12 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
      * List of training partners.
      */
     private final BiMap<Integer, Integer> trainingPartners = HashBiMap.create();
+
+    /**
+     * List of all beds.
+     */
+    @NotNull
+    private final List<BlockPos> bedList = new ArrayList<>();
 
     /**
      * The abstract constructor of the building.
@@ -81,6 +90,30 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         return new JobCombatTraining(citizen);
     }
 
+    @NotNull
+    @Override
+    public List<BlockPos> getBedList()
+    {
+        return new ArrayList<>(bedList);
+    }
+    
+    @Override
+    public boolean assignCitizen(final ICitizenData citizen)
+    {
+        if (super.assignCitizen(citizen) && citizen != null)
+        {
+            // Set new home, since guards are housed at their workerbuilding.
+            final IBuilding building = citizen.getHomeBuilding();
+            if (building != null && !building.getID().equals(this.getID()))
+            {
+                building.removeCitizen(citizen);
+            }
+            citizen.setHomeBuilding(this);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
@@ -94,7 +127,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Combat Academy", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.COMBAT_ACADEMY_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));
@@ -114,7 +147,19 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         fightingPos.addAll(NBTUtils.streamCompound(targetList).map(targetCompound -> BlockPosUtil.read(targetCompound, TAG_TARGET)).collect(Collectors.toList()));
 
         final ListNBT partnersTagList = compound.getList(TAG_COMBAT_PARTNER, Constants.NBT.TAG_COMPOUND);
-        trainingPartners.putAll(NBTUtils.streamCompound(partnersTagList).collect(Collectors.toMap(targetCompound -> targetCompound.getInt(TAG_PARTNER1), targetCompound -> targetCompound.getInt(TAG_PARTNER2))));
+        trainingPartners.putAll(NBTUtils.streamCompound(partnersTagList)
+                                  .collect(Collectors.toMap(targetCompound -> targetCompound.getInt(TAG_PARTNER1), targetCompound -> targetCompound.getInt(TAG_PARTNER2))));
+        
+        final ListNBT bedTagList = compound.getList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < bedTagList.size(); ++i)
+        {
+            final CompoundNBT bedCompound = bedTagList.getCompound(i);
+            final BlockPos bedPos = NBTUtil.readBlockPos(bedCompound);
+            if (!bedList.contains(bedPos))
+            {
+                bedList.add(bedPos);
+            }
+        }
     }
 
     @Override
@@ -128,11 +173,22 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         final ListNBT partnersTagList = trainingPartners.entrySet().stream().map(BuildingCombatAcademy::writePartnerTupleToNBT).collect(NBTUtils.toListNBT());
         compound.put(TAG_COMBAT_PARTNER, partnersTagList);
 
+        if (!bedList.isEmpty())
+        {
+            @NotNull final ListNBT bedTagList = new ListNBT();
+            for (@NotNull final BlockPos pos : bedList)
+            {
+                bedTagList.add(NBTUtil.writeBlockPos(pos));
+            }
+            compound.put(TAG_BEDS, bedTagList);
+        }
+        
         return compound;
     }
 
     /**
      * Writes the partner tuple to NBT
+     *
      * @param tuple the tuple to write to NBT
      * @return a compound with the data.
      */
@@ -201,8 +257,9 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
 
     /**
      * Get a random trainings partner in the building.
-     * @return the entityCitizen partner or null.
+     *
      * @param citizen the worker to get the partner for.
+     * @return the entityCitizen partner or null.
      */
     public AbstractEntityCitizen getRandomCombatPartner(final AbstractEntityCitizen citizen)
     {
@@ -210,15 +267,15 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         if (citizenData != null)
         {
             final ICitizenData partner = getAssignedCitizen().stream()
-                                              .filter(data -> data.getId() != citizenData.getId())
-                                              .filter(data -> !trainingPartners.containsKey(data.getId()))
-                                              .filter(data -> !trainingPartners.containsValue(data.getId()))
-                                              .findFirst()
-                                              .orElse(null);
+                                           .filter(data -> data.getId() != citizenData.getId())
+                                           .filter(data -> !trainingPartners.containsKey(data.getId()))
+                                           .filter(data -> !trainingPartners.containsValue(data.getId()))
+                                           .findFirst()
+                                           .orElse(null);
             if (partner != null)
             {
                 trainingPartners.put(citizenData.getId(), partner.getId());
-                return partner.getCitizenEntity().orElse(null);
+                return partner.getEntity().orElse(null);
             }
             return null;
         }
@@ -238,6 +295,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
 
     /**
      * Get the citizen of the combat partner or null if not existing or available.
+     *
      * @param citizen the citizen.
      * @return the citizen or null.
      */
@@ -260,10 +318,11 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
                 return null;
             }
 
-            final ICitizenData citizenData = getAssignedCitizen().stream().filter(cit -> cit.getId() != data.getId()).filter(cit -> cit.getId() == citizenId).findFirst().orElse(null);
+            final ICitizenData citizenData =
+              getAssignedCitizen().stream().filter(cit -> cit.getId() != data.getId()).filter(cit -> cit.getId() == citizenId).findFirst().orElse(null);
             if (citizenData != null)
             {
-                return citizenData.getCitizenEntity().orElse(null);
+                return citizenData.getEntity().orElse(null);
             }
         }
         return null;
@@ -271,6 +330,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
 
     /**
      * Reset the combat partner for a worker.
+     *
      * @param worker the worker to reset it for.
      */
     public void resetPartner(final AbstractEntityCitizen worker)
@@ -290,10 +350,54 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     }
 
     @Override
+    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        super.registerBlockPosition(blockState, pos, world);
+
+        BlockPos registrationPosition = pos;
+        if (blockState.getBlock() instanceof BedBlock)
+        {
+            if (blockState.get(BedBlock.PART) == BedPart.FOOT)
+            {
+                registrationPosition = registrationPosition.offset(blockState.get(BedBlock.HORIZONTAL_FACING));
+            }
+
+            if (!bedList.contains(registrationPosition))
+            {
+                bedList.add(registrationPosition);
+            }
+        }
+    }    
+
+    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.combatAcademy;
     }
+
+    @Override
+    public void onWakeUp()
+    {
+        super.onWakeUp();
+        
+        final World world = getColony().getWorld();
+        if (world == null)
+        {
+            return;
+        }
+
+        for (final BlockPos pos : bedList)
+        {
+            BlockState state = world.getBlockState(pos);
+            state = state.getBlock().getExtendedState(state, world, pos);
+            if (state.getBlock() instanceof BedBlock
+                  && state.get(BedBlock.OCCUPIED)
+                  && state.get(BedBlock.PART).equals(BedPart.HEAD))
+            {
+                world.setBlockState(pos, state.with(BedBlock.OCCUPIED, false), 0x03);
+            }
+        }
+    }    
 
     /**
      * The client view for the bakery building.

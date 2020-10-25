@@ -8,6 +8,7 @@ import com.minecolonies.api.research.factories.ILocalResearchFactory;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
@@ -66,5 +67,36 @@ public class LocalResearchFactory implements ILocalResearchFactory
         research.setState(ResearchState.values()[state]);
         research.setProgress(progress);
         return research;
+    }
+
+    @Override
+    public void serialize(IFactoryController controller, ILocalResearch input, PacketBuffer packetBuffer)
+    {
+        packetBuffer.writeInt(input.getState().ordinal());
+        packetBuffer.writeString(input.getId());
+        packetBuffer.writeString(input.getBranch());
+        packetBuffer.writeInt(input.getProgress());
+        packetBuffer.writeInt(input.getDepth());
+    }
+
+    @Override
+    public ILocalResearch deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    {
+        final int state = buffer.readInt();
+        final String id = buffer.readString();
+        final String branch = buffer.readString();
+        final int progress = buffer.readInt();
+        final int depth = buffer.readInt();
+
+        final ILocalResearch research = getNewInstance(id, branch, depth);
+        research.setState(ResearchState.values()[state]);
+        research.setProgress(progress);
+        return research;
+    }
+
+    @Override
+    public short getSerializationId()
+    {
+        return 29;
     }
 }

@@ -15,6 +15,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -31,10 +32,8 @@ import static com.minecolonies.api.util.constant.Suppression.CLASSES_SHOULD_NOT_
 /**
  * Basic job information.
  * <p>
- * Suppressing Sonar Rule squid:S2390
- * This rule does "Classes should not access static members of their own subclasses during initialization"
- * But in this case the rule does not apply because
- * We are only mapping classes and that is reasonable
+ * Suppressing Sonar Rule squid:S2390 This rule does "Classes should not access static members of their own subclasses during initialization" But in this case the rule does not
+ * apply because We are only mapping classes and that is reasonable
  */
 @SuppressWarnings(CLASSES_SHOULD_NOT_ACCESS_STATIC_MEMBERS_OF_THEIR_OWN_SUBCLASSES_DURING_INITIALIZATION)
 public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends AbstractJob<AI, J>> implements IJob<AI>
@@ -94,6 +93,12 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     @Override
+    public boolean pickupSuccess(@NotNull ItemStack pickedUpStack)
+    {
+        return true;
+    }
+
+    @Override
     public IModelType getModel()
     {
         return BipedModelType.CITIZEN;
@@ -138,6 +143,18 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         }
     }
 
+    @Override
+    public void serializeToView(final PacketBuffer buffer)
+    {
+        buffer.writeString(getJobRegistryEntry().getRegistryName().toString());
+        buffer.writeString(getName());
+        buffer.writeInt(getAsyncRequests().size());
+        for (final IToken<?> token : getAsyncRequests())
+        {
+            StandardFactoryController.getInstance().serialize(buffer, token);
+        }
+    }
+
     /**
      * Get a set of async requests connected to this job.
      *
@@ -147,6 +164,12 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     public Set<IToken<?>> getAsyncRequests()
     {
         return asyncRequests;
+    }
+
+    @Override
+    public void markRequestSync(final IToken<?> id)
+    {
+        asyncRequests.remove(id);
     }
 
     @Override
@@ -166,7 +189,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
               .error(
                 "Affected Citizen name:" + citizen.getName() + " id:" + citizen.getId() + " job:" + citizen.getJob() + " jobForAICreation:" + nameTag + " class:" + this.getClass()
                   + " entityPresent:"
-                  + citizen.getCitizenEntity().isPresent());
+                  + citizen.getEntity().isPresent());
             return;
         }
 
@@ -243,9 +266,9 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     @Override
-    public boolean isOkayToEat()
+    public boolean canAIBeInterrupted()
     {
-        return (workerAI.get() != null && workerAI.get().getState().isOkayToEat());
+        return (workerAI.get() != null && workerAI.get().canBeInterrupted());
     }
 
     @Override
@@ -319,8 +342,20 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     @Override
+    public boolean isActive()
+    {
+        return true;
+    }
+
+    @Override
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
         return false;
+    }
+
+    @Override
+    public void processOfflineTime(final long time)
+    {
+        // Do Nothing.
     }
 }

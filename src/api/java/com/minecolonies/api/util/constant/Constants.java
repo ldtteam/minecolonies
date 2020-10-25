@@ -47,7 +47,7 @@ public final class Constants
     public static final int    UPDATE_FLAG                      = 0x03;
     public static final int    TICKS_HOUR                       = TICKS_SECOND * SECONDS_A_MINUTE * SECONDS_A_MINUTE;
     public static final int    TICKS_FOURTY_MIN                 = 48000;
-    public static final int    MAX_PARAMS_IRECIPESTORAGE        = 4;
+    public static final int    MAX_PARAMS_IRECIPESTORAGE        = 8;
     public static final int    MIN_PARAMS_IRECIPESTORAGE        = 3;
     public static final int    PARAMS_ITEMSTORAGE               = 2;
     public static final int    PARAMS_RESEARCH_EFFECT           = 2;
@@ -81,15 +81,15 @@ public final class Constants
     /**
      * Advancement Criterion Names
      */
-    public static final String CRITERION_SUPPLY_PLACED = "supply_placed";
-    public static final String CRITERION_STRUCTURE_PLACED = "structure_placed";
-    public static final String CRITERION_CREATE_BUILD_REQUEST = "create_build_request";
-    public static final String CRITERION_OPEN_GUI_WINDOW = "open_gui_window";
-    public static final String CRITERION_CLICK_GUI_BUTTON = "click_gui_button";
-    public static final String CRITERION_CITIZEN_EAT_FOOD = "citizen_eat_food";
-    public static final String CRITERION_BUILDING_ADD_RECIPE = "building_add_recipe";
+    public static final String CRITERION_SUPPLY_PLACED          = "supply_placed";
+    public static final String CRITERION_STRUCTURE_PLACED       = "structure_placed";
+    public static final String CRITERION_CREATE_BUILD_REQUEST   = "create_build_request";
+    public static final String CRITERION_OPEN_GUI_WINDOW        = "open_gui_window";
+    public static final String CRITERION_CLICK_GUI_BUTTON       = "click_gui_button";
+    public static final String CRITERION_CITIZEN_EAT_FOOD       = "citizen_eat_food";
+    public static final String CRITERION_BUILDING_ADD_RECIPE    = "building_add_recipe";
     public static final String CRITERION_COMPLETE_BUILD_REQUEST = "complete_build_request";
-    public static final String CRITERION_COLONY_POPULATION = "colony_population";
+    public static final String CRITERION_COLONY_POPULATION      = "colony_population";
 
     /**
      * Placement key for item nbt

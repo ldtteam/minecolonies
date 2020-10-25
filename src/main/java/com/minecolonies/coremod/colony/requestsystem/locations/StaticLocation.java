@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,7 +95,7 @@ public class StaticLocation implements ILocation
     @Override
     public String toString()
     {
-        return "Dim: " + dimension + " " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + " ";
+        return "Dim: " + dimension + " " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + " ";
     }
 
     /**
@@ -185,8 +186,7 @@ public class StaticLocation implements ILocation
         }
 
         /**
-         * Method to get a new instance of a location given the input.
-         * Method not used in this factory.
+         * Method to get a new instance of a location given the input. Method not used in this factory.
          *
          * @param input The input to build a new location for.
          * @return The new output instance for a given input.
@@ -197,5 +197,48 @@ public class StaticLocation implements ILocation
         {
             return new StaticLocation(input, 0);
         }
+
+        @Override
+        public void serialize(IFactoryController controller, StaticLocation input, PacketBuffer packetBuffer)
+        {
+            StaticLocation.serialize(packetBuffer, input);
+        }
+
+        @Override
+        public StaticLocation deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return StaticLocation.deserialize(buffer);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 3;
+        }
+    }
+
+    /**
+     * Serialize this location to the given {@link PacketBuffer}.
+     *
+     * @param buffer the buffer to serialize this location to.
+     */
+    public static void serialize(PacketBuffer buffer, StaticLocation location)
+    {
+        buffer.writeBlockPos(location.pos);
+        buffer.writeInt(location.dimension);
+    }
+
+    /**
+     * Deserialize the location from the given {@link PacketBuffer}
+     *
+     * @param buffer the buffer to read.
+     * @return the deserialized location.
+     */
+    public static StaticLocation deserialize(PacketBuffer buffer)
+    {
+        final BlockPos pos = buffer.readBlockPos();
+        final int dimension = buffer.readInt();
+
+        return new StaticLocation(pos, dimension);
     }
 }

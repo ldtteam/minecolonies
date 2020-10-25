@@ -61,13 +61,13 @@ public class EntryPoint
          * Citizen commands subtree
          */
         final CommandTree citizenCommands = new CommandTree("citizens")
-                .addNode(new CommandCitizenInfo().build())
-                .addNode(new CommandCitizenKill().build())
-                .addNode(new CommandCitizenList().build())
-                .addNode(new CommandCitizenReload().build())
-                .addNode(new CommandCitizenSpawnNew().build())
-                .addNode(new CommandCitizenTeleport().build())
-                .addNode(new CommandCitizenTriggerWalkTo().build());
+                                              .addNode(new CommandCitizenInfo().build())
+                                              .addNode(new CommandCitizenKill().build())
+                                              .addNode(new CommandCitizenList().build())
+                                              .addNode(new CommandCitizenReload().build())
+                                              .addNode(new CommandCitizenSpawnNew().build())
+                                              .addNode(new CommandCitizenTeleport().build())
+                                              .addNode(new CommandCitizenTriggerWalkTo().build());
 
         /**
          * Root minecolonies command tree, all subtrees are added here.
@@ -80,6 +80,7 @@ public class EntryPoint
                                                .addNode(new CommandWhereAmI().build())
                                                .addNode(new CommandWhoAmI().build())
                                                .addNode(new CommandRTP().build())
+                                               .addNode(new CommandUnloadForcedChunks().build())
                                                .addNode(new CommandRaidAllTonight().build())
                                                .addNode(new CommandRaidAllNow().build())
                                                .addNode(new CommandBackup().build())
@@ -97,6 +98,7 @@ public class EntryPoint
                                                     .addNode(new CommandWhereAmI().build())
                                                     .addNode(new CommandWhoAmI().build())
                                                     .addNode(new CommandRTP().build())
+                                                    .addNode(new CommandUnloadForcedChunks().build())
                                                     .addNode(new CommandRaidAllTonight().build())
                                                     .addNode(new CommandRaidAllNow().build())
                                                     .addNode(new CommandBackup().build())

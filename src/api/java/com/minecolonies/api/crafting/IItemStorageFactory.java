@@ -22,12 +22,12 @@ public interface IItemStorageFactory extends IFactory<FactoryVoidInput, ItemStor
             throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only 2 are allowed!");
         }
 
-        if(!(context[0] instanceof ItemStack))
+        if (!(context[0] instanceof ItemStack))
         {
             throw new IllegalArgumentException("First parameter is supposed to be an ItemStack!");
         }
 
-        if(!(context[1] instanceof Integer))
+        if (!(context[1] instanceof Integer))
         {
             throw new IllegalArgumentException("Second parameter is supposed to be an Integer!");
         }
@@ -39,8 +39,9 @@ public interface IItemStorageFactory extends IFactory<FactoryVoidInput, ItemStor
 
     /**
      * Method to get a new Instance of an itemStorage.
+     *
      * @param stack the input.
-     * @param size the grid size.
+     * @param size  the grid size.
      * @return a new Instance of ItemStorage.
      */
     @NotNull

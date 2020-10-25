@@ -1,5 +1,6 @@
 package com.minecolonies.api.tileentities;
 
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.MathHelper;
@@ -35,6 +36,7 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
 
     /**
      * Alternative overriden constructor.
+     *
      * @param type the entity type.
      */
     public TileEntityEnchanter(final TileEntityType<? extends TileEntityEnchanter> type)
@@ -97,5 +99,11 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
         pageFlip = MathHelper.clamp(pageFlip, -0.2F, 0.2F);
         this.flipA += (pageFlip - this.flipA) * 0.9F;
         this.pageFlip += this.flipA;
+    }
+
+    @Override
+    public void markDirty()
+    {
+        WorldUtil.markChunkDirty(world, pos);
     }
 }

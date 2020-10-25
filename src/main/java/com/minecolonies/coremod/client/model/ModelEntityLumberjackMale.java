@@ -7,26 +7,25 @@ import org.jetbrains.annotations.NotNull;
 
 public class ModelEntityLumberjackMale extends CitizenModel<AbstractEntityCitizen>
 {
-    // fields
-    ModelRenderer Log1;
-    ModelRenderer Log2;
-    ModelRenderer Log3;
-    ModelRenderer Basket1;
-    ModelRenderer Basket2;
-    ModelRenderer Basket3;
-    ModelRenderer Basket4;
-    ModelRenderer Basket5;
-    ModelRenderer Basket6;
-    ModelRenderer Basket7;
-    ModelRenderer Basket8;
-    ModelRenderer Basket9;
-    ModelRenderer Basket10;
-    ModelRenderer Basket11;
-    ModelRenderer BasketE1;
-    ModelRenderer BasketE2;
-
     public ModelEntityLumberjackMale()
     {
+        ModelRenderer Log1;
+        ModelRenderer Log2;
+        ModelRenderer Log3;
+        ModelRenderer Basket1;
+        ModelRenderer Basket2;
+        ModelRenderer Basket3;
+        ModelRenderer Basket4;
+        ModelRenderer Basket5;
+        ModelRenderer Basket6;
+        ModelRenderer Basket7;
+        ModelRenderer Basket8;
+        ModelRenderer Basket9;
+        ModelRenderer Basket10;
+        ModelRenderer Basket11;
+        ModelRenderer BasketE1;
+        ModelRenderer BasketE2;
+
         textureWidth = 64;
         textureHeight = 64;
 
@@ -86,11 +85,11 @@ public class ModelEntityLumberjackMale extends CitizenModel<AbstractEntityCitize
         Log2.setTextureSize(64, 64);
         setRotation(Log2, 0.5585054F, 0F, 0F);
 
-		/*
+        /*
          * Log3 = new ModelRenderer(this, 28, 33); Log3.addBox(-2F, 0F, 3F, 10,
-		 * 3, 3); Log3.setRotationPoint(0F, 0F, 0F); Log3.setTextureSize(64,
-		 * 64); setRotation(Log3, 0F, 0F, 1.099557F);
-		 */
+         * 3, 3); Log3.setRotationPoint(0F, 0F, 0F); Log3.setTextureSize(64,
+         * 64); setRotation(Log3, 0F, 0F, 1.099557F);
+         */
 
         Log3 = new ModelRenderer(this, 52, 33);
         Log3.addBox(-3F, -2F, 3F, 3, 10, 3);

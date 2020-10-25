@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
@@ -26,29 +27,30 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     /**
      * The citizen assigned to this manager.
      */
-    private final EntityCitizen citizen;
+    protected final AbstractEntityCitizen citizen;
 
     /**
      * It's colony id.
      */
-    private int colonyId;
+    protected int colonyId;
 
     /**
      * The colony reference.
      */
     @Nullable
-    private IColony colony;
+    protected IColony colony;
 
     /**
      * Whether the entity is registered to the colony yet.
      */
-    private boolean registered = false;
+    protected boolean registered = false;
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenColonyHandler(final EntityCitizen citizen)
+    public CitizenColonyHandler(final AbstractEntityCitizen citizen)
     {
         this.citizen = citizen;
     }
@@ -74,7 +76,8 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Server-specific update for the EntityCitizen.
-     * @param colonyID the id of the colony.
+     *
+     * @param colonyID  the id of the colony.
      * @param citizenID the id of the citizen.
      */
     @Override
@@ -88,7 +91,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         this.colonyId = colonyID;
         citizen.setCitizenId(citizenID);
 
-        if (colonyId == 0 || citizen.getCitizenId() == 0)
+        if (colonyId == 0 || citizen.getCivilianID() == 0)
         {
             citizen.remove();
             return;
@@ -104,7 +107,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         }
 
         this.colony = colony;
-        colony.getCitizenManager().registerCitizen(citizen);
+        colony.getCitizenManager().registerCivilian(citizen);
         registered = true;
     }
 
@@ -121,7 +124,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
                 colonyId = citizen.getDataManager().get(DATA_COLONY_ID);
             }
 
-            if (citizen.getCitizenId() == 0)
+            if (citizen.getCivilianID() == 0)
             {
                 citizen.setCitizenId(citizen.getDataManager().get(DATA_CITIZEN_ID));
             }
@@ -139,6 +142,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Get the amount the worker should decrease its saturation by each action done or x blocks traveled.
+     *
      * @return the double describing it.
      */
     @Override
@@ -150,17 +154,24 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Getter for the colony.
+     *
      * @return the colony of the citizen or null.
      */
     @Override
     @Nullable
     public IColony getColony()
     {
+        if (colony == null && !citizen.world.isRemote)
+        {
+            registerWithColony(getColonyId(), citizen.getCivilianID());
+        }
+
         return colony;
     }
 
     /**
      * Getter for the colonz id.
+     *
      * @return the colony id.
      */
     @Override
@@ -171,6 +182,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
     /**
      * Setter for the colony id.
+     *
      * @param colonyId the new colonyId.
      */
     @Override
@@ -184,13 +196,14 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     {
         if (citizen.getCitizenData() != null && registered && colony != null)
         {
-            colony.getCitizenManager().unregisterCitizen(citizen);
+            colony.getCitizenManager().unregisterCivilian(citizen);
             citizen.getCitizenData().setLastPosition(citizen.getPosition());
         }
     }
 
     /**
      * Check if a citizen is at home.
+     *
      * @return true if so.
      */
     @Override

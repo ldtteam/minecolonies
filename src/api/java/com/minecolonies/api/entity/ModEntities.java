@@ -11,6 +11,7 @@ import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Constants.MOD_ID)
@@ -18,6 +19,9 @@ public class ModEntities
 {
     @ObjectHolder("citizen")
     public static EntityType<? extends AbstractEntityCitizen> CITIZEN;
+
+    @ObjectHolder("visitor")
+    public static EntityType<? extends AbstractEntityCitizen> VISITOR;
 
     @ObjectHolder("fishhook")
     public static EntityType<? extends Entity> FISHHOOK;
@@ -75,4 +79,6 @@ public class ModEntities
 
     @ObjectHolder("firearrow")
     public static EntityType<? extends AbstractArrowEntity> FIREARROW;
+
+    public static EntityType<? extends ArrowEntity> MC_NORMAL_ARROW;
 }

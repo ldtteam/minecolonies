@@ -52,7 +52,7 @@ public class BuildToolPlaceMessage implements IMessage
      * Language key for missing hut
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
-    private static final String WRONG_COLONY = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
+    private static final String WRONG_COLONY        = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
 
     /**
      * The state at the offset position.
@@ -65,6 +65,7 @@ public class BuildToolPlaceMessage implements IMessage
     private BlockPos pos;
     private boolean  isHut;
     private boolean  mirror;
+    public BlockPos builder = BlockPos.ZERO;
 
     /**
      * Empty constructor used when registering the
@@ -124,6 +125,8 @@ public class BuildToolPlaceMessage implements IMessage
         mirror = buf.readBoolean();
 
         state = Block.getStateById(buf.readInt());
+
+        builder = buf.readBlockPos();
     }
 
     /**
@@ -148,6 +151,8 @@ public class BuildToolPlaceMessage implements IMessage
         buf.writeBoolean(mirror);
 
         buf.writeInt(Block.getStateId(state));
+
+        buf.writeBlockPos(builder);
     }
 
     @Nullable
@@ -173,7 +178,7 @@ public class BuildToolPlaceMessage implements IMessage
         }
         else
         {
-            handleDecoration(CompatibilityUtils.getWorldFromEntity(player), player, sn, workOrderName, rotation, pos, mirror);
+            handleDecoration(CompatibilityUtils.getWorldFromEntity(player), player, sn, workOrderName, rotation, pos, mirror, builder);
         }
     }
 
@@ -277,7 +282,8 @@ public class BuildToolPlaceMessage implements IMessage
     private static void handleDecoration(
       @NotNull final World world, @NotNull final PlayerEntity player,
       final StructureName sn, final String workOrderName,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror,
+      BlockPos builder)
     {
         @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
@@ -301,10 +307,17 @@ public class BuildToolPlaceMessage implements IMessage
                 }
             }
 
-            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(schem, woName, rotation, buildPos, mirror), false);
+            WorkOrderBuildDecoration woDeco = new WorkOrderBuildDecoration(schem, woName, rotation, buildPos, mirror);
+            if (!builder.equals(BlockPos.ZERO))
+            {
+                woDeco.setClaimedBy(builder);
+            }
+
+            colony.getWorkManager().addWorkOrder(woDeco, false);
         }
         else
         {
+            SoundUtils.playErrorSound(player, player.getPosition());
             Log.getLogger().error("handleDecoration: Could not build " + sn, new Exception());
         }
     }
@@ -330,10 +343,12 @@ public class BuildToolPlaceMessage implements IMessage
 
         if (building == null)
         {
+            SoundUtils.playErrorSound(player, player.getPosition());
             Log.getLogger().error("BuildTool: building is null!", new Exception());
         }
         else
         {
+            SoundUtils.playSuccessSound(player, player.getPosition());
             if (building.getTileEntity() != null)
             {
                 final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, buildPos);
@@ -369,10 +384,8 @@ public class BuildToolPlaceMessage implements IMessage
                 ConstructionTapeHelper.placeConstructionTape(building.getPosition(), corners, world);
             }
 
-            if (mirror)
-            {
-                building.invertMirror();
-            }
+            building.setIsMirrored(mirror);
+
             if (complete)
             {
                 building.onUpgradeComplete(building.getBuildingLevel());

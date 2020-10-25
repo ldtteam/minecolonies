@@ -15,6 +15,7 @@ public interface ICitizenSleepHandler
 
     /**
      * Returns the orientation of the bed in degrees.
+     *
      * @return the bed orientation.
      */
     @OnlyIn(Dist.CLIENT)
@@ -34,20 +35,37 @@ public interface ICitizenSleepHandler
     void onWakeUp();
 
     /**
+     * Determines the home position
+     *
+     * @return home pos or null
+     */
+    BlockPos findHomePos();
+
+    /**
      * Get the bed location of the citizen.
+     *
      * @return the bed location.
      */
     BlockPos getBedLocation();
 
     /**
      * Get the X render offset.
+     *
      * @return the offset.
      */
     float getRenderOffsetX();
 
     /**
      * Get the z render offset.
+     *
      * @return the offset.
      */
     float getRenderOffsetZ();
+
+    /**
+     * Whether we should start to go sleeping
+     *
+     * @return true if should sleep
+     */
+    boolean shouldGoSleep();
 }

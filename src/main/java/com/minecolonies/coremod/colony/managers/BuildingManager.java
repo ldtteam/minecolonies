@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
@@ -11,17 +12,19 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -39,6 +42,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,6 +51,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 public class BuildingManager implements IBuildingManager
 {
@@ -174,7 +179,7 @@ public class BuildingManager implements IBuildingManager
         //  Tick Buildings
         for (@NotNull final IBuilding building : buildings.values())
         {
-            if (colony.getWorld().isBlockPresent(building.getPosition()))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition()))
             {
                 building.onColonyTick(colony);
             }
@@ -198,7 +203,7 @@ public class BuildingManager implements IBuildingManager
         for (@NotNull final IBuilding building : tempBuildings)
         {
             final BlockPos loc = building.getPosition();
-            if (colony.getWorld().isBlockPresent(loc) && !building.isMatchingBlock(colony.getWorld().getBlockState(loc).getBlock()))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), loc) && !building.isMatchingBlock(colony.getWorld().getBlockState(loc).getBlock()))
             {
                 //  Sanity cleanup
                 removedBuildings.add(building);
@@ -209,7 +214,7 @@ public class BuildingManager implements IBuildingManager
 
         for (@NotNull final BlockPos pos : tempFields)
         {
-            if (colony.getWorld().isBlockPresent(pos))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), pos))
             {
                 if (colony.getWorld().getTileEntity(pos) instanceof ScarecrowTileEntity)
                 {
@@ -252,6 +257,28 @@ public class BuildingManager implements IBuildingManager
         return null;
     }
 
+    @Nullable
+    @Override
+    public IWareHouse getClosestWarehouseInColony(final BlockPos pos)
+    {
+        IWareHouse wareHouse = null;
+        double dist = 0;
+        for (final IWareHouse building : wareHouses)
+        {
+            if (building.getBuildingLevel() > 0 && building.getTileEntity() != null)
+            {
+                final double tempDist = building.getPosition().distanceSq(pos);
+                if (wareHouse == null || tempDist < dist)
+                {
+                    dist = tempDist;
+                    wareHouse = building;
+                }
+            }
+        }
+
+        return wareHouse;
+    }
+
     @Override
     public Map<BlockPos, IBuilding> getBuildings()
     {
@@ -283,10 +310,9 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void addNewField(final AbstractScarescrowTileEntity tileEntity, final BlockPos pos, final World world)
+    public void addNewField(final AbstractScarecrowTileEntity tileEntity, final BlockPos pos, final World world)
     {
         addField(pos);
-        tileEntity.calculateSize(world, pos.down());
         markFieldsDirty();
     }
 
@@ -334,10 +360,8 @@ public class BuildingManager implements IBuildingManager
                   colony.getID(),
                   tileEntity.getBlockState().getClass(),
                   tileEntity.getPosition()));
-                if (tileEntity.isMirrored())
-                {
-                    building.invertMirror();
-                }
+
+                building.setIsMirrored(tileEntity.isMirrored());
                 if (!tileEntity.getStyle().isEmpty())
                 {
                     building.setStyle(tileEntity.getStyle());
@@ -352,7 +376,8 @@ public class BuildingManager implements IBuildingManager
                     building.onPlacement();
 
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
-                    final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
+                    final LoadOnlyStructureHandler wrapper =
+                      new LoadOnlyStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
                     final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
                       = ColonyUtils.calculateCorners(building.getPosition(),
                       world,
@@ -430,8 +455,6 @@ public class BuildingManager implements IBuildingManager
             wareHouses.remove(building);
         }
 
-        colony.getRequestManager().onProviderRemovedFromColony(building);
-
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
         for (@NotNull final ICitizenData citizen : colony.getCitizenManager().getCitizens())
         {
@@ -439,6 +462,7 @@ public class BuildingManager implements IBuildingManager
             building.cancelAllRequestsOfCitizen(citizen);
         }
 
+        colony.getRequestManager().onProviderRemovedFromColony(building);
         colony.getCitizenManager().calculateMaxCitizens();
     }
 
@@ -509,6 +533,60 @@ public class BuildingManager implements IBuildingManager
 
         Collections.shuffle(allowedBuildings);
         return allowedBuildings.get(0).getPosition();
+    }
+
+    /**
+     * Finds whether there is a guard building close to the given building
+     *
+     * @param building
+     * @return false if no guard tower close, true in other cases
+     */
+    @Override
+    public boolean hasGuardBuildingNear(final IBuilding building)
+    {
+        if (building == null)
+        {
+            return true;
+        }
+
+        final Chunk chunk = colony.getWorld().getChunk(building.getPosition().getX() >> 4, building.getPosition().getZ() >> 4);
+        final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+
+        if (closeCap == null)
+        {
+            return false;
+        }
+
+        for (final BlockPos buildingPos : closeCap.getAllClaimingBuildings().get(colony.getID()))
+        {
+            final IBuilding guardbuilding = colony.getBuildingManager().getBuilding(buildingPos);
+            if (guardbuilding instanceof AbstractBuildingGuards || guardbuilding instanceof BuildingBarracks)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public void guardBuildingChangedAt(final IBuilding guardBuilding, final int newLevel)
+    {
+        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        {
+            if (building.getPosition().getX() <= guardBuilding.getPosition().getX() + 16 * guardBuilding.getClaimRadius(newLevel)
+                  && building.getPosition().getZ() <= guardBuilding.getPosition().getZ() + 16 * guardBuilding.getClaimRadius(newLevel))
+            {
+                if (newLevel > 0)
+                {
+                    building.setGuardBuildingNear(true);
+                }
+                else
+                {
+                    building.setGuardBuildingNear(hasGuardBuildingNear(building));
+                }
+            }
+        }
     }
 
     @Override

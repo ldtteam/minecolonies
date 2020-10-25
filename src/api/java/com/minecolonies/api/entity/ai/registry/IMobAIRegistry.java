@@ -14,8 +14,7 @@ public interface IMobAIRegistry
     static IMobAIRegistry getInstance() { return IMinecoloniesAPI.getInstance().getMobAIRegistry(); }
 
     /**
-     * Method to get the AI tasks registered for a given mob.
-     * Used by minecolonies to get the AIs that are required for a given mob.
+     * Method to get the AI tasks registered for a given mob. Used by minecolonies to get the AIs that are required for a given mob.
      *
      * @param mob The mob that the system is initializing and requests the AI for.
      * @return The map with the entity AI tasks that are needed for the given mob, with their priorities.
@@ -51,8 +50,7 @@ public interface IMobAIRegistry
       Predicate<AbstractEntityMinecoloniesMob> applyPredicate);
 
     /**
-     * Method to get the AI target tasks registered for a given mob.
-     * Used by minecolonies to get the AIs that are required for a given mob.
+     * Method to get the AI target tasks registered for a given mob. Used by minecolonies to get the AIs that are required for a given mob.
      *
      * @param mob The mob that the system is initializing and requests the AI for.
      * @return The map with the entity AI tasks that are needed for the given mob, with their priorities.

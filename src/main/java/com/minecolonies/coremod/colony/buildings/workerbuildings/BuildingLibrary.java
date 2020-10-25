@@ -14,6 +14,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -88,7 +89,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
 
     /**
      * Parses Study Items from the Config and adds them on the keepX list
-     * 
+     *
      * @return the list of study items
      */
     private List<StudyItem> parseFromConfig()
@@ -253,7 +254,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Library", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.LIBRARY_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));

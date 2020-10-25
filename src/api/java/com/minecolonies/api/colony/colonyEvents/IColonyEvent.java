@@ -4,12 +4,14 @@ import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.INBTSerializable;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for all colony event types.
  */
-public interface IColonyEvent
+public interface IColonyEvent extends INBTSerializable<CompoundNBT>
 {
     /**
      * Returns the events current status
@@ -20,6 +22,7 @@ public interface IColonyEvent
 
     /**
      * Sets the current event status
+     *
      * @param status the status to set.
      */
     void setStatus(final EventStatus status);
@@ -44,21 +47,6 @@ public interface IColonyEvent
      * @param colony the colony to set.
      */
     void setColony(@NotNull final IColony colony);
-
-    /**
-     * Writes the event to NBT
-     *
-     * @param compound the compound to write it to.
-     * @return the compound.
-     */
-    CompoundNBT writeToNBT(final CompoundNBT compound);
-
-    /**
-     * Reads the events values from NBT
-     *
-     * @param compound the compound to read it from.
-     */
-    void readFromNBT(final CompoundNBT compound);
 
     /*
      *

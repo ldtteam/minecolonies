@@ -9,6 +9,7 @@ import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
@@ -36,6 +37,8 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
@@ -44,8 +47,13 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
  * The abstract citizen entity.
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
-public abstract class AbstractEntityCitizen extends AgeableEntity implements INamedContainerProvider, INPC
+public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements INamedContainerProvider
 {
+    /**
+     * Used texture mapping.
+     */
+    private Map<String, String> textureMapping = new HashMap<>();
+
     public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
     public static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
     public static final DataParameter<Integer>  DATA_IS_FEMALE       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
@@ -92,9 +100,19 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     private AbstractAdvancedPathNavigate pathNavigate;
 
     /**
+     * Counts entity collisions
+     */
+    private int collisionCounter = 0;
+
+    /**
+     * The collision threshold
+     */
+    private final static int COLL_THRESHOLD = 50;
+
+    /**
      * Constructor for a new citizen typed entity.
      *
-     * @param type the Entity type.
+     * @param type  the Entity type.
      * @param world the world.
      */
     public AbstractEntityCitizen(final EntityType<? extends AgeableEntity> type, final World world)
@@ -193,8 +211,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     }
 
     /**
-     * Sets the textures of all citizens and distinguishes between male and
-     * female.
+     * Sets the textures of all citizens and distinguishes between male and female.
      */
     public void setTexture()
     {
@@ -204,10 +221,12 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
         }
 
         texture = getModelType().getTexture(this);
+        textureDirty = false;
     }
 
     /**
      * Get the citizen data view.
+     *
      * @return the view.
      */
     public abstract ICitizenDataView getCitizenDataView();
@@ -220,10 +239,12 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     @NotNull
     public ResourceLocation getTexture()
     {
+        final String renderMeta = getRenderMetadata();
         if (texture == null
               || textureDirty
-              || !getTexture().getPath().contains(getDataManager().get(DATA_STYLE))
-              || !getTexture().getPath().contains(getDataManager().get(DATA_TEXTURE_SUFFIX)))
+              || !texture.getPath().contains(renderMeta)
+              || !texture.getPath().contains(textureMapping.getOrDefault(getDataManager().get(DATA_STYLE), "default"))
+              || !texture.getPath().contains(getDataManager().get(DATA_TEXTURE_SUFFIX)))
         {
             setTexture();
         }
@@ -236,6 +257,16 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public void setTextureDirty()
     {
         this.textureDirty = true;
+    }
+
+    /**
+     * Set the used texture mapping (from style to actual folder).
+     * @param style the colony style.
+     * @param used the actual folder.
+     */
+    public void setTextureMapping(final String style, final String used)
+    {
+        this.textureMapping.put(style, used);
     }
 
     /**
@@ -308,9 +339,39 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
             this.pathNavigate.setCanSwim(true);
             this.pathNavigate.getPathingOptions().setEnterDoors(true);
             this.pathNavigate.getPathingOptions().setCanOpenDoors(true);
-            this.navigator.getNodeProcessor().setCanOpenDoors(true);
+            this.pathNavigate.setStuckHandler(PathingStuckHandler.createStuckHandler().withTeleportOnFullStuck().withTeleportSteps(5));
         }
         return pathNavigate;
+    }
+
+    /**
+     * Ignores entity collisions are colliding for a while, solves stuck e.g. for many trying to take the same door
+     *
+     * @param entityIn entity to collide with
+     */
+    @Override
+    public void applyEntityCollision(@NotNull final Entity entityIn)
+    {
+        if ((collisionCounter += 2) > COLL_THRESHOLD)
+        {
+            if (collisionCounter > COLL_THRESHOLD * 2)
+            {
+                collisionCounter = 0;
+            }
+
+            return;
+        }
+        super.applyEntityCollision(entityIn);
+    }
+
+    @Override
+    public void livingTick()
+    {
+        super.livingTick();
+        if (collisionCounter > 0)
+        {
+            collisionCounter--;
+        }
     }
 
     /**
@@ -341,6 +402,10 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
      */
     public void setRenderMetadata(final String renderMetadata)
     {
+        if (renderMetadata.equals(getRenderMetadata()))
+        {
+            return;
+        }
         this.renderMetadata = renderMetadata;
         dataManager.set(DATA_RENDER_METADATA, getRenderMetadata());
     }
@@ -423,8 +488,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     }
 
     /**
-     * Entities treat being on ladders as not on ground; this breaks navigation
-     * logic.
+     * Entities treat being on ladders as not on ground; this breaks navigation logic.
      */
     @Override
     protected void updateFallState(final double y, final boolean onGroundIn, @NotNull final BlockState state, @NotNull final BlockPos pos)
@@ -469,8 +533,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public abstract ILocation getLocation();
 
     /**
-     * Checks if a worker is at his working site.
-     * If he isn't, sets it's path to the location
+     * Checks if a worker is at his working site. If he isn't, sets it's path to the location
      *
      * @param site  the place where he should walk to
      * @param range Range to check in
@@ -479,20 +542,12 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public abstract boolean isWorkerAtSiteWithMove(@NotNull BlockPos site, int range);
 
     /**
-     * Getter for the citizendata.
-     * Tries to get it from the colony is the data is null.
+     * Getter for the citizendata. Tries to get it from the colony is the data is null.
      *
      * @return the data.
      */
     @Nullable
     public abstract ICitizenData getCitizenData();
-
-    /**
-     * Setter for the citizen data.
-     *
-     * @param data the data to set.
-     */
-    public abstract void setCitizenData(@Nullable ICitizenData data);
 
     /**
      * Return this citizens inventory.
@@ -504,11 +559,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
 
     @NotNull
     public abstract IItemHandler getItemHandlerCitizen();
-
-    /**
-     * Mark the citizen dirty to synch the data with the client.
-     */
-    public abstract void markDirty();
 
     @NotNull
     public abstract DesiredActivity getDesiredActivity();
@@ -549,40 +599,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
      * Decrease the saturation of the citizen for 1 action.
      */
     public abstract void decreaseSaturationForContinuousAction();
-
-    /**
-     * Getter for the citizen id.
-     *
-     * @return the id.
-     */
-    public abstract int getCitizenId();
-
-    /**
-     * Setter for the citizen id.
-     *
-     * @param id the id to set.
-     */
-    public abstract void setCitizenId(int id);
-
-    /**
-     * Getter for the current position.
-     * Only approximated position, used for stuck checking.
-     *
-     * @return the current position.
-     */
-    public abstract BlockPos getCurrentPosition();
-
-    /**
-     * Setter for the current position.
-     *
-     * @param currentPosition the position to set.
-     */
-    public abstract void setCurrentPosition(BlockPos currentPosition);
-
-    /**
-     * Spawn eating particles for the citizen.
-     */
-    public abstract void spawnEatingParticle();
 
     /**
      * The Handler for all experience related methods.
@@ -645,19 +661,11 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public abstract ICitizenSleepHandler getCitizenSleepHandler();
 
     /**
-     * The Handler to check if a citizen is stuck.
-     *
-     * @return the instance of the handler.
-     */
-    public abstract ICitizenStuckHandler getCitizenStuckHandler();
-
-    /**
      * The Handler to check if the citizen is sick.
      *
      * @return the instance of the handler.
      */
     public abstract ICitizenDiseaseHandler getCitizenDiseaseHandler();
-
 
     public abstract void setCitizenDiseaseHandler(ICitizenDiseaseHandler citizenDiseaseHandler);
 
@@ -702,8 +710,6 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
 
     public abstract boolean isDead();
 
-    public abstract void setCitizenStuckHandler(ICitizenStuckHandler citizenStuckHandler);
-
     public abstract void setCitizenSleepHandler(ICitizenSleepHandler citizenSleepHandler);
 
     public abstract void setCitizenJobHandler(ICitizenJobHandler citizenJobHandler);
@@ -713,4 +719,36 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements INa
     public abstract void setCitizenChatHandler(ICitizenChatHandler citizenChatHandler);
 
     public abstract void setCitizenExperienceHandler(ICitizenExperienceHandler citizenExperienceHandler);
+
+    /**
+     * Get if the citizen is fleeing from an attacker.
+     *
+     * @return true if so.
+     */
+    public abstract boolean isCurrentlyFleeing();
+
+    /**
+     * Calls a guard for help against an attacker.
+     *
+     * @param attacker       the attacking entity
+     * @param guardHelpRange the squaredistance in which we search for nearby guards
+     */
+    public abstract void callForHelp(final Entity attacker, final int guardHelpRange);
+
+    /**
+     * Sets the fleeing state
+     *
+     * @param fleeing true if fleeing.
+     */
+    public abstract void setFleeingState(final boolean fleeing);
+
+    /**
+     * Setter for the citizen pose.
+     *
+     * @param pose the pose to set.
+     */
+    public void updatePose(final Pose pose)
+    {
+        setPose(pose);
+    }
 }

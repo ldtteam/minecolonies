@@ -89,6 +89,12 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
+    public boolean canDeconstruct()
+    {
+        return false;
+    }
+
+    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.barracksTower;

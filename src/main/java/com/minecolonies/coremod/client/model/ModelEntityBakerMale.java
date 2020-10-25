@@ -1,3 +1,6 @@
+// Made with Blockbench 3.5.1
+// Exported for Minecraft version 1.15
+// Paste this class into your mod and generate all required imports
 package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
@@ -6,90 +9,76 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 
 public class ModelEntityBakerMale extends CitizenModel<AbstractEntityCitizen>
 {
-    //fields
-    ModelRenderer top;
-    ModelRenderer base;
-    ModelRenderer middle;
-
     public ModelEntityBakerMale()
     {
+        ModelRenderer headdetail;
+        ModelRenderer hat;
+        ModelRenderer base;
+        ModelRenderer middle;
+        ModelRenderer top;
+
         textureWidth = 128;
         textureHeight = 64;
 
-        bipedRightArm = new ModelRenderer(this, 40, 16);
-        bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
-        bipedRightArm.setRotationPoint(-5F, 2F, 0F);
-        bipedRightArm.setTextureSize(128, 64);
-        bipedRightArm.mirror = true;
-        setRotation(bipedRightArm, 0F, 0F, 0F);
+        bipedRightArm = new ModelRenderer(this);
+        bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
+        bipedRightArm.setTextureOffset(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        bipedLeftArm = new ModelRenderer(this, 40, 16);
-        bipedLeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
-        bipedLeftArm.setRotationPoint(5F, 2F, 0F);
-        bipedLeftArm.setTextureSize(128, 64);
-        bipedLeftArm.mirror = true;
-        setRotation(bipedLeftArm, 0F, 0F, 0F);
+        bipedLeftArm = new ModelRenderer(this);
+        bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
+        bipedLeftArm.setTextureOffset(40, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        bipedRightLeg = new ModelRenderer(this, 0, 16);
-        bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        bipedRightLeg.setRotationPoint(-2F, 12F, 0F);
-        bipedRightLeg.setTextureSize(128, 64);
-        bipedRightLeg.mirror = true;
-        setRotation(bipedRightLeg, 0F, 0F, 0F);
+        bipedRightLeg = new ModelRenderer(this);
+        bipedRightLeg.setRotationPoint(-2.0F, 12.0F, 0.0F);
+        bipedRightLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        bipedLeftLeg = new ModelRenderer(this, 0, 16);
-        bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
-        bipedLeftLeg.setTextureSize(128, 64);
-        bipedLeftLeg.mirror = true;
-        setRotation(bipedLeftLeg, 0F, 0F, 0F);
+        bipedLeftLeg = new ModelRenderer(this);
+        bipedLeftLeg.setRotationPoint(2.0F, 12.0F, 0.0F);
+        bipedLeftLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        bipedBody = new ModelRenderer(this, 16, 16);
-        bipedBody.addBox(-4F, 0F, -2F, 8, 12, 4);
-        bipedBody.setRotationPoint(0F, 0F, 0F);
-        bipedBody.setTextureSize(128, 64);
-        bipedBody.mirror = true;
-        setRotation(bipedBody, 0F, 0F, 0F);
+        bipedBody = new ModelRenderer(this);
+        bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
-        bipedHead = new ModelRenderer(this, 0, 0);
-        bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8);
-        bipedHead.setRotationPoint(0F, 0F, 0F);
-        bipedHead.setTextureSize(128, 64);
-        bipedHead.mirror = true;
-        setRotation(bipedHead, 0F, 0F, 0F);
+        bipedHead = new ModelRenderer(this);
+        bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
-        top = new ModelRenderer(this, 0, 53);
-        top.addBox(-2.5F, -11F, -4.6F, 5, 1, 7);
-        top.setRotationPoint(0F, 0F, 0F);
-        top.setTextureSize(128, 64);
-        top.mirror = true;
-        setRotation(top, -0.1858931F, 0F, 0F);
+        headdetail = new ModelRenderer(this);
+        headdetail.setRotationPoint(0.0F, 24.0F, 0.0F);
+        bipedHead.addChild(headdetail);
+        headdetail.setTextureOffset(32, 0).addBox(-4.0F, -32.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
 
-        base = new ModelRenderer(this, 0, 33);
-        base.addBox(-4.5F, -9F, -5.8F, 9, 2, 9);
-        base.setRotationPoint(0F, 0F, 0F);
-        base.setTextureSize(128, 64);
-        base.mirror = true;
-        setRotation(base, -0.1858931F, 0F, 0F);
+        hat = new ModelRenderer(this);
+        hat.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bipedHead.addChild(hat);
 
-        middle = new ModelRenderer(this, 0, 44);
-        middle.addBox(-3.5F, -10F, -5F, 7, 1, 8);
-        middle.setRotationPoint(0F, 0F, 0F);
-        middle.setTextureSize(128, 64);
-        middle.mirror = true;
-        setRotation(middle, -0.1858931F, 0F, 0F);
 
-        bipedHead.addChild(base);
-        bipedHead.addChild(middle);
-        bipedHead.addChild(top);
+        base = new ModelRenderer(this);
+        base.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hat.addChild(base);
+        setRotationAngle(base, -0.1859F, 0.0F, 0.0F);
+        base.setTextureOffset(0, 33).addBox(-4.5F, -9.0F, -5.8F, 9.0F, 2.0F, 9.0F, 0.0F, true);
+
+        middle = new ModelRenderer(this);
+        middle.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hat.addChild(middle);
+        setRotationAngle(middle, -0.1859F, 0.0F, 0.0F);
+        middle.setTextureOffset(0, 44).addBox(-3.5F, -10.0F, -5.0F, 7.0F, 1.0F, 8.0F, 0.0F, true);
+
+        top = new ModelRenderer(this);
+        top.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hat.addChild(top);
+        setRotationAngle(top, -0.1859F, 0.0F, 0.0F);
+        top.setTextureOffset(0, 53).addBox(-2.5F, -11.0F, -4.6F, 5.0F, 1.0F, 7.0F, 0.0F, true);
 
         bipedHeadwear.showModel = false;
     }
 
-    private void setRotation(final ModelRenderer model, final float x, final float y, final float z)
+    public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
     {
-        model.rotateAngleX = x;
-        model.rotateAngleY = y;
-        model.rotateAngleZ = z;
+        modelRenderer.rotateAngleX = x;
+        modelRenderer.rotateAngleY = y;
+        modelRenderer.rotateAngleZ = z;
     }
 }

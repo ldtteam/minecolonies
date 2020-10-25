@@ -1,9 +1,7 @@
 package com.minecolonies.api.entity.ai.statemachine.states;
 
 /**
- * Basic state enclosing states all ai's use.
- * Please extend this class with the states your ai needs.
- * And please document each state on what it does.
+ * Basic state enclosing states all ai's use. Please extend this class with the states your ai needs. And please document each state on what it does.
  */
 public enum AIWorkerState implements IAIState
 {
@@ -12,14 +10,11 @@ public enum AIWorkerState implements IAIState
 ###GENERAL###
      */
     /**
-     * this is the idle state for the ai.
-     * From here on it will start working.
-     * Use this state in your ai to start your code.
+     * this is the idle state for the ai. From here on it will start working. Use this state in your ai to start your code.
      */
     IDLE(true),
     /**
-     * This state is only used on ai initialization.
-     * It checks if any important things are null.
+     * This state is only used on ai initialization. It checks if any important things are null.
      */
     INIT(true),
     /**
@@ -42,6 +37,14 @@ public enum AIWorkerState implements IAIState
      * Start building a StructureIterator.
      */
     START_BUILDING(false),
+    /**
+     * Mine a block.
+     */
+    MINE_BLOCK(false),
+    /**
+     * Load the structure and requirements.
+     */
+    LOAD_STRUCTURE(false),
     /**
      * Creates the solid structure.
      */
@@ -291,6 +294,11 @@ public enum AIWorkerState implements IAIState
      */
     RETRIEVING_END_PRODUCT_FROM_FURNACE(true),
 
+    /**
+     * Fuel the furnace
+     */
+    ADD_FUEL_TO_FURNACE(true),
+
     /*
 ###Cook###
      */
@@ -326,6 +334,11 @@ public enum AIWorkerState implements IAIState
      * Pickup items within area.
      */
     HERDER_PICKUP(true),
+
+    /**
+     * Pickup items within area.
+     */
+    HERDER_FEED(false),
 
     /*
 ### Cowboy ###

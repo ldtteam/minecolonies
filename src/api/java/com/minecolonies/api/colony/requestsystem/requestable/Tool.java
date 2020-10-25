@@ -1,13 +1,18 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -19,6 +24,11 @@ import java.util.stream.Collectors;
  */
 public class Tool implements IDeliverable
 {
+    /**
+     * Set of type tokens belonging to this class.
+     */
+    private final static Set<TypeToken<?>>
+      TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Tool.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TYPE      = "Type";
@@ -56,7 +66,7 @@ public class Tool implements IDeliverable
      * Serializes this Tool into NBT.
      *
      * @param controller The IFactoryController used to serialize sub types.
-     * @param tool the tool to serialize.
+     * @param tool       the tool to serialize.
      * @return The CompoundNBT containing the tool data.
      */
     @NotNull
@@ -70,6 +80,61 @@ public class Tool implements IDeliverable
         compound.put(NBT_RESULT, tool.getResult().serializeNBT());
 
         return compound;
+    }
+
+    /**
+     * Static method that constructs an instance from NBT.
+     *
+     * @param controller The {@link IFactoryController} to deserialize components with.
+     * @param nbt        The nbt to serialize from.
+     * @return An instance of Tool with the data contained in the given NBT.
+     */
+    @NotNull
+    public static Tool deserialize(final IFactoryController controller, final CompoundNBT nbt)
+    {
+        //API:Map the given strings a proper way.
+        final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
+        final Integer minLevel = nbt.getInt(NBT_MIN_LEVEL);
+        final Integer maxLevel = nbt.getInt(NBT_MAX_LEVEL);
+        final ItemStack result = ItemStack.read(nbt.getCompound(NBT_RESULT));
+
+        return new Tool(type, minLevel, maxLevel, result);
+    }
+
+    /**
+     * Serialize the deliverable.
+     *
+     * @param controller the controller.
+     * @param buffer     the the buffer to write to.
+     * @param input      the input to serialize.
+     */
+    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Tool input)
+    {
+        buffer.writeString(input.getToolClass().getName());
+        buffer.writeInt(input.getMinLevel());
+        buffer.writeInt(input.getMaxLevel());
+        buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
+        if (!ItemStackUtils.isEmpty(input.result))
+        {
+            buffer.writeItemStack(input.result);
+        }
+    }
+
+    /**
+     * Deserialize the deliverable.
+     *
+     * @param controller the controller.
+     * @param buffer     the buffer to read.
+     * @return the deliverable.
+     */
+    public static Tool deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    {
+        final IToolType type = ToolType.getToolType(buffer.readString());
+        final int minLevel = buffer.readInt();
+        final int maxLevel = buffer.readInt();
+        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
+
+        return new Tool(type, minLevel, maxLevel, result);
     }
 
     /**
@@ -103,7 +168,9 @@ public class Tool implements IDeliverable
     public Integer getMaxLevel()
     {
         return maxLevel;
-    }    /**
+    }
+
+    /**
      * The resulting stack if set during creation, else ItemStack.Empty.
      *
      * @return The resulting stack.
@@ -114,39 +181,23 @@ public class Tool implements IDeliverable
         return result;
     }
 
-    /**
-     * Static method that constructs an instance from NBT.
-     *
-     * @param controller The {@link IFactoryController} to deserialize components with.
-     * @param nbt        The nbt to serialize from.
-     * @return An instance of Tool with the data contained in the given NBT.
-     */
-    @NotNull
-    public static Tool deserialize(final IFactoryController controller, final CompoundNBT nbt)
-    {
-        //API:Map the given strings a proper way.
-        final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
-        final Integer minLevel = nbt.getInt(NBT_MIN_LEVEL);
-        final Integer maxLevel = nbt.getInt(NBT_MAX_LEVEL);
-        final ItemStack result = ItemStack.read(nbt.getCompound(NBT_RESULT));
-
-        return new Tool(type, minLevel, maxLevel, result);
-    }
-
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
         //API:Map the given strings a proper way.
         final boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
-                && stack.getCount() >= 1
-                && getToolClasses(stack).stream()
-                .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
-                .map(ToolType::getToolType)
-                .anyMatch(t -> t != ToolType.NONE && (stack.getDamage() > 0 || !stack.isDamaged()) && ItemStackUtils.hasToolLevel(stack, t, getMinLevel(), getMaxLevel()));
+                                         && stack.getCount() >= 1
+                                         && getToolClasses(stack).stream()
+                                              .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
+                                              .map(ToolType::getToolType)
+                                              .anyMatch(t -> t != ToolType.NONE && (stack.getDamage() > 0 || !stack.isDamaged()) && ItemStackUtils.hasToolLevel(stack,
+                                                t,
+                                                getMinLevel(),
+                                                getMaxLevel()));
 
         if (!toolTypeResult)
         {
-            return stack.getItem() instanceof HoeItem && toolClass.equals(ToolType.HOE) || stack.getItem() instanceof ShieldItem && toolClass.equals(ToolType.SHIELD);
+            return (stack.getItem() instanceof HoeItem && toolClass.equals(ToolType.HOE)) || (stack.getItem() instanceof ShieldItem && toolClass.equals(ToolType.SHIELD));
         }
 
         return toolTypeResult;
@@ -156,38 +207,38 @@ public class Tool implements IDeliverable
     {
         final Set<String> set = new HashSet<>();
 
-        if(ItemStackUtils.isEmpty(stack))
+        if (ItemStackUtils.isEmpty(stack))
         {
             return set;
         }
 
         set.addAll(stack.getItem().getToolTypes(stack).stream().map(net.minecraftforge.common.ToolType::getName).collect(Collectors.toList()));
 
-        if(stack.getItem() instanceof BowItem)
+        if (stack.getItem() instanceof BowItem)
         {
             set.add("bow");
         }
-        else if(stack.getItem() instanceof SwordItem || Compatibility.isTinkersWeapon(stack))
+        else if (stack.getItem() instanceof SwordItem || Compatibility.isTinkersWeapon(stack))
         {
             set.add("weapon");
         }
-        else if(stack.getItem() instanceof HoeItem)
+        else if (stack.getItem() instanceof HoeItem)
         {
             set.add("hoe");
         }
-        else if(stack.getItem() instanceof FishingRodItem)
+        else if (stack.getItem() instanceof FishingRodItem)
         {
             set.add("rod");
         }
-        else if(stack.getItem() instanceof  ShearsItem)
+        else if (stack.getItem() instanceof ShearsItem)
         {
             set.add("shears");
         }
-        else if(stack.getItem() instanceof  ShieldItem)
+        else if (stack.getItem() instanceof ShieldItem)
         {
             set.add("shield");
         }
-        else if(stack.getItem() instanceof ArmorItem)
+        else if (stack.getItem() instanceof ArmorItem)
         {
             /*
              * There is no armor class for each type of armor.
@@ -218,6 +269,7 @@ public class Tool implements IDeliverable
 
     /**
      * Check if the tool is armor.
+     *
      * @return true if so.
      */
     public boolean isArmor()
@@ -286,5 +338,11 @@ public class Tool implements IDeliverable
         result1 = 31 * result1 + getMaxLevel().hashCode();
         result1 = 31 * result1 + getResult().hashCode();
         return result1;
+    }
+
+    @Override
+    public Set<TypeToken<?>> getSuperClasses()
+    {
+        return TYPE_TOKENS;
     }
 }

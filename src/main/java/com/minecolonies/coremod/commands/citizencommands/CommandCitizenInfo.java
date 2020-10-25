@@ -44,7 +44,7 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
             return 0;
         }
 
-        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(IntegerArgumentType.getInteger(context, CITIZENID_ARG));
+        final ICitizenData citizenData = colony.getCitizenManager().getCivilian(IntegerArgumentType.getInteger(context, CITIZENID_ARG));
 
         if (citizenData == null)
         {
@@ -52,7 +52,7 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
             return 0;
         }
 
-        final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+        final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();
 
         if (!optionalEntityCitizen.isPresent())
         {
@@ -88,23 +88,24 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
               workingPosition.getZ()), true);
         }
 
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent( "com.minecolonies.command.citizeninfo.health", entityCitizen.getHealth(), entityCitizen.getMaxHealth()), true);
+        context.getSource()
+          .sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.health", entityCitizen.getHealth(), entityCitizen.getMaxHealth()), true);
 
-        Object[] skills = new Object[]{
-                citizenData.getCitizenSkillHandler().getSkills().get(Skill.Athletics).getA(),
-                citizenData.getCitizenSkillHandler().getSkills().get(Skill.Dexterity).getA(),
-                citizenData.getCitizenSkillHandler().getSkills().get(Skill.Strength).getA(),
-                citizenData.getCitizenSkillHandler().getSkills().get(Skill.Agility).getA(),
-                citizenData.getCitizenSkillHandler().getSkills().get(Skill.Stamina).getA(),
-                citizenData.getCitizenSkillHandler().getSkills().get(Skill.Mana).getA(),
-                citizenData.getCitizenSkillHandler().getSkills().get(Skill.Adaptability).getA(),
-                citizenData.getCitizenSkillHandler().getSkills().get(Skill.Focus).getA(),
-                citizenData.getCitizenSkillHandler().getSkills().get(Skill.Creativity).getA(),
-                citizenData.getCitizenSkillHandler().getSkills().get(Skill.Knowledge).getA(),
-                citizenData.getCitizenSkillHandler().getSkills().get(Skill.Intelligence).getA()
+        Object[] skills = new Object[] {
+          citizenData.getCitizenSkillHandler().getSkills().get(Skill.Athletics).getA(),
+          citizenData.getCitizenSkillHandler().getSkills().get(Skill.Dexterity).getA(),
+          citizenData.getCitizenSkillHandler().getSkills().get(Skill.Strength).getA(),
+          citizenData.getCitizenSkillHandler().getSkills().get(Skill.Agility).getA(),
+          citizenData.getCitizenSkillHandler().getSkills().get(Skill.Stamina).getA(),
+          citizenData.getCitizenSkillHandler().getSkills().get(Skill.Mana).getA(),
+          citizenData.getCitizenSkillHandler().getSkills().get(Skill.Adaptability).getA(),
+          citizenData.getCitizenSkillHandler().getSkills().get(Skill.Focus).getA(),
+          citizenData.getCitizenSkillHandler().getSkills().get(Skill.Creativity).getA(),
+          citizenData.getCitizenSkillHandler().getSkills().get(Skill.Knowledge).getA(),
+          citizenData.getCitizenSkillHandler().getSkills().get(Skill.Intelligence).getA()
         };
         context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.skills",
-                skills), true);
+          skills), true);
 
         if (entityCitizen.getCitizenJobHandler().getColonyJob() == null)
         {
@@ -116,7 +117,7 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent(
               "com.minecolonies.command.citizeninfo.job",
               entityCitizen.getCitizenColonyHandler().getWorkBuilding().getJobName()), true);
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent( "com.minecolonies.command.citizeninfo.activity",
+            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.activity",
               entityCitizen.getDesiredActivity(),
               entityCitizen.getCitizenJobHandler().getColonyJob().getNameTagDescription(),
               entityCitizen.goalSelector.getRunningGoals().findFirst().get().getGoal().toString()),

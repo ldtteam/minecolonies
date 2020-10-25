@@ -154,9 +154,7 @@ public interface IColonyManager
     IBuildingView getBuildingView(int dimension, BlockPos pos);
 
     /**
-     * Side neutral method to get colony.
-     * On clients it returns the view.
-     * On servers it returns the colony itself.
+     * Side neutral method to get colony. On clients it returns the view. On servers it returns the colony itself.
      *
      * @param w   World.
      * @param pos coordinates.
@@ -166,15 +164,11 @@ public interface IColonyManager
     IColony getIColony(@NotNull World w, @NotNull BlockPos pos);
 
     /**
-     * Side neutral method to get colony.
-     * On clients it returns the view.
-     * On servers it returns the colony itself.
-     * {@link #getClosestColony(World, BlockPos)}
+     * Side neutral method to get colony. On clients it returns the view. On servers it returns the colony itself. {@link #getClosestColony(World, BlockPos)}
      *
      * @param w   World.
      * @param pos Block position.
-     * @return View of colony or colony itself depending on side, closest to
-     * coordinates.
+     * @return View of colony or colony itself depending on side, closest to coordinates.
      */
     @Nullable
     IColony getClosestIColony(@NotNull World w, @NotNull BlockPos pos);
@@ -199,9 +193,7 @@ public interface IColonyManager
     IColony getClosestColony(@NotNull World w, @NotNull BlockPos pos);
 
     /**
-     * Side neutral method to get colony.
-     * On clients it returns the view.
-     * On servers it returns the colony itself.
+     * Side neutral method to get colony. On clients it returns the view. On servers it returns the colony itself.
      * <p>
      * Returns a colony or view with the given Player as owner.
      *
@@ -213,9 +205,7 @@ public interface IColonyManager
     IColony getIColonyByOwner(@NotNull World w, @NotNull PlayerEntity owner);
 
     /**
-     * Side neutral method to get colony.
-     * On clients it returns the view.
-     * On servers it returns the colony itself.
+     * Side neutral method to get colony. On clients it returns the view. On servers it returns the colony itself.
      * <p>
      * Returns a colony or view with given Player as owner.
      *
@@ -227,16 +217,14 @@ public interface IColonyManager
     IColony getIColonyByOwner(@NotNull World w, UUID owner);
 
     /**
-     * Returns the minimum distance between two town halls, to not make colonies
-     * collide.
+     * Returns the minimum distance between two town halls, to not make colonies collide.
      *
      * @return Minimum town hall distance.
      */
     int getMinimumDistanceBetweenTownHalls();
 
     /**
-     * On server tick, tick every Colony.
-     * NOTE: Review this for performance.
+     * On server tick, tick every Colony. NOTE: Review this for performance.
      *
      * @param event {@link net.minecraftforge.event.TickEvent.ServerTickEvent}
      */
@@ -264,16 +252,14 @@ public interface IColonyManager
     void onClientTick(@NotNull TickEvent.ClientTickEvent event);
 
     /**
-     * On world tick, tick every Colony in that world.
-     * NOTE: Review this for performance.
+     * On world tick, tick every Colony in that world. NOTE: Review this for performance.
      *
      * @param event {@link TickEvent.WorldTickEvent}.
      */
     void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
 
     /**
-     * When a world is loaded, Colonies in that world need to grab the reference
-     * to the World. Additionally, when loading the first world, load the manager data.
+     * When a world is loaded, Colonies in that world need to grab the reference to the World. Additionally, when loading the first world, load the manager data.
      *
      * @param world World.
      */
@@ -294,8 +280,7 @@ public interface IColonyManager
     void setServerUUID(UUID uuid);
 
     /**
-     * When a world unloads, all colonies in that world are informed.
-     * Additionally, when the last world is unloaded, delete all colonies.
+     * When a world unloads, all colonies in that world are informed. Additionally, when the last world is unloaded, delete all colonies.
      *
      * @param world World.
      */
@@ -322,9 +307,8 @@ public interface IColonyManager
     IColonyView getColonyView(int id, int dimension);
 
     /**
-     * Returns result of {@link IColonyView#handlePermissionsViewMessage(PacketBuffer)}
-     * if {@link #getColonyView(int, int)}. gives a not-null result. If {@link
-     * #getColonyView(int, int)} is null, returns null.
+     * Returns result of {@link IColonyView#handlePermissionsViewMessage(PacketBuffer)} if {@link #getColonyView(int, int)}. gives a not-null result. If {@link #getColonyView(int,
+     * int)} is null, returns null.
      *
      * @param colonyID ID of the colony.
      * @param data     {@link PacketBuffer} with colony data.
@@ -333,9 +317,8 @@ public interface IColonyManager
     void handlePermissionsViewMessage(int colonyID, @NotNull PacketBuffer data, int dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyViewCitizensMessage(int,
-     * PacketBuffer)} if {@link #getColonyView(int, int)} gives a not-null result. If
-     * {@link #getColonyView(int, int)} is null, returns null.
+     * Returns result of {@link IColonyView#handleColonyViewCitizensMessage(int, PacketBuffer)} if {@link #getColonyView(int, int)} gives a not-null result. If {@link
+     * #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId  ID of the colony.
      * @param citizenId ID of the citizen.
@@ -345,9 +328,8 @@ public interface IColonyManager
     void handleColonyViewCitizensMessage(int colonyId, int citizenId, PacketBuffer buf, int dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyViewWorkOrderMessage(PacketBuffer)}
-     * (int, ByteBuf)} if {@link #getColonyView(int, int)} gives a not-null result.
-     * If {@link #getColonyView(int, int)} is null, returns null.
+     * Returns result of {@link IColonyView#handleColonyViewWorkOrderMessage(PacketBuffer)} (int, ByteBuf)} if {@link #getColonyView(int, int)} gives a not-null result. If {@link
+     * #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId ID of the colony.
      * @param buf      {@link PacketBuffer} with colony data.
@@ -356,9 +338,8 @@ public interface IColonyManager
     void handleColonyViewWorkOrderMessage(int colonyId, PacketBuffer buf, int dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyViewRemoveCitizenMessage(int)}
-     * if {@link #getColonyView(int, int)} gives a not-null result. If {@link
-     * #getColonyView(int, int)} is null, returns null.
+     * Returns result of {@link IColonyView#handleColonyViewRemoveCitizenMessage(int)} if {@link #getColonyView(int, int)} gives a not-null result. If {@link #getColonyView(int,
+     * int)} is null, returns null.
      *
      * @param colonyId  ID of the colony.
      * @param citizenId ID of the citizen.
@@ -367,9 +348,8 @@ public interface IColonyManager
     void handleColonyViewRemoveCitizenMessage(int colonyId, int citizenId, int dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyBuildingViewMessage(BlockPos,
-     * PacketBuffer)} if {@link #getColonyView(int, int)} gives a not-null result. If
-     * {@link #getColonyView(int, int)} is null, returns null.
+     * Returns result of {@link IColonyView#handleColonyBuildingViewMessage(BlockPos, PacketBuffer)} if {@link #getColonyView(int, int)} gives a not-null result. If {@link
+     * #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId   ID of the colony.
      * @param buildingId ID of the building.
@@ -379,8 +359,7 @@ public interface IColonyManager
     void handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, @NotNull PacketBuffer buf, int dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)}
-     * if {@link #getColonyView(int, int)} gives a not-null result. If {@link
+     * Returns result of {@link IColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)} if {@link #getColonyView(int, int)} gives a not-null result. If {@link
      * #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId   ID of the colony.
@@ -390,9 +369,8 @@ public interface IColonyManager
     void handleColonyViewRemoveBuildingMessage(int colonyId, BlockPos buildingId, int dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyViewRemoveWorkOrderMessage(int)}
-     * if {@link #getColonyView(int, int)} gives a not-null result. If {@link
-     * #getColonyView(int, int)} is null, returns null.
+     * Returns result of {@link IColonyView#handleColonyViewRemoveWorkOrderMessage(int)} if {@link #getColonyView(int, int)} gives a not-null result. If {@link #getColonyView(int,
+     * int)} is null, returns null.
      *
      * @param colonyId    ID of the colony.
      * @param workOrderId ID of the workOrder.

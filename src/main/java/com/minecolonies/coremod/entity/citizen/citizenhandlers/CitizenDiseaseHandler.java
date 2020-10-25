@@ -6,15 +6,17 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenDiseaseHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobHealer;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.TAG_DISEASE;
-import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
+import static com.minecolonies.api.util.constant.CitizenConstants.TAG_IMMUNITY;
+import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 
 /**
  * Handler taking care of citizens getting stuck.
@@ -29,7 +31,12 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     /**
      * Base likelihood of a citizen getting a disease.
      */
-    private static final int DISEASE_FACTOR = 100000;
+    private static final int DISEASE_FACTOR = 10000;
+
+    /**
+     * Number of seconds after recovering a citizen is immune against any illness.
+     */
+    private static final int IMMUNITY_TIME  = 60 * 10 * 7;
 
     /**
      * The citizen assigned to this manager.
@@ -42,48 +49,86 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     private String disease = "";
 
     /**
+     * Special immunity time after being cured.
+     */
+    private int immunityTicks = 0;
+
+    /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenDiseaseHandler(final EntityCitizen citizen)
+    public CitizenDiseaseHandler(final AbstractEntityCitizen citizen)
     {
         this.citizen = citizen;
     }
 
     /**
-     * Called in the citizen every few ticks to check if stuck.
+     * Called in the citizen every few ticks to check for illness.
      */
     @Override
     public void tick()
     {
-        if (citizen.getTicksExisted() % TICKS_20 == 0 && !(citizen.getCitizenJobHandler().getColonyJob() instanceof JobHealer)
-              && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > IMinecoloniesAPI.getInstance().getConfig().getCommon().initialCitizenAmount.get())
+        if (canBecomeSick())
         {
             final int citizenModifier = citizen.getCitizenJobHandler().getColonyJob() == null ? 1 : citizen.getCitizenJobHandler().getColonyJob().getDiseaseModifier();
             final int configModifier = MineColonies.getConfig().getCommon().diseaseModifier.get();
-            if (citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR / citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount()) < citizenModifier)
+            if (citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier)
             {
                 this.disease = IColonyManager.getInstance().getCompatibilityManager().getRandomDisease();
             }
+        }
+
+        if (immunityTicks > 0)
+        {
+            immunityTicks--;
+        }
+    }
+
+    /**
+     * Check if the citizen may become sick.
+     * @return true if so.
+     */
+    private boolean canBecomeSick()
+    {
+        return !isSick()
+             && citizen.getCitizenColonyHandler().getColony().isActive()
+             && !(citizen.getCitizenJobHandler().getColonyJob() instanceof JobHealer)
+             && immunityTicks <= 0
+             && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > IMinecoloniesAPI.getInstance()
+                                                                                                               .getConfig()
+                                                                                                               .getCommon().initialCitizenAmount.get();
+    }
+
+    @Override
+    public void onCollission(@NotNull final AbstractEntityCitizen citizen)
+    {
+        if (citizen.getCitizenDiseaseHandler().isSick()
+              && canBecomeSick()
+              && citizen.getRandom().nextInt(ONE_HUNDRED_PERCENT) < 1)
+        {
+            this.disease = citizen.getCitizenDiseaseHandler().getDisease();
         }
     }
 
     @Override
     public boolean isSick()
     {
-        return !disease.isEmpty() || ( !(citizen.getCitizenJobHandler() instanceof AbstractJobGuard) && citizen.getHealth() <= SEEK_DOCTOR_HEALTH);
+        return !disease.isEmpty() || (!(citizen.getCitizenJobHandler() instanceof AbstractJobGuard) && citizen.getHealth() <= SEEK_DOCTOR_HEALTH);
     }
 
     @Override
     public void write(final CompoundNBT compound)
     {
         compound.putString(TAG_DISEASE, disease);
+        compound.putInt(TAG_IMMUNITY, immunityTicks);
     }
 
     @Override
     public void read(final CompoundNBT compound)
     {
         this.disease = compound.getString(TAG_DISEASE);
+        this.immunityTicks = compound.getInt(TAG_IMMUNITY);
     }
 
     @Override
@@ -106,6 +151,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
             {
                 hospital.onWakeUp();
             }
+            immunityTicks = IMMUNITY_TIME;
         }
     }
 }

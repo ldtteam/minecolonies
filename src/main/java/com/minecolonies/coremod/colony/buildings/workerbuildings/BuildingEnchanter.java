@@ -115,6 +115,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
 
     /**
      * Add a new worker to gather xp from.
+     *
      * @param blockPos the pos of the building.
      */
     public void addWorker(final BlockPos blockPos)
@@ -125,6 +126,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
 
     /**
      * Remove a worker to stop gathering from.
+     *
      * @param blockPos the pos of that worker.
      */
     public void removeWorker(final BlockPos blockPos)
@@ -147,12 +149,13 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         super.deserializeNBT(compound);
         buildingToGatherFrom.clear();
         NBTUtils.streamCompound(compound.getList(TAG_GATHER_LIST, Constants.NBT.TAG_COMPOUND))
-                                      .map(this::deserializeListElement)
-                                      .forEach(t -> buildingToGatherFrom.put(t.getA(), t.getB()));
+          .map(this::deserializeListElement)
+          .forEach(t -> buildingToGatherFrom.put(t.getA(), t.getB()));
     }
 
     /**
      * Helper to deserialize a list element from nbt.
+     *
      * @param nbtTagCompound the compound to deserialize from.
      * @return the resulting blockPos/boolean tuple.
      */
@@ -174,7 +177,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     private CompoundNBT serializeListElement(final Map.Entry<BlockPos, Boolean> entry)
     {
         final CompoundNBT compound = new CompoundNBT();
-        BlockPosUtil.write(compound,TAG_POS, entry.getKey());
+        BlockPosUtil.write(compound, TAG_POS, entry.getKey());
         compound.putBoolean(TAG_GATHERED_ALREADY, entry.getValue());
         return compound;
     }
@@ -192,6 +195,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
 
     /**
      * Return the set of the buildings to gather from.
+     *
      * @return a copy of th eset.
      */
     public Set<BlockPos> getBuildingsToGatherFrom()
@@ -201,6 +205,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
 
     /**
      * Get a random worker building id to gather xp from.
+     *
      * @return the unique pos id of it.
      */
     @Nullable
@@ -216,6 +221,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
 
     /**
      * Set the building as gathered.
+     *
      * @param pos the pos of the building.
      */
     public void setAsGathered(final BlockPos pos)
@@ -265,6 +271,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
 
         /**
          * Getter for the list.
+         *
          * @return the list.
          */
         public List<BlockPos> getBuildingsToGatherFrom()
@@ -274,6 +281,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
 
         /**
          * Add a new worker to gather xp from.
+         *
          * @param blockPos the pos of the building.
          */
         public void addWorker(final BlockPos blockPos)
@@ -284,6 +292,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
 
         /**
          * Remove a worker to stop gathering from.
+         *
          * @param blockPos the pos of that worker.
          */
         public void removeWorker(final BlockPos blockPos)

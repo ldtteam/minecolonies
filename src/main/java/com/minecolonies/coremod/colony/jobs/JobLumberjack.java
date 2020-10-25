@@ -4,12 +4,15 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TREE;
 
 /**
@@ -18,10 +21,15 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TREE;
 public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, JobLumberjack>
 {
     /**
+     * Walking speed bonus per level
+     */
+    public static final double BONUS_SPEED_PER_LEVEL = 0.003;
+
+    /**
      * The tree this lumberjack is currently working on.
      */
     @Nullable
-    private              Tree   tree;
+    private Tree tree;
 
     /**
      * Create a lumberjack job.
@@ -37,14 +45,14 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-        if (compound.keySet().contains(TAG_TREE))
+        @NotNull final CompoundNBT treeTag = new CompoundNBT();
+
+        if (tree != null)
         {
-            tree = Tree.read(compound.getCompound(TAG_TREE));
-            if (!tree.isTree())
-            {
-                tree = null;
-            }
+            tree.write(treeTag);
         }
+
+        compound.put(TAG_TREE, treeTag);
         return compound;
     }
 
@@ -72,14 +80,25 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        @NotNull final CompoundNBT treeTag = new CompoundNBT();
-
-        if (tree != null)
+        if (compound.keySet().contains(TAG_TREE))
         {
-            tree.write(treeTag);
+            tree = Tree.read(compound.getCompound(TAG_TREE));
+            if (!tree.isTree())
+            {
+                tree = null;
+            }
         }
+    }
 
-        compound.put(TAG_TREE, treeTag);
+    @Override
+    public void onLevelUp()
+    {
+        if (getCitizen().getEntity().isPresent())
+        {
+            final AbstractEntityCitizen worker = getCitizen().getEntity().get();
+            worker.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+              .setBaseValue(BASE_MOVEMENT_SPEED + (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getSecondarySkill()) / 2.0 ) * BONUS_SPEED_PER_LEVEL);
+        }
     }
 
     /**

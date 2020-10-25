@@ -1,20 +1,20 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 /**
  * Miner Node Data StructureIterator.
  * <p>
- * When a node is completed we should add the surrounding nodes to level as AVAILABLE
- * also note that we don't want node (0, -1) because there will be a ladder on the back
- * wall of the initial node, and we cant put the connection through the ladder
+ * When a node is completed we should add the surrounding nodes to level as AVAILABLE also note that we don't want node (0, -1) because there will be a ladder on the back wall of
+ * the initial node, and we cant put the connection through the ladder
  */
 public class Node
 {
@@ -23,6 +23,7 @@ public class Node
      */
     private static final String TAG_X       = "idX";
     private static final String TAG_Z       = "idZ";
+    private static final String TAG_ROT     = "rotation";
     private static final String TAG_STYLE   = "Style";
     private static final String TAG_STATUS  = "Status";
     private static final String TAG_PARENTX = "ParentX";
@@ -49,6 +50,11 @@ public class Node
     private final int z;
 
     /**
+     * The rotation that was calculated and used at build time
+     */
+    private Optional<Integer> rot = Optional.empty();
+
+    /**
      * Central position of parent node.
      */
     @Nullable
@@ -67,8 +73,7 @@ public class Node
     private NodeStatus status;
 
     /**
-     * Initializes the node.
-     * Requires a location in the node as parameters
+     * Initializes the node. Requires a location in the node as parameters
      *
      * @param x      X-coordinate in the node
      * @param z      Z-coordinate in the node
@@ -78,14 +83,13 @@ public class Node
     {
         this.x = x;
         this.z = z;
-        this.style = NodeType.CROSSROAD;
+        this.style = NodeType.UNDEFINED;
         this.status = NodeStatus.AVAILABLE;
         this.parent = parent;
     }
 
     /**
-     * Creates a node from the NBT Tag.
-     * Returns the created node
+     * Creates a node from the NBT Tag. Returns the created node
      *
      * @param compound Compound to read from
      * @return Node created from compound
@@ -110,7 +114,6 @@ public class Node
         }
 
         final NodeType style = NodeType.valueOf(compound.getString(TAG_STYLE));
-
         final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
         Vec2i parent = null;
@@ -119,8 +122,8 @@ public class Node
             if (hasDoubles)
             {
                 parent = new Vec2i(
-                                    MathHelper.floor(compound.getDouble(TAG_PARENTX)),
-                                    MathHelper.floor(compound.getDouble(TAG_PARENTZ)));
+                  MathHelper.floor(compound.getDouble(TAG_PARENTX)),
+                  MathHelper.floor(compound.getDouble(TAG_PARENTZ)));
             }
             else
             {
@@ -130,8 +133,17 @@ public class Node
 
         //Set the node status in all directions.
         @NotNull final Node node = new Node(x, z, parent);
+        if(style == NodeType.UNDEFINED)
+        {
+            Log.getLogger().error("Minecolonies Node " + x + "," + z + " has an undefined style, please tell the mod author about this");
+        }
         node.setStyle(style);
         node.setStatus(status);
+
+        if(compound.keySet().contains(TAG_ROT))
+        {
+            node.setRot(compound.getInt(TAG_ROT));
+        }
 
         return node;
     }
@@ -145,6 +157,11 @@ public class Node
     {
         compound.putInt(TAG_X, x);
         compound.putInt(TAG_Z, z);
+        
+        if(rot.isPresent())
+        {
+            compound.putInt(TAG_ROT, rot.get());
+        }
 
         compound.putString(TAG_STYLE, style.name());
         compound.putString(TAG_STATUS, status.name());
@@ -282,9 +299,10 @@ public class Node
 
     /**
      * Return a random next node to work at, might be at this node or at a parent.
-     * @return the next node to go to.
+     *
      * @param level the level it is part of.
-     * @param step the step.
+     * @param step  the step.
+     * @return the next node to go to.
      */
     @Nullable
     public Node getRandomNextNode(final Level level, final int step)
@@ -313,7 +331,7 @@ public class Node
         if (nextNode == null || nextNode.style == NodeType.SHAFT)
         {
             final Node parent = level.getOpenNode(getParent());
-            return parent == null ? null : parent.getRandomNextNode(level, step+1);
+            return parent == null ? null : parent.getRandomNextNode(level, step + 1);
         }
         return nextNode;
     }
@@ -342,11 +360,8 @@ public class Node
     }
 
     /**
-     * Sets the status of the node.
-     * AVAILABLE means it can be mined
-     * IN_PROGRESS means it is currently being mined
-     * COMPLETED means it has been mined and all torches/wood structure has been placed
-     * LADDER means this side has the ladder and must not be mined
+     * Sets the status of the node. AVAILABLE means it can be mined IN_PROGRESS means it is currently being mined COMPLETED means it has been mined and all torches/wood structure
+     * has been placed LADDER means this side has the ladder and must not be mined
      */
     public enum NodeStatus
     {
@@ -372,6 +387,26 @@ public class Node
         //Crossroad structure
         CROSSROAD,
         //Bending tunnle
-        BEND
+        BEND,
+        //New node, undefined
+        UNDEFINED
+    }
+
+    /**
+     * Get rotation stored in the node as an optional, only set if actually stored. 
+     * @return
+     */
+    public Optional<Integer> getRot()
+    {
+        return rot;
+    }
+
+    /**
+     * Set rotation storaged in the node
+     * @param rot
+     */
+    public void setRot(int rot)
+    {
+        this.rot = Optional.of(rot);
     }
 }

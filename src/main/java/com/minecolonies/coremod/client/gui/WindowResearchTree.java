@@ -5,6 +5,7 @@ import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ZoomDragView;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
@@ -15,6 +16,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
+import com.minecolonies.coremod.research.BuildingResearchRequirement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
@@ -40,7 +42,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     /**
      * The university building.
      */
-    private final BuildingUniversity.View  building;
+    private final BuildingUniversity.View building;
 
     /**
      * The previous window.
@@ -54,13 +56,14 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
     /**
      * Create the research tree window.
-     * @param branch the branch being researched.
+     *
+     * @param branch   the branch being researched.
      * @param building the associated university.
-     * @param last the GUI we opened this from.
+     * @param last     the GUI we opened this from.
      */
     public WindowResearchTree(final String branch, final BuildingUniversity.View building, final WindowHutUniversity last)
     {
-        super(Constants.MOD_ID + R_TREE_RESOURCE_SUFFIX);
+        super(Constants.MOD_ID + R_TREE_RESOURCE_SUFFIX, last);
         this.branch = branch;
         this.building = building;
         this.last = last;
@@ -76,11 +79,37 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         for (int i = 1; i <= MAX_DEPTH; i++)
         {
             final Label timeLabel = new Label();
-            timeLabel.setLabelText(Math.pow(2, i-1) + "h");
-            timeLabel.setPosition((i-1) * (GRADIENT_WIDTH + X_SPACING) + GRADIENT_WIDTH / 2, TIMELABEL_Y_POSITION);
+            timeLabel.setLabelText(Math.pow(2, i - 1) + "h");
+            timeLabel.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING) + GRADIENT_WIDTH / 2, TIMELABEL_Y_POSITION);
             timeLabel.setColor(Color.rgbaToInt(218, 202, 171, 255));
             view.addChild(timeLabel);
         }
+    }
+
+    /**
+     *
+     * @param researchRequirement requirement to start research
+     * @return whether the requirement has been satisfied for research
+     */
+    private boolean isResearchFulfilled(final BuildingResearchRequirement researchRequirement)
+    {
+        List<IBuildingView> buildings = building.getColony().getBuildings();
+        int levels = 0;
+
+        if (researchRequirement == null)
+        {
+            return true;
+        }
+
+        for (IBuildingView building : buildings)
+        {
+            if (building.getSchematicName().equals(researchRequirement.getBuilding()))
+            {
+                levels += building.getBuildingLevel();
+            }
+        }
+
+        return levels >= researchRequirement.getBuildingLevel();
     }
 
     @Override
@@ -107,17 +136,26 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
     /**
      * Draw the tree of research.
-     * @param height the start y offset.
-     * @param depth the current depth.
-     * @param view the view to append it to.
-     * @param researchList the list of research to go through.
-     * @param tree the local tree of the colony.
+     *
+     * @param height           the start y offset.
+     * @param depth            the current depth.
+     * @param view             the view to append it to.
+     * @param researchList     the list of research to go through.
+     * @param tree             the local tree of the colony.
      * @param parentResearched if possibly can be researched.
-     * @param abandoned if abandoned child.
-     * @param parentHeight the height of the parent.
+     * @param abandoned        if abandoned child.
+     * @param parentHeight     the height of the parent.
      * @return the next y offset.
      */
-    public int drawTree(final int height, final int depth, final ZoomDragView view, final List<String> researchList, final ILocalResearchTree tree, final boolean parentResearched, final boolean abandoned, final int parentHeight)
+    public int drawTree(
+      final int height,
+      final int depth,
+      final ZoomDragView view,
+      final List<String> researchList,
+      final ILocalResearchTree tree,
+      final boolean parentResearched,
+      final boolean abandoned,
+      final int parentHeight)
     {
         int nextHeight = height;
         for (int i = 0; i < researchList.size(); i++)
@@ -173,7 +211,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final Label nameLabel = new Label();
             nameLabel.setLabelText(research.getDesc());
             nameLabel.setPosition(offsetX + INITIAL_X_OFFSET + NAME_OFFSET, (nextHeight + Math.min(i, 1)) * (GRADIENT_HEIGHT + Y_SPACING) + Y_SPACING + INITIAL_Y_OFFSET);
-            nameLabel.setColor(Color.rgbaToInt(160 , 160 , 160, 255));
+            nameLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
             view.addChild(nameLabel);
 
             if (state == ResearchState.IN_PROGRESS)
@@ -184,7 +222,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch()));
                 }
                 //Calculates how much percent of the next level has been completed.
-                final double progressRatio = (localResearch.getProgress()+1)/(Math.pow(2, localResearch.getDepth()-1) * (double) BASE_RESEARCH_TIME) * 100;
+                final double progressRatio = (localResearch.getProgress() + 1) / (Math.pow(2, localResearch.getDepth() - 1) * (double) BASE_RESEARCH_TIME) * 100;
 
                 @NotNull final Image xpBar = new Image();
                 xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
@@ -210,7 +248,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 final Label requirementLabel = new Label();
                 requirementLabel.setLabelText(research.getResearchRequirement().getDesc().getFormattedText());
                 requirementLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() + INITIAL_Y_OFFSET);
-                requirementLabel.setColor(Color.rgbaToInt(160 , 160 , 160, 255));
+                requirementLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
 
                 view.addChild(requirementLabel);
             }
@@ -218,11 +256,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final Label effectLabel = new Label();
             effectLabel.setLabelText(research.getEffect().getDesc().getFormattedText());
             effectLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() * 2 + INITIAL_Y_OFFSET + INITIAL_Y_OFFSET);
-            effectLabel.setColor(Color.rgbaToInt(160 , 160 , 160, 255));
+            effectLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
 
             view.addChild(effectLabel);
 
-            if ( parentResearched && state == ResearchState.NOT_STARTED && !trueAbandoned )
+            if (parentResearched && state == ResearchState.NOT_STARTED && !trueAbandoned)
             {
                 final ButtonImage buttonImage = new ButtonImage();
                 buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
@@ -246,6 +284,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                     buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.toomanyinprogress"));
                 }
+                else if (!isResearchFulfilled((BuildingResearchRequirement) research.getResearchRequirement()))
+                {
+                    buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
+                    buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.missingrequirements"));
+                }
                 else if (!research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
@@ -258,7 +301,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 }
                 else if (research.getDepth() == 6
                            && building.getBuildingLevel() == building.getBuildingMaxLevel()
-                            && hasMax)
+                           && hasMax)
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                     buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.maxunlocked"));
@@ -285,14 +328,14 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 final Image lockIcon = new Image();
                 lockIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/locked_icon.png"));
                 lockIcon.setSize(LOCK_WIDTH, LOCK_HEIGHT);
-                lockIcon.setPosition( effectLabel.getX() + BUTTON_LENGTH, effectLabel.getY() + effectLabel.getHeight() + INITIAL_Y_OFFSET);
+                lockIcon.setPosition(effectLabel.getX() + BUTTON_LENGTH, effectLabel.getY() + effectLabel.getHeight() + INITIAL_Y_OFFSET);
                 view.addChild(lockIcon);
             }
 
             final boolean firstSibling = i == 0;
-            final boolean secondSibling = i == 1;
+            final boolean secondSibling = i >= 1;
 
-            final boolean lastSibling = i+1 >= researchList.size();
+            final boolean lastSibling = i + 1 >= researchList.size();
 
             if (!research.getParent().isEmpty())
             {
@@ -308,12 +351,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 {
                     if (secondSibling)
                     {
-                        for (int dif = 1; dif < (nextHeight + Math.min(i, 1)) - parentHeight; dif++)
+                        for (int dif = 1; dif < nextHeight - parentHeight + 1; dif++)
                         {
                             final Image corner = new Image();
                             corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_down.png"));
                             corner.setSize(X_SPACING, GRADIENT_HEIGHT + Y_SPACING);
-                            corner.setPosition(gradient.getX() - X_SPACING, (dif) * (gradient.getHeight() + Y_SPACING) + Y_SPACING);
+                            corner.setPosition(gradient.getX() - X_SPACING, gradient.getY() - (dif * corner.getHeight()));
                             view.addChild(corner);
                         }
                     }
@@ -374,12 +417,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                         }
                     }
                 }
-
             }
 
             if (!research.getChilds().isEmpty())
             {
-                nextHeight = drawTree(nextHeight + Math.min(i, 1), depth + 1, view, research.getChilds(), tree, state == ResearchState.FINISHED, trueAbandoned, (nextHeight + Math.min(i, 1)));
+                nextHeight =
+                  drawTree(nextHeight + Math.min(i, 1), depth + 1, view, research.getChilds(), tree, state == ResearchState.FINISHED, trueAbandoned, (nextHeight + Math.min(i, 1)));
             }
             else
             {
@@ -389,5 +432,4 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
         return nextHeight;
     }
-
 }

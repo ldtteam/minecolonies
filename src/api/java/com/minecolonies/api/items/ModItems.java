@@ -39,6 +39,20 @@ public final class ModItems
 
     public static Item santaHat;
 
+    public static Item flagBanner;
+    public static Item irongate;
+    public static Item woodgate;
+
+    public static Item breadDough;
+    public static Item cookieDough;
+    public static Item cakeBatter;
+    public static Item rawPumpkinPie;
+
+    public static Item milkyBread;
+    public static Item sugaryBread;
+    public static Item goldenBread;
+    public static Item chorusBread;
+
     /**
      * Private constructor to hide the implicit public one.
      */

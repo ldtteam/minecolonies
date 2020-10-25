@@ -65,8 +65,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     private int targetCounter;
 
     /**
-     * Creates the abstract part of the AI.inte
-     * Always use this constructor!
+     * Creates the abstract part of the AI.inte Always use this constructor!
      *
      * @param job the job to fulfill
      */
@@ -75,12 +74,12 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(COMBAT_TRAINING, this::decideOnTrainingType, 1),
-          new AITarget(FIND_TRAINING_PARTNER, this::findTrainingPartner, 1),
-          new AITarget(KNIGHT_TRAIN_WITH_PARTNER, this::trainWithPartner, 1),
-          new AITarget(FIND_DUMMY_PARTNER, this::findDummyPartner, 1),
-          new AITarget(KNIGHT_ATTACK_DUMMY, this::attackDummy, 1),
-          new AITarget(KNIGHT_ATTACK_PROTECT, this::attack, 1)
+          new AITarget(COMBAT_TRAINING, this::decideOnTrainingType, 20),
+          new AITarget(FIND_TRAINING_PARTNER, this::findTrainingPartner, 20),
+          new AITarget(KNIGHT_TRAIN_WITH_PARTNER, this::trainWithPartner, 20),
+          new AITarget(FIND_DUMMY_PARTNER, this::findDummyPartner, 20),
+          new AITarget(KNIGHT_ATTACK_DUMMY, this::attackDummy, 20),
+          new AITarget(KNIGHT_ATTACK_PROTECT, this::attack, TRAININGS_DELAY)
         );
     }
 
@@ -91,7 +90,6 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      */
     private IAIState decideOnTrainingType()
     {
-        setDelay(STANDARD_DELAY);
         if (getOwnBuilding().hasCombatPartner(worker) || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < PARTNER_TRAINING_CHANCE)
         {
             return FIND_TRAINING_PARTNER;
@@ -104,7 +102,6 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     {
         if (getOwnBuilding().hasCombatPartner(worker))
         {
-            setDelay(STANDARD_DELAY);
             return KNIGHT_TRAIN_WITH_PARTNER;
         }
         return super.decide();
@@ -117,7 +114,6 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      */
     private IAIState findTrainingPartner()
     {
-        setDelay(STANDARD_DELAY);
         final BuildingCombatAcademy academy = getOwnBuilding();
         if (academy.hasCombatPartner(worker))
         {
@@ -137,11 +133,11 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
     /**
      * Train with a partner. Find the partner and path to him.
+     *
      * @return the next state to go to.
      */
     private IAIState trainWithPartner()
     {
-        setDelay(STANDARD_DELAY);
         if (trainingPartner == null)
         {
             return COMBAT_TRAINING;
@@ -157,11 +153,11 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
     /**
      * Attack the training partner or block.
+     *
      * @return the next state to go to.
      */
     private IAIState attack()
     {
-        setDelay(STANDARD_DELAY);
         if (trainingPartner == null)
         {
             return START_WORKING;
@@ -217,17 +213,16 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return KNIGHT_ATTACK_PROTECT;
         }
 
-        setDelay(TRAININGS_DELAY);
         return KNIGHT_ATTACK_PROTECT;
     }
 
     /**
      * Find a dummy partner.
+     *
      * @return the next state to go to.
      */
     private IAIState findDummyPartner()
     {
-        setDelay(STANDARD_DELAY);
         final BuildingCombatAcademy academy = getOwnBuilding();
         if (targetCounter >= academy.getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
         {
@@ -238,7 +233,6 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
         if (getOwnBuilding().hasCombatPartner(worker))
         {
-            setDelay(STANDARD_DELAY);
             return KNIGHT_TRAIN_WITH_PARTNER;
         }
 
@@ -259,11 +253,11 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
     /**
      * Attack the dummy.
+     *
      * @return the next state to go to.
      */
     private IAIState attackDummy()
     {
-        setDelay(STANDARD_DELAY);
         if (currentCombatTarget == null)
         {
             return START_WORKING;
@@ -302,7 +296,6 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return KNIGHT_ATTACK_DUMMY;
         }
 
-        setDelay(TRAININGS_DELAY);
         return FIND_DUMMY_PARTNER;
     }
 
@@ -311,13 +304,11 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     {
         if (checkForToolOrWeapon(ToolType.SWORD))
         {
-            setDelay(REQUEST_DELAY);
             return false;
         }
 
         if (checkForToolOrWeapon(ToolType.SHIELD))
         {
-            setDelay(REQUEST_DELAY);
             return false;
         }
 

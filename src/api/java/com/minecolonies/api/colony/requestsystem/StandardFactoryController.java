@@ -21,8 +21,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Default implementation of a FactoryController
- * Singleton.
+ * Default implementation of a FactoryController Singleton.
  */
 public final class StandardFactoryController implements IFactoryController
 {
@@ -35,7 +34,7 @@ public final class StandardFactoryController implements IFactoryController
     /**
      * Instance variable.
      */
-    private static final StandardFactoryController     INSTANCE              = new StandardFactoryController();
+    private static final StandardFactoryController              INSTANCE              = new StandardFactoryController();
     /**
      * Primary (main) INPUT mappings.
      */
@@ -51,10 +50,10 @@ public final class StandardFactoryController implements IFactoryController
      * Secondary (super) output mappings
      */
     @NotNull
-    private final Map<TypeToken<?>, Set<IFactory<?, ?>>>                secondaryOutputMappings = new HashMap<>();
+    private final Map<TypeToken<?>, Set<IFactory<?, ?>>>                   secondaryOutputMappings = new HashMap<>();
     /**
-     * A cache that holds all Mappers and their search secondary IO types.
-     * Filled during runtime to speed up searches to factories when both INPUT and OUTPUT type are secondary types.
+     * A cache that holds all Mappers and their search secondary IO types. Filled during runtime to speed up searches to factories when both INPUT and OUTPUT type are secondary
+     * types.
      */
     @NotNull
     private final Cache<Tuple<TypeToken<?>, TypeToken<?>>, IFactory<?, ?>> secondaryMappingsCache  = CacheBuilder.newBuilder().build();
@@ -72,11 +71,14 @@ public final class StandardFactoryController implements IFactoryController
     private final BiMap<String, String> classRenamingHandlers = HashBiMap.create();
 
     /**
+     * Specific serialization mappings.
+     */
+    private Map<Short, IFactory<?, ?>> serializationMappings = new HashMap<>();
+
+    /**
      * Private constructor. Throws IllegalStateException if already created.
-     *
-     * We suppress warning squid:S2583 which makes sure that no null checks are executed on notnull fields.
-     * In this case it makes sense since we need to make sure.
-     *
+     * <p>
+     * We suppress warning squid:S2583 which makes sure that no null checks are executed on notnull fields. In this case it makes sense since we need to make sure.
      */
     @SuppressWarnings("squid:S2583")
     private StandardFactoryController()
@@ -88,8 +90,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     /**
-     * Resets the FactoryController to the default values.
-     * Clears all registered Factories.
+     * Resets the FactoryController to the default values. Clears all registered Factories.
      * <p>
      * Only used for testing.
      */
@@ -112,7 +113,8 @@ public final class StandardFactoryController implements IFactoryController
 
     @SuppressWarnings(Suppression.UNCHECKED)
     @Override
-    public <INPUT, OUTPUT> IFactory<INPUT, OUTPUT> getFactoryForIO(@NotNull final TypeToken<? extends INPUT> inputClass, @NotNull final TypeToken<? extends OUTPUT> outputClass) throws IllegalArgumentException
+    public <INPUT, OUTPUT> IFactory<INPUT, OUTPUT> getFactoryForIO(@NotNull final TypeToken<? extends INPUT> inputClass, @NotNull final TypeToken<? extends OUTPUT> outputClass)
+      throws IllegalArgumentException
     {
         final ITypeOverrideHandler<?> inputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(inputClass)).findFirst().orElse(null);
         final ITypeOverrideHandler<?> outputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(outputClass)).findFirst().orElse(null);
@@ -197,10 +199,21 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
+    public <OUTPUT> IFactory<?, OUTPUT> getFactoryForSerializationId(final short id) throws IllegalArgumentException
+    {
+        return (IFactory<?, OUTPUT>) serializationMappings.get(id);
+    }
+
+    @Override
     public <INPUT, OUTPUT> void registerNewFactory(@NotNull final IFactory<INPUT, OUTPUT> factory) throws IllegalArgumentException
     {
         primaryInputMappings.putIfAbsent(factory.getFactoryInputType(), new HashSet<>());
         primaryOutputMappings.putIfAbsent(factory.getFactoryOutputType(), new HashSet<>());
+        if (serializationMappings.containsKey(factory.getSerializationId()))
+        {
+            throw new IllegalArgumentException("Cannot register two factories with the same serialization id!");
+        }
+        serializationMappings.put(factory.getSerializationId(), factory);
 
         final Set<IFactory<?, ?>> primaryInputFactories = primaryInputMappings.get(factory.getFactoryInputType());
         final Set<IFactory<?, ?>> primaryOutputFactories = primaryOutputMappings.get(factory.getFactoryOutputType());
@@ -258,7 +271,7 @@ public final class StandardFactoryController implements IFactoryController
         }
         catch (final IllegalArgumentException e)
         {
-            throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller").initCause(e);
+            throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller: " + className).initCause(e);
         }
 
         try
@@ -284,17 +297,37 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    public <OUTPUT> void writeToBuffer(@NotNull final PacketBuffer buffer, @NotNull final OUTPUT object) throws IllegalArgumentException
+    public <OUTPUT> void serialize(@NotNull final PacketBuffer buffer, @NotNull final OUTPUT object) throws IllegalArgumentException
     {
-        final CompoundNBT bufferCompound = serialize(object);
-        buffer.writeCompoundTag(bufferCompound);
+        final IFactory<?, OUTPUT> factory = getFactoryForOutput((TypeToken<? extends OUTPUT>) TypeToken.of(object.getClass()));
+        buffer.writeShort(factory.getSerializationId());
+        factory.serialize(this, object, buffer);
     }
 
     @Override
-    public <OUTPUT> OUTPUT readFromBuffer(@NotNull final PacketBuffer buffer) throws IllegalArgumentException
+    public <OUTPUT> OUTPUT deserialize(@NotNull final PacketBuffer buffer) throws IllegalArgumentException
     {
-        final CompoundNBT bufferCompound = buffer.readCompoundTag();
-        return deserialize(bufferCompound);
+        short classId = buffer.readShort();
+        final IFactory<?, OUTPUT> factory;
+
+        try
+        {
+            factory = getFactoryForOutput(classId);
+        }
+        catch (final IllegalArgumentException e)
+        {
+            throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller").initCause(e);
+        }
+
+        try
+        {
+            return factory.deserialize(this, buffer);
+        }
+        catch (Throwable throwable)
+        {
+            Log.getLogger().error(throwable);
+            return null;
+        }
     }
 
     @Override

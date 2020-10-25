@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-
 public class CitizenEatFoodTrigger extends AbstractCriterionTrigger<CitizenEatFoodListeners, CitizenEatFoodCriterionInstance>
 {
     public CitizenEatFoodTrigger()

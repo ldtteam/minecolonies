@@ -7,11 +7,11 @@ import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;
@@ -25,8 +25,8 @@ public class EntityLocation implements ILocation
     @NotNull
     private final UUID uuid;
 
-    @Nullable
-    private WeakReference<Entity> entity;
+    @NotNull
+    private WeakReference<Entity> entity = new WeakReference<>(null);
 
     public EntityLocation(@NotNull final UUID uuid)
     {
@@ -36,7 +36,7 @@ public class EntityLocation implements ILocation
 
     private void checkEntity()
     {
-        if (entity != null)
+        if (entity.get() != null)
         {
             return;
         }
@@ -69,13 +69,14 @@ public class EntityLocation implements ILocation
     public BlockPos getInDimensionLocation()
     {
         checkEntity();
-        if (entity == null || entity.get() == null)
+        final Entity entityRef = entity.get();
+        if (entityRef == null)
         {
             return BlockPos.ZERO;
         }
         else
         {
-            return entity.get().getPosition();
+            return entityRef.getPosition();
         }
     }
 
@@ -88,13 +89,14 @@ public class EntityLocation implements ILocation
     public int getDimension()
     {
         checkEntity();
-        if (entity == null || entity.get() == null)
+        final Entity entityRef = entity.get();
+        if (entityRef == null)
         {
             return 0;
         }
         else
         {
-            return entity.get().dimension.getId();
+            return entityRef.dimension.getId();
         }
     }
 
@@ -108,7 +110,7 @@ public class EntityLocation implements ILocation
     public boolean isReachableFromLocation(@NotNull final ILocation location)
     {
         checkEntity();
-        return !(entity == null || entity.get() == null) && location.getDimension() == getDimension();
+        return !(entity.get() == null) && location.getDimension() == getDimension();
     }
 
     /**
@@ -119,7 +121,8 @@ public class EntityLocation implements ILocation
     public PlayerEntity getPlayerEntity()
     {
         checkEntity();
-        return entity != null && entity.get() != null && entity.get() instanceof PlayerEntity ? (PlayerEntity) entity.get() : null;
+        final Entity entityRef = entity.get();
+        return entityRef instanceof PlayerEntity ? (PlayerEntity) entityRef : null;
     }
 
     @SuppressWarnings("squid:S2972")
@@ -128,7 +131,6 @@ public class EntityLocation implements ILocation
      */
     public static class Factory implements ILocationFactory<Entity, EntityLocation>
     {
-
         ////// --------------------------- NBTConstants --------------------------- \\\\\\
         private static final String NBT_MSB = "Id_MSB";
         private static final String NBT_LSB = "Id_LSB";
@@ -204,5 +206,46 @@ public class EntityLocation implements ILocation
         {
             return new EntityLocation(input.getUniqueID());
         }
+
+        @Override
+        public void serialize(IFactoryController controller, EntityLocation input, PacketBuffer packetBuffer)
+        {
+            EntityLocation.serialize(packetBuffer, input);
+        }
+
+        @Override
+        public EntityLocation deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        {
+            return EntityLocation.deserialize(buffer);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 4;
+        }
+    }
+
+    /**
+     * Serialize this location to the given {@link PacketBuffer}.
+     *
+     * @param buffer the buffer to serialize this location to.
+     */
+    public static void serialize(PacketBuffer buffer, EntityLocation location)
+    {
+        buffer.writeUniqueId(location.uuid);
+    }
+
+    /**
+     * Deserialize the location from the given {@link PacketBuffer}
+     *
+     * @param buffer the buffer to read.
+     * @return the deserialized location.
+     */
+    public static EntityLocation deserialize(PacketBuffer buffer)
+    {
+        final UUID uuid = buffer.readUniqueId();
+
+        return new EntityLocation(uuid);
     }
 }

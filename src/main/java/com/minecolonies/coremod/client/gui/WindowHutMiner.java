@@ -21,14 +21,14 @@ import java.util.List;
  */
 public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.View>
 {
-    private static final String LIST_LEVELS               = "levels";
-    private static final String PAGE_LEVELS               = "levelActions";
-    private static final String BUTTON_CURRENTLEVEL       = "changeToLevel";
-    private static final String VIEW_PAGES                = "pages";
-    private static final String HUT_MINER_RESOURCE_SUFFIX = ":gui/windowhutminer.xml";
-    private final BuildingMiner.View            miner;
-    private       List<Tuple<Integer, Integer>> levelsInfo;
-    private       ScrollingList                 levelList;
+    private static final String                        LIST_LEVELS               = "levels";
+    private static final String                        PAGE_LEVELS               = "levelActions";
+    private static final String                        BUTTON_CURRENTLEVEL       = "changeToLevel";
+    private static final String                        VIEW_PAGES                = "pages";
+    private static final String                        HUT_MINER_RESOURCE_SUFFIX = ":gui/windowhutminer.xml";
+    private final        BuildingMiner.View            miner;
+    private              List<Tuple<Integer, Integer>> levelsInfo;
+    private              ScrollingList                 levelList;
 
     /**
      * Constructor for the window of the miner hut.
@@ -76,10 +76,10 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
 
                 rowPane.findPaneOfTypeByID("lvl", Label.class).setLabelText(Integer.toString(index));
                 rowPane.findPaneOfTypeByID("nONodes", Label.class)
-                       .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerNode") + ": " + levelsInfo.get(index).getA());
+                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerNode") + ": " + levelsInfo.get(index).getA());
                 rowPane.findPaneOfTypeByID("yLevel", Label.class)
-                       .setLabelText("Y: " + (levelsInfo.get(index).getB() + 1));
-                       // ^^ 1 is for Y depth fix
+                  .setLabelText("Y: " + (levelsInfo.get(index).getB() + 1));
+                // ^^ 1 is for Y depth fix
             }
         });
     }
@@ -116,7 +116,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
                     miner.current = row;
                     Network.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
                 }
-                break; 
+                break;
             default:
                 super.onButtonClicked(button);
                 break;

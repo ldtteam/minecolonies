@@ -29,6 +29,7 @@ public enum EventType
 
     /**
      * Create a sound event.
+     *
      * @param chance the chance for the sound to be played.
      */
     EventType(final double chance)
@@ -38,6 +39,7 @@ public enum EventType
 
     /**
      * Get the chance for the sound to play.
+     *
      * @return the chance.
      */
     public double getChance()

@@ -2,10 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Alignment;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Image;
-import com.ldtteam.blockout.controls.Label;
-import com.ldtteam.blockout.controls.Text;
+import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -26,6 +23,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
+import com.minecolonies.coremod.network.messages.server.colony.citizen.AdjustSkillCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.TransferItemsToCitizenRequestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -38,12 +36,10 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_CANT_TAKE_EQUIPPED;
@@ -61,6 +57,11 @@ public class WindowCitizen extends AbstractWindowRequestTree
      * The citizenData.View object.
      */
     private final ICitizenDataView citizen;
+
+    /**
+     * Tick function for updating every second.
+     */
+    private int tick = 0;
 
     /**
      * Enum for the available hearts
@@ -124,6 +125,16 @@ public class WindowCitizen extends AbstractWindowRequestTree
           IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimension().getType().getId()));
         this.citizen = citizen;
 
+        if (citizen.getVisibleStatus() == null)
+        {
+            findPaneOfTypeByID(STATUS_ICON, Image.class).setVisible(false);
+        }
+        else
+        {
+            findPaneOfTypeByID(STATUS_ICON, Image.class).setImage(citizen.getVisibleStatus().getIcon());
+            findPaneOfTypeByID(STATUS_ICON, Image.class).setHoverToolTip(Collections.singletonList(citizen.getVisibleStatus().getTranslatedText()));
+        }
+
         updateJobPage(citizen, this, colony);
     }
 
@@ -136,6 +147,18 @@ public class WindowCitizen extends AbstractWindowRequestTree
     public boolean canFulFill()
     {
         return true;
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+
+        if (tick++ == 20)
+        {
+            tick = 0;
+            createSkillContent(citizen, this);
+        }
     }
 
     /**
@@ -287,43 +310,6 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
-     * <p>
-     * currently unused.
-     *
-     * @param citizen the citizen to create a create a happiness bar for.
-     * @param view    the view to add the happiness bar to.
-     */
-    /*
-    private static void createHappinessBar(final ICitizenDataView citizen, final View view)
-    {
-        final double experienceRatio = (citizen.getHappiness() / HappinessConstants.MAX_HAPPINESS) * XP_BAR_WIDTH;
-        view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
-        view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int) citizen.getHappiness()));
-
-
-        @NotNull final Image xpBar = new Image();
-        xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
-        xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
-
-        @NotNull final Image xpBar2 = new Image();
-        xpBar2.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
-        xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
-
-        view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar);
-        view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar2);
-
-        if (experienceRatio > 0)
-        {
-            @NotNull final Image xpBarFull = new Image();
-            xpBarFull.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
-            xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
-            view.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
-        }
-    }
-    */
-
-    /**
-     * Creates an Happiness bar according to the citizen maxHappiness and currentHappiness.
      *
      * @param citizen pointer to the citizen data view
      * @param window  pointer to the current window
@@ -357,17 +343,28 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
     /**
      * Fills the citizen gui with it's skill values.
-     *
-     * @param citizen the citizen to use.
+     *  @param citizen the citizen to use.
      * @param window  the window to fill.
      */
     public static void createSkillContent(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
+        final boolean isCreative = Minecraft.getInstance().player.isCreative();
         for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
         {
             final Label label = window.findPaneOfTypeByID(entry.getKey().name().toLowerCase(Locale.US), Label.class);
             label.setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US), entry.getValue().getA()));
             label.setScale(0.8f);
+
+            if (isCreative)
+            {
+                final Button buttonPlus = window.findPaneOfTypeByID(PLUS_PREFIX + entry.getKey().name().toLowerCase(Locale.US), Button.class);
+                final Button buttonMinus = window.findPaneOfTypeByID(MINUS_PREFIX + entry.getKey().name().toLowerCase(Locale.US), Button.class);
+                if (buttonPlus != null && buttonMinus != null)
+                {
+                    buttonPlus.setVisible(true);
+                    buttonMinus.setVisible(true);
+                }
+            }
         }
     }
 
@@ -396,6 +393,21 @@ public class WindowCitizen extends AbstractWindowRequestTree
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
+        if (button.getID().contains(PLUS_PREFIX))
+        {
+            final String label = button.getID().replace(PLUS_PREFIX, "");
+            final Skill skill = Skill.valueOf(StringUtils.capitalize(label));
+
+            Network.getNetwork().sendToServer(new AdjustSkillCitizenMessage(colony, citizen, 1, skill));
+        }
+        else if (button.getID().contains(MINUS_PREFIX))
+        {
+            final String label = button.getID().replace(MINUS_PREFIX, "");
+            final Skill skill = Skill.valueOf(StringUtils.capitalize(label));
+
+            Network.getNetwork().sendToServer(new AdjustSkillCitizenMessage(colony, citizen, -1, skill));
+        }
+
         switch (button.getID())
         {
             case BUTTON_REQUESTS:
@@ -540,7 +552,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     {
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
-        if (building instanceof AbstractBuildingWorker.View && ! (building instanceof BuildingLibrary.View))
+        if (building instanceof AbstractBuildingWorker.View && !(building instanceof BuildingLibrary.View))
         {
             windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label",
               LanguageHandler.format(citizen.getJob())));

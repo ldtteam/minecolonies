@@ -5,12 +5,14 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
@@ -31,10 +33,9 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Abstract class for all buildings which require a filterable list of allowed items AND can also craft stuff.
  * <p>
- * TODO: The crafter logic is just a copypaste from {@link AbstractBuildingCrafter} to avoid diamond inheritance.
- * This should be fixed at some point.
+ * TODO: The crafter logic is just a copypaste from {@link AbstractBuildingCrafter} to avoid diamond inheritance. This should be fixed at some point.
  */
-public abstract class AbstractFilterableListCrafter extends AbstractFilterableListBuilding
+public abstract class AbstractFilterableListCrafter extends AbstractFilterableListBuilding implements IBuildingPublicCrafter
 {
     /**
      * Extra amount of recipes the crafters can learn.
@@ -133,10 +134,11 @@ public abstract class AbstractFilterableListCrafter extends AbstractFilterableLi
         return true;
     }
 
+
     @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
+    public Skill getCraftSpeedSkill()
     {
-        return AbstractFilterableListCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
+        return getPrimarySkill();
     }
 
     /**
@@ -155,27 +157,6 @@ public abstract class AbstractFilterableListCrafter extends AbstractFilterableLi
             super(c, l);
         }
 
-        /**
-         * Check if an additional recipe can be added.
-         *
-         * @return true if so.
-         */
-        @Override
-        public boolean canRecipeBeAdded()
-        {
-            return AbstractFilterableListCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
-        }
     }
 
-    /**
-     * Check if an additional recipe can be added.
-     *
-     * @param learnedRecipes the learned recipes.
-     * @param buildingLevel  the building level.
-     * @return true if so.
-     */
-    public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)
-    {
-        return (Math.pow(2, buildingLevel) * EXTRA_RECIPE_MULTIPLIER) >= (learnedRecipes + 1);
-    }
 }

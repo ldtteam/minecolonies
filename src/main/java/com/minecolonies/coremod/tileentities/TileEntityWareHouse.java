@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.google.common.collect.Lists;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
@@ -9,6 +8,8 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -17,12 +18,9 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -37,74 +35,81 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         super(MinecoloniesTileEntities.WAREHOUSE);
     }
 
-    /**
-     * Method used to check if this warehouse holds any of the requested itemstacks.
-     *
-     * @param itemStackSelectionPredicate The predicate to check with.
-     * @return True when the warehouse holds a stack, false when not.
-     */
     @Override
     public boolean hasMatchingItemStackInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate, int count)
     {
-        final List<ItemStack> targetStacks = getMatchingItemStacksInWarehouse(itemStackSelectionPredicate);
-        return targetStacks.stream().mapToInt(ItemStackUtils::getSize).sum() >= count;
+        final List<Tuple<ItemStack, BlockPos>> targetStacks = getMatchingItemStacksInWarehouse(itemStackSelectionPredicate);
+        return targetStacks.stream().mapToInt(tuple -> ItemStackUtils.getSize(tuple.getA())).sum() >= count;
     }
 
-    /**
-     * Method to get the first matching ItemStack in the Warehouse.
-     *
-     * @param itemStackSelectionPredicate The predicate to select the ItemStack with.
-     * @return The first matching ItemStack.
-     */
+    @Override
+    public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count)
+    {
+        int totalCountFound = 0;
+        final List<BlockPos> containers = new ArrayList<>(getBuilding().getAdditionalCountainers());
+        containers.add(this.getPos());
+        for (@NotNull final BlockPos pos : containers)
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final TileEntity entity = getWorld().getTileEntity(pos);
+                if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty())
+                {
+                    totalCountFound += ((AbstractTileEntityRack) entity).getCount(itemStack, true);
+                    if (totalCountFound >= count)
+                    {
+                        return true;
+                    }
+                }
+
+                if (entity instanceof ChestTileEntity)
+                {
+                    totalCountFound += InventoryUtils.getItemCountInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
+                      item -> item.isItemEqualIgnoreDurability(itemStack) && item.getCount() >= itemStack.getCount());
+                    if (totalCountFound >= count)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     @NotNull
-    public List<ItemStack> getMatchingItemStacksInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public List<Tuple<ItemStack, BlockPos>> getMatchingItemStacksInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
+        List<Tuple<ItemStack, BlockPos>> found = new ArrayList<>();
+        
         if (getBuilding() != null)
         {
-            final Set<TileEntity> tileEntities = new HashSet<>();
-            tileEntities.add(this);
+            final List<BlockPos> containers = new ArrayList<>(getBuilding().getAdditionalCountainers());
+            containers.add(getBuilding().getPosition());
+            for (@NotNull final BlockPos pos : containers)
+            {
+                final TileEntity entity = getWorld().getTileEntity(pos);
+                if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).getItemCount(itemStackSelectionPredicate) > 0)
+                {
+                    final TileEntityRack rack = (TileEntityRack) entity;
+                    for (final ItemStack stack : (InventoryUtils.filterItemHandler(rack.getInventory(), itemStackSelectionPredicate)))
+                    {
+                        found.add(new Tuple<>(stack, pos));
+                    }
+                }
 
-            return tileEntities.stream()
-                     .flatMap(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStackSelectionPredicate).stream())
-                     .filter(itemStacks -> !itemStacks.isEmpty())
-              .collect(Collectors.toList());
-
+                if (entity instanceof ChestTileEntity && InventoryUtils.hasItemInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), itemStackSelectionPredicate))
+                {
+                    for (final ItemStack stack : InventoryUtils.filterItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), itemStackSelectionPredicate))
+                    {
+                        found.add(new Tuple<>(stack, pos));
+                    }
+                }
+            }
         }
-
-        return Lists.newArrayList();
+        return found;
     }
 
-    /**
-     * Check for a certain item and return the position of the chest containing it.
-     *
-     * @param itemStackSelectionPredicate the stack to search for.
-     * @return the position or null.
-     */
-    @Nullable
-    public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        if (getBuilding() != null)
-        {
-            final Set<TileEntity> tileEntities = getBuilding().getAdditionalCountainers().stream().map(pos -> getWorld().getTileEntity(pos)).collect(Collectors.toSet());
-            tileEntities.removeIf(Objects::isNull);
-            tileEntities.add(this);
-
-            return tileEntities.stream()
-                     .filter(tileEntity -> InventoryUtils.hasItemInProvider(tileEntity, itemStackSelectionPredicate))
-                     .map(TileEntity::getPos)
-                     .findFirst().orElse(null);
-        }
-
-        return null;
-    }
-
-    /**
-     * Dump the inventory of a citizen into the warehouse.
-     * Go through all items and search the right chest to dump it in.
-     *
-     * @param inventoryCitizen the inventory of the citizen
-     */
     @Override
     public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
     {

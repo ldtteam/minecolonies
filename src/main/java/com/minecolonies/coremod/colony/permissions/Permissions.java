@@ -224,7 +224,7 @@ public class Permissions implements IPermissions
     private void markDirty()
     {
         dirty = true;
-        if(colony != null)
+        if (colony != null)
         {
             colony.markDirty();
         }
@@ -243,8 +243,7 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Returns the promotion rank of a specific rank.
-     * E.G.: Neutral will return Friend.
+     * Returns the promotion rank of a specific rank. E.G.: Neutral will return Friend.
      *
      * @param rank Rank to check promotion of.
      * @return {@link Rank} after promotion.
@@ -260,8 +259,7 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Returns the demotion rank of a specific rank.
-     * E.G.: Neutral will return Hostile.
+     * Returns the demotion rank of a specific rank. E.G.: Neutral will return Hostile.
      *
      * @param rank Rank to check demotion of.
      * @return {@link Rank} after demotion.
@@ -317,7 +315,7 @@ public class Permissions implements IPermissions
             {
                 players.put(id, new Player(id, player.getName(), rank));
             }
-            else if(!name.isEmpty())
+            else if (!name.isEmpty())
             {
                 players.put(id, new Player(id, name, rank));
             }
@@ -655,7 +653,7 @@ public class Permissions implements IPermissions
     /**
      * Adds a player to the rankings.
      *
-     * @param id UUID of the player..
+     * @param id   UUID of the player..
      * @param rank Desired rank.
      * @param name name of the player.
      * @return True if succesful, otherwise false.

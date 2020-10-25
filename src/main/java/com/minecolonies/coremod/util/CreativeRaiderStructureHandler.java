@@ -32,8 +32,7 @@ import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.T
 import static com.minecolonies.api.util.constant.StructureTagConstants.*;
 
 /**
- * Raider specific creative structure handler.
- * Will correctly place spawners
+ * Raider specific creative structure handler. Will correctly place spawners
  */
 public final class CreativeRaiderStructureHandler extends CreativeStructureHandler
 {
@@ -54,15 +53,23 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
 
     /**
      * The minecolonies specific creative structure placer.
-     * @param world the world.
-     * @param pos the pos it is placed at.
-     * @param structureName the name of the structure.
-     * @param settings the placement settings.
+     *
+     * @param world          the world.
+     * @param pos            the pos it is placed at.
+     * @param structureName  the name of the structure.
+     * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
-     * @param event the raid event.
-     * @param colonyId the colony id.
+     * @param event          the raid event.
+     * @param colonyId       the colony id.
      */
-    public CreativeRaiderStructureHandler(final World world, final BlockPos pos, final String structureName, final PlacementSettings settings, final boolean fancyPlacement, final IColonyRaidEvent event, final int colonyId)
+    public CreativeRaiderStructureHandler(
+      final World world,
+      final BlockPos pos,
+      final String structureName,
+      final PlacementSettings settings,
+      final boolean fancyPlacement,
+      final IColonyRaidEvent event,
+      final int colonyId)
     {
         super(world, pos, structureName, settings, fancyPlacement);
         getBluePrint().rotateWithMirror(settings.getRotation(), settings.getMirror(), world);
@@ -83,6 +90,11 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
                 }
             }
         }
+
+        if (map == null)
+        {
+            Log.getLogger().error("Raider spawned without matching blueprint data for it: " + structureName);
+        }
     }
 
     @Override
@@ -90,10 +102,10 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
     {
         super.triggerSuccess(pos, list, placement);
         final BlockPos worldPos = getProgressPosInWorld(pos);
-        if (getWorld().getBlockState(worldPos).getBlock() == Blocks.GOLD_BLOCK)
+        if (getWorld().getBlockState(worldPos).getBlock() == Blocks.GOLD_BLOCK && map != null)
         {
             final List<String> tags = map.getOrDefault(worldPos, Collections.emptyList());
-            for (final String tag: tags)
+            for (final String tag : tags)
             {
                 switch (tag)
                 {
@@ -112,18 +124,17 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
     }
 
     /**
-     * Load a structure into this world
-     * and place it in the right position and rotation.
+     * Load a structure into this world and place it in the right position and rotation.
      *
-     * @param worldObj the world to load it in
-     * @param name     the structures name
-     * @param pos      coordinates
-     * @param rotation the rotation.
-     * @param mirror   the mirror used.
+     * @param worldObj       the world to load it in
+     * @param name           the structures name
+     * @param pos            coordinates
+     * @param rotation       the rotation.
+     * @param mirror         the mirror used.
      * @param fancyPlacement if fancy or complete.
-     * @param colonyId the colony id.
-     * @param event the raid event.
-     * @param player   the placing player.
+     * @param colonyId       the colony id.
+     * @param event          the raid event.
+     * @param player         the placing player.
      * @return the placed blueprint.
      */
     public static Blueprint loadAndPlaceStructureWithRotation(
@@ -135,7 +146,8 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
     {
         try
         {
-            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, name, new PlacementSettings(mirror, rotation), fancyPlacement, event, colonyId);
+            @NotNull final IStructureHandler structure =
+              new CreativeRaiderStructureHandler(worldObj, pos, name, new PlacementSettings(mirror, rotation), fancyPlacement, event, colonyId);
             if (structure.hasBluePrint())
             {
                 @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);

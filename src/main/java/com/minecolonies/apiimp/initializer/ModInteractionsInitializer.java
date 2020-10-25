@@ -2,9 +2,10 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
-import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteractionResponseHandler;
-import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteractionResponseHandler;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteractionResponseHandler;
+import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -21,22 +22,34 @@ public final class ModInteractionsInitializer
         final IForgeRegistry<InteractionResponseHandlerEntry> reg = event.getRegistry();
 
         ModInteractionResponseHandlers.standard = new InteractionResponseHandlerEntry.Builder()
-                            .setResponseHandlerProducer(StandardInteractionResponseHandler::new)
-                            .setRegistryName(ModInteractionResponseHandlers.STANDARD)
-                            .createEntry();
-
-        ModInteractionResponseHandlers.pos = new InteractionResponseHandlerEntry.Builder()
-                                                    .setResponseHandlerProducer(PosBasedInteractionResponseHandler::new)
-                                                    .setRegistryName(ModInteractionResponseHandlers.POS)
+                                                    .setResponseHandlerProducer(StandardInteraction::new)
+                                                    .setRegistryName(ModInteractionResponseHandlers.STANDARD)
                                                     .createEntry();
 
-        ModInteractionResponseHandlers.request = new InteractionResponseHandlerEntry.Builder()
-                                               .setResponseHandlerProducer(RequestBasedInteractionResponseHandler::new)
-                                               .setRegistryName(ModInteractionResponseHandlers.REQUEST)
+        ModInteractionResponseHandlers.simpleNotification = new InteractionResponseHandlerEntry.Builder()
+                                                              .setResponseHandlerProducer(StandardInteraction::new)
+                                                              .setRegistryName(ModInteractionResponseHandlers.SIMPLE_NOTIFICATION)
+                                                              .createEntry();
+
+        ModInteractionResponseHandlers.pos = new InteractionResponseHandlerEntry.Builder()
+                                               .setResponseHandlerProducer(PosBasedInteraction::new)
+                                               .setRegistryName(ModInteractionResponseHandlers.POS)
                                                .createEntry();
+
+        ModInteractionResponseHandlers.request = new InteractionResponseHandlerEntry.Builder()
+                                                   .setResponseHandlerProducer(RequestBasedInteraction::new)
+                                                   .setRegistryName(ModInteractionResponseHandlers.REQUEST)
+                                                   .createEntry();
+
+        ModInteractionResponseHandlers.recruitment = new InteractionResponseHandlerEntry.Builder()
+                                                       .setResponseHandlerProducer(RecruitmentInteraction::new)
+                                                       .setRegistryName(ModInteractionResponseHandlers.RECRUITMENT)
+                                                       .createEntry();
 
         reg.register(ModInteractionResponseHandlers.standard);
         reg.register(ModInteractionResponseHandlers.pos);
         reg.register(ModInteractionResponseHandlers.request);
+        reg.register(ModInteractionResponseHandlers.simpleNotification);
+        reg.register(ModInteractionResponseHandlers.recruitment);
     }
 }

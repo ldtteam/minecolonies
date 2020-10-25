@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -30,7 +30,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -38,12 +37,11 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MIN_SLOTS_FOR_RECOGNITION;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
@@ -87,14 +85,14 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     private String style = "";
 
     /**
-     * Create the combined inv wrapper for the building.
-     */
-    private CombinedItemHandler combinedInv;
-
-    /**
      * The name of the building location.
      */
     public ResourceLocation registryName;
+
+    /**
+     * Create the combined inv wrapper for the building.
+     */
+    private CombinedItemHandler combinedInv;
 
     /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
@@ -106,6 +104,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
     /**
      * Alternative overriden constructor.
+     *
      * @param type the entity type.
      */
     public TileEntityColonyBuilding(final TileEntityType<? extends AbstractTileEntityColonyBuilding> type)
@@ -199,19 +198,25 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
         if (theBuilding != null)
         {
-            if (isInTileEntity(theBuilding.getTileEntity(), notEmptyPredicate))
-            {
-                return theBuilding.getPosition();
-            }
+            final List<BlockPos> containers = new ArrayList<>(theBuilding.getAdditionalCountainers());
+            containers.add(getBuilding().getPosition());
 
-            for (final BlockPos pos : theBuilding.getAdditionalCountainers())
+            for (final BlockPos pos : containers)
             {
-                final TileEntity entity = getWorld().getTileEntity(pos);
-                if ((entity instanceof AbstractTileEntityRack
-                       && ((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
-                      || (isInTileEntity(entity, notEmptyPredicate)))
+                if (WorldUtil.isBlockLoaded(world, pos))
                 {
-                    return pos;
+                    final TileEntity entity = getWorld().getTileEntity(pos);
+                    if (entity instanceof AbstractTileEntityRack)
+                    {
+                        if (((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
+                        {
+                            return pos;
+                        }
+                    }
+                    else if (isInTileEntity(entity, notEmptyPredicate))
+                    {
+                        return pos;
+                    }
                 }
             }
         }
@@ -267,6 +272,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         final CompoundNBT compound = packet.getNbtCompound();
         colonyId = compound.getInt(TAG_COLONY);
+        super.onDataPacket(net, packet);
     }
 
     @Override
@@ -339,6 +345,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         style = compound.getString(TAG_STYLE);
         registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
         buildingPos = pos;
+        single = true;
     }
 
     @NotNull
@@ -356,6 +363,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public void tick()
     {
+        combinedInv = null;
         if (!getWorld().isRemote && colonyId == 0)
         {
             final IColony tempColony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), this.getPosition());
@@ -363,6 +371,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             {
                 colonyId = tempColony.getID();
             }
+        }
+
+        if (!getWorld().isRemote && colonyId != 0 && colony == null)
+        {
+            updateColonyReferences();
         }
     }
 
@@ -435,44 +448,64 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     }
 
     @Override
-    public void markInvDirty()
+    public boolean isMain()
     {
-        combinedInv = null;
+        return true;
     }
 
+    @Override
+    public void updateBlockState()
+    {
+        // Do nothing
+    }
+
+    @Override
+    public void setSingle(final boolean single)
+    {
+        // Do nothing, these are always single!
+    }
+
+    @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @Nullable final Direction side)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
         {
-            if (this.combinedInv == null)
+            if (combinedInv == null)
             {
                 //Add additional containers
-                final Set<ICapabilityProvider> providers = new HashSet<>();
+                final Set<IItemHandlerModifiable> handlers = new HashSet<>();
                 final World world = colony.getWorld();
                 if (world != null)
                 {
-                    //Add additional containers
-                    providers.addAll(building.getAdditionalCountainers().stream()
-                                       .map(world::getTileEntity)
-                                       .collect(Collectors.toSet()));
-                    providers.removeIf(Objects::isNull);
-                    building.getAdditionalCountainers().stream().map(world::getTileEntity).filter(entity -> entity instanceof TileEntityRack).forEach(entity -> ((TileEntityRack) entity).setBuildingPos(this.pos));
+                    for (final BlockPos pos : building.getAdditionalCountainers())
+                    {
+                        if (WorldUtil.isBlockLoaded(world, pos))
+                        {
+                            final TileEntity te = world.getTileEntity(pos);
+                            if (te != null)
+                            {
+                                final LazyOptional<IItemHandler> cap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                                cap.ifPresent(theCap -> {
+                                    if (theCap instanceof IItemHandlerModifiable && theCap.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
+                                    {
+                                        handlers.add((IItemHandlerModifiable) theCap);
+                                    }
+                                });
+
+                                if (te instanceof AbstractTileEntityRack)
+                                {
+                                    ((AbstractTileEntityRack) te).setBuildingPos(this.getPos());
+                                }
+                            }
+                        }
+                    }
                 }
 
-                final List<IItemHandler> handlers = providers.stream()
-                                                      .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
-                                                      .collect(Collectors.toList());
                 handlers.add(getInventory());
-                this.combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.stream()
-                                                                                          .filter(handler -> handler instanceof IItemHandlerModifiable
-                                                                                                               && handler.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
-                                                                                          .map(handler -> (IItemHandlerModifiable) handler)
-                                                                                          .distinct()
-                                                                                          .toArray(IItemHandlerModifiable[]::new));
+                combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0]));
             }
-
-            return LazyOptional.of(() -> (T) this.combinedInv);
+            return LazyOptional.of(() -> (T) combinedInv);
         }
         return super.getCapability(capability, side);
     }

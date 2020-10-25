@@ -181,8 +181,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     {
         new ArrayList<>(assignedRequests).stream()
           .map(manager::getRequestForToken)
-          .filter(shouldTriggerReassign)
-          .filter(Objects::nonNull)
+          .filter(shouldTriggerReassign.and(Objects::nonNull))
           .forEach(request ->
           {
               final IToken<?> newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(token));

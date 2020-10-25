@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -8,19 +9,25 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
+import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowTownHall;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.MAX_PERMISSION_EVENTS;
+import static com.minecolonies.api.util.constant.ColonyConstants.MAX_COLONY_EVENTS;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 /**
  * Class used to manage the townHall building block.
@@ -78,17 +85,12 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         return ModBuildings.townHall;
     }
 
-    /**
-     * Add a colony permission event to the colony.
-     * Reduce the list by one if bigger than a treshhold.
-     * @param event the event to add.
-     */
     @Override
     public void addPermissionEvent(final PermissionEvent event)
     {
-        if(getBuildingLevel() >= 1 && !permissionEvents.contains(event))
+        if (getBuildingLevel() >= 1 && !permissionEvents.contains(event))
         {
-            if (permissionEvents.size() >= MAX_PERMISSION_EVENTS)
+            if (permissionEvents.size() >= MAX_COLONY_EVENTS)
             {
                 permissionEvents.removeFirst();
             }
@@ -104,8 +106,16 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
         buf.writeBoolean(MineColonies.getConfig().getCommon().canPlayerUseAllyTHTeleport.get());
         buf.writeInt(permissionEvents.size());
-        for(final PermissionEvent event: permissionEvents)
+        for (final PermissionEvent event : permissionEvents)
         {
+            event.serialize(buf);
+        }
+
+        List<IColonyEventDescription> colonyEvents = colony.getEventDescriptionManager().getEventDescriptions();
+        buf.writeInt(colonyEvents.size());
+        for (final IColonyEventDescription event : colonyEvents)
+        {
+            buf.writeString(event.getEventTypeId().getPath());
             event.serialize(buf);
         }
     }
@@ -167,6 +177,11 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         private final List<PermissionEvent> permissionEvents = new LinkedList<>();
 
         /**
+         * List of colony events.
+         */
+        private final List<IColonyEventDescription> colonyEvents = new LinkedList<>();
+
+        /**
          * If the player is allowed to do townHall teleport.
          */
         private boolean canPlayerUseTP = false;
@@ -195,27 +210,41 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
             super.deserialize(buf);
 
             canPlayerUseTP = buf.readBoolean();
-            final int size = buf.readInt();
-            for(int i = 0; i < size; i++)
+            final int permissionEventsSize = buf.readInt();
+            for (int i = 0; i < permissionEventsSize; i++)
             {
                 permissionEvents.add(new PermissionEvent(buf));
             }
+
+            colonyEvents.clear();
+            final int colonyEventsSize = buf.readInt();
+            for (int i = 0; i < colonyEventsSize; i++)
+            {
+                final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, buf.readString());
+
+                final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().getValue(eventTypeID);
+                if (registryEntry == null)
+                {
+                    Log.getLogger().warn("Event is missing registryEntry!:" + eventTypeID.getPath());
+                    continue;
+                }
+
+                colonyEvents.add(registryEntry.deserializeEventDescriptionFromPacketBuffer(buf));
+            }
         }
 
-        /**
-         * Get a list of permission events.
-         * @return a copy of the list of events.
-         */
         @Override
         public List<PermissionEvent> getPermissionEvents()
         {
             return new LinkedList<>(permissionEvents);
         }
 
-        /**
-         * Check if the player can use the teleport command.
-         * @return true if so.
-         */
+        @Override
+        public List<IColonyEventDescription> getColonyEvents()
+        {
+            return new LinkedList<>(colonyEvents);
+        }
+
         @Override
         public boolean canPlayerUseTP()
         {

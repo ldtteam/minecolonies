@@ -34,6 +34,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
 
     /**
      * Sets the name, creative tab, and registers the Ancient Tome item.
+     *
      * @param properties the properties.
      */
     public ItemClipBoard(final Item.Properties properties)
@@ -65,7 +66,10 @@ public class ItemClipBoard extends AbstractItemMinecolonies
             if (ctx.getWorld().isRemote)
             {
                 final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), ctx.getWorld().dimension.getType().getId());
-                MineColonies.proxy.openClipBoardWindow(colonyView);
+                if (colonyView != null)
+                {
+                    MineColonies.proxy.openClipBoardWindow(colonyView);
+                }
             }
         }
 
@@ -99,7 +103,10 @@ public class ItemClipBoard extends AbstractItemMinecolonies
         if (compound.keySet().contains(TAG_COLONY))
         {
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), worldIn.dimension.getType().getId());
-            MineColonies.proxy.openClipBoardWindow(colonyView);
+            if (colonyView != null)
+            {
+                MineColonies.proxy.openClipBoardWindow(colonyView);
+            }
         }
         else
         {
@@ -110,8 +117,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
     }
 
     /**
-     * Check for the compound and return it.
-     * If not available create and return it.
+     * Check for the compound and return it. If not available create and return it.
      *
      * @param scepter the scepter to check in for.
      * @return the compound of the scepter.

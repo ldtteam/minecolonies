@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -32,9 +33,13 @@ public class ChunkCache implements IWorldReader
     protected int       chunkX;
     protected int       chunkZ;
     protected Chunk[][] chunkArray;
-    /** set by !chunk.getAreLevelsEmpty */
+    /**
+     * set by !chunk.getAreLevelsEmpty
+     */
     protected boolean   empty;
-    /** Reference to the World object. */
+    /**
+     * Reference to the World object.
+     */
     protected World     world;
 
     public ChunkCache(World worldIn, BlockPos posFromIn, BlockPos posToIn, int subIn)
@@ -51,7 +56,7 @@ public class ChunkCache implements IWorldReader
         {
             for (int l = this.chunkZ; l <= j; ++l)
             {
-                if (worldIn.getChunkProvider().isChunkLoaded(new ChunkPos(k, l)))
+                if (WorldUtil.isEntityChunkLoaded(world, new ChunkPos(k, l)))
                 {
                     this.chunkArray[k - this.chunkX][l - this.chunkZ] = worldIn.getChunk(k, l);
                 }
@@ -61,6 +66,7 @@ public class ChunkCache implements IWorldReader
 
     /**
      * set by !chunk.getAreLevelsEmpty
+     *
      * @return if so.
      */
     @OnlyIn(Dist.CLIENT)
@@ -81,7 +87,10 @@ public class ChunkCache implements IWorldReader
     {
         int i = (pos.getX() >> 4) - this.chunkX;
         int j = (pos.getZ() >> 4) - this.chunkZ;
-        if (!withinBounds(i, j)) return null;
+        if (!withinBounds(i, j))
+        {
+            return null;
+        }
         return this.chunkArray[i][j].getTileEntity(pos, createType);
     }
 
@@ -128,8 +137,8 @@ public class ChunkCache implements IWorldReader
     }
 
     /**
-     * Checks to see if an air block exists at the provided location. Note that this only checks to see if the blocks
-     * material is set to air, meaning it is possible for non-vanilla blocks to still pass this check.
+     * Checks to see if an air block exists at the provided location. Note that this only checks to see if the blocks material is set to air, meaning it is possible for non-vanilla
+     * blocks to still pass this check.
      */
     @Override
     public boolean isAirBlock(BlockPos pos)

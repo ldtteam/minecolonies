@@ -12,8 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 public interface IMCOPCommand extends IMCCommand
 {
     /**
-     * Executes pre-checks before issuing the command.
-     * Checks for the senders type and OP rights.
+     * Executes pre-checks before issuing the command. Checks for the senders type and OP rights.
      */
     @Override
     default boolean checkPreCondition(final CommandContext<CommandSource> context)

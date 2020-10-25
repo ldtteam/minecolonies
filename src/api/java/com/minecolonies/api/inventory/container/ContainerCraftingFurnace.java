@@ -45,14 +45,16 @@ public class ContainerCraftingFurnace extends Container
 
     /**
      * Constructs the GUI with the player.
+     *
      * @param windowId the window id.
-     * @param inv the player inventory.
-     * @param extra extra data.
+     * @param inv      the player inventory.
+     * @param extra    extra data.
      */
     public ContainerCraftingFurnace(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
         super(ModContainers.craftingFurnace, windowId);
-        this.furnaceInventory = new IItemHandlerModifiable() {
+        this.furnaceInventory = new IItemHandlerModifiable()
+        {
 
             ItemStack input = ItemStack.EMPTY;
             ItemStack output = ItemStack.EMPTY;
@@ -137,7 +139,7 @@ public class ContainerCraftingFurnace extends Container
         };
         this.playerInventory = inv;
         buildingPos = extra.readBlockPos();
-        this.addSlot(new SlotItemHandler(furnaceInventory, 0 , 56, 17)
+        this.addSlot(new SlotItemHandler(furnaceInventory, 0, 56, 17)
         {
             @Override
             public int getSlotStackLimit()
@@ -223,7 +225,7 @@ public class ContainerCraftingFurnace extends Container
                 clickResult = ItemStack.EMPTY;
             }
         }
-        else if(mode == ClickType.QUICK_MOVE)
+        else if (mode == ClickType.QUICK_MOVE)
         {
             clickResult = ItemStack.EMPTY;
         }
@@ -248,7 +250,8 @@ public class ContainerCraftingFurnace extends Container
 
     /**
      * Handle a slot click.
-     * @param slot the clicked slot.
+     *
+     * @param slot  the clicked slot.
      * @param stack the used stack.
      * @return the result.
      */
@@ -334,6 +337,7 @@ public class ContainerCraftingFurnace extends Container
 
     /**
      * Get the position of the container.
+     *
      * @return the position.
      */
     public BlockPos getPos()

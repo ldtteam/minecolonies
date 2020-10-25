@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 public class BuildingAddRecipeCriterionInstance extends CriterionInstance
 {
     private ItemPredicate[] outputItemPredicates;
-    private int craftingSize = -1;
+    private int             craftingSize = -1;
 
     public BuildingAddRecipeCriterionInstance()
     {

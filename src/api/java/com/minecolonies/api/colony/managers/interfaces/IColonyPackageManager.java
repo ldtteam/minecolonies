@@ -12,18 +12,21 @@ public interface IColonyPackageManager
 {
     /**
      * Get the last contact in hours from the colony.
+     *
      * @return the integer.
      */
     int getLastContactInHours();
 
     /**
      * Set the last contact in hours.
+     *
      * @param lastContactInHours the number to set.
      */
     void setLastContactInHours(int lastContactInHours);
 
     /**
      * Get all subscribers.
+     *
      * @return a copy of the hashset.
      */
     Set<ServerPlayerEntity> getCloseSubscribers();
@@ -48,12 +51,10 @@ public interface IColonyPackageManager
      */
     void sendPermissionsPackets();
 
-
     /**
      * Sends packages to update the workOrders.
      */
     void sendWorkOrderPackets();
-
 
     /**
      * Sends packages to update the schematics.
@@ -67,6 +68,7 @@ public interface IColonyPackageManager
 
     /**
      * Add a new subscriber to the colony.
+     *
      * @param subscriber the subscriber to add.
      */
     void addCloseSubscriber(@NotNull final ServerPlayerEntity subscriber);
@@ -87,6 +89,7 @@ public interface IColonyPackageManager
 
     /**
      * Remove a subscriber from the colony.
+     *
      * @param player the subscriber to remove.
      */
     void removeCloseSubscriber(@NotNull final ServerPlayerEntity player);

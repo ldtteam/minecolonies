@@ -3,13 +3,16 @@ package com.minecolonies.coremod.event;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.commands.EntryPoint;
+import com.minecolonies.coremod.datalistener.CrafterRecipeListener;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.client.ServerUUIDMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import org.jetbrains.annotations.NotNull;
@@ -52,16 +55,20 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
+    public static void onServerAboutToStart(FMLServerAboutToStartEvent event)
+    {
+        event.getServer().getResourceManager().addReloadListener(new CrafterRecipeListener());
+    }
+
+    @SubscribeEvent
     public static void onServerStarting(final FMLServerStartingEvent event)
     {
         EntryPoint.register(event.getCommandDispatcher());
     }
-    
+
     @SubscribeEvent
     public static void onServerStopped(final FMLServerStoppingEvent event)
     {
         Pathfinding.shutdown();
     }
-
-
 }

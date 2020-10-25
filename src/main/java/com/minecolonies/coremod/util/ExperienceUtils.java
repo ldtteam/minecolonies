@@ -11,8 +11,7 @@ public final class ExperienceUtils
     private static final double EXPERIENCE_MULTIPLIER = 1D;
 
     /**
-     * The number to create a percentage from another number (ex. 100*0.25 =
-     * 25).
+     * The number to create a percentage from another number (ex. 100*0.25 = 25).
      */
     private static final double PERCENT_MULTIPLIER = 100D;
 
@@ -68,13 +67,13 @@ public final class ExperienceUtils
      */
     public static double getXPNeededForNextLevel(final int currentLevel)
     {
-        return EXPERIENCE_MULTIPLIER
-                 * (currentLevel + 1)
-                 * (currentLevel + 1);
+        return Math.max(1, 1 + EXPERIENCE_MULTIPLIER *
+                                 5 * currentLevel + 0.005 * (currentLevel * currentLevel * currentLevel));
     }
 
     /**
      * Calculate level depending on the experience.
+     *
      * @param xp the experience to calculate it for.
      * @return the correct level.
      */

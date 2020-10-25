@@ -4,13 +4,17 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.MultiOutputRecipe;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
@@ -20,6 +24,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraft
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -30,12 +35,9 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the crafter building.
  */
-public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
+public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
-    /**
-     * Extra amount of recipes the crafters can learn.
-     */
-    private static final int EXTRA_RECIPE_MULTIPLIER = 10;
+
 
     /**
      * Instantiates a new crafter building.
@@ -86,41 +88,25 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<ItemStorage, Tuple<Integer, Boolean>> recipeOutputs = new HashMap<>();
-        for (final ICitizenData citizen : getAssignedCitizen())
+        for (final Tuple<IRecipeStorage, Integer> recipeStorage : getPendingRequestQueue())
         {
-            if (citizen.getJob() instanceof AbstractJobCrafter)
+            for (final ItemStorage itemStorage : recipeStorage.getA().getCleanedInput())
             {
-                final List<IToken<?>> assignedTasks = new ArrayList<>(citizen.getJob(AbstractJobCrafter.class).getAssignedTasks());
-                if (((AbstractJobCrafter) citizen.getJob()).getCurrentTask() != null)
+                int amount = itemStorage.getAmount() * recipeStorage.getB();
+                if (recipeOutputs.containsKey(itemStorage))
                 {
-                    assignedTasks.add(((AbstractJobCrafter) citizen.getJob()).getCurrentTask().getId());
+                    amount += recipeOutputs.get(itemStorage).getA();
                 }
-                for (final IToken<?> taskToken : assignedTasks)
-                {
-                    final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
-                    final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
-                    if (recipeStorage != null)
-                    {
-                        for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
-                        {
-                            int amount = itemStorage.getAmount() * request.getRequest().getCount();
-                            if (recipeOutputs.containsKey(itemStorage))
-                            {
-                                amount += recipeOutputs.get(itemStorage).getA();
-                            }
-                            recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
-                        }
-
-                        final ItemStorage output = new ItemStorage(recipeStorage.getPrimaryOutput());
-                        int amount = output.getAmount() * request.getRequest().getCount();
-                        if (recipeOutputs.containsKey(output))
-                        {
-                            amount += recipeOutputs.get(output).getA();
-                        }
-                        recipeOutputs.put(output, new Tuple<>(amount, false));
-                    }
-                }
+                recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
             }
+
+            final ItemStorage output = new ItemStorage(recipeStorage.getA().getPrimaryOutput());
+            int amount = output.getAmount() * recipeStorage.getB();
+            if (recipeOutputs.containsKey(output))
+            {
+                amount += recipeOutputs.get(output).getA();
+            }
+            recipeOutputs.put(output, new Tuple<>(amount, false));
         }
 
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
@@ -129,15 +115,75 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     }
 
     @Override
-    public boolean canCraftComplexRecipes()
+    public Map<ItemStorage, Integer> reservedStacks()
     {
-        return true;
+        final Map<ItemStorage, Integer> recipeOutputs = new HashMap<>();
+        for (final Tuple<IRecipeStorage, Integer> recipeStorage : getPendingRequestQueue())
+        {
+            for (final ItemStorage itemStorage : recipeStorage.getA().getCleanedInput())
+            {
+                int amount = itemStorage.getAmount() * recipeStorage.getB();
+                if (recipeOutputs.containsKey(itemStorage))
+                {
+                    amount += recipeOutputs.get(itemStorage);
+                }
+                recipeOutputs.put(itemStorage, amount);
+            }
+        }
+        return recipeOutputs;
+    }
+
+    /**
+     * Get a list of all recipeStorages of the pending requests in the crafters queues.
+     * @return the list.
+     */
+    private List<Tuple<IRecipeStorage, Integer>> getPendingRequestQueue()
+    {
+        final List<Tuple<IRecipeStorage, Integer>> recipes = new ArrayList<>();
+        for (final ICitizenData citizen : getAssignedCitizen())
+        {
+            if (citizen.getJob() instanceof AbstractJobCrafter)
+            {
+                final List<IToken<?>> assignedTasks = new ArrayList<>(citizen.getJob(AbstractJobCrafter.class).getAssignedTasks());
+                assignedTasks.addAll(citizen.getJob(AbstractJobCrafter.class).getTaskQueue());
+
+                for (final IToken<?> taskToken : assignedTasks)
+                {
+                    final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
+                    final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
+                    if (recipeStorage != null)
+                    {
+                        recipes.add(new Tuple<>(recipeStorage, request.getRequest().getCount()));
+                    }
+                }
+            }
+        }
+        return recipes;
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
     {
-        return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
+        for (final IToken<?> token : recipes)
+        {
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(i -> stackPredicate.test(i))))
+            {
+                final List<IItemHandler> handlers = getHandlers();
+                IRecipeStorage toTest = storage.getRecipeType() instanceof MultiOutputRecipe ? storage.getClassicForMultiOutput(stackPredicate) : storage;
+                if (toTest.canFullFillRecipe(count, considerReservation ? reservedStacks() : Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
+                {
+                    return toTest;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean canCraftComplexRecipes()
+    {
+        return true;
     }
 
     /**
@@ -156,32 +202,23 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
             super(c, l);
         }
 
-        /**
-         * Check if an additional recipe can be added.
-         *
-         * @return true if so.
-         */
-        public boolean canRecipeBeAdded()
-        {
-            return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
-        }
-    }
-
-    /**
-     * Check if an additional recipe can be added.
-     *
-     * @param learnedRecipes the learned recipes.
-     * @param buildingLevel  the building level.
-     * @return true if so.
-     */
-    public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)
-    {
-        return (Math.pow(2, buildingLevel) * EXTRA_RECIPE_MULTIPLIER) >= (learnedRecipes + 1);
     }
 
     @Override
     protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
     {
         return super.canRecipeBeAddedBasedOnTags(token);
+    }
+
+    @Override
+    public Skill getCraftSpeedSkill()
+    {
+        return getSecondarySkill();
+    }
+
+    @Override
+    public Skill getRecipeImprovementSkill()
+    {
+        return getPrimarySkill();
     }
 }

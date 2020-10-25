@@ -43,6 +43,7 @@ public interface IMCCommand
 
     /**
      * Executes pre-checks before issuing the command
+     *
      * @param context the context.
      * @return 1 if successful and 0 if incomplete.
      */
@@ -56,7 +57,8 @@ public interface IMCCommand
         return onExecute(context);
     }
 
-    default ICommandCallbackBuilder<CommandSource> executePreConditionCheck() {
+    default ICommandCallbackBuilder<CommandSource> executePreConditionCheck()
+    {
         return executeCallback -> context -> {
             if (!checkPreCondition(context))
             {
@@ -69,8 +71,9 @@ public interface IMCCommand
 
     /**
      * Preconditions to check before executing
-     * @return true if fine.
+     *
      * @param context the command context.
+     * @return true if fine.
      */
     default boolean checkPreCondition(final CommandContext<CommandSource> context)
     {
@@ -87,6 +90,7 @@ public interface IMCCommand
 
     /**
      * Name string of the command.
+     *
      * @return the name.
      */
     String getName();
@@ -101,7 +105,8 @@ public interface IMCCommand
         return player.getServer().getPlayerList().canSendCommands(player.getGameProfile());
     }
 
-    interface ICommandCallbackBuilder<S> {
+    interface ICommandCallbackBuilder<S>
+    {
 
         Command<S> then(final Command<CommandSource> executeCallback);
     }

@@ -10,6 +10,7 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
@@ -71,9 +72,8 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     /**
      * Generate your AI class to register.
      * <p>
-     * Suppressing Sonar Rule squid:S1452 This rule does "Generic wildcard types should not be used in return parameters"
-     * But in this case the rule does not apply because
-     * We are fine with all AbstractJob implementations and need generics only for java
+     * Suppressing Sonar Rule squid:S1452 This rule does "Generic wildcard types should not be used in return parameters" But in this case the rule does not apply because We are
+     * fine with all AbstractJob implementations and need generics only for java
      *
      * @return your personal AI instance.
      */
@@ -93,16 +93,14 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     void setCheckedForFood();
 
     /**
-     * This method can be used to display the current status.
-     * That a citizen is having.
+     * This method can be used to display the current status. That a citizen is having.
      *
      * @return Small string to display info in name tag
      */
     String getNameTagDescription();
 
     /**
-     * Used by the AI skeleton to change a citizens name.
-     * Mostly used to update debugging information.
+     * Used by the AI skeleton to change a citizens name. Mostly used to update debugging information.
      *
      * @param nameTag The name tag to display.
      */
@@ -146,7 +144,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      *
      * @return true if so.
      */
-    boolean isOkayToEat();
+    boolean canAIBeInterrupted();
 
     /**
      * Getter for the amount of actions done.
@@ -156,20 +154,17 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     int getActionsDone();
 
     /**
-     * Increase the actions done since the last reset by 1
-     * Used for example to detect if and when the inventory has to be dumped.
+     * Increase the actions done since the last reset by 1 Used for example to detect if and when the inventory has to be dumped.
      */
     void incrementActionsDone();
 
     /**
-     * Increase the actions done since the last reset by numberOfActions
-     * Used for example to detect if and when the inventory has to be dumped.
+     * Increase the actions done since the last reset by numberOfActions Used for example to detect if and when the inventory has to be dumped.
      */
     void incrementActionsDone(int numberOfActions);
 
     /**
-     * Clear the actions done counter.
-     * Call this when dumping into the chest.
+     * Clear the actions done counter. Call this when dumping into the chest.
      */
     void clearActionsDone();
 
@@ -220,8 +215,41 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 
     /**
      * Check if the particular job ignores a particular damage type.
+     *
      * @param damageSource the damage source to check.
      * @return true if so.
      */
     boolean ignoresDamage(@NotNull final DamageSource damageSource);
+
+    /**
+     * Mark a request as a synchronous (blocking request).
+     *
+     * @param id the id.
+     */
+    void markRequestSync(IToken<?> id);
+
+    /**
+     * If the worker can pick up the stack.
+     * @param pickedUpStack the stack to check.
+     * @return true if so.
+     */
+    boolean pickupSuccess(@NotNull ItemStack pickedUpStack);
+
+    /**
+     * Check if the job is actually set as active.
+     * @return true if so.
+     */
+    boolean isActive();
+
+    /**
+     * Process time the colony was offline.
+     * @param time the time in seconds.
+     */
+    void processOfflineTime(long time);
+
+    /**
+     * Serialize the job to a buffer.
+     * @param buffer the buffer to serialize it to.
+     */
+    void serializeToView(final PacketBuffer buffer);
 }

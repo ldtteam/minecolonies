@@ -6,7 +6,10 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.colony.jobs.JobTeacher;
@@ -15,7 +18,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.Tuple;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +40,12 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
      * To be requested by the teacher.
      */
     private final Predicate<ItemStack> PAPER = stack -> stack.getItem() == Items.PAPER;
+
+    /**
+     * Teaching icon
+     */
+    private final static VisibleCitizenStatus TEACHING_ICON =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/teacher_student.png"), "com.minecolonies.gui.visiblestatus.teacher_student");
 
     /**
      * Area the worker targets.
@@ -113,6 +122,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
         {
             return START_WORKING;
         }
+        worker.getCitizenData().setVisibleStatus(TEACHING_ICON);
 
         if (walkToBlock(pupilToTeach.getPosition()))
         {
@@ -122,7 +132,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
         if (maxSittingTicks == 0 || worker.ridingEntity == null)
         {
             // Sit for 2-100 seconds.
-            final int jobModifier = 100 / Math.max(1, worker.getCitizenData().getJobModifier());
+            final int jobModifier = (int) (100 / Math.max(1, getSecondarySkillLevel() / 2.0));
             maxSittingTicks = worker.getRandom().nextInt(jobModifier / 2) + jobModifier / 2;
 
             final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(world);
@@ -155,12 +165,13 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
             );
         }
 
-        double xp = 1.0 * (1.0 + worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) / 10.0);
+        double xp = 1.5 * (1.0 + worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) / 10.0);
         final MultiplierModifierResearchEffect effect =
           worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TEACHING, MultiplierModifierResearchEffect.class);
         if (effect != null)
         {
             xp *= (1 + effect.getEffect());
+            xp *= (1 + (getPrimarySkillLevel() / 10.0));
         }
 
         pupilToTeach.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, xp, pupilToTeach.getCitizenData());

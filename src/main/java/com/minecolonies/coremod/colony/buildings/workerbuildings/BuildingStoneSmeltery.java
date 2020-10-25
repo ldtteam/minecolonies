@@ -14,20 +14,18 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutStoneSmelter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
+import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
-import com.minecolonies.coremod.util.FurnaceRecipes;
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.GlazedTerracottaBlock;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
@@ -112,33 +110,11 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
             return false;
         }
 
-        return isBlockForThisSmelter(storage.getPrimaryOutput()) && FurnaceRecipes.getInstance().getSmeltingResult(storage.getInput().get(0)).isItemEqual(storage.getPrimaryOutput());
-    }
+        Optional<Boolean> isRecipeAllowed;
 
-    /**
-     * Method to check if the stack is craftable for the smeltery.
-     *
-     * @param stack the stack to craft.
-     * @return true if so.
-     */
-    public boolean isBlockForThisSmelter(final ItemStack stack)
-    {
-        final Item item = stack.getItem();
-        if (item instanceof BlockItem)
-        {
-            final Block block = ((BlockItem) item).getBlock();
-            if (block.isIn(BlockTags.STONE_BRICKS) ||
-                    block == Blocks.STONE         ||
-                    block == Blocks.STONE_BRICKS  ||
-                    block == Blocks.SMOOTH_STONE  ||
-                    block instanceof GlazedTerracottaBlock)
-            {
-
-                return true;
-            }
-        }
-
-        return item == Items.BRICK || item == Items.COAL || item == Items.CHARCOAL || item == Items.NETHER_BRICK;
+        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
+        
+        return isRecipeAllowed.orElse(false);
     }
 
     @Override
@@ -150,7 +126,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect("Stonesmeltery", UnlockBuildingResearchEffect.class);
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.STONESMELTERY_RESEARCH, UnlockBuildingResearchEffect.class);
         if (effect == null)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"));

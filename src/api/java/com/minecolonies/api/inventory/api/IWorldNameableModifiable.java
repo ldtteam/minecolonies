@@ -11,8 +11,7 @@ public interface IWorldNameableModifiable extends INameable
     /**
      * Method to set the name of this {@link INameable}.
      *
-     * @param name The new name of this {@link INameable}, or null to reset
-     *             it to its default.
+     * @param name The new name of this {@link INameable}, or null to reset it to its default.
      */
     void setName(@Nullable String name);
 }

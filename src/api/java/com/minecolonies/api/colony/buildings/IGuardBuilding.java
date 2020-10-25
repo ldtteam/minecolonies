@@ -16,8 +16,7 @@ import java.util.Map;
 public interface IGuardBuilding extends IBuildingWorker
 {
     /**
-     * Worker gets this distance times building level away from his/her hut to
-     * patrol.
+     * Worker gets this distance times building level away from his/her hut to patrol.
      */
     int PATROL_DISTANCE = 30;
 
@@ -251,4 +250,10 @@ public interface IGuardBuilding extends IBuildingWorker
      * Populates the mobs list from the ForgeRegistries.
      */
     void calculateMobs();
+
+    /**
+     * If we have to calculate a new target manually.
+     * @return true if so.
+     */
+    boolean requiresManualTarget();
 }

@@ -7,6 +7,7 @@ import com.ldtteam.blockout.controls.Image;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -26,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.WindowConstants.CLIPBOARD_TOGGLE;
 
 /**
  * ClipBoard window.
@@ -75,7 +78,12 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     /**
      * The divider for the life count.
      */
-    private static final int LIFE_COUNT_DIVIDER = 30;
+    private static final int        LIFE_COUNT_DIVIDER = 30;
+
+    /**
+     * List of async request tokens.
+     */
+    private final List<IToken<?>> asyncRequest = new ArrayList<>();
 
     /**
      * Scrollinglist of the resources.
@@ -93,21 +101,45 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     private int lifeCount = 0;
 
     /**
+     * Hide or show not important requests.
+     */
+    private boolean hide = false;
+
+    /**
      * Constructor of the clipboard GUI.
+     *
      * @param colony the colony to check the requests for.
      */
     public WindowClipBoard(final IColonyView colony)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
         this.colony = colony;
+        for (final ICitizenDataView view : this.colony.getCitizens().values())
+        {
+            if (view.getJobView() != null)
+            {
+                asyncRequest.addAll(view.getJobView().getAsyncRequests());
+            }
+        }
+        registerButton(CLIPBOARD_TOGGLE, this::toggleImportant);
+    }
+
+    private void toggleImportant()
+    {
+        this.hide = !this.hide;
+        fillList();
     }
 
     /**
-     * Called when the window is opened.
-     * Sets up the buttons for either hut mode or decoration mode.
+     * Called when the window is opened. Sets up the buttons for either hut mode or decoration mode.
      */
     @Override
     public void onOpened()
+    {
+        fillList();
+    }
+
+    private void fillList()
     {
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
         resourceList.setDataProvider(() -> getOpenRequests().size(), (index, rowPane) ->
@@ -124,7 +156,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
             if (!displayStacks.isEmpty())
             {
-                if(exampleStackDisplay != null)
+                if (exampleStackDisplay != null)
                 {
                     exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
                 }
@@ -146,6 +178,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
     /**
      * The requests to display.
+     *
      * @return the list of requests.
      */
     public ImmutableList<IRequest<?>> getOpenRequests()
@@ -173,10 +206,15 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         requests.addAll(requestTokens.stream().map(requestManager::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
 
+        if (hide)
+        {
+            requests.removeIf(req -> asyncRequest.contains(req.getId()));
+        }
+
         final BlockPos playerPos = Minecraft.getInstance().player.getPosition();
         requests.sort(Comparator.comparing((IRequest<?> request) -> request.getRequester().getLocation().getInDimensionLocation()
-                .distanceSq(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
-                .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));
+                                                                      .distanceSq(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
+                        .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));
 
         return ImmutableList.copyOf(requests);
     }

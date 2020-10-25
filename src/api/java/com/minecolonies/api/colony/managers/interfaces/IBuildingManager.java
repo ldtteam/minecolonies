@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
@@ -76,8 +76,15 @@ public interface IBuildingManager
     IBuilding getBuilding(BlockPos pos);
 
     /**
-     * Returns a map with all buildings within the colony.
-     * Key is ID (Coordinates), value is building object.
+     * Get the closest warehouse relative to a position.
+     * @param pos the position,.
+     * @return the closest warehouse.
+     */
+    @Nullable
+    IWareHouse getClosestWarehouseInColony(BlockPos pos);
+
+    /**
+     * Returns a map with all buildings within the colony. Key is ID (Coordinates), value is building object.
      *
      * @return Map with ID (coordinates) as key, and buildings as value.
      */
@@ -106,8 +113,7 @@ public interface IBuildingManager
     boolean hasTownHall();
 
     /**
-     * Get building in Colony by ID. The building will be casted to the provided
-     * type.
+     * Get building in Colony by ID. The building will be casted to the provided type.
      *
      * @param buildingId ID (coordinates) of the building to get.
      * @param type       Type of building.
@@ -132,7 +138,7 @@ public interface IBuildingManager
      * @param pos        Position where the field has been placed.
      * @param world      the world of the field.
      */
-    void addNewField(final AbstractScarescrowTileEntity tileEntity, final BlockPos pos, final World world);
+    void addNewField(final AbstractScarecrowTileEntity tileEntity, final BlockPos pos, final World world);
 
     /**
      * Returns a field which has not been taken yet.
@@ -142,7 +148,7 @@ public interface IBuildingManager
      * @return a field if there is one available, else null.
      */
     @Nullable
-    AbstractScarescrowTileEntity getFreeField(final int owner, final World world);
+    AbstractScarecrowTileEntity getFreeField(final int owner, final World world);
 
     /**
      * Remove a IBuilding from the Colony (when it is destroyed).
@@ -197,6 +203,16 @@ public interface IBuildingManager
      * @return the random building. Returns null if no building matching the predicate was found.
      */
     BlockPos getRandomBuilding(Predicate<IBuilding> filterPredicate);
+
+    /**
+     * Finds whether there is a guard building close to the given building
+     *
+     * @param building
+     * @return false if no guard tower close, true in other cases
+     */
+    boolean hasGuardBuildingNear(IBuilding building);
+
+    void guardBuildingChangedAt(IBuilding guardBuilding, int newLevel);
 
     /**
      * Set the townhall building.

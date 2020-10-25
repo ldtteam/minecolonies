@@ -10,10 +10,9 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_BAKER;
 
 /**
- * The fisherman's job class.
- * implements some useful things for him.
+ * The fisherman's job class. implements some useful things for him.
  */
-public class JobBaker extends AbstractJob<EntityAIWorkBaker, JobBaker>
+public class JobBaker extends AbstractJobCrafter<EntityAIWorkBaker, JobBaker>
 {
     /**
      * Initializes the job class.

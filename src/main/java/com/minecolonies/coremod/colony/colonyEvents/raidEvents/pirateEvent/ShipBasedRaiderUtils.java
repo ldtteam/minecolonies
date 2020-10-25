@@ -6,9 +6,9 @@ import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
-import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CreativeBuildingStructureHandler;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
 import net.minecraft.block.AirBlock;
@@ -23,8 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.api.colony.colonyEvents.NBTTags.TAG_EVENT_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Utils for Colony pirate events
@@ -71,11 +70,22 @@ public final class ShipBasedRaiderUtils
       final int shipRotation)
     {
         final CreativeRaiderStructureHandler
-          structure = new CreativeRaiderStructureHandler(world, targetSpawnPoint, Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize, new PlacementSettings(Mirror.NONE, BlockPosUtil.getRotationFromRotations(shipRotation)), true, event, colony.getID());
+          structure = new CreativeRaiderStructureHandler(world,
+          targetSpawnPoint,
+          Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize,
+          new PlacementSettings(Mirror.NONE, BlockPosUtil.getRotationFromRotations(shipRotation)),
+          true,
+          event,
+          colony.getID());
 
         if (!colony.getEventManager()
                .getStructureManager()
-               .spawnTemporaryStructure(structure.getBluePrint(), Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize, targetSpawnPoint, event.getID(), shipRotation, Mirror.NONE))
+               .spawnTemporaryStructure(structure.getBluePrint(),
+                 Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize,
+                 targetSpawnPoint,
+                 event.getID(),
+                 shipRotation,
+                 Mirror.NONE))
         {
             return false;
         }
@@ -110,13 +120,13 @@ public final class ShipBasedRaiderUtils
     /**
      * Checks whether a pirate event is possible at this place.
      *
-     * @param colony the colony.
+     * @param colony     the colony.
      * @param spawnPoint the spawn point.
-     * @param raidLevel the raid level.
-     * @param rotation the rotation.
+     * @param raidLevel  the raid level.
+     * @param rotation   the rotation.
      * @return true if successful.
      */
-    public static boolean canSpawnShipAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation, final IColonyStructureSpawnEvent event)
+    public static boolean canSpawnShipAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation, final String shipName)
     {
         if (spawnPoint.equals(colony.getCenter()) || spawnPoint.getY() > MineColonies.getConfig().getCommon().maxYForBarbarians.get())
         {
@@ -124,7 +134,7 @@ public final class ShipBasedRaiderUtils
         }
 
         final World world = colony.getWorld();
-        final String shipSize = ShipSize.getShipForRaidLevel(raidLevel).schematicPrefix + event.getShipDesc();
+        final String shipSize = ShipSize.getShipForRaiderAmount(raidLevel).schematicPrefix + shipName;
 
         final CreativeBuildingStructureHandler
           structure = new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize, new PlacementSettings(), true);
@@ -154,11 +164,11 @@ public final class ShipBasedRaiderUtils
     /**
      * Returns true when most parts of the given area are water, more then 90%
      *
-     * @param materials the materials.
-     * @param world Blockacces to use
-     * @param baseY the base y pos.
-     * @param from  First corner of search rectangle
-     * @param to    Second corner of search rectangle
+     * @param materials       the materials.
+     * @param world           Blockacces to use
+     * @param baseY           the base y pos.
+     * @param from            First corner of search rectangle
+     * @param to              Second corner of search rectangle
      * @param percentRequired the required percentage.
      * @return true if enough water surface blocks are found
      */
@@ -194,7 +204,8 @@ public final class ShipBasedRaiderUtils
             for (int z = 0; z < zDist; z++)
             {
                 // Count surface waterblocks
-                if (!materials.contains(world.getBlockState(new BlockPos(from.getX() + (x*xDir), baseY, from.getZ() + (z*zDir))).getMaterial()) || !world.isAirBlock(new BlockPos(from.getX() + (x*xDir), baseY + 1, from.getZ() + (z*zDir))))
+                if (!materials.contains(world.getBlockState(new BlockPos(from.getX() + (x * xDir), baseY, from.getZ() + (z * zDir))).getMaterial())
+                      || !world.isAirBlock(new BlockPos(from.getX() + (x * xDir), baseY + 1, from.getZ() + (z * zDir))))
                 {
                     wrongMaterialBlocks++;
                     // Skip when we already found too many non water blocks
@@ -232,7 +243,7 @@ public final class ShipBasedRaiderUtils
             return null;
         }
 
-        if (colony.getWorld().isBlockPresent(startPos))
+        if (WorldUtil.isBlockLoaded(colony.getWorld(), startPos))
         {
             return BlockPosUtil.findLand(startPos, colony.getWorld());
         }
@@ -254,7 +265,7 @@ public final class ShipBasedRaiderUtils
                 return null;
             }
 
-            if (colony.getWorld().isBlockPresent(tempPos))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), tempPos))
             {
                 return BlockPosUtil.getFloor(tempPos, colony.getWorld());
             }
@@ -267,7 +278,7 @@ public final class ShipBasedRaiderUtils
      *
      * @param spawnPos the ships spawnpoint
      * @param world    the world
-     * @param radius the radius to check for.
+     * @param radius   the radius to check for.
      * @return the position.
      */
     public static BlockPos findSpawnPosOnShip(final BlockPos spawnPos, final World world, final int radius)

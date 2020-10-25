@@ -7,12 +7,16 @@ import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
+import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ClassicRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.MultiOutputRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.InventoryUtils;
@@ -23,12 +27,15 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.crafting.CustomRecipe;
+import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import io.netty.buffer.Unpooled;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -45,7 +52,9 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -56,16 +65,53 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
-import static com.minecolonies.api.util.constant.CitizenConstants.BONUS_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMPROVED;
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * The abstract class for each worker building.
  */
 public abstract class AbstractBuildingWorker extends AbstractBuilding implements IBuildingWorker
 {
+
+    /**
+     * The base chance for a recipe to be improved. This is modified by worker skill and the number of items crafted
+     */
+    private static final double BASE_CHANCE = 0.0625;
+
+    /**
+     * Extra amount of recipes the crafters can learn.
+     */
+    private static final int EXTRA_RECIPE_MULTIPLIER = 5;
+
+    /**
+     * The name of the tag for improving recipes
+     */
+    private static final String REDUCEABLE = "reduceable";
+
+    /**
+     * Tag specifier for Products to Include
+     */
+    private static final String PRODUCT = "_product";
+
+    /**
+     * Tag specifier for Products to Exclude
+     */
+    private static final String PRODUCT_EXCLUDED = "_product_excluded";
+
+    /**
+     * Tag specifier for Ingredients to include
+     */
+    private static final String INGREDIENT = "_ingredient";
+
+    /**
+     * Tag specifier for Ingredients to exclude
+     */
+    private static final String INGREDIENT_EXCLUDED = "_ingredient_excluded";
 
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
@@ -76,6 +122,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * The hiring mode of this particular building, by default overriden by colony mode.
      */
     private HiringMode hiringMode = HiringMode.DEFAULT;
+
+    /**
+     * The display name of the job - post localization
+     */
+    private String jobDisplayName = "";
 
     /**
      * The abstract constructor of the building.
@@ -126,9 +177,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
+     * Override this method if you want to keep an amount of items in inventory. When the inventory is full, everything get's dumped into the building chest. But you can use this
+     * method to hold some stacks back.
      *
      * @return a list of objects which should be kept.
      */
@@ -150,41 +200,83 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Nullable
     public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
     {
+        IRecipeStorage foundRecipe = null;
+        final HashMap<IRecipeStorage, Integer> candidates = new HashMap<>();
+
+
+        //Scan through and collect all possible recipes that could fulfill this, taking special note of the first one
         for (final IToken<?> token : recipes)
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(i -> stackPredicate.test(i))))
             {
-                return storage;
+                if(foundRecipe == null)
+                {
+                    foundRecipe = storage;
+                }
+                candidates.put(storage, 0);
             }
         }
-        return null;
+
+        //If we have more than one possible recipe, let's choose the one with the most stock in the warehouses
+        if(candidates.size() > 1)
+        {
+            for(Map.Entry<IRecipeStorage, Integer> foo : candidates.entrySet())
+            {
+                final ItemStorage checkItem = foo.getKey().getCleanedInput().stream().max(Comparator.comparingInt(ItemStorage::getAmount)).get();
+                candidates.put(foo.getKey(), getWarehouseCount(checkItem));
+            }
+            foundRecipe = candidates.entrySet().stream().min(Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
+        }
+
+        if(foundRecipe != null && foundRecipe.getRecipeType() instanceof MultiOutputRecipe)
+        {
+            foundRecipe = foundRecipe.getClassicForMultiOutput(stackPredicate);
+        }
+
+        return foundRecipe;
     }
 
-    @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack)
+    /**
+     * Get the count of items in all the warehouses
+     */
+    protected int getWarehouseCount(ItemStorage item)
     {
-        return getFirstFullFillableRecipe(tempStack, tempStack.getCount());
+        int count = 0;
+        final List<IWareHouse> wareHouses = colony.getBuildingManager().getWareHouses();
+
+        for(IWareHouse wareHouse: wareHouses)
+        {
+            count += InventoryUtils.hasBuildingEnoughElseCount(wareHouse, item, 0);
+        }
+        return count;
     }
 
     @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack, int count)
+    public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack, final boolean considerReservation)
     {
-        return getFirstFullFillableRecipe(itemStack -> !itemStack.isEmpty() && itemStack.isItemEqual(tempStack), count * tempStack.getCount());
+        return getFirstFullFillableRecipe(tempStack, tempStack.getCount(), considerReservation);
     }
 
     @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
+    public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack, int count, final boolean considerReservation)
+    {
+        return getFirstFullFillableRecipe(itemStack -> !itemStack.isEmpty() && itemStack.isItemEqual(tempStack), count * tempStack.getCount(), considerReservation);
+    }
+
+    @Override
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
     {
         for (final IToken<?> token : recipes)
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(i -> stackPredicate.test(i))))
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                IRecipeStorage toTest = storage.getRecipeType() instanceof MultiOutputRecipe ? storage.getClassicForMultiOutput(stackPredicate) : storage;
+                if (toTest.canFullFillRecipe(count, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
                 {
-                    return storage;
+                    return toTest;
                 }
             }
         }
@@ -219,15 +311,24 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * @param token
      * @return whether the recipe can bee added based on tokens.
      */
-    protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
+    protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken<?> token)
+    {
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+        return canRecipeBeAddedBasedOnTags(storage);
+    }
+
+    /**
+     * @param storage
+     * @return whether the recipe can bee added based on tokens.
+     */
+    protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IRecipeStorage storage)
     {
 
-        ResourceLocation products = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product"));
-        ResourceLocation ingredients = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient"));
-        ResourceLocation productsExcluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_product_excluded"));
-        ResourceLocation ingredientsExcluded = new ResourceLocation("minecolonies", this.getJobName().toLowerCase().concat("_ingredient_excluded"));
+        ResourceLocation products = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(PRODUCT));
+        ResourceLocation ingredients = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(INGREDIENT));
+        ResourceLocation productsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(PRODUCT_EXCLUDED));
+        ResourceLocation ingredientsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(INGREDIENT_EXCLUDED));
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
         if (storage == null)
         {
             return Optional.of(false);
@@ -239,6 +340,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             return Optional.of(false);
         }
 
+        // Check against allowed products
+        if (ItemTags.getCollection().getOrCreate(products).contains(storage.getPrimaryOutput().getItem()))
+        {
+            return Optional.of(true);
+        }
+
         // Check against excluded ingredients
         for (final ItemStack stack : storage.getInput())
         {
@@ -246,12 +353,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             {
                 return Optional.of(false);
             }
-        }
-
-        // Check against allowed products
-        if (ItemTags.getCollection().getOrCreate(products).contains(storage.getPrimaryOutput().getItem()))
-        {
-            return Optional.of(true);
         }
 
         // Check against allowed ingredients
@@ -264,6 +365,76 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Has a chance to reduce the resource requirements for the recipe in this building
+     * @param recipe the recipe we're possibly improving
+     * @param count the number of items (chances) 
+     * @param citizen The citizen, as the primary skill can improve the chances
+     */
+    public void improveRecipe(IRecipeStorage recipe, int count, ICitizenData citizen)
+    {
+        final ResourceLocation reducableIngredients = new ResourceLocation(MOD_ID, REDUCEABLE.concat(INGREDIENT));
+        final ResourceLocation reducableProductExclusions = new ResourceLocation(MOD_ID, REDUCEABLE.concat(PRODUCT_EXCLUDED));
+        final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
+
+        final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(getRecipeImprovementSkill())));
+        final double roll = citizen.getRandom().nextDouble() * 100;
+
+        ItemStack reducedItem = null;
+
+        if(roll <= actualChance && !ItemTags.getCollection().getOrCreate(reducableProductExclusions).contains(recipe.getPrimaryOutput().getItem()))
+        {
+            final ArrayList<ItemStack> newRecipe = new ArrayList<>();
+            boolean didReduction = false;
+            for(ItemStorage input : inputs)
+            {
+                // Check against excluded products
+                if (input.getAmount() > 1 && ItemTags.getCollection().getOrCreate(reducableIngredients).contains(input.getItem()))
+                {
+                    reducedItem = input.getItemStack();
+                    reducedItem.setCount(input.getAmount() - 1);
+                    newRecipe.add(reducedItem);
+                    didReduction = true;
+                } else
+                {
+                    newRecipe.add(input.getItemStack());
+                }
+            }
+            
+            if (didReduction)
+            {
+                final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    newRecipe,
+                    1,
+                    recipe.getPrimaryOutput(),
+                    Blocks.AIR);
+
+                replaceRecipe(recipe.getToken(), IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+
+                // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
+                final TranslationTextComponent message = new TranslationTextComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
+                        new TranslationTextComponent(citizen.getJob().getName().toLowerCase()),
+                        recipe.getPrimaryOutput().getDisplayName(),
+                        reducedItem.getDisplayName(),
+                        citizen.getName());
+
+                for(PlayerEntity player :colony.getMessagePlayerEntities())
+                {
+                    player.sendMessage(message);
+                }
+            }
+        }
+    }
+
+    @Override
+    @NotNull
+    public Skill getRecipeImprovementSkill()
+    {
+        return getSecondarySkill();
     }
 
     @Override
@@ -279,13 +450,24 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     private boolean hasSpaceForMoreRecipes()
     {
+
+        return getMaxRecipes() > getRecipes().size() ;
+    }
+
+    /**
+     * Gets the maximum number of recipes a building may have at the current time.
+     */
+    protected int getMaxRecipes()
+    {
         double increase = 1;
         final MultiplierModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(RECIPES, MultiplierModifierResearchEffect.class);
         if (effect != null)
         {
             increase = 1 + effect.getEffect();
         }
-        return Math.pow(2, getBuildingLevel()) * increase > getRecipes().size() + 1;
+        if(canCraftComplexRecipes())
+            increase*=EXTRA_RECIPE_MULTIPLIER;
+        return (int) (Math.pow(2, getBuildingLevel()) * increase);
     }
 
     /**
@@ -319,7 +501,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             final TileEntity entity = colony.getWorld().getTileEntity(pos);
             if (entity != null)
             {
-                handlers.addAll(InventoryUtils.getItemHandlersFromProvider(entity));
+                final LazyOptional<IItemHandler> handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null);
+                handler.ifPresent(handlers::add);
             }
         }
         return ImmutableList.copyOf(handlers);
@@ -365,11 +548,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                     final ICitizenData data;
                     if (workersTagList.getCompound(i).keySet().contains(TAG_ID))
                     {
-                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompound(i).getInt(TAG_ID));
+                        data = getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_ID));
                     }
                     else if (workersTagList.getCompound(i).keySet().contains(TAG_WORKER_ID))
                     {
-                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
+                        data = getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
                     }
                     else
                     {
@@ -385,7 +568,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             catch (final Exception e)
             {
                 Log.getLogger().warn("Warning: Updating data structures:", e);
-                final ICitizenData worker = getColony().getCitizenManager().getCitizen(compound.getInt(TAG_WORKER));
+                final ICitizenData worker = getColony().getCitizenManager().getCivilian(compound.getInt(TAG_WORKER));
                 assignCitizen(worker);
             }
         }
@@ -395,10 +578,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         final ListNBT recipesTags = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < recipesTags.size(); i++)
         {
-            final IToken<?> token  = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
+            final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
             if (!recipes.contains(token))
             {
                 recipes.add(token);
+                IColonyManager.getInstance().getRecipeManager().registerUse(token);
             }
         }
     }
@@ -438,29 +622,67 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     {
         if (canRecipeBeAdded(token))
         {
-            recipes.add(token);
+            addRecipeToList(token);
             markDirty();
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
             {
-                colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                colony.getRequestManager()
+                  .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
             }
             return true;
         }
         return false;
     }
 
+    /**
+     * Add a recipe to the list of recipes.
+     *
+     * @param token the token to add.
+     */
+    public void addRecipeToList(final IToken<?> token)
+    {
+        if (!recipes.contains(token))
+        {
+            recipes.add(token);
+        }
+    }
+
     @Override
     public void removeRecipe(final IToken<?> token)
     {
-        recipes.remove(token);
-        markDirty();
+        if(recipes.remove(token))
+        {
+            markDirty();
+        }
+        else
+        {
+            Log.getLogger().warn("Failure to remove recipe, please tell the mod authors about this");
+            recipes.clear();
+        }
+    }
+
+    /**
+     * Replace one current recipe with a new one
+     * @param oldRecipe the recipe to replace
+     * @param newRecipe the new version
+     */
+    public void replaceRecipe(final IToken<?> oldRecipe, final IToken<?> newRecipe)
+    {
+        if (recipes.contains(oldRecipe))
+        {
+            int oldIndex = recipes.indexOf(oldRecipe);
+            recipes.add(oldIndex, newRecipe);
+            recipes.remove(oldRecipe);
+            markDirty();
+        }
     }
 
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
         super.onColonyTick(colony);
+        checkForWorkerSpecificRecipes();
 
         // If we have no active worker, grab one from the Colony
         if (!isFull() && ((getBuildingLevel() > 0 && isBuilt()) || this instanceof BuildingBuilder)
@@ -482,6 +704,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             super.removeCitizen(citizen);
             citizen.setWorkBuilding(null);
             cancelAllRequestsOfCitizen(citizen);
+            citizen.setVisibleStatus(null);
         }
     }
 
@@ -522,8 +745,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         buf.writeInt(getPrimarySkill().ordinal());
         buf.writeInt(getSecondarySkill().ordinal());
         buf.writeInt(getMaxInhabitants());
-        buf.writeBoolean(hasSpaceForMoreRecipes());
         buf.writeBoolean(isRecipeAlterationAllowed());
+        buf.writeString(jobDisplayName);
+        buf.writeInt(getMaxRecipes());
     }
 
     @Override
@@ -543,7 +767,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public boolean canWorkDuringTheRain()
     {
-        return getBuildingLevel() >= BONUS_BUILDING_LEVEL;
+        return false;
     }
 
     @Override
@@ -607,6 +831,128 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     /**
+     * Check for worker specific recipes and add them if necessary.
+     */
+    public void checkForWorkerSpecificRecipes()
+    {
+        for(final CustomRecipe newRecipe : CustomRecipeManager.getInstance().getRecipes(getJobName()))
+        {
+            final IRecipeStorage recipeStorage = newRecipe.getRecipeStorage();
+            final IToken<?> recipeToken = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipeStorage);
+
+            if(newRecipe.isValidForBuilding(this))
+            {   
+                IToken<?> duplicateFound = null;
+                boolean forceReplace = false;  
+                for(IToken<?> token : recipes)
+                {
+                    if(token == recipeToken)
+                    {
+                        duplicateFound = token;
+                        break;
+                    }
+                    final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+                    //Let's verify that this recipe doesn't exist in an improved form
+                    if(storage != null && storage.getPrimaryOutput().equals(recipeStorage.getPrimaryOutput(), true))
+                    {
+                        List<ItemStorage> recipeInput1 = storage.getCleanedInput();
+                        List<ItemStorage> recipeInput2 = recipeStorage.getCleanedInput();
+
+                        if(recipeInput1.size() != recipeInput2.size())
+                        {
+                            continue;
+                        }
+                        
+                        if(recipeInput1.size() > 1)
+                        {
+                            recipeInput1.sort(Comparator.comparing(item -> Objects.hash(item.hashCode(), item.getAmount())));
+                            recipeInput2.sort(Comparator.comparing(item -> Objects.hash(item.hashCode(), item.getAmount())));
+                        }
+
+                        boolean allMatch = true;
+                        for(int i=0; i<recipeInput1.size(); i++)
+                        {
+                            if(!recipeInput1.get(i).getItem().equals(recipeInput2.get(i).getItem()))
+                            {
+                                allMatch = false;
+                                break;
+                            }
+                        }
+                        if(allMatch)
+                        {
+                            duplicateFound = token;
+                            if(storage.getRecipeType() instanceof ClassicRecipe && recipeStorage.getRecipeType() instanceof MultiOutputRecipe)
+                            {
+                                //This catches the old custom recipes without a RecipeSource
+                                forceReplace = true;
+                            }
+                            if(storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeStorage.getRecipeSource()))
+                            {
+                                //This will only happen if the tokens don't match, aka: the recipe has changed.
+                                forceReplace = true;
+                            }
+                            break;
+                        }
+                    }
+                }
+                if(duplicateFound == null)
+                {
+                    addRecipeToList(recipeToken);    
+                    colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                }
+                else if((forceReplace || newRecipe.getMustExist()) && duplicateFound != recipeToken)
+                {
+                    //We found the base recipe for a multi-recipe, replace it with the multi-recipe
+                    replaceRecipe(duplicateFound, recipeToken);
+                    colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+
+                    //Clean up old 'classic' recipes that the new multi-recipe replaces
+                    final List<ItemStack> alternates = recipeStorage.getAlternateOutputs();
+                    for(IToken<?> token : this.getRecipes())
+                    {
+                        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+                        if(storage.getRecipeType() instanceof ClassicRecipe && ItemStackUtils.compareItemStackListIgnoreStackSize(alternates, storage.getPrimaryOutput(), false, true))
+                        {
+                            removeRecipe(token);
+                        }
+                    }
+                    colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && recipeStorage.getAlternateOutputs().stream().anyMatch(i -> ((IDeliverable) request.getRequest()).matches(i)));
+                }
+            } 
+            else
+            {
+                if(recipes.contains(recipeToken))
+                {
+                    removeRecipe(recipeToken);
+                }
+            }
+        }
+        markDirty();
+    }
+
+
+    /**
+     * Get the Job DisplayName
+     */
+    public String getJobDisplayName()
+    {
+        return jobDisplayName;
+    }
+
+    /**
+     * Set the job Display name
+     * @param jobDisplayName the localization ID for the display name
+     */
+    public void setJobDisplayName(String jobDisplayName)
+    {
+        if(this.jobDisplayName.isEmpty())
+        {
+            this.jobDisplayName = jobDisplayName;
+        }
+    }
+    
+    /**
      * AbstractBuildingWorker View for clients.
      */
     public static class View extends AbstractBuildingView implements IBuildingWorkerView
@@ -652,14 +998,19 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         private Skill secondary = Skill.Intelligence;
 
         /**
-         * If the building can add more recipes.
+         * The maximum number of recipes this building can have currently
          */
-        private boolean canAddMoreRecipes;
+        private int maxRecipes;
 
         /**
          * If the building allows altering of recipes
          */
         private boolean isRecipeAlterationAllowed;
+
+        /**
+         * The job display name
+         */
+        private String jobDisplayName;
 
         /**
          * Creates the view representation of the building.
@@ -713,8 +1064,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             this.primary = Skill.values()[buf.readInt()];
             this.secondary = Skill.values()[buf.readInt()];
             this.maxInhabitants = buf.readInt();
-            this.canAddMoreRecipes = buf.readBoolean();
             this.isRecipeAlterationAllowed = buf.readBoolean();
+            this.jobDisplayName = buf.readString();
+            this.maxRecipes=buf.readInt();
         }
 
         @Override
@@ -778,7 +1130,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         @Override
         public boolean canRecipeBeAdded()
         {
-            return canAddMoreRecipes;
+            return getMaxRecipes() > getRecipes().size();
+        }
+        
+        public int getMaxRecipes()
+        {
+            return maxRecipes;
         }
 
         @Override
@@ -825,6 +1182,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         public int getMaxInhabitants()
         {
             return this.maxInhabitants;
+        }
+
+        @Override
+        public String getJobDisplayName()
+        {
+            return jobDisplayName;
         }
     }
 }

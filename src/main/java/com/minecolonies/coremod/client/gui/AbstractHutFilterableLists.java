@@ -35,8 +35,8 @@ public abstract class AbstractHutFilterableLists extends AbstractWindowWorkerBui
     /**
      * Constructor for the window of the the filterable lists.
      *
-     * @param building {@link AbstractFilterableListsView}.
-     * @param res the resource String.
+     * @param building   {@link AbstractFilterableListsView}.
+     * @param res        the resource String.
      * @param predicates the restriction.
      */
     @SafeVarargs
@@ -51,8 +51,9 @@ public abstract class AbstractHutFilterableLists extends AbstractWindowWorkerBui
 
     /**
      * The classic block list.
+     *
      * @param filterPredicate the predicate filter.
-     * @param id the id of the specific predicate.
+     * @param id              the id of the specific predicate.
      * @return the list of itemStorages.
      */
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
@@ -61,7 +62,13 @@ public abstract class AbstractHutFilterableLists extends AbstractWindowWorkerBui
         {
             return Collections.emptyList();
         }
-        return ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(filterPredicate.and(itemStackPredicate.get(id))).map(ItemStorage::new).collect(Collectors.toList()));
+        return ImmutableList.copyOf(IColonyManager.getInstance()
+                                      .getCompatibilityManager()
+                                      .getBlockList()
+                                      .stream()
+                                      .filter(filterPredicate.and(itemStackPredicate.get(id)))
+                                      .map(ItemStorage::new)
+                                      .collect(Collectors.toList()));
     }
 
     @Override

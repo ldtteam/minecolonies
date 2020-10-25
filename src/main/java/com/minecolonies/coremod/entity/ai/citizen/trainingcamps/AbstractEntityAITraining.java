@@ -2,10 +2,9 @@ package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -17,7 +16,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
  * Abstract class for all training AIs.
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B extends AbstractBuildingWorker> extends AbstractEntityAIBasic<J, B>
+public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B extends AbstractBuildingWorker> extends AbstractEntityAIInteract<J, B>
 {
     /**
      * Percentual chance for target search being chosen as target job.
@@ -50,8 +49,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
     protected int currentAttackDelay = 0;
 
     /**
-     * Creates the abstract part of the AI.inte
-     * Always use this constructor!
+     * Creates the abstract part of the AI.inte Always use this constructor!
      *
      * @param job the job to fulfill
      */
@@ -62,9 +60,9 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
         super.registerTargets(
           new AITarget(IDLE, () -> START_WORKING, 1),
           new AITarget(START_WORKING, () -> DECIDE, 1),
-          new AITarget(DECIDE, this::decide, 1),
-          new AITarget(TRAINING_WANDER, this::wander, 1),
-          new AITarget(GO_TO_TARGET, this::pathToTarget, 1)
+          new AITarget(DECIDE, this::decide, 20),
+          new AITarget(TRAINING_WANDER, this::wander, 20),
+          new AITarget(GO_TO_TARGET, this::pathToTarget, 20)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -76,7 +74,6 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
      */
     public IAIState decide()
     {
-        setDelay(STANDARD_DELAY);
         if (!isSetup())
         {
             return DECIDE;
@@ -91,6 +88,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
 
     /**
      * Method to check if the worker is ready to start.
+     *
      * @return true if so.
      */
     protected abstract boolean isSetup();
@@ -102,13 +100,13 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
      */
     private IAIState wander()
     {
-        setDelay(STANDARD_DELAY);
         if (currentPathingTarget == null)
         {
             currentPathingTarget = getWanderPosition();
+            return getState();
         }
 
-        if (!walkToBlock(currentPathingTarget) || worker.getCitizenStuckHandler().isStuck())
+        if (!walkToBlock(currentPathingTarget))
         {
             currentPathingTarget = null;
             return DECIDE;
@@ -124,7 +122,6 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
      */
     private IAIState pathToTarget()
     {
-        setDelay(STANDARD_DELAY);
         if (walkToBlock(currentPathingTarget, 2))
         {
             return getState();
@@ -139,7 +136,11 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
      */
     private BlockPos getWanderPosition()
     {
-        final BlockPos pos = BlockPosUtil.getRandomPosition(world, worker.getPosition(), getOwnBuilding().getPosition(), 1, 5);
+        final BlockPos pos = findRandomPositionToWalkTo(20);
+        if (pos == null)
+        {
+            return null;
+        }
 
         if (range == null)
         {

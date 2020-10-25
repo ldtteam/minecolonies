@@ -10,7 +10,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.util.Direction;
@@ -109,7 +108,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                         if (currentNode.getStyle() == Node.NodeType.SHAFT)
                         {
                             final Direction facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(currentNode.getX(), 0, currentNode.getZ()));
-                            final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY+1, ladderPos.getZ());
+                            final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY + 1, ladderPos.getZ());
 
                             return new BlockPos(ladderHeight.offset(facing, 7));
                         }
@@ -123,9 +122,9 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
 
                 addToProxyList(
                   new BlockPos(
-                                ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
-                                level.getDepth(),
-                                ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
+                    ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                    level.getDepth(),
+                    ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
                 return getProxy(target, citizen.getPosition(), distanceToPath);
 
                 //If he already is at ladder location, the closest node automatically will be his hut block.
@@ -151,9 +150,9 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                 //Then add the ladder position as the latest node.
                 addToProxyList(
                   new BlockPos(
-                                ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
-                                level.getDepth(),
-                                ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
+                    ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                    level.getDepth(),
+                    ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
 
                 if (building.getActiveNode() != null && building.getActiveNode().getParent() != null)
                 {
@@ -180,7 +179,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                 if (lastNode != null && lastNode.getStyle() == Node.NodeType.SHAFT)
                 {
                     final Direction facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(lastNode.getX(), 0, lastNode.getZ()));
-                    final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY+1, ladderPos.getZ());
+                    final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY + 1, ladderPos.getZ());
                     return new BlockPos(ladderHeight.offset(facing, 7));
                 }
 
@@ -249,12 +248,11 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     @Override
     public boolean isLivingAtSiteWithMove(final MobEntity entity, final int x, final int y, final int z, final int range)
     {
-        if (!WorkerUtil.isWorkerAtSiteWithMove((EntityCitizen) entity, x, y, z, range))
+        if (!WorkerUtil.isWorkerAtSiteWithMove((AbstractEntityCitizen) entity, x, y, z, range))
         {
             EntityUtils.tryMoveLivingToXYZ(entity, x, y, z);
             return false;
         }
         return true;
     }
-
 }

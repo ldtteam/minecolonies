@@ -18,8 +18,7 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     private static final int MAX_ANIMALS_PER_LEVEL = 2;
 
     /**
-     * Creates the abstract part of the AI.
-     * Always use this constructor!
+     * Creates the abstract part of the AI. Always use this constructor!
      *
      * @param job the job to fulfill
      */
@@ -46,6 +45,18 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     public int getMaxAnimalMultiplier()
     {
         return MAX_ANIMALS_PER_LEVEL;
+    }
+
+    @Override
+    public double getButcheringAttackDamage()
+    {
+        return Math.max(1.0, getPrimarySkillLevel() / 10.0);
+    }
+
+    @Override
+    protected boolean canFeedChildren()
+    {
+        return getSecondarySkillLevel() >= LIMIT_TO_FEED_CHILDREN;
     }
 
     @Override

@@ -28,20 +28,21 @@ public class NBTUtils
     public static Collector<CompoundNBT, ?, ListNBT> toListNBT()
     {
         return Collectors.collectingAndThen(
-                Collectors.toList(),
-                list -> {
-                    final ListNBT tagList = new ListNBT();
-                    list.forEach(tagList::add);
+          Collectors.toList(),
+          list -> {
+              final ListNBT tagList = new ListNBT();
+              list.forEach(tagList::add);
 
-                    return tagList;
-                });
+              return tagList;
+          });
     }
 
     private static class TagListIterator implements Iterator<INBT>
     {
 
         private final ListNBT list;
-        private int currentIndex = 0;
+        private       int     currentIndex = 0;
+
         private TagListIterator(final ListNBT list) {this.list = list;}
 
         @Override

@@ -28,7 +28,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
     /**
      * Range to the proxy.
      */
-    private static final int PROXY_RANGE  = 3;
+    private static final int PROXY_RANGE = 3;
 
     /**
      * The entity entity associated with the proxy.
@@ -89,7 +89,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
         }
 
         final double distanceToPath = careAboutY()
-                ? BlockPosUtil.getDistanceSquared(entity.getPosition(), target) : BlockPosUtil.getDistanceSquared2D(entity.getPosition(), target);
+                                        ? BlockPosUtil.getDistanceSquared(entity.getPosition(), target) : BlockPosUtil.getDistanceSquared2D(entity.getPosition(), target);
 
         if (distanceToPath <= MIN_RANGE_FOR_DIRECT_PATH)
         {
@@ -201,16 +201,16 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
         final boolean arrived;
         if (onMove)
         {
-            final int targetY = careAboutY() ? entity.getPosition().getY() : target.getY();
+            final int targetY = careAboutY() ? target.getY() : entity.getPosition().getY();
             arrived = isLivingAtSiteWithMove(entity, target.getX(), target.getY(), target.getZ(), range)
-                     || EntityUtils.isLivingAtSite(entity, target.getX(), targetY, target.getZ(), range + 1);
+                        || EntityUtils.isLivingAtSite(entity, target.getX(), targetY, target.getZ(), range + 1);
         }
         else
         {
             arrived = !EntityUtils.isLivingAtSite(entity, target.getX(), target.getY(), target.getZ(), range);
         }
 
-        if(arrived)
+        if (arrived)
         {
             this.target = null;
         }

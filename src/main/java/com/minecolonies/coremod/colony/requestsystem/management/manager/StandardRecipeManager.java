@@ -12,10 +12,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 public class StandardRecipeManager implements IRecipeManager
 {
@@ -34,10 +33,16 @@ public class StandardRecipeManager implements IRecipeManager
      */
     private ImmutableMap<IToken<?>, IRecipeStorage> cache = null;
 
+
+    /**
+     * The list of recipes marked as used this session
+     */
+    private final Set<IToken<?>> usedRecipes = new HashSet<>();
+
     @Override
     public ImmutableMap<IToken<?>, IRecipeStorage> getRecipes()
     {
-         if (cache == null)
+        if (cache == null)
         {
             cache = ImmutableMap.copyOf(recipes);
         }
@@ -48,6 +53,7 @@ public class StandardRecipeManager implements IRecipeManager
     public IToken<?> addRecipe(final IRecipeStorage storage)
     {
         recipes.put(storage.getToken(), storage);
+        usedRecipes.add(storage.getToken());
         cache = null;
         return storage.getToken();
     }
@@ -56,19 +62,20 @@ public class StandardRecipeManager implements IRecipeManager
     public IToken<?> checkOrAddRecipe(final IRecipeStorage storage)
     {
         final IToken<?> token = getRecipeId(storage);
-        if(token == null)
+        if (token == null)
         {
             return addRecipe(storage);
         }
+        usedRecipes.add(token);
         return token;
     }
 
     @Override
     public IToken<?> getRecipeId(final IRecipeStorage storage)
     {
-        for(final Map.Entry<IToken<?>, IRecipeStorage> tempStorage: recipes.entrySet())
+        for (final Map.Entry<IToken<?>, IRecipeStorage> tempStorage : recipes.entrySet())
         {
-            if(tempStorage.getValue().equals(storage))
+            if (tempStorage.getValue().equals(storage))
             {
                 return tempStorage.getKey();
             }
@@ -80,17 +87,35 @@ public class StandardRecipeManager implements IRecipeManager
     public void write(@NotNull final CompoundNBT compound)
     {
         @NotNull final ListNBT recipesTagList =
-                recipes.entrySet().stream().map(entry ->  StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toListNBT());
+          recipes.entrySet().stream().filter(recipeEntry -> usedRecipes.contains(recipeEntry.getKey())).map(entry -> StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toListNBT());
         compound.put(TAG_RECIPES, recipesTagList);
     }
 
     @Override
     public void read(@NotNull final CompoundNBT compound)
     {
-        recipes.putAll(NBTUtils.streamCompound(compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND))
-                .map(recipeCompound -> (IRecipeStorage) StandardFactoryController.getInstance().deserialize(recipeCompound))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toMap(IRecipeStorage::getToken, recipe -> recipe)));
+        final ListNBT list = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++)
+        {
+            IRecipeStorage recipe = StandardFactoryController.getInstance().deserialize(list.getCompound(i));
+            if (recipe != null)
+            {
+                recipes.put(recipe.getToken(), recipe);
+            }
+        }
         cache = null;
+    }
+
+    @Override
+    public void reset()
+    {
+        recipes.clear();
+        usedRecipes.clear();
+    }
+
+    @Override
+    public void registerUse(final IToken<?> token)
+    {
+        usedRecipes.add(token);
     }
 }

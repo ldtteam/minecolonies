@@ -62,9 +62,8 @@ public final class BakerRecipes
         inputPumpkinPie.add(new ItemStack(Items.SUGAR, 1));
         inputPumpkinPie.add(new ItemStack(Items.EGG, 1));
 
-    	
-    	
-    	final List<ItemStack> inputCake = new ArrayList<>();
+
+        final List<ItemStack> inputCake = new ArrayList<>();
         inputCake.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
         inputCake.add(new ItemStack(Items.MILK_BUCKET, 1));
         inputCake.add(new ItemStack(Items.MILK_BUCKET, 1));

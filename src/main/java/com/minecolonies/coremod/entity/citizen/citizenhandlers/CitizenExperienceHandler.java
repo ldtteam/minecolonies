@@ -2,17 +2,24 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.research.util.ResearchConstants.LEVELING;
+import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.XP_PARTICLE_EXPLOSION_SIZE;
 
@@ -32,15 +39,26 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     public static final int SECONDARY_DEPENDENCY_SHARE = 5;
 
     /**
+     * Number of times to attempt XP pickup before forcing it
+     */
+    public static final int MAX_XP_PICKUP_ATTEMPTS = 5;
+
+    /**
      * The citizen assigned to this manager.
      */
-    private final EntityCitizen citizen;
+    private final AbstractEntityCitizen citizen;
+
+    /**
+     * Number of times we've moved XP consecutively
+     */
+    private int counterMovedXp = 0;
 
     /**
      * Constructor for the experience handler.
+     *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenExperienceHandler(final EntityCitizen citizen)
+    public CitizenExperienceHandler(final AbstractEntityCitizen citizen)
     {
         this.citizen = citizen;
     }
@@ -73,34 +91,18 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         double localXp = xp * bonusXp;
         final double saturation = citizen.getCitizenData().getSaturation();
         final int intelligenceLevel = data.getCitizenSkillHandler().getLevel(Skill.Intelligence);
-        localXp += localXp * ( intelligenceLevel / 10.0 );
+        localXp += localXp * (intelligenceLevel / 10.0);
 
         if (saturation <= 0)
         {
             return;
         }
 
-        if (saturation < AVERAGE_SATURATION)
+        final MultiplierModifierResearchEffect xpBonus =
+          citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(LEVELING, MultiplierModifierResearchEffect.class);
+        if (xpBonus != null)
         {
-            if (saturation < LOW_SATURATION)
-            {
-                localXp -= localXp * BIG_SATURATION_FACTOR;
-            }
-            else
-            {
-                localXp -= localXp * LOW_SATURATION_FACTOR;
-            }
-        }
-        else if (saturation > AVERAGE_SATURATION)
-        {
-            if (saturation > HIGH_SATURATION)
-            {
-                localXp += localXp * BIG_SATURATION_FACTOR;
-            }
-            else
-            {
-                localXp += localXp * LOW_SATURATION_FACTOR;
-            }
+            localXp *= (1 + xpBonus.getEffect());
         }
 
         localXp = citizen.getCitizenItemHandler().applyMending(localXp);
@@ -122,7 +124,8 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     {
         int experience;
 
-        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorldFromCitizen(citizen).getGameRules().getBoolean(
+        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorldFromCitizen(
+          citizen).getGameRules().getBoolean(
           GameRules.DO_MOB_LOOT))
         {
             experience = (int) (citizen.getCitizenData().getCitizenSkillHandler().getTotalXP());
@@ -160,18 +163,36 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             return;
         }
 
-        for (@NotNull final ExperienceOrbEntity orb : citizen.world.getEntitiesWithinAABB(ExperienceOrbEntity.class, citizen.getBoundingBox().grow(2)))
+        final int growSize = counterMovedXp > 0 || citizen.getRandom().nextInt(100) < 20 ? 8 : 2;
+
+        final AxisAlignedBB box = citizen.getBoundingBox().grow(growSize);
+        if (!WorldUtil.isAABBLoaded(citizen.world, box))
         {
-            Vec3d vec3d = new Vec3d(citizen.posX - orb.getPosX(), citizen.posY + (double)this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
+            return;
+        }
+
+        boolean movedXp = false;
+
+        for (@NotNull final ExperienceOrbEntity orb : citizen.world.getEntitiesWithinAABB(ExperienceOrbEntity.class, box))
+        {
+            Vec3d vec3d = new Vec3d(citizen.posX - orb.getPosX(), citizen.posY + (double) this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
             double d1 = vec3d.lengthSquared();
 
-            if (d1 < 1.0D) {
+            if (d1 < 1.0D || counterMovedXp > MAX_XP_PICKUP_ATTEMPTS)
+            {
                 addExperience(orb.getXpValue() / 2.0D);
                 orb.remove();
+                counterMovedXp = 0;
                 return;
             }
             double d2 = 1.0D - Math.sqrt(d1) / 8.0D;
             orb.setMotion(orb.getMotion().add(vec3d.normalize().scale(d2 * d2 * 0.1D)));
+            movedXp = true;
+            counterMovedXp++;
+        }
+        if(!movedXp)
+        {
+            counterMovedXp = 0;
         }
     }
 }

@@ -1,12 +1,13 @@
 package com.minecolonies.api.blocks;
 
+import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
+import com.minecolonies.api.blocks.decorative.AbstractColonyFlagBanner;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Class to create the modBlocks.
- * References to the blocks can be made here
+ * Class to create the modBlocks. References to the blocks can be made here
  * <p>
  * We disabled the following finals since we are neither able to mark the items as final, nor do we want to provide public accessors.
  */
@@ -67,13 +68,17 @@ public final class ModBlocks
      * Utility blocks.
      */
     public static AbstractBlockMinecoloniesConstructionTape<? extends AbstractBlockMinecoloniesConstructionTape<?>> blockConstructionTape;
-    public static AbstractBlockMinecoloniesRack<? extends AbstractBlockMinecoloniesRack<?>> blockRack;
-    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>> blockWayPoint;
-    public static AbstractBlockBarrel<? extends AbstractBlockBarrel<?>> blockBarrel;
+    public static AbstractBlockMinecoloniesRack<? extends AbstractBlockMinecoloniesRack<?>>             blockRack;
+    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                     blockWayPoint;
+    public static AbstractBlockBarrel<? extends AbstractBlockBarrel<?>>                                 blockBarrel;
     public static AbstractBlockMinecoloniesHorizontal<? extends AbstractBlockMinecoloniesHorizontal<?>> blockDecorationPlaceholder;
-    public static AbstractBlockMinecoloniesDefault<? extends AbstractBlockMinecoloniesDefault<?>> blockScarecrow;
-    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>> blockBarracksTowerSubstitution;
-    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>> blockCompostedDirt;
+    public static AbstractBlockMinecoloniesDefault<? extends AbstractBlockMinecoloniesDefault<?>>       blockScarecrow;
+    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                     blockBarracksTowerSubstitution;
+    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                     blockCompostedDirt;
+    public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                       blockColonyBanner;
+    public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                       blockColonyWallBanner;
+    public static AbstractBlockGate                                                                     blockIronGate;
+    public static AbstractBlockGate                                                                     blockWoodenGate;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -127,6 +132,7 @@ public final class ModBlocks
           blockHutTavern,
           blockHutRabbitHutch,
           blockHutConcreteMixer,
-          blockHutBeekeeper};
+          blockHutBeekeeper,
+          blockHutFlorist};
     }
 }

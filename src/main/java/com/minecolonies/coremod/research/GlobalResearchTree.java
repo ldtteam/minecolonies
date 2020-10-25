@@ -3,6 +3,7 @@ package com.minecolonies.coremod.research;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -42,8 +43,13 @@ public class GlobalResearchTree implements IGlobalResearchTree
         {
             branchMap = new HashMap<>();
         }
+        if (branchMap.containsKey(research.getId()))
+        {
+            Log.getLogger().error("Duplicate research key:" + research.getId());
+        }
+
         branchMap.put(research.getId(), research);
-        researchTree.put(branch,branchMap);
+        researchTree.put(branch, branchMap);
     }
 
     @Override
@@ -66,7 +72,11 @@ public class GlobalResearchTree implements IGlobalResearchTree
     public void writeToNBT(final CompoundNBT compound)
     {
         @NotNull final ListNBT
-          citizenTagList = researchTree.values().stream().flatMap(map -> map.values().stream()).map(research -> StandardFactoryController.getInstance().serialize(research)).collect(NBTUtils.toListNBT());
+          citizenTagList = researchTree.values()
+                             .stream()
+                             .flatMap(map -> map.values().stream())
+                             .map(research -> StandardFactoryController.getInstance().serialize(research))
+                             .collect(NBTUtils.toListNBT());
         compound.put(TAG_RESEARCH_TREE, citizenTagList);
     }
 
@@ -75,13 +85,27 @@ public class GlobalResearchTree implements IGlobalResearchTree
     {
         researchTree.clear();
         NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Constants.NBT.TAG_COMPOUND))
-                              .map(researchCompound -> (IGlobalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
-                              .forEach(research -> addResearch(research.getBranch(), research));
+          .map(researchCompound -> (IGlobalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
+          .forEach(research -> addResearch(research.getBranch(), research));
     }
 
     @Override
     public void loadCost()
     {
         researchTree.values().forEach(b -> b.values().forEach(IGlobalResearch::loadCostFromConfig));
+    }
+
+    @Override
+    public String getEffectIdForResearch(final String id)
+    {
+        for(final String branch: this.getBranches())
+        {
+            final IGlobalResearch r = this.getResearch(branch, id);
+            if (r != null)
+            {
+                return r.getEffect().getId();
+            }
+        }
+        return null; 
     }
 }

@@ -1,8 +1,9 @@
 package com.minecolonies.api.entity.mobs.pirates;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
-import com.minecolonies.api.sounds.BarbarianSounds;
+import com.minecolonies.api.sounds.RaiderSounds;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.util.SoundEvent;
@@ -11,7 +12,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
@@ -34,7 +34,8 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
 
     /**
      * Constructor method for Abstract Barbarians.
-     * @param type the type.
+     *
+     * @param type  the type.
      * @param world the world.
      */
     public AbstractEntityPirate(final EntityType<? extends AbstractEntityPirate> type, final World world)
@@ -54,13 +55,6 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
         }
     }
 
-    @Nullable
-    @Override
-    protected SoundEvent getAmbientSound()
-    {
-        return BarbarianSounds.barbarianSay;
-    }
-
     @Override
     public boolean canSpawn(final IWorld worldIn, final SpawnReason spawnReasonIn)
     {
@@ -69,6 +63,7 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
 
     /**
      * Get the unique texture id.
+     *
      * @return the texture id.
      */
     public int getTextureId()
@@ -83,5 +78,11 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
         AbstractAdvancedPathNavigate navigator = super.getNavigator();
         navigator.getPathingOptions().withStartSwimCost(2.5D).withSwimCost(1.1D);
         return navigator;
+    }
+
+    @Override
+    public RaiderType getRaiderType()
+    {
+        return RaiderType.PIRATE;
     }
 }

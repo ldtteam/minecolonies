@@ -7,12 +7,14 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.client.gui.WindowHutCitizen;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenBornEvent;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
@@ -36,7 +38,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RESIDENTS;
 /**
  * The class of the citizen hut.
  */
-public class BuildingHome extends AbstractBuilding
+public class BuildingHome extends AbstractBuilding implements IBuildingBedProvider
 {
     /**
      * The string describing the hut.
@@ -65,10 +67,9 @@ public class BuildingHome extends AbstractBuilding
     private static final int MIN_TIME_BEFORE_SPAWNTRY = 300;
 
     /**
-     * Interval at which the childen are created, in ticks.
-     * Every 20 min it tries to spawn a child, 20min*60s*20ticks
+     * Interval at which the childen are created, in ticks. Every 20 min it tries to spawn a child, 20min*60s*20ticks
      */
-    private int childCreationInterval = 600;
+    private final static int CHILD_SPAWN_INTERVAL = 20 * 60;
 
     /**
      * The timer counting ticks to the next time creating a child
@@ -85,7 +86,7 @@ public class BuildingHome extends AbstractBuilding
     {
         super(c, l);
         final Random rand = new Random();
-        childCreationTimer = rand.nextInt(childCreationInterval) + MIN_TIME_BEFORE_SPAWNTRY;
+        childCreationTimer = rand.nextInt(CHILD_SPAWN_INTERVAL) + MIN_TIME_BEFORE_SPAWNTRY;
     }
 
     @Override
@@ -98,7 +99,7 @@ public class BuildingHome extends AbstractBuilding
             final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
             for (final int citizenId : residentIds)
             {
-                final ICitizenData citizen = getColony().getCitizenManager().getCitizen(citizenId);
+                final ICitizenData citizen = getColony().getCitizenManager().getCivilian(citizenId);
                 if (citizen != null)
                 {
                     // Bypass assignCitizen (which marks dirty)
@@ -241,12 +242,14 @@ public class BuildingHome extends AbstractBuilding
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        if (childCreationTimer > childCreationInterval)
+        if (getBuildingLevel() > 0 && (childCreationTimer -= TWENTYFIVESEC) <= 0)
         {
-            childCreationTimer = 0;
+            childCreationTimer =
+              (int) (colony.getWorld().rand.nextInt(500) + CHILD_SPAWN_INTERVAL * (1.0 - colony.getCitizenManager().getCurrentCitizenCount() / Math.max(4,
+                colony.getCitizenManager()
+                  .getMaxCitizens())));
             trySpawnChild();
         }
-        childCreationTimer += TWENTYFIVESEC;
 
         if (getAssignedCitizen().size() < getMaxInhabitants() && !getColony().isManualHousing())
         {
@@ -256,11 +259,8 @@ public class BuildingHome extends AbstractBuilding
     }
 
     /**
-     * Try to spawn a new citizen as child.
-     * Mom / dad entities are required and chosen randomly in this hut.
-     * Childs inherit stats from their parents, avergaged +-2
-     * Childs get assigned to a free housing slot in the colony to be raised there,
-     * if the house has an adult living there the child takes its name and gets raised by it.
+     * Try to spawn a new citizen as child. Mom / dad entities are required and chosen randomly in this hut. Childs inherit stats from their parents, avergaged +-2 Childs get
+     * assigned to a free housing slot in the colony to be raised there, if the house has an adult living there the child takes its name and gets raised by it.
      */
     public void trySpawnChild()
     {
@@ -292,7 +292,7 @@ public class BuildingHome extends AbstractBuilding
                 return;
             }
 
-            final ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterNewCitizenData();
+            final ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCivilianData();
 
             final Random rand = new Random();
 
@@ -355,6 +355,8 @@ public class BuildingHome extends AbstractBuilding
 
             LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild");
             colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), this.getPosition());
+
+            colony.getEventDescriptionManager().addEventDescription(new CitizenBornEvent(getPosition(), newCitizen.getName()));
         }
     }
 
@@ -390,8 +392,7 @@ public class BuildingHome extends AbstractBuilding
     }
 
     /**
-     * Looks for a homeless citizen to add to the current building Calls.
-     * {@link #assignCitizen(ICitizenData)}
+     * Looks for a homeless citizen to add to the current building Calls. {@link #assignCitizen(ICitizenData)}
      */
     private void addHomelessCitizens()
     {
@@ -425,7 +426,7 @@ public class BuildingHome extends AbstractBuilding
 
     /**
      * Moves the citizen into his new hut
-     * 
+     *
      * @param citizen the citizen to move
      */
     private void moveCitizenToHut(final ICitizenData citizen)
@@ -512,12 +513,8 @@ public class BuildingHome extends AbstractBuilding
         getColony().getCitizenManager().calculateMaxCitizens();
     }
 
-    /**
-     * Gets a list of all beds in this building.
-     * 
-     * @return a list of all beds in this building.
-     */
     @NotNull
+    @Override
     public List<BlockPos> getBedList()
     {
         return new ArrayList<>(bedList);

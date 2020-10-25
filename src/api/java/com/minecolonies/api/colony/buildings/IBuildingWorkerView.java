@@ -92,10 +92,9 @@ public interface IBuildingWorkerView extends IBuildingView
     /**
      * Check if players can change the building's recipe list.
      * <p>
-     * This is the case for most current buildings, but some buildings might only work on built-in recipes.
-     * It's recommended to turn this off for buildings that make no use of player-thaught recipes, to avoid confusion for new players.
-     * Turning this on will hide the "Teach recipes" button, hide the remove-buttons in the recipe list,
-     * and also hide the recipe list altogether if no recipes are present.
+     * This is the case for most current buildings, but some buildings might only work on built-in recipes. It's recommended to turn this off for buildings that make no use of
+     * player-thaught recipes, to avoid confusion for new players. Turning this on will hide the "Teach recipes" button, hide the remove-buttons in the recipe list, and also hide
+     * the recipe list altogether if no recipes are present.
      * </p>
      *
      * @return true if player is allowed to alter  recipes, false if not
@@ -122,4 +121,11 @@ public interface IBuildingWorkerView extends IBuildingView
      * @return job name.
      */
     String getJobName();
+
+    /**
+     * Get the name of the job.
+     *
+     * @return job name.
+     */
+    String getJobDisplayName();
 }

@@ -9,15 +9,13 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 /**
- * Information about a resource.
- * - How many are needed to finish the build
- * - How many are available to the builder
- * - How many are in the player's inventory (client side only)
+ * Information about a resource. - How many are needed to finish the build - How many are available to the builder - How many are in the player's inventory (client side only)
  */
 public class BuildingBuilderResource extends ItemStorage
 {
     private int amountAvailable;
     private int amountPlayer;
+
     /**
      * Constructor for a resource but with available items.
      *
@@ -57,9 +55,8 @@ public class BuildingBuilderResource extends ItemStorage
     /**
      * get how much more is needed from the player.
      * <p>
-     * This is taking the builder's inventory + chest into account and the player inventory
-     * Negative number is when the player does not have enough
-     * Negative number is when the player does not more than enough
+     * This is taking the builder's inventory + chest into account and the player inventory Negative number is when the player does not have enough Negative number is when the
+     * player does not more than enough
      *
      * @return the amount needed
      */
@@ -74,12 +71,12 @@ public class BuildingBuilderResource extends ItemStorage
         final int itemId = Item.getIdFromItem(getItem());
         final int hashCode = getItemStack().hasTag() ? getItemStack().getTag().hashCode() : 0;
         return getName() + "(p:"
-                + amountPlayer + " a:"
-                + amountAvailable + " n:" + getAmount()
-                + " id=" + itemId
-                + " damage=" + getDamageValue() +  "-"
-                + hashCode
-                + ") => " + getAvailabilityStatus().name();
+                 + amountPlayer + " a:"
+                 + amountAvailable + " n:" + getAmount()
+                 + " id=" + itemId
+                 + " damage=" + getDamageValue() + "-"
+                 + hashCode
+                 + ") => " + getAvailabilityStatus().name();
     }
 
     public String getName()
@@ -167,8 +164,7 @@ public class BuildingBuilderResource extends ItemStorage
     }
 
     /**
-     * Availability status of the resource.
-     * according to the builder's chest, inventory and the player's inventory
+     * Availability status of the resource. according to the builder's chest, inventory and the player's inventory
      */
     public enum RessourceAvailability
     {
@@ -190,8 +186,7 @@ public class BuildingBuilderResource extends ItemStorage
         /**
          * Compare to resource together.
          * <p>
-         * We want the item availalable in the player inventory first and the one not needed last
-         * In alphabetical order otherwise
+         * We want the item availalable in the player inventory first and the one not needed last In alphabetical order otherwise
          */
         @Override
         public int compare(final BuildingBuilderResource resource1, final BuildingBuilderResource resource2)

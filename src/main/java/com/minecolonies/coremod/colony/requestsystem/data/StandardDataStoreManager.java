@@ -12,6 +12,7 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -120,6 +121,36 @@ public class StandardDataStoreManager implements IDataStoreManager
             }).collect(Collectors.toMap(Tuple::getA, Tuple::getB));
 
             return new StandardDataStoreManager(storeMap);
+        }
+
+        @Override
+        public void serialize(IFactoryController controller, StandardDataStoreManager input, PacketBuffer packetBuffer)
+        {
+            packetBuffer.writeInt(input.storeMap.size());
+            input.storeMap.forEach((key, value) -> {
+                controller.serialize(packetBuffer, key);
+                controller.serialize(packetBuffer, value);
+            });
+        }
+
+        @Override
+        public StandardDataStoreManager deserialize(IFactoryController controller, PacketBuffer buffer)
+          throws Throwable
+        {
+            final Map<IToken<?>, IDataStore> storeMap = new HashMap<>();
+            final int storeSize = buffer.readInt();
+            for (int i = 0; i < storeSize; ++i)
+            {
+                storeMap.put(controller.deserialize(buffer), controller.deserialize(buffer));
+            }
+
+            return new StandardDataStoreManager(storeMap);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 40;
         }
     }
 }

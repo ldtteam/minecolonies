@@ -15,13 +15,18 @@ import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
-import com.ldtteam.structurize.util.*;
+import com.ldtteam.structurize.util.BlueprintPositionInfo;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
@@ -41,10 +46,7 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
@@ -112,7 +114,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
      *
-     * @param c          the colony view.
+     * @param c        the colony view.
      * @param building the building.
      */
     public WindowBuildBuilding(final IColonyView c, final IBuildingView building)
@@ -134,7 +136,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
         else if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
-            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.switchStyle"));
+            buttonBuild.hide();
         }
         else
         {
@@ -171,7 +173,13 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
+        if (building.getBuildingLevel() > 0
+            && !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
+            && !building.isDeconstructed())
+            return;
+
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
+
         Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
         if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
@@ -190,7 +198,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void repairClicked()
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
-        Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
+        Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, building.getStyle()));
         Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder));
         cancelClicked();
     }
@@ -203,9 +211,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         builders.clear();
         builders.add(new Tuple<>(LanguageHandler.format("com.minecolonies.coremod.job.Builder") + ":", BlockPos.ZERO));
         builders.addAll(building.getColony().getBuildings().stream()
-                          .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty() && !(build instanceof BuildingMiner.View))
-                          .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
-                          .collect(Collectors.toList()));
+                .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
+                        && !(build instanceof BuildingMiner.View))
+                .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
+                .sorted(Comparator.comparing(item -> item.getB().distanceSq(building.getPosition())))
+                .collect(Collectors.toList()));
 
         initBuilderNavigation();
     }
@@ -243,6 +253,17 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
+        // Ensure the player cannot change a style of an already constructed building
+        if (building.getBuildingLevel() > 0)
+        {
+            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
+                    LanguageHandler.format(
+                            !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
+                            && !building.isDeconstructed()
+                                ? "com.minecolonies.coremod.gui.workerhuts.bad_style"
+                                : "com.minecolonies.coremod.gui.workerhuts.upgrade"));
+        }
+
         final World world = Minecraft.getInstance().world;
         resources.clear();
 
@@ -290,7 +311,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             {
                 addNeededResource(stack, stack.getCount());
             }
-
         }
         while (result != null && result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
 
@@ -407,8 +427,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     }
 
     /**
-     * Called when the GUI has been opened.
-     * Will fill the fields and lists.
+     * Called when the GUI has been opened. Will fill the fields and lists.
      */
     @Override
     public void onOpened()
@@ -453,7 +472,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                 quantityLabel.setLabelText(Integer.toString(resource.getAmount()));
                 resourceLabel.setColor(WHITE, WHITE);
                 quantityLabel.setColor(WHITE, WHITE);
-                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(new ItemStack(resource.getItem(), 1));
+                final ItemStack itemIcon = new ItemStack(resource.getItem(), 1);
+                itemIcon.setTag(resource.getItemStack().getTag());
+                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(itemIcon);
             }
         });
     }

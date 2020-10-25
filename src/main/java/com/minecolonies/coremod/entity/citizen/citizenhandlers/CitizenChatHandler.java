@@ -2,9 +2,9 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
@@ -24,19 +24,21 @@ public class CitizenChatHandler implements ICitizenChatHandler
     /**
      * The citizen assigned to this manager.
      */
-    private final EntityCitizen citizen;
+    private final AbstractEntityCitizen citizen;
+
     /**
      * Constructor for the experience handler.
      *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenChatHandler(final EntityCitizen citizen)
+    public CitizenChatHandler(final AbstractEntityCitizen citizen)
     {
         this.citizen = citizen;
     }
 
     /**
      * Notify about death of citizen.
+     *
      * @param damageSource the damage source.
      */
     @Override
@@ -60,8 +62,8 @@ public class CitizenChatHandler implements ICitizenChatHandler
                 LanguageHandler.sendPlayersMessage(
                   citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "",
                   new TranslationTextComponent("block.blockhuttownhall.messagecolonistdead",
-                  citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY,
-                  (int) citizen.posZ, new TranslationTextComponent(damageSource.damageType)));
+                    citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY,
+                    (int) citizen.posZ, new TranslationTextComponent(damageSource.damageType)));
             }
         }
     }
@@ -91,17 +93,21 @@ public class CitizenChatHandler implements ICitizenChatHandler
         {
             final StringTextComponent colonyDescription = new StringTextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ": ");
             final List<PlayerEntity> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
-            final PlayerEntity owner = ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
+            final PlayerEntity owner =
+              ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
 
             if (owner != null)
             {
                 players.remove(owner);
                 LanguageHandler.sendPlayerMessage(owner,
-                  citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), citizenDescription, requiredItem);
+                  citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), " ", citizenDescription, requiredItem);
             }
 
             LanguageHandler.sendPlayersMessage(players,
-              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), citizenDescription, colonyDescription, requiredItem);
+              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), " ",
+              citizenDescription,
+              colonyDescription,
+              requiredItem);
         }
     }
 }

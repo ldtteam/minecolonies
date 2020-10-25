@@ -1,20 +1,9 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
-import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.management.IRequestHandler;
 import com.minecolonies.api.colony.requestsystem.manager.AssigningStrategy;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.manager.RequestMappingHandler;
@@ -31,6 +20,12 @@ import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequest
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedBlacklistAssignmentRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * Class used to handle the inner workings of the request system with regards to requests.
@@ -97,7 +92,6 @@ public class RequestHandler implements IRequestHandler
      * @param request                The request to assign.
      * @param resolverTokenBlackList Each resolver that has its token in this blacklist will be skipped when checking for a possible resolver.
      * @return The token of the resolver that has gotten the request assigned, null if none was found.
-     *
      * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
      */
     @Override
@@ -118,13 +112,12 @@ public class RequestHandler implements IRequestHandler
     }
 
     /**
-     * Method used to assign a given request to a resolver. Does take a given blacklist of resolvers into account.
-     * Uses the default assigning strategy: {@link AssigningStrategy#PRIORITY_BASED}
+     * Method used to assign a given request to a resolver. Does take a given blacklist of resolvers into account. Uses the default assigning strategy: {@link
+     * AssigningStrategy#PRIORITY_BASED}
      *
      * @param request                The request to assign.
      * @param resolverTokenBlackList Each resolver that has its token in this blacklist will be skipped when checking for a possible resolver.
      * @return The token of the resolver that has gotten the request assigned, null if none was found.
-     *
      * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
      */
     @Override
@@ -138,8 +131,7 @@ public class RequestHandler implements IRequestHandler
 
         request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNING);
 
-        final Set<TypeToken<?>> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
-        requestTypes.remove(TypeConstants.OBJECT);
+        final Set<TypeToken<?>> requestTypes = request.getSuperClasses();
 
         final List<TypeToken<?>> typeIndexList = new LinkedList<>(requestTypes);
 
@@ -185,7 +177,7 @@ public class RequestHandler implements IRequestHandler
             resolver.onRequestAssigned(manager, request, false);
 
             for (final IToken<?> childRequestToken :
-                            attemptResult)
+              attemptResult)
             {
                 final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
 
@@ -194,7 +186,7 @@ public class RequestHandler implements IRequestHandler
             }
 
             for (final IToken<?> childRequestToken :
-                            attemptResult)
+              attemptResult)
             {
                 final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
 
@@ -220,13 +212,12 @@ public class RequestHandler implements IRequestHandler
     }
 
     /**
-     * Method used to reassign the request to a resolver that is not in the given blacklist.
-     * Cancels the request internally without notify the requester, and attempts a reassign. If the reassignment failed, it is assigned back to the orignal resolver.
+     * Method used to reassign the request to a resolver that is not in the given blacklist. Cancels the request internally without notify the requester, and attempts a reassign.
+     * If the reassignment failed, it is assigned back to the orignal resolver.
      *
      * @param request                The request that is being reassigned.
      * @param resolverTokenBlackList The blacklist to which not to assign the request.
      * @return The token of the resolver that has gotten the request assigned, null if none was found.
-     *
      * @throws IllegalArgumentException Thrown when something went wrong.
      */
     @Override
@@ -260,7 +251,7 @@ public class RequestHandler implements IRequestHandler
     /**
      * Method used to check if a given request token is assigned to a resolver.
      *
-     * @param token   The request token to check for.
+     * @param token The request token to check for.
      * @return True when the request token has been assigned, false when not.
      */
     @Override
@@ -306,7 +297,7 @@ public class RequestHandler implements IRequestHandler
     /**
      * Method used to handle the successful resolving of a request.
      *
-     * @param token   The token of the request that got finished successfully.
+     * @param token The token of the request that got finished successfully.
      */
     @Override
     public void onRequestCompleted(final IToken<?> token)
@@ -342,10 +333,9 @@ public class RequestHandler implements IRequestHandler
     }
 
     /**
-     * Method used to handle requests that were overruled or cancelled.
-     * Cancels all children first, handles the creation of clean up requests.
+     * Method used to handle requests that were overruled or cancelled. Cancels all children first, handles the creation of clean up requests.
      *
-     * @param token   The token of the request that got cancelled or overruled
+     * @param token The token of the request that got cancelled or overruled
      */
     @Override
     @SuppressWarnings(UNCHECKED)
@@ -378,10 +368,9 @@ public class RequestHandler implements IRequestHandler
     }
 
     /**
-     * Method used to handle requests that were overruled or cancelled.
-     * Cancels all children first, handles the creation of clean up requests.
+     * Method used to handle requests that were overruled or cancelled. Cancels all children first, handles the creation of clean up requests.
      *
-     * @param token   The token of the request that got cancelled or overruled
+     * @param token The token of the request that got cancelled or overruled
      */
     @Override
     public void onRequestCancelled(final IToken<?> token)
@@ -461,8 +450,7 @@ public class RequestHandler implements IRequestHandler
     }
 
     /**
-     * Method used to resolve a request.
-     * When this method is called the given request has to be assigned.
+     * Method used to resolve a request. When this method is called the given request has to be assigned.
      *
      * @param request The request about to be resolved.
      * @throws IllegalArgumentException when the request is unknown, not resolved, or cannot be resolved.
@@ -494,11 +482,10 @@ public class RequestHandler implements IRequestHandler
     }
 
     /**
-     * Method called when the given manager gets notified of the receiving of a given task by its requester.
-     * All communication with the resolver should be aborted by this time, so overrullings and cancelations need to be processed,
-     * before this method is called.
+     * Method called when the given manager gets notified of the receiving of a given task by its requester. All communication with the resolver should be aborted by this time, so
+     * overrullings and cancelations need to be processed, before this method is called.
      *
-     * @param token   The token of the request.
+     * @param token The token of the request.
      * @throws IllegalArgumentException Thrown when the token is unknown.
      */
     @Override
@@ -555,17 +542,16 @@ public class RequestHandler implements IRequestHandler
      * Returns all requests made by a given requester.
      *
      * @param requester The requester in question.
-     *
      * @return A collection with request instances that are made by the given requester.
      */
     @Override
     public Collection<IRequest<?>> getRequestsMadeByRequester(final IRequester requester)
     {
         return manager.getRequestIdentitiesDataStore()
-          .getIdentities()
-          .values()
-          .stream()
-          .filter(iRequest -> iRequest.getRequester().getId().equals(requester.getId()))
-          .collect(Collectors.toList());
+                 .getIdentities()
+                 .values()
+                 .stream()
+                 .filter(iRequest -> iRequest.getRequester().getId().equals(requester.getId()))
+                 .collect(Collectors.toList());
     }
 }

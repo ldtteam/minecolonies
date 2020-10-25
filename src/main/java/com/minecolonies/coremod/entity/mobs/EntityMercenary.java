@@ -13,7 +13,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.entity.ai.minimal.EntityAIOpenFenceGate;
+import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
@@ -21,7 +21,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.monster.MonsterEntity;
@@ -53,6 +52,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TIME;
 import static com.minecolonies.api.util.constant.RaiderConstants.FOLLOW_RANGE;
+import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 /**
  * Class for Mercenary entities, which can be spawned to protect the colony
@@ -67,7 +67,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     /**
      * Reference to the colony the mercenary spawned in.
      */
-    private              IColony                       colony;
+    private              IColony                      colony;
     /**
      * This entities minecolonies-Navigator.
      */
@@ -120,10 +120,11 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
      * The entities name.
      */
     private static final String ENTITY_NAME = "Mercenary";
-    
+
     /**
      * Constructor method for Mercenaries.
-     * @param type the type.
+     *
+     * @param type  the type.
      * @param world the world.
      */
     public EntityMercenary(final EntityType<EntityMercenary> type, final World world)
@@ -134,8 +135,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(1, new EntityMercenaryAI(this));
-        this.goalSelector.addGoal(2, new OpenDoorGoal(this, true));
-        this.goalSelector.addGoal(4, new EntityAIOpenFenceGate(this, true));
+        this.goalSelector.addGoal(4, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, MonsterEntity.class, 10, true, false, e -> e instanceof IMob && !(e instanceof LlamaEntity)));
 
         this.forceSpawn = true;
@@ -268,6 +268,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
 
     /**
      * Sets this mercenary as leader
+     *
      * @param soldiers set a leader of the list.
      */
     public void setLeader(final List<EntityMercenary> soldiers)
@@ -394,6 +395,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
 
     /**
      * Creates and returns the proxy when needed.
+     *
      * @return the walking proxy.
      */
     public GeneralEntityWalkToProxy getProxy()

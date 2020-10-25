@@ -11,11 +11,11 @@
     <view id="saturationBar" size="120 11" pos="35 54"/>
     <view id="happinessBar" size="120 11" pos="35 64"/>
     <label id="happinessLabel" size="30 11" color="black" pos="150 73"/>
-    
+
     <label id="title" size="70 11" pos="20 92" color="black" textalign="MIDDLE"
-        label="§l$(com.minecolonies.coremod.gui.citizen.skills)"/>
-    <group size="90 115" pos="36 105">
-        <label id="athletics" size="90% 10" color="black"/>
+           label="§l$(com.minecolonies.coremod.gui.citizen.skills)"/>
+    <group size="100 115" pos="36 105">
+        <label id="athletics" size="100% 9" color="black"/>
         <label id="dexterity" size="100% 9" color="black"/>
         <label id="strength" size="100% 9" color="black"/>
         <label id="agility" size="100% 9" color="black"/>
@@ -40,10 +40,37 @@
         <image size="9 9" source="minecolonies:textures/entity/skills/small/knowledge.png"/>
         <image size="9 9" source="minecolonies:textures/entity/skills/small/intelligence.png"/>
     </group>
+    <group size="10 115" pos="100 105">
+        <button id="plus_athletics" size="100% 9" color="black" label="+" visible="false"/>
+        <button id="plus_dexterity" size="100% 9" color="black" label="+" visible="false"/>
+        <button id="plus_strength" size="100% 9" color="black" label="+" visible="false"/>
+        <button id="plus_agility" size="100% 9" color="black" label="+" visible="false"/>
+        <button id="plus_stamina" size="100% 9" color="black" label="+" visible="false"/>
+        <button id="plus_mana" size="100% 9" color="black" label="+" visible="false"/>
+        <button id="plus_adaptability" size="100% 9" color="black" label="+" visible="false"/>
+        <button id="plus_focus" size="100% 9" color="black" label="+" visible="false"/>
+        <button id="plus_creativity" size="100% 9" color="black" label="+" visible="false"/>
+        <button id="plus_knowledge" size="100% 9" color="black" label="+" visible="false"/>
+        <button id="plus_intelligence" size="100% 9" color="black" label="+" visible="false"/>
+    </group>
 
+    <group size="10 115" pos="110 105">
+        <button id="minus_athletics" size="100% 9" color="black" label="-" visible="false"/>
+        <button id="minus_dexterity" size="100% 9" color="black" label="-" visible="false"/>
+        <button id="minus_strength" size="100% 9" color="black" label="-" visible="false"/>
+        <button id="minus_agility" size="100% 9" color="black" label="-" visible="false"/>
+        <button id="minus_stamina" size="100% 9" color="black" label="-" visible="false"/>
+        <button id="minus_mana" size="100% 9" color="black" label="-" visible="false"/>
+        <button id="minus_adaptability" size="100% 9" color="black" label="-" visible="false"/>
+        <button id="minus_focus" size="100% 9" color="black" label="-" visible="false"/>
+        <button id="minus_creativity" size="100% 9" color="black" label="-" visible="false"/>
+        <button id="minus_knowledge" size="100% 9" color="black" label="-" visible="false"/>
+        <button id="minus_intelligence" size="100% 9" color="black" label="-" visible="false"/>
+    </group>
 
+    <image id="statusicon" size="30 30" pos="138 99"/>
     <image id="deco4" size="15 49" pos="137 194"
-        source="minecolonies:textures/gui/citizen/colonist_decor_up_ribbon_smaller.png"/>
+           source="minecolonies:textures/gui/citizen/colonist_decor_up_ribbon_smaller.png"/>
     <image id="gender" size="30 30" pos="130 189"
-        source="minecolonies:textures/gui/citizen/colonist_wax_male_smaller.png"/>
+           source="minecolonies:textures/gui/citizen/colonist_wax_male_smaller.png"/>
 </window>
