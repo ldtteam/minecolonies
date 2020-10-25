@@ -500,7 +500,9 @@ public final class TranslationConstants
     @NonNls
     public static final String REQUEST_CRAFTING_DISPLAY = "com.minecolonies.coremod.request.crafting.display";
     @NonNls
-    public static final String RECIPE_STATUS="com.minecolonies.coremod.gui.workerhuts.recipestatus";
+    public static final String RECIPE_STATUS ="com.minecolonies.coremod.gui.workerhuts.recipestatus";
+    @NonNls
+    public static final String RACK = "block.minecolonies.blockminecoloniesrack";
 
     private TranslationConstants()
     {
