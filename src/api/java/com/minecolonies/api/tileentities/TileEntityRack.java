@@ -56,11 +56,6 @@ public class TileEntityRack extends AbstractTileEntityRack
      */
     private int size = 0;
 
-    /**
-     * The combined inv wrapper for double racks.
-     */
-    private CombinedItemHandler combinedHandler;
-
     public TileEntityRack(final TileEntityType<? extends TileEntityRack> type)
     {
         super(type);
@@ -147,11 +142,6 @@ public class TileEntityRack extends AbstractTileEntityRack
         inventory = tempInventory;
         final BlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 0x03);
-
-        if (main && combinedHandler == null && getOtherChest() != null)
-        {
-            combinedHandler = new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory());
-        }
     }
 
     @Override
@@ -438,11 +428,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             {
                 if (isMain())
                 {
-                    if (combinedHandler == null)
-                    {
-                        combinedHandler = new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory());
-                    }
-                    return LazyOptional.of(() -> (T) combinedHandler);
+                    return LazyOptional.of(() -> (T) new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory()));
                 }
                 else
                 {
@@ -453,13 +439,7 @@ public class TileEntityRack extends AbstractTileEntityRack
                     else
                     {
                         this.main = true;
-
-                        if (combinedHandler == null)
-                        {
-                            combinedHandler = new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory());
-                        }
-                        markDirty();
-                        return LazyOptional.of(() -> (T) combinedHandler);
+                        return LazyOptional.of(() -> (T) new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory()));
                     }
                 }
             }
