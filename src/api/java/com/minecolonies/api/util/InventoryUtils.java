@@ -263,10 +263,21 @@ public class InventoryUtils
 
     public static int getItemCountInItemHandlers(@Nullable final Collection<IItemHandler> itemHandlers, @NotNull final Predicate<ItemStack> itemStackPredicate)
     {
-        return itemHandlers.stream().filter(Objects::nonNull)
-                 .flatMap(handler -> filterItemHandler(handler, itemStackPredicate).stream())
-                 .mapToInt(ItemStackUtils::getSize)
-                 .sum();
+        int count = 0;
+        if (itemHandlers != null)
+        {
+            Set<ItemStack> itemSet = new HashSet<>();
+            for (final IItemHandler handler : itemHandlers)
+            {
+                itemSet.addAll(filterItemHandler(handler, itemStackPredicate));
+            }
+
+            for (final ItemStack stack : itemSet)
+            {
+                count += stack.getCount();
+            }
+        }
+        return count;
     }
 
     /**
@@ -714,7 +725,7 @@ public class InventoryUtils
             totalCount += provider.getTileEntity().getAllContent().getOrDefault(stack, 0);
         }
 
-        if (totalCount > count)
+        if (totalCount > count && count > 0)
         {
             return Integer.MAX_VALUE;
         }

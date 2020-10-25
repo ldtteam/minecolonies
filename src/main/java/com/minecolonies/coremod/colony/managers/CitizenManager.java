@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
+import com.minecolonies.api.colony.buildings.IWorkerLivingBuilding;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
@@ -230,20 +231,29 @@ public class CitizenManager implements ICitizenManager
         }
 
         BlockPos spawnLocation = spawnPos;
-        if (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO))
+        if (colony.hasTownHall() && (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO)))
         {
             spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
         }
 
         if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), spawnLocation))
         {
-            final BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+            BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
             if (calculatedSpawn != null)
             {
                 return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
             }
             else
             {
+                if (colony.hasTownHall())
+                {
+                    calculatedSpawn = EntityUtils.getSpawnPoint(world, colony.getBuildingManager().getTownHall().getID());
+                    if (calculatedSpawn != null)
+                    {
+                        return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
+                    }
+                }
+
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                   "com.minecolonies.coremod.citizens.nospace",
                   spawnLocation.getX(),
@@ -374,19 +384,17 @@ public class CitizenManager implements ICitizenManager
             if (b.getBuildingLevel() > 0)
             {
                 if (b instanceof IBuildingBedProvider || b.hasModule(LivingBuildingModule.class))
+                if (b instanceof IWorkerLivingBuilding)
                 {
-                    newMaxCitizens += b.getMaxInhabitants();
-                }
-                else if (b instanceof AbstractBuildingGuards && b.getBuildingLevel() > 0)
-                {
-                    if (b.getAssignedCitizen().size() != 0)
-                    {
-                        newMaxCitizens += b.getAssignedCitizen().size();
-                    }
-                    else
+                    newMaxCitizens += b.getAssignedCitizen().size();
+                    if ((b instanceof AbstractBuildingGuards) && b.getAssignedCitizen().size() == 0 && b.getBuildingLevel() > 0)
                     {
                         potentialMax += 1;
                     }
+                }
+                else if (b instanceof IBuildingBedProvider)
+                {
+                    newMaxCitizens += b.getMaxInhabitants();
                 }
             }
         }

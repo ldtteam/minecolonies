@@ -60,7 +60,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     private boolean active = false;
 
     /**
-     * How many deliveries are ongoing in parallel.
+     * Old field for backwards compatibility.
      */
     private int ongoingDeliveries;
 
@@ -126,7 +126,6 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         final CompoundNBT compound = super.serializeNBT();
         compound.put(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
         compound.putBoolean(TAG_ACTIVE, this.active);
-        compound.putInt(TAG_ONGOING, this.ongoingDeliveries);
         return compound;
     }
 
@@ -258,14 +257,30 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         else if (request.getRequest() instanceof Delivery)
         {
             final List<IRequest<? extends Delivery>> taskList = getTaskListWithSameDestination((IRequest<? extends Delivery>) request);
-            for (int i = 0; i < Math.max(1, Math.min(ongoingDeliveries, taskList.size())); i++)
+            if (ongoingDeliveries != 0)
             {
-                final IRequest<? extends Delivery> req = taskList.get(i);
-                if (req.getState() == RequestState.IN_PROGRESS)
+                for (int i = 0; i < Math.max(1, Math.min(ongoingDeliveries, taskList.size())); i++)
                 {
-                    getColony().getRequestManager().updateRequestState(req.getId(), successful ? RequestState.RESOLVED : RequestState.FAILED);
+                    final IRequest<? extends Delivery> req = taskList.get(i);
+                    if (req.getState() == RequestState.IN_PROGRESS)
+                    {
+                        getColony().getRequestManager().updateRequestState(req.getId(), successful ? RequestState.RESOLVED : RequestState.FAILED);
+                    }
+                    getTaskQueueFromDataStore().remove(req.getId());
                 }
-                getTaskQueueFromDataStore().remove(req.getId());
+            }
+            else
+            {
+                for (final IToken<?> token : new ArrayList<>(getDataStore().getOngoingDeliveries()))
+                {
+                    final IRequest<?> req = getColony().getRequestManager().getRequestForToken(token);
+                    if (req != null && req.getState() == RequestState.IN_PROGRESS)
+                    {
+                        getColony().getRequestManager().updateRequestState(req.getId(), successful ? RequestState.RESOLVED : RequestState.FAILED);
+                    }
+                    getTaskQueueFromDataStore().remove(token);
+                    getDataStore().getOngoingDeliveries().remove(token);
+                }
             }
         }
         else if (request.getRequest() instanceof Pickup)
@@ -472,12 +487,13 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
 
         if (requestTokens.isEmpty())
         {
-            // No task, compare with dman to warehouse pos
-            final IWareHouse wareHouse = findWareHouse();
+            // No task, compare with dman pos
             totalScore = getClosenessFactorTo(getSource(newRequest),
               getTarget(newRequest),
-              wareHouse != null ? findWareHouse().getID() : getCitizen().getLastPosition(),
-              getCitizen().getLastPosition());
+              getCitizen().getLastPosition(),
+              getTarget(newRequest));
+
+            totalScore -= ((AbstractDeliverymanRequestable) newRequest.getRequest()).getPriority();
         }
 
         for (int i = 0; i < requestTokens.size(); i++)
@@ -524,13 +540,13 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         // Closeness compared to the existing request
         double score = getClosenessFactorTo(getSource(source), getTarget(source), getSource(comparing), getTarget(comparing));
         // Priority of the existing request in diff to priority of the newly incomming one
-        score += (((AbstractDeliverymanRequestable) comparing.getRequest()).getPriority() - ((AbstractDeliverymanRequestable) source.getRequest()).getPriority()) * 0.3;
+        score += (((AbstractDeliverymanRequestable) comparing.getRequest()).getPriority() - ((AbstractDeliverymanRequestable) source.getRequest()).getPriority()) * 0.5;
 
         // Additional score for alternating between pickup and delivery
         score += getPickUpRequestScore(source, comparing);
 
         // Worse score the more requests we have to overtake
-        score += (getTaskQueue().size() - comparingIndex) * 0.5;
+        score += getTaskQueue().size() - comparingIndex;
 
         return score;
     }
@@ -592,7 +608,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         final double targetCloseness = BlockPosUtil.getDistance(target1, target2) / newLength;
         final double sourceCloseness = BlockPosUtil.getDistance(source1, source2) / newLength;
 
-        return (targetCloseness + sourceCloseness) * 10;
+        return (targetCloseness + sourceCloseness) * 5;
     }
 
     /**
@@ -660,12 +676,20 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     }
 
     /**
-     * Set how many parallel deliveries are ongoing.
-     *
-     * @param i the quantity.
+     * Add a concurrent delivery that is going on.
+     * @param requestToken the token of the request.
      */
-    public void setParallelDeliveries(final int i)
+    public void addConcurrentDelivery(final IToken<?> requestToken)
     {
-        this.ongoingDeliveries = i;
+        getDataStore().getOngoingDeliveries().add(requestToken);
+    }
+
+    /**
+     * Remove a concurrent delivery that is going on.
+     * @param requestToken the token of the request.
+     */
+    public void removeConcurrentDelivery(final IToken<?> requestToken)
+    {
+        getDataStore().getOngoingDeliveries().remove(requestToken);
     }
 }

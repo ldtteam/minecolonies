@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -82,6 +83,27 @@ public final class TeleportHelper
         }
 
         colonyTeleport(player, colony);
+    }
+
+    /**
+     * Teleports the player to the nearest safe surface location above their current location
+     */
+    public static void surfaceTeleport(@NotNull final ServerPlayerEntity player)
+    {
+        BlockPos position = new BlockPos(player.getPosX(), 250, player.getPosZ()); //start at current position
+        final ServerWorld world = player.getServerWorld();
+
+        position = BlockPosUtil.findLand(position, world);
+
+        ChunkPos chunkpos = new ChunkPos(position);
+        world.getChunkProvider().registerTicket(TicketType.POST_TELEPORT, chunkpos, 1, player.getEntityId());
+        player.stopRiding();
+        if (player.isSleeping())
+        {
+            player.stopSleepInBed(true, true);
+        }
+
+        player.teleport(world, position.getX(), position.getY() + 2.0, position.getZ(), player.rotationYaw, player.rotationPitch);
     }
 
     /**

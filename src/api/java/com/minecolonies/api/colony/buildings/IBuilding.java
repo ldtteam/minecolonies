@@ -375,6 +375,12 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     void addMinimumStock(final ItemStack itemStack, final int quantity);
 
     /**
+     * Calculate the number of reserved stacks the resolver can't touch.
+     * @return a list of itemstorages.
+     */
+    Map<ItemStorage, Integer> reservedStacks();
+
+    /**
      * Open the right crafting container.
      *
      * @param player the player opening it.

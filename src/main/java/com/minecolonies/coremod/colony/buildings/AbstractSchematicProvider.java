@@ -317,7 +317,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
                     if (structureRotation <= worldRotation)
                     {
                         cachedRotation = worldRotation - structureRotation;
-                        ;
                     }
                     else
                     {

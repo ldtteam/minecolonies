@@ -46,7 +46,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count)
     {
         int totalCountFound = 0;
-        for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+        final List<BlockPos> containers = new ArrayList<>(getBuilding().getAdditionalCountainers());
+        containers.add(this.getPos());
+        for (@NotNull final BlockPos pos : containers)
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {

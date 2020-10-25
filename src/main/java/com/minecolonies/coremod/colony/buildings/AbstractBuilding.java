@@ -1869,6 +1869,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return Optional.of(getColony().getCitizenManager().getCivilian(citizenID));
     }
 
+    @Override
+    public Map<ItemStorage, Integer> reservedStacks()
+    {
+        return Collections.emptyMap();
+    }
+
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
 
     @Override
