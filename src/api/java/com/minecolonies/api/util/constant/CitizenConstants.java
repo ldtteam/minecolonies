@@ -234,6 +234,11 @@ public final class CitizenConstants
     public static final String RESEARCH_BONUS_MULTIPLIER = "ResearchSpeedBonus";
 
     /**
+     * The addition skill bonus speed modifier
+     */
+    public static final String SKILL_BONUS_ADD = "SkillSpeedBonus";
+
+    /**
      * The Config guard health modifier name
      */
     public static final String GUARD_HEALTH_MOD_CONFIG_NAME = "MinecoloniesGuardConfigHP";
