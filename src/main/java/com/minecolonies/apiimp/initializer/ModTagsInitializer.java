@@ -1,22 +1,16 @@
 package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.Log;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ObjectHolder;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import java.util.HashMap;
 
-@ObjectHolder(Constants.MOD_ID)
-@Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModTagsInitializer
 {
     /**
@@ -49,25 +43,20 @@ public class ModTagsInitializer
     private static final ResourceLocation CONCRETE_BLOCK  = new ResourceLocation(MOD_ID, "concrete");
     private static final ResourceLocation PATHING_BLOCKS = new ResourceLocation(MOD_ID, "pathblocks");
 
-
-    @SubscribeEvent
-    public static void tagsUpdated(TagsUpdatedEvent event)
-    {
-        ModTagsInitializer.init();
-    }
-
+    private static boolean loaded = false;
 
     public static void init()
     {
+        if(loaded)
+        {
+            return;
+        }
+        loaded = true;
+
         ModTags.decorationItems = getBlockTags(DECORATION_ITEMS);
         ModTags.concretePowder = getItemTags(CONCRETE_POWDER);
         ModTags.concreteBlock = getBlockTags(CONCRETE_BLOCK);
         ModTags.pathingBlocks = getBlockTags(PATHING_BLOCKS);
-
-        ModTags.crafterProduct = new HashMap<>();
-        ModTags.crafterProductExclusions = new HashMap<>();
-        ModTags.crafterIngredient = new HashMap<>();
-        ModTags.crafterIngredientExclusions = new HashMap<>();
 
         initCrafterRules("baker");
         initCrafterRules("blacksmith");
@@ -93,7 +82,7 @@ public class ModTagsInitializer
         initCrafterRules("swineherder");
 
         initCrafterRules(REDUCEABLE);
-
+        Log.getLogger().info("Tags Loaded");
     }
 
     /**

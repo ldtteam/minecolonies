@@ -1,5 +1,6 @@
 package com.minecolonies.api.items;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.block.Block;
@@ -13,8 +14,8 @@ public class ModTags
     public static Tag<Block>    concreteBlock;
     public static Tag<Block>    pathingBlocks;
 
-    public static Map<String, Tag<Item>> crafterProduct;
-    public static Map<String, Tag<Item>> crafterProductExclusions;
-    public static Map<String, Tag<Item>> crafterIngredient;
-    public static Map<String, Tag<Item>> crafterIngredientExclusions;
+    public static final Map<String, Tag<Item>> crafterProduct = new HashMap<>();
+    public static final Map<String, Tag<Item>> crafterProductExclusions = new HashMap<>();
+    public static final Map<String, Tag<Item>> crafterIngredient = new HashMap<>();
+    public static final Map<String, Tag<Item>> crafterIngredientExclusions = new HashMap<>();
 }
