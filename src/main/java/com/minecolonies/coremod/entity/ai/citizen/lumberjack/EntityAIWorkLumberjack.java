@@ -506,7 +506,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             }
             job.getTree().pollNextLog();
             worker.decreaseSaturationForContinuousAction();
-            logCOunt++;
         }
         else if (job.getTree().hasLeaves() && job.getTree().isSlimeTree())
         {
@@ -520,8 +519,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
         return getState();
     }
-
-    private int logCOunt = 0;
 
     /**
      * Walk to the current construction site.

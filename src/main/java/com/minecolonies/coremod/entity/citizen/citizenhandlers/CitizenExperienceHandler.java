@@ -68,13 +68,10 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         }
     }
 
-    double xpGained = 0;
-
     @Override
     public void addExperience(final double xp)
     {
         final IBuilding home = citizen.getCitizenColonyHandler().getHomeBuilding();
-        xpGained += xp;
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
 
         final ICitizenData data = citizen.getCitizenData();
