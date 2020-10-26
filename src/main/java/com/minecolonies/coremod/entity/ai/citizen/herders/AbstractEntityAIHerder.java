@@ -211,8 +211,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     /**
      * Checks if we can breed this entity
      *
-     * @param entity
-     * @return
+     * @param entity to check
+     * @return true if breed able
      */
     protected boolean isBreedAble(final AnimalEntity entity)
     {
