@@ -22,6 +22,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
@@ -82,16 +83,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         SUCCESS,
         RECALC
     }
-
-    /**
-     * Tagname for decoration blocks
-     */
-    private static String DECOBLOCK_TAG = "decoblocks";
-
-    /**
-     * Tag of all the blocks that need to be in the deco phase of the builder
-     */
-    protected static Tag<Block> decoItems;
 
     /**
      * Predicate defining things we don't want the builders to ever touch.
@@ -257,11 +248,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     protected static boolean isDecoItem(Block block)
     {
-        if(decoItems == null)
-        {
-            decoItems = BlockTags.getCollection().getOrCreate(new ResourceLocation(MOD_ID, DECOBLOCK_TAG));
-        }
-        return decoItems.contains(block);
+        return ModTags.decorationItems.contains(block);
     }
 
     /**

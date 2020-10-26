@@ -6,6 +6,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
@@ -65,12 +66,6 @@ public final class WorkerUtil
      */
     public static List<Tuple<ToolType, ItemStack>> tools;
 
-    /**
-     * A list of all the path blocks on which the citizen walks faster.
-     */
-    private static final ResourceLocation PATHING_BLOCKS = new ResourceLocation("minecolonies", "pathblocks");
-    private static Tag<Block> PATHING_TAG;
-
     private WorkerUtil()
     {
         //Hide default constructor.
@@ -101,11 +96,7 @@ public final class WorkerUtil
      */
     public static boolean isPathBlock(final Block block)
     {
-        if (PATHING_TAG == null)
-        {
-            PATHING_TAG = BlockTags.getCollection().getOrCreate(PATHING_BLOCKS);
-        }
-        return PATHING_TAG.contains(block);
+        return ModTags.pathingBlocks.contains(block);
     }
 
     /**
