@@ -68,11 +68,13 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         }
     }
 
+    double xpGained = 0;
+
     @Override
     public void addExperience(final double xp)
     {
         final IBuilding home = citizen.getCitizenColonyHandler().getHomeBuilding();
-
+        xpGained += xp;
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
 
         final ICitizenData data = citizen.getCitizenData();
@@ -176,7 +178,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
             if (d1 < 1.0D || counterMovedXp > MAX_XP_PICKUP_ATTEMPTS)
             {
-                addExperience(orb.getXpValue() / 2.0D);
+                addExperience(orb.getXpValue() / 2.5D);
                 orb.remove();
                 counterMovedXp = 0;
                 return;
