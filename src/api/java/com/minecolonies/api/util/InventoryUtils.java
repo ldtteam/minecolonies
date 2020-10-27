@@ -720,19 +720,9 @@ public class InventoryUtils
     public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final ItemStorage stack, final int count)
     {
         int totalCount = 0;
-        if (provider.getTileEntity() != null)
-        {
-            totalCount += provider.getTileEntity().getAllContent().getOrDefault(stack, 0);
-        }
-
-        if (totalCount > count && count > 0)
-        {
-            return Integer.MAX_VALUE;
-        }
-
         final World world = provider.getColony().getWorld();
 
-        for (final BlockPos pos : provider.getAdditionalCountainers())
+        for (final BlockPos pos : provider.getContainers())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
@@ -741,29 +731,14 @@ public class InventoryUtils
                 {
                     totalCount += ((TileEntityRack) entity).getAllContent().getOrDefault(stack, 0);
                 }
-            }
-        }
-
-        if (totalCount >= count)
-        {
-            return totalCount;
-        }
-
-        for (final BlockPos pos : provider.getAdditionalCountainers())
-        {
-            if (WorldUtil.isBlockLoaded(world, pos))
-            {
-                final TileEntity entity = world.getTileEntity(pos);
-                if (!(entity instanceof TileEntityRack) && entity != null)
+                else
                 {
-                    for (final IItemHandler handler : getItemHandlersFromProvider(entity))
-                    {
-                        totalCount += getItemCountInItemHandler(handler, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
-                        if (totalCount > count)
-                        {
-                            return Integer.MAX_VALUE;
-                        }
-                    }
+                    totalCount += getItemCountInProvider(entity, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
+                }
+
+                if (totalCount > count)
+                {
+                    return Integer.MAX_VALUE;
                 }
             }
         }
@@ -1593,6 +1568,36 @@ public class InventoryUtils
         }
         return false;
     }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link IItemHandler} to the given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param predicate  the matching stack.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextBestSlotInItemHandler(
+      @NotNull final IItemHandler sourceHandler,
+      final Predicate<ItemStack> predicate,
+      @NotNull final IItemHandler targetHandler)
+    {
+        for (int i = 0; i < sourceHandler.getSlots(); i++)
+        {
+            if (predicate.test(sourceHandler.getStackInSlot(i)))
+            {
+                ItemStack sourceStack = sourceHandler.extractItem(i, Integer.MAX_VALUE, true);
+                if (!sourceStack.isEmpty() && addItemStackToItemHandler(targetHandler, sourceStack))
+                {
+                    sourceHandler.extractItem(i, Integer.MAX_VALUE, false);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     /**
      * Method to put a given Itemstack in a given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.

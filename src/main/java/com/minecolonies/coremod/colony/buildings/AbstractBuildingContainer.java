@@ -143,9 +143,11 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     }
 
     @Override
-    public List<BlockPos> getAdditionalCountainers()
+    public List<BlockPos> getContainers()
     {
-        return new ArrayList<>(containerList);
+        final List<BlockPos> list = new ArrayList<>(containerList);;
+        list.add(this.getPosition());
+        return list;
     }
 
     @Override

@@ -469,9 +469,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             handlers.add(workerEntity.getInventory());
         }
-        handlers.add(getTileEntity().getInventory());
 
-        for (final BlockPos pos : getAdditionalCountainers())
+        for (final BlockPos pos : getContainers())
         {
             final TileEntity entity = colony.getWorld().getTileEntity(pos);
             if (entity != null)
