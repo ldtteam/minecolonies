@@ -11,6 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -739,6 +740,37 @@ public class InventoryUtils
                 if (totalCount > count)
                 {
                     return Integer.MAX_VALUE;
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Count the number of items a building has.
+     *
+     * @param provider building to check in.
+     * @param stack    the stack to check.
+     * @return Amount of occurrences of stacks that match the given stack.
+     */
+    public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final ItemStorage stack)
+    {
+        int totalCount = 0;
+        final World world = provider.getColony().getWorld();
+
+        for (final BlockPos pos : provider.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    totalCount += ((TileEntityRack) entity).getAllContent().getOrDefault(stack, 0);
+                }
+                else if (entity instanceof ChestTileEntity)
+                {
+                    totalCount += getItemCountInProvider(entity, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
                 }
             }
         }
