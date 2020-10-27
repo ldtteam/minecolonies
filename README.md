@@ -1,3 +1,6 @@
+[![CF Dl Count](http://cf.way2muchnoise.eu/full_minecolonies_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/minecolonies)
+[![MC Versions](http://cf.way2muchnoise.eu/versions/Minecraft_minecolonies_all.svg)](https://www.curseforge.com/minecraft/mc-mods/minecolonies)
+[![Last Commit](https://img.shields.io/github/last-commit/ldtteam/minecolonies.svg)](https://github.com/ldtteam/minecolonies/commits/version/1.15)
 [![CLA assistant](https://cla-assistant.io/readme/badge/ldtteam/minecolonies)](https://cla-assistant.io/ldtteam/minecolonies)
 [![Build Status](https://buildsystem.ldtteam.com/app/rest/builds/buildType:LetSDevTogether_Minecolonies_Alpha_Release/statusIcon)](http://buildsystem.ldtteam.com/)
 
