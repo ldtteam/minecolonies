@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.BASE_PATHFINDING_RANGE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TIME;
@@ -348,7 +349,8 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
     {
         return LivingEntity.registerAttributes()
-                 .createMutableAttribute(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue());
+                 .createMutableAttribute(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue())
+                 .createMutableAttribute(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
     }
 
     @Override
