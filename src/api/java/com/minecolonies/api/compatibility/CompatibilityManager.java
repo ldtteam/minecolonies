@@ -959,7 +959,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 final int enchantmentLevel = Integer.parseInt(split[2]);
                 final int numberOfTickets = Integer.parseInt(split[3]);
 
-                for (int level = buildingLevel; level <= 5; level++)
+                for (int level = buildingLevel; level <= Math.min(buildingLevel + 2, 5); level++)
                 {
                     final List<Tuple<String, Integer>> list = enchantments.getOrDefault(level, new ArrayList<>());
                     for (int i = 0; i < numberOfTickets; i++)
