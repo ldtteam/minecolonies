@@ -37,6 +37,7 @@ import java.util.List;
 public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnData
 {
     private static final DataParameter<Integer> DATA_HOOKED_ENTITY = EntityDataManager.createKey(NewBobberEntity.class, DataSerializers.VARINT);
+    private static final int                    XP_PER_CATCH       = 2;
     private              boolean                inGround;
     private              int                    ticksInGround;
     private              EntityCitizen          angler;
@@ -472,7 +473,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         }
         else
         {
-            this.ticksCaughtDelay = MathHelper.nextInt(this.rand, 100, 600);
+            this.ticksCaughtDelay = MathHelper.nextInt(this.rand, 1060, 1300);
             this.ticksCaughtDelay -= this.lureSpeed * 20 * 5;
             this.ticksCaughtDelay = Math.max(5, ticksCaughtDelay);
         }
@@ -515,7 +516,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                       this.angler.getPosX(),
                       this.angler.getPosY() + 0.5D,
                       this.angler.getPosZ() + 0.5D,
-                      this.rand.nextInt(6) + 1));
+                      XP_PER_CATCH));
                 }
 
                 i = 1;

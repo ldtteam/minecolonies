@@ -11,7 +11,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeep
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -289,7 +288,6 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         breedTwoAnimals(animalOne, animalTwo);
 
-        worker.getCitizenExperienceHandler().addExperience(1.0);
         incrementActionsDoneAndDecSaturation();
         return DECIDE;
     }
@@ -378,7 +376,6 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                   bee.setRevengeTarget(worker);
               });
         }
-        worker.getCitizenExperienceHandler().addExperience(1.0);
         incrementActionsDoneAndDecSaturation();
 
         return START_WORKING;

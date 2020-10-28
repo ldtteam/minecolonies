@@ -46,7 +46,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
     /**
      * Base xp gain for the smelter.
      */
-    private static final double BASE_XP_GAIN = 5;
+    private static final double BASE_XP_GAIN = 2;
 
     /**
      * How many of each cure item it should try to request at a time.

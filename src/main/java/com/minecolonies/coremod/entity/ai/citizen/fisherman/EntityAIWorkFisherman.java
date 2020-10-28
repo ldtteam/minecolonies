@@ -117,7 +117,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     /**
      * Per level lure speed.
      */
-    private static final int LURE_SPEED_DIVIDER = 5;
+    private static final int LURE_SPEED_DIVIDER = 15;
 
     /**
      * The number of executed adjusts of the fisherman's rotation.
@@ -447,6 +447,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
                 }
             }
 
+            this.incrementActionsDoneAndDecSaturation();
+
             if (worker.getRandom().nextDouble() < CHANCE_NEW_POND)
             {
                 job.setWater(null);
@@ -511,12 +513,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             this.entityFishHook = (NewBobberEntity) ModEntities.FISHHOOK.create(world);
             this.entityFishHook.setAngler((EntityCitizen) worker,
               EnchantmentHelper.getFishingLuckBonus(worker.getHeldItemMainhand()),
-              (int) ((getPrimarySkillLevel() / 2.0) / LURE_SPEED_DIVIDER + EnchantmentHelper.getFishingSpeedBonus(worker.getHeldItemMainhand())));
+              (int) (5 + (getPrimarySkillLevel() / LURE_SPEED_DIVIDER) + EnchantmentHelper.getFishingSpeedBonus(worker.getHeldItemMainhand())));
             world.addEntity(this.entityFishHook);
         }
 
         worker.swingArm(worker.getActiveHand());
-        this.incrementActionsDoneAndDecSaturation();
     }
 
     /**

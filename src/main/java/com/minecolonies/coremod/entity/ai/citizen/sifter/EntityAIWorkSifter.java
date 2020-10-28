@@ -140,7 +140,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
         }
 
         final IAIState check = checkForSievableBlock(sifterBuilding.getSievableBlock(), sifterBuilding);
-        if (progress > MAX_LEVEL - Math.min((getSecondarySkillLevel()/2) + 1, MAX_LEVEL))
+        if (progress > MAX_LEVEL - Math.min((getSecondarySkillLevel() / 5) + 1, MAX_LEVEL))
         {
             progress = 0;
             if (check == SIFT)
@@ -166,7 +166,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
                 }
 
                 worker.decreaseSaturationForContinuousAction();
-                worker.getCitizenExperienceHandler().addExperience(0.1);
+                worker.getCitizenExperienceHandler().addExperience(0.2);
 
                 return START_WORKING;
             }

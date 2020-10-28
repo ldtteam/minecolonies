@@ -15,8 +15,8 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
+import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToWithPassable;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
@@ -124,6 +124,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private final static VisibleCitizenStatus SEARCH =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/lumberjack_search.png"), "com.minecolonies.gui.visiblestatus.lumberjack_search");
+
+    /**
+     * Xp bonus per finished tree
+     */
+    private static final double XP_PER_TREE = 1;
 
     /**
      * Position where the Builders constructs from.
@@ -449,6 +454,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 job.setTree(null);
                 checkedInHut = false;
             }
+
+            worker.getCitizenExperienceHandler().addExperience(XP_PER_TREE);
             incrementActionsDoneAndDecSaturation();
             workFrom = null;
             setDelay(TICKS_SECOND * GATHERING_DELAY);

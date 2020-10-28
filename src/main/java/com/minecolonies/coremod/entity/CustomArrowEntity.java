@@ -17,7 +17,7 @@ public class CustomArrowEntity extends ArrowEntity
     /**
      * Max time the arrow is stuck before removing it
      */
-    private static final int MAX_TIME_IN_GROUND = 10;
+    private static final int MAX_TIME_IN_GROUND = 100;
 
     public CustomArrowEntity(final EntityType<? extends ArrowEntity> type, final World world)
     {
