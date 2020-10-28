@@ -6,6 +6,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
@@ -25,11 +26,8 @@ import net.minecraft.item.Items;
 import net.minecraft.item.ToolItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
 import net.minecraft.tileentity.SignTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
@@ -65,12 +63,6 @@ public final class WorkerUtil
      */
     public static List<Tuple<ToolType, ItemStack>> tools;
 
-    /**
-     * A list of all the path blocks on which the citizen walks faster.
-     */
-    private static final ResourceLocation PATHING_BLOCKS = new ResourceLocation("minecolonies", "pathblocks");
-    private static ITag<Block> PATHING_TAG;
-
     private WorkerUtil()
     {
         //Hide default constructor.
@@ -101,11 +93,7 @@ public final class WorkerUtil
      */
     public static boolean isPathBlock(final Block block)
     {
-        if (PATHING_TAG == null)
-        {
-            PATHING_TAG = BlockTags.getCollection().getTagByID(PATHING_BLOCKS);
-        }
-        return PATHING_TAG.contains(block);
+        return ModTags.pathingBlocks.contains(block);
     }
 
     /**

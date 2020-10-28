@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.TagUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -60,12 +61,6 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     private static final String CONCRETE_MIXER = "concretemixer";
 
     /**
-     * Resource location for concrete tag.
-     */
-    private static final ResourceLocation CONCRETE_POWDER = new ResourceLocation("minecolonies", "concrete_powder");
-    private static final ResourceLocation CONCRETE_BLOCK  = new ResourceLocation("minecolonies", "concrete");
-
-    /**
      * How deep the water can max be to place concrete in it.
      */
     private static final int WATER_DEPTH_SUPPORT = 5;
@@ -99,7 +94,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         input.add(new ItemStack(Items.SAND, 4));
         input.add(new ItemStack(Items.GRAVEL, 4));
 
-        for (final Item item : TagUtils.getItem(CONCRETE_POWDER).map(tag -> tag.getAllElements()).orElse(Lists.newArrayList()))
+        for (final Item item : ModTags.concretePowder.getAllElements())
         {
             final List<ItemStack> customInput = new ArrayList<>();
             customInput.addAll(input);
@@ -283,7 +278,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         {
             for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
             {
-                if (TagUtils.getBlock(CONCRETE_BLOCK).map(tag -> tag.contains(colony.getWorld().getBlockState(pos).getBlock())).orElse(false))
+                if (ModTags.concreteBlock.contains(colony.getWorld().getBlockState(pos).getBlock()))
                 {
                     return pos;
                 }
