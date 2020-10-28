@@ -469,13 +469,15 @@ public final class WindowConstants
     public static final String RESOURCE_NAME               = "resourceName";
     public static final String RESOURCE_AVAILABLE_NEEDED   = "resourceAvailableNeeded";
     public static final String RESOURCE_MISSING            = "resourceMissing";
-    public static final String RESOURCE_ADD                = "resourceAdd";
-    public static final String RESOURCE_ID                 = "resourceId";
-    public static final String RESOURCE_QUANTITY_MISSING   = "resourceQuantity";
-    public static final String RESOURCE_ICON               = "resourceIcon";
-    public static final String STOCK_ADD                   = "addStock";
-    public static final String STOCK_REMOVE                = "removeStock";
-    public static final String QUANTITY_LABEL              = "resourceQty";
+    public static final String RESOURCE_ADD              = "resourceAdd";
+    public static final String RESOURCE_ID               = "resourceId";
+    public static final String RESOURCE_QUANTITY_MISSING = "resourceQuantity";
+    public static final String RESOURCE_ICON             = "resourceIcon";
+    public static final String STOCK_ADD                 = "addStock";
+    public static final String STOCK_REMOVE              = "removeStock";
+    public static final String QUANTITY_LABEL            = "resourceQty";
+    public static final String IN_DELIVERY_ICON          = "indeliveryicon";
+    public static final String IN_DELIVERY_AMOUNT        = "indeliveryamount";
 
     public static final String GUIDE_RESOURCE_SUFFIX = ":gui/windowhutguide.xml";
     public static final String GUIDE_CONFIRM         = "confirm";
