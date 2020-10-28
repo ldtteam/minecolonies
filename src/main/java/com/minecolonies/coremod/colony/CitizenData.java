@@ -1173,7 +1173,7 @@ public class CitizenData implements ICitizenData
             if (speedEffect != null)
             {
                 final AttributeModifier speedModifier = new AttributeModifier(RESEARCH_BONUS_MULTIPLIER, 1.0 + speedEffect.getEffect(), AttributeModifier.Operation.MULTIPLY_TOTAL);
-                AttributeModifierUtils.addModifier(citizen, speedModifier, SharedMonsterAttributes.MOVEMENT_SPEED);
+                AttributeModifierUtils.addModifier(citizen, speedModifier, Attributes.MOVEMENT_SPEED);
             }
 
             final AdditionModifierResearchEffect healthEffect =
