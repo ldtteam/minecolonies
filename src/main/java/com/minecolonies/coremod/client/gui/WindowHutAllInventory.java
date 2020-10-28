@@ -1,22 +1,19 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.event.ClientEventHandler;
 import com.minecolonies.coremod.event.HighlightManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -270,7 +267,14 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 final String name = resource.getItemStack().getDisplayName().getFormattedText();
                 resourceLabel.setLabelText(name.substring(0, Math.min(17, name.length())));
                 final Label qtys = rowPane.findPaneOfTypeByID("quantities", Label.class);
-                qtys.setLabelText(Integer.toString(resource.getAmount()));
+                if(!Screen.hasShiftDown())
+                {
+                    qtys.setLabelText(Utils.format(resource.getAmount()));
+                }
+                else
+                {
+                    qtys.setLabelText(Integer.toString(resource.getAmount()));
+                }
                 final Item imagesrc = resource.getItemStack().getItem();
                 final ItemStack image = new ItemStack(imagesrc, 1);
                 image.setTag(resource.getItemStack().getTag());
