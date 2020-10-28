@@ -20,6 +20,8 @@
     <list id="resources" size="164 71%" pos="13 60">
         <box size="100% 30" linewidth="2">
             <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
+            <image id="indeliveryicon" source="minecolonies:textures/gui/citizen/delivery_16x16.png" size="16 16" pos="120 12" visible="false"/>
+            <label id="indeliveryamount" size="100% 12" pos="140 15" textalign="MIDDLE_LEFT" color="green"/>
             <label id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
             <label id="resourceMissing" size="50 12" pos="2 18" textalign="MIDDLE_LEFT" color="black"/>
             <label id="resourceAvailableNeeded" size="100% 12" pos="0 18" textalign="MIDDLE" color="black"/>
