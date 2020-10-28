@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.util;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 
@@ -77,5 +78,44 @@ public abstract class AttributeModifierUtils
         entity.getAttribute(Attributes.MAX_HEALTH).applyNonPersistentModifier(modifier);
 
         entity.setHealth(entity.getMaxHealth() * prevHealthPct);
+    }
+
+    /**
+     * Remove a specific modifier from an entity.
+     * @param entity the entity.
+     * @param modifierName the name of the modifier.
+     * @param attribute the type of attribute.
+     */
+    public static void removeModifier(final LivingEntity entity, final String modifierName, final Attribute attribute)
+    {
+        if (entity == null)
+        {
+            return;
+        }
+
+        for (final AttributeModifier mod : entity.getAttribute(attribute).getModifierListCopy())
+        {
+            if (mod.getName().equals(modifierName))
+            {
+                entity.getAttribute(attribute).removeModifier(mod);
+            }
+        }
+    }
+
+    /**
+     * Add a specific new modifier.
+     * @param entity the entity to add it to.
+     * @param modifier the modifier to add.
+     * @param attribute the type of the attribute.
+     */
+    public static void addModifier(final LivingEntity entity, final AttributeModifier modifier, final Attribute attribute)
+    {
+        if (entity == null)
+        {
+            return;
+        }
+
+        removeModifier(entity, modifier.getName(), attribute);
+        entity.getAttribute(attribute).applyNonPersistentModifier(modifier);
     }
 }

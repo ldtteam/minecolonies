@@ -405,8 +405,15 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             if (entity instanceof FurnaceTileEntity)
             {
                 final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-                final int countInResultSlot = isEmpty(furnace.getStackInSlot(RESULT_SLOT)) ? 0 : furnace.getStackInSlot(RESULT_SLOT).getCount();
-                if ((!furnace.isBurning() && countInResultSlot > 0 && isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT))))
+                int countInResultSlot = 0;
+                boolean fullResult = false;
+                if (!isEmpty(furnace.getStackInSlot(RESULT_SLOT)))
+                {
+                    countInResultSlot = furnace.getStackInSlot(RESULT_SLOT).getCount();
+                    fullResult = countInResultSlot >= furnace.getStackInSlot(RESULT_SLOT).getMaxStackSize();
+                }
+
+                if (fullResult || (!furnace.isBurning() && countInResultSlot > 0 && isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT))))
                 {
                     worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;

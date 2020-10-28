@@ -21,6 +21,7 @@ import com.minecolonies.coremod.colony.jobs.JobHealer;
 import com.minecolonies.coremod.entity.ai.citizen.healer.Patient;
 import com.minecolonies.coremod.research.ResearchInitializer;
 import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
+import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -41,6 +42,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
+import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 
@@ -220,8 +222,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
         if (citizen != null)
         {
             final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
-            optCitizen.ifPresent(entityCitizen -> entityCitizen.getAttribute(Attributes.MOVEMENT_SPEED)
-                                                    .setBaseValue(BASE_MOVEMENT_SPEED));
+            optCitizen.ifPresent(entityCitizen -> AttributeModifierUtils.removeModifier(entityCitizen, SKILL_BONUS_ADD, SharedMonsterAttributes.MOVEMENT_SPEED));
         }
         super.removeCitizen(citizen);
     }
