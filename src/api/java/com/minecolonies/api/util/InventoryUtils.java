@@ -1602,12 +1602,12 @@ public class InventoryUtils
     }
 
     /**
-     * Method to swap the ItemStacks from the given source {@link IItemHandler} to the given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
+     * Method to transfer an ItemStacks from the given source {@link IItemHandler} to the given target {@link IItemHandler}.
      *
      * @param sourceHandler The {@link IItemHandler} that works as Source.
-     * @param predicate  the matching stack.
+     * @param predicate  the predicate for the stack.
      * @param targetHandler The {@link IItemHandler} that works as Target.
-     * @return True when the swap was successful, false when not.
+     * @return true when the swap was successful, false when not.
      */
     public static boolean transferItemStackIntoNextBestSlotInItemHandler(
       @NotNull final IItemHandler sourceHandler,
