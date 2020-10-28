@@ -244,7 +244,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         for(IWareHouse wareHouse: wareHouses)
         {
-            count += InventoryUtils.hasBuildingEnoughElseCount(wareHouse, item, 0);
+            count += InventoryUtils.getCountFromBuilding(wareHouse, item);
         }
         return count;
     }
@@ -490,9 +490,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             handlers.add(workerEntity.getInventory());
         }
-        handlers.add(getTileEntity().getInventory());
 
-        for (final BlockPos pos : getAdditionalCountainers())
+        for (final BlockPos pos : getContainers())
         {
             final TileEntity entity = colony.getWorld().getTileEntity(pos);
             if (entity != null)

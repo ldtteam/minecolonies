@@ -22,6 +22,7 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -97,11 +98,11 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public boolean hasItemStack(final ItemStack stack, final boolean ignoreDamageValue)
+    public boolean hasItemStack(final ItemStack stack, final int count, final boolean ignoreDamageValue)
     {
         final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
 
-        return content.getOrDefault(checkItem, 0) >= stack.getCount();
+        return content.getOrDefault(checkItem, 0) >= count;
     }
 
     @Override
@@ -122,6 +123,29 @@ public class TileEntityRack extends AbstractTileEntityRack
                 return true;
             }
         }
+        return false;
+    }
+
+    @Override
+    public boolean hasSimilarStack(@NotNull final ItemStack stack)
+    {
+        final ItemStorage checkItem = new ItemStorage(stack, true);
+        if (content.containsKey(checkItem))
+        {
+            return true;
+        }
+
+        for (final ItemStorage storage : content.keySet())
+        {
+            for (final ResourceLocation tag : stack.getItem().getTags())
+            {
+                if (storage.getItemStack().getItem().getTags().contains(tag))
+                {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
