@@ -336,6 +336,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public void registerBuildingModules(final IBuilding building)
     {
-
+        //todo fire event in the future to allow mods to register modules.
     }
 }

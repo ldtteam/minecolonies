@@ -155,7 +155,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Set of building modules this building has.
      */
-    protected Map<Class<? extends AbstractBuildingModule>, IBuildingModule> modules = new LinkedHashMap<>();
+    protected Map<Class<? extends IBuildingModule>, IBuildingModule> modules = new LinkedHashMap<>();
 
     /**
      * Constructor for a AbstractBuilding.
@@ -172,20 +172,20 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    public boolean hasModule(final Class<? extends AbstractBuildingModule> clazz)
+    public boolean hasModule(final Class<? extends IBuildingModule> clazz)
     {
         return modules.containsKey(clazz);
     }
 
     @Nullable
     @Override
-    public IBuildingModule getModule(final Class<? extends AbstractBuildingModule> clazz)
+    public IBuildingModule getModule(final Class<? extends IBuildingModule> clazz)
     {
         return modules.get(clazz);
     }
 
     @Override
-    public void registerModule(@NotNull final AbstractBuildingModule module)
+    public void registerModule(@NotNull final IBuildingModule module)
     {
         this.modules.put(module.getClass(), module);
     }

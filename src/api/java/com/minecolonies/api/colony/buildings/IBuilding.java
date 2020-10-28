@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -39,7 +38,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @param clazz the module of the class to check.
      * @return true if so.
      */
-    boolean hasModule(final Class<? extends AbstractBuildingModule> clazz);
+    boolean hasModule(final Class<? extends IBuildingModule> clazz);
 
     /**
      * Get the module with a particular class.
@@ -47,13 +46,13 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @return the module or null of not existant.
      */
     @Nullable
-    IBuildingModule getModule(Class<? extends AbstractBuildingModule> clazz);
+    IBuildingModule getModule(Class<? extends IBuildingModule> clazz);
 
     /**
      * Register a specific module to the building.
      * @param module the module to register.
      */
-    void registerModule(@NotNull final AbstractBuildingModule module);
+    void registerModule(@NotNull final IBuildingModule module);
 
     /**
      * Getter for the custom name of a building.

@@ -16,80 +16,53 @@ public interface IBuildingModule
      * Deserialize the module.
      * @param compound the nbt compound.
      */
-    default void deserializeNBT(CompoundNBT compound)
-    {
-
-    }
+    default void deserializeNBT(CompoundNBT compound) { }
 
     /**
      * Serialize the module from a compound.
      * @param compound the compound.
      */
-    default void serializeNBT(final CompoundNBT compound)
-    {
-
-    }
+    default void serializeNBT(final CompoundNBT compound) { }
 
     /**
      * Serialization method to send the module data to the client side.
      * @param buf the buffer to write it to.
      */
-    default void serializeToView(PacketBuffer buf)
-    {
-
-    }
+    default void serializeToView(PacketBuffer buf) { }
 
     /**
      * On destruction hook of the building, calling into the modules.
      */
-    default void onDestroyed()
-    {
-
-    }
+    default void onDestroyed() { }
 
     /**
      * Colony tick hook.
      * @param colony the colony the tick is invoked from.
      */
-    default void onColonyTick(@NotNull IColony colony)
-    {
-
-    }
+    default void onColonyTick(@NotNull IColony colony) { }
 
     /**
      * Upgrade complete module hook.
      * @param newLevel the new level.
      */
-    default void onUpgradeComplete(int newLevel)
-    {
-
-    }
+    default void onUpgradeComplete(int newLevel) { }
 
     /**
      * On building move hook for modules.
      * @param oldBuilding the building that is going to be moved.
      */
-    default void onBuildingMove(IBuilding oldBuilding)
-    {
-
-    }
+    default void onBuildingMove(IBuilding oldBuilding) { }
 
     /**
      * Specific wakeup hook in modules.
      */
-    default void onWakeUp()
-    {
-
-    }
+    default void onWakeUp() { }
 
     /**
      * On player entering hook.
      * @param player the player that entered the building.
      */
-    default void onPlayerEnterBuilding(PlayerEntity player)
-    {
-
-    }
+    default void onPlayerEnterBuilding(PlayerEntity player) { }
 
     /**
      * Specific dirty marking of modules (separate from building dirty).
