@@ -296,7 +296,7 @@ public final class CitizenConstants
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
      */
-    public static final double XP_EACH_BUILDING = 10.0D;
+    public static final double XP_EACH_BUILDING = 8.0D;
 
     /**
      * Increase this value to make the building speed slower. Used to balance worker level speed increase.
