@@ -23,7 +23,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,6 +80,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * New born age.
      */
     private static final double MAX_ENTITY_AGE = -24000.0;
+
+    /**
+     * Xp per action, like breed feed butcher
+     */
+    protected static final double XP_PER_ACTION = 0.5;
 
     /**
      * Area the worker targets.
@@ -172,7 +176,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         int numOfFeedableAnimals = 0;
         for (final AnimalEntity entity : animals)
         {
-            if (entity.getGrowingAge() == 0)
+            if (isBreedAble(entity))
             {
                 numOfBreedableAnimals++;
             }
@@ -203,6 +207,17 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return HERDER_FEED;
         }
         return START_WORKING;
+    }
+
+    /**
+     * Checks if we can breed this entity
+     *
+     * @param entity to check
+     * @return true if breed able
+     */
+    protected boolean isBreedAble(final AnimalEntity entity)
+    {
+        return !entity.isInLove() && !entity.isChild();
     }
 
     /**
@@ -289,8 +304,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         if (!animal.isAlive())
         {
-            worker.getCitizenExperienceHandler().addExperience(1.0);
-            worker.decreaseSaturationForAction();
+            worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
+            incrementActionsDoneAndDecSaturation();
         }
 
         return HERDER_BUTCHER;
@@ -307,7 +322,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         final AnimalEntity animalOne = animals
                                          .stream()
-                                         .filter(animal -> !animal.isChild())
+                                         .filter(animal -> isBreedAble(animal))
                                          .findAny()
                                          .orElse(null);
 
@@ -320,7 +335,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
           {
               final float range = animal.getDistance(animalOne);
               final boolean isAnimalOne = animalOne.equals(animal);
-              return animal.getGrowingAge() == 0 && range <= DISTANCE_TO_BREED && !isAnimalOne;
+              return isBreedAble(animal) && range <= DISTANCE_TO_BREED && !isAnimalOne;
           }
         ).findAny().orElse(null);
 
@@ -337,8 +352,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING));
 
         breedTwoAnimals(animalOne, animalTwo);
-        incrementActionsDoneAndDecSaturation();
-        worker.getCitizenExperienceHandler().addExperience(1.0);
+        worker.decreaseSaturationForContinuousAction();
         return DECIDE;
     }
 
@@ -375,12 +389,12 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             animalOne.ageUp((int)((float)(-animalOne.getGrowingAge() / 20) * 0.1F), true);
             worker.swingArm(Hand.MAIN_HAND);
             InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), getBreedingItem());
-            incrementActionsDoneAndDecSaturation();
-            worker.getCitizenExperienceHandler().addExperience(1.0);
+            worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             animalOne.playSound(SoundEvents.ENTITY_GENERIC_EAT, 1.0F, 1.0F);
             return DECIDE;
         }
 
+        worker.decreaseSaturationForContinuousAction();
         return getState();
     }
 
@@ -511,6 +525,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
                 animal.setInLove(null);
                 worker.swingArm(Hand.MAIN_HAND);
                 InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), getBreedingItem());
+                worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             }
         }
     }

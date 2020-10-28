@@ -197,7 +197,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return START_WORKING;
         }
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-        
+
         building.syncWithColony(world);
         if (building.getFarmerFields().size() < getOwnBuilding().getBuildingLevel() && !building.assignManually())
         {
@@ -209,7 +209,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         if (amountOfCompostInBuilding + amountOfCompostInInv <= 0)
         {
-            if (getOwnBuilding().requestFertilizer() && !getOwnBuilding().hasWorkerOpenRequestsOfType(Objects.requireNonNull(worker.getCitizenData()), TypeToken.of(StackList.class)))
+            if (getOwnBuilding().requestFertilizer() && !getOwnBuilding().hasWorkerOpenRequestsOfType(Objects.requireNonNull(worker.getCitizenData()),
+              TypeToken.of(StackList.class)))
             {
                 final List<ItemStack> compostAbleItems = new ArrayList<>();
                 compostAbleItems.add(new ItemStack(ModItems.compost, 1));
@@ -316,7 +317,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         {
             workingOffset = nextValidCell(field);
             if (workingOffset == null)
+            {
                 return false;
+            }
 
             position = field.getPos().down().south(workingOffset.getZ()).east(workingOffset.getX());
         }
@@ -386,44 +389,47 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private int cell = -1;
 
     /**
-     * Fetch the next available block within the field.
-     * Uses mathemajical quadratic equations to determine
-     * the coordinates by an index.
-     * Considers max radii set in the field gui.
+     * Fetch the next available block within the field. Uses mathemajical quadratic equations to determine the coordinates by an index. Considers max radii set in the field gui.
+     *
      * @return the new offset position
      */
-    protected BlockPos nextValidCell (AbstractScarecrowTileEntity field)
+    protected BlockPos nextValidCell(AbstractScarecrowTileEntity field)
     {
         int ring, ringCell, x, z;
         Direction facing;
 
         if (workingOffset == null)
+        {
             cell = -1;
+        }
 
         do
         {
-            if (++cell == getLargestCell()) return null;
-            ring = (int) Math.floor((Math.sqrt(cell+1) + 1) / 2.0);
-            ringCell = cell - (int) (4*Math.pow(ring-1,2) + 4*(ring-1));
-            facing = Direction.byHorizontalIndex(Math.floorDiv(ringCell, 2*ring));
+            if (++cell == getLargestCell())
+            {
+                return null;
+            }
+            ring = (int) Math.floor((Math.sqrt(cell + 1) + 1) / 2.0);
+            ringCell = cell - (int) (4 * Math.pow(ring - 1, 2) + 4 * (ring - 1));
+            facing = Direction.byHorizontalIndex(Math.floorDiv(ringCell, 2 * ring));
 
 
             if (facing.getAxis() == Direction.Axis.Z)
             {
-                x = (facing == Direction.NORTH ? -1: 1) * (ring - (ringCell % (2*ring)));
-                z = (facing == Direction.NORTH ? -1: 1) * ring;
+                x = (facing == Direction.NORTH ? -1 : 1) * (ring - (ringCell % (2 * ring)));
+                z = (facing == Direction.NORTH ? -1 : 1) * ring;
             }
             else
             {
-                x = (facing == Direction.WEST ? -1: 1) * ring;
-                z = (facing == Direction.EAST ? -1: 1) * (ring - (ringCell % (2*ring)));
+                x = (facing == Direction.WEST ? -1 : 1) * ring;
+                z = (facing == Direction.EAST ? -1 : 1) * (ring - (ringCell % (2 * ring)));
             }
         }
         while (
-                -z > field.getRadius(Direction.NORTH)
-             ||  x > field.getRadius(Direction.EAST)
-             ||  z > field.getRadius(Direction.SOUTH)
-             || -x > field.getRadius(Direction.WEST)
+          -z > field.getRadius(Direction.NORTH)
+            || x > field.getRadius(Direction.EAST)
+            || z > field.getRadius(Direction.SOUTH)
+            || -x > field.getRadius(Direction.WEST)
         );
 
         return new BlockPos(x, 0, z);
@@ -431,7 +437,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
     protected int getLargestCell()
     {
-        return (int) Math.pow(ScarecrowTileEntity.getMaxRange()*2+1, 2);
+        return (int) Math.pow(ScarecrowTileEntity.getMaxRange() * 2 + 1, 2);
     }
 
     /**
@@ -575,14 +581,21 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     {
         if (shouldHarvest(position))
         {
-            worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
             if (Compatibility.isPamsInstalled())
             {
+                worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
                 harvestCrop(position.up());
                 return true;
             }
 
-            return mineBlock(position.up());
+            if (mineBlock(position.up()))
+            {
+                worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
+            }
+            else
+            {
+                return false;
+            }
         }
         return true;
     }
@@ -782,7 +795,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         this.incrementActionsDone();
         worker.decreaseSaturationForContinuousAction();
-        worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
     }
 
     /**

@@ -72,7 +72,6 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     public void addExperience(final double xp)
     {
         final IBuilding home = citizen.getCitizenColonyHandler().getHomeBuilding();
-
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
 
         final ICitizenData data = citizen.getCitizenData();
@@ -83,11 +82,11 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         }
 
         final double workBuildingLevel = workBuilding.getBuildingLevel();
-        final double bonusXp = 1 + (workBuildingLevel * citizenHutLevel) / 10;
-        double localXp = xp * bonusXp;
+        final double buildingXPModifier = 1 + (workBuildingLevel + citizenHutLevel) / 10;
+        double localXp = xp * buildingXPModifier;
         final double saturation = citizen.getCitizenData().getSaturation();
         final int intelligenceLevel = data.getCitizenSkillHandler().getLevel(Skill.Intelligence);
-        localXp += localXp * (intelligenceLevel / 10.0);
+        localXp += localXp * (intelligenceLevel / 100.0);
 
         if (saturation <= 0)
         {
@@ -176,7 +175,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
             if (d1 < 1.0D)
             {
-                addExperience(orb.getXpValue() / 2.0D);
+                addExperience(orb.getXpValue() / 2.5D);
                 orb.remove();
                 counterMovedXp = 0;
             }

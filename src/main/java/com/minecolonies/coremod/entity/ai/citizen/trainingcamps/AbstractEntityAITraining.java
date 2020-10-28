@@ -21,7 +21,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
     /**
      * Percentual chance for target search being chosen as target job.
      */
-    private static final int TARGET_SEARCH_CHANCE = 10;
+    private static final int TARGET_SEARCH_CHANCE = 30;
 
     /**
      * 100% chance to compare it with smaller percentages.
@@ -61,7 +61,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
           new AITarget(IDLE, () -> START_WORKING, 1),
           new AITarget(START_WORKING, () -> DECIDE, 1),
           new AITarget(DECIDE, this::decide, 20),
-          new AITarget(TRAINING_WANDER, this::wander, 20),
+          new AITarget(TRAINING_WANDER, this::wander, 200),
           new AITarget(GO_TO_TARGET, this::pathToTarget, 20)
         );
         worker.setCanPickUpLoot(true);
