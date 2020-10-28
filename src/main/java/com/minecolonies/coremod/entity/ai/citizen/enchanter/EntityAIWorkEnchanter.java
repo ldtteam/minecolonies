@@ -75,6 +75,11 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
     private static final int MANA_REQ_PER_LEVEL = 10;
 
     /**
+     * XP per drain
+     */
+    private static final double XP_PER_DRAIN = 10;
+
+    /**
      * The citizen entity to gather from.
      */
     private ICitizenData citizenToGatherFrom = null;
@@ -372,6 +377,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
 
             worker.getInventoryCitizen().extractItem(bookSlot, 1, false);
             worker.getCitizenData().getCitizenSkillHandler().incrementLevel(Skill.Mana, 1);
+            worker.getCitizenExperienceHandler().addExperience(XP_PER_DRAIN);
             worker.getCitizenData().markDirty();
         }
         resetDraining();

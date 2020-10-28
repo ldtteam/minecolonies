@@ -40,6 +40,11 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     private static final Integer PLANT_TO_REQUEST = 16;
 
     /**
+     * Xp per harvesting block
+     */
+    private static final double XP_PER_HARVEST = 1;
+
+    /**
      * The current farm pos to take care of.
      */
     private BlockPos workPos;
@@ -126,6 +131,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
                 worker.getCitizenItemHandler().tryPickupItemEntity(item);
             }
         }
+
+        worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
 
         return START_WORKING;
     }
