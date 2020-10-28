@@ -16,6 +16,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutDeliveryman;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
+import static com.minecolonies.api.util.constant.CitizenConstants.*;
 
 /**
  * Class of the warehouse building.
@@ -98,8 +99,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         if (citizen != null)
         {
             final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
-            optCitizen.ifPresent(entityCitizen -> entityCitizen.getAttribute(Attributes.MOVEMENT_SPEED)
-                                                    .setBaseValue(BASE_MOVEMENT_SPEED));
+            optCitizen.ifPresent(entityCitizen -> AttributeModifierUtils.removeModifier(entityCitizen, SKILL_BONUS_ADD, Attributes.MOVEMENT_SPEED));
         }
         super.removeCitizen(citizen);
     }
