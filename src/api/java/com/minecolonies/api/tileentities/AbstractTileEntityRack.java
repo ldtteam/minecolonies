@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -159,10 +158,11 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
      *
      * @param stack             the stack to check.
+     * @param count             the min count it should have.
      * @param ignoreDamageValue ignore the damage value.
      * @return true if so.
      */
-    public abstract boolean hasItemStack(ItemStack stack, boolean ignoreDamageValue);
+    public abstract boolean hasItemStack(ItemStack stack, final int count, boolean ignoreDamageValue);
 
     /**
      * Check if a similar/same item as the stack is in the inventory. And return the count if so.
@@ -180,6 +180,14 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      * @return true if so.
      */
     public abstract boolean hasItemStack(@NotNull Predicate<ItemStack> itemStackSelectionPredicate);
+
+    /**
+     * Check if a similar stack is in the rack.
+     *
+     * @param stack stack to check.
+     * @return a set of different results depending on the similarity metric.
+     */
+    public abstract boolean hasSimilarStack(@NotNull ItemStack stack);
 
     /**
      * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.

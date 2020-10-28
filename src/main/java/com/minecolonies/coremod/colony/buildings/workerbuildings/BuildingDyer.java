@@ -193,7 +193,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
             {
                 for(IBuilding wareHouse: colony.getBuildingManager().getWareHouses())
                 {
-                    final int colorCount = InventoryUtils.hasBuildingEnoughElseCount(wareHouse, color, 1);
+                    final int colorCount = InventoryUtils.getCountFromBuilding(wareHouse, color);
                     inventoryCounts.put(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
                 }
             }

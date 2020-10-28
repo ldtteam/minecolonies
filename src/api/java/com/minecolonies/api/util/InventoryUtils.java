@@ -11,6 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -720,19 +721,9 @@ public class InventoryUtils
     public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final ItemStorage stack, final int count)
     {
         int totalCount = 0;
-        if (provider.getTileEntity() != null)
-        {
-            totalCount += provider.getTileEntity().getAllContent().getOrDefault(stack, 0);
-        }
-
-        if (totalCount > count && count > 0)
-        {
-            return Integer.MAX_VALUE;
-        }
-
         final World world = provider.getColony().getWorld();
 
-        for (final BlockPos pos : provider.getAdditionalCountainers())
+        for (final BlockPos pos : provider.getContainers())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
@@ -741,29 +732,45 @@ public class InventoryUtils
                 {
                     totalCount += ((TileEntityRack) entity).getAllContent().getOrDefault(stack, 0);
                 }
+                else
+                {
+                    totalCount += getItemCountInProvider(entity, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
+                }
+
+                if (totalCount > count)
+                {
+                    return Integer.MAX_VALUE;
+                }
             }
         }
 
-        if (totalCount >= count)
-        {
-            return totalCount;
-        }
+        return totalCount;
+    }
 
-        for (final BlockPos pos : provider.getAdditionalCountainers())
+    /**
+     * Count the number of items a building has.
+     *
+     * @param provider building to check in.
+     * @param stack    the stack to check.
+     * @return Amount of occurrences of stacks that match the given stack.
+     */
+    public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final ItemStorage stack)
+    {
+        int totalCount = 0;
+        final World world = provider.getColony().getWorld();
+
+        for (final BlockPos pos : provider.getContainers())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (!(entity instanceof TileEntityRack) && entity != null)
+                if (entity instanceof TileEntityRack)
                 {
-                    for (final IItemHandler handler : getItemHandlersFromProvider(entity))
-                    {
-                        totalCount += getItemCountInItemHandler(handler, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
-                        if (totalCount > count)
-                        {
-                            return Integer.MAX_VALUE;
-                        }
-                    }
+                    totalCount += ((TileEntityRack) entity).getAllContent().getOrDefault(stack, 0);
+                }
+                else if (entity instanceof ChestTileEntity)
+                {
+                    totalCount += getItemCountInProvider(entity, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
                 }
             }
         }
@@ -1593,6 +1600,36 @@ public class InventoryUtils
         }
         return false;
     }
+
+    /**
+     * Method to transfer an ItemStacks from the given source {@link IItemHandler} to the given target {@link IItemHandler}.
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param predicate  the predicate for the stack.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return true when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextBestSlotInItemHandler(
+      @NotNull final IItemHandler sourceHandler,
+      final Predicate<ItemStack> predicate,
+      @NotNull final IItemHandler targetHandler)
+    {
+        for (int i = 0; i < sourceHandler.getSlots(); i++)
+        {
+            if (predicate.test(sourceHandler.getStackInSlot(i)))
+            {
+                ItemStack sourceStack = sourceHandler.extractItem(i, Integer.MAX_VALUE, true);
+                if (!sourceStack.isEmpty() && addItemStackToItemHandler(targetHandler, sourceStack))
+                {
+                    sourceHandler.extractItem(i, Integer.MAX_VALUE, false);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     /**
      * Method to put a given Itemstack in a given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
