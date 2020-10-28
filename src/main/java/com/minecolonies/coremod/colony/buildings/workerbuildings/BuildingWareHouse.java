@@ -364,10 +364,10 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     {
         if (storageUpgrade < MAX_STORAGE_UPGRADE)
         {
-            for (final BlockPos pos : getAdditionalCountainers())
+            for (final BlockPos pos : getContainers())
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (entity instanceof TileEntityRack)
+                if (entity instanceof TileEntityRack && !(entity instanceof TileEntityColonyBuilding))
                 {
                     ((AbstractTileEntityRack) entity).upgradeItemStorage();
                 }

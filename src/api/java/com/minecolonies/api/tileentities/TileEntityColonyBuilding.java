@@ -198,10 +198,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
         if (theBuilding != null)
         {
-            final List<BlockPos> containers = new ArrayList<>(theBuilding.getAdditionalCountainers());
-            containers.add(getBuilding().getPosition());
-
-            for (final BlockPos pos : containers)
+            for (final BlockPos pos : theBuilding.getContainers())
             {
                 if (WorldUtil.isBlockLoaded(world, pos))
                 {
@@ -482,9 +479,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 final World world = colony.getWorld();
                 if (world != null)
                 {
-                    for (final BlockPos pos : building.getAdditionalCountainers())
+                    for (final BlockPos pos : building.getContainers())
                     {
-                        if (WorldUtil.isBlockLoaded(world, pos))
+                        if (WorldUtil.isBlockLoaded(world, pos) && !pos.equals(this.pos))
                         {
                             final TileEntity te = world.getTileEntity(pos);
                             if (te != null)
@@ -505,8 +502,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                         }
                     }
                 }
+                handlers.add(this.getInventory());
 
-                handlers.add(getInventory());
                 combinedInv = LazyOptional.of(() -> new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0])));
             }
             return (LazyOptional<T>) combinedInv;
