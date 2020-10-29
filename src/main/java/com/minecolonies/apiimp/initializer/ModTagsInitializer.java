@@ -110,7 +110,7 @@ public class ModTagsInitializer
      */
     private static ITag<Item> getItemTags(final ResourceLocation resourceLocation)
     {
-        return TagUtils.getItem(resourceLocation).get();
+        return TagUtils.getItem(resourceLocation);
     }
 
     /**
@@ -120,6 +120,6 @@ public class ModTagsInitializer
      */
     private static ITag<Block> getBlockTags(final ResourceLocation resourceLocation)
     {
-        return TagUtils.getBlock(resourceLocation).get();
+        return TagUtils.getBlock(resourceLocation);
     }
 }
