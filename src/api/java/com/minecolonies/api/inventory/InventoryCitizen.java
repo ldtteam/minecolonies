@@ -34,6 +34,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      * The default inv size.
      */
     private static final int DEFAULT_INV_SIZE = 27;
+    private static final int ROW_SIZE         = 9;
 
     /**
      * Amount of free slots
@@ -404,13 +405,8 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     {
         if (this.mainInventory.size() < nbtTagList.getCompound(0).getInt(TAG_SIZE))
         {
-            final AbstractResearchEffect<Double> researchEffect =
-              citizen.getColony().getResearchManager().getResearchEffects().getEffect(INV_SLOTS, AbstractResearchEffect.class);
-            int size = DEFAULT_INV_SIZE;
-            if (researchEffect != null)
-            {
-                size += researchEffect.getEffect();
-            }
+            int size = nbtTagList.getCompound(0).getInt(TAG_SIZE);
+            size -= size % ROW_SIZE;
             this.mainInventory = NonNullList.withSize(size, ItemStackUtils.EMPTY);
         }
 
