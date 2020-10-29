@@ -42,6 +42,11 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     private static final int ARMOR_SIZE = 5;
 
     /**
+     * Amount of free slots
+     */
+    private int freeSlots = DEFAULT_INV_SIZE + ARMOR_SIZE;
+
+    /**
      * The inventory. (27 main inventory, 4 armor slots, 1 offhand slot)
      */
     private NonNullList<ItemStack> mainInventory = NonNullList.withSize(DEFAULT_INV_SIZE + ARMOR_SIZE, ItemStackUtils.EMPTY);
@@ -163,7 +168,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      */
     public boolean hasSpace()
     {
-        return this.mainInventory.stream().limit(getSlots()).anyMatch(itemStack -> itemStack.isEmpty());
+        return freeSlots > 0;
     }
 
     /**
@@ -173,7 +178,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      */
     public boolean isEmpty()
     {
-        return !this.mainInventory.stream().limit(getSlots()).anyMatch(itemStack -> !itemStack.isEmpty());
+        return freeSlots == mainInventory.size();
     }
 
     /**
@@ -199,6 +204,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
                 inv.set(index++, mainInventory.get(i));
             }
             mainInventory = inv;
+            freeSlots += futureSize - size;
         }
     }
 
@@ -253,7 +259,6 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
     {
-        markDirty();
         final ItemStack copy = stack.copy();
         final ItemStack inSlot = mainInventory.get(slot);
         if (inSlot.getCount() >= inSlot.getMaxStackSize() || (!inSlot.isEmpty() && !inSlot.isItemEqual(copy)))
@@ -265,6 +270,8 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             if (!simulate)
             {
+                markDirty();
+                freeSlots--;
                 mainInventory.set(slot, copy);
                 return ItemStack.EMPTY;
             }
@@ -279,6 +286,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             if (!simulate)
             {
+                markDirty();
                 inSlot.setCount(inSlot.getCount() + copy.getCount());
             }
             return ItemStack.EMPTY;
@@ -287,6 +295,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             if (!simulate)
             {
+                markDirty();
                 inSlot.setCount(inSlot.getCount() + avail);
             }
             copy.setCount(copy.getCount() - avail);
@@ -298,13 +307,14 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
     {
-        markDirty();
         final ItemStack inSlot = mainInventory.get(slot);
 
         if (amount >= inSlot.getCount())
         {
             if (!simulate)
             {
+                markDirty();
+                freeSlots++;
                 mainInventory.set(slot, ItemStack.EMPTY);
             }
             return inSlot;
@@ -316,7 +326,12 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
             copy.setCount(amount);
             if (!simulate)
             {
+                markDirty();
                 inSlot.setCount(inSlot.getCount() - amount);
+                if (ItemStackUtils.isEmpty(inSlot))
+                {
+                    freeSlots++;
+                }
             }
             return copy;
         }
@@ -419,6 +434,8 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
             this.mainInventory = NonNullList.withSize(nbtTagList.getCompound(0).getInt(TAG_SIZE), ItemStackUtils.EMPTY);
         }
 
+        freeSlots = mainInventory.size();
+
         for (int i = 1; i < nbtTagList.size(); ++i)
         {
             final CompoundNBT compoundNBT = nbtTagList.getCompound(i);
@@ -431,6 +448,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
                 if (j < this.mainInventory.size())
                 {
                     this.mainInventory.set(j, itemstack);
+                    freeSlots--;
                 }
             }
         }
@@ -439,6 +457,18 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public void setStackInSlot(final int slot, @Nonnull final ItemStack stack)
     {
+        if (!ItemStackUtils.isEmpty(stack))
+        {
+            if (ItemStackUtils.isEmpty(mainInventory.get(slot)))
+            {
+                freeSlots--;
+            }
+        }
+        else if (!ItemStackUtils.isEmpty(mainInventory.get(slot)))
+        {
+            freeSlots++;
+        }
+
         mainInventory.set(slot, stack);
     }
 }

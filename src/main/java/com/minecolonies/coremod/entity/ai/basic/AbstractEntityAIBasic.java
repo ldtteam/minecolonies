@@ -409,7 +409,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @Nullable
     private IAIState initSafetyChecks()
     {
-        if (null == worker.getCitizenJobHandler().getColonyJob() || null == getOwnBuilding() || worker.getCitizenData() == null)
+        if (null == worker.getCitizenJobHandler().getColonyJob() || worker.getCitizenColonyHandler().getWorkBuilding() == null || worker.getCitizenData() == null)
         {
             return INIT;
         }
