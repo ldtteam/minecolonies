@@ -3,7 +3,6 @@ package com.minecolonies.api.inventory;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -37,19 +36,14 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     private static final int DEFAULT_INV_SIZE = 27;
 
     /**
-     * Armor inv size.
-     */
-    private static final int ARMOR_SIZE = 5;
-
-    /**
      * Amount of free slots
      */
-    private int freeSlots = DEFAULT_INV_SIZE + ARMOR_SIZE;
+    private int freeSlots = DEFAULT_INV_SIZE;
 
     /**
      * The inventory. (27 main inventory, 4 armor slots, 1 offhand slot)
      */
-    private NonNullList<ItemStack> mainInventory = NonNullList.withSize(DEFAULT_INV_SIZE + ARMOR_SIZE, ItemStackUtils.EMPTY);
+    private NonNullList<ItemStack> mainInventory = NonNullList.withSize(DEFAULT_INV_SIZE, ItemStackUtils.EMPTY);
 
     /**
      * The index of the currently held items (0-8).
@@ -158,7 +152,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public int getSlots()
     {
-        return this.mainInventory.size() - ARMOR_SIZE;
+        return this.mainInventory.size();
     }
 
     /**
@@ -193,16 +187,11 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             final NonNullList<ItemStack> inv = NonNullList.withSize(futureSize, ItemStackUtils.EMPTY);
 
-            for (int i = 0; i < mainInventory.size() - ARMOR_SIZE; i++)
+            for (int i = 0; i < mainInventory.size(); i++)
             {
                 inv.set(i, mainInventory.get(i));
             }
 
-            int index = inv.size() - ARMOR_SIZE;
-            for (int i = mainInventory.size() - ARMOR_SIZE; i < mainInventory.size(); i++)
-            {
-                inv.set(index++, mainInventory.get(i));
-            }
             mainInventory = inv;
             freeSlots += futureSize - size;
         }
@@ -346,22 +335,6 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public boolean isItemValid(final int slot, @Nonnull final ItemStack stack)
     {
-        if (slot == 36)
-        {
-            return stack.getEquipmentSlot() == EquipmentSlotType.HEAD;
-        }
-        else if (slot == 37)
-        {
-            return stack.getEquipmentSlot() == EquipmentSlotType.CHEST;
-        }
-        else if (slot == 38)
-        {
-            return stack.getEquipmentSlot() == EquipmentSlotType.LEGS;
-        }
-        else if (slot == 39)
-        {
-            return stack.getEquipmentSlot() == EquipmentSlotType.FEET;
-        }
         return true;
     }
 
@@ -398,9 +371,9 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             final AbstractResearchEffect<Double> researchEffect =
               citizen.getColony().getResearchManager().getResearchEffects().getEffect(INV_SLOTS, AbstractResearchEffect.class);
-            if (researchEffect != null && this.mainInventory.size() - ARMOR_SIZE < DEFAULT_INV_SIZE + researchEffect.getEffect())
+            if (researchEffect != null && this.mainInventory.size() < DEFAULT_INV_SIZE + researchEffect.getEffect())
             {
-                resizeInventory(this.mainInventory.size(), (int) (DEFAULT_INV_SIZE + researchEffect.getEffect() + ARMOR_SIZE));
+                resizeInventory(this.mainInventory.size(), (int) (DEFAULT_INV_SIZE + researchEffect.getEffect()));
             }
         }
 
@@ -431,7 +404,14 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     {
         if (this.mainInventory.size() < nbtTagList.getCompound(0).getInt(TAG_SIZE))
         {
-            this.mainInventory = NonNullList.withSize(nbtTagList.getCompound(0).getInt(TAG_SIZE), ItemStackUtils.EMPTY);
+            final AbstractResearchEffect<Double> researchEffect =
+              citizen.getColony().getResearchManager().getResearchEffects().getEffect(INV_SLOTS, AbstractResearchEffect.class);
+            int size = DEFAULT_INV_SIZE;
+            if (researchEffect != null)
+            {
+                size += researchEffect.getEffect();
+            }
+            this.mainInventory = NonNullList.withSize(size, ItemStackUtils.EMPTY);
         }
 
         freeSlots = mainInventory.size();
