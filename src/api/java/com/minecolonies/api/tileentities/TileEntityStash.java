@@ -56,7 +56,7 @@ public class TileEntityStash extends TileEntityColonyBuilding
                 if (colony != null)
                 {
                     final IBuilding building = colony.getBuildingManager().getBuilding(pos);
-                    if (!freeStacks())
+                    if (!isEmpty())
                     {
                         // Note that createPickupRequest will make sure to only create on request per building.
                         building.createPickupRequest(getPlayerActionPriority(true));

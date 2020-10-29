@@ -85,12 +85,6 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public boolean freeStacks()
-    {
-        return content.isEmpty();
-    }
-
-    @Override
     public int getFreeSlots()
     {
         return freeSlots;
