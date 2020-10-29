@@ -64,7 +64,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING, STANDARD_DELAY),
-          new AITarget(START_WORKING, this::startWorking, TICKS_SECOND),
+          new AITarget(START_WORKING, this::startWorking, 100),
           new AITarget(START_USING_FURNACE, this::fillUpFurnace, STANDARD_DELAY),
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::accelerateFurnaces, TICKS_SECOND),
           new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, STANDARD_DELAY));
