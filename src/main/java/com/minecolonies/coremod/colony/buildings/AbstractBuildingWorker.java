@@ -19,7 +19,11 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.MultiOutputRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -89,26 +93,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * The name of the tag for improving recipes
      */
     private static final String REDUCEABLE = "reduceable";
-
-    /**
-     * Tag specifier for Products to Include
-     */
-    private static final String PRODUCT = "_product";
-
-    /**
-     * Tag specifier for Products to Exclude
-     */
-    private static final String PRODUCT_EXCLUDED = "_product_excluded";
-
-    /**
-     * Tag specifier for Ingredients to include
-     */
-    private static final String INGREDIENT = "_ingredient";
-
-    /**
-     * Tag specifier for Ingredients to exclude
-     */
-    private static final String INGREDIENT_EXCLUDED = "_ingredient_excluded";
 
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
@@ -320,25 +304,21 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IRecipeStorage storage)
     {
-
-        ResourceLocation products = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(PRODUCT));
-        ResourceLocation ingredients = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(INGREDIENT));
-        ResourceLocation productsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(PRODUCT_EXCLUDED));
-        ResourceLocation ingredientsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(INGREDIENT_EXCLUDED));
-
         if (storage == null)
         {
             return Optional.of(false);
         }
 
+        final String crafterName = this.getJobName().toLowerCase();
+
         // Check against excluded products
-        if (TagUtils.getItem(productsExcluded).map(tag -> tag.contains(storage.getPrimaryOutput().getItem())).orElse(false))
+        if (ModTags.crafterProductExclusions.containsKey(crafterName) && ModTags.crafterProductExclusions.get(crafterName).contains(storage.getPrimaryOutput().getItem()))
         {
             return Optional.of(false);
         }
 
         // Check against allowed products
-        if (TagUtils.getItem(products).map(tag -> tag.contains(storage.getPrimaryOutput().getItem())).orElse(false))
+        if (ModTags.crafterProduct.containsKey(crafterName) && ModTags.crafterProduct.get(crafterName).contains(storage.getPrimaryOutput().getItem()))
         {
             return Optional.of(true);
         }
@@ -346,7 +326,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         // Check against excluded ingredients
         for (final ItemStack stack : storage.getInput())
         {
-            if (TagUtils.getItem(ingredientsExcluded).map(tag -> tag.contains(stack.getItem())).orElse(false))
+            if (ModTags.crafterIngredientExclusions.containsKey(crafterName) && ModTags.crafterIngredientExclusions.get(crafterName).contains(stack.getItem()))
             {
                 return Optional.of(false);
             }
@@ -355,7 +335,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         // Check against allowed ingredients
         for (final ItemStack stack : storage.getInput())
         {
-            if (TagUtils.getItem(ingredients).map(tag -> tag.contains(stack.getItem())).orElse(false))
+            if (ModTags.crafterIngredient.containsKey(crafterName) && ModTags.crafterIngredient.get(crafterName).contains(stack.getItem()))
             {
                 return Optional.of(true);
             }
@@ -372,22 +352,21 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     public void improveRecipe(IRecipeStorage recipe, int count, ICitizenData citizen)
     {
-        final ResourceLocation reducableIngredients = new ResourceLocation(MOD_ID, REDUCEABLE.concat(INGREDIENT));
-        final ResourceLocation reducableProductExclusions = new ResourceLocation(MOD_ID, REDUCEABLE.concat(PRODUCT_EXCLUDED));
         final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
 
         final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(getRecipeImprovementSkill())));
         final double roll = citizen.getRandom().nextDouble() * 100;
 
         ItemStack reducedItem = null;
-        if(roll <= actualChance && !TagUtils.getItem(reducableProductExclusions).map(tag -> tag.contains(recipe.getPrimaryOutput().getItem())).orElse(false))
+
+        if(roll <= actualChance && ModTags.crafterProductExclusions.containsKey(REDUCEABLE) && !ModTags.crafterProductExclusions.get(REDUCEABLE).contains(recipe.getPrimaryOutput().getItem()))
         {
             final ArrayList<ItemStack> newRecipe = new ArrayList<>();
             boolean didReduction = false;
             for(ItemStorage input : inputs)
             {
                 // Check against excluded products
-                if (input.getAmount() > 1 && ItemTags.createOptional(reducableIngredients).contains(input.getItem()))
+                if (input.getAmount() > 1 && ModTags.crafterIngredient.containsKey(REDUCEABLE) && ModTags.crafterIngredient.get(REDUCEABLE).contains(input.getItem()))
                 {
                     reducedItem = input.getItemStack();
                     reducedItem.setCount(input.getAmount() - 1);

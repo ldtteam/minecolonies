@@ -22,6 +22,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
@@ -34,9 +35,11 @@ import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -50,6 +53,7 @@ import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure.ItemCheckResult.*;
 import static com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler.Stage.*;
@@ -147,6 +151,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
            */
           new AITarget(COMPLETE_BUILD, this::completeBuild, STANDARD_DELAY)
         );
+
     }
 
     /**
@@ -239,6 +244,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     }
 
     /**
+     * Checks for blocks that need to be treated as deco
+     */
+    protected static boolean isDecoItem(Block block)
+    {
+        return ModTags.decorationItems.contains(block);
+    }
+
+    /**
      * The Structure step to execute the actual placement actions etc.
      *
      * @return the next step to go to.
@@ -286,12 +299,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || info.getBlockInfo()
+                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || isDecoItem(info.getBlockInfo()
                                                                                                                                                   .getState()
-                                                                                                                                                  .getBlock() instanceof CoralBlock
-                                                                                                                                             || info.getBlockInfo()
-                                                                                                                                                  .getState()
-                                                                                                                                                  .getBlock() instanceof LanternBlock)),
+                                                                                                                                                  .getBlock()))),
                   false);
                 break;
             case CLEAR_WATER:
@@ -318,12 +328,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !(info.getBlockInfo()
+                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !isDecoItem(info.getBlockInfo()
                                                                                                                                                    .getState()
-                                                                                                                                                   .getBlock() instanceof CoralBlock)
-                                                                                                                                            && !(info.getBlockInfo()
-                                                                                                                                                    .getState()
-                                                                                                                                                    .getBlock() instanceof LanternBlock))),
+                                                                                                                                                   .getBlock()))),
                   false);
                 break;
             case SPAWN:
