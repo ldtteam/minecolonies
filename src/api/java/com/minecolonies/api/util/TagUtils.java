@@ -7,21 +7,33 @@ import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.Optional;
-
+/**
+ * Class for specific minecraft tag utilities.
+ */
 public final class TagUtils
 {
-
     private TagUtils()
     {
         throw new IllegalStateException("Tried to initialize: TagUtils but this is a Utility class.");
     }
 
-    public static Optional<ITag<Item>> getItem(final ResourceLocation resourceLocation) {
-        return Optional.ofNullable(ItemTags.getCollection().func_241833_a().getOrDefault(resourceLocation, null));
+    /**
+     * Get a tag for items.
+     * @param resourceLocation the unique id.
+     * @return the tag or an empty placeholder if not existant.
+     */
+    public static ITag<Item> getItem(final ResourceLocation resourceLocation)
+    {
+        return ItemTags.getCollection().func_241834_b(resourceLocation);
     }
 
-    public static Optional<ITag<Block>> getBlock(final ResourceLocation resourceLocation) {
-        return Optional.ofNullable(BlockTags.getCollection().func_241833_a().getOrDefault(resourceLocation, null));
+    /**
+     * Get a tag for items.
+     * @param resourceLocation the unique id.
+     * @return the tag or an empty placeholder if not existant.
+     */
+    public static ITag<Block> getBlock(final ResourceLocation resourceLocation)
+    {
+        return BlockTags.getCollection().func_241834_b(resourceLocation);
     }
 }
