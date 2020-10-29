@@ -732,7 +732,7 @@ public class InventoryUtils
                 {
                     totalCount += ((TileEntityRack) entity).getAllContent().getOrDefault(stack, 0);
                 }
-                else
+                else if (entity != null)
                 {
                     totalCount += getItemCountInProvider(entity, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
                 }
