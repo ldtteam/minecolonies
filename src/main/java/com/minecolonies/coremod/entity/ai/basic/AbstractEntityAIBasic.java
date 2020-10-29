@@ -1496,7 +1496,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true;
         }
 
-        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(),
+        if (InventoryUtils.getCountFromBuilding(getOwnBuilding(),
           itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= minCount &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 getOwnBuilding(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true),
@@ -1531,7 +1531,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true;
         }
 
-        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(),
+        if (InventoryUtils.getCountFromBuilding(getOwnBuilding(),
           itemStack -> itemStack.getItem().isIn(tag)) >= count &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 getOwnBuilding(), itemStack -> itemStack.getItem().isIn(tag),

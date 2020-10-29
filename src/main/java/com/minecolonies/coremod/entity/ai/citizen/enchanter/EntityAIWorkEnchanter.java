@@ -136,7 +136,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             final int booksInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_BOOK);
             if (booksInInv <= 0)
             {
-                final int numberOfBooksInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_BOOK);
+                final int numberOfBooksInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), IS_BOOK);
                 if (numberOfBooksInBuilding > 0)
                 {
                     needsCurrently = new Tuple<>(IS_BOOK, 1);
@@ -158,7 +158,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         final int ancientTomesInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_ANCIENT_TOME);
         if (ancientTomesInInv <= 0)
         {
-            final int amountOfAncientTomes = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_ANCIENT_TOME);
+            final int amountOfAncientTomes = InventoryUtils.getCountFromBuilding(getOwnBuilding(), IS_ANCIENT_TOME);
             if (amountOfAncientTomes > 0)
             {
                 needsCurrently = new Tuple<>(IS_ANCIENT_TOME, 1);
