@@ -16,6 +16,7 @@ import net.minecraft.util.math.shapes.VoxelShape;
 
 /**
  * Custom movement handler for minecolonies citizens (avoid jumping so much).
+ * Note that the "speed" variable of the super is a speedFactor to our attributes base speed.
  */
 public class MovementHandler extends MovementController
 {
@@ -95,8 +96,7 @@ public class MovementHandler extends MovementController
         }
         else if (this.action == net.minecraft.entity.ai.controller.MovementController.Action.JUMPING)
         {
-            //TODO we're using setAIMoveSpeed manually which gets overridden here and above
-            this.mob.setAIMoveSpeed((float) (this.speed * this.mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue()));
+            this.mob.setAIMoveSpeed((float) (this.speed * speedAtr.getValue()));
 
             // Avoid beeing stuck in jumping while in liquids
             final BlockPos blockpos = new BlockPos(this.mob);

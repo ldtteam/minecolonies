@@ -4,7 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -29,6 +29,11 @@ public class NamedDamageSource extends EntityDamageSource
     @Override
     public ITextComponent getDeathMessage(LivingEntity entityLivingBaseIn)
     {
-        return new StringTextComponent(this.damageType);
+        return new TranslationTextComponent(this.damageType, entityLivingBaseIn.getName());
+    }
+
+    public boolean isDifficultyScaled()
+    {
+        return false;
     }
 }

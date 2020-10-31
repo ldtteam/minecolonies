@@ -4,11 +4,12 @@ import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.util.NamedDamageSource;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.EnumSet;
 
@@ -20,11 +21,11 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 public class EntityAIRaiderAttackMelee extends Goal
 {
 
-    private static final int                           MAX_ATTACK_DELAY        = 60;
-    private static final double                        HALF_ROTATION           = 180;
-    private static final double                        MIN_DISTANCE_FOR_ATTACK = 2.5;
-    private static final double                        ATTACK_SPEED            = 1.3;
-    public static final  int                           MUTEX_BITS              = 3;
+    private static final int    MAX_ATTACK_DELAY        = 60;
+    private static final double HALF_ROTATION           = 180;
+    private static final double MIN_DISTANCE_FOR_ATTACK = 2.5;
+    private static final double ATTACK_SPEED            = 1.2;
+    public static final  int    MUTEX_BITS              = 3;
 
     /**
      * Extended reach based on difficulty
@@ -36,7 +37,7 @@ public class EntityAIRaiderAttackMelee extends Goal
      * Additional movement speed difficulty
      */
     private static final double ADD_SPEED_DIFFICULTY = 2.3;
-    private static final double ADD_SPEED            = 0.3;
+    private static final double BONUS_SPEED          = 1.2;
 
     private final        AbstractEntityMinecoloniesMob entity;
     private              LivingEntity                  target;
@@ -115,7 +116,7 @@ public class EntityAIRaiderAttackMelee extends Goal
             if (entity.getDistance(target) <= (entity.getDifficulty() < EXTENDED_REACH_DIFFICUTLY ? MIN_DISTANCE_FOR_ATTACK : MIN_DISTANCE_FOR_ATTACK + EXTENDED_REACH)
                   && lastAttack <= 0 && entity.canEntityBeSeen(target))
             {
-                target.attackEntityFrom(new EntityDamageSource(entity.getType().getTranslationKey(), entity), (float) damageToBeDealt);
+                target.attackEntityFrom(new NamedDamageSource("death.attack." + ((TranslationTextComponent) entity.getName()).getKey(), entity), (float) damageToBeDealt);
                 entity.swingArm(Hand.MAIN_HAND);
                 entity.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) 1.0D, (float) SoundUtils.getRandomPitch(entity.getRNG()));
                 target.setRevengeTarget(entity);
@@ -129,7 +130,7 @@ public class EntityAIRaiderAttackMelee extends Goal
             entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
             entity.getLookController().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
 
-            entity.getNavigator().tryMoveToEntityLiving(target, entity.getDifficulty() < ADD_SPEED_DIFFICULTY ? ATTACK_SPEED : ATTACK_SPEED + ADD_SPEED);
+            entity.getNavigator().tryMoveToEntityLiving(target, entity.getDifficulty() < ADD_SPEED_DIFFICULTY ? ATTACK_SPEED : ATTACK_SPEED * BONUS_SPEED);
         }
     }
 

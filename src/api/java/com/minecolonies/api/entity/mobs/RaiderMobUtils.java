@@ -50,7 +50,7 @@ public final class RaiderMobUtils
     /**
      * Damage increased by 1 for every 200 raid level difficulty
      */
-    public static int DAMAGE_PER_X_RAID_LEVEL = 200;
+    public static int DAMAGE_PER_X_RAID_LEVEL = 400;
 
     /**
      * Max damage from raidlevels
@@ -84,16 +84,16 @@ public final class RaiderMobUtils
      */
     public static void setMobAttributes(final AbstractEntityMinecoloniesMob mob, final IColony colony)
     {
-        final double difficultyModifier = colony.getRaiderManager().getRaidDifficultyModifier();
+        final double difficultyModifier = 5.4;
         mob.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE * 2);
-        mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(difficultyModifier < 2.4 ? MOVEMENT_SPEED : MOVEMENT_SPEED + 0.1);
+        mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(difficultyModifier < 2.4 ? MOVEMENT_SPEED : MOVEMENT_SPEED * 1.2);
         final int raidLevel = colony.getRaiderManager().getColonyRaidLevel();
 
         // Base damage
         final double attackDamage =
-          difficultyModifier * (ATTACK_DAMAGE + Math.min(
-            raidLevel / DAMAGE_PER_X_RAID_LEVEL,
-            MAX_RAID_LEVEL_DAMAGE));
+          ATTACK_DAMAGE +
+            difficultyModifier *
+              Math.min(raidLevel / DAMAGE_PER_X_RAID_LEVEL, MAX_RAID_LEVEL_DAMAGE);
 
         // Base health
         final double baseHealth = getHealthBasedOnRaidLevel(raidLevel) * difficultyModifier;
