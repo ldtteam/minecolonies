@@ -84,7 +84,7 @@ public final class RaiderMobUtils
      */
     public static void setMobAttributes(final AbstractEntityMinecoloniesMob mob, final IColony colony)
     {
-        final double difficultyModifier = 5.4;
+        final double difficultyModifier = colony.getRaiderManager().getRaidDifficultyModifier();
         mob.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE * 2);
         mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(difficultyModifier < 2.4 ? MOVEMENT_SPEED : MOVEMENT_SPEED * 1.2);
         final int raidLevel = colony.getRaiderManager().getColonyRaidLevel();
