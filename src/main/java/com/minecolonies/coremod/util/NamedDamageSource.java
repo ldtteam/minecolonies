@@ -32,6 +32,11 @@ public class NamedDamageSource extends EntityDamageSource
         return new TranslationTextComponent(this.damageType, entityLivingBaseIn.getName());
     }
 
+    /**
+     * World difficulty scaling of damage against players, disabled as we already do take world difficulty into account.
+     *
+     * @return false
+     */
     public boolean isDifficultyScaled()
     {
         return false;
