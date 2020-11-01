@@ -86,7 +86,7 @@ public final class RaiderMobUtils
     {
         final double difficultyModifier = colony.getRaiderManager().getRaidDifficultyModifier();
         mob.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE * 2);
-        mob.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(difficultyModifier < 2.4 ? MOVEMENT_SPEED : MOVEMENT_SPEED + 0.1);
+        mob.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(difficultyModifier < 2.4 ? MOVEMENT_SPEED : MOVEMENT_SPEED * 1.2);
         final int raidLevel = colony.getRaiderManager().getColonyRaidLevel();
 
         // Base damage
