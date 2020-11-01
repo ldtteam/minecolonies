@@ -59,6 +59,11 @@ public class TileEntityRack extends AbstractTileEntityRack
     private int size = 0;
 
     /**
+     * Amount of free slots
+     */
+    private int freeSlots = 0;
+
+    /**
      * Last optional we created.
      */
     private LazyOptional<IItemHandler> lastOptional;
@@ -80,20 +85,8 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public boolean freeStacks()
-    {
-        return content.isEmpty();
-    }
-
-    @Override
     public int getFreeSlots()
     {
-        int freeSlots = inventory.getSlots();
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            final double slotsNeeded = (double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize();
-            freeSlots -= (int) Math.ceil(slotsNeeded);
-        }
         return freeSlots;
     }
 
@@ -209,12 +202,14 @@ public class TileEntityRack extends AbstractTileEntityRack
     private void updateContent()
     {
         content.clear();
+        freeSlots = 0;
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
             final ItemStack stack = inventory.getStackInSlot(slot);
 
             if (ItemStackUtils.isEmpty(stack))
             {
+                freeSlots++;
                 continue;
             }
 

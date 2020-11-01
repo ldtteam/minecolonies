@@ -141,13 +141,6 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
     public abstract void setInWarehouse(Boolean isInWarehouse);
 
     /**
-     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
-     *
-     * @return true if so.
-     */
-    public abstract boolean freeStacks();
-
-    /**
      * Get the amount of free slots in the inventory. This method checks the content list, it is therefore extremely fast.
      *
      * @return the amount of free slots (an integer).
