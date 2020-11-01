@@ -27,7 +27,7 @@ public class CommandStats implements IMCOPCommand
     {
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
 
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey().getLocation());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey().func_240901_a_());
         if (colony == null)
         {
             return 0;
