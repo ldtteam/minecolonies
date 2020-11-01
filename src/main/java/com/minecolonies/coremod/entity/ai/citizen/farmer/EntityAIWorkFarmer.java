@@ -204,7 +204,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             searchAndAddFields();
         }
 
-        final int amountOfCompostInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), this::isCompost);
+        final int amountOfCompostInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), this::isCompost);
         final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost);
 
         if (amountOfCompostInBuilding + amountOfCompostInInv <= 0)

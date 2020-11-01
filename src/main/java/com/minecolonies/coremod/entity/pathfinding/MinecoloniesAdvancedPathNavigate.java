@@ -79,6 +79,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private IStuckHandler stuckHandler;
 
     /**
+     * Whether we did set sneaking
+     */
+    private boolean isSneaking = true;
+
+    /**
      * Instantiates the navigation of an ourEntity.
      *
      * @param entity the ourEntity.
@@ -211,7 +216,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         int oldIndex = this.noPath() ? 0 : this.getPath().getCurrentPathIndex();
 
-        entity.setSneaking(false);
+        if (isSneaking)
+        {
+            isSneaking = false;
+            entity.setSneaking(false);
+        }
         this.ourEntity.setMoveVertical(0);
         if (handleLadders(oldIndex))
         {
@@ -498,7 +507,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 return handleEntityInWater(oldIndex, pEx);
             }
-            else
+            else if (world.rand.nextInt(10) == 0)
             {
                 if (WorkerUtil.isPathBlock(world.getBlockState(findBlockUnderEntity(ourEntity)).getBlock()))
                 {
@@ -668,6 +677,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 default:
                     newSpeed = 0;
                     entity.setSneaking(true);
+                    isSneaking = true;
                     break;
             }
 

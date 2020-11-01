@@ -732,7 +732,7 @@ public class InventoryUtils
                 {
                     totalCount += ((TileEntityRack) entity).getAllContent().getOrDefault(stack, 0);
                 }
-                else
+                else if (entity != null)
                 {
                     totalCount += getItemCountInProvider(entity, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
                 }
@@ -771,6 +771,37 @@ public class InventoryUtils
                 else if (entity instanceof ChestTileEntity)
                 {
                     totalCount += getItemCountInProvider(entity, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Count the number of items a building has.
+     *
+     * @param provider building to check in.
+     * @param predicate the predicate to match.
+     * @return Amount of occurrences of stacks that match the given stack.
+     */
+    public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> predicate)
+    {
+        int totalCount = 0;
+        final World world = provider.getColony().getWorld();
+
+        for (final BlockPos pos : provider.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    totalCount += ((TileEntityRack) entity).getItemCount(predicate);
+                }
+                else if (entity instanceof ChestTileEntity)
+                {
+                    totalCount += getItemCountInProvider(entity, predicate);
                 }
             }
         }

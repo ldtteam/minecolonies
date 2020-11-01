@@ -410,7 +410,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @Nullable
     private IAIState initSafetyChecks()
     {
-        if (null == worker.getCitizenJobHandler().getColonyJob() || null == getOwnBuilding() || worker.getCitizenData() == null)
+        if (null == worker.getCitizenJobHandler().getColonyJob() || worker.getCitizenColonyHandler().getWorkBuilding() == null || worker.getCitizenData() == null)
         {
             return INIT;
         }
@@ -1497,7 +1497,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true;
         }
 
-        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(),
+        if (InventoryUtils.getCountFromBuilding(getOwnBuilding(),
           itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= minCount &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 getOwnBuilding(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true),
@@ -1532,7 +1532,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true;
         }
 
-        if (InventoryUtils.getItemCountInProvider(getOwnBuilding(),
+        if (InventoryUtils.getCountFromBuilding(getOwnBuilding(),
           itemStack -> itemStack.getItem().isIn(tag)) >= count &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 getOwnBuilding(), itemStack -> itemStack.getItem().isIn(tag),

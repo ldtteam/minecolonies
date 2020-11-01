@@ -3,7 +3,6 @@ package com.minecolonies.api.inventory;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -35,16 +34,17 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      * The default inv size.
      */
     private static final int DEFAULT_INV_SIZE = 27;
+    private static final int ROW_SIZE         = 9;
 
     /**
-     * Armor inv size.
+     * Amount of free slots
      */
-    private static final int ARMOR_SIZE = 5;
+    private int freeSlots = DEFAULT_INV_SIZE;
 
     /**
      * The inventory. (27 main inventory, 4 armor slots, 1 offhand slot)
      */
-    private NonNullList<ItemStack> mainInventory = NonNullList.withSize(DEFAULT_INV_SIZE + ARMOR_SIZE, ItemStackUtils.EMPTY);
+    private NonNullList<ItemStack> mainInventory = NonNullList.withSize(DEFAULT_INV_SIZE, ItemStackUtils.EMPTY);
 
     /**
      * The index of the currently held items (0-8).
@@ -153,7 +153,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public int getSlots()
     {
-        return this.mainInventory.size() - ARMOR_SIZE;
+        return this.mainInventory.size();
     }
 
     /**
@@ -163,7 +163,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      */
     public boolean hasSpace()
     {
-        return this.mainInventory.stream().limit(getSlots()).anyMatch(itemStack -> itemStack.isEmpty());
+        return freeSlots > 0;
     }
 
     /**
@@ -173,7 +173,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      */
     public boolean isEmpty()
     {
-        return !this.mainInventory.stream().limit(getSlots()).anyMatch(itemStack -> !itemStack.isEmpty());
+        return freeSlots == mainInventory.size();
     }
 
     /**
@@ -188,17 +188,13 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             final NonNullList<ItemStack> inv = NonNullList.withSize(futureSize, ItemStackUtils.EMPTY);
 
-            for (int i = 0; i < mainInventory.size() - ARMOR_SIZE; i++)
+            for (int i = 0; i < mainInventory.size(); i++)
             {
                 inv.set(i, mainInventory.get(i));
             }
 
-            int index = inv.size() - ARMOR_SIZE;
-            for (int i = mainInventory.size() - ARMOR_SIZE; i < mainInventory.size(); i++)
-            {
-                inv.set(index++, mainInventory.get(i));
-            }
             mainInventory = inv;
+            freeSlots += futureSize - size;
         }
     }
 
@@ -253,7 +249,6 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
     {
-        markDirty();
         final ItemStack copy = stack.copy();
         final ItemStack inSlot = mainInventory.get(slot);
         if (inSlot.getCount() >= inSlot.getMaxStackSize() || (!inSlot.isEmpty() && !inSlot.isItemEqual(copy)))
@@ -265,6 +260,8 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             if (!simulate)
             {
+                markDirty();
+                freeSlots--;
                 mainInventory.set(slot, copy);
                 return ItemStack.EMPTY;
             }
@@ -279,6 +276,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             if (!simulate)
             {
+                markDirty();
                 inSlot.setCount(inSlot.getCount() + copy.getCount());
             }
             return ItemStack.EMPTY;
@@ -287,6 +285,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             if (!simulate)
             {
+                markDirty();
                 inSlot.setCount(inSlot.getCount() + avail);
             }
             copy.setCount(copy.getCount() - avail);
@@ -298,13 +297,14 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
     {
-        markDirty();
         final ItemStack inSlot = mainInventory.get(slot);
 
         if (amount >= inSlot.getCount())
         {
             if (!simulate)
             {
+                markDirty();
+                freeSlots++;
                 mainInventory.set(slot, ItemStack.EMPTY);
             }
             return inSlot;
@@ -316,7 +316,12 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
             copy.setCount(amount);
             if (!simulate)
             {
+                markDirty();
                 inSlot.setCount(inSlot.getCount() - amount);
+                if (ItemStackUtils.isEmpty(inSlot))
+                {
+                    freeSlots++;
+                }
             }
             return copy;
         }
@@ -331,22 +336,6 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public boolean isItemValid(final int slot, @Nonnull final ItemStack stack)
     {
-        if (slot == 36)
-        {
-            return stack.getEquipmentSlot() == EquipmentSlotType.HEAD;
-        }
-        else if (slot == 37)
-        {
-            return stack.getEquipmentSlot() == EquipmentSlotType.CHEST;
-        }
-        else if (slot == 38)
-        {
-            return stack.getEquipmentSlot() == EquipmentSlotType.LEGS;
-        }
-        else if (slot == 39)
-        {
-            return stack.getEquipmentSlot() == EquipmentSlotType.FEET;
-        }
         return true;
     }
 
@@ -383,9 +372,9 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             final AbstractResearchEffect<Double> researchEffect =
               citizen.getColony().getResearchManager().getResearchEffects().getEffect(INV_SLOTS, AbstractResearchEffect.class);
-            if (researchEffect != null && this.mainInventory.size() - ARMOR_SIZE < DEFAULT_INV_SIZE + researchEffect.getEffect())
+            if (researchEffect != null && this.mainInventory.size() < DEFAULT_INV_SIZE + researchEffect.getEffect())
             {
-                resizeInventory(this.mainInventory.size(), (int) (DEFAULT_INV_SIZE + researchEffect.getEffect() + ARMOR_SIZE));
+                resizeInventory(this.mainInventory.size(), (int) (DEFAULT_INV_SIZE + researchEffect.getEffect()));
             }
         }
 
@@ -416,8 +405,12 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     {
         if (this.mainInventory.size() < nbtTagList.getCompound(0).getInt(TAG_SIZE))
         {
-            this.mainInventory = NonNullList.withSize(nbtTagList.getCompound(0).getInt(TAG_SIZE), ItemStackUtils.EMPTY);
+            int size = nbtTagList.getCompound(0).getInt(TAG_SIZE);
+            size -= size % ROW_SIZE;
+            this.mainInventory = NonNullList.withSize(size, ItemStackUtils.EMPTY);
         }
+
+        freeSlots = mainInventory.size();
 
         for (int i = 1; i < nbtTagList.size(); ++i)
         {
@@ -431,6 +424,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
                 if (j < this.mainInventory.size())
                 {
                     this.mainInventory.set(j, itemstack);
+                    freeSlots--;
                 }
             }
         }
@@ -439,6 +433,18 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public void setStackInSlot(final int slot, @Nonnull final ItemStack stack)
     {
+        if (!ItemStackUtils.isEmpty(stack))
+        {
+            if (ItemStackUtils.isEmpty(mainInventory.get(slot)))
+            {
+                freeSlots--;
+            }
+        }
+        else if (!ItemStackUtils.isEmpty(mainInventory.get(slot)))
+        {
+            freeSlots++;
+        }
+
         mainInventory.set(slot, stack);
     }
 }
