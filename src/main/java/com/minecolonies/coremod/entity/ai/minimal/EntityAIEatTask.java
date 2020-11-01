@@ -167,7 +167,7 @@ public class EntityAIEatTask extends Goal
         if (citizenData.getSaturation() <= CitizenConstants.AVERAGE_SATURATION)
         {
             waitingTicks++;
-            return (waitingTicks >= TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_BETWEEN_FOOD_CHECKS && citizenData.getSaturation() < CitizenConstants.LOW_SATURATION)
+            return (waitingTicks >= SECONDS_A_MINUTE * MINUTES_BETWEEN_FOOD_CHECKS && citizenData.getSaturation() < CitizenConstants.LOW_SATURATION)
                      || citizenData.getJob() == null || citizenData.getSaturation() == 0;
         }
 
@@ -544,5 +544,6 @@ public class EntityAIEatTask extends Goal
     public void startExecuting()
     {
         citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.EAT);
+        delayTicks = TICKS_SECOND - 1;
     }
 }
