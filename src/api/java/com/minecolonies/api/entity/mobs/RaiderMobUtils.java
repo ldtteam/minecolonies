@@ -50,7 +50,7 @@ public final class RaiderMobUtils
     /**
      * Damage increased by 1 for every 200 raid level difficulty
      */
-    public static int DAMAGE_PER_X_RAID_LEVEL = 200;
+    public static int DAMAGE_PER_X_RAID_LEVEL = 400;
 
     /**
      * Max damage from raidlevels
@@ -91,9 +91,9 @@ public final class RaiderMobUtils
 
         // Base damage
         final double attackDamage =
-          difficultyModifier * (ATTACK_DAMAGE + Math.min(
-            raidLevel / DAMAGE_PER_X_RAID_LEVEL,
-            MAX_RAID_LEVEL_DAMAGE));
+          ATTACK_DAMAGE +
+            difficultyModifier *
+              Math.min(raidLevel / DAMAGE_PER_X_RAID_LEVEL, MAX_RAID_LEVEL_DAMAGE);
 
         // Base health
         final double baseHealth = getHealthBasedOnRaidLevel(raidLevel) * difficultyModifier;

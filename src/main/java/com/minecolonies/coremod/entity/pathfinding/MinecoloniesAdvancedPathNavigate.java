@@ -29,7 +29,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,11 +43,12 @@ import java.util.concurrent.ExecutionException;
 public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNavigate
 {
     private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
-    private static final double PIRATE_SWIM_BONUS        = 30;
-    private static final double BARBARIAN_SWIM_BONUS     = 15;
-    private static final double CITIZEN_SWIM_BONUS       = 10;
+    private static final double PIRATE_SWIM_BONUS        = 1.5;
+    private static final double BARBARIAN_SWIM_BONUS     = 1.2;
+    private static final double CITIZEN_SWIM_BONUS       = 1.1;
     public static final  double MIN_Y_DISTANCE           = 0.001;
-    public static final  int    MAX_SPEED_ALLOWED        = 100;
+    public static final  int    MAX_SPEED_ALLOWED        = 2;
+    public static final  double MIN_SPEED_ALLOWED        = 0.1;
 
     @Nullable
     private PathResult pathResult;
@@ -106,7 +106,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public PathResult moveAwayFromXYZ(final BlockPos avoid, final double range, final double speed)
+    public PathResult moveAwayFromXYZ(final BlockPos avoid, final double range, final double speedFactor)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
 
@@ -115,11 +115,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           avoid,
           (int) range,
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
-          ourEntity), null, speed);
+          ourEntity), null, speedFactor);
     }
 
     @Nullable
-    public RandomPathResult moveToRandomPos(final double range, final double speed)
+    public RandomPathResult moveToRandomPos(final double range, final double speedFactor)
     {
         if (pathResult instanceof RandomPathResult && pathResult.isComputing())
         {
@@ -133,14 +133,14 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           start,
           theRange,
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
-          ourEntity), null, speed);
+          ourEntity), null, speedFactor);
     }
 
     @Nullable
     public PathResult setPathJob(
       @NotNull final AbstractPathJob job,
       final BlockPos dest,
-      final double speed)
+      final double speedFactor)
     {
         if (dest != null && dest.equals(desiredPos) && calculationFuture != null && pathResult != null)
         {
@@ -156,11 +156,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             desiredPos = dest;
             desiredPosTimeout = 50 * 20;
         }
-        this.walkSpeed = speed;
+        this.walkSpeedFactor = speedFactor;
 
-        if (speed > MAX_SPEED_ALLOWED)
+        if (speedFactor > MAX_SPEED_ALLOWED || speedFactor < MIN_SPEED_ALLOWED)
         {
-            Log.getLogger().error("Tried to set a too high speed for entity:" + ourEntity, new Exception());
+            Log.getLogger().error("Tried to set a bad speed:" + speedFactor + " for entity:" + ourEntity, new Exception());
             return null;
         }
 
@@ -233,7 +233,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public PathResult moveToXYZ(final double x, final double y, final double z, final double speed)
+    public PathResult moveToXYZ(final double x, final double y, final double z, final double speedFactor)
     {
         final int newX = MathHelper.floor(x);
         final int newY = (int) y;
@@ -259,13 +259,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             desiredPos,
             (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
             ourEntity),
-          desiredPos, speed);
+          desiredPos, speedFactor);
     }
 
     @Override
-    public boolean tryMoveToBlockPos(final BlockPos pos, final double speed)
+    public boolean tryMoveToBlockPos(final BlockPos pos, final double speedFactor)
     {
-        moveToXYZ(pos.getX(), pos.getY(), pos.getZ(), speed);
+        moveToXYZ(pos.getX(), pos.getY(), pos.getZ(), speedFactor);
         return true;
     }
 
@@ -333,58 +333,58 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                  && super.isDirectPathBetweenPoints(start, end, sizeX, sizeY, sizeZ);
     }
 
-    public double getSpeed()
+    public double getSpeedFactor()
     {
         if (ourEntity instanceof AbstractEntityPirate && ourEntity.isInWater())
         {
-            speed = walkSpeed * PIRATE_SWIM_BONUS;
+            speed = walkSpeedFactor * PIRATE_SWIM_BONUS;
             return speed;
         }
         else if (ourEntity instanceof AbstractEntityBarbarian && ourEntity.isInWater())
         {
-            speed = walkSpeed * BARBARIAN_SWIM_BONUS;
+            speed = walkSpeedFactor * BARBARIAN_SWIM_BONUS;
             return speed;
         }
         else if (ourEntity instanceof AbstractEntityCitizen && ourEntity.isInWater())
         {
-            speed = walkSpeed * CITIZEN_SWIM_BONUS;
+            speed = walkSpeedFactor * CITIZEN_SWIM_BONUS;
             return speed;
         }
 
-        speed = walkSpeed;
-        return walkSpeed;
+        speed = walkSpeedFactor;
+        return walkSpeedFactor;
     }
 
     @Override
-    public void setSpeed(final double d)
+    public void setSpeed(final double speedFactor)
     {
-        if (d > MAX_SPEED_ALLOWED)
+        if (speedFactor > MAX_SPEED_ALLOWED || speedFactor < MIN_SPEED_ALLOWED)
         {
-            Log.getLogger().error("Tried to set a too high speed for entity:" + ourEntity, new Exception());
+            Log.getLogger().error("Tried to set a bad speed:" + speedFactor + " for entity:" + ourEntity, new Exception());
             return;
         }
-        walkSpeed = d;
+        walkSpeedFactor = speedFactor;
     }
 
     /**
      * Deprecated - try to use BlockPos instead
      */
     @Override
-    public boolean tryMoveToXYZ(final double x, final double y, final double z, final double speed)
+    public boolean tryMoveToXYZ(final double x, final double y, final double z, final double speedFactor)
     {
         if (x == 0 && y == 0 && z == 0)
         {
             return false;
         }
 
-        moveToXYZ(x, y, z, speed);
+        moveToXYZ(x, y, z, speedFactor);
         return true;
     }
 
     @Override
-    public boolean tryMoveToEntityLiving(final Entity entityIn, final double speedIn)
+    public boolean tryMoveToEntityLiving(final Entity entityIn, final double speedFactor)
     {
-        return tryMoveToBlockPos(new BlockPos(entityIn.getPositionVec()), speedIn);
+        return tryMoveToBlockPos(entityIn.getPosition(), speedFactor);
     }
 
     // Removes stupid vanilla stuff, causing our pathpoints to occasionally be replaced by vanilla ones.
@@ -392,7 +392,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     protected void trimPath() {}
 
     @Override
-    public boolean setPath(@Nullable final Path path, final double speed)
+    public boolean setPath(@Nullable final Path path, final double speedFactor)
     {
         if (path == null)
         {
@@ -400,7 +400,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return false;
         }
         pathStartTime = world.getGameTime();
-        return super.setPath(convertPath(path), speed);
+        return super.setPath(convertPath(path), speedFactor);
     }
 
     /**
@@ -448,7 +448,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return true;
         }
 
-        setPath(calculationFuture.get(), getSpeed());
+        setPath(calculationFuture.get(), getSpeedFactor());
 
         pathResult.setPathLength(getPath().getCurrentPathLength());
         pathResult.setStatus(PathFindingStatus.IN_PROGRESS_FOLLOWING);
@@ -502,11 +502,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 if (WorkerUtil.isPathBlock(world.getBlockState(findBlockUnderEntity(ourEntity)).getBlock()))
                 {
-                    speed = ON_PATH_SPEED_MULTIPLIER * getSpeed();
+                    speed = ON_PATH_SPEED_MULTIPLIER * getSpeedFactor();
                 }
                 else
                 {
-                    speed = getSpeed();
+                    speed = getSpeedFactor();
                 }
             }
         }
@@ -645,7 +645,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         if (vec3.squareDistanceTo(ourEntity.getPosX(), vec3.y, ourEntity.getPosZ()) < Math.random() * 0.1)
         {
             //This way he is less nervous and gets up the ladder
-            double newSpeed = 0.05;
+            double newSpeed = 0.3;
             switch (pEx.getLadderFacing())
             {
                 //  Any of these values is climbing, so adjust our direction of travel towards the ladder
@@ -723,15 +723,14 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             Vector3d = this.getPath().getPosition(this.ourEntity);
         }
 
-        ourEntity.setAIMoveSpeed((float) getSpeed());
-        this.ourEntity.getMoveHelper().setMoveTo(Vector3d.x, Vector3d.y, Vector3d.z, getSpeed());
+        this.ourEntity.getMoveHelper().setMoveTo(Vector3d.x, Vector3d.y, Vector3d.z, getSpeedFactor());
         return false;
     }
 
     @Override
     protected void pathFollow()
     {
-        getSpeed();
+        getSpeedFactor();
         final int curNode = currentPath.getCurrentPathIndex();
         final int curNodeNext = curNode + 1;
         if (curNodeNext < currentPath.getCurrentPathLength())
