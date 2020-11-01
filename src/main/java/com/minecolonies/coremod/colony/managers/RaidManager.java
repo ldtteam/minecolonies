@@ -479,8 +479,8 @@ public class RaidManager implements IRaiderManager
             // Additional raid protection for certain buildings, towers can be used now to deal with unlucky - inwall spawns
             if (building instanceof BuildingGuardTower)
             {
-                // 47/59/71/83/95
-                minDist += building.getBuildingLevel() * 12;
+                // 32/39/48/55/62
+                minDist += building.getBuildingLevel() * 7;
             }
             else if (building instanceof BuildingHome)
             {
