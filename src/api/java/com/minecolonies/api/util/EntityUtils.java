@@ -202,12 +202,12 @@ public final class EntityUtils
      * @param x      x-coordinate
      * @param y      y-coordinate
      * @param z      z-coordinate
-     * @param speed  Speed to move with
+     * @param speedFactor  Speedfactor to modify base speed with
      * @return True if the path is set to destination, otherwise false
      */
-    public static boolean tryMoveLivingToXYZ(@NotNull final MobEntity living, final int x, final int y, final int z, final double speed)
+    public static boolean tryMoveLivingToXYZ(@NotNull final MobEntity living, final int x, final int y, final int z, final double speedFactor)
     {
-        return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
+        return living.getNavigator().tryMoveToXYZ(x, y, z, speedFactor);
     }
 
     /**
