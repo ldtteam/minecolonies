@@ -162,12 +162,6 @@ public class DecorationBuildRequestMessage implements IMessage
             }
 
             final BlockState state = player.getEntityWorld().getBlockState(pos);
-
-            if (difference < 0)
-            {
-                difference += 4;
-            }
-
             final WorkOrderBuildDecoration order = new WorkOrderBuildDecoration(name + level,
               name + level,
               difference,
