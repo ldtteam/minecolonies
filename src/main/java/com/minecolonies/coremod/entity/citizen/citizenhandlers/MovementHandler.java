@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.pathfinding.NodeProcessor;
 import net.minecraft.pathfinding.PathNavigator;
@@ -20,9 +21,16 @@ import net.minecraft.util.math.shapes.VoxelShape;
  */
 public class MovementHandler extends MovementController
 {
+
+    /**
+     * Speed attribute holder
+     */
+    final ModifiableAttributeInstance speedAtr;
+
     public MovementHandler(MobEntity mob)
     {
         super(mob);
+        this.speedAtr = this.mob.getAttribute(Attributes.MOVEMENT_SPEED);
     }
 
     @Override
@@ -30,7 +38,7 @@ public class MovementHandler extends MovementController
     {
         if (this.action == net.minecraft.entity.ai.controller.MovementController.Action.STRAFE)
         {
-            final float speedAtt = (float) this.mob.getAttribute(Attributes.MOVEMENT_SPEED).getValue();
+            final float speedAtt = (float) speedAtr.getValue();
             float speed = (float) this.speed * speedAtt;
             float forward = this.moveForward;
             float strafe = this.moveStrafe;
@@ -80,7 +88,7 @@ public class MovementHandler extends MovementController
 
             final float range = (float) (MathHelper.atan2(zDif, xDif) * (double) (180F / (float) Math.PI)) - 90.0F;
             this.mob.rotationYaw = this.limitAngle(this.mob.rotationYaw, range, 90.0F);
-            this.mob.setAIMoveSpeed((float) (this.speed * this.mob.getAttribute(Attributes.MOVEMENT_SPEED).getValue()));
+            this.mob.setAIMoveSpeed((float) (this.speed * speedAtr.getValue()));
             final BlockPos blockpos = new BlockPos(this.mob.getPositionVec());
             final BlockState blockstate = this.mob.world.getBlockState(blockpos);
             final Block block = blockstate.getBlock();
@@ -96,7 +104,7 @@ public class MovementHandler extends MovementController
         }
         else if (this.action == net.minecraft.entity.ai.controller.MovementController.Action.JUMPING)
         {
-            this.mob.setAIMoveSpeed((float) (this.speed * this.mob.getAttribute(Attributes.MOVEMENT_SPEED).getValue()));
+            this.mob.setAIMoveSpeed((float) (this.speed * speedAtr.getValue()));
 
             // Avoid beeing stuck in jumping while in liquids
             final BlockPos blockpos = new BlockPos(this.mob.getPositionVec());

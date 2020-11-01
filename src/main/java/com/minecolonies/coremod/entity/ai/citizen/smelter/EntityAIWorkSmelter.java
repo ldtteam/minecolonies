@@ -305,7 +305,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     @Override
     protected IAIState checkForAdditionalJobs()
     {
-        final int amountOfTools = InventoryUtils.getItemCountInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon)
+        final int amountOfTools = InventoryUtils.getCountFromBuilding(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon)
                                     + InventoryUtils.getItemCountInItemHandler(
           worker.getInventoryCitizen(), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
 

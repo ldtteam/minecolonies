@@ -146,6 +146,12 @@ public class EntityAIEatTask extends Goal
             return true;
         }
 
+        if (++delayTicks % TICKS_SECOND != 0)
+        {
+            return false;
+        }
+        delayTicks = 0;
+
         if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getCitizenSleepHandler().isAsleep())
         {
             return false;
@@ -165,7 +171,7 @@ public class EntityAIEatTask extends Goal
                      || citizenData.getJob() == null || citizenData.getSaturation() == 0;
         }
 
-        return (citizenData.getSaturation() <= HIGH_SATURATION && checkForFood(citizenData) == EAT && citizen.isOkayToEat());
+        return (citizenData.getSaturation() <= HIGH_SATURATION && citizen.isOkayToEat() && checkForFood(citizenData) == EAT);
     }
 
     @Override

@@ -137,7 +137,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected boolean reachedMaxToKeep()
     {
-        return InventoryUtils.getItemCountInProvider(getOwnBuilding(), ItemStackUtils.ISFOOD)
+        return InventoryUtils.getCountFromBuilding(getOwnBuilding(), ItemStackUtils.ISFOOD)
                  > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel()) * SLOT_PER_LINE;
     }
 

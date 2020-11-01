@@ -178,7 +178,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         final Item current = plantation.getCurrentPhase();
 
-        final int plantInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
+        final int plantInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
         final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
 
         if (plantInBuilding + plantInInv <= 0)
