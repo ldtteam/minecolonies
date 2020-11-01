@@ -462,7 +462,6 @@ public class RaidManager implements IRaiderManager
      * Determines whether the given spawn point is allowed.
      *
      * @param spawnPos        the spawn point to check
-     * @param loadedBuildings the loaded buildings
      * @return true if valid
      */
     private boolean isValidSpawnPoint(final BlockPos spawnPos)
@@ -555,6 +554,7 @@ public class RaidManager implements IRaiderManager
                 {
                     raidDifficulty = Math.min(MAX_RAID_DIFFICULTY, raidDifficulty + 1);
                 }
+                Log.getLogger().warn("Total Lost Citizens: " + lostCitizens);
             }
 
             nightsSinceLastRaid++;

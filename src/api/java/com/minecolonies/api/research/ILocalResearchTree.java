@@ -63,4 +63,10 @@ public interface ILocalResearchTree
      * @param effects  the effects.
      */
     void readFromNBT(final CompoundNBT compound, final IResearchEffectManager effects);
+
+    /**
+     * Get the total amount of finished research.
+     * @return the total.
+     */
+    int getResearchCount();
 }

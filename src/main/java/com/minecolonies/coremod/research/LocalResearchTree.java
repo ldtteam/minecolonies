@@ -123,4 +123,15 @@ public class LocalResearchTree implements ILocalResearchTree
               }
           });
     }
+
+    @Override
+    public int getResearchCount()
+    {
+        int count  = 0;
+        for (Map<String, ILocalResearch> branch : researchTree.values())
+        {
+            count += branch.size();
+        }
+        return count;
+    }
 }
