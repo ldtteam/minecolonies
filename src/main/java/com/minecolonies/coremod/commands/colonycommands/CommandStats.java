@@ -73,7 +73,7 @@ public class CommandStats implements IMCOPCommand
         final double researchTotal = colony.getResearchManager().getResearchTree().getResearchCount();
 
         context.getSource().sendFeedback(new StringTextComponent("Avg Intelligence: " + intelligenceAvg), true);
-        context.getSource().sendFeedback(new StringTextComponent("Way to Work: " + wayToWorkAvg), true);
+        context.getSource().sendFeedback(new StringTextComponent("Way to Work Sq: " + wayToWorkAvg), true);
         context.getSource().sendFeedback(new StringTextComponent("Avg Worker Stats: " + workerStatsAvg), true);
         context.getSource().sendFeedback(new StringTextComponent("Overall Happiness: " + overallHappiness), true);
         context.getSource().sendFeedback(new StringTextComponent("Total Research: " + researchTotal), true);
