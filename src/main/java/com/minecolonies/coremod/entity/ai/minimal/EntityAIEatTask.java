@@ -33,7 +33,6 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.EnumSet;
 
@@ -44,7 +43,6 @@ import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_RESTAURANT;
 import static com.minecolonies.api.util.constant.TranslationConstants.RAW_FOOD;
-import static com.minecolonies.coremod.entity.ai.citizen.cook.EntityAIWorkCook.AMOUNT_OF_FOOD_TO_SERVE;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIEatTask.EatingState.*;
 
 /**
@@ -71,6 +69,11 @@ public class EntityAIEatTask extends Goal
      * Time required to eat in seconds.
      */
     private static final int REQUIRED_TIME_TO_EAT = 5;
+
+    /**
+     * Amount of food to get by yourself
+     */
+    private static final int GET_YOURSELF_SATURATION = 30;
 
     /**
      * The different types of AIStates related to eating.
@@ -300,20 +303,16 @@ public class EntityAIEatTask extends Goal
         }
 
         final IColony colony = citizen.getCitizenColonyHandler().getColony();
-
         final IBuilding cookBuilding = colony.getBuildingManager().getBuilding(restaurantPos);
         if (cookBuilding instanceof BuildingCook)
         {
-            InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-              cookBuilding.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
-              stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack),
-              AMOUNT_OF_FOOD_TO_SERVE,
-              citizen.getInventoryCitizen());
-            return WAIT_FOR_FOOD;
+            InventoryUtils.transferFoodUpToSaturation(cookBuilding,
+              citizen.getInventoryCitizen(),
+              GET_YOURSELF_SATURATION,
+              stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack));
         }
 
-        eatPos = findPlaceToEat();
-        return GO_TO_EAT_POS;
+        return WAIT_FOR_FOOD;
     }
 
     /**
@@ -405,11 +404,10 @@ public class EntityAIEatTask extends Goal
             final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(buildingWorker, stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack));
             if (slot != -1)
             {
-                if (InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-                  buildingWorker.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
-                  stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack),
-                  buildingWorker.getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE,
-                  citizen.getInventoryCitizen()))
+                if (InventoryUtils.transferFoodUpToSaturation(buildingWorker,
+                  citizen.getInventoryCitizen(),
+                  GET_YOURSELF_SATURATION,
+                  stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack)))
                 {
                     return EAT;
                 }
