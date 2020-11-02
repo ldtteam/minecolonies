@@ -123,7 +123,7 @@ public class CommonConfiguration extends AbstractConfiguration
      *  -------------------------------------------------------------------------------- */
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> extraOres;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> disabledModTags;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> enabledModTags;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> guardResourceLocations;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
@@ -487,8 +487,8 @@ public class CommonConfiguration extends AbstractConfiguration
                      "minestuck:ore_uranium"),
           s -> s instanceof String);
 
-        disabledModTags = defineList(builder, "disabledmodtags",
-          Collections.singletonList("minecolonies"),
+        enabledModTags = defineList(builder, "enabledmodtags",
+          Collections.emptyList(),
           s -> s instanceof String);
 
         guardResourceLocations = defineList(builder, "guardresourcelocations",
