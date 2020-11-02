@@ -28,11 +28,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -46,7 +42,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     /**
      * The amount of food which should be served to the worker.
      */
-    public static final int AMOUNT_OF_FOOD_TO_SERVE = 2;
+    public static final int AMOUNT_OF_FOOD_TO_SERVE = 5;
 
     /**
      * Delay between each serving.
