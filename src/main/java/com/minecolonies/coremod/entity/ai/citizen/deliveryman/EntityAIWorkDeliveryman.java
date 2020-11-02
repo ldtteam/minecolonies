@@ -373,6 +373,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final IItemHandler workerInventory = worker.getInventoryCitizen();
         for (int i = 0; i < workerInventory.getSlots(); i++)
         {
+            if (workerInventory.getStackInSlot(i).isEmpty())
+            {
+                continue;
+            }
+
             final ItemStack stack = workerInventory.extractItem(i, Integer.MAX_VALUE, false);
             if (ItemStackUtils.isEmpty(stack))
             {
