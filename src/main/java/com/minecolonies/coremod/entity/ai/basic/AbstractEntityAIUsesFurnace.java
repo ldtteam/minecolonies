@@ -230,7 +230,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
                 }
             }
         }
-        return getState();
+        return null;
     }
 
     /**
