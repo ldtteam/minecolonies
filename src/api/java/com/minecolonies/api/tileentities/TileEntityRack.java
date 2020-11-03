@@ -3,14 +3,12 @@ package com.minecolonies.api.tileentities;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
-import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.api.util.constant.Constants;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -234,7 +232,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             if (!main && !single && getOtherChest() != null && !getOtherChest().isMain())
             {
-                main = true;
+                setMain(true);
             }
 
             if (main || single)
@@ -447,11 +445,6 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final Direction dir)
     {
-        if (lastOptional != null)
-        {
-            lastOptional.invalidate();
-        }
-
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
             if (single)
@@ -475,7 +468,7 @@ public class TileEntityRack extends AbstractTileEntityRack
                     }
                     else
                     {
-                        this.main = true;
+                        setMain(true);
                         lastOptional = LazyOptional.of(() -> new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory()));
                         return (LazyOptional<T>) lastOptional;
                     }
@@ -547,5 +540,31 @@ public class TileEntityRack extends AbstractTileEntityRack
     public ITextComponent getDisplayName()
     {
         return new StringTextComponent("Rack");
+    }
+
+    @Override
+    public void setMain(final boolean main)
+    {
+        if (main != this.main)
+        {
+            if (lastOptional != null)
+            {
+                lastOptional.invalidate();
+            }
+            super.setMain(main);
+        }
+    }
+
+    @Override
+    public void setSingle(final boolean single)
+    {
+        if (single != this.single)
+        {
+            if (lastOptional != null)
+            {
+                lastOptional.invalidate();
+            }
+            super.setSingle(single);
+        }
     }
 }
