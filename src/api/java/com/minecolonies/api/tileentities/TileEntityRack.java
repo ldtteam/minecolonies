@@ -135,8 +135,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             for (final ResourceLocation tag : stack.getItem().getTags())
             {
-                if ((MinecoloniesAPIProxy.getInstance().getConfig().getCommon().enabledModTags.get().contains(tag.toString())
-                     || tag.getNamespace().equals("minecraft"))
+                if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().enabledModTags.get().contains(tag.toString())
                       && storage.getItemStack().getItem().getTags().contains(tag))
                 {
                     return true;
