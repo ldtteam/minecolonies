@@ -1,5 +1,6 @@
 package com.minecolonies.api.tileentities;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -132,7 +133,8 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             for (final ResourceLocation tag : stack.getItem().getTags())
             {
-                if (storage.getItemStack().getItem().getTags().contains(tag))
+                if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().enabledModTags.get().contains(tag.toString())
+                      && storage.getItemStack().getItem().getTags().contains(tag))
                 {
                     return true;
                 }

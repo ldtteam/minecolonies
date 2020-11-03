@@ -96,7 +96,7 @@ public class RaidManager implements IRaiderManager
     /**
      * Percentage increased amount of spawns per player
      */
-    private static final double INCREASE_PER_PLAYER = 0.10;
+    private static final double INCREASE_PER_PLAYER = 0.05;
 
     /**
      * Chance to ignore biome selection

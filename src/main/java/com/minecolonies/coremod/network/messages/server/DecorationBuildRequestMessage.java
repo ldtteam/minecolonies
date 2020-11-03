@@ -1,10 +1,14 @@
 package com.minecolonies.coremod.network.messages.server;
 
+import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
@@ -126,15 +130,39 @@ public class DecorationBuildRequestMessage implements IMessage
                 colony.getWorkManager().removeWorkOrder(wo.get().getKey());
                 return;
             }
-            final BlockState state = player.getEntityWorld().getBlockState(pos);
-            final Direction facing = state.get(BlockDecorationController.HORIZONTAL_FACING);
-            final Direction basic = ((TileEntityDecorationController) entity).getBasicFacing();
-            int difference = facing.getHorizontalIndex() - basic.getHorizontalIndex();
-            if (difference < 0)
+
+            int difference = 0;
+
+            final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), this.pos, name + level, new PlacementSettings(), true);
+
+            final Blueprint blueprint = structure.getBluePrint();
+
+            if (blueprint != null)
             {
-                difference += 4;
+                final BlockState structureState = structure.getBluePrint().getBlockInfoAsMap().get(structure.getBluePrint().getPrimaryBlockOffset()).getState();
+                if (structureState != null)
+                {
+                    if (!(structureState.getBlock() instanceof BlockDecorationController))
+                    {
+                        Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", name + level));
+                        return;
+                    }
+
+                    final int structureRotation = structureState.get(BlockDecorationController.HORIZONTAL_FACING).getHorizontalIndex();
+                    final int worldRotation = colony.getWorld().getBlockState(this.pos).get(BlockDecorationController.HORIZONTAL_FACING).getHorizontalIndex();
+
+                    if (structureRotation <= worldRotation)
+                    {
+                        difference = worldRotation - structureRotation;
+                    }
+                    else
+                    {
+                        difference = 4 + worldRotation - structureRotation;
+                    }
+                }
             }
 
+            final BlockState state = player.getEntityWorld().getBlockState(pos);
             final WorkOrderBuildDecoration order = new WorkOrderBuildDecoration(name + level,
               name + level,
               difference,
