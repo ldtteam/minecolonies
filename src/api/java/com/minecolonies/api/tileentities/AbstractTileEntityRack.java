@@ -194,7 +194,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      */
     public void setBuildingPos(final BlockPos pos)
     {
-        if (world != null && buildingPos != null && !buildingPos.equals(pos))
+        if (world != null && (buildingPos == null || !buildingPos.equals(pos)))
         {
             markDirty();
         }
