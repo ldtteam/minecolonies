@@ -263,6 +263,11 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         if (!ItemStackUtils.isEmpty(stack))
         {
             stack.getItem().damageItem(stack, amount, entityIn, onBroken);
+
+            if (ItemStackUtils.isEmpty(stack))
+            {
+                freeSlots++;
+            }
         }
 
         return ItemStackUtils.isEmpty(stack);
@@ -280,6 +285,11 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         if (!ItemStackUtils.isEmpty(stack))
         {
             stack.setCount(stack.getCount() - 1);
+
+            if (ItemStackUtils.isEmpty(stack))
+            {
+                freeSlots++;
+            }
         }
 
         return ItemStackUtils.isEmpty(stack);
