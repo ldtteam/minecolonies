@@ -1,13 +1,16 @@
 package com.minecolonies.api.tileentities;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
+import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.Constants;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -132,7 +135,8 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             for (final ResourceLocation tag : stack.getItem().getTags())
             {
-                if (storage.getItemStack().getItem().getTags().contains(tag))
+                if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().enabledModTags.get().contains(tag.toString())
+                      && storage.getItemStack().getItem().getTags().contains(tag))
                 {
                     return true;
                 }

@@ -31,7 +31,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraf
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.util.FurnaceRecipes;
-
+import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -46,11 +46,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import io.netty.buffer.Unpooled;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -476,6 +473,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     @Override
     public void onColonyTick(final IColony colony)
     {
+        // TODO: Request on tick if no food, so that foo gets distributed from the warehouse even when there is currently no cook
         super.onColonyTick(colony);
         if(isCookingTimeout > 0)
         {
