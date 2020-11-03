@@ -3,6 +3,7 @@ package com.minecolonies.api.inventory;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -14,8 +15,10 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 import static com.minecolonies.api.research.util.ResearchConstants.INV_SLOTS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SIZE;
@@ -245,6 +248,43 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         }
     }
 
+    /**
+     * Damage an item within the inventory
+     *
+     * @param slot     slot to damage
+     * @param amount   damage amount
+     * @param entityIn entity which uses the item
+     * @param onBroken action upon item break
+     * @return true if the item broke
+     */
+    public <T extends LivingEntity> boolean damageInventoryItem(final int slot, int amount, @Nullable T entityIn, @Nullable Consumer<T> onBroken)
+    {
+        final ItemStack stack = mainInventory.get(slot);
+        if (!ItemStackUtils.isEmpty(stack))
+        {
+            stack.getItem().damageItem(stack, amount, entityIn, onBroken);
+        }
+
+        return ItemStackUtils.isEmpty(stack);
+    }
+
+    /**
+     * Shrinks an item in the given slot
+     *
+     * @param slot slot to shrink
+     * @return true if item is empty afterwards
+     */
+    public boolean shrinkInventoryItem(final int slot)
+    {
+        final ItemStack stack = mainInventory.get(slot);
+        if (!ItemStackUtils.isEmpty(stack))
+        {
+            stack.setCount(stack.getCount() - 1);
+        }
+
+        return ItemStackUtils.isEmpty(stack);
+    }
+
     @Nonnull
     @Override
     public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
@@ -390,6 +430,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         sizeNbt.putInt(TAG_SIZE, this.mainInventory.size());
         nbtTagList.add(sizeNbt);
 
+        freeSlots = mainInventory.size();
         for (int i = 0; i < this.mainInventory.size(); ++i)
         {
             if (!(this.mainInventory.get(i)).isEmpty())
@@ -398,6 +439,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
                 compoundNBT.putByte("Slot", (byte) i);
                 (this.mainInventory.get(i)).write(compoundNBT);
                 nbtTagList.add(compoundNBT);
+                freeSlots--;
             }
         }
 
@@ -453,6 +495,6 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
             freeSlots++;
         }
 
-        mainInventory.set(slot, stack);
+        mainInventory.set(slot, stack.copy());
     }
 }
