@@ -216,7 +216,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     protected boolean isBreedAble(final AnimalEntity entity)
     {
-        return !entity.isInLove() && !entity.isChild();
+        return entity.getGrowingAge() == 0 && entity.canBreed();
     }
 
     /**
@@ -321,7 +321,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         final AnimalEntity animalOne = animals
                                          .stream()
-                                         .filter(animal -> isBreedAble(animal))
+                                         .filter(this::isBreedAble)
                                          .findAny()
                                          .orElse(null);
 
@@ -407,12 +407,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         final List<ItemEntity> items = searchForItemsInArea();
 
-        if (!items.isEmpty())
+        if (!items.isEmpty() && walkToBlock(items.get(0).getPosition()))
         {
-            if (walkToBlock(items.get(0).getPosition()))
-            {
-                return getState();
-            }
+            return getState();
         }
 
         incrementActionsDoneAndDecSaturation();
