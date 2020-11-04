@@ -8,15 +8,15 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHan
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.research.util.ResearchConstants.LEVELING;
 import static com.minecolonies.api.util.constant.Constants.XP_PARTICLE_EXPLOSION_SIZE;
 
 /**
@@ -72,7 +72,6 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     public void addExperience(final double xp)
     {
         final IBuilding home = citizen.getCitizenColonyHandler().getHomeBuilding();
-
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
 
         final ICitizenData data = citizen.getCitizenData();
@@ -83,38 +82,22 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         }
 
         final double workBuildingLevel = workBuilding.getBuildingLevel();
-        final double bonusXp = 1 + (workBuildingLevel * citizenHutLevel) / 10;
-        double localXp = xp * bonusXp;
+        final double buildingXPModifier = 1 + (workBuildingLevel + citizenHutLevel) / 10;
+        double localXp = xp * buildingXPModifier;
         final double saturation = citizen.getCitizenData().getSaturation();
         final int intelligenceLevel = data.getCitizenSkillHandler().getLevel(Skill.Intelligence);
-        localXp += localXp * (intelligenceLevel / 10.0);
+        localXp += localXp * (intelligenceLevel / 100.0);
 
         if (saturation <= 0)
         {
             return;
         }
 
-        if (saturation < AVERAGE_SATURATION)
+        final MultiplierModifierResearchEffect xpBonus =
+          citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(LEVELING, MultiplierModifierResearchEffect.class);
+        if (xpBonus != null)
         {
-            if (saturation < LOW_SATURATION)
-            {
-                localXp -= localXp * BIG_SATURATION_FACTOR;
-            }
-            else
-            {
-                localXp -= localXp * LOW_SATURATION_FACTOR;
-            }
-        }
-        else if (saturation > AVERAGE_SATURATION)
-        {
-            if (saturation > HIGH_SATURATION)
-            {
-                localXp += localXp * BIG_SATURATION_FACTOR;
-            }
-            else
-            {
-                localXp += localXp * LOW_SATURATION_FACTOR;
-            }
+            localXp *= (1 + xpBonus.getEffect());
         }
 
         localXp = citizen.getCitizenItemHandler().applyMending(localXp);
@@ -192,7 +175,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
             if (d1 < 1.0D || counterMovedXp > MAX_XP_PICKUP_ATTEMPTS)
             {
-                addExperience(orb.getXpValue() / 2.0D);
+                addExperience(orb.getXpValue() / 2.5D);
                 orb.remove();
                 counterMovedXp = 0;
                 return;

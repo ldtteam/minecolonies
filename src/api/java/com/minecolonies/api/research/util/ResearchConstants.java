@@ -81,6 +81,7 @@ public final class ResearchConstants
     public static final String CAP      = "Citizen-Cap";
     public static final String RAILS    = "Rails";
     public static final String WALKING  = "Walking";
+    public static final String LEVELING  = "Leveling";
 
     public static final String HEALTH       = "Health";
     public static final String REGENERATION = "Regeneration";
@@ -101,6 +102,8 @@ public final class ResearchConstants
     public static final String PLANT_2     = "Plant 2";
     public static final String CRUSHING_11 = "1:1 Crushing";
     public static final String FIRE_RES    = "Miner Fire Res";
+
+    public static final String END_KNOWLEGE = "Knowledge of The End";
 
     /**
      * Private constructor to hide implicit public one.

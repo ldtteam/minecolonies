@@ -28,12 +28,11 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
@@ -44,7 +43,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     /**
      * The amount of food which should be served to the worker.
      */
-    public static final int AMOUNT_OF_FOOD_TO_SERVE = 2;
+    public static final int SATURATION_TO_SERVE = 16;
 
     /**
      * Delay between each serving.
@@ -72,6 +71,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     private final static VisibleCitizenStatus COOK =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/cook.png"), "com.minecolonies.gui.visiblestatus.cook");
 
+    /**
+     * The list of items needed for the assistant
+     */
+    private Set<ItemStack> assistantTests = new HashSet<>();
 
     /**
      * The building range the cook should search for clients.
@@ -120,9 +123,9 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     protected boolean isSmeltable(final ItemStack stack)
     {
         //Only return true if the item isn't queued for a recipe. 
-        if(!getOwnBuilding().getIsCooking())
+        if(!getOwnBuilding().getIsCooking() )
         {
-            return ItemStackUtils.ISCOOKABLE.test(stack);
+            return ItemStackUtils.ISCOOKABLE.test(stack) && !isItemStackForAssistant(stack);
         }
         return false;
     }
@@ -130,7 +133,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected boolean reachedMaxToKeep()
     {
-        return InventoryUtils.getItemCountInProvider(getOwnBuilding(), ItemStackUtils.ISFOOD)
+        return InventoryUtils.getCountFromBuilding(getOwnBuilding(), ItemStackUtils.ISFOOD)
                  > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel()) * SLOT_PER_LINE;
     }
 
@@ -202,11 +205,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             removeFromQueue();
             return getState();
         }
-        InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-          worker.getInventoryCitizen(),
-          ItemStackUtils.CAN_EAT,
-          getOwnBuilding().getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE, handler
-        );
+
+        InventoryUtils.transferFoodUpToSaturation(worker, handler, getOwnBuilding().getBuildingLevel() * SATURATION_TO_SERVE, stack -> CAN_EAT.test(stack));
 
         if (!citizenToServe.isEmpty() && citizenToServe.get(0).getCitizenData() != null)
         {
@@ -249,6 +249,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected IAIState checkForImportantJobs()
     {
+        this.assistantTests.clear(); //Clear the cache of current pending work
         if (range == null)
         {
             range = getOwnBuilding().getTargetableArea(world);
@@ -271,20 +272,35 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             citizenToServe.addAll(citizenList);
             playerToServe.addAll(playerList);
 
-            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> ItemStackUtils.CAN_EAT.test(stack) && !getOwnBuilding().isItemStackInRequest(stack)))
+            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> ItemStackUtils.CAN_EAT.test(stack)))
             {
                 return COOK_SERVE_FOOD_TO_CITIZEN;
             }
-            else if (!InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> ItemStackUtils.CAN_EAT.test(stack) && !getOwnBuilding().isItemStackInRequest(stack)))
+            else if (!InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> ItemStackUtils.CAN_EAT.test(stack) && !isItemStackForAssistant(stack)))
             {
                 return START_WORKING;
             }
 
-            needsCurrently = new Tuple<>(stack -> ItemStackUtils.CAN_EAT.test(stack) && !getOwnBuilding().isItemStackInRequest(stack), STACKSIZE);
+            needsCurrently = new Tuple<>(stack -> ItemStackUtils.CAN_EAT.test(stack) && !isItemStackForAssistant(stack), STACKSIZE);
             return GATHERING_REQUIRED_MATERIALS;
         }
 
         return START_WORKING;
+    }
+
+    /**
+     * Check if the stack we're using is needed by the assistant
+     * @param stack the stack to check
+     * @return true if the assistant needs this for a recipe
+     */
+    private boolean isItemStackForAssistant(ItemStack stack)
+    {
+        if(this.assistantTests.isEmpty())
+        {
+            this.assistantTests.addAll(getOwnBuilding().getAssistantItems());
+        }
+
+        return ItemStackUtils.compareItemStackListIgnoreStackSize(new ArrayList<>(assistantTests), stack, true, true);
     }
 
 

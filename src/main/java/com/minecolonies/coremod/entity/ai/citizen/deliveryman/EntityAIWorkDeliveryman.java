@@ -14,6 +14,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryFunctions;
@@ -186,6 +187,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 return START_WORKING;
             }
         }
+        else if (InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= 0)
+        {
+            this.alreadyKept = new ArrayList<>();
+            this.currentSlot = 0;
+            return DUMPING;
+        }
 
         currentSlot++;
         return PICKUP;
@@ -199,7 +206,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean pickupFromBuilding(@NotNull final IBuilding building)
     {
-        if (cannotHoldMoreItems())
+        if (cannotHoldMoreItems() || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= 0)
         {
             return false;
         }
@@ -209,7 +216,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return false;
         }
-
+        
         if (currentSlot >= handler.getSlots())
         {
             return true;
@@ -232,11 +239,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if (ItemStackUtils.isEmpty(handler.getStackInSlot(currentSlot)))
         {
             return false;
-        }
-
-        if (InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= 0)
-        {
-            return true;
         }
 
         final ItemStack activeStack = handler.extractItem(currentSlot, amount, false);
@@ -371,6 +373,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final IItemHandler workerInventory = worker.getInventoryCitizen();
         for (int i = 0; i < workerInventory.getSlots(); i++)
         {
+            if (workerInventory.getStackInSlot(i).isEmpty())
+            {
+                continue;
+            }
+
             final ItemStack stack = workerInventory.extractItem(i, Integer.MAX_VALUE, false);
             if (ItemStackUtils.isEmpty(stack))
             {
@@ -443,7 +450,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        worker.getCitizenExperienceHandler().addExperience(1.0D);
+        worker.getCitizenExperienceHandler().addExperience(1.5D);
         worker.decreaseSaturationForContinuousAction();
         worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, SLOT_HAND);
         job.finishRequest(true);
@@ -468,7 +475,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         final List<IRequest<? extends Delivery>> taskList = job.getTaskListWithSameDestination((IRequest<? extends Delivery>) currentTask);
         final List<ItemStack> alreadyInInv = new ArrayList<>();
-        Delivery nextPickUp = null;
+        IRequest<? extends Delivery> nextPickUp = null;
 
         int parallelDeliveryCount = 0;
         for (final IRequest<? extends Delivery> task : taskList)
@@ -487,7 +494,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
             if (totalCount < hasCount + task.getRequest().getStack().getCount())
             {
-                nextPickUp = task.getRequest();
+                nextPickUp = task;
                 break;
             }
             else
@@ -496,13 +503,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
 
-        if (nextPickUp == null || parallelDeliveryCount > 1 + (getSecondarySkillLevel() / 5.0))
+        if (nextPickUp == null || parallelDeliveryCount > 1 + (getSecondarySkillLevel() / 5))
         {
-            job.setParallelDeliveries(parallelDeliveryCount - 1);
             return DELIVERY;
         }
 
-        final ILocation location = nextPickUp.getStart();
+        final ILocation location = nextPickUp.getRequest().getStart();
 
         if (!location.isReachableFromLocation(worker.getLocation()))
         {
@@ -530,18 +536,20 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockState().getBlock());
         }
 
-        if (gatherIfInTileEntity(tileEntity, nextPickUp.getStack()))
+        job.addConcurrentDelivery(nextPickUp.getId());
+        if (gatherIfInTileEntity(tileEntity, nextPickUp.getRequest().getStack()))
         {
             return PREPARE_DELIVERY;
         }
 
         if (parallelDeliveryCount > 1)
         {
-            job.setParallelDeliveries(parallelDeliveryCount - 1);
+            job.removeConcurrentDelivery(nextPickUp.getId());
             return DELIVERY;
         }
 
         job.finishRequest(false);
+        job.removeConcurrentDelivery(nextPickUp.getId());
         return START_WORKING;
     }
 

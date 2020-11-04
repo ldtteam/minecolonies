@@ -678,7 +678,7 @@ public class CitizenData implements ICitizenData
         buf.writeFloat(getEntity().map(AbstractEntityCitizen::getMaxHealth).orElse(MAX_HEALTH));
 
         buf.writeDouble(getSaturation());
-        buf.writeDouble(citizenHappinessHandler.getHappiness());
+        buf.writeDouble(citizenHappinessHandler.getHappiness(getColony()));
 
         buf.writeCompoundTag(citizenSkillHandler.write());
 
@@ -977,7 +977,7 @@ public class CitizenData implements ICitizenData
 
         if (nbtTagCompound.keySet().contains(TAG_LEVEL_MAP) && !nbtTagCompound.keySet().contains(TAG_NEW_SKILLS))
         {
-            citizenSkillHandler.init((int) citizenHappinessHandler.getHappiness());
+            citizenSkillHandler.init((int) citizenHappinessHandler.getHappiness(getColony()));
             final Map<String, Integer> levels = new HashMap<>();
             final ListNBT levelTagList = nbtTagCompound.getList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < levelTagList.size(); ++i)
@@ -1172,7 +1172,8 @@ public class CitizenData implements ICitizenData
               colony.getResearchManager().getResearchEffects().getEffect(WALKING, MultiplierModifierResearchEffect.class);
             if (speedEffect != null)
             {
-                citizen.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED + (BASE_MOVEMENT_SPEED * speedEffect.getEffect()));
+                final AttributeModifier speedModifier = new AttributeModifier(RESEARCH_BONUS_MULTIPLIER, speedEffect.getEffect(), AttributeModifier.Operation.MULTIPLY_TOTAL);
+                AttributeModifierUtils.addModifier(citizen, speedModifier, SharedMonsterAttributes.MOVEMENT_SPEED);
             }
 
             final AdditionModifierResearchEffect healthEffect =

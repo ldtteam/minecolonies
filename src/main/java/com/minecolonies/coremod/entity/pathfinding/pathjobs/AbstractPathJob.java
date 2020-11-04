@@ -25,6 +25,7 @@ import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.state.properties.Half;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -205,13 +206,28 @@ public abstract class AbstractPathJob implements Callable<Path>
           MathHelper.floor(entity.getPosY()),
           MathHelper.floor(entity.getPosZ()));
         BlockState bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
-        final Block b = bs.getBlock();
 
-        // 1 Up when we're standing within this node
-        if (bs.getMaterial().blocksMovement() && bs.getCollisionShape(entity.world, pos).getEnd(Direction.Axis.Y) > 0)
+        // 1 Up when we're standing within this collision shape
+        final VoxelShape collisionShape = bs.getCollisionShape(entity.world, pos);
+        if (bs.getMaterial().blocksMovement() && collisionShape.getEnd(Direction.Axis.Y) > 0)
         {
-            pos.setPos(pos.getX(), pos.getY() + 1, pos.getZ());
+            final double relPosX = Math.abs(entity.getPosX() % 1);
+            final double relPosZ = Math.abs(entity.getPosZ() % 1);
+
+            for (final AxisAlignedBB box : collisionShape.toBoundingBoxList())
+            {
+                if (relPosX >= box.minX && relPosX <= box.maxX
+                      && relPosZ >= box.minZ && relPosZ <= box.maxZ
+                      && box.maxY > 0)
+                {
+                    pos.setPos(pos.getX(), pos.getY() + 1, pos.getZ());
+                    bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
+                    break;
+                }
+            }
         }
+
+        final Block b = bs.getBlock();
 
         if (entity.isInWater())
         {
@@ -600,7 +616,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         //  Compute length of path, since we need to allocate an array.  This is cheaper/faster than building a List
         //  and converting it.  Yes, we have targetNode.steps, but I do not want to rely on that being accurate (I might
         //  fudge that value later on for cutoff purposes
-        int pathLength = 0;
+        int pathLength = 1;
         int railsLength = 0;
         @Nullable Node node = targetNode;
         while (node.parent != null)
@@ -614,6 +630,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         @NotNull final PathPoint[] points = new PathPoint[pathLength];
+        points[0] = new PathPointExtended(node.pos);
 
         @Nullable Node nextInPath = null;
         node = targetNode;
@@ -1093,7 +1110,8 @@ public abstract class AbstractPathJob implements Callable<Path>
             if (block.getMaterial().blocksMovement())
             {
                 return pathingOptions.canEnterDoors() && (block.getBlock() instanceof DoorBlock
-                                                            || block.getBlock() instanceof FenceGateBlock)
+                                                            || block.getBlock() instanceof FenceGateBlock
+                                                            || (block.getBlock() instanceof TrapDoorBlock && !(world.getBlockState(pos.up()).getBlock() instanceof TrapDoorBlock)))
                          || block.getBlock() instanceof AbstractBlockMinecoloniesConstructionTape
                          || block.getBlock() instanceof PressurePlateBlock
                          || block.getBlock() instanceof BlockDecorationController

@@ -2,11 +2,14 @@ package com.minecolonies.coremod.entity.ai.citizen.composter;
 
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
@@ -21,6 +24,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -83,6 +87,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         super(job);
         super.registerTargets(
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::accelerateBarrels, TICKS_SECOND),
           new AITarget(IDLE, START_WORKING, 1),
           new AITarget(GET_MATERIALS, this::getMaterials, TICKS_SECOND),
           new AITarget(START_WORKING, this::decideWhatToDo, 1),
@@ -91,6 +96,35 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         );
         worker.setCanPickUpLoot(true);
     }
+
+    /**
+     * Actually accelerate the Barrels
+     */
+    private IAIState accelerateBarrels()
+    {
+        final int accelerationTicks = (worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getPrimarySkill()) / 10) * 2;
+        final World world = getOwnBuilding().getColony().getWorld();
+        for (final BlockPos pos : getOwnBuilding().getBarrels())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityBarrel)
+                {
+                    final TileEntityBarrel barrel = (TileEntityBarrel) entity;
+                    for(int i = 0; i < accelerationTicks; i++)
+                    {
+                        if (barrel.checkIfWorking() && !barrel.isDone())
+                        {
+                            barrel.tick();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
 
     /**
      * Method for the AI to try to get the materials needed for the task he's doing. Will request if there are no materials
@@ -140,7 +174,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             }
             if (!itemList.isEmpty())
             {
-                worker.getCitizenData().createRequestAsync(new StackList(itemList, COM_MINECOLONIES_REQUESTS_COMPOSTABLE, Constants.STACKSIZE, 1));
+                worker.getCitizenData().createRequestAsync(new StackList(itemList, COM_MINECOLONIES_REQUESTS_COMPOSTABLE, Constants.STACKSIZE * getOwnBuilding().getBarrels().size(), 1));
             }
         }
 
@@ -264,7 +298,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             worker.getCitizenItemHandler().hitBlockWithToolInHand(currentTarget);
 
             final TileEntityBarrel te = (TileEntityBarrel) world.getTileEntity(currentTarget);
-            final ItemStack compost = te.retrieveCompost(getLootMultiplier(new Random()));
+            final ItemStack compost = te.retrieveCompost(getLootMultiplier(worker.getRandom()));
 
             if (getOwnBuilding().shouldRetrieveDirtFromCompostBin())
             {

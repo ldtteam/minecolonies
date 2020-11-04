@@ -21,6 +21,8 @@ import com.minecolonies.coremod.client.gui.WindowHutWareHouse;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PickupRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseConcreteRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
@@ -338,6 +340,11 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
           getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN))
           );
 
+        builder.add(new DeliveryRequestResolver(getRequester().getLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PickupRequestResolver(getRequester().getLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+
         return builder.build();
     }
 
@@ -357,10 +364,10 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     {
         if (storageUpgrade < MAX_STORAGE_UPGRADE)
         {
-            for (final BlockPos pos : getAdditionalCountainers())
+            for (final BlockPos pos : getContainers())
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (entity instanceof TileEntityRack)
+                if (entity instanceof TileEntityRack && !(entity instanceof TileEntityColonyBuilding))
                 {
                     ((AbstractTileEntityRack) entity).upgradeItemStorage();
                 }

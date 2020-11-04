@@ -44,7 +44,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     /**
      * Amount of xp the builder gains for placing a block.
      */
-    private static final double XP_EACH_BLOCK = 0.1D;
+    private static final double XP_EACH_BLOCK = 0.05D;
 
     /**
      * The structure AI handling this task.

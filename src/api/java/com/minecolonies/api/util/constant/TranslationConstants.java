@@ -188,6 +188,16 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_DISMISS                    = "com.minecolonies.coremod.item.bannerrallyguards.gui.dismiss";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_SUGARY_BREAD_TOOLTIP_GUI                   = "com.minecolonies.coremod.item.sugary.bread.gui";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_MILKY_BREAD_TOOLTIP_GUI                    = "com.minecolonies.coremod.item.milky.bread.gui";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GOLDEN_BREAD_TOOLTIP_GUI                   = "com.minecolonies.coremod.item.golden.bread.gui";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_CHORUS_BREAD_TOOLTIP_GUI                   = "com.minecolonies.coremod.item.chorus.bread.gui";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_BREAD_AVAILABLE_TOOLTIP_GUI                = "com.minecolonies.coremod.item.bread.available.gui";
+    @NonNls
     public static final String CITIZEN_RENAME_SAME                                                 = "com.minecolonies.coremod.citizen.rename.same";
     @NonNls
     public static final String CITIZEN_RENAME_NOT_ALLOWED                                          = "com.minecolonies.coremod.citizen.rename.notallowed";
@@ -473,6 +483,26 @@ public final class TranslationConstants
     public static final String HUT_NEEDS_RESEARCH_TOOLTIP_1                                        = "com.minecolonies.coremod.research.item1";
     @NonNls
     public static final String HUT_NEEDS_RESEARCH_TOOLTIP_2                                        = "com.minecolonies.coremod.research.item2";
+    @NonNls
+    public static final String FROM = "com.minecolonies.coremod.from";
+    @NonNls
+    public static final String AT = "com.minecolonies.coremod.at";
+    @NonNls
+    public static final String IN_QUEUE = "com.minecolonies.coremod.listentry";
+    @NonNls
+    public static final String MISSING_DELIVERIES = "com.minecolonies.coremod.missingitems";
+    @NonNls
+    public static final String FINISHED = "com.minecolonies.coremod.finished";
+    @NonNls
+    public static final String DIST = "com.minecolonies.coremod.dist.blocks";
+    @NonNls
+    public static final String NOT_RESOLVED = "com.minecolonies.coremod.notresolved";
+    @NonNls
+    public static final String REQUEST_CRAFTING_DISPLAY = "com.minecolonies.coremod.request.crafting.display";
+    @NonNls
+    public static final String RECIPE_STATUS ="com.minecolonies.coremod.gui.workerhuts.recipestatus";
+    @NonNls
+    public static final String RACK = "block.minecolonies.blockminecoloniesrack";
 
     private TranslationConstants()
     {

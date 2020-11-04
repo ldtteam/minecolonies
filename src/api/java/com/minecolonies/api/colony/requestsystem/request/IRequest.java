@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.requestsystem.request;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.requestsystem.manager.AssigningStrategy;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
@@ -286,4 +287,11 @@ public interface IRequest<R extends IRequestable>
      * @return an immutable copy of the set.
      */
     Set<TypeToken<?>> getSuperClasses();
+
+    /**
+     * Get the resolver tooltip for a request.
+     * @param colony the colony view to obtain information if necessary.
+     * @return a list of strings or empty.
+     */
+    List<String> getResolverToolTip(IColonyView colony);
 }

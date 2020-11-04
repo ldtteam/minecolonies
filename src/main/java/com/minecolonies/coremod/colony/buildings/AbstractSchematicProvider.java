@@ -321,7 +321,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
                     if (structureRotation <= worldRotation)
                     {
                         cachedRotation = worldRotation - structureRotation;
-                        ;
                     }
                     else
                     {
@@ -361,6 +360,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     public void setStyle(final String style)
     {
         this.style = style;
+        cachedRotation = -1;
         this.markDirty();
     }
 

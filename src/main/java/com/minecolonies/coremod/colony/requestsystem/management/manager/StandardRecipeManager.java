@@ -12,8 +12,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class StandardRecipeManager implements IRecipeManager
 {
@@ -32,6 +33,12 @@ public class StandardRecipeManager implements IRecipeManager
      */
     private ImmutableMap<IToken<?>, IRecipeStorage> cache = null;
 
+
+    /**
+     * The list of recipes marked as used this session
+     */
+    private final Set<IToken<?>> usedRecipes = new HashSet<>();
+
     @Override
     public ImmutableMap<IToken<?>, IRecipeStorage> getRecipes()
     {
@@ -46,6 +53,7 @@ public class StandardRecipeManager implements IRecipeManager
     public IToken<?> addRecipe(final IRecipeStorage storage)
     {
         recipes.put(storage.getToken(), storage);
+        usedRecipes.add(storage.getToken());
         cache = null;
         return storage.getToken();
     }
@@ -58,6 +66,7 @@ public class StandardRecipeManager implements IRecipeManager
         {
             return addRecipe(storage);
         }
+        usedRecipes.add(token);
         return token;
     }
 
@@ -78,7 +87,7 @@ public class StandardRecipeManager implements IRecipeManager
     public void write(@NotNull final CompoundNBT compound)
     {
         @NotNull final ListNBT recipesTagList =
-          recipes.entrySet().stream().map(entry -> StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toListNBT());
+          recipes.entrySet().stream().filter(recipeEntry -> usedRecipes.contains(recipeEntry.getKey())).map(entry -> StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toListNBT());
         compound.put(TAG_RECIPES, recipesTagList);
     }
 
@@ -95,5 +104,18 @@ public class StandardRecipeManager implements IRecipeManager
             }
         }
         cache = null;
+    }
+
+    @Override
+    public void reset()
+    {
+        recipes.clear();
+        usedRecipes.clear();
+    }
+
+    @Override
+    public void registerUse(final IToken<?> token)
+    {
+        usedRecipes.add(token);
     }
 }

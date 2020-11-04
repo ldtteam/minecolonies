@@ -91,7 +91,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
      */
     private IAIState decide()
     {
-        final int paperInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), PAPER);
+        final int paperInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), PAPER);
         final int paperInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), PAPER);
         if (paperInBuilding + paperInInv <= 0)
         {
@@ -165,7 +165,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
             );
         }
 
-        double xp = 1.0 * (1.0 + worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) / 10.0);
+        double xp = 1.5 * (1.0 + worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) / 10.0);
         final MultiplierModifierResearchEffect effect =
           worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TEACHING, MultiplierModifierResearchEffect.class);
         if (effect != null)

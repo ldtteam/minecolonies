@@ -6,10 +6,13 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.healer.EntityAIWorkHealer;
+import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
+import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
 
 /**
  * The healer job class.
@@ -79,9 +82,8 @@ public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
         if (getCitizen().getEntity().isPresent())
         {
             final AbstractEntityCitizen worker = getCitizen().getEntity().get();
-            worker.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
-              .setBaseValue(
-                BASE_MOVEMENT_SPEED + (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill())) * BONUS_SPEED_PER_LEVEL);
+            final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD, getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill()) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADDITION);
+            AttributeModifierUtils.addModifier(worker, speedModifier, SharedMonsterAttributes.MOVEMENT_SPEED);
         }
     }
 

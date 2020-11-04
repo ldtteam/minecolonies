@@ -123,6 +123,7 @@ public class CommonConfiguration extends AbstractConfiguration
      *  -------------------------------------------------------------------------------- */
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> extraOres;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> enabledModTags;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> guardResourceLocations;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
@@ -295,6 +296,8 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> guardianangel2;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> whatyaneed;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> enhanced_gates1;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> enhanced_gates2;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> stringwork;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> thoselungs;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> rainbowheaven;
@@ -313,6 +316,7 @@ public class CommonConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> hittingiron;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> stonecake;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> strong;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> hardened;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> reinforced;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> steelbracing;
@@ -362,6 +366,8 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> arrowuse;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> arrowpierce;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> knockbackaoe;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> knowtheend;
 
     /**
      * Builds common configuration.
@@ -480,6 +486,168 @@ public class CommonConfiguration extends AbstractConfiguration
                    ("minestuck:ore_cruxite",
                      "minestuck:ore_uranium"),
           s -> s instanceof String);
+
+        enabledModTags = defineList(builder, "enabledmodtags",
+          Arrays.asList(
+            "minecraft:wool",
+            "minecraft:planks",
+            "minecraft:stone_bricks",
+            "minecraft:wooden_buttons",
+            "minecraft:buttons",
+            "minecraft:carpets",
+            "minecraft:wooden_doors",
+            "minecraft:wooden_stairs",
+            "minecraft:wooden_slabs",
+            "minecraft:wooden_fences",
+            "minecraft:wooden_pressure_plates",
+            "minecraft:wooden_trapdoors",
+            "minecraft:saplings",
+            "minecraft:logs",
+            "minecraft:dark_oak_logs",
+            "minecraft:oak_logs",
+            "minecraft:birch_logs",
+            "minecraft:acacia_logs",
+            "minecraft:jungle_logs",
+            "minecraft:spruce_logs",
+            "minecraft:banners",
+            "minecraft:sand",
+            "minecraft:walls",
+            "minecraft:anvil",
+            "minecraft:leaves",
+            "minecraft:small_flowers",
+            "minecraft:beds",
+            "minecraft:fishes",
+            "minecraft:signs",
+            "minecraft:music_discs",
+            "minecraft:arrows",
+            "forge:bones",
+            "forge:bookshelves",
+            "forge:chests/ender",
+            "forge:chests/trapped",
+            "forge:chests/wooden",
+            "forge:cobblestone",
+            "forge:crops/beetroot",
+            "forge:crops/carrot",
+            "forge:crops/nether_wart",
+            "forge:crops/potato",
+            "forge:crops/wheat",
+            "forge:dusts/prismarine",
+            "forge:dusts/redstone",
+            "forge:dusts/glowstone",
+            "forge:dyes",
+            "forge:dyes/black",
+            "forge:dyes/red",
+            "forge:dyes/green",
+            "forge:dyes/brown",
+            "forge:dyes/blue",
+            "forge:dyes/purple",
+            "forge:dyes/cyan",
+            "forge:dyes/light_gray",
+            "forge:dyes/gray",
+            "forge:dyes/pink",
+            "forge:dyes/lime",
+            "forge:dyes/yellow",
+            "forge:dyes/light_blue",
+            "forge:dyes/magenta",
+            "forge:dyes/orange",
+            "forge:dyes/white",
+            "forge:eggs",
+            "forge:ender_pearls",
+            "forge:feathers",
+            "forge:fence_gates",
+            "forge:fence_gates/wooden",
+            "forge:fences",
+            "forge:fences/nether_brick",
+            "forge:fences/wooden",
+            "forge:gems/diamond",
+            "forge:gems/emerald",
+            "forge:gems/lapis",
+            "forge:gems/prismarine",
+            "forge:gems/quartz",
+            "forge:glass",
+            "forge:glass/black",
+            "forge:glass/blue",
+            "forge:glass/brown",
+            "forge:glass/colorless",
+            "forge:glass/cyan",
+            "forge:glass/gray",
+            "forge:glass/green",
+            "forge:glass/light_blue",
+            "forge:glass/light_gray",
+            "forge:glass/lime",
+            "forge:glass/magenta",
+            "forge:glass/orange",
+            "forge:glass/pink",
+            "forge:glass/purple",
+            "forge:glass/red",
+            "forge:glass/white",
+            "forge:glass/yellow",
+            "forge:glass_panes",
+            "forge:glass_panes/black",
+            "forge:glass_panes/blue",
+            "forge:glass_panes/brown",
+            "forge:glass_panes/colorless",
+            "forge:glass_panes/cyan",
+            "forge:glass_panes/gray",
+            "forge:glass_panes/green",
+            "forge:glass_panes/light_blue",
+            "forge:glass_panes/light_gray",
+            "forge:glass_panes/lime",
+            "forge:glass_panes/magenta",
+            "forge:glass_panes/orange",
+            "forge:glass_panes/pink",
+            "forge:glass_panes/purple",
+            "forge:glass_panes/red",
+            "forge:glass_panes/white",
+            "forge:glass_panes/yellow",
+            "forge:gravel",
+            "forge:gunpowder",
+            "forge:heads",
+            "forge:ingots/brick",
+            "forge:ingots/gold",
+            "forge:ingots/iron",
+            "forge:ingots/nether_brick",
+            "forge:leather",
+            "forge:mushrooms",
+            "forge:nether_stars",
+            "forge:netherrack",
+            "forge:nuggets/gold",
+            "forge:nuggets/iron",
+            "forge:obsidian",
+            "forge:ores/coal",
+            "forge:ores/diamond",
+            "forge:ores/emerald",
+            "forge:ores/gold",
+            "forge:ores/iron",
+            "forge:ores/lapis",
+            "forge:ores/quartz",
+            "forge:ores/redstone",
+            "forge:rods/blaze",
+            "forge:rods/wooden",
+            "forge:sand",
+            "forge:sand/colorless",
+            "forge:sand/red",
+            "forge:sandstone",
+            "forge:seeds",
+            "forge:seeds/beetroot",
+            "forge:seeds/melon",
+            "forge:seeds/pumpkin",
+            "forge:seeds/wheat",
+            "forge:slimeballs",
+            "forge:stained_glass",
+            "forge:stained_glass_panes",
+            "forge:stone",
+            "forge:storage_blocks/coal",
+            "forge:storage_blocks/diamond",
+            "forge:storage_blocks/emerald",
+            "forge:storage_blocks/gold",
+            "forge:storage_blocks/iron",
+            "forge:storage_blocks/lapis",
+            "forge:storage_blocks/quartz",
+            "forge:storage_blocks/redstone",
+            "forge:string"),
+          s -> s instanceof String);
+
         guardResourceLocations = defineList(builder, "guardresourcelocations",
           Arrays.asList
                    ("minecraft:slime",
@@ -1191,6 +1359,11 @@ public class CommonConfiguration extends AbstractConfiguration
         whatyaneed = defineList(builder, "whatyaneed",
           Collections.singletonList("minecraft:redstone*64"),
           s -> s instanceof String);
+        enhanced_gates1 = defineList(builder, "enhanced_gates1",
+          Arrays.asList("minecolonies:gate_wood*64", "minecolonies:ancienttome*2", "minecraft:iron_block*5"),
+          s -> s instanceof String);
+        enhanced_gates2 = defineList(builder, "enhanced_gates2",
+          Arrays.asList("minecolonies:gate_iron*64", "minecolonies:ancienttome*2", "minecraft:obsidian*32"), s -> s instanceof String);
         stringwork = defineList(builder, "stringwork",
           Collections.singletonList("minecraft:string*16"),
           s -> s instanceof String);
@@ -1238,6 +1411,9 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         this.stonecake = defineList(builder, "stonecake",
           Collections.singletonList("minecraft:chiseled_stone_bricks*64"),
+          s -> s instanceof String);
+        this.strong = defineList(builder, "strong",
+          Collections.singletonList("minecraft:diamond*8"),
           s -> s instanceof String);
         this.hardened = defineList(builder, "hardened",
           Collections.singletonList("minecraft:diamond*16"),
@@ -1377,6 +1553,11 @@ public class CommonConfiguration extends AbstractConfiguration
         this.pavetheroad = defineList(builder, "pavetheroad",
           Collections.singletonList("minecraft:white_concrete*32"),
           s -> s instanceof String);
+
+        this.knowtheend = defineList(builder, "knowtheend",
+          Arrays.asList("minecraft:chorus_fruit*64"),
+          s -> s instanceof String);
+
 
         finishCategory(builder);
     }

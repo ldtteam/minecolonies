@@ -12,6 +12,7 @@ import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.apiimp.initializer.ModTagsInitializer;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
@@ -788,6 +789,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void onWorldLoad(@NotNull final World world)
     {
+        ModTagsInitializer.init();
         if (!world.isRemote)
         {
             if (!loaded)
@@ -796,7 +798,9 @@ public final class ColonyManager implements IColonyManager
                 @Nullable final CompoundNBT data = BackUpHelper.loadNBTFromPath(file);
                 if (data != null)
                 {
+                    Log.getLogger().info("Loading Minecolonies Data");
                     read(data);
+                    Log.getLogger().info("Load Complete");
                 }
 
                 if (serverUUID == null)
@@ -858,6 +862,7 @@ public final class ColonyManager implements IColonyManager
             if (loaded)
             {
                 BackUpHelper.backupColonyData();
+                recipeManager.reset();
                 loaded = false;
             }
         }

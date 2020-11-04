@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistry
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
@@ -126,6 +127,12 @@ public abstract class CommonProxy implements IProxy
     public static void registerJobTypes(final RegistryEvent.Register<JobEntry> event)
     {
         ModJobsInitializer.init(event);
+    }
+
+    @SubscribeEvent
+    public static void registerRecipeTypes(final RegistryEvent.Register<RecipeTypeEntry> event)
+    {
+        ModRecipeTypesInitializer.init(event);
     }
 
     @Override

@@ -13,8 +13,11 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
 import com.minecolonies.coremod.colony.jobs.JobRabbitHerder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
  * Creates a new building for the rabbit hutch.
@@ -40,6 +43,7 @@ public class BuildingRabbitHutch extends AbstractBuildingHerder
     public BuildingRabbitHutch(final IColony c, final BlockPos l)
     {
         super(c, l);
+        keepX.put(stack -> Items.CARROT == stack.getItem(), new Tuple<>(STACKSIZE, true));
     }
 
     @NotNull

@@ -41,10 +41,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -196,7 +193,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
             {
                 for(IBuilding wareHouse: colony.getBuildingManager().getWareHouses())
                 {
-                    final int colorCount = InventoryUtils.hasBuildingEnoughElseCount(wareHouse, color, 1);
+                    final int colorCount = InventoryUtils.getCountFromBuilding(wareHouse, color);
                     inventoryCounts.put(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
                 }
             }
@@ -215,9 +212,9 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, int count)
+    public IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, int count, final boolean considerReservation)
     {
-        IRecipeStorage recipe =  super.getFirstFullFillableRecipe(stackPredicate, count);
+        IRecipeStorage recipe =  super.getFirstFullFillableRecipe(stackPredicate, count, considerReservation);
 
         if(recipe == null)
         {
@@ -225,7 +222,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
             if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if (storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                if (storage.canFullFillRecipe(count, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
                 {
                     return storage;
                 }

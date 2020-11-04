@@ -36,7 +36,6 @@ import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.*;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallSingleCitizenMessage;
-import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallTownhallMessage;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -173,7 +172,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         registerButton(BUTTON_REMOVE_PLAYER, this::removePlayerClicked);
         registerButton(BUTTON_PROMOTE, this::promoteDemoteClicked);
         registerButton(BUTTON_DEMOTE, this::promoteDemoteClicked);
-        registerButton(BUTTON_RECALL, this::recallClicked);
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
         registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
@@ -1067,7 +1065,9 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     }
                 }
 
-                rowPane.findPaneOfTypeByID(WORK_LABEL, Label.class).setLabelText(workOrder.get());
+                final String[] split = workOrder.get().split("/");
+
+                rowPane.findPaneOfTypeByID(WORK_LABEL, Label.class).setLabelText(split[split.length - 1]);
                 rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Label.class).setLabelText(claimingCitizen);
                 rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Label.class).setLabelText(Integer.toString(workOrder.getId()));
             }
@@ -1304,14 +1304,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                   .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.DEMOTE));
             }
         }
-    }
-
-    /**
-     * Action when a recall button is clicked.
-     */
-    private void recallClicked()
-    {
-        Network.getNetwork().sendToServer(new RecallTownhallMessage(townHall.getColony()));
     }
 
     /**
