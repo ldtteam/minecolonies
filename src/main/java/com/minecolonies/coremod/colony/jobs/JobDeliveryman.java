@@ -500,7 +500,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         for (int i = 0; i < requestTokens.size(); i++)
         {
             final IRequest<?> compareRequest = getColony().getRequestManager().getRequestForToken(requestTokens.get(i));
-            if (compareRequest == null)
+            if (compareRequest == null || compareRequest.getState() == RequestState.COMPLETED)
             {
                 continue;
             }
