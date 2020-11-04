@@ -10,12 +10,10 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-
 import java.util.Arrays;
 
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
@@ -305,6 +303,19 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack)
     {
+        int slotIndex = slot;
+        for (final IItemHandlerModifiable modifiable : handlers)
+        {
+            if (slotIndex >= modifiable.getSlots())
+            {
+                slotIndex -= modifiable.getSlots();
+            }
+            else
+            {
+                return modifiable.isItemValid(slotIndex, stack);
+            }
+        }
+
         return false;
     }
 

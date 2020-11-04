@@ -255,15 +255,19 @@ public class CitizenItemHandler implements ICitizenItemHandler
             return;
         }
 
-        heldItem.damageItem(damage, citizen, (i) -> {
-            i.sendBreakAnimation(Hand.MAIN_HAND);
-        });
-
         //check if tool breaks
-        if (ItemStackUtils.isEmpty(heldItem) && citizen.getInventoryCitizen().getHeldItemSlot(hand) != -1)
+        if (citizen.getCitizenData()
+              .getInventory()
+              .damageInventoryItem(citizen.getCitizenData().getInventory().getHeldItemSlot(hand), damage, citizen, item -> item.sendBreakAnimation(hand)))
         {
-            citizen.getInventoryCitizen().insertItem(citizen.getInventoryCitizen().getHeldItemSlot(hand), ItemStackUtils.EMPTY, false);
-            citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
+            if (hand == Hand.MAIN_HAND)
+            {
+                citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
+            }
+            else
+            {
+                citizen.setItemStackToSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
+            }
         }
     }
 

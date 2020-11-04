@@ -194,11 +194,11 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      */
     public void setBuildingPos(final BlockPos pos)
     {
-        this.buildingPos = pos;
-        if (world != null)
+        if (world != null && (buildingPos == null || !buildingPos.equals(pos)))
         {
             markDirty();
         }
+        this.buildingPos = pos;
     }
 
     /* Get the amount of items matching a predicate in the inventory.
