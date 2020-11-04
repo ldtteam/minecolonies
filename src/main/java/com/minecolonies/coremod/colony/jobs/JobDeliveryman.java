@@ -205,6 +205,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
 
         LinkedList<IToken<?>> taskQueue = getTaskQueueFromDataStore();
 
+        int offset = 0;
         for (int i = insertionIndex; i < taskQueue.size(); i++)
         {
             final IToken theToken = taskQueue.get(i);
@@ -213,6 +214,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             {
                 taskQueue.remove(theToken);
                 i--;
+                offset--;
             }
             else
             {
@@ -220,7 +222,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             }
         }
 
-        getTaskQueueFromDataStore().add(Math.max(0, insertionIndex), token);
+        getTaskQueueFromDataStore().add(Math.max(0, insertionIndex + offset), token);
 
         if (newRequest instanceof StandardRequests.PickupRequest && newRequest.getRequest().getPriority() == getPlayerActionPriority(true))
         {
@@ -500,7 +502,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         for (int i = 0; i < requestTokens.size(); i++)
         {
             final IRequest<?> compareRequest = getColony().getRequestManager().getRequestForToken(requestTokens.get(i));
-            if (compareRequest == null || compareRequest.getState() == RequestState.COMPLETED)
+            if (compareRequest == null)
             {
                 continue;
             }
