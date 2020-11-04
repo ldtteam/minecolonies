@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutcook"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_cook.title"
+      "translate": "advancements.minecolonies.build.cook.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_cook.description"
+      "translate": "advancements.minecolonies.build.cook.description"
     },
     "show_toast": true,
     "announce_to_chat": true

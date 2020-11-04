@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutblacksmith"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_blacksmith.title"
+      "translate": "advancements.minecolonies.build.blacksmith.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_blacksmith.description"
+      "translate": "advancements.minecolonies.build.blacksmith.description"
     },
     "show_toast": true,
     "announce_to_chat": true

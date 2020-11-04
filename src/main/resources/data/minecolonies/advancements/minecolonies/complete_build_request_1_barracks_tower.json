@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutbarrackstower"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_barracks_tower.title"
+      "translate": "advancements.minecolonies.build.barracks_tower.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_barracks_tower.description"
+      "translate": "advancements.minecolonies.build.barracks_tower.description"
     },
     "show_toast": true,
     "announce_to_chat": true

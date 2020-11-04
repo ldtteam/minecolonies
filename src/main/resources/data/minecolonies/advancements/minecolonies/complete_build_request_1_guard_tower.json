@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutguardtower"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_guard_tower.title"
+      "translate": "advancements.minecolonies.build.guard_tower.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_guard_tower.description"
+      "translate": "advancements.minecolonies.build.guard_tower.description"
     },
     "show_toast": true,
     "announce_to_chat": true

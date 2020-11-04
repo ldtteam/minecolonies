@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutcombatacademy"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_combat_academy.title"
+      "translate": "advancements.minecolonies.build.combat_academy.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_combat_academy.description"
+      "translate": "advancements.minecolonies.build.combat_academy.description"
     },
     "show_toast": true,
     "announce_to_chat": true

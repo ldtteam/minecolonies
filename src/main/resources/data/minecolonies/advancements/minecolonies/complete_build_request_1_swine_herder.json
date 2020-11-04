@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutswineherder"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_swine_herder.title"
+      "translate": "advancements.minecolonies.build.swine_herder.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_swine_herder.description"
+      "translate": "advancements.minecolonies.build.swine_herder.description"
     },
     "show_toast": true,
     "announce_to_chat": true

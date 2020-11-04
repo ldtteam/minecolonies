@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutfarmer"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_farmer.title"
+      "translate": "advancements.minecolonies.build.farmer.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_farmer.description"
+      "translate": "advancements.minecolonies.build.farmer.description"
     },
     "show_toast": true,
     "announce_to_chat": true

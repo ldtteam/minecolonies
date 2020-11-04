@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutstonesmeltery"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_stone_smeltery.title"
+      "translate": "advancements.minecolonies.build.stone_smeltery.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_stone_smeltery.description"
+      "translate": "advancements.minecolonies.build.stone_smeltery.description"
     },
     "show_toast": true,
     "announce_to_chat": true

@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutcomposter"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_composter.title"
+      "translate": "advancements.minecolonies.build.composter.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_composter.description"
+      "translate": "advancements.minecolonies.build.composter.description"
     },
     "show_toast": true,
     "announce_to_chat": true

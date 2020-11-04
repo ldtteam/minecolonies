@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutbuilder"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_builder.title"
+      "translate": "advancements.minecolonies.build.builder.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_builder.description"
+      "translate": "advancements.minecolonies.build.builder.description"
     },
     "show_toast": true,
     "announce_to_chat": true,

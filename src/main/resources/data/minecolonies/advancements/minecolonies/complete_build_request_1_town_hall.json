@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhuttownhall"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_town_hall.title"
+      "translate": "advancements.minecolonies.build.town_hall.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_town_hall.description"
+      "translate": "advancements.minecolonies.build.town_hall.description"
     },
     "show_toast": true,
     "announce_to_chat": true

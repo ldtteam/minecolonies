@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutcowboy"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_cowboy.title"
+      "translate": "advancements.minecolonies.build.cowboy.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_cowboy.description"
+      "translate": "advancements.minecolonies.build.cowboy.description"
     },
     "show_toast": true,
     "announce_to_chat": true

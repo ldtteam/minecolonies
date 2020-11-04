@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutbaker"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_baker.title"
+      "translate": "advancements.minecolonies.build.baker.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_baker.description"
+      "translate": "advancements.minecolonies.build.baker.description"
     },
     "show_toast": true,
     "announce_to_chat": true

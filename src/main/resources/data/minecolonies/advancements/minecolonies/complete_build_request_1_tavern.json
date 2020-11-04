@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhuttavern"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_tavern.title"
+      "translate": "advancements.minecolonies.build.tavern.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_tavern.description"
+      "translate": "advancements.minecolonies.build.tavern.description"
     },
     "show_toast": true,
     "announce_to_chat": true

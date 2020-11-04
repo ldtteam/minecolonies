@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutwarehouse"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_warehouse.title"
+      "translate": "advancements.minecolonies.build.warehouse.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_warehouse.description"
+      "translate": "advancements.minecolonies.build.warehouse.description"
     },
     "show_toast": true,
     "announce_to_chat": true

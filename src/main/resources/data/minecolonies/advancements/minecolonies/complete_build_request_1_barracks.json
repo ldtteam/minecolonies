@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutbarracks"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_barracks.title"
+      "translate": "advancements.minecolonies.build.barracks.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_barracks.description"
+      "translate": "advancements.minecolonies.build.barracks.description"
     },
     "show_toast": true,
     "announce_to_chat": true

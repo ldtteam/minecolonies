@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutsawmill"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_sawmill.title"
+      "translate": "advancements.minecolonies.build.sawmill.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_sawmill.description"
+      "translate": "advancements.minecolonies.build.sawmill.description"
     },
     "show_toast": true,
     "announce_to_chat": true

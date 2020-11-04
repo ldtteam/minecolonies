@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutflorist"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_florist.title"
+      "translate": "advancements.minecolonies.build.florist.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_florist.description"
+      "translate": "advancements.minecolonies.build.florist.description"
     },
     "show_toast": true,
     "announce_to_chat": true

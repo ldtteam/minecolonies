@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutdeliveryman"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_delivery_person.title"
+      "translate": "advancements.minecolonies.build.delivery_person.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_delivery_person.description"
+      "translate": "advancements.minecolonies.build.delivery_person.description"
     },
     "show_toast": true,
     "announce_to_chat": true

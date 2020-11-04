@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutarchery"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_archery.title"
+      "translate": "advancements.minecolonies.build.archery.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_archery.description"
+      "translate": "advancements.minecolonies.build.archery.description"
     },
     "show_toast": true,
     "announce_to_chat": true

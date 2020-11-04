@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutenchanter"
     },
     "title": {
-      "translate": "advancements.minecolonies.complete_build_request_1_enchanter.title"
+      "translate": "advancements.minecolonies.build.enchanter.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.complete_build_request_1_enchanter.description"
+      "translate": "advancements.minecolonies.build.enchanter.description"
     },
     "show_toast": true,
     "announce_to_chat": true
