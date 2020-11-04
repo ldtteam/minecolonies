@@ -447,6 +447,11 @@ public class TileEntityRack extends AbstractTileEntityRack
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
+            if (lastOptional != null && lastOptional.isPresent())
+            {
+                return (LazyOptional<T>) lastOptional;
+            }
+
             if (single)
             {
                 lastOptional = LazyOptional.of(() -> inventory);
@@ -550,6 +555,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             if (lastOptional != null)
             {
                 lastOptional.invalidate();
+                lastOptional = null;
             }
             super.setMain(main);
         }
@@ -563,6 +569,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             if (lastOptional != null)
             {
                 lastOptional.invalidate();
+                lastOptional = null;
             }
             super.setSingle(single);
         }
