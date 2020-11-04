@@ -167,6 +167,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         inventory = tempInventory;
         final BlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 0x03);
+        invalidateCap();
     }
 
     @Override
@@ -370,6 +371,8 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             this.buildingPos = BlockPosUtil.read(compound, TAG_POS);
         }
+
+        invalidateCap();
     }
 
     @NotNull
@@ -445,39 +448,45 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final Direction dir)
     {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        if (!removed && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
             if (lastOptional != null && lastOptional.isPresent())
             {
-                return (LazyOptional<T>) lastOptional;
+                return lastOptional.cast();
             }
 
             if (single)
             {
-                lastOptional = LazyOptional.of(() -> inventory);
-                return (LazyOptional<T>) lastOptional;
+                lastOptional = LazyOptional.of(() ->
+                {
+                    if (this.isRemoved())
+                    {
+                        return new RackInventory(0);
+                    }
+
+                    return new CombinedItemHandler(RACK, getInventory());
+                });
+                return lastOptional.cast();
             }
-            else if (getOtherChest() != null)
+            else
             {
-                if (isMain())
+                lastOptional = LazyOptional.of(() ->
                 {
-                    lastOptional = LazyOptional.of(() -> new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory()));
-                    return (LazyOptional<T>) lastOptional;
-                }
-                else
-                {
-                    if (getOtherChest().isMain())
+                    if (this.isRemoved())
                     {
-                        lastOptional = getOtherChest().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-                        return (LazyOptional<T>) lastOptional;
+                        return new RackInventory(0);
                     }
-                    else
+
+                    final AbstractTileEntityRack other = getOtherChest();
+                    if (other == null)
                     {
-                        setMain(true);
-                        lastOptional = LazyOptional.of(() -> new CombinedItemHandler(RACK, inventory, getOtherChest().getInventory()));
-                        return (LazyOptional<T>) lastOptional;
+                        return new CombinedItemHandler(RACK, getInventory());
                     }
-                }
+
+                    return new CombinedItemHandler(RACK, getInventory(), other.getInventory());
+                });
+
+                return lastOptional.cast();
             }
         }
         return super.getCapability(capability, dir);
@@ -552,11 +561,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     {
         if (main != this.main)
         {
-            if (lastOptional != null)
-            {
-                lastOptional.invalidate();
-                lastOptional = null;
-            }
+            invalidateCap();
             super.setMain(main);
         }
     }
@@ -566,12 +571,35 @@ public class TileEntityRack extends AbstractTileEntityRack
     {
         if (single != this.single)
         {
-            if (lastOptional != null)
-            {
-                lastOptional.invalidate();
-                lastOptional = null;
-            }
+            invalidateCap();
             super.setSingle(single);
         }
+    }
+
+    @Override
+    public void remove()
+    {
+        super.remove();
+        invalidateCap();
+    }
+
+    @Override
+    public void updateContainingBlockInfo()
+    {
+        super.updateContainingBlockInfo();
+        invalidateCap();
+    }
+
+    /**
+     * Invalidates the cap
+     */
+    private void invalidateCap()
+    {
+        if (lastOptional != null && lastOptional.isPresent())
+        {
+            lastOptional.invalidate();
+        }
+
+        lastOptional = null;
     }
 }
