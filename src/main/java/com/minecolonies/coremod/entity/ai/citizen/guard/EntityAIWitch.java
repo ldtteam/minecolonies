@@ -344,13 +344,13 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
 
         for (final LivingEntity entity : entities)
         {
-            if (!worker.canEntityBeSeen(entity) || !entity.isAlive())
+            if (!entity.isAlive())
             {
                 continue;
             }
             final int tempDistance = (int) BlockPosUtil.getDistanceSquared(worker.getPosition(), entity.getPosition());
 
-            if (isAlly(entity))
+            if (isAlly(entity) && worker.canEntityBeSeen(entity))
             {
                 /*if (entity instanceof EntityCitizen)
                 {
@@ -372,7 +372,7 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
                     isAlly = true;
                 }
             }
-            else if (isEntityValidTarget(entity))
+            else if (isEntityValidTarget(entity) && worker.canEntityBeSeen(entity))
             {
                 // Find closest
                 if (tempDistance < closest)
