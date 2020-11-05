@@ -10,8 +10,8 @@
       "translate": "advancements.minecolonies.root.build.description"
     },
     "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
-    "show_toast": true,
-    "announce_to_chat": true
+    "show_toast": false,
+    "announce_to_chat": false
   },
   "criteria": {
     "builders_hut": {

@@ -1,18 +1,18 @@
 {
-  "parent": "minecolonies:minecolonies/colony_population_25",
+  "parent": "minecolonies:minecolonies/colony_population_50",
   "display": {
     "icon": {
-      "item": "minecraft:diamond"
+      "item": "minecraft:emerald"
     },
     "title": {
-      "translate": "advancements.minecolonies.colony_population_50.title"
+      "translate": "advancements.minecolonies.colony_population_75.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.colony_population_50.description"
+      "translate": "advancements.minecolonies.colony_population_75.description"
     },
     "show_toast": true,
     "announce_to_chat": true,
-    "frame": "goal"
+    "frame": "challenge"
   },
   "criteria": {
     "population_5": {

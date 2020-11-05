@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:minecolonies/colony_population_5",
+  "parent": "minecolonies:colony_building/build_citizen",
   "display": {
     "icon": {
       "item": "minecolonies:blockhutlibrary"
