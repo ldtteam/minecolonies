@@ -18,6 +18,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PotionEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.PotionItem;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.potion.PotionUtils;
@@ -575,9 +576,12 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
             default:
                 target = debuffTarget;
         }
-        worker.getNavigator().tryMoveToBlockPos(
-          worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 8),
-          getCombatMovementSpeed());
+        if (target != null)
+        {
+            worker.getNavigator().tryMoveToBlockPos(
+              worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 8),
+              getCombatMovementSpeed());
+        }
     }
 
     /**
@@ -619,7 +623,7 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
         if (getState() instanceof AIWorkerState)
         {
             final AIWorkerState state = (AIWorkerState) getState();
-            final ItemStack stack = new ItemStack(Items.POTION);
+            final ItemStack stack = new ItemStack(Items.SPLASH_POTION);
             if (state == WITCH_GUARD_ATTACK_BUFF)
             {
                 PotionUtils.appendEffects(stack, Collections.singleton(getBuffEffect()));
