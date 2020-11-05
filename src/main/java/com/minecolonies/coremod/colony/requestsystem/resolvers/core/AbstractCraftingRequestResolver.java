@@ -12,9 +12,11 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.research.effects.AbstractResearchEffect;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 
 import net.minecraft.block.Blocks;
@@ -28,6 +30,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DEPTH;
+import static com.minecolonies.api.research.util.ResearchConstants.INV_SLOTS;
 
 /**
  * Abstract crafting resolver for all crafting tasks.
@@ -242,20 +245,63 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             return null;
         }
 
-        return createRequestsForRecipe(manager, craftableCrafting.getPrimaryOutput(), count, minCount);
+        return createRequestsForRecipe(manager, craftableCrafting, count, minCount);
     }
 
+    /**
+     * Create the crafting request entries for the overall request
+     * Will produce multiple, if the ingredients don't all fit in the crafters inventory. 
+     * @param manager       request manager
+     * @param recipeRequest requested recipe instance
+     * @param count         count of item requested
+     * @param minCount      minimum count required
+     * @return List of crafting requests necessary to fulfill the overall requests
+     */
     @Nullable
     protected List<IToken<?>> createRequestsForRecipe(
       @NotNull final IRequestManager manager,
-      final ItemStack requestStack,
+      final IRecipeStorage recipeRequest,
       final int count,
       final int minCount)
     {
-        final int recipeExecutionsCount = (int) Math.ceil((double) count / requestStack.getCount());
-        final int minRecipeExecutionsCount = (int) Math.ceil((double) minCount / requestStack.getCount());
+        final List<ItemStorage> inputs = recipeRequest.getCleanedInput();
+        final ItemStack requestStack = recipeRequest.getPrimaryOutput();
+        final AbstractResearchEffect<Double> researchEffect =  manager.getColony().getResearchManager().getResearchEffects().getEffect(INV_SLOTS, AbstractResearchEffect.class);
+        final int extraSlots = researchEffect != null ? researchEffect.getEffect().intValue() : 0;         
+        final int maxSlots = (27 + extraSlots) - (27 + extraSlots) % 8;  // retaining 1 slot per row for 'overhead'
 
-        return ImmutableList.of(manager.createRequest(this, createNewRequestableForStack(requestStack.copy(), recipeExecutionsCount, Math.max(1, minRecipeExecutionsCount))));
+        int recipeExecutionsCount = (int) Math.ceil((double) count / requestStack.getCount());
+        int minRecipeExecutionsCount = (int) Math.ceil((double) minCount / requestStack.getCount());
+        int batchSize = recipeExecutionsCount;
+        int totalSlots = Integer.MAX_VALUE;
+
+        //Calculate how many slots are needed, and figure out the maximum number of iterations we can load ingredients for into inventory
+        while (totalSlots > maxSlots)
+        {
+            //Start with how much space needed for the output, it's a little naive, as it assumes we need full output and ingredients at the same time
+            int stacksNeeded = (int) Math.ceil((double)(requestStack.getCount() * batchSize) / requestStack.getMaxStackSize());
+            for(ItemStorage ingredient : inputs)
+            {
+                stacksNeeded += (int) Math.ceil((double)(ingredient.getAmount() * batchSize) / ingredient.getItemStack().getMaxStackSize());
+            }
+            if (stacksNeeded > maxSlots)
+            {
+                //We can't fit everything into inventory. Reduce the batch size by the ratio of what we calculated and what we have available. 
+                batchSize = (int) Math.floor((double) batchSize * ((double) maxSlots / stacksNeeded));
+            }
+            totalSlots = Math.min(totalSlots, stacksNeeded);
+        }
+
+        //Create a crafting request for each batch needed to supply the full request
+        List<IToken<?>> requests = new ArrayList<>();
+        while(recipeExecutionsCount > 0)
+        {
+            requests.add(manager.createRequest(this, createNewRequestableForStack(requestStack.copy(), Math.min(batchSize, recipeExecutionsCount), Math.max(1, Math.min(batchSize, minRecipeExecutionsCount)))));
+            recipeExecutionsCount -= batchSize;
+            minRecipeExecutionsCount  = minRecipeExecutionsCount > batchSize ? minRecipeExecutionsCount - batchSize : 0; 
+        }
+
+        return ImmutableList.copyOf(requests);
     }
 
     /**

@@ -42,6 +42,13 @@ public interface IRecipeManager
     IToken<?> getRecipeId(final IRecipeStorage storage);
 
     /**
+     * Register the recipe as used with the recipe manager
+     * 
+     * @param token the recipe token
+     */
+    void registerUse(final IToken<?> token);
+
+    /**
      * Write colonies to NBT data for saving.
      *
      * @param compound NBT-Tag.
@@ -54,4 +61,9 @@ public interface IRecipeManager
      * @param compound NBT Tag.
      */
     void read(@NotNull final CompoundNBT compound);
+
+    /**
+     * Clear the recipe list (used during shutdown)
+     */
+    void reset();
 }

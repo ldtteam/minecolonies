@@ -101,6 +101,6 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public boolean isInventoryFull()
     {
-        return InventoryUtils.isProviderFull(citizen);
+        return !citizen.getInventoryCitizen().hasSpace();
     }
 }

@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
+import com.minecolonies.api.colony.buildings.IWorkerLivingBuilding;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
@@ -144,9 +145,16 @@ public class CitizenManager implements ICitizenManager
         final ICitizenData data = citizens.get(entity.getCivilianID());
         if (data != null && data.getEntity().isPresent() && data.getEntity().get() == entity)
         {
-            if (colony.getWorld().getScoreboard().getPlayersTeam(entity.getScoreboardName()) == colony.getTeam())
+            try
             {
-                colony.getWorld().getScoreboard().removePlayerFromTeam(entity.getScoreboardName(), colony.getTeam());
+                if (colony.getWorld().getScoreboard().getPlayersTeam(entity.getScoreboardName()) == colony.getTeam())
+                {
+                    colony.getWorld().getScoreboard().removePlayerFromTeam(entity.getScoreboardName(), colony.getTeam());
+                }
+            }
+            catch (Exception ignored)
+            {
+                // For some weird reason we can get an exception here, though the exception is thrown for team != colony team which we check == on before
             }
 
             citizens.get(entity.getCivilianID()).setEntity(null);
@@ -221,20 +229,29 @@ public class CitizenManager implements ICitizenManager
         }
 
         BlockPos spawnLocation = spawnPos;
-        if (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO))
+        if (colony.hasTownHall() && (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO)))
         {
             spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
         }
 
         if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), spawnLocation))
         {
-            final BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+            BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
             if (calculatedSpawn != null)
             {
                 return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
             }
             else
             {
+                if (colony.hasTownHall())
+                {
+                    calculatedSpawn = EntityUtils.getSpawnPoint(world, colony.getBuildingManager().getTownHall().getID());
+                    if (calculatedSpawn != null)
+                    {
+                        return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
+                    }
+                }
+
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                   "com.minecolonies.coremod.citizens.nospace",
                   spawnLocation.getX(),
@@ -279,10 +296,11 @@ public class CitizenManager implements ICitizenManager
             colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(spawnPoint, citizenData.getName()));
         }
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
-        entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
 
         entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
         world.addEntity(entity);
+
+        entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
 
         colony.getProgressManager()
           .progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
@@ -363,20 +381,17 @@ public class CitizenManager implements ICitizenManager
         {
             if (b.getBuildingLevel() > 0)
             {
-                if (b instanceof IBuildingBedProvider)
+                if (b instanceof IWorkerLivingBuilding)
                 {
-                    newMaxCitizens += b.getMaxInhabitants();
-                }
-                else if (b instanceof AbstractBuildingGuards && b.getBuildingLevel() > 0)
-                {
-                    if (b.getAssignedCitizen().size() != 0)
-                    {
-                        newMaxCitizens += b.getAssignedCitizen().size();
-                    }
-                    else
+                    newMaxCitizens += b.getAssignedCitizen().size();
+                    if ((b instanceof AbstractBuildingGuards) && b.getAssignedCitizen().size() == 0 && b.getBuildingLevel() > 0)
                     {
                         potentialMax += 1;
                     }
+                }
+                else if (b instanceof IBuildingBedProvider)
+                {
+                    newMaxCitizens += b.getMaxInhabitants();
                 }
             }
         }
@@ -453,6 +468,11 @@ public class CitizenManager implements ICitizenManager
         if (effect != null)
         {
             max += effect.getEffect();
+            // TODO research data rework
+            if (max >= 200)
+            {
+                return MineColonies.getConfig().getCommon().maxCitizenPerColony.get() - 25;
+            }
         }
         return max;
     }

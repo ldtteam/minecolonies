@@ -14,34 +14,41 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedList;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LIST;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TOKEN;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSystemDeliveryManJobDataStore
 {
 
     private       IToken<?>             id;
     private final LinkedList<IToken<?>> queue;
+    private final Set<IToken<?>> ongoingDeliveries;
 
-    public StandardRequestSystemDeliveryManJobDataStore(final IToken<?> id, final LinkedList<IToken<?>> queue)
+    public StandardRequestSystemDeliveryManJobDataStore(final IToken<?> id, final LinkedList<IToken<?>> queue, final Set<IToken<?>> ongoingDeliveries)
     {
         this.id = id;
         this.queue = queue;
+        this.ongoingDeliveries = ongoingDeliveries;
     }
 
     public StandardRequestSystemDeliveryManJobDataStore()
     {
         this(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          new LinkedList<>());
+          new LinkedList<>(), new HashSet<>());
     }
 
     @Override
     public LinkedList<IToken<?>> getQueue()
     {
         return queue;
+    }
+
+    @Override
+    public Set<IToken<?>> getOngoingDeliveries()
+    {
+        return ongoingDeliveries;
     }
 
     @Override
@@ -89,6 +96,7 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
             final CompoundNBT compound = new CompoundNBT();
             compound.put(TAG_TOKEN, controller.serialize(standardRequestSystemDeliveryManJobDataStore.id));
             compound.put(TAG_LIST, standardRequestSystemDeliveryManJobDataStore.queue.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
+            compound.put(TAG_ONGOING_LIST, standardRequestSystemDeliveryManJobDataStore.ongoingDeliveries.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
             return compound;
         }
 
@@ -99,8 +107,11 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
                                                   .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
-                                                  .collect(Collectors.toCollection(LinkedList<IToken<?>>::new));
-            return new StandardRequestSystemDeliveryManJobDataStore(token, queue);
+                                                  .collect(Collectors.toCollection(LinkedList::new));
+            final HashSet<IToken<?>> ongoingDeliveries = NBTUtils.streamCompound(nbt.getList(TAG_ONGOING_LIST, Constants.NBT.TAG_COMPOUND))
+                                                  .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
+                                                  .collect(Collectors.toCollection(HashSet::new));
+            return new StandardRequestSystemDeliveryManJobDataStore(token, queue, ongoingDeliveries);
         }
 
         @Override
@@ -111,22 +122,33 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.queue.size());
             input.queue.forEach(entry -> controller.serialize(packetBuffer, entry));
+            packetBuffer.writeInt(input.ongoingDeliveries.size());
+            input.ongoingDeliveries.forEach(entry -> controller.serialize(packetBuffer, entry));
         }
 
+        @NotNull
         @Override
         public StandardRequestSystemDeliveryManJobDataStore deserialize(
           IFactoryController controller,
-          PacketBuffer buffer) throws Throwable
+          @NotNull PacketBuffer buffer) throws Throwable
         {
             final IToken<?> id = controller.deserialize(buffer);
             final LinkedList<IToken<?>> queue = new LinkedList<>();
+            final Set<IToken<?>> ongoingDeliveries = new HashSet<>();
+
             final int queueSize = buffer.readInt();
             for (int i = 0; i < queueSize; ++i)
             {
                 queue.add(controller.deserialize(buffer));
             }
 
-            return new StandardRequestSystemDeliveryManJobDataStore(id, queue);
+            final int ongoingSize = buffer.readInt();
+            for (int i = 0; i < ongoingSize; ++i)
+            {
+                queue.add(controller.deserialize(buffer));
+            }
+
+            return new StandardRequestSystemDeliveryManJobDataStore(id, queue, ongoingDeliveries);
         }
 
         @Override

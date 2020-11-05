@@ -21,7 +21,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
     protected final MobEntity    ourEntity;
     @Nullable
     protected       BlockPos     destination;
-    protected       double       walkSpeed = 1.0D;
+    protected       double       walkSpeedFactor = 1.0D;
     @Nullable
     protected       BlockPos     originalDestination;
     @Nullable

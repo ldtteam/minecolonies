@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -10,7 +11,6 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.util.Hand;
@@ -51,7 +51,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
     /**
      * Base rate experience for every shot.
      */
-    private static final double XP_BASE_RATE = 2;
+    private static final double XP_BASE_RATE = 0.2;
 
     /**
      * Time to wait before analyzing the shot.
@@ -163,7 +163,8 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             WorkerUtil.faceBlock(currentShootingTarget, worker);
             worker.swingArm(Hand.MAIN_HAND);
 
-            final ArrowEntity arrow = EntityType.ARROW.create(world);
+            final ArrowEntity arrow = ModEntities.MC_NORMAL_ARROW.create(world);
+            arrow.setDamage(0);
             arrow.setShooter(worker);
             arrow.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
             final double xVector = currentShootingTarget.getX() - worker.getPosX();

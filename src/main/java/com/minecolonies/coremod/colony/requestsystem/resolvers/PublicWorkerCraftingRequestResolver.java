@@ -1,13 +1,14 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
+import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.item.ItemStack;
@@ -74,7 +75,13 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     @Override
     public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        return new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_PUBLIC_CRAFTING_RESOLVER_NAME);
+        final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
+        if (requester instanceof IBuildingWorkerView)
+        {
+            final IBuildingWorkerView bwv = (IBuildingWorkerView) requester;
+            return new TranslationTextComponent(bwv.getJobDisplayName().toLowerCase());
+        }
+        return super.getRequesterDisplayName(manager, request);
     }
 
     @Override

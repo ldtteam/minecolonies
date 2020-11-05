@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest.MISSING;
 
 /**
  * Window for the request trees.
@@ -316,18 +317,20 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                     logo.setVisible(false);
                     exampleStackDisplay.setVisible(true);
                     exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
+                    rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText());
                 }
                 else
                 {
                     exampleStackDisplay.setVisible(false);
-                    logo.setVisible(true);
-                    logo.setImage(request.getDisplayIcon());
+                    if (!request.getDisplayIcon().equals(MISSING))
+                    {
+                        logo.setVisible(true);
+                        logo.setImage(request.getDisplayIcon());
+                        logo.setHoverToolTip(request.getResolverToolTip(colony));
+                    }
                 }
 
-                rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                  .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText());
-                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-                  .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
+                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
                 if (!cancellable(request))
                 {

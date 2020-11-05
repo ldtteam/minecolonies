@@ -229,6 +229,16 @@ public final class CitizenConstants
     public static final String GUARD_HEALTH_MOD_BUILDING_NAME = "MinecoloniesGuardBuildingHP";
 
     /**
+     * The Research health modifier name.
+     */
+    public static final String RESEARCH_BONUS_MULTIPLIER = "ResearchSpeedBonus";
+
+    /**
+     * The addition skill bonus speed modifier
+     */
+    public static final String SKILL_BONUS_ADD = "SkillSpeedBonus";
+
+    /**
      * The Config guard health modifier name
      */
     public static final String GUARD_HEALTH_MOD_CONFIG_NAME = "MinecoloniesGuardConfigHP";
@@ -286,7 +296,7 @@ public final class CitizenConstants
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
      */
-    public static final double XP_EACH_BUILDING = 10.0D;
+    public static final double XP_EACH_BUILDING = 8.0D;
 
     /**
      * Increase this value to make the building speed slower. Used to balance worker level speed increase.

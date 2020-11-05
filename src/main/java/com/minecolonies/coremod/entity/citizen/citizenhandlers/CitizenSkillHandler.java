@@ -73,12 +73,27 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     @Override
     public void init(@NotNull final ICitizenData mom, @NotNull final ICitizenData dad, final Random rand)
     {
+        final int levelCap = (int) mom.getColony().getOverallHappiness();
+        init(levelCap);
+
+        final int bonusPoints = 25 + rand.nextInt(25);
+
+        int totalPoints = 0;
         for (final Skill skill : Skill.values())
         {
-            skillMap.put(skill,
-              new Tuple<>(Math.max(1,
-                (Math.min(MAX_INHERITANCE, mom.getCitizenSkillHandler().getLevel(skill)) + Math.min(MAX_INHERITANCE, dad.getCitizenSkillHandler().getLevel(skill))) / 2
-                  + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE)), 0.0D));
+            final int momLevel = mom.getCitizenSkillHandler().getSkills().get(skill).getA();
+            final int dadLevel = dad.getCitizenSkillHandler().getSkills().get(skill).getA();
+            totalPoints += momLevel + dadLevel;
+        }
+
+        for (final Skill skill : Skill.values())
+        {
+            final double momLevel = mom.getCitizenSkillHandler().getSkills().get(skill).getA();
+            final double dadLevel = dad.getCitizenSkillHandler().getSkills().get(skill).getA();
+
+            int newPoints = (int) (((momLevel + dadLevel) / totalPoints) * bonusPoints);
+
+            skillMap.put(skill, new Tuple<>(skillMap.get(skill).getA() + newPoints, 0.0D));
         }
     }
 
@@ -125,7 +140,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
             return;
         }
 
-        final int levelCap = (int) citizen.getCitizenHappinessHandler().getHappiness();
+        final int levelCap = (int) citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony());
         if (skillMap.get(Skill.Intelligence).getB() < levelCap * 9)
         {
             addXpToSkill(Skill.Intelligence, 10, citizen);
@@ -195,10 +210,10 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         double xpToDiscount = xp;
         while (xpToDiscount > 0)
         {
-            if (currentXp >= xpToDiscount)
+            if (currentXp >= xpToDiscount || level <= 1)
             {
-                skillMap.put(skill, new Tuple<>(Math.max(1, level), currentXp - xpToDiscount));
-                xpToDiscount = 0;
+                skillMap.put(skill, new Tuple<>(Math.max(1, level), Math.max(0, currentXp - xpToDiscount)));
+                break;
             }
             else
             {

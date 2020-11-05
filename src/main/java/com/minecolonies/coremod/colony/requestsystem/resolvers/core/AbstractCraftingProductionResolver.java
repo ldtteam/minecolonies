@@ -109,7 +109,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             return null;
         }
 
-        final IRecipeStorage fullfillableCrafting = building.getFirstFullFillableRecipe(stack, count);
+        final IRecipeStorage fullfillableCrafting = building.getFirstFullFillableRecipe(stack, count, true);
         if (fullfillableCrafting != null)
         {
             return ImmutableList.of();
@@ -144,13 +144,17 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
                 final ItemStack craftingHelperStack = ingredient.getItemStack().copy();
                 final ItemStack container = ingredient.getItem().getContainerItem(ingredient.getItemStack());
                 //if recipe secondary produces craftinghelperstack, don't add it by count, add it once. Or get fancy and calculate durability and add appropriately
-                if (!ItemStackUtils.isEmpty(container) && ItemStackUtils.compareItemStacksIgnoreStackSize(container, craftingHelperStack, false, true))
+                if(!storage.getSecondaryOutputs().isEmpty() && ItemStackUtils.compareItemStackListIgnoreStackSize(storage.getSecondaryOutputs(), craftingHelperStack, false, true))
+                {
+                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount(), ingredient.getAmount()));
+                }
+                else if (!ItemStackUtils.isEmpty(container) && ItemStackUtils.compareItemStacksIgnoreStackSize(container, craftingHelperStack, false, true))
                 {
                     materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount(), ingredient.getAmount()));
                 } 
                 else
                 {
-                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount() * count, ingredient.getAmount() * minCount));
+                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount() * count, ingredient.getAmount() * minCount ));
                 }
             }
         }
@@ -204,7 +208,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack(), request.getRequest().getCount());
+        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack(), request.getRequest().getCount(), false);
 
         if (storage == null)
         {

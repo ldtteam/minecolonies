@@ -19,7 +19,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
@@ -32,7 +31,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraf
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.util.FurnaceRecipes;
-
+import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -47,11 +46,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import io.netty.buffer.Unpooled;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -283,10 +279,10 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count)
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
     {
         //Try to fulfill normally
-        IRecipeStorage storage = super.getFirstFullFillableRecipe(stackPredicate, count);
+        IRecipeStorage storage = super.getFirstFullFillableRecipe(stackPredicate, count, considerReservation);
 
         //Couldn't fulfill normally, let's try to fulfill with a temporary smelting recipe. 
         if(storage == null)
@@ -295,7 +291,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             if (storage != null)
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if (!storage.canFullFillRecipe(count, handlers.toArray(new IItemHandler[0])))
+                if (!storage.canFullFillRecipe(count, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
                 {
                     return null;
                 }
@@ -303,6 +299,34 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         }
 
         return storage;
+    }
+
+    /**
+     * Get the list of items that the assistant needs to craft the currently queued tasks
+     */
+    public Set<ItemStack> getAssistantItems()
+    {
+        final Set<ItemStack> recipeOutputs = new HashSet<>();
+        for (final ICitizenData citizen : getAssignedCitizen())
+        {
+            if (citizen.getJob() instanceof AbstractJobCrafter)
+            {
+                final List<IToken<?>> assignedTasks = citizen.getJob(AbstractJobCrafter.class).getAssignedTasks();
+                for (final IToken<?> taskToken : assignedTasks)
+                {
+                    final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
+                    final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
+                    if (recipeStorage != null)
+                    {
+                        for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
+                        {
+                            recipeOutputs.add(itemStorage.getItemStack());
+                        }
+                    }
+                }
+            }
+        }
+        return recipeOutputs;
     }
 
     @Override
@@ -449,6 +473,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     @Override
     public void onColonyTick(final IColony colony)
     {
+        // TODO: Request on tick if no food, so that foo gets distributed from the warehouse even when there is currently no cook
         super.onColonyTick(colony);
         if(isCookingTimeout > 0)
         {

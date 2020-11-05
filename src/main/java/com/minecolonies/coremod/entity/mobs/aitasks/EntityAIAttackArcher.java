@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
@@ -33,15 +33,15 @@ public class EntityAIAttackArcher extends Goal
      */
     private static final double ARROW_PIERCE_DIFFICULTY = 3.0d;
 
-    private static final double                        PITCH_MULTIPLIER               = 0.4;
-    private static final double                        HALF_ROTATION                  = 180;
-    private static final double                        ATTACK_SPEED                   = 1.3;
-    private static final double                        AIM_HEIGHT                     = 2.0D;
-    private static final double                        ARROW_SPEED                    = 1.4D;
-    private static final double                        HIT_CHANCE                     = 10.0D;
-    private static final double                        AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.20000000298023224D;
-    private static final double                        BASE_PITCH                     = 0.8D;
-    private static final double                        PITCH_DIVIDER                  = 1.0D;
+    private static final double PITCH_MULTIPLIER               = 0.4;
+    private static final double HALF_ROTATION                  = 180;
+    private static final double ATTACK_SPEED                   = 1.1;
+    private static final double AIM_HEIGHT                     = 2.0D;
+    private static final double ARROW_SPEED                    = 1.4D;
+    private static final double HIT_CHANCE                     = 10.0D;
+    private static final double AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.20000000298023224D;
+    private static final double BASE_PITCH                     = 0.8D;
+    private static final double PITCH_DIVIDER                  = 1.0D;
     private static final double                        MAX_ATTACK_DISTANCE            = 20.0D;
     private static final double                        SPEED_FOR_DIST                 = 35;
     private final        AbstractEntityMinecoloniesMob entity;
@@ -128,7 +128,7 @@ public class EntityAIAttackArcher extends Goal
 
             if (lastAttack <= 0 && entity.canEntityBeSeen(target))
             {
-                AbstractArrowEntity arrowEntity = EntityType.ARROW.create(target.world);
+                AbstractArrowEntity arrowEntity = ModEntities.MC_NORMAL_ARROW.create(target.world);
                 arrowEntity.setShooter(entity);
 
                 final ItemStack bow = entity.getHeldItem(Hand.MAIN_HAND);

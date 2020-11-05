@@ -76,6 +76,14 @@ public interface IBuildingManager
     IBuilding getBuilding(BlockPos pos);
 
     /**
+     * Get the closest warehouse relative to a position.
+     * @param pos the position,.
+     * @return the closest warehouse.
+     */
+    @Nullable
+    IWareHouse getClosestWarehouseInColony(BlockPos pos);
+
+    /**
      * Returns a map with all buildings within the colony. Key is ID (Coordinates), value is building object.
      *
      * @return Map with ID (coordinates) as key, and buildings as value.

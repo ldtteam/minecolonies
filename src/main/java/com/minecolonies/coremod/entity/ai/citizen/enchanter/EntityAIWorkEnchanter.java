@@ -75,6 +75,11 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
     private static final int MANA_REQ_PER_LEVEL = 10;
 
     /**
+     * XP per drain
+     */
+    private static final double XP_PER_DRAIN = 10;
+
+    /**
      * The citizen entity to gather from.
      */
     private ICitizenData citizenToGatherFrom = null;
@@ -131,7 +136,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
             final int booksInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_BOOK);
             if (booksInInv <= 0)
             {
-                final int numberOfBooksInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_BOOK);
+                final int numberOfBooksInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), IS_BOOK);
                 if (numberOfBooksInBuilding > 0)
                 {
                     needsCurrently = new Tuple<>(IS_BOOK, 1);
@@ -153,7 +158,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
         final int ancientTomesInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_ANCIENT_TOME);
         if (ancientTomesInInv <= 0)
         {
-            final int amountOfAncientTomes = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_ANCIENT_TOME);
+            final int amountOfAncientTomes = InventoryUtils.getCountFromBuilding(getOwnBuilding(), IS_ANCIENT_TOME);
             if (amountOfAncientTomes > 0)
             {
                 needsCurrently = new Tuple<>(IS_ANCIENT_TOME, 1);
@@ -372,6 +377,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
 
             worker.getInventoryCitizen().extractItem(bookSlot, 1, false);
             worker.getCitizenData().getCitizenSkillHandler().incrementLevel(Skill.Mana, 1);
+            worker.getCitizenExperienceHandler().addExperience(XP_PER_DRAIN);
             worker.getCitizenData().markDirty();
         }
         resetDraining();

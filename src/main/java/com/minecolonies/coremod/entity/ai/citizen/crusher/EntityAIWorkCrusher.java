@@ -29,7 +29,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
     /**
      * Delay for each of the craftings.
      */
-    private static final int TICK_DELAY = 20;
+    private static final int TICK_DELAY = 40;
 
     /**
      * Crusher icon
@@ -206,7 +206,6 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
                     if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
                     {
                         job.finishRequest(true);
-                        worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
                     }
                 }
             }

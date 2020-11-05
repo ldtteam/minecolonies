@@ -52,11 +52,11 @@ public interface IBuildingContainer extends ICitizenAssignable, ICapabilityProvi
     void removeContainerPosition(BlockPos pos);
 
     /**
-     * Get all additional containers which belong to the building.
+     * Get all containers which belong to the building (including hutblock).
      *
      * @return a copy of the list to avoid currentModification exception.
      */
-    List<BlockPos> getAdditionalCountainers();
+    List<BlockPos> getContainers();
 
     /**
      * Register a blockState and position. We suppress this warning since this parameter will be used in child classes which override this method.

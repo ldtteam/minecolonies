@@ -47,10 +47,6 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
  */
 public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFurnaceUser implements IBuildingPublicCrafter
 {
-    /**
-     * Extra amount of recipes the crafters can learn.
-     */
-    private static final int EXTRA_RECIPE_MULTIPLIER = 10;
 
     /**
      * Instantiates a new crafter building.
@@ -96,16 +92,17 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
                 for (final IToken<?> taskToken : assignedTaskIds)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
-                    final IRecipeStorage recipeStorage = getFirstFullFillableRecipe(request.getRequest().getStack());
+                    final IRecipeStorage recipeStorage = getFirstFullFillableRecipe(request.getRequest().getStack(), false);
                     if (recipeStorage != null)
                     {
                         for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
                         {
+                            int amount = itemStorage.getAmount() * request.getRequest().getCount();
                             if (recipeOutputs.containsKey(itemStorage))
                             {
-                                itemStorage.setAmount(recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount());
+                                amount += recipeOutputs.get(itemStorage).getA();
                             }
-                            recipeOutputs.put(itemStorage, new Tuple<>(itemStorage.getAmount(), true));
+                            recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
                         }
                     }
                 }
@@ -121,12 +118,6 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
     public boolean canCraftComplexRecipes()
     {
         return true;
-    }
-
-    @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-        return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
     }
 
     @Override
@@ -157,6 +148,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
         }, getID());
     }
 
+
     /**
      * Crafter building View.
      */
@@ -173,26 +165,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
             super(c, l);
         }
 
-        /**
-         * Check if an additional recipe can be added.
-         *
-         * @return true if so.
-         */
-        public boolean canRecipeBeAdded()
-        {
-            return AbstractBuildingSmelterCrafter.canBuildingCanLearnMoreRecipes(getBuildingLevel(), super.getRecipes().size());
-        }
     }
 
-    /**
-     * Check if an additional recipe can be added.
-     *
-     * @param learnedRecipes the learned recipes.
-     * @param buildingLevel  the building level.
-     * @return true if so.
-     */
-    public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)
-    {
-        return (Math.pow(2, buildingLevel) * EXTRA_RECIPE_MULTIPLIER) >= (learnedRecipes + 1);
-    }
+
 }
