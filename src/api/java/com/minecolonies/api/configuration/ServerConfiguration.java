@@ -901,6 +901,7 @@ public class ServerConfiguration extends AbstractConfiguration
                      "1,minecraft:smite,1,50",
                      "1,minecraft:sweeping,1,50",
                      "1,minecraft:unbreaking,1,50",
+                     "3,minecolonies:raider_damage_enchant,1,15",
 
                      "2,minecraft:aqua_affinity,2,25",
                      "2,minecraft:bane_of_arthropods,2,25",
@@ -987,6 +988,7 @@ public class ServerConfiguration extends AbstractConfiguration
                      "5,minecraft:sharpness,5,1",
                      "5,minecraft:smite,5,1",
                      "5,minecraft:sweeping,5,1",
+                     "5,minecolonies:raider_damage_enchant,2,3",
                      "5,minecraft:unbreaking,5,1"
                    ),
           s -> s instanceof String);

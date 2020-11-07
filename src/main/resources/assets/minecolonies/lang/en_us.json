@@ -887,6 +887,8 @@
   "com.minecolonies.coremod.item.bannerrallyguards.gui.error": "Error modifying banner. Please try again.",
   "block.minecolonies.blockpaperwall": "Paper Wall",
 
+  "enchantment.minecolonies.raider_damage_enchant": "Raider's Bane",
+
   "com.minecolonies.coremod.item.gate.craft": "Crafted by the Mechanic",
   "com.minecolonies.coremod.item.gate.place": "Autoplaces parts. The max size is 5x4 which needs a stack of 20.",
 

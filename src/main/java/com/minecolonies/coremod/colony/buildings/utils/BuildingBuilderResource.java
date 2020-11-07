@@ -208,7 +208,7 @@ public class BuildingBuilderResource extends ItemStorage
     public static class ResourceComparator implements Comparator<BuildingBuilderResource>, Serializable
     {
         private static final long                                serialVersionUID = 1;
-        private static final Map<RessourceAvailability, Integer> order            = new HashMap<>();
+        private final        Map<RessourceAvailability, Integer> order            = new HashMap<>();
 
         public ResourceComparator(final RessourceAvailability... resourceOrder)
         {
