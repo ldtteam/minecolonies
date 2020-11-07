@@ -4,8 +4,7 @@ import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
-import com.minecolonies.api.colony.buildings.modules.IDefinesCoreBuildingStatsModule;
+import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.TavernSounds;
@@ -42,7 +41,7 @@ import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
 /**
  * Tavern building for the colony. Houses 4 citizens Plays a tavern theme on entering Spawns/allows citizen recruitment Spawns trader/quest npcs
  */
-public class TavernCoreBuildingStatsModule extends AbstractBuildingModule implements IDefinesCoreBuildingStatsModule
+public class TavernCoreBuildingStatsModule extends AbstractBuildingModule implements IDefinesCoreBuildingStatsModule, IBuildingEventsModule, IStoresDataModule, ITickingModule
 {
     /**
      * Schematic name
@@ -141,7 +140,6 @@ public class TavernCoreBuildingStatsModule extends AbstractBuildingModule implem
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        super.onColonyTick(colony);
         if (musicCooldown > 0)
         {
             musicCooldown -= MAX_TICKRATE;
@@ -166,7 +164,6 @@ public class TavernCoreBuildingStatsModule extends AbstractBuildingModule implem
     @Override
     public void onUpgradeComplete(final int newlevel)
     {
-        super.onUpgradeComplete(newlevel);
         initTags = false;
     }
 
@@ -259,7 +256,6 @@ public class TavernCoreBuildingStatsModule extends AbstractBuildingModule implem
     @Override
     public void deserializeNBT(final CompoundNBT nbt)
     {
-        super.deserializeNBT(nbt);
         final ListNBT visitorlist = nbt.getList(TAG_VISITORS, TAG_COMPOUND);
         for (final INBT data : visitorlist)
         {
@@ -308,7 +304,6 @@ public class TavernCoreBuildingStatsModule extends AbstractBuildingModule implem
     @Override
     public void onDestroyed()
     {
-        super.onDestroyed();
         for (final Integer id : externalCitizens)
         {
             building.getColony().getVisitorManager().removeCivilian(building.getColony().getVisitorManager().getVisitor(id));

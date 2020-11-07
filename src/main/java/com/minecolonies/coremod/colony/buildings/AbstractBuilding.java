@@ -210,7 +210,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         for (final IBuildingModule module : modules.values())
         {
-            module.onWakeUp();
+            if (module instanceof IBuildingEventsModule)
+            {
+                ((IBuildingEventsModule) module).onWakeUp();
+            }
         }
     }
 
@@ -243,7 +246,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         for (final IBuildingModule module : modules.values())
         {
-            module.onBuildingMove(oldBuilding);
+            if (module instanceof IBuildingEventsModule)
+            {
+                ((IBuildingEventsModule) module).onBuildingMove(oldBuilding);
+            }
         }
     }
 
@@ -252,7 +258,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         for (final IBuildingModule module : modules.values())
         {
-            module.onPlayerEnterBuilding(player);
+            if (module instanceof IBuildingEventsModule)
+            {
+                ((IBuildingEventsModule) module).onPlayerEnterBuilding(player);
+            }
         }
     }
 
@@ -328,7 +337,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         for (final IBuildingModule module : modules.values())
         {
-            module.deserializeNBT(compound);
+            if (module instanceof IStoresDataModule)
+            {
+                ((IStoresDataModule) module).deserializeNBT(compound);
+            }
         }
     }
 
@@ -360,7 +372,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         for (final IBuildingModule module : modules.values())
         {
-            module.serializeNBT(compound);
+            if (module instanceof IStoresDataModule)
+            {
+                ((IStoresDataModule) module).serializeNBT(compound);
+            }
         }
         return compound;
     }
@@ -399,7 +414,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         for (final IBuildingModule module : modules.values())
         {
-            module.onDestroyed();
+            if (module instanceof IBuildingEventsModule)
+            {
+                ((IBuildingEventsModule) module).onDestroyed();
+            }
         }
     }
 
@@ -743,7 +761,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         for (final IBuildingModule module : modules.values())
         {
-            module.serializeToView(buf);
+            if (module instanceof IStoresDataModule)
+            {
+                ((IStoresDataModule) module).serializeToView(buf);
+            }
         }
     }
 
@@ -839,7 +860,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         for (final IBuildingModule module : modules.values())
         {
-            module.onColonyTick(colony);
+            if (module instanceof ITickingModule)
+            {
+                ((ITickingModule) module).onColonyTick(colony);
+            }
         }
     }
 
@@ -1066,7 +1090,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         for (final IBuildingModule module : modules.values())
         {
-            module.onUpgradeComplete(newLevel);
+            if (module instanceof IBuildingEventsModule)
+            {
+                ((IBuildingEventsModule) module).onUpgradeComplete(newLevel);
+            }
         }
     }
 

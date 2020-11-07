@@ -6,9 +6,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
-import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
-import com.minecolonies.api.colony.buildings.modules.IAssignsCitizen;
-import com.minecolonies.api.colony.buildings.modules.IRegistersBlockModule;
+import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.buildings.AbstractCitizenAssignable;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenBornEvent;
@@ -34,7 +32,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RESIDENTS;
 /**
  * The class of the citizen hut.
  */
-public class LivingBuildingModule extends AbstractBuildingModule implements IBuildingBedProvider, IAssignsCitizen, IRegistersBlockModule
+public class LivingBuildingModule extends AbstractBuildingModule implements IBuildingBedProvider, IAssignsCitizen, IRegistersBlockModule, IBuildingEventsModule, ITickingModule, IStoresDataModule
 {
     /**
      * List of all beds.
@@ -81,8 +79,6 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        super.deserializeNBT(compound);
-
         if (compound.keySet().contains(TAG_RESIDENTS))
         {
             final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
@@ -175,7 +171,6 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
     @Override
     public void onDestroyed()
     {
-        super.onDestroyed();
         building.getAssignedCitizen().stream()
           .filter(Objects::nonNull)
           .forEach(citizen -> citizen.setHomeBuilding(null));
@@ -461,7 +456,6 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        super.onUpgradeComplete(newLevel);
         for (final Optional<AbstractEntityCitizen> entityCitizen : Objects.requireNonNull(building.getAssignedEntities()))
         {
             if (entityCitizen.isPresent() && entityCitizen.get().getCitizenJobHandler().getColonyJob() == null)
@@ -475,8 +469,6 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
     @Override
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
-        super.serializeToView(buf);
-
         buf.writeInt(building.getAssignedCitizen().size());
         for (@NotNull final ICitizenData citizen : building.getAssignedCitizen())
         {
@@ -494,7 +486,6 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
     @Override
     public void onBuildingMove(final IBuilding oldBuilding)
     {
-        super.onBuildingMove(oldBuilding);
         final List<ICitizenData> residents = oldBuilding.getAssignedCitizen();
         for (final ICitizenData citizen : residents)
         {

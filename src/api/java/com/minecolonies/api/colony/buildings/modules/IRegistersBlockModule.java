@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Module type to register specific blocks to a building (beds, workstations, etc).
  */
-public interface IRegistersBlockModule
+public interface IRegistersBlockModule extends IBuildingModule
 {
     /**
      * Attempt to register a specific block at a specific module.
