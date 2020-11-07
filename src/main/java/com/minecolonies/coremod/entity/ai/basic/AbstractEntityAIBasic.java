@@ -417,6 +417,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
         if (getState() == INIT)
         {
+            this.getOwnBuilding().setJobDisplayName(job.getName());
             return IDLE;
         }
 
