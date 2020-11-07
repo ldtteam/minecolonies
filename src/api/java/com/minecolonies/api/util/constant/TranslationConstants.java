@@ -501,6 +501,8 @@ public final class TranslationConstants
     public static final String RECIPE_STATUS="com.minecolonies.coremod.gui.workerhuts.recipestatus";
     @NonNls
     public static final String DIST = "com.minecolonies.coremod.dist.blocks";
+    @NonNls
+    public static final String RACK = "block.minecolonies.blockminecoloniesrack";
 
     private TranslationConstants()
     {

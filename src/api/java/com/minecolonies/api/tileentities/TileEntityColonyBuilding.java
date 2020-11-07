@@ -37,9 +37,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -92,7 +90,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     /**
      * Create the combined inv wrapper for the building.
      */
-    private CombinedItemHandler combinedInv;
+    private LazyOptional<CombinedItemHandler> combinedInv;
 
     /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
@@ -198,10 +196,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
         if (theBuilding != null)
         {
-            final List<BlockPos> containers = new ArrayList<>(theBuilding.getAdditionalCountainers());
-            containers.add(getBuilding().getPosition());
-
-            for (final BlockPos pos : containers)
+            for (final BlockPos pos : theBuilding.getContainers())
             {
                 if (WorldUtil.isBlockLoaded(world, pos))
                 {
@@ -363,7 +358,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public void tick()
     {
-        combinedInv = null;
+        if (combinedInv != null)
+        {
+            combinedInv.invalidate();
+            combinedInv = null;
+        }
         if (!getWorld().isRemote && colonyId == 0)
         {
             final IColony tempColony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), this.getPosition());
@@ -469,7 +468,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @Nullable final Direction side)
     {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
+        if (!removed && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
         {
             if (combinedInv == null)
             {
@@ -478,9 +477,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 final World world = colony.getWorld();
                 if (world != null)
                 {
-                    for (final BlockPos pos : building.getAdditionalCountainers())
+                    for (final BlockPos pos : building.getContainers())
                     {
-                        if (WorldUtil.isBlockLoaded(world, pos))
+                        if (WorldUtil.isBlockLoaded(world, pos) && !pos.equals(this.pos))
                         {
                             final TileEntity te = world.getTileEntity(pos);
                             if (te != null)
@@ -501,11 +500,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                         }
                     }
                 }
+                handlers.add(this.getInventory());
 
-                handlers.add(getInventory());
-                combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0]));
+                combinedInv = LazyOptional.of(() -> new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0])));
             }
-            return LazyOptional.of(() -> (T) combinedInv);
+            return (LazyOptional<T>) combinedInv;
         }
         return super.getCapability(capability, side);
     }

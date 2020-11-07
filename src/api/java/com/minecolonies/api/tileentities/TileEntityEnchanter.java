@@ -47,6 +47,13 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
     @Override
     public void tick()
     {
+        super.tick();
+
+        if (!world.isRemote)
+        {
+            return;
+        }
+
         this.bookSpreadPrev = this.bookSpread;
         this.bookRotationPrev = this.bookRotation;
         PlayerEntity player = this.world.getClosestPlayer(((float) this.pos.getX() + 0.5F), ((float) this.pos.getY() + 0.5F), ((float) this.pos.getZ() + 0.5F), 3.0D, false);

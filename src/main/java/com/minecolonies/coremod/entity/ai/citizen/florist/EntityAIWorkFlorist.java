@@ -50,7 +50,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     /**
      * The chance for something to grow per second on one of the fields.
      */
-    private static final double PERCENT_CHANGE_FOR_GROWTH = 0.5;
+    private static final double PERCENT_CHANGE_FOR_GROWTH = 0.2;
 
     /**
      * Base XP gain for the florist for composting or harvesting.
@@ -84,6 +84,11 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/florist.png"), "com.minecolonies.gui.visiblestatus.florist");
 
     /**
+     * Xp gained on harvest
+     */
+    private static final double XP_PER_FLOWER = 2;
+
+    /**
      * Position the florist should harvest a flower at now.
      */
     private BlockPos harvestPosition;
@@ -111,7 +116,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         super.registerTargets(
           new AITarget(IDLE, START_WORKING, 1),
           new AITarget(START_WORKING, DECIDE, TICKS_SECOND),
-          new AITarget(DECIDE, this::decide, TICKS_SECOND),
+          new AITarget(DECIDE, this::decide, 200),
           new AITarget(FLORIST_HARVEST, this::harvest, TICKS_SECOND),
           new AITarget(FLORIST_COMPOST, this::compost, TICKS_SECOND)
         );
@@ -142,7 +147,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST);
         if (amountOfCompostInInv <= 0)
         {
-            final int amountOfCompostInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), IS_COMPOST);
+            final int amountOfCompostInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), IS_COMPOST);
             if (amountOfCompostInBuilding > 0)
             {
                 needsCurrently = new Tuple<>(IS_COMPOST, STACKSIZE);
@@ -203,7 +208,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             {
                 if (worker.getRandom().nextInt(200 - getPrimarySkillLevel()) < 0 || InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST))
                 {
-                    ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH, getOwnBuilding().getFlowerToGrow());
+                    ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH - (getOwnBuilding().getBuildingLevel() * 0.01), getOwnBuilding().getFlowerToGrow());
                 }
             }
             else
@@ -212,7 +217,6 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             }
         }
 
-        worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         incrementActionsDone();
         worker.decreaseSaturationForContinuousAction();
         compostPosition = null;
@@ -243,7 +247,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             return getState();
         }
 
-        worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+        worker.getCitizenExperienceHandler().addExperience(XP_PER_FLOWER);
         incrementActionsDone();
         worker.decreaseSaturationForContinuousAction();
         harvestPosition = null;

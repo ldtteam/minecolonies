@@ -67,6 +67,11 @@ public final class ExperienceUtils
      */
     public static double getXPNeededForNextLevel(final int currentLevel)
     {
+        if (currentLevel <= 0)
+        {
+            return 1;
+        }
+
         return Math.max(1, 1 + EXPERIENCE_MULTIPLIER *
                                  5 * currentLevel + 0.005 * (currentLevel * currentLevel * currentLevel));
     }

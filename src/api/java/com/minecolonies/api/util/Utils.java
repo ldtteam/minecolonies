@@ -6,15 +6,29 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.io.File;
+import java.util.NavigableMap;
 import java.util.Objects;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 /**
  * General purpose utilities class. todo: split up into logically distinct parts
  */
 public final class Utils
 {
+    private static final NavigableMap<Long, String> suffixes = new TreeMap<> ();
+    
+    static
+    {
+    suffixes.put(1_000L, "k");
+    suffixes.put(1_000_000L, "M");
+    suffixes.put(1_000_000_000L, "G");
+    suffixes.put(1_000_000_000_000L, "T");
+    suffixes.put(1_000_000_000_000_000L, "P");
+    suffixes.put(1_000_000_000_000_000_000L, "E");
+    }
+
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -216,5 +230,26 @@ public final class Utils
         {
             Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
         }
+    }
+    
+    /**
+     * Formats a long value into a abbreviated string, ie: 1000->1k, 1200->1.2k, 13000->13k
+     * @param value to format
+     * @return string version of the value
+     */
+    public static String format(long value)
+    {
+        //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
+        if (value == Long.MIN_VALUE) return format(Long.MIN_VALUE + 1);
+        if (value < 0) return "-" + format(-value);
+        if (value < 1000) return Long.toString(value); //deal with easy case
+
+        Entry<Long, String> e = suffixes.floorEntry(value);
+        Long divideBy = e.getKey();
+        String suffix = e.getValue();
+
+        long truncated = value / (divideBy / 10); //the number part of the output times 10
+        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
+        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
 }

@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,9 +45,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count)
     {
         int totalCountFound = 0;
-        final List<BlockPos> containers = new ArrayList<>(getBuilding().getAdditionalCountainers());
-        containers.add(this.getPos());
-        for (@NotNull final BlockPos pos : containers)
+        for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
@@ -84,9 +81,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         
         if (getBuilding() != null)
         {
-            final List<BlockPos> containers = new ArrayList<>(getBuilding().getAdditionalCountainers());
-            containers.add(getBuilding().getPosition());
-            for (@NotNull final BlockPos pos : containers)
+            for (@NotNull final BlockPos pos : getBuilding().getContainers())
             {
                 final TileEntity entity = getWorld().getTileEntity(pos);
                 if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).getItemCount(itemStackSelectionPredicate) > 0)
@@ -120,17 +115,16 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             {
                 continue;
             }
+
             @Nullable final TileEntity chest = searchRightChestForStack(stack);
             if (chest == null)
             {
                 LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
                 return;
             }
-            final IItemHandler handler = chest.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null);
-            if (handler != null)
-            {
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(inventoryCitizen, i, handler);
-            }
+
+            final int index = i;
+            chest.getCapability(ITEM_HANDLER_CAPABILITY, null).ifPresent(handler -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(inventoryCitizen, index, handler));
         }
     }
 
@@ -143,12 +137,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     @Nullable
     private TileEntity searchRightChestForStack(@NotNull final ItemStack stack)
     {
-        if (InventoryUtils.findSlotInProviderNotFullWithItem(this, stack.getItem(), ItemStackUtils.getSize(stack)) != -1)
-        {
-            return this;
-        }
-
-        for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+        for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
             final TileEntity entity = getWorld().getTileEntity(pos);
             if (isInRack(stack, entity, false) || isInChest(stack, entity, false))
@@ -166,13 +155,15 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      *
      * @param stack             the stack to check.
      * @param entity            the entity.
-     * @param ignoreDamageValue should the damage value be ignored.
+     * @param includeSimilarMatches if similar matches should be included or only exact matches.
      * @return true if so.
      */
-    private static boolean isInRack(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
+    private static boolean isInRack(final ItemStack stack, final TileEntity entity, final boolean includeSimilarMatches)
     {
-        return entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).hasItemStack(stack, ignoreDamageValue)
-                 && InventoryUtils.findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack);
+        return entity instanceof TileEntityRack
+                 && !((AbstractTileEntityRack) entity).isEmpty()
+                 && (includeSimilarMatches ? ((TileEntityRack) entity).hasSimilarStack(stack) : ((AbstractTileEntityRack) entity).hasItemStack(stack, 1, false))
+                 && ((TileEntityRack) entity).getFreeSlots() > 0;
     }
 
     /**
@@ -198,7 +189,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     @Nullable
     private TileEntity searchChestWithSimilarItem(final ItemStack stack)
     {
-        for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+        for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
             final TileEntity entity = getWorld().getTileEntity(pos);
             if (isInRack(stack, entity, true) || isInChest(stack, entity, true))
@@ -219,7 +210,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     {
         int freeSlots = 0;
         TileEntity emptiestChest = null;
-        for (@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+        for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
             final TileEntity entity = getWorld().getTileEntity(pos);
             if (entity == null)

@@ -1173,12 +1173,8 @@ public class CitizenData implements ICitizenData
               colony.getResearchManager().getResearchEffects().getEffect(WALKING, MultiplierModifierResearchEffect.class);
             if (speedEffect != null)
             {
-                double speed = BASE_MOVEMENT_SPEED + (BASE_MOVEMENT_SPEED * speedEffect.getEffect());
-                if (job instanceof IAffectsWalkingSpeed)
-                {
-                    speed = ((IAffectsWalkingSpeed) job).getWalkingSpeed() * (1.0 + speedEffect.getEffect());
-                }
-                citizen.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(speed);
+                final AttributeModifier speedModifier = new AttributeModifier(RESEARCH_BONUS_MULTIPLIER, speedEffect.getEffect(), AttributeModifier.Operation.MULTIPLY_TOTAL);
+                AttributeModifierUtils.addModifier(citizen, speedModifier, SharedMonsterAttributes.MOVEMENT_SPEED);
             }
 
             final AdditionModifierResearchEffect healthEffect =

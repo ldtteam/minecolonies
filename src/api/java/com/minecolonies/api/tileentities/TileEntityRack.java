@@ -1,12 +1,13 @@
 package com.minecolonies.api.tileentities;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
@@ -22,6 +23,7 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -29,7 +31,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -40,6 +42,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.RACK;
 
 /**
  * Tile entity for the warehouse shelves.
@@ -57,9 +60,14 @@ public class TileEntityRack extends AbstractTileEntityRack
     private int size = 0;
 
     /**
-     * The combined inv wrapper for double racks.
+     * Amount of free slots
      */
-    private CombinedInvWrapper combinedHandler;
+    private int freeSlots = 0;
+
+    /**
+     * Last optional we created.
+     */
+    private LazyOptional<IItemHandler> lastOptional;
 
     public TileEntityRack(final TileEntityType<? extends TileEntityRack> type)
     {
@@ -78,29 +86,17 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public boolean freeStacks()
-    {
-        return content.isEmpty();
-    }
-
-    @Override
     public int getFreeSlots()
     {
-        int freeSlots = inventory.getSlots();
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            final double slotsNeeded = (double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize();
-            freeSlots -= (int) Math.ceil(slotsNeeded);
-        }
         return freeSlots;
     }
 
     @Override
-    public boolean hasItemStack(final ItemStack stack, final boolean ignoreDamageValue)
+    public boolean hasItemStack(final ItemStack stack, final int count, final boolean ignoreDamageValue)
     {
         final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
 
-        return content.getOrDefault(checkItem, 0) >= stack.getCount();
+        return content.getOrDefault(checkItem, 0) >= count;
     }
 
     @Override
@@ -121,6 +117,30 @@ public class TileEntityRack extends AbstractTileEntityRack
                 return true;
             }
         }
+        return false;
+    }
+
+    @Override
+    public boolean hasSimilarStack(@NotNull final ItemStack stack)
+    {
+        final ItemStorage checkItem = new ItemStorage(stack, true);
+        if (content.containsKey(checkItem))
+        {
+            return true;
+        }
+
+        for (final ItemStorage storage : content.keySet())
+        {
+            for (final ResourceLocation tag : stack.getItem().getTags())
+            {
+                if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().enabledModTags.get().contains(tag.toString())
+                      && storage.getItemStack().getItem().getTags().contains(tag))
+                {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
@@ -147,11 +167,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         inventory = tempInventory;
         final BlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 0x03);
-
-        if (main && combinedHandler == null && getOtherChest() != null)
-        {
-            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
-        }
+        invalidateCap();
     }
 
     @Override
@@ -189,12 +205,14 @@ public class TileEntityRack extends AbstractTileEntityRack
     private void updateContent()
     {
         content.clear();
+        freeSlots = 0;
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
             final ItemStack stack = inventory.getStackInSlot(slot);
 
             if (ItemStackUtils.isEmpty(stack))
             {
+                freeSlots++;
                 continue;
             }
 
@@ -215,7 +233,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             if (!main && !single && getOtherChest() != null && !getOtherChest().isMain())
             {
-                main = true;
+                setMain(true);
             }
 
             if (main || single)
@@ -353,6 +371,8 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             this.buildingPos = BlockPosUtil.read(compound, TAG_POS);
         }
+
+        invalidateCap();
     }
 
     @NotNull
@@ -428,40 +448,45 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final Direction dir)
     {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        if (!removed && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
+            if (lastOptional != null && lastOptional.isPresent())
+            {
+                return lastOptional.cast();
+            }
+
             if (single)
             {
-                return LazyOptional.of(() -> (T) inventory);
-            }
-            else if (getOtherChest() != null)
-            {
-                if (isMain())
+                lastOptional = LazyOptional.of(() ->
                 {
-                    if (combinedHandler == null)
+                    if (this.isRemoved())
                     {
-                        combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
+                        return new RackInventory(0);
                     }
-                    return LazyOptional.of(() -> (T) combinedHandler);
-                }
-                else
-                {
-                    if (getOtherChest().isMain())
-                    {
-                        return (LazyOptional<T>) getOtherChest().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-                    }
-                    else
-                    {
-                        this.main = true;
 
-                        if (combinedHandler == null)
-                        {
-                            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
-                        }
-                        markDirty();
-                        return LazyOptional.of(() -> (T) combinedHandler);
+                    return new CombinedItemHandler(RACK, getInventory());
+                });
+                return lastOptional.cast();
+            }
+            else
+            {
+                lastOptional = LazyOptional.of(() ->
+                {
+                    if (this.isRemoved())
+                    {
+                        return new RackInventory(0);
                     }
-                }
+
+                    final AbstractTileEntityRack other = getOtherChest();
+                    if (other == null)
+                    {
+                        return new CombinedItemHandler(RACK, getInventory());
+                    }
+
+                    return new CombinedItemHandler(RACK, getInventory(), other.getInventory());
+                });
+
+                return lastOptional.cast();
             }
         }
         return super.getCapability(capability, dir);
@@ -529,5 +554,52 @@ public class TileEntityRack extends AbstractTileEntityRack
     public ITextComponent getDisplayName()
     {
         return new StringTextComponent("Rack");
+    }
+
+    @Override
+    public void setMain(final boolean main)
+    {
+        if (main != this.main)
+        {
+            invalidateCap();
+            super.setMain(main);
+        }
+    }
+
+    @Override
+    public void setSingle(final boolean single)
+    {
+        if (single != this.single)
+        {
+            invalidateCap();
+            super.setSingle(single);
+        }
+    }
+
+    @Override
+    public void remove()
+    {
+        super.remove();
+        invalidateCap();
+    }
+
+    @Override
+    public void updateContainingBlockInfo()
+    {
+        super.updateContainingBlockInfo();
+        invalidateCap();
+    }
+
+    /**
+     * Invalidates the cap
+     */
+    private void invalidateCap()
+    {
+        if (lastOptional != null && lastOptional.isPresent())
+        {
+            lastOptional.invalidate();
+        }
+
+        lastOptional = null;
     }
 }

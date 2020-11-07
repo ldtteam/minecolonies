@@ -40,6 +40,11 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     private static final Integer PLANT_TO_REQUEST = 16;
 
     /**
+     * Xp per harvesting block
+     */
+    private static final double XP_PER_HARVEST = 1;
+
+    /**
      * The current farm pos to take care of.
      */
     private BlockPos workPos;
@@ -127,6 +132,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             }
         }
 
+        worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
+
         return START_WORKING;
     }
 
@@ -171,7 +178,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         final Item current = plantation.getCurrentPhase();
 
-        final int plantInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
+        final int plantInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
         final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
 
         if (plantInBuilding + plantInInv <= 0)

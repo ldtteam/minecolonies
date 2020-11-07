@@ -426,19 +426,19 @@ public class ResearchInitializer
         hamlet.addChild(village);
         village.addChild(city);
 
-        final GlobalResearch diligent = new GlobalResearch("diligent", "civilian", "Diligent", 2, new MultiplierModifierResearchEffect("Leveling", 0.05));
+        final GlobalResearch diligent = new GlobalResearch("diligent", "civilian", "Diligent", 2, new MultiplierModifierResearchEffect(LEVELING, 0.05));
         diligent.setRequirement(new BuildingResearchRequirement(2, "library"));
 
-        final GlobalResearch studious = new GlobalResearch("studious", "civilian", "Studious", 3, new MultiplierModifierResearchEffect("Leveling", 0.1));
+        final GlobalResearch studious = new GlobalResearch("studious", "civilian", "Studious", 3, new MultiplierModifierResearchEffect(LEVELING, 0.1));
         studious.setRequirement(new BuildingResearchRequirement(3, "library"));
 
-        final GlobalResearch scholarly = new GlobalResearch("scholarly", "civilian", "Scholarly", 4, new MultiplierModifierResearchEffect("Leveling", 0.25));
+        final GlobalResearch scholarly = new GlobalResearch("scholarly", "civilian", "Scholarly", 4, new MultiplierModifierResearchEffect(LEVELING, 0.25));
         scholarly.setRequirement(new BuildingResearchRequirement(4, "library"));
 
-        final GlobalResearch reflective = new GlobalResearch("reflective", "civilian", "Reflective", 5, new MultiplierModifierResearchEffect("Leveling", 0.5));
+        final GlobalResearch reflective = new GlobalResearch("reflective", "civilian", "Reflective", 5, new MultiplierModifierResearchEffect(LEVELING, 0.5));
         reflective.setRequirement(new BuildingResearchRequirement(5, "library"));
 
-        final GlobalResearch academic = new GlobalResearch("academic", "civilian", "Academic", 6, new MultiplierModifierResearchEffect("Leveling", 1.0));
+        final GlobalResearch academic = new GlobalResearch("academic", "civilian", "Academic", 6, new MultiplierModifierResearchEffect(LEVELING, 1.0));
 
         keen.addChild(diligent);
         diligent.addChild(studious);
@@ -455,10 +455,10 @@ public class ResearchInitializer
         final GlobalResearch agile = new GlobalResearch("agile", "civilian", "Agile", 4, new MultiplierModifierResearchEffect("Walking", 0.1));
         agile.setRequirement(new BuildingResearchRequirement(4, "townhall"));
 
-        final GlobalResearch swift = new GlobalResearch("swift", "civilian", "Swift", 5, new MultiplierModifierResearchEffect("Walking", 0.25));
+        final GlobalResearch swift = new GlobalResearch("swift", "civilian", "Swift", 5, new MultiplierModifierResearchEffect("Walking", 0.15));
         swift.setRequirement(new BuildingResearchRequirement(5, "townhall"));
 
-        final GlobalResearch athlete = new GlobalResearch("athlete", "civilian", "Athlete", 6, new MultiplierModifierResearchEffect("Walking", 1.0));
+        final GlobalResearch athlete = new GlobalResearch("athlete", "civilian", "Athlete", 6, new MultiplierModifierResearchEffect("Walking", 0.25));
 
         keen.addChild(rails);
         rails.addChild(nimble);

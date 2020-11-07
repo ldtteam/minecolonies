@@ -405,8 +405,15 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             if (entity instanceof FurnaceTileEntity)
             {
                 final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-                final int countInResultSlot = isEmpty(furnace.getStackInSlot(RESULT_SLOT)) ? 0 : furnace.getStackInSlot(RESULT_SLOT).getCount();
-                if ((!furnace.isBurning() && countInResultSlot > 0 && isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT))))
+                int countInResultSlot = 0;
+                boolean fullResult = false;
+                if (!isEmpty(furnace.getStackInSlot(RESULT_SLOT)))
+                {
+                    countInResultSlot = furnace.getStackInSlot(RESULT_SLOT).getCount();
+                    fullResult = countInResultSlot >= furnace.getStackInSlot(RESULT_SLOT).getMaxStackSize();
+                }
+
+                if (fullResult || (!furnace.isBurning() && countInResultSlot > 0 && isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT))))
                 {
                     worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
@@ -444,7 +451,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             }
 
             //if we don't have enough at all, cancel
-            int countOfInput = inputInInv + InventoryUtils.getItemCountInProvider(getOwnBuilding(), predicate) + countInFurnaces + inputInFurnace + outputInInv;
+            int countOfInput = inputInInv + InventoryUtils.getCountFromBuilding(getOwnBuilding(), predicate) + countInFurnaces + inputInFurnace + outputInInv;
             if (countOfInput < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 job.finishRequest(false);
@@ -612,7 +619,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             {
                 return START_WORKING;
             }
-            final int amountOfSmeltableInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), smeltable);
+            final int amountOfSmeltableInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), smeltable);
             final int amountOfSmeltableInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), smeltable);
 
             if (worker.getHeldItem(Hand.MAIN_HAND).isEmpty())
