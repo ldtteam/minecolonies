@@ -217,7 +217,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     protected boolean isBreedAble(final AnimalEntity entity)
     {
-        return entity.getGrowingAge() == 0 && entity.canBreed();
+        return entity.getGrowingAge() == 0 && entity.canFallInLove();
     }
 
     /**

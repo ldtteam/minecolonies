@@ -93,7 +93,7 @@ dependencies {
     additionalMods "com.ldtteam:structurize:${config.structurize_version}"
     compile "com.ldtteam:datagenerators:0.1.38-ALPHA"
     
-    implementation fg.deobf("mezz.jei:jei-1.16.3:${config.jei_version}")
+    implementation fg.deobf("mezz.jei:jei-${config.minecraft_version}:${config.jei_version}")
 
     testImplementation  'junit:junit:4.12'
     testImplementation  "org.mockito:mockito-core:1.+"
