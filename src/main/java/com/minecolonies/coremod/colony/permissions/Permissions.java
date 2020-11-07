@@ -137,6 +137,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES_FAR_AWAY);
         this.setPermission(Rank.OWNER, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
         this.setPermission(Rank.OWNER, Action.RALLY_GUARDS);
+        this.setPermission(Rank.OWNER, Action.RECEIVES_POTION_BUFFS);
 
         //Officer
         permissionMap.put(Rank.OFFICER, 0);
@@ -166,6 +167,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES_FAR_AWAY);
         this.setPermission(Rank.OFFICER, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
         this.setPermission(Rank.OFFICER, Action.RALLY_GUARDS);
+        this.setPermission(Rank.OFFICER, Action.RECEIVES_POTION_BUFFS);
 
 
         //Friend

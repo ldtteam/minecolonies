@@ -181,7 +181,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * Timer for the wakeup AI.
      */
-    private int wakeTimer = 0;
+    protected int wakeTimer = 0;
 
     /**
      * Timer for fighting, goes down to 0 when hasnt been fighting for a while
@@ -191,7 +191,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * The sleeping guard we found
      */
-    private WeakReference<EntityCitizen> sleepingGuard = new WeakReference<>(null);
+    protected WeakReference<EntityCitizen> sleepingGuard = new WeakReference<>(null);
 
     /**
      * Random generator for this AI.

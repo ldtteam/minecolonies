@@ -12,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.entity.projectile.PotionEntity;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Constants.MOD_ID)
@@ -80,5 +81,9 @@ public class ModEntities
     @ObjectHolder("firearrow")
     public static EntityType<? extends AbstractArrowEntity> FIREARROW;
 
+    @ObjectHolder("mcnormalarrow")
     public static EntityType<? extends ArrowEntity> MC_NORMAL_ARROW;
+
+    @ObjectHolder("witchpotion")
+    public static EntityType<? extends PotionEntity> WITCH_POTION;
 }
