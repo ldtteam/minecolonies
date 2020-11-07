@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.TavernCoreBuildingStatsModule;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,6 +35,6 @@ public class BlockHutTavern extends AbstractBlockHut<com.minecolonies.coremod.bl
     public void registerBuildingModules(final IBuilding building)
     {
         building.registerModule(new LivingBuildingModule(building));
-        building.registerModule(new TavernBuildingModule(building));
+        building.registerModule(new TavernCoreBuildingStatsModule(building));
     }
 }

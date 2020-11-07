@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;

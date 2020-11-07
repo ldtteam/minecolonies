@@ -5,7 +5,7 @@ import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
-import com.minecolonies.api.colony.buildings.modules.IDefinesBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IDefinesCoreBuildingStatsModule;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.TavernSounds;
@@ -42,7 +42,7 @@ import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
 /**
  * Tavern building for the colony. Houses 4 citizens Plays a tavern theme on entering Spawns/allows citizen recruitment Spawns trader/quest npcs
  */
-public class TavernBuildingModule extends AbstractBuildingModule implements IDefinesBuildingModule
+public class TavernCoreBuildingStatsModule extends AbstractBuildingModule implements IDefinesCoreBuildingStatsModule
 {
     /**
      * Schematic name
@@ -96,7 +96,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
      * Creates a new tavern module.
      * @param building the building it is assigned to.
      */
-    public TavernBuildingModule(final IBuilding building)
+    public TavernCoreBuildingStatsModule(final IBuilding building)
     {
         super(building);
     }

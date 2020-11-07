@@ -1,9 +1,9 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 /**
- * Interface describing the different modules.
+ * Interface describing core building stats.
  */
-public interface IDefinesBuildingModule
+public interface IDefinesCoreBuildingStatsModule extends IBuildingModule
 {
     /**
      * Get the max building level a module allows.

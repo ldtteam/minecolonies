@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.managers.interfaces.IProgressManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;

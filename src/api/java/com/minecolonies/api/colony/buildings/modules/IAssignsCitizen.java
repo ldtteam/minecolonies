@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Interface for all modules that need special assignment handling.
  */
-public interface IAssignsCitizen
+public interface IAssignsCitizen extends IBuildingModule
 {
     /**
      * Specific citizen removal hook for modules.

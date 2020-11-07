@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.HomeCoreBuildingStatsModule;
 import com.minecolonies.coremod.network.messages.server.colony.building.RecallCitizenHutMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.client.Minecraft;
@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the home building.
  */
-public class WindowHutCitizen extends AbstractWindowBuilding<HomeBuildingModule.View>
+public class WindowHutCitizen extends AbstractWindowBuilding<HomeCoreBuildingStatsModule.View>
 {
     /**
      * Suffix describing the window xml.
@@ -32,18 +32,18 @@ public class WindowHutCitizen extends AbstractWindowBuilding<HomeBuildingModule.
     /**
      * The building the view is relates to.
      */
-    private final HomeBuildingModule.View home;
+    private final HomeCoreBuildingStatsModule.View home;
     /**
      * The list of citizen assigned to this hut.
      */
-    private       ScrollingList     citizen;
+    private       ScrollingList                    citizen;
 
     /**
      * Creates the Window object.
      *
      * @param building View of the home building.
      */
-    public WindowHutCitizen(final HomeBuildingModule.View building)
+    public WindowHutCitizen(final HomeCoreBuildingStatsModule.View building)
     {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
 

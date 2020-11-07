@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.buildings.modules;
 import com.minecolonies.api.colony.buildings.IBuilding;
 
 /**
- * Blocks providing building modules.
+ * Classes providing building modules.
  */
 public interface IBuildingModuleProvider
 {

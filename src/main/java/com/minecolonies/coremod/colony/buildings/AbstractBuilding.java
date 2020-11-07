@@ -443,9 +443,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         int maxInhabitants = 0;
         for (final IBuildingModule module : modules.values())
         {
-            if (module instanceof IDefinesBuildingModule)
+            if (module instanceof IDefinesCoreBuildingStatsModule)
             {
-                maxInhabitants = ((IDefinesBuildingModule) module).getMaxInhabitants();
+                maxInhabitants = ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants();
             }
         }
         return maxInhabitants;
@@ -457,9 +457,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         int maxBuildingLevel = 0;
         for (final IBuildingModule module : modules.values())
         {
-            if (module instanceof IDefinesBuildingModule)
+            if (module instanceof IDefinesCoreBuildingStatsModule)
             {
-                maxBuildingLevel = ((IDefinesBuildingModule) module).getMaxInhabitants();
+                maxBuildingLevel = ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants();
             }
         }
         return maxBuildingLevel;

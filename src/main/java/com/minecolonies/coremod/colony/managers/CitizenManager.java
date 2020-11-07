@@ -20,7 +20,6 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
