@@ -463,7 +463,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             if (module instanceof IDefinesCoreBuildingStatsModule)
             {
-                current = getModule(IDefinesCoreBuildingStatsModule.class).getMaxInhabitants().apply(current);
+                current = ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants().apply(current);
             }
         }
         return Math.max(0, current);
