@@ -21,17 +21,23 @@ public class DefaultBuildingInstance extends AbstractBuilding
     public final String schematicName;
 
     /**
+     * Max building level.
+     */
+    private final int maxBuildingLevel;
+
+    /**
      * Create a default building instance that's based on modules and not inheritance.
      * @param colony the colony.
      * @param pos the position.
      * @param schematicName the schematic name.
      * @param entry the entry.
      */
-    public DefaultBuildingInstance(final IColony colony, final BlockPos pos, final String schematicName, final BuildingEntry entry)
+    public DefaultBuildingInstance(final IColony colony, final BlockPos pos, final String schematicName, final int maxLevel, final BuildingEntry entry)
     {
         super(colony, pos);
         this.schematicName = schematicName;
         this.entry = entry;
+        this.maxBuildingLevel = maxLevel;
         entry.getBuildingBlock().registerBuildingModules(this);
     }
 
@@ -41,10 +47,11 @@ public class DefaultBuildingInstance extends AbstractBuilding
         return entry;
     }
 
+    //todo replace in the future which a cache and schematic check (similar to rotation).
     @Override
     public int getMaxBuildingLevel()
     {
-        return 5;
+        return maxBuildingLevel;
     }
 
     @NotNull

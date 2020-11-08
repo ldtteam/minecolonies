@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 import org.jetbrains.annotations.NotNull;
 
 /**

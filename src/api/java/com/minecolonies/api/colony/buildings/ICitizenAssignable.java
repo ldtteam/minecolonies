@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;

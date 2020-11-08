@@ -102,12 +102,6 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     }
 
     @Override
-    public IStat<Integer> getMaxBuildingLevel()
-    {
-        return (prev) -> 3;
-    }
-
-    @Override
     public IStat<Integer> getMaxInhabitants()
     {
         if (building.getBuildingLevel() <= 0)

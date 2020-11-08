@@ -140,7 +140,7 @@ public final class ModBuildingsInitializer
 
         ModBuildings.home = new BuildingEntry.Builder()
                               .setBuildingBlock(ModBlocks.blockHutHome)
-                              .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "citizen", ModBuildings.home))
+                              .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "citizen", 5, ModBuildings.home))
                               .setBuildingViewProducer(() -> HomeBuildingModule.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOME_ID))
                               .createBuildingEntry();
@@ -301,7 +301,7 @@ public final class ModBuildingsInitializer
 
         ModBuildings.tavern = new BuildingEntry.Builder()
                                 .setBuildingBlock(ModBlocks.blockHutTavern)
-                                .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "tavern", ModBuildings.tavern))
+                                .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "tavern", 3, ModBuildings.tavern))
                                 .setBuildingViewProducer(() -> TavernBuildingModule.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.TAVERN_ID))
                                 .createBuildingEntry();
