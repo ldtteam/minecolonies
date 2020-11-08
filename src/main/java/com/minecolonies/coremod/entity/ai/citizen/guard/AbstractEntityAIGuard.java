@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
-import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -34,7 +33,6 @@ import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -191,7 +189,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * The sleeping guard we found
      */
-    protected WeakReference<EntityCitizen> sleepingGuard = new WeakReference<>(null);
+    protected WeakReference<AbstractEntityCitizen> sleepingGuard = new WeakReference<>(null);
 
     /**
      * Random generator for this AI.
@@ -840,6 +838,37 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
+     * Checks a given {@link LivingEntity} if it should be treated as an enemy
+     *
+     * @param entity the entity to check
+     * @return wether the tested entity should be traeted as an enemy (true) or not (false)
+     */
+    public boolean isEnemy(final LivingEntity entity)
+    {
+        if (entity == null || !entity.isAlive())
+        {
+            return false;
+        }
+
+        if (buildingGuards.isAttackableMob(entity))
+        {
+            return true;
+        }
+
+        final IColony colony = worker.getCitizenColonyHandler().getColony();
+
+        // Players
+        if (entity instanceof PlayerEntity && (colony.getPermissions().hasPermission((PlayerEntity) entity, Action.GUARDS_ATTACK)
+                                                 || colony.isValidAttackingPlayer((PlayerEntity) entity)))
+        {
+            return true;
+        }
+
+        // Other colonies guard citizen attacking the colony
+        return entity instanceof EntityCitizen && colony.isValidAttackingGuard((AbstractEntityCitizen) entity);
+    }
+
+    /**
      * Checks whether the given entity is a valid target to attack.
      *
      * @param entity Entity to check
@@ -851,41 +880,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         {
             return false;
         }
-
         if (entity == worker.getRevengeTarget())
         {
             return true;
         }
-
-        if (entity instanceof IMob)
-        {
-            final MobEntryView entry = buildingGuards.getMobsToAttack().get(entity.getType().getRegistryName());
-            if (entry != null && entry.shouldAttack())
-            {
-                return true;
-            }
-        }
-
-        final IColony colony = worker.getCitizenColonyHandler().getColony();
-        if (colony == null)
-        {
-            return false;
-        }
-
-        // Players
-        if (entity instanceof PlayerEntity && (colony.getPermissions().hasPermission((PlayerEntity) entity, Action.GUARDS_ATTACK)
-                                                 || colony.isValidAttackingPlayer((PlayerEntity) entity)))
-        {
-            return true;
-        }
-
-        // Other colonies guard citizen attacking the colony
-        if (entity instanceof EntityCitizen && colony.isValidAttackingGuard((AbstractEntityCitizen) entity))
-        {
-            return true;
-        }
-
-        return false;
+        return isEnemy(entity);
     }
 
     /**

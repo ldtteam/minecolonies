@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.BiPredicate;
 
 public class WitchPotionEntity extends PotionEntity
 {
@@ -37,7 +38,13 @@ public class WitchPotionEntity extends PotionEntity
     /**
      * The minimum duration to get affected
      */
-    public static final int MIN_DURATION = 20;
+    public static final int                         MIN_DURATION = 20;
+
+    /**
+     * The bi-predicate to check if an effect should be applied to an entity
+     */
+    @Nullable
+    private final BiPredicate<LivingEntity, Effect> predicate;
 
     /**
      * Throws a potion at the target with the given inaccuracy
@@ -48,10 +55,11 @@ public class WitchPotionEntity extends PotionEntity
      * @param world the {@link World} of the thrower
      * @param velocity the velocity to throw the potion with
      * @param inaccuracy the inaccuracy to throw the potion with
+     * @param predicate the bi-predicate to check if an effect should be applied to an entity
      */
-    public static void throwPotionAt(final ItemStack potionStack, final LivingEntity target, final AbstractEntityCitizen thrower, final World world, final float velocity, final float inaccuracy)
+    public static void throwPotionAt(final ItemStack potionStack, final LivingEntity target, final AbstractEntityCitizen thrower, final World world, final float velocity, final float inaccuracy, final BiPredicate<LivingEntity,Effect> predicate)
     {
-        final PotionEntity potionentity = new WitchPotionEntity(world, thrower);
+        final PotionEntity potionentity = new WitchPotionEntity(world, thrower, predicate);
         potionentity.setItem(potionStack);
         potionentity.shoot(target.getPosX(), target.getPosY(), target.getPosZ(), velocity, inaccuracy);
         world.addEntity(potionentity);
@@ -60,11 +68,13 @@ public class WitchPotionEntity extends PotionEntity
     public WitchPotionEntity(final EntityType<? extends PotionEntity> typeIn, final World worldIn)
     {
         super(typeIn, worldIn);
+        this.predicate = null;
     }
 
-    public WitchPotionEntity(final World worldIn, final AbstractEntityCitizen livingEntityIn)
+    public WitchPotionEntity(final World worldIn, final AbstractEntityCitizen livingEntityIn, final BiPredicate<LivingEntity,Effect> predicate)
     {
         super(worldIn, livingEntityIn);
+        this.predicate = predicate;
     }
 
     @Override
@@ -73,7 +83,6 @@ public class WitchPotionEntity extends PotionEntity
         final AbstractEntityCitizen citizen = this.getThrower();
         if (citizen != null && citizen.getCitizenData().getJob() instanceof JobWitch)
         {
-            final EntityAIWitch ai = ((EntityAIWitch) citizen.getCitizenData().getJob(JobWitch.class).getWorkerAI());
             final AxisAlignedBB axisalignedbb = this.getBoundingBox().grow(SPLASH_SIZE, SPLASH_HEIGTH, SPLASH_SIZE);
             final List<LivingEntity> list = this.world.getEntitiesWithinAABB(LivingEntity.class, axisalignedbb);
             if (!list.isEmpty())
@@ -90,30 +99,25 @@ public class WitchPotionEntity extends PotionEntity
                             {
                                 d1 = 1.0D;
                             }
-                            final boolean ally = EntityAIWitch.isAlly(citizen.getCitizenData().getColony(), livingentity);
-                            final boolean foe = !ally && ai.isEntityValidTarget(livingentity);
-                            if (ally || foe)
+                            for (final EffectInstance effectinstance : effects)
                             {
-                                for (final EffectInstance effectinstance : effects)
+                                final Effect effect = effectinstance.getPotion();
+                                if (predicate == null || predicate.test(livingentity, effect))
                                 {
-                                    final Effect effect = effectinstance.getPotion();
-                                    if ((ally && effect.isBeneficial()) || (foe && !effect.isBeneficial()))
+                                    if (effect.isInstant())
                                     {
-                                        if (effect.isInstant())
+                                        effect.affectEntity(this, this.getThrower(), livingentity, effectinstance.getAmplifier(), d1);
+                                    }
+                                    else
+                                    {
+                                        final int duration = (int) (d1 * (double) effectinstance.getDuration() + 0.5D);
+                                        if (duration > MIN_DURATION)
                                         {
-                                            effect.affectEntity(this, this.getThrower(), livingentity, effectinstance.getAmplifier(), d1);
-                                        }
-                                        else
-                                        {
-                                            final int duration = (int) (d1 * (double) effectinstance.getDuration() + 0.5D);
-                                            if (duration > MIN_DURATION)
-                                            {
-                                                livingentity.addPotionEffect(new EffectInstance(effect,
-                                                  duration,
-                                                  effectinstance.getAmplifier(),
-                                                  effectinstance.isAmbient(),
-                                                  effectinstance.doesShowParticles()));
-                                            }
+                                            livingentity.addPotionEffect(new EffectInstance(effect,
+                                              duration,
+                                              effectinstance.getAmplifier(),
+                                              effectinstance.isAmbient(),
+                                              effectinstance.doesShowParticles()));
                                         }
                                     }
                                 }

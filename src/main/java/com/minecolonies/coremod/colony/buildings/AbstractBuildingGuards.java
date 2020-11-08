@@ -16,6 +16,7 @@ import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
@@ -34,6 +35,7 @@ import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRandomPos;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
@@ -42,7 +44,9 @@ import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
@@ -227,6 +231,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }, new Tuple<>(128, true));
 
         calculateMobs();
+    }
+
+    @Override
+    public boolean isAttackableMob(final LivingEntity entity)
+    {
+        if (entity instanceof IMob)
+        {
+            final MobEntryView entry = getMobsToAttack().get(entity.getType().getRegistryName());
+            return entry != null && entry.shouldAttack();
+        }
+        return false;
     }
 
     //// ---- NBT Overrides ---- \\\\

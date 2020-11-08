@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -40,6 +41,14 @@ public interface IGuardBuilding extends IBuildingWorker
         }
         return true;
     }
+
+    /**
+     * Check wether the given entity should be attacked
+     *
+     * @param entity the entity to check
+     * @return true if the entity should be attacked, otherwise false
+     */
+    boolean isAttackableMob(LivingEntity entity);
 
     /**
      * Get the guard's {@link GuardTask}.

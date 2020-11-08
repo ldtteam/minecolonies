@@ -22,6 +22,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.EffectType;
 import net.minecraft.potion.Effects;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.Hand;
@@ -308,7 +309,18 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     {
         final int level = worker.getCitizenData().getCitizenSkillHandler().getLevel(ModGuardTypes.witch.getSecondarySkill());
         final float inaccuracy = 99f / level;
-        WitchPotionEntity.throwPotionAt(worker.getActiveItemStack(), target, worker, world, POTION_VELOCITY, inaccuracy);
+        WitchPotionEntity.throwPotionAt(worker.getActiveItemStack(), target, worker, world, POTION_VELOCITY, inaccuracy, (entity, effect) -> {
+            switch (effect.getEffectType())
+            {
+                case HARMFUL:
+                    return (isEnemy(entity) && !entity.isEntityUndead()) || (isAlly(entity) && entity.isEntityUndead());
+                case BENEFICIAL:
+                    return (isAlly(entity) && !entity.isEntityUndead()) || (isEnemy(entity) && entity.isEntityUndead());
+                case NEUTRAL:
+                default:
+                    return true;
+            }
+        });
 
     }
 
@@ -349,11 +361,11 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
             if (entity.isAlive() && worker.canEntityBeSeen(entity))
             {
                 final int tempDistance = (int) BlockPosUtil.getDistanceSquared(worker.getPosition(), entity.getPosition());
-                if (isAlly(worker.getCitizenData().getColony(), entity))
+                if (isAlly(entity))
                 {
                     if (entity instanceof AbstractEntityCitizen)
                     {
-                        final EntityCitizen citizen = (EntityCitizen) entity;
+                        final AbstractEntityCitizen citizen = (AbstractEntityCitizen) entity;
 
                         // Found a sleeping guard nearby
                         if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep())
@@ -528,12 +540,12 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     /**
      * Checks if the given {@link LivingEntity} is an ally.
      *
-     * @param ownColony the {@link IColony} to check for
      * @param entity the {@link LivingEntity} to check
      * @return true if the {@link LivingEntity} is an ally
      */
-    public static boolean isAlly(final IColony ownColony, final LivingEntity entity)
+    public boolean isAlly(final LivingEntity entity)
     {
+        final IColony ownColony = worker.getCitizenColonyHandler().getColony();
         if (entity instanceof PlayerEntity)
         {
             return ownColony.getPermissions().hasPermission((PlayerEntity) entity, Action.RECEIVES_POTION_BUFFS);
