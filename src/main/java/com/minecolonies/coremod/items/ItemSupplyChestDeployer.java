@@ -81,7 +81,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             {
                 return ActionResultType.FAIL;
             }
-            placeSupplyShip(ctx.getWorld().getDimensionType().getEffects(), ctx.getPos(), ctx.getPlayer().getHorizontalFacing());
+            placeSupplyShip(ctx.getWorld().getDimensionType(), ctx.getPos(), ctx.getPlayer().getHorizontalFacing());
         }
 
         return ActionResultType.FAIL;
@@ -99,7 +99,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return new ActionResult<>(ActionResultType.FAIL, stack);
             }
-            placeSupplyShip(worldIn.getDimensionType().getEffects(), null, playerIn.getHorizontalFacing());
+            placeSupplyShip(worldIn.getDimensionType(), null, playerIn.getHorizontalFacing());
         }
 
         return new ActionResult<>(ActionResultType.FAIL, stack);
@@ -111,9 +111,9 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param pos       the position to place the supply chest at.
      * @param direction the direction the supply chest should face.
      */
-    private void placeSupplyShip(ResourceLocation dim, @Nullable final BlockPos pos, @NotNull final Direction direction)
+    private void placeSupplyShip(DimensionType dim, @Nullable final BlockPos pos, @NotNull final Direction direction)
     {
-        final String name = dim.equals(DimensionType.THE_NETHER.getLocation())
+        final String name = dim.isSame(DimensionType.NETHER_TYPE)
                 ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
                 : SUPPLY_SHIP_STRUCTURE_NAME;
 
@@ -203,7 +203,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private static void checkFluidAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final PlayerEntity placer)
     {
-        final boolean isOverworld = world.getDimensionType().getEffects().equals(DimensionType.OVERWORLD.getLocation());
+        final boolean isOverworld = world.getDimensionType().isSame(DimensionType.OVERWORLD_TYPE);
         final boolean isWater = BlockUtils.isWater(world.getBlockState(pos));
         final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
         if (!isWater && isOverworld)
