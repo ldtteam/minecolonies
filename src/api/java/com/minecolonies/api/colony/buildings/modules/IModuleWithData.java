@@ -6,7 +6,7 @@ import net.minecraft.network.PacketBuffer;
 /**
  * Interface for all building modules that store additional data.
  */
-public interface IStoresDataModule extends IBuildingModule
+public interface IModuleWithData extends IBuildingModule
 {
     /**
      * Deserialize the module.

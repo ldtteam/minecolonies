@@ -8,7 +8,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.modules.TavernCoreBuildingStatsModule;
+import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.RecallCitizenHutMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_RECALL;
 /**
  * Window for the tavern
  */
-public class WindowHutTavern extends AbstractWindowBuilding<TavernCoreBuildingStatsModule.View>
+public class WindowHutTavern extends AbstractWindowBuilding<TavernBuildingModule.View>
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -59,7 +59,7 @@ public class WindowHutTavern extends AbstractWindowBuilding<TavernCoreBuildingSt
      *
      * @param building View of the home building.
      */
-    public WindowHutTavern(final TavernCoreBuildingStatsModule.View building)
+    public WindowHutTavern(final TavernBuildingModule.View building)
     {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
 

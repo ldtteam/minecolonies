@@ -16,6 +16,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
@@ -214,9 +215,9 @@ public class EntityAISleep extends Goal
             {
                 final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
                 List<BlockPos> bedList = new ArrayList<>();
-                if (hut.hasModule(LivingBuildingModule.class))
+                if (hut.hasModule(BedHandlingModule.class))
                 {
-                    bedList.addAll(((LivingBuildingModule) hut.getModule(LivingBuildingModule.class)).getBedList());
+                    bedList.addAll(((BedHandlingModule) hut.getModule(BedHandlingModule.class)).getRegisterBlocks());
                 }
 
                 for (final BlockPos pos : bedList)
@@ -346,7 +347,7 @@ public class EntityAISleep extends Goal
                 if (colony != null && colony.getBuildingManager().getBuilding(citizen.getHomePosition()) != null)
                 {
                     final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
-                    if (hut.hasModule(LivingBuildingModule.class))
+                    if (hut.hasModule(LivingBuildingModule.class) || hut instanceof IBuildingBedProvider)
                     {
                         setBedOccupied(false);
                     }

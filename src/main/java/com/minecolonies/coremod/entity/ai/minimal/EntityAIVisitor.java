@@ -11,7 +11,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.VisitorData;
 import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
-import com.minecolonies.coremod.colony.buildings.modules.TavernCoreBuildingStatsModule;
+import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.util.NamedDamageSource;
@@ -109,7 +109,7 @@ public class EntityAIVisitor extends Goal
             citizen.getCitizenColonyHandler().getColony().getVisitorManager().removeCivilian(citizen.getCitizenData());
             if (tavern != null)
             {
-                ((TavernCoreBuildingStatsModule) tavern.getModule(TavernCoreBuildingStatsModule.class)).removeCitizen(citizen.getCivilianID());
+                ((TavernBuildingModule) tavern.getModule(TavernBuildingModule.class)).removeCitizen(citizen.getCivilianID());
             }
             return true;
         }
@@ -181,7 +181,7 @@ public class EntityAIVisitor extends Goal
         final int random = citizen.getRandom().nextInt(5);
         if (tavern != null && (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColony().isDay()))
         {
-            final BlockPos pos = ((TavernCoreBuildingStatsModule) tavern.getModule(TavernCoreBuildingStatsModule.class)).getFreeSitPosition();
+            final BlockPos pos = ((TavernBuildingModule) tavern.getModule(TavernBuildingModule.class)).getFreeSitPosition();
             if (pos != null)
             {
                 ((VisitorData) citizen.getCitizenData()).setSittingPosition(pos);
@@ -242,7 +242,7 @@ public class EntityAIVisitor extends Goal
         }
 
         IBuilding building = citizen.getCitizenData().getHomeBuilding();
-        if (building.hasModule(TavernCoreBuildingStatsModule.class))
+        if (building.hasModule(TavernBuildingModule.class))
         {
             tavern = (DefaultBuildingInstance) building;
         }

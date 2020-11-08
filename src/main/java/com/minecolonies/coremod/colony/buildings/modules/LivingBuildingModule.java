@@ -5,41 +5,25 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.buildings.AbstractCitizenAssignable;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenBornEvent;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.state.properties.BedPart;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.TWENTYFIVESEC;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BEDS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RESIDENTS;
 
 /**
  * The class of the citizen hut.
  */
-public class LivingBuildingModule extends AbstractBuildingModule implements IBuildingBedProvider, IAssignsCitizen, IRegistersBlockModule, IBuildingEventsModule, ITickingModule, IStoresDataModule
+public class LivingBuildingModule extends AbstractBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IModuleWithData
 {
-    /**
-     * List of all beds.
-     */
-    @NotNull
-    private final List<BlockPos> bedList = new ArrayList<>();
-
     /**
      * Is a female citizen living here?
      */
@@ -92,17 +76,6 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
                 }
             }
         }
-
-        final ListNBT bedTagList = compound.getList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < bedTagList.size(); ++i)
-        {
-            final CompoundNBT bedCompound = bedTagList.getCompound(i);
-            final BlockPos bedPos = NBTUtil.readBlockPos(bedCompound);
-            if (!bedList.contains(bedPos))
-            {
-                bedList.add(bedPos);
-            }
-        }
     }
 
     @Override
@@ -116,55 +89,6 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
                 residentIds[i] = building.getAssignedCitizen().get(i).getId();
             }
             compound.putIntArray(TAG_RESIDENTS, residentIds);
-        }
-        if (!bedList.isEmpty())
-        {
-            @NotNull final ListNBT bedTagList = new ListNBT();
-            for (@NotNull final BlockPos pos : bedList)
-            {
-                bedTagList.add(NBTUtil.writeBlockPos(pos));
-            }
-            compound.put(TAG_BEDS, bedTagList);
-        }
-    }
-
-    @Override
-    public void onWakeUp()
-    {
-        final World world = building.getColony().getWorld();
-        if (world == null)
-        {
-            return;
-        }
-
-        for (final BlockPos pos : bedList)
-        {
-            BlockState state = world.getBlockState(pos);
-            state = state.getBlock().getExtendedState(state, world, pos);
-            if (state.getBlock() instanceof BedBlock
-                  && state.get(BedBlock.OCCUPIED)
-                  && state.get(BedBlock.PART).equals(BedPart.HEAD))
-            {
-                world.setBlockState(pos, state.with(BedBlock.OCCUPIED, false), 0x03);
-            }
-        }
-    }
-
-    @Override
-    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
-    {
-        BlockPos registrationPosition = pos;
-        if (blockState.getBlock() instanceof BedBlock)
-        {
-            if (blockState.get(BedBlock.PART) == BedPart.FOOT)
-            {
-                registrationPosition = registrationPosition.offset(blockState.get(BedBlock.HORIZONTAL_FACING));
-            }
-
-            if (!bedList.contains(registrationPosition))
-            {
-                bedList.add(registrationPosition);
-            }
         }
     }
 
@@ -474,13 +398,6 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IBui
         {
             buf.writeInt(citizen.getId());
         }
-    }
-
-    @NotNull
-    @Override
-    public List<BlockPos> getBedList()
-    {
-        return new ArrayList<>(bedList);
     }
 
     @Override

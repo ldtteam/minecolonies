@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Module type to register specific blocks to a building (beds, workstations, etc).
  */
-public interface IRegistersBlockModule extends IBuildingModule
+public interface IModuleWithExternalBlocks extends IBuildingModule
 {
     /**
      * Attempt to register a specific block at a specific module.
@@ -16,5 +16,5 @@ public interface IRegistersBlockModule extends IBuildingModule
      * @param pos the position.
      * @param world the world.
      */
-    void registerBlockPosition(@NotNull BlockState blockState, @NotNull BlockPos pos, @NotNull World world);
+    void onBlockPlacedInBuilding(@NotNull BlockState blockState, @NotNull BlockPos pos, @NotNull World world);
 }

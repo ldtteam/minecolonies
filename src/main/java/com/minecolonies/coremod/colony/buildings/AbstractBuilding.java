@@ -337,9 +337,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         for (final IBuildingModule module : modules.values())
         {
-            if (module instanceof IStoresDataModule)
+            if (module instanceof IModuleWithData)
             {
-                ((IStoresDataModule) module).deserializeNBT(compound);
+                ((IModuleWithData) module).deserializeNBT(compound);
             }
         }
     }
@@ -372,9 +372,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         for (final IBuildingModule module : modules.values())
         {
-            if (module instanceof IStoresDataModule)
+            if (module instanceof IModuleWithData)
             {
-                ((IStoresDataModule) module).serializeNBT(compound);
+                ((IModuleWithData) module).serializeNBT(compound);
             }
         }
         return compound;
@@ -759,9 +759,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         for (final IBuildingModule module : modules.values())
         {
-            if (module instanceof IStoresDataModule)
+            if (module instanceof IModuleWithData)
             {
-                ((IStoresDataModule) module).serializeToView(buf);
+                ((IModuleWithData) module).serializeToView(buf);
             }
         }
     }
@@ -1370,9 +1370,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         super.registerBlockPosition(blockState, pos, world);
         for (final IBuildingModule module : modules.values())
         {
-            if (module instanceof IRegistersBlockModule)
+            if (module instanceof IModuleWithExternalBlocks)
             {
-                ((IRegistersBlockModule) module).registerBlockPosition(blockState, pos, world);
+                ((IModuleWithExternalBlocks) module).onBlockPlacedInBuilding(blockState, pos, world);
             }
         }
     }
