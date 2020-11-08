@@ -5,6 +5,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
  * Module type to register specific blocks to a building (beds, workstations, etc).
  */
@@ -17,4 +19,10 @@ public interface IModuleWithExternalBlocks extends IBuildingModule
      * @param world the world.
      */
     void onBlockPlacedInBuilding(@NotNull BlockState blockState, @NotNull BlockPos pos, @NotNull World world);
+
+    /**
+     * Get the list of registered blocks.
+     * @return the list of positions of the blocks.
+     */
+    List<BlockPos> getRegisterBlocks();
 }

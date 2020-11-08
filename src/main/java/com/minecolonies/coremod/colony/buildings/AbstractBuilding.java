@@ -458,14 +458,22 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return super.getMaxInhabitants();
         }
 
+        IntStat<Integer> current = null;
         for (final IBuildingModule module : modules.values())
         {
             if (module instanceof IDefinesCoreBuildingStatsModule)
             {
-                return ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants();
+                if (current == null)
+                {
+                    current = (IntStat<Integer>) ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants();
+                }
+                else
+                {
+                    current = (IntStat<Integer>) ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants().process(current);
+                }
             }
         }
-        return super.getMaxInhabitants();
+        return current == null ? 0 : Math.max(0, current.getValue());
     }
 
     @Override
