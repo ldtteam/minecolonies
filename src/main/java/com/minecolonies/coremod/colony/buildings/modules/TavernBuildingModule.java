@@ -5,6 +5,7 @@ import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.TavernSounds;
@@ -101,20 +102,20 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     }
 
     @Override
-    public int getMaxBuildingLevel()
+    public IStat<Integer> getMaxBuildingLevel()
     {
-        return 3;
+        return (prev) -> 3;
     }
 
     @Override
-    public int getMaxInhabitants()
+    public IStat<Integer> getMaxInhabitants()
     {
         if (building.getBuildingLevel() <= 0)
         {
-            return 0;
+            return (prev) -> 0;
         }
 
-        return 4;
+        return (prev) -> 4;
     }
 
     @Override

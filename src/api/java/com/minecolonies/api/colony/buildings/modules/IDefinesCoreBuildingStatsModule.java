@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.buildings.modules;
 
-import com.minecolonies.api.colony.buildings.modules.stat.BuildingStatMode;
-import com.minecolonies.api.colony.buildings.modules.stat.IBuildingStat;
+import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 
 /**
  * Interface describing core building stats.
@@ -14,14 +13,14 @@ public interface IDefinesCoreBuildingStatsModule extends IBuildingModule
      * By default this is 5.
      * @return the max level.
      */
-    default IBuildingStat<Integer> getMaxBuildingLevel()
+    default IStat<Integer> getMaxBuildingLevel()
     {
-        return new IBuildingStat<Integer>(5, BuildingStatMode.FIRST) {};
+        return (prev) -> prev == 0 ? 5 : prev;
     }
 
     /**
      * Get the max number of inhabitants this module allows.
      * @return the modules max number of assigned citizens.
      */
-    IBuildingStat<IntStat<Integer>> getMaxInhabitants();
+    IStat<Integer> getMaxInhabitants();
 }

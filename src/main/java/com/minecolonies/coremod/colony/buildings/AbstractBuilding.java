@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
@@ -458,32 +459,26 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return super.getMaxInhabitants();
         }
 
-        IntStat<Integer> current = null;
+        int current = 0;
         for (final IBuildingModule module : modules.values())
         {
             if (module instanceof IDefinesCoreBuildingStatsModule)
             {
-                if (current == null)
-                {
-                    current = (IntStat<Integer>) ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants();
-                }
-                else
-                {
-                    current = (IntStat<Integer>) ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants().process(current);
-                }
+                current = ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants().apply(current);
             }
         }
-        return current == null ? 0 : Math.max(0, current.getValue());
+        return Math.max(0, current);
     }
 
     @Override
     public int getMaxBuildingLevel()
     {
+        int current = 0;
         for (final IBuildingModule module : modules.values())
         {
             if (module instanceof IDefinesCoreBuildingStatsModule)
             {
-                return ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants();
+                current = ((IDefinesCoreBuildingStatsModule) module).getMaxBuildingLevel().apply(current);
             }
         }
         return 5;
