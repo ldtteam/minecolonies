@@ -24,5 +24,5 @@ public interface IModuleWithExternalBlocks extends IBuildingModule
      * Get the list of registered blocks.
      * @return the list of positions of the blocks.
      */
-    List<BlockPos> getRegisterBlocks();
+    List<BlockPos> getRegisteredBlocks();
 }

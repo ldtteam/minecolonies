@@ -42,7 +42,7 @@ import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
 /**
  * Tavern building for the colony. Houses 4 citizens Plays a tavern theme on entering Spawns/allows citizen recruitment Spawns trader/quest npcs
  */
-public class TavernBuildingModule extends AbstractBuildingModule implements IDefinesCoreBuildingStatsModule, IBuildingEventsModule, IModuleWithData, ITickingModule
+public class TavernBuildingModule extends AbstractBuildingModule implements IDefinesCoreBuildingStatsModule, IBuildingEventsModule, IPersistentModule, ITickingModule
 {
     /**
      * Schematic name

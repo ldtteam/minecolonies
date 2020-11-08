@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.buildings.modules.*;
-import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
@@ -180,9 +179,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     @Nullable
     @Override
-    public IBuildingModule getModule(final Class<? extends IBuildingModule> clazz)
+    public <T extends IBuildingModule> T getModule(final Class<T> clazz)
     {
-        return modules.get(clazz);
+        return (T) modules.get(clazz);
     }
 
     @Override
@@ -338,9 +337,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         for (final IBuildingModule module : modules.values())
         {
-            if (module instanceof IModuleWithData)
+            if (module instanceof IPersistentModule)
             {
-                ((IModuleWithData) module).deserializeNBT(compound);
+                ((IPersistentModule) module).deserializeNBT(compound);
             }
         }
     }
@@ -373,9 +372,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         for (final IBuildingModule module : modules.values())
         {
-            if (module instanceof IModuleWithData)
+            if (module instanceof IPersistentModule)
             {
-                ((IModuleWithData) module).serializeNBT(compound);
+                ((IPersistentModule) module).serializeNBT(compound);
             }
         }
         return compound;
@@ -762,9 +761,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         for (final IBuildingModule module : modules.values())
         {
-            if (module instanceof IModuleWithData)
+            if (module instanceof IPersistentModule)
             {
-                ((IModuleWithData) module).serializeToView(buf);
+                ((IPersistentModule) module).serializeToView(buf);
             }
         }
     }

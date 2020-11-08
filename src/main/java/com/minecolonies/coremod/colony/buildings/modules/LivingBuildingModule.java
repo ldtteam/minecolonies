@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RESIDENTS;
 /**
  * The class of the citizen hut.
  */
-public class LivingBuildingModule extends AbstractBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IModuleWithData
+public class LivingBuildingModule extends AbstractBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule
 {
     /**
      * Is a female citizen living here?

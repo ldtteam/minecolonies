@@ -11,6 +11,7 @@ public interface IDefinesCoreBuildingStatsModule extends IBuildingModule
     /**
      * Get the max building level a module allows.
      * By default this is 5.
+     * todo: Code this to be defined by the actually schematic availability.
      * @return the max level.
      */
     default IStat<Integer> getMaxBuildingLevel()

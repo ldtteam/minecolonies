@@ -20,13 +20,13 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BEDS;
 /**
  * The class of the citizen hut.
  */
-public class BedHandlingModule extends AbstractBuildingModule implements IModuleWithExternalBlocks, IModuleWithData, IBuildingEventsModule
+public class BedHandlingModule extends AbstractBuildingModule implements IModuleWithExternalBlocks, IPersistentModule, IBuildingEventsModule
 {
     /**
      * List of all beds.
      */
     @NotNull
-    private final List<BlockPos> bedList = new ArrayList<>();
+    private final Set<BlockPos> bedList = new HashSet<>();
 
     /**
      * Creates a new home building module.
@@ -45,10 +45,7 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
         {
             final CompoundNBT bedCompound = bedTagList.getCompound(i);
             final BlockPos bedPos = NBTUtil.readBlockPos(bedCompound);
-            if (!bedList.contains(bedPos))
-            {
-                bedList.add(bedPos);
-            }
+            bedList.add(bedPos);
         }
     }
 
@@ -77,15 +74,12 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
                 registrationPosition = registrationPosition.offset(blockState.get(BedBlock.HORIZONTAL_FACING));
             }
 
-            if (!bedList.contains(registrationPosition))
-            {
-                bedList.add(registrationPosition);
-            }
+            bedList.add(registrationPosition);
         }
     }
 
     @Override
-    public List<BlockPos> getRegisterBlocks()
+    public List<BlockPos> getRegisteredBlocks()
     {
         return new ArrayList<>(bedList);
     }
