@@ -288,6 +288,10 @@ public final class TranslationConstants
     @NonNls
     public static final String REALLY_FAR_DESC                                                     = "com.minecolonies.coremod.max.schematic.reallyfar";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL                         = "com.minecolonies.coremod.gui.builder.manual";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BUILDER_AUTOMATIC                      = "com.minecolonies.coremod.gui.builder.automatic";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HERDER_BREEDING                        = "com.minecolonies.coremod.gui.herder.breeding";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HERDER_NOTBREEDING                     = "com.minecolonies.coremod.gui.herder.notbreeding";

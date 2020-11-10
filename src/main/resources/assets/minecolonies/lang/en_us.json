@@ -578,6 +578,10 @@
   "com.minecolonies.coremod.gui.warehouse.visitcitizenchests": "Visit Citizen Chests:",
   "com.minecolonies.coremod.gui.workerhuts.mobslist": "Mob Attack List",
 
+  "com.minecolonies.coremod.gui.builder.manual": "Manual Mode",
+  "com.minecolonies.coremod.gui.builder.automatic": "Automatic Mode",
+  "com.minecolonies.coremod.gui.builder.select": "Select",
+
   "com.minecolonies.coremod.gui.workerhuts.minernode": "Nodes",
   "com.minecolonies.coremod.gui.hiring.off": "Automatic",
   "com.minecolonies.coremod.gui.cowboy.notcollect": "Not Collecting Milk",

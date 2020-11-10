@@ -7,15 +7,20 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.TransferItemsRequestMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.builder.BuilderSelectWorkOrderMessage;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -44,6 +49,11 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      * The advancement location.
      */
     private static final ResourceLocation GUIDE_ADVANCEMENT = new ResourceLocation(Constants.MOD_ID, "minecolonies/check_out_guide");
+
+    /**
+     * Button for toggling manual mode.
+     */
+    private static final String BUTTON_MANUAL_MODE = "manualMode";
 
     /**
      * List of resources needed.
@@ -81,8 +91,19 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     {
         super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
         pullResourcesFromHut();
+
         registerButton(RESOURCE_ADD, this::transferItems);
+        registerButton(BUTTON_MANUAL_MODE, this::manualModeClicked);
+        registerButton(WORK_ORDER_SELECT, this::selectWorkOrder);
+
         this.needGuide = needGuide;
+
+        Button buttonManualMode = findPaneOfTypeByID(BUTTON_MANUAL_MODE, Button.class);
+        if (building.getManualMode()) {
+            buttonManualMode.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL));
+        } else {
+            buttonManualMode.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_AUTOMATIC));
+        }
     }
 
     /**
@@ -139,6 +160,22 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 updateResourcePane(index, rowPane);
+            }
+        });
+
+        final ScrollingList workOrdersList = findPaneOfTypeByID(LIST_WORK_ORDERS, ScrollingList.class);
+        workOrdersList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return building.getBuildOrders().size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                updateAvailableWorkOrders(index, rowPane);
             }
         });
 
@@ -219,6 +256,22 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     }
 
     /**
+     * Updates the available work orders page.
+     * 
+     * @param index   index in the list of resources.
+     * @param rowPane The Pane to use to display the information.
+     */
+    private void updateAvailableWorkOrders(final int index, @NotNull final Pane rowPane)
+    {
+        final WorkOrderView order = building.getBuildOrders().get(index);
+        final Label workOrderPosLabel = rowPane.findPaneOfTypeByID(WORK_ORDER_POS, Label.class);
+
+        rowPane.findPaneOfTypeByID(WORK_ORDER_NAME, Label.class).setLabelText(order.get());
+        workOrderPosLabel.setLabelText(order.getPos().getX() + " " + order.getPos().getY() + " " + order.getPos().getZ());
+        rowPane.findPaneOfTypeByID(WORK_ORDER_ID, Label.class).setLabelText(Integer.toString(order.getId()));
+    }
+
+    /**
      * Returns the name of a building.
      *
      * @return Name of a building.
@@ -277,5 +330,41 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             resources.sort(new BuildingBuilderResource.ResourceComparator());
             Network.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity, true));
         }
+    }
+
+    /**
+     * On manual mode button clicked.
+     * 
+     * @param button the button that just got clicked.
+     */
+    private void manualModeClicked(@NotNull final Button button)
+    {
+        if (button.getLabel().equals(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL)))
+        {
+            button.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_AUTOMATIC));
+            building.setManualMode(false);
+        }
+        else
+        {
+            button.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL));
+            building.setManualMode(true);
+        }
+    }
+
+    /**
+     * On click select the clicked work order.
+     * 
+     * @param button the clicked button.
+     */
+    private void selectWorkOrder(@NotNull final Button button)
+    {
+        final Pane pane = button.getParent();
+
+        final int id = Integer.parseInt(pane.findPaneOfTypeByID(WORK_ORDER_ID, Label.class).getLabelText());
+
+        button.disable();
+        Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(building));
+
+        Network.getNetwork().sendToServer(new BuilderSelectWorkOrderMessage(building, id));
     }
 }
