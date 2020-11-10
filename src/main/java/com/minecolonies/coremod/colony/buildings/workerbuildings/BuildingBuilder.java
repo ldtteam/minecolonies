@@ -163,7 +163,8 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             {
                 order.serializeViewNetworkData(buf);
             }
-        } else if (manualMode)
+        }
+        else if (manualMode)
         {
             buf.writeInt(0);
         }
@@ -321,7 +322,8 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        if (citizen.getJob(JobBuilder.class).hasWorkOrder()) {
+        if (citizen.getJob(JobBuilder.class).hasWorkOrder())
+        {
             return;
         }
 
@@ -415,7 +417,8 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
          * 
          * @return the available work orders to choose from.
          */
-        public List<WorkOrderView> getBuildOrders() {
+        public List<WorkOrderView> getBuildOrders()
+        {
             return orders;
         }
 

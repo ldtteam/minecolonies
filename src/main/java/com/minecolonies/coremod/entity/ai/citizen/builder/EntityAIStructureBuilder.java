@@ -201,7 +201,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         if (!job.hasWorkOrder())
         {
-            if (getOwnBuilding().getManualMode()) {
+            if (getOwnBuilding().getManualMode())
+            {
                 return false;
             }
             getOwnBuilding().searchWorkOrder();

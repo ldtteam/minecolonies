@@ -99,9 +99,12 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         this.needGuide = needGuide;
 
         Button buttonManualMode = findPaneOfTypeByID(BUTTON_MANUAL_MODE, Button.class);
-        if (building.getManualMode()) {
+        if (building.getManualMode())
+        {
             buttonManualMode.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL));
-        } else {
+        }
+        else
+        {
             buttonManualMode.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_AUTOMATIC));
         }
     }
