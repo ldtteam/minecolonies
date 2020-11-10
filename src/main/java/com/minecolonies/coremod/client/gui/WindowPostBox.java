@@ -12,6 +12,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
+import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -144,7 +145,8 @@ public class WindowPostBox extends AbstractWindowRequestTree
     {
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
                                                                 || stack.getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || stack.getDisplayName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
+                                                                || stack.getDisplayName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                                                                || (stack.getItem() instanceof EnchantedBookItem && EnchantedBookItem.getEnchantments(stack).getCompound(0).getString("id").contains(filter.toLowerCase(Locale.US)));
         allItems.clear();
         allItems.addAll(getBlockList(filterPredicate));
         updateResourceList();

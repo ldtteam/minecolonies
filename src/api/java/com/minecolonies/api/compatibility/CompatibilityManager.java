@@ -7,17 +7,22 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionUtils;
+import net.minecraft.potion.Potions;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.Property;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -31,6 +36,7 @@ import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.Constants.ORE_STRING;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
+import static net.minecraft.item.EnchantedBookItem.getEnchantedItemStack;
 
 /**
  * CompatibilityManager handling certain list and maps of itemStacks of certain types.
@@ -218,9 +224,35 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverBlockList()
     {
-        allBlocks = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
+        final List<ItemStack> stacks = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
+                                           .filter(item -> !(item instanceof EnchantedBookItem || item instanceof PotionItem))
                                            .map(ItemStack::new)
-                                           .collect(Collectors.toList()));
+                                           .collect(Collectors.toList());
+        for(Enchantment enchantment : Registry.ENCHANTMENT)
+        {
+            for(int i = enchantment.getMinLevel(); i <= enchantment.getMaxLevel(); ++i)
+            {
+                stacks.add(getEnchantedItemStack(new EnchantmentData(enchantment, i)));
+            }
+        }
+
+        for(Potion potion : Registry.POTION)
+        {
+            if (potion != Potions.EMPTY)
+            {
+                stacks.add(PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), potion));
+            }
+        }
+
+        for(Potion potion : Registry.POTION)
+        {
+            if (!potion.getEffects().isEmpty())
+            {
+                stacks.add(PotionUtils.addPotionToItemStack(new ItemStack(Items.TIPPED_ARROW), potion));
+            }
+        }
+
+        allBlocks = ImmutableList.copyOf(stacks);
     }
 
     /**
@@ -533,7 +565,7 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             ench = list.get(random.nextInt(list.size()));
         }
-        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())),
+        return new Tuple<>(getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())),
           ench.getB());
     }
 
