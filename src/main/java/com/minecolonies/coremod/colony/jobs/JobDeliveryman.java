@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
-import com.minecolonies.api.colony.jobs.IAffectsWalkingSpeed;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -48,7 +47,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Class of the deliveryman job.
  */
-public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeliveryman> implements IAffectsWalkingSpeed
+public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeliveryman>
 {
     private IToken<?> rsDataStoreToken;
 
@@ -100,12 +99,6 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD, getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill()) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addModifier(worker, speedModifier, SharedMonsterAttributes.MOVEMENT_SPEED);
         }
-    }
-
-    @Override
-    public double getWalkingSpeed()
-    {
-        return BASE_MOVEMENT_SPEED + (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill())) * BONUS_SPEED_PER_LEVEL;
     }
 
     @Override

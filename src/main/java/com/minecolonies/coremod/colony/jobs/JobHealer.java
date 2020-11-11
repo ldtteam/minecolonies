@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.jobs.IAffectsWalkingSpeed;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -18,7 +17,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_AD
 /**
  * The healer job class.
  */
-public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer> implements IAffectsWalkingSpeed
+public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
 {
     /**
      * Walking speed bonus per level
@@ -86,12 +85,6 @@ public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer> implem
             final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD, getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill()) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addModifier(worker, speedModifier, SharedMonsterAttributes.MOVEMENT_SPEED);
         }
-    }
-
-    @Override
-    public double getWalkingSpeed()
-    {
-        return BASE_MOVEMENT_SPEED + (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill())) * BONUS_SPEED_PER_LEVEL;
     }
 
     @Override

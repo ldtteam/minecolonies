@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.jobs.IAffectsWalkingSpeed;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -22,7 +21,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TREE;
 /**
  * The Lumberjack job class.
  */
-public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, JobLumberjack> implements IAffectsWalkingSpeed
+public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, JobLumberjack>
 {
     /**
      * Walking speed bonus per level
@@ -104,13 +103,7 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
             AttributeModifierUtils.addModifier(worker, speedModifier, SharedMonsterAttributes.MOVEMENT_SPEED);
         }
     }
-
-    @Override
-    public double getWalkingSpeed()
-    {
-        return BASE_MOVEMENT_SPEED + (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getSecondarySkill()) / 2.0 ) * BONUS_SPEED_PER_LEVEL;
-    }
-
+    
     /**
      * Get the current tree the lumberjack is cutting.
      *
