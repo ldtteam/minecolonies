@@ -220,6 +220,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_SERVING                             = "com.minecolonies.coremod.status.serving";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_BUILDER_MANUAL_MODE                        = "com.minecolonies.coremod.builder.manual_mode";
+    @NonNls
     public static final String ENTERING_COLONY_MESSAGE                                             = "com.minecolonies.coremod.enteringcolony";
     @NonNls
     public static final String LEAVING_COLONY_MESSAGE                                              = "com.minecolonies.coremod.leavingcolony";

@@ -7,7 +7,10 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_BUILDER_MANUAL_MODE;
 
 public class BuilderSetManualModeMessage extends AbstractBuildingServerMessage<BuildingBuilder>
 {
@@ -49,5 +52,9 @@ public class BuilderSetManualModeMessage extends AbstractBuildingServerMessage<B
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingBuilder building)
     {
         building.setManualMode(manualMode);
+        if (manualMode)
+        {
+            ctxIn.getSender().sendMessage(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_BUILDER_MANUAL_MODE, building.getMainCitizen().getName()));
+        }
     }
 }
