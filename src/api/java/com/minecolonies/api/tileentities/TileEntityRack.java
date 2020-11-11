@@ -483,7 +483,14 @@ public class TileEntityRack extends AbstractTileEntityRack
                         return new CombinedItemHandler(RACK, getInventory());
                     }
 
-                    return new CombinedItemHandler(RACK, getInventory(), other.getInventory());
+                    if (main)
+                    {
+                        return new CombinedItemHandler(RACK, getInventory(), other.getInventory());
+                    }
+                    else
+                    {
+                        return new CombinedItemHandler(RACK, other.getInventory(), getInventory());
+                    }
                 });
 
                 return lastOptional.cast();
