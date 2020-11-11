@@ -45,8 +45,8 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @param clazz the modules class.
      * @return the module or null of not existant.
      */
-    @Nullable
-    <T extends IBuildingModule> T getModule(Class<T> clazz);
+    @NotNull
+    <T extends IBuildingModule> Optional<T> getModule(Class<T> clazz);
 
     /**
      * Register a specific module to the building.

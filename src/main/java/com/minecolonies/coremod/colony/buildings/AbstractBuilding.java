@@ -177,11 +177,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return modules.containsKey(clazz);
     }
 
-    @Nullable
+    @NotNull
     @Override
-    public <T extends IBuildingModule> T getModule(final Class<T> clazz)
+    public <T extends IBuildingModule> Optional<T> getModule(final Class<T> clazz)
     {
-        return (T) modules.get(clazz);
+        return Optional.ofNullable((T) modules.get(clazz));
     }
 
     @Override

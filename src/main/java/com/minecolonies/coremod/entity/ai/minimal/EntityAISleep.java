@@ -217,7 +217,7 @@ public class EntityAISleep extends Goal
                 List<BlockPos> bedList = new ArrayList<>();
                 if (hut.hasModule(BedHandlingModule.class))
                 {
-                    bedList.addAll(hut.getModule(BedHandlingModule.class).getRegisteredBlocks());
+                    hut.getModule(BedHandlingModule.class).ifPresent(module -> bedList.addAll(module.getRegisteredBlocks()));
                 }
 
                 for (final BlockPos pos : bedList)

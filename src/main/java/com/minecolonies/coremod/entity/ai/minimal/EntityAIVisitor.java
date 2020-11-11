@@ -109,7 +109,7 @@ public class EntityAIVisitor extends Goal
             citizen.getCitizenColonyHandler().getColony().getVisitorManager().removeCivilian(citizen.getCitizenData());
             if (tavern != null)
             {
-                tavern.getModule(TavernBuildingModule.class).removeCitizen(citizen.getCivilianID());
+                tavern.getModule(TavernBuildingModule.class).ifPresent(module -> module.removeCitizen(citizen.getCivilianID()));
             }
             return true;
         }
@@ -179,9 +179,9 @@ public class EntityAIVisitor extends Goal
         }
 
         final int random = citizen.getRandom().nextInt(5);
-        if (tavern != null && (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColony().isDay()))
+        if (tavern != null && (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColony().isDay()) && tavern.hasModule(TavernBuildingModule.class))
         {
-            final BlockPos pos = tavern.getModule(TavernBuildingModule.class).getFreeSitPosition();
+            final BlockPos pos = tavern.getModule(TavernBuildingModule.class).get().getFreeSitPosition();
             if (pos != null)
             {
                 ((VisitorData) citizen.getCitizenData()).setSittingPosition(pos);
