@@ -67,8 +67,6 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     @Override
     public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
-
         if (building instanceof BuildingWareHouse
               || (building instanceof BuildingCook && building.isMinimumStockRequest(request))
               || (building instanceof BuildingBaker && building.isMinimumStockRequest(request))
