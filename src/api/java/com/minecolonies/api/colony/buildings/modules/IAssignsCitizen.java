@@ -21,4 +21,10 @@ public interface IAssignsCitizen extends IBuildingModule
      * @return true if one was added.
      */
     boolean assignCitizen(ICitizenData citizen);
+
+    /**
+     * Get the max number of citizens this module supports.
+     * @return the modules max.
+     */
+    int getModuleMax();
 }

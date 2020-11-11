@@ -147,7 +147,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
             trySpawnChild();
         }
 
-        if (building.getAssignedCitizen().size() < building.getMaxInhabitants() && !building.getColony().isManualHousing())
+        if (building.getAssignedCitizen().size() < getModuleMax() && !building.getColony().isManualHousing())
         {
             // 'Capture' as many citizens into this house as possible
             addHomelessCitizens();
@@ -357,6 +357,12 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
 
         citizen.setHomeBuilding(building);
         return true;
+    }
+
+    @Override
+    public int getModuleMax()
+    {
+        return building.getMaxInhabitants();
     }
 
     private boolean buildingAssignmentLogic(final ICitizenData citizen)
