@@ -12,6 +12,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
+import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -144,7 +145,8 @@ public class WindowPostBox extends AbstractWindowRequestTree
     {
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
                                                                 || stack.getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || stack.getDisplayName().getFormattedText().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
+                                                                || stack.getDisplayName().getFormattedText().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                                                                || (stack.getItem() instanceof EnchantedBookItem && EnchantedBookItem.getEnchantments(stack).getCompound(0).getString("id").contains(filter.toLowerCase(Locale.US)));
         allItems.clear();
         allItems.addAll(getBlockList(filterPredicate));
         updateResourceList();
@@ -160,9 +162,9 @@ public class WindowPostBox extends AbstractWindowRequestTree
     {
         if (filter.isEmpty())
         {
-            return IColonyManager.getInstance().getCompatibilityManager().getBlockList();
+            return IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems();
         }
-        return IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(filterPredicate).collect(Collectors.toList());
+        return IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems().stream().filter(filterPredicate).collect(Collectors.toList());
     }
 
     /**
