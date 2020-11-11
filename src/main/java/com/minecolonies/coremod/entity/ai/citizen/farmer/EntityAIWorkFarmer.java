@@ -648,6 +648,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private boolean plantCrop(final ItemStack item, @NotNull final BlockPos position)
     {
+        if (item == null || item.isEmpty())
+        {
+            return false;
+        }
         final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(item.getItem());
         if (slot == -1)
         {

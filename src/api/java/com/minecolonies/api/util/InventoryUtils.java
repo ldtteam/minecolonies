@@ -485,7 +485,7 @@ public class InventoryUtils
     @NotNull
     private static List<ItemStack> getFromProviderForAllSides(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> predicate)
     {
-        final ArrayList<ItemStack> combinedList = new ArrayList<>();
+        final Set<ItemStack> combinedList = new HashSet<>();
 
         for (final IItemHandler handler : getItemHandlersFromProvider(provider))
         {
@@ -494,7 +494,7 @@ public class InventoryUtils
                 combinedList.addAll(filterItemHandler(handler, predicate));
             }
         }
-        return combinedList;
+        return new ArrayList<>(combinedList);
     }
 
     /**
