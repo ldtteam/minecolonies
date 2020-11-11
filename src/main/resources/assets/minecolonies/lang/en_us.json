@@ -1110,7 +1110,7 @@
   "com.minecolonies.coremod.gui.auto.hire.warning": "Turn the hiring mode of this hut (and colony) to manual to fire this worker or hire another one.",
   "com.minecolonies.coremod.citizens.nospace": "Colonists can't arrive at your colony because there is not enough space at pos X:%d Y:%d Z:%d!",
 
-  "com.minecolonies.coremod.builder.manual_mode": "%s: Succesfully switched to manual mode, i will just finish the current task.",
+  "com.minecolonies.coremod.builder.manual_mode": "%s: Successfully switched to manual mode. I'll just finish up my current task.",
 
   "entity.pirate": "Pirate",
   "entity.archerpirate": "Archer Pirate",
