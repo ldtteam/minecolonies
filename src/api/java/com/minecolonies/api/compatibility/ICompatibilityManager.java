@@ -158,7 +158,7 @@ public interface ICompatibilityManager
      *
      * @return the immutable list.
      */
-    List<ItemStack> getBlockList();
+    List<ItemStack> getListOfAllItems();
 
     /**
      * Test if an itemStack is compostable

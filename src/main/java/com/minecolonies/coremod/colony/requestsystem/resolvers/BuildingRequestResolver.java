@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.RSConstants.CONST_BUILDING_RESOLVER_PRIORITY;
 
@@ -65,8 +67,6 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     @Override
     public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
-
         if (building instanceof BuildingWareHouse
               || (building instanceof BuildingCook && building.isMinimumStockRequest(request))
               || (building instanceof BuildingBaker && building.isMinimumStockRequest(request))
@@ -75,22 +75,23 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
             return false;
         }
 
-        return tileEntities.stream()
-                 .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
-                 .filter(itemStack -> !itemStack.isEmpty())
-                 .flatMap(List::stream)
-                 .filter(itemStack -> {
-                     if (!request.hasParent())
-                     {
-                         return true;
-                     }
+        final Predicate<ItemStack> pred = itemStack -> {
+            if (ItemStackUtils.isEmpty(itemStack) || !request.getRequest().matches(itemStack))
+            {
+                return false;
+            }
 
-                     final IRequest<?> requestParent = manager.getRequestForToken(request.getParent());
+            if (!request.hasParent())
+            {
+                return true;
+            }
 
-                     return !requestParent.getRequestOfType(IDeliverable.class).map(d -> d.matches(itemStack)).orElse(false);
-                 })
-                 .mapToInt(ItemStack::getCount)
-                 .sum() > 0;
+            final IRequest<?> requestParent = manager.getRequestForToken(request.getParent());
+
+            return !requestParent.getRequestOfType(IDeliverable.class).map(d -> d.matches(itemStack)).orElse(false);
+        };
+
+        return InventoryUtils.getCountFromBuilding(building, pred) > 0;
     }
 
     @Nullable
