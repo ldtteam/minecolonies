@@ -154,7 +154,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * List of all blocks.
      */
-    private static ImmutableList<ItemStack> allBlocks = ImmutableList.<ItemStack>builder().build();
+    private static ImmutableList<ItemStack> allItems = ImmutableList.<ItemStack>builder().build();
 
     /**
      * Instantiates the compatibilityManager.
@@ -201,7 +201,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void discover(final boolean serverSide)
     {
-        discoverBlockList();
+        discoverAllItems();
 
         discoverSaplings();
         discoverOres();
@@ -223,9 +223,9 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Create complete list of blocks, client side only.
      */
-    private void discoverBlockList()
+    private void discoverAllItems()
     {
-        final List<ItemStack> stacks = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
+        final List<ItemStack> stacks = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), true)
                                            .filter(item -> !(item instanceof EnchantedBookItem || item instanceof PotionItem))
                                            .map(ItemStack::new)
                                            .collect(Collectors.toList());
@@ -253,7 +253,7 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
 
-        allBlocks = ImmutableList.copyOf(stacks);
+        allItems = ImmutableList.copyOf(stacks);
     }
 
     /**
@@ -262,9 +262,9 @@ public class CompatibilityManager implements ICompatibilityManager
      * @return the list of itemStacks.
      */
     @Override
-    public List<ItemStack> getBlockList()
+    public List<ItemStack> getListOfAllItems()
     {
-        return allBlocks;
+        return allItems;
     }
 
     @Override
@@ -576,12 +576,12 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (smeltableOres.isEmpty())
         {
-            smeltableOres.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isOre).map(ItemStorage::new).collect(Collectors.toList())));
+            smeltableOres.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isOre).map(ItemStorage::new).collect(Collectors.toList())));
         }
 
         if (oreBlocks.isEmpty())
         {
-            oreBlocks.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isMineableOre)
+            oreBlocks.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isMineableOre)
                                                     .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
                                                     .map(stack -> ((BlockItem) stack.getItem()).getBlock())
                                                     .collect(Collectors.toList())));
@@ -619,7 +619,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (compostableItems.isEmpty())
         {
-            compostableItems.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
+            compostableItems.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering compostables");
     }
@@ -631,7 +631,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (plantables.isEmpty())
         {
-            plantables.addAll(ImmutableList.copyOf(allBlocks.stream()
+            plantables.addAll(ImmutableList.copyOf(allItems.stream()
                                                      .filter(this::isPlantable)
                                                      .map(ItemStorage::new)
                                                      .collect(Collectors.toList())));
@@ -646,7 +646,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (fuel.isEmpty())
         {
-            fuel.addAll(ImmutableList.copyOf(allBlocks.stream().filter(FurnaceTileEntity::isFuel).map(ItemStorage::new).collect(Collectors.toList())));
+            fuel.addAll(ImmutableList.copyOf(allItems.stream().filter(FurnaceTileEntity::isFuel).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering fuel");
     }
@@ -658,7 +658,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (food.isEmpty())
         {
-            food.addAll(ImmutableList.copyOf(allBlocks.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
+            food.addAll(ImmutableList.copyOf(allItems.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering food");
     }

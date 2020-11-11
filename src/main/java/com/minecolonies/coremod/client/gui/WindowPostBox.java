@@ -162,9 +162,9 @@ public class WindowPostBox extends AbstractWindowRequestTree
     {
         if (filter.isEmpty())
         {
-            return IColonyManager.getInstance().getCompatibilityManager().getBlockList();
+            return IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems();
         }
-        return IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(filterPredicate).collect(Collectors.toList());
+        return IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems().stream().filter(filterPredicate).collect(Collectors.toList());
     }
 
     /**
