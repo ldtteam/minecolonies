@@ -221,7 +221,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Create complete list of blocks, client side only.
+     * Create complete list of all existing items, client side only.
      */
     private void discoverAllItems()
     {
