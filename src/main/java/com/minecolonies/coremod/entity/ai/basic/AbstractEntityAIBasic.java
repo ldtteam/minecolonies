@@ -45,6 +45,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -143,6 +144,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * Already kept items during the dumping cycle.
      */
     private final List<ItemStorage> alreadyKept = new ArrayList<>();
+
+    /**
+     * Items to pick up quickly, rather than part of the full pickup group
+     */
+    private final List<ItemStack> fastPickup = new ArrayList<>();
 
     /**
      * Counter to count pickup attempts.
@@ -1029,6 +1035,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             {
                 building.createPickupRequest(getMaxBuildingPriority(true));
                 hasDumpedItems = false;
+                fastPickup.clear();
             }
             alreadyKept.clear();
             slotAt = 0;
@@ -1050,8 +1057,21 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             // Note that this will not create a pickup request when another request is already in progress.
             building.createPickupRequest(scaledPriority(building.getPickUpPriority()));
             hasDumpedItems = false;
+            fastPickup.clear();
+        } 
+        else if (!fastPickup.isEmpty())
+        {
+            building.createPickupRequest(scaledPriority(building.getPickUpPriority()), fastPickup);
+            fastPickup.clear();
         }
+
+
         return afterDump();
+    }
+
+    public boolean addItemForFastPickup(ItemStack item)
+    {
+        return fastPickup.add(item);
     }
 
     /**
