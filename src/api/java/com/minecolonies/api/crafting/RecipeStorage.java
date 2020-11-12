@@ -104,7 +104,7 @@ public class RecipeStorage implements IRecipeStorage
         this.cleanedInput.addAll(this.calculateCleanedInput());
         this.primaryOutput = primaryOutput;
         this.alternateOutputs = altOutputs != null ? altOutputs : ImmutableList.of();
-        this.secondaryOutputs = secOutputs != null ? secOutputs.stream().filter(i -> i.getItem() != ModItems.buildTool).collect(Collectors.toList()): ImmutableList.of();
+        this.secondaryOutputs = secOutputs != null ? secOutputs.stream().filter(i -> i.getItem() != ModItems.buildTool).collect(Collectors.toList()): this.calculateSecondaryOutputs();
         this.gridSize = gridSize;
         this.intermediate = intermediate;
         this.token = token;
@@ -165,6 +165,30 @@ public class RecipeStorage implements IRecipeStorage
             immutableItems.add(new ImmutableItemStorage(storage));
         }
         return immutableItems;
+    }
+
+    /**
+     * Calculate secondary stacks if they aren't provided. 
+     * @return the list of secondary outputs
+     */
+    private List<ItemStack> calculateSecondaryOutputs()
+    {
+        List<ItemStack> secondaryStacks = new ArrayList<>();
+        for (final ItemStack stack : input)
+        {
+            if (stack.getItem() == ModItems.buildTool)
+            {
+                continue;
+            }
+
+            final ItemStack container = stack.getItem().getContainerItem(stack);
+            if (!ItemStackUtils.isEmpty(container))
+            {
+                container.setCount(stack.getCount());
+                secondaryStacks.add(container);
+            }
+        }
+        return ImmutableList.copyOf(secondaryStacks);
     }
 
     @NotNull
@@ -467,29 +491,7 @@ public class RecipeStorage implements IRecipeStorage
             }
         }
 
-        final List<ItemStack> secondaryStacks = new ArrayList<>();
-        if(!secondaryOutputs.isEmpty())
-        {
-            secondaryStacks.addAll(secondaryOutputs);
-        }
-        else
-        {
-            for (final ItemStack stack : input)
-            {
-                if (stack.getItem() == ModItems.buildTool)
-                {
-                    continue;
-                }
-
-                final ItemStack container = stack.getItem().getContainerItem(stack);
-                if (!ItemStackUtils.isEmpty(container))
-                {
-                    container.setCount(stack.getCount());
-                    secondaryStacks.add(container);
-                }
-            }
-        }
-        for (final ItemStack stack : secondaryStacks)
+        for (final ItemStack stack : secondaryOutputs)
         {
             for (final IItemHandler handler : handlers)
             {
