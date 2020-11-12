@@ -1273,6 +1273,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public boolean createPickupRequest(final int scaledPriority)
     {
+        return createPickupRequest(scaledPriority, ImmutableList.of());
+    }
+
+    @Override
+    public boolean createPickupRequest(final int scaledPriority, List<ItemStack> pickups)
+    {
         if (scaledPriority < 0 || scaledPriority > getPlayerActionPriority(true))
         {
             return false;
@@ -1283,19 +1289,32 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             for (final IToken<?> req : reqs)
             {
-                if (colony.getRequestManager().getRequestForToken(req).getState() == RequestState.IN_PROGRESS)
+                IRequest<?> currentReq = colony.getRequestManager().getRequestForToken(req);
+                if (currentReq.getState() == RequestState.IN_PROGRESS)
                 {
                     final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(req);
                     if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
                     {
                         colony.getRequestManager().reassignRequest(req, Collections.emptyList());
                     }
+                    if (!pickups.isEmpty() && !currentReq.getDeliveries().isEmpty() )
+                    {
+                        Log.getLogger().info("Adding to fast pickup:" + getClass().getName());
+                        currentReq.addDelivery(pickups);
+                        break;
+                    }
                 }
             }
             return false;
         }
 
-        createRequest(new Pickup(scaledPriority), true);
+        IToken<?> reqToken = createRequest(new Pickup(scaledPriority), true);
+        IRequest<?> request = colony.getRequestManager().getRequestForToken(reqToken);
+
+        if(!pickups.isEmpty())
+        {
+            request.addDelivery(pickups);
+        }
         return true;
     }
 
