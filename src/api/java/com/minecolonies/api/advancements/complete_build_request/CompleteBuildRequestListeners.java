@@ -11,8 +11,8 @@ public class CompleteBuildRequestListeners extends CriterionListeners<CompleteBu
         super(playerAdvancements);
     }
 
-    public void trigger(final StructureName structureName, final int level)
+    public void trigger(final StructureName structureName, final int level, int y)
     {
-        trigger(instance -> instance.test(structureName, level));
+        trigger(instance -> instance.test(structureName, level, y));
     }
 }

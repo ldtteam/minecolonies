@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -17,6 +18,7 @@ import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
+import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.item.ItemStack;
@@ -87,6 +89,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private static final int LADDER_SEARCH_RANGE = 10;
     private static final int SHAFT_RADIUS        = 3;
     private static final int SAFE_CHECK_RANGE    = 5;
+
+    /**
+     * Considered the base of the shaft
+     */
+    private static final int SHAFT_BASE_DEPTH = 8;
 
     /**
      * Possible rotations.
@@ -307,7 +314,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private IAIState checkMineShaft()
     {
         final BuildingMiner buildingMiner = getOwnBuilding();
-        //Check if we reached the mineshaft depth limit
+        // Check if we reached the bottom of the shaft
+        if (getLastLadder(buildingMiner.getLadderLocation(), world) < SHAFT_BASE_DEPTH)
+        {
+            AdvancementUtils.TriggerAdvancementPlayersForColony(job.getColony(), AdvancementTriggers.DEEP_MINE::trigger);
+        }
+
+        // Check if we reached the mineshaft depth limit
         if (getLastLadder(buildingMiner.getLadderLocation(), world) < buildingMiner.getDepthLimit())
         {
             //If the miner hut has been placed too deep.

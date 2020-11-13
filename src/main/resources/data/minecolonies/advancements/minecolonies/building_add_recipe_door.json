@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:colony_building/build_sawmill",
+  "parent": "minecolonies:production/build_sawmill",
   "display": {
     "icon": {
       "item": "minecraft:oak_door"

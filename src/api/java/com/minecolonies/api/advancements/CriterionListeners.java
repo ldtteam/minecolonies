@@ -35,6 +35,14 @@ public class CriterionListeners<T extends ICriterionInstance>
         this.listeners.remove(listener);
     }
 
+    /**
+     * Grants advancements with no conditions or checks (for simple checks to be made in the normal code streams)
+     */
+    public void trigger ()
+    {
+        this.listeners.forEach(listener -> listener.grantCriterion(this.playerAdvancements));
+    }
+
     public void trigger(Predicate<T> test)
     {
         final List<ICriterionTrigger.Listener<T>> toGrant = new ArrayList<>();

@@ -233,6 +233,11 @@ public class BuildingBarracks extends AbstractBuilding
         return compound;
     }
 
+    public List<BlockPos> getTowers()
+    {
+        return towers;
+    }
+
     /**
      * Barracks building View.
      */

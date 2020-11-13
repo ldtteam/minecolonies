@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:minecolonies/create_build_request_1_builder",
+  "parent": "minecolonies:minecolonies/request_builder",
   "display": {
     "icon": {
       "item": "minecraft:torch"

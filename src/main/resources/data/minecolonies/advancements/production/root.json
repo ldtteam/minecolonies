@@ -1,18 +1,17 @@
 {
-  "parent": "minecolonies:minecolonies/fulfill_request",
   "display": {
     "icon": {
       "item": "minecolonies:blockhutbuilder"
     },
     "title": {
-      "translate": "advancements.minecolonies.build.builder.title"
+      "translate": "advancements.minecolonies.root.production.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.build.builder.description"
+      "translate": "advancements.minecolonies.root.production.description"
     },
-    "show_toast": true,
-    "announce_to_chat": true,
-    "frame": "goal"
+    "background": "structurize:textures/blocks/cactus/cactus_planks.png",
+    "show_toast": false,
+    "announce_to_chat": false
   },
   "criteria": {
     "builders_hut": {

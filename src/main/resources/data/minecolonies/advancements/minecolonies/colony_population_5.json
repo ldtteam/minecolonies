@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:minecolonies/place_townhall",
+  "parent": "minecolonies:minecolonies/build_citizen",
   "display": {
     "icon": {
       "item": "minecraft:red_bed"
