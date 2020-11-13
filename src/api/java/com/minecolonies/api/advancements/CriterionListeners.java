@@ -36,9 +36,9 @@ public class CriterionListeners<T extends ICriterionInstance>
     }
 
     /**
-     * Grants advancements with no conditions or checks (for simple checks to be made in the normal code streams)
+     * Grants advancements with no conditions or checks (for simple checks to be made in events)
      */
-    public void trigger ()
+    public void trigger()
     {
         this.listeners.forEach(listener -> listener.grantCriterion(this.playerAdvancements));
     }
