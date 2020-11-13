@@ -17,6 +17,12 @@ public class CompleteBuildRequestTrigger extends AbstractCriterionTrigger<Comple
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), CompleteBuildRequestListeners::new);
     }
 
+    /**
+     * Triggers the listener checks if there are any listening in
+     * @param player the player the check regards
+     * @param structureName the structure that was just completed
+     * @param level the level the structure got upgraded to, or 0
+     */
     public void trigger(final ServerPlayerEntity player, final StructureName structureName, final int level)
     {
         final CompleteBuildRequestListeners listeners = this.getListeners(player.getAdvancements());

@@ -15,6 +15,10 @@ import com.minecolonies.api.advancements.place_structure.PlaceStructureTrigger;
 import com.minecolonies.api.advancements.place_supply.PlaceSupplyTrigger;
 import net.minecraft.advancements.CriteriaTriggers;
 
+/**
+ * The collection of advancement triggers for minecolonies.
+ * Each trigger may correspond to multiple advancements.
+ */
 public class AdvancementTriggers
 {
     public static final PlaceSupplyTrigger          PLACE_SUPPLY           = new PlaceSupplyTrigger();
@@ -31,6 +35,9 @@ public class AdvancementTriggers
     public static final DeepMineTrigger             DEEP_MINE              = new DeepMineTrigger();
     public static final AllTowersTrigger            ALL_TOWERS             = new AllTowersTrigger();
 
+    /**
+     * Registers all the triggers so they can be referenced in the advancement JSON
+     */
     public static void preInit()
     {
         CriteriaTriggers.register(PLACE_SUPPLY);

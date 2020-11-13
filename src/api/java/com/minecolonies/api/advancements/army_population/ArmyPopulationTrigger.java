@@ -9,6 +9,9 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Triggered on allocation of new soldiers
+ */
 public class ArmyPopulationTrigger extends AbstractCriterionTrigger<ArmyPopulationListeners, ArmyPopulationCriterionInstance>
 {
     public ArmyPopulationTrigger()
@@ -16,12 +19,17 @@ public class ArmyPopulationTrigger extends AbstractCriterionTrigger<ArmyPopulati
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_ARMY_POPULATION), ArmyPopulationListeners::new);
     }
 
-    public void trigger(final ServerPlayerEntity player, final int populationCount)
+    /**
+     * Triggers the listener checks if there is any listening in
+     * @param player the player the check regards
+     * @param armySize the related colony's current army size
+     */
+    public void trigger(final ServerPlayerEntity player, final int armySize)
     {
         final ArmyPopulationListeners listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)
         {
-            listeners.trigger(populationCount);
+            listeners.trigger(armySize);
         }
     }
 

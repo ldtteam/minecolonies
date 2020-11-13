@@ -6,7 +6,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class ArmyPopulationCriterionInstance extends CriterionInstance
 {
-    private int populationCount;
+    private final int populationCount;
 
     public ArmyPopulationCriterionInstance(final int populationCount)
     {
@@ -17,7 +17,7 @@ public class ArmyPopulationCriterionInstance extends CriterionInstance
 
     public boolean test(final int populationCount)
     {
-        //Less than sign used just in case a previous population increase was missed.
+        // Less than sign used just in case a previous population increase was missed.
         return this.populationCount <= populationCount;
     }
 }

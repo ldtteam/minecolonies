@@ -10,6 +10,9 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Is triggered when the maximum number of fields has been allocated to a single farmer
+ */
 public class MaxFieldsTrigger extends AbstractCriterionTrigger<CriterionListeners<CriterionInstance>, CriterionInstance>
 {
     private final static ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_MAX_FIELDS);
@@ -19,6 +22,10 @@ public class MaxFieldsTrigger extends AbstractCriterionTrigger<CriterionListener
         super(ID, CriterionListeners::new);
     }
 
+    /**
+     * Triggers the listener checks if there are any listening in
+     * @param player the player the check regards
+     */
     public void trigger(final ServerPlayerEntity player)
     {
         final CriterionListeners<CriterionInstance> listeners = this.getListeners(player.getAdvancements());
