@@ -17,12 +17,12 @@ public class CompleteBuildRequestTrigger extends AbstractCriterionTrigger<Comple
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), CompleteBuildRequestListeners::new);
     }
 
-    public void trigger(final ServerPlayerEntity player, final StructureName structureName, final int level, final int y)
+    public void trigger(final ServerPlayerEntity player, final StructureName structureName, final int level)
     {
         final CompleteBuildRequestListeners listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)
         {
-            listeners.trigger(structureName, level, y);
+            listeners.trigger(structureName, level);
         }
     }
 

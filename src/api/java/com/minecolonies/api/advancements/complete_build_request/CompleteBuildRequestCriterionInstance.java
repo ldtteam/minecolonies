@@ -4,14 +4,12 @@ import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 
 public class CompleteBuildRequestCriterionInstance extends CriterionInstance
 {
     private String        hutName;
     private StructureName structureName;
     private int           level = -1;
-    private int           minGroundDistance = -1;
 
     public CompleteBuildRequestCriterionInstance()
     {
@@ -69,10 +67,5 @@ public class CompleteBuildRequestCriterionInstance extends CriterionInstance
         }
 
         return true;
-    }
-
-    public boolean test(final StructureName structureName, final int level, final int y)
-    {
-        return test(structureName, level) && y >= this.minGroundDistance;
     }
 }

@@ -232,7 +232,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         {
             final int level = ((WorkOrderBuildBuilding) this).getUpgradeLevel();
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, level, this.getBuildingLocation().getY()));
+                AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, level));
         }
         else if (this instanceof WorkOrderBuildRemoval)
         {
@@ -243,7 +243,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         else
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0, -1));
+                AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
 
             if (citizen.getName().isEmpty())
             {
