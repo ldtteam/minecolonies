@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHan
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -149,6 +150,12 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                     data.setWorkBuilding(null);
                     data.setHomeBuilding(null);
                     data.setJob(null);
+
+                    if (colony.getWorld().rand.nextInt(100) <= MineColonies.getConfig().getCommon().badVisitorsChance.get())
+                    {
+                        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.recruit.runaway", data.getName());
+                        return;
+                    }
 
                     // Create and read new citizen
                     ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCivilianData();
