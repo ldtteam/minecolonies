@@ -5,6 +5,9 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * The test instance to check "hut_name" or "structure_name" for the "complete_build_request" trigger
+ */
 public class CompleteBuildRequestCriterionInstance extends CriterionInstance
 {
     private String        hutName;
@@ -16,6 +19,10 @@ public class CompleteBuildRequestCriterionInstance extends CriterionInstance
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST));
     }
 
+    /**
+     * Construct the check with a single condition
+     * @param structureName the structure that has to be completed to succeed
+     */
     public CompleteBuildRequestCriterionInstance(final StructureName structureName)
     {
         this();
@@ -23,6 +30,10 @@ public class CompleteBuildRequestCriterionInstance extends CriterionInstance
         this.structureName = structureName;
     }
 
+    /**
+     * Construct the check with a single condition
+     * @param hutName the hut that has to be completed to succeed
+     */
     public CompleteBuildRequestCriterionInstance(final String hutName)
     {
         this();
@@ -30,6 +41,11 @@ public class CompleteBuildRequestCriterionInstance extends CriterionInstance
         this.hutName = hutName;
     }
 
+    /**
+     * Construct the check with a more specific condition
+     * @param structureName the structure that has to be completed to succeed
+     * @param level the level of the structure that should be completed
+     */
     public CompleteBuildRequestCriterionInstance(final StructureName structureName, final int level)
     {
         this();
@@ -38,6 +54,11 @@ public class CompleteBuildRequestCriterionInstance extends CriterionInstance
         this.level = level;
     }
 
+    /**
+     * Construct the check with a more specific condition
+     * @param hutName the hut that has to be completed to succeed
+     * @param level the level of the hut that should be completed
+     */
     public CompleteBuildRequestCriterionInstance(final String hutName, final int level)
     {
         this();
@@ -46,6 +67,12 @@ public class CompleteBuildRequestCriterionInstance extends CriterionInstance
         this.level = level;
     }
 
+    /**
+     * Performs the check for the conditions
+     * @param structureName the id of the structure that was just built
+     * @param level the level that the structure is now on, or 0
+     * @return whether the check succeeded
+     */
     public boolean test(final StructureName structureName, final int level)
     {
         if (this.hutName != null && this.level != -1)
