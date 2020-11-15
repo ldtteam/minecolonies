@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -211,13 +211,16 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     {
         @Nullable final IBuilding homeBuilding = getHomeBuilding();
 
-        if (homeBuilding instanceof BuildingHome)
+        if (homeBuilding != null)
         {
-            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = homeBuilding.getCorners();
-            return new AxisAlignedBB(corners.getA().getA(), citizen.posY - 1, corners.getB().getA(),
-              corners.getA().getB(),
-              citizen.posY + 1,
-              corners.getB().getB()).contains(new Vec3d(citizen.getPosition()));
+            if (homeBuilding.hasModule(LivingBuildingModule.class))
+            {
+                final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = homeBuilding.getCorners();
+                return new AxisAlignedBB(corners.getA().getA(), citizen.posY - 1, corners.getB().getA(),
+                  corners.getA().getB(),
+                  citizen.posY + 1,
+                  corners.getB().getB()).contains(new Vec3d(citizen.getPosition()));
+            }
         }
 
         @Nullable final BlockPos homePosition = citizen.getHomePosition();

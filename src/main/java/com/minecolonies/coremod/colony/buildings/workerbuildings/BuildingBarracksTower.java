@@ -63,6 +63,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         return OFFENCE_BONUS;
     }
 
+    @NotNull
     @Override
     public String getSchematicName()
     {

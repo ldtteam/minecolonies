@@ -103,7 +103,7 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
             AttributeModifierUtils.addModifier(worker, speedModifier, SharedMonsterAttributes.MOVEMENT_SPEED);
         }
     }
-
+    
     /**
      * Get the current tree the lumberjack is cutting.
      *

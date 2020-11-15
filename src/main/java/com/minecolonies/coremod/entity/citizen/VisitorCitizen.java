@@ -21,7 +21,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTavern;
+import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIVisitor;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
@@ -181,9 +181,10 @@ public class VisitorCitizen extends AbstractEntityCitizen
             if (damageSource.getTrueSource() instanceof LivingEntity && damage > 1.01f)
             {
                 final IBuilding home = getCitizenData().getHomeBuilding();
-                if (home instanceof BuildingTavern)
+                if (home.hasModule(TavernBuildingModule.class))
                 {
-                    for (final Integer id : ((BuildingTavern) home).getExternalCitizens())
+                    final TavernBuildingModule module = home.getModule(TavernBuildingModule.class).get();
+                    for (final Integer id : module.getExternalCitizens())
                     {
                         ICitizenData data = citizenColonyHandler.getColony().getVisitorManager().getCivilian(id);
                         if (data != null && data.getEntity().isPresent() && data.getEntity().get().getRevengeTarget() == null)
@@ -660,9 +661,9 @@ public class VisitorCitizen extends AbstractEntityCitizen
             if (colony != null && getCitizenData() != null)
             {
                 colony.getVisitorManager().removeCivilian(getCitizenData());
-                if (getCitizenData().getHomeBuilding() instanceof BuildingTavern)
+                if (getCitizenData().getHomeBuilding() instanceof TavernBuildingModule)
                 {
-                    BuildingTavern tavern = (BuildingTavern) getCitizenData().getHomeBuilding();
+                    TavernBuildingModule tavern = (TavernBuildingModule) getCitizenData().getHomeBuilding();
                     tavern.setNoVisitorTime(world.getRandom().nextInt(5000) + 30000);
                 }
 
