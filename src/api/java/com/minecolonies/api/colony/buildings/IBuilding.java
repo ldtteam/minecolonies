@@ -24,6 +24,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -284,7 +285,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
 
     boolean hasWorkerOpenRequests(@NotNull ICitizenData citizen);
 
-    ImmutableList<IRequest<?>> getOpenRequests(@NotNull ICitizenData data);
+    Collection<IRequest<?>> getOpenRequests(@NotNull ICitizenData data);
 
     boolean hasWorkerOpenRequestsFiltered(@NotNull ICitizenData citizen, @NotNull Predicate<IRequest<?>> selectionPredicate);
 
@@ -305,7 +306,9 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
 
     boolean hasCitizenCompletedRequests(@NotNull ICitizenData data);
 
-    ImmutableList<IRequest<?>> getCompletedRequests(@NotNull ICitizenData data);
+    boolean hasCitizenCompletedRequestsToPickup(@NotNull ICitizenData data);
+
+    Collection<IRequest<?>> getCompletedRequests(@NotNull ICitizenData data);
 
     @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull ICitizenData citizenData, TypeToken<R> requestType);

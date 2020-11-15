@@ -701,6 +701,11 @@ public class VisitorCitizen extends AbstractEntityCitizen
         {
             Log.getLogger().error("Visitor entity set to zero pos, report to mod author:", new Exception());
             remove();
+
+            if (getCitizenData() != null && citizenColonyHandler.getColony() != null)
+            {
+                citizenColonyHandler.getColony().getVisitorManager().removeCivilian(getCitizenData());
+            }
         }
     }
 }

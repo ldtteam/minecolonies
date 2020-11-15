@@ -1396,18 +1396,26 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    public ImmutableList<IRequest<?>> getOpenRequests(@NotNull final ICitizenData data)
+    public Collection<IRequest<?>> getOpenRequests(@NotNull final ICitizenData data)
     {
         if (!getOpenRequestsByCitizen().containsKey(data.getId()))
         {
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(getOpenRequestsByCitizen().get(data.getId())
-                                      .stream()
-                                      .map(getColony().getRequestManager()::getRequestForToken)
-                                      .filter(Objects::nonNull)
-                                      .iterator());
+        final Collection<IToken<?>> tokens = getOpenRequestsByCitizen().get(data.getId());
+        final List<IRequest<?>> requests = new ArrayList<>(tokens.size());
+
+        for (final IToken<?> token : tokens)
+        {
+            final IRequest<?> request = getColony().getRequestManager().getRequestForToken(token);
+            if (request != null)
+            {
+                requests.add(request);
+            }
+        }
+
+        return Collections.unmodifiableList(requests);
     }
 
     @Override
@@ -1490,15 +1498,53 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    public ImmutableList<IRequest<?>> getCompletedRequests(@NotNull final ICitizenData data)
+    public boolean hasCitizenCompletedRequestsToPickup(@NotNull final ICitizenData data)
     {
         if (!getCompletedRequestsByCitizen().containsKey(data.getId()))
+        {
+            return false;
+        }
+
+        for (IToken<?> token : getCompletedRequestsByCitizen().get(data.getId()))
+        {
+            if (!data.isRequestAsync(token))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public Collection<IRequest<?>> getCompletedRequests(@NotNull final ICitizenData data)
+    {
+        final Collection<IToken<?>> tokens = getCompletedRequestsByCitizen().get(data.getId());
+        if (tokens == null || tokens.isEmpty())
         {
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(getCompletedRequestsByCitizen().get(data.getId()).stream()
-                                      .map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
+        final List<IRequest<?>> requests = new ArrayList<>(tokens.size());
+
+        for (final IToken<?> token : tokens)
+        {
+            final IRequest<?> request = getColony().getRequestManager().getRequestForToken(token);
+            if (request != null)
+            {
+                requests.add(request);
+            }
+            else
+            {
+                getCompletedRequestsByCitizen().get(data.getId()).remove(token);
+                if (getCompletedRequestsByCitizen().get(data.getId()).isEmpty())
+                {
+                    getCompletedRequestsByCitizen().remove(data.getId());
+                }
+            }
+        }
+
+        return Collections.unmodifiableList(requests);
     }
 
     @Override
