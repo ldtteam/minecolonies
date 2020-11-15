@@ -1285,7 +1285,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             for (final IToken<?> req : reqs)
             {
-                if (colony.getRequestManager().getRequestForToken(req).getState() == RequestState.IN_PROGRESS)
+                final IRequest<?> request = colony.getRequestManager().getRequestForToken(req);
+                if (request != null && request.getState() == RequestState.IN_PROGRESS)
                 {
                     final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(req);
                     if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
@@ -1644,11 +1645,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final int citizenThatRequested = getCitizensByRequest().remove(request.getId());
-        getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
-
-        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
+        final Map<Integer, Collection<IToken<?>>> openRequestsByCitizen = getOpenRequestsByCitizen();
+        final Collection<IToken<?>> byCitizenList = openRequestsByCitizen.get(citizenThatRequested);
+        if (byCitizenList != null)
         {
-            getOpenRequestsByCitizen().remove(citizenThatRequested);
+            byCitizenList.remove(request.getId());
+            if (byCitizenList.isEmpty())
+            {
+                openRequestsByCitizen.remove(citizenThatRequested);
+            }
         }
 
         if (getOpenRequestsByRequestableType().containsKey(TypeToken.of(request.getRequest().getClass())))
