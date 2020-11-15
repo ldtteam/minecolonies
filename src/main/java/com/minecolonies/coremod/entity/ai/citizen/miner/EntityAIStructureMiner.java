@@ -24,6 +24,7 @@ import net.minecraft.block.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -240,6 +241,54 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             return MINER_SEARCHING_LADDER;
         }
         return MINER_CHECK_MINESHAFT;
+    }
+
+    @Override
+    public IAIState doMining()
+    {
+        if (blockToMine == null)
+        {
+            return BUILDING_STEP;
+        }
+
+        final BlockState blockState = world.getBlockState(blockToMine);
+        if (!IColonyManager.getInstance().getCompatibilityManager().isOre(blockState))
+        {
+            blockToMine = getSurroundingOreOrDefault(blockToMine);
+        }
+
+        if (world.getBlockState(blockToMine).getBlock() instanceof AirBlock)
+        {
+            return BUILDING_STEP;
+        }
+
+        if (!mineBlock(blockToMine, getCurrentWorkingPosition()))
+        {
+            worker.swingArm(Hand.MAIN_HAND);
+            return getState();
+        }
+
+        blockToMine = getSurroundingOreOrDefault(blockToMine);
+        if (IColonyManager.getInstance().getCompatibilityManager().isOre(world.getBlockState(blockToMine)))
+        {
+            return getState();
+        }
+
+        worker.decreaseSaturationForContinuousAction();
+        return BUILDING_STEP;
+    }
+
+    private BlockPos getSurroundingOreOrDefault(final BlockPos pos)
+    {
+        for (Direction direction : Direction.values())
+        {
+            final BlockPos offset = pos.offset(direction);
+            if (IColonyManager.getInstance().getCompatibilityManager().isOre(world.getBlockState(offset)))
+            {
+                return offset;
+            }
+        }
+        return pos;
     }
 
     /**
