@@ -166,6 +166,12 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_CLIPBOARD_COLONY_SET                               = "com.minecolonies.coremod.item.clipboard.registered";
     @NonNls
+    public static final String COM_MINECOLONIES_SCROLL_NEED_BUILDER                                = "com.minecolonies.coremod.item.scroll.needcolony";
+    @NonNls
+    public static final String COM_MINECOLONIES_SCROLL_BUILDER_SET                                 = "com.minecolonies.coremod.item.scroll.registered";
+    @NonNls
+    public static final String COM_MINECOLONIES_SCROLL_NO_BUILDER                                  = "com.minecolonies.coremod.item.scroll.no_builder";
+    @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED                       = "com.minecolonies.coremod.item.bannerrallyguards.selected";
     @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED                     = "com.minecolonies.coremod.item.bannerrallyguards.deselected";
