@@ -1283,7 +1283,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             for (final IToken<?> req : reqs)
             {
-                if (colony.getRequestManager().getRequestForToken(req).getState() == RequestState.IN_PROGRESS)
+                final IRequest<?> request = colony.getRequestManager().getRequestForToken(req);
+                if (request != null && request.getState() == RequestState.IN_PROGRESS)
                 {
                     final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(req);
                     if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
