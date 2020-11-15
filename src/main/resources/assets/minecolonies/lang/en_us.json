@@ -32,6 +32,9 @@
   "minecolonies.config.forceloadcolony": "Force Load Colony",
   "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, the entire colony should be kept loaded.",
 
+  "minecolonies.config.badvisitorchance": "Bad recruitment chance",
+  "minecolonies.config.badvisitorchance.comment": "Chance to get an evil tavern visitor which can run off with the resources, in % [Default: 2]",
+
   "minecolonies.config.listofplantables": "Florist Flowers",
   "minecolonies.config.listofplantables.comment": "The items and item-tags that the Florist can plant.",
 
@@ -1789,6 +1792,7 @@
   "com.minecolonies.coremod.gui.chat.showstats": "Show citizen stats",
   "com.minecolonies.coremod.gui.chat.recruit": "Recruit for ",
   "com.minecolonies.coremod.recruit.message": "%s has decided to stay in your colony as a citizen!",
+  "com.minecolonies.coremod.recruit.runaway": "%s took your resources and just ran off, what a thug. Doh!",
   "com.minecolonies.coremod.gui.chat.notnow": "Maybe later",
   "com.minecolonies.coremod.gui.chat.notenoughitems": "You do not have the fitting items in your inventory to offer this visitor!",
   "com.minecolonies.coremod.gui.chat.nospace": "Your colony does not have enough space to house another citizen.",

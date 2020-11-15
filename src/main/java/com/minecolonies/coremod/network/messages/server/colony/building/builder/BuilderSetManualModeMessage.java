@@ -54,7 +54,7 @@ public class BuilderSetManualModeMessage extends AbstractBuildingServerMessage<B
         building.setManualMode(manualMode);
         if (manualMode)
         {
-            ctxIn.getSender().sendMessage(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_BUILDER_MANUAL_MODE, building.getMainCitizen().getName()));
+            ctxIn.getSender().sendMessage(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_BUILDER_MANUAL_MODE, building.getMainCitizen().getName()), ctxIn.getSender().getUniqueID());
         }
     }
 }
