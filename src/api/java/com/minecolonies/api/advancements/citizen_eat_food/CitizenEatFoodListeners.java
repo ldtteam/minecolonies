@@ -4,6 +4,10 @@ import com.minecolonies.api.advancements.CriterionListeners;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.item.ItemStack;
 
+/**
+ * The listener instantiated for every advancement that listens to the associated criterion.
+ * A basic class to trigger with the correct arguments
+ */
 public class CitizenEatFoodListeners extends CriterionListeners<CitizenEatFoodCriterionInstance>
 {
     public CitizenEatFoodListeners(final PlayerAdvancements playerAdvancements)

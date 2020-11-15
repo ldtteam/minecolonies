@@ -4,6 +4,9 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * A default instance for the "place_supply" trigger, as the conditions are handled in events
+ */
 public class PlaceSupplyCriterionInstance extends CriterionInstance
 {
     public PlaceSupplyCriterionInstance()

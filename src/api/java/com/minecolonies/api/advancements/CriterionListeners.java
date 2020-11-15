@@ -10,11 +10,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+/**
+ * A base class for the listening manager of a given criterion that captures and tests
+ * and checks each advancement when the criterion is triggered
+ * @param <T> the Instance of the criterion that will be tested against
+ */
 public class CriterionListeners<T extends ICriterionInstance>
 {
     private final PlayerAdvancements                 playerAdvancements;
     private final Set<ICriterionTrigger.Listener<T>> listeners = Sets.newHashSet();
 
+    /**
+     * The base manager for the listeners, where each listener is an advancement
+     * that could be triggered by the associated criterion
+     * @param playerAdvancements the advancements associated with the player
+     */
     public CriterionListeners(PlayerAdvancements playerAdvancements)
     {
         this.playerAdvancements = playerAdvancements;
@@ -25,16 +35,30 @@ public class CriterionListeners<T extends ICriterionInstance>
         return this.listeners.isEmpty();
     }
 
+    /** add a new criterion listener */
     public void add(ICriterionTrigger.Listener<T> listener)
     {
         this.listeners.add(listener);
     }
 
+    /** remove an existing criterion listener */
     public void remove(ICriterionTrigger.Listener<T> listener)
     {
         this.listeners.remove(listener);
     }
 
+    /**
+     * Grants advancements with no conditions or checks (for simple checks to be made in events)
+     */
+    public void trigger()
+    {
+        this.listeners.forEach(listener -> listener.grantCriterion(this.playerAdvancements));
+    }
+
+    /**
+     * Grants each advancement that passes the test provided by that advancement's listener.
+     * @param test the test to return true if the advancement is to be granted
+     */
     public void trigger(Predicate<T> test)
     {
         final List<ICriterionTrigger.Listener<T>> toGrant = new ArrayList<>();
