@@ -17,6 +17,11 @@ public class CitizenEatFoodTrigger extends AbstractCriterionTrigger<CitizenEatFo
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), CitizenEatFoodListeners::new);
     }
 
+    /**
+     * Triggers the listener checks if there are any listening in
+     * @param player the player the check regards
+     * @param foodItemStack the food eaten by the citizen
+     */
     public void trigger(final ServerPlayerEntity player, final ItemStack foodItemStack)
     {
         if (player != null)

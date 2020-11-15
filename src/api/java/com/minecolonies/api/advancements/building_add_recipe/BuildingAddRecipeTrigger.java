@@ -13,6 +13,9 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Triggered whenever a new recipe has been set in any building
+ */
 public class BuildingAddRecipeTrigger extends AbstractCriterionTrigger<BuildingAddRecipeListeners, BuildingAddRecipeCriterionInstance>
 {
     public BuildingAddRecipeTrigger()
@@ -20,6 +23,11 @@ public class BuildingAddRecipeTrigger extends AbstractCriterionTrigger<BuildingA
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), BuildingAddRecipeListeners::new);
     }
 
+    /**
+     * Triggers the listener checks if there are any listening in
+     * @param player the player the check regards
+     * @param recipeStorage details about the recipe that was added
+     */
     public void trigger(final ServerPlayerEntity player, final IRecipeStorage recipeStorage)
     {
         final BuildingAddRecipeListeners listeners = this.getListeners(player.getAdvancements());

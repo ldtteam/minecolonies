@@ -16,6 +16,12 @@ public class ClickGuiButtonTrigger extends AbstractCriterionTrigger<ClickGuiButt
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), ClickGuiButtonListeners::new);
     }
 
+    /**
+     * Triggers the listener checks if there are any listening in
+     * @param player the player the check regards
+     * @param buttonId the id of the button in blockout
+     * @param windowResource the blockout window id to refer to
+     */
     public void trigger(final ServerPlayerEntity player, final String buttonId, final String windowResource)
     {
         final ClickGuiButtonListeners listeners = this.getListeners(player.getAdvancements());

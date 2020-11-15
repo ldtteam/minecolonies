@@ -5,6 +5,9 @@ import net.minecraft.advancements.criterion.CriterionInstance;
 import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * The test instance to check the various conditions for the "click_gui_button" trigger
+ */
 public class ClickGuiButtonCriterionInstance extends CriterionInstance
 {
     private String buttonId;
@@ -15,6 +18,10 @@ public class ClickGuiButtonCriterionInstance extends CriterionInstance
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.ANY_AND);
     }
 
+    /**
+     * Construct the check with a single button condition
+     * @param buttonId the button to be clicked to succeed
+     */
     public ClickGuiButtonCriterionInstance(final String buttonId)
     {
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.ANY_AND);
@@ -22,6 +29,11 @@ public class ClickGuiButtonCriterionInstance extends CriterionInstance
         this.buttonId = buttonId;
     }
 
+    /**
+     * Construct the check more specifically
+     * @param buttonId the button to be clicked to succeed
+     * @param windowResource the window id of the button to be clicked
+     */
     public ClickGuiButtonCriterionInstance(final String buttonId, final String windowResource)
     {
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.ANY_AND);
@@ -30,6 +42,12 @@ public class ClickGuiButtonCriterionInstance extends CriterionInstance
         this.buttonId = buttonId;
     }
 
+    /**
+     * Performs the check for the conditions
+     * @param buttonId the id of the button that was just clicked
+     * @param windowResource the blockout window id to check
+     * @return whether the check succeeded
+     */
     public boolean test(final String buttonId, final String windowResource)
     {
         if (this.buttonId != null && this.windowResource != null)

@@ -1,11 +1,15 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenJobHandler;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -112,6 +116,18 @@ public class CitizenJobHandler implements ICitizenJobHandler
             if (citizen.getTicksExisted() > 0 && citizen.getCitizenColonyHandler().getWorkBuilding() != null)
             {
                 BlockPosUtil.tryMoveBaseCitizenEntityToXYZ(citizen, citizen.getCitizenColonyHandler().getWorkBuilding().getPosition());
+            }
+
+            // Calculate the number of guards for some advancements
+            if (job instanceof AbstractJobGuard)
+            {
+                IColony colony = citizen.getCitizenColonyHandler().getColony();
+                int guards = ((int) colony.getCitizenManager().getCitizens()
+                        .stream()
+                        .filter(citizen -> citizen.getJob() instanceof AbstractJobGuard)
+                        .count());
+                AdvancementUtils.TriggerAdvancementPlayersForColony(citizen.getCitizenColonyHandler().getColony(),
+                        player -> AdvancementTriggers.ARMY_POPULATION.trigger(player, guards));
             }
         }
     }

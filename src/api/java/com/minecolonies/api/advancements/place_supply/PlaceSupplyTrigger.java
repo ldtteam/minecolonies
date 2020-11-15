@@ -8,6 +8,9 @@ import net.minecraft.loot.ConditionArrayParser;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Triggered when a supply camp or supply ship has been placed
+ */
 public class PlaceSupplyTrigger extends AbstractCriterionTrigger<PlaceSupplyListeners, PlaceSupplyCriterionInstance>
 {
     public PlaceSupplyTrigger()
@@ -15,6 +18,10 @@ public class PlaceSupplyTrigger extends AbstractCriterionTrigger<PlaceSupplyList
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_SUPPLY_PLACED), PlaceSupplyListeners::new);
     }
 
+    /**
+     * Triggers the listener checks if there are any listening in
+     * @param player the player the check regards
+     */
     public void trigger(final ServerPlayerEntity player)
     {
         final PlaceSupplyListeners listeners = this.getListeners(player.getAdvancements());

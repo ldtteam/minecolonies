@@ -1,12 +1,15 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -129,6 +132,20 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         super.onUpgradeComplete(newLevel);
         final IBuilding barrack = colony.getBuildingManager().getBuilding(barracks);
         ChunkDataHelper.claimColonyChunks(colony, true, barracks, barrack.getClaimRadius(newLevel));
+
+        if (newLevel == barrack.getMaxBuildingLevel())
+        {
+            boolean allUpgraded = true;
+            for (BlockPos tower : ((BuildingBarracks) barrack).getTowers())
+            {
+                Log.getLogger().info("Upgraded: " + allUpgraded);
+                if (colony.getBuildingManager().getBuilding(tower).getBuildingLevel() != barrack.getMaxBuildingLevel())
+                    allUpgraded = false;
+            }
+
+            if (allUpgraded)
+                AdvancementUtils.TriggerAdvancementPlayersForColony(colony, AdvancementTriggers.ALL_TOWERS::trigger);
+        }
     }
 
     @Override

@@ -9,6 +9,9 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Triggered when a blockout window is opened
+ */
 public class OpenGuiWindowTrigger extends AbstractCriterionTrigger<OpenGuiWindowListeners, OpenGuiWindowCriterionInstance>
 {
     public OpenGuiWindowTrigger()
@@ -16,6 +19,11 @@ public class OpenGuiWindowTrigger extends AbstractCriterionTrigger<OpenGuiWindow
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_OPEN_GUI_WINDOW), OpenGuiWindowListeners::new);
     }
 
+    /**
+     * Triggers the listener checks if there are any listening in
+     * @param player the player the check regards
+     * @param windowResource the window id that was just opened
+     */
     public void trigger(final ServerPlayerEntity player, final String windowResource)
     {
         final OpenGuiWindowListeners listeners = this.getListeners(player.getAdvancements());
