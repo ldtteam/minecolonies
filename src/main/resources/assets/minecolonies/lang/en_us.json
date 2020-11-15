@@ -339,8 +339,10 @@
   "entity.worker.inventoryfullchestfull": "Please make space in my chests/racks. I am not able to dump my inventory.",
 
   "entity.builder.messagebuildstart": " started building %s.",
-  "entity.builder.messagebuildcomplete": " finished building %s.",
+  "entity.builder.messagebuildcomplete": "finished building %s.",
+  "entity.builder.messagebuildcomplete_manual": "finished building %s. You can assign them another task now!",
   "entity.builder.messagebuildcomplete_generic": "%s finished building %s.",
+  "entity.builder.messagebuildcomplete_generic_manual": "%s finished building %s. You can assign them another task now!",
   "entity.builder.messageremovalcomplete": " finished deconstructing building %s.",
   "entity.builder.messagebuildtoohigh": "%s is too high! Please lower the building below Y 256.",
   "entity.builder.messagebuildtoolow": "%s is too low! Please raise the building above Y 0.",
@@ -583,6 +585,10 @@
 
   "com.minecolonies.coremod.gui.warehouse.visitcitizenchests": "Visit Citizen Chests:",
   "com.minecolonies.coremod.gui.workerhuts.mobslist": "Mob Attack List",
+
+  "com.minecolonies.coremod.gui.builder.manual": "Manual Mode",
+  "com.minecolonies.coremod.gui.builder.automatic": "Automatic Mode",
+  "com.minecolonies.coremod.gui.builder.select": "Select",
 
   "com.minecolonies.coremod.gui.workerhuts.minernode": "Nodes",
   "com.minecolonies.coremod.gui.hiring.off": "Automatic",
@@ -1111,6 +1117,8 @@
   "com.minecolonies.coremod.gui.warehouse.sort": "Sort",
   "com.minecolonies.coremod.gui.auto.hire.warning": "Turn the hiring mode of this hut (and colony) to manual to fire this worker or hire another one.",
   "com.minecolonies.coremod.citizens.nospace": "Colonists can't arrive at your colony because there is not enough space at pos X:%d Y:%d Z:%d!",
+
+  "com.minecolonies.coremod.builder.manual_mode": "%s: Successfully switched to manual mode. I'll just finish up my current task.",
 
   "entity.pirate": "Pirate",
   "entity.archerpirate": "Archer Pirate",
