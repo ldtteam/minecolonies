@@ -32,6 +32,9 @@ repositories {
     flatDir {
         dirs 'libs'
     }
+    maven {
+        url = "https://www.cursemaven.com"
+    }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
