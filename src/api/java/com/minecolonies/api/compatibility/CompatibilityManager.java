@@ -323,6 +323,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 newSplit[0] = "minecraft";
                 split = newSplit;
             }
+            
             if (split.length == 2)
             {
                 for (final ResourceLocation tag : itemStack.getItem().getTags())

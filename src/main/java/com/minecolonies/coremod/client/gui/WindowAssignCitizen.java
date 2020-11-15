@@ -14,7 +14,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -129,7 +129,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
             {
                 @NotNull final ICitizenDataView citizen = citizens.get(index);
 
-                if (building instanceof BuildingHome.View)
+                if (building instanceof LivingBuildingView)
                 {
                     rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
 
@@ -153,7 +153,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
                             final double oldDistance = BlockPosUtil.getDistance2D(work, home);
                             homeString = LanguageHandler.format("com.minecolonies.coremod.gui.homeHut.currently", oldDistance);
                             better = newDistance < oldDistance;
-                            if (oldDistance >= 220)
+                            if (oldDistance >= FAR_DISTANCE_THRESHOLD)
                             {
                                 badCurrentLiving = true;
                             }
@@ -211,9 +211,9 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
         {
             final int row = citizenList.getListElementIndexByPane(button);
             final ICitizenDataView data = citizens.get(row);
-            if (building instanceof BuildingHome.View)
+            if (building instanceof LivingBuildingView)
             {
-                ((BuildingHome.View) building).addResident(data.getId());
+                ((LivingBuildingView) building).addResident(data.getId());
             }
             Network.getNetwork().sendToServer(new AssignUnassignMessage(this.building, true, data.getId()));
         }

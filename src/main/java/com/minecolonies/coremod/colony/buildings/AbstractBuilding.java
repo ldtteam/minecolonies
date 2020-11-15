@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
+import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
@@ -35,7 +36,7 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
@@ -52,6 +53,7 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -148,6 +150,16 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     private boolean recheckGuardBuildingNear = false;
 
     /**
+     * Made to check if the building has to update the server/client.
+     */
+    private boolean dirty = false;
+
+    /**
+     * Set of building modules this building has.
+     */
+    protected Map<Class<? extends IBuildingModule>, IBuildingModule> modules = new LinkedHashMap<>();
+
+    /**
      * Constructor for a AbstractBuilding.
      *
      * @param colony Colony the building belongs to.
@@ -159,6 +171,25 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
         setupRsDataStore();
+    }
+
+    @Override
+    public boolean hasModule(final Class<? extends IBuildingModule> clazz)
+    {
+        return modules.containsKey(clazz);
+    }
+
+    @NotNull
+    @Override
+    public <T extends IBuildingModule> Optional<T> getModule(final Class<T> clazz)
+    {
+        return Optional.ofNullable((T) modules.get(clazz));
+    }
+
+    @Override
+    public void registerModule(@NotNull final IBuildingModule module)
+    {
+        this.modules.put(module.getClass(), module);
     }
 
     /**
@@ -179,9 +210,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onWakeUp()
     {
-        /*
-         * Buildings override this if required.
-         */
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module instanceof IBuildingEventsModule)
+            {
+                ((IBuildingEventsModule) module).onWakeUp();
+            }
+        }
     }
 
     /**
@@ -211,7 +246,25 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onBuildingMove(final IBuilding oldBuilding)
     {
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module instanceof IBuildingEventsModule)
+            {
+                ((IBuildingEventsModule) module).onBuildingMove(oldBuilding);
+            }
+        }
+    }
 
+    @Override
+    public void onPlayerEnterBuilding(final PlayerEntity player)
+    {
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module instanceof IBuildingEventsModule)
+            {
+                ((IBuildingEventsModule) module).onPlayerEnterBuilding(player);
+            }
+        }
     }
 
     @Override
@@ -283,6 +336,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             final CompoundNBT compoundNBT = minimumStockTagList.getCompound(i);
             minimumStock.put(new ItemStorage(ItemStack.read(compoundNBT)), compoundNBT.getInt(TAG_QUANTITY));
         }
+
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module instanceof IPersistentModule)
+            {
+                ((IPersistentModule) module).deserializeNBT(compound);
+            }
+        }
     }
 
     @Override
@@ -311,6 +372,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
         compound.put(TAG_MINIMUM_STOCK, minimumStockTagList);
 
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module instanceof IPersistentModule)
+            {
+                ((IPersistentModule) module).serializeNBT(compound);
+            }
+        }
         return compound;
     }
 
@@ -345,6 +413,62 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         ChunkDataHelper.claimColonyChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()));
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
+
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module instanceof IBuildingEventsModule)
+            {
+                ((IBuildingEventsModule) module).onDestroyed();
+            }
+        }
+    }
+
+    @Override
+    public void removeCitizen(final ICitizenData citizen)
+    {
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module instanceof IAssignsCitizen)
+            {
+                ((IAssignsCitizen) module).removeCitizen(citizen);
+            }
+        }
+        super.removeCitizen(citizen);
+    }
+
+    @Override
+    public boolean assignCitizen(final ICitizenData citizen)
+    {
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module instanceof IAssignsCitizen)
+            {
+                if (((IAssignsCitizen) module).assignCitizen(citizen))
+                {
+                    return true;
+                }
+            }
+        }
+        return super.assignCitizen(citizen);
+    }
+
+    @Override
+    public int getMaxInhabitants()
+    {
+        if (modules.isEmpty())
+        {
+            return super.getMaxInhabitants();
+        }
+
+        int current = 0;
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module instanceof IDefinesCoreBuildingStatsModule)
+            {
+                current = ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants().apply(current);
+            }
+        }
+        return Math.max(0, current);
     }
 
     /**
@@ -454,10 +578,33 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public final void markDirty()
     {
-        super.markDirty();
+        dirty = true;
         if (colony != null)
         {
             colony.getBuildingManager().markBuildingsDirty();
+        }
+    }
+
+    @Override
+    public final boolean isDirty()
+    {
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module.checkDirty())
+            {
+                return true;
+            }
+        }
+        return dirty;
+    }
+
+    @Override
+    public final void clearDirty()
+    {
+        dirty = false;
+        for (final IBuildingModule module : modules.values())
+        {
+            module.clearDirty();
         }
     }
 
@@ -599,6 +746,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
         buf.writeBoolean(minimumStock.size() >= minimumStockSize());
         buf.writeBoolean(isDeconstructed());
+
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module instanceof IPersistentModule)
+            {
+                ((IPersistentModule) module).serializeToView(buf);
+            }
+        }
     }
 
     /**
@@ -641,7 +796,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
 
         markDirty();
-        ;
     }
 
     /**
@@ -689,6 +843,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 {
                     getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
                 }
+            }
+        }
+
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module instanceof ITickingModule)
+            {
+                ((ITickingModule) module).onColonyTick(colony);
             }
         }
     }
@@ -895,7 +1057,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
           colony.getBuildingManager().getBuildings().values().stream()
             .filter(building -> building instanceof AbstractBuildingWorker).mapToInt(ISchematicProvider::getBuildingLevel).sum(),
           colony.getBuildingManager().getBuildings().values().stream()
-            .filter(building -> building instanceof BuildingHome).mapToInt(ISchematicProvider::getBuildingLevel).sum()
+            .filter(building -> building.hasModule(LivingBuildingModule.class)).mapToInt(ISchematicProvider::getBuildingLevel).sum()
         );
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, newLevel);
         final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
@@ -912,6 +1074,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         if (newLevel > getBuildingLevel())
         {
             FireworkUtils.spawnFireworksAtAABBCorners(getTargetableArea(colony.getWorld()), colony.getWorld(), newLevel);
+        }
+
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module instanceof IBuildingEventsModule)
+            {
+                ((IBuildingEventsModule) module).onUpgradeComplete(newLevel);
+            }
         }
     }
 
@@ -1182,6 +1352,19 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         markDirty();
 
         return requestToken;
+    }
+
+    @Override
+    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        super.registerBlockPosition(blockState, pos, world);
+        for (final IBuildingModule module : modules.values())
+        {
+            if (module instanceof IModuleWithExternalBlocks)
+            {
+                ((IModuleWithExternalBlocks) module).onBlockPlacedInBuilding(blockState, pos, world);
+            }
+        }
     }
 
     /**

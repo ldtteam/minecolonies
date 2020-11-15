@@ -1,10 +1,11 @@
-package com.minecolonies.coremod.colony.buildings.workerbuildings;
+package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.*;
-import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.TavernSounds;
@@ -12,6 +13,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutTavern;
+import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.coremod.network.messages.client.colony.PlayMusicAtPosMessage;
@@ -29,10 +31,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
@@ -43,12 +42,11 @@ import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
 /**
  * Tavern building for the colony. Houses 4 citizens Plays a tavern theme on entering Spawns/allows citizen recruitment Spawns trader/quest npcs
  */
-public class BuildingTavern extends BuildingHome
+public class TavernBuildingModule extends AbstractBuildingModule implements IDefinesCoreBuildingStatsModule, IBuildingEventsModule, IPersistentModule, ITickingModule
 {
     /**
      * Schematic name
      */
-    public static final String TARVERN_SCHEMATIC = "tavern";
     public static final String TAG_VISITOR_ID    = "visitor";
 
     /**
@@ -95,59 +93,38 @@ public class BuildingTavern extends BuildingHome
     private int noVisitorTime = 10000;
 
     /**
-     * Instantiates a new citizen hut.
-     *
-     * @param c the colony.
-     * @param l the location.
+     * Creates a new tavern module.
+     * @param building the building it is assigned to.
      */
-    public BuildingTavern(final IColony c, final BlockPos l)
+    public TavernBuildingModule(final IBuilding building)
     {
-        super(c, l);
-    }
-
-    @NotNull
-    @Override
-    public String getSchematicName()
-    {
-        return TARVERN_SCHEMATIC;
+        super(building);
     }
 
     @Override
-    public int getMaxBuildingLevel()
+    public IStat<Integer> getMaxInhabitants()
     {
-        return 3;
-    }
-
-    @Override
-    public BuildingEntry getBuildingRegistryEntry()
-    {
-        return ModBuildings.tavern;
-    }
-
-    @Override
-    public int getMaxInhabitants()
-    {
-        if (getBuildingLevel() <= 0)
+        if (building.getBuildingLevel() <= 0)
         {
-            return 0;
+            return (prev) -> 0;
         }
 
-        return 4;
+        return (prev) -> 4;
     }
 
     @Override
     public void onPlayerEnterBuilding(final PlayerEntity player)
     {
-        if (musicCooldown <= 0 && getBuildingLevel() > 0 && !colony.isDay())
+        if (musicCooldown <= 0 && building.getBuildingLevel() > 0 && !building.getColony().isDay())
         {
-            net.minecraft.util.Tuple<Integer, Integer> corner1 = getCorners().getA();
-            net.minecraft.util.Tuple<Integer, Integer> corner2 = getCorners().getB();
+            net.minecraft.util.Tuple<Integer, Integer> corner1 = building.getCorners().getA();
+            net.minecraft.util.Tuple<Integer, Integer> corner2 = building.getCorners().getB();
 
             final int x = (int) ((corner1.getA() + corner1.getB()) * 0.5);
             final int z = (int) ((corner2.getA() + corner2.getB()) * 0.5);
 
-            final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, new BlockPos(x, getPosition().getY(), z), colony.getWorld(), 0.7f, 1.0f);
-            for (final ServerPlayerEntity curPlayer : colony.getPackageManager().getCloseSubscribers())
+            final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, new BlockPos(x, building.getPosition().getY(), z), building.getColony().getWorld(), 0.7f, 1.0f);
+            for (final ServerPlayerEntity curPlayer : building.getColony().getPackageManager().getCloseSubscribers())
             {
                 Network.getNetwork().sendToPlayer(message, curPlayer);
             }
@@ -158,32 +135,23 @@ public class BuildingTavern extends BuildingHome
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        super.onColonyTick(colony);
         if (musicCooldown > 0)
         {
             musicCooldown -= MAX_TICKRATE;
         }
 
-        final Iterator<Integer> it = externalCitizens.iterator();
-        while (it.hasNext())
-        {
-            final Integer id = it.next();
-            if (colony.getVisitorManager().getVisitor(id) == null)
-            {
-                it.remove();
-            }
-        }
+        externalCitizens.removeIf(id -> colony.getVisitorManager().getVisitor(id) == null);
 
         if (noVisitorTime > 0)
         {
             noVisitorTime -= 500;
         }
 
-        if (getBuildingLevel() > 0 && externalCitizens.size() < 3 * getBuildingLevel() && noVisitorTime <= 0)
+        if (building.getBuildingLevel() > 0 && externalCitizens.size() < 3 * building.getBuildingLevel() && noVisitorTime <= 0)
         {
             spawnVisitor();
             noVisitorTime =
-              colony.getWorld().getRandom().nextInt(3000) + (6000 / getBuildingLevel()) * colony.getCitizenManager().getCurrentCitizenCount() / colony.getCitizenManager()
+              colony.getWorld().getRandom().nextInt(3000) + (6000 / building.getBuildingLevel()) * colony.getCitizenManager().getCurrentCitizenCount() / colony.getCitizenManager()
                                                                                                                                                   .getMaxCitizens();
         }
     }
@@ -191,7 +159,6 @@ public class BuildingTavern extends BuildingHome
     @Override
     public void onUpgradeComplete(final int newlevel)
     {
-        super.onUpgradeComplete(newlevel);
         initTags = false;
     }
 
@@ -200,13 +167,13 @@ public class BuildingTavern extends BuildingHome
      */
     private void spawnVisitor()
     {
-        IVisitorData newCitizen = (IVisitorData) colony.getVisitorManager().createAndRegisterCivilianData();
+        IVisitorData newCitizen = (IVisitorData) building.getColony().getVisitorManager().createAndRegisterCivilianData();
         externalCitizens.add(newCitizen.getId());
 
-        newCitizen.setBedPos(getPosition());
-        newCitizen.setHomeBuilding(this);
+        newCitizen.setBedPos(building.getPosition());
+        newCitizen.setHomeBuilding(building);
 
-        int recruitLevel = colony.getWorld().rand.nextInt(10 * getBuildingLevel()) + 15;
+        int recruitLevel = building.getColony().getWorld().rand.nextInt(10 * building.getBuildingLevel()) + 15;
         List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
 
         if (newCitizen.getName().contains("Ray"))
@@ -216,16 +183,16 @@ public class BuildingTavern extends BuildingHome
 
         newCitizen.getCitizenSkillHandler().init(recruitLevel);
 
-        BlockPos spawnPos = BlockPosUtil.findAround(colony.getWorld(), getPosition(), 1, 1, bs -> bs.getMaterial() == Material.AIR);
+        BlockPos spawnPos = BlockPosUtil.findAround(building.getColony().getWorld(), building.getPosition(), 1, 1, bs -> bs.getMaterial() == Material.AIR);
         if (spawnPos == null)
         {
-            spawnPos = getPosition();
+            spawnPos = building.getPosition();
         }
 
-        colony.getVisitorManager().spawnOrCreateCivilian(newCitizen, colony.getWorld(), spawnPos, true);
-        Tuple<Item, Integer> cost = recruitCosts.get(colony.getWorld().rand.nextInt(recruitCosts.size()));
+        building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
+        Tuple<Item, Integer> cost = recruitCosts.get(building.getColony().getWorld().rand.nextInt(recruitCosts.size()));
 
-        colony.getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
+        building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
 
         if (newCitizen.getEntity().isPresent())
         {
@@ -245,7 +212,7 @@ public class BuildingTavern extends BuildingHome
             {
                 if (cost.getB() <= 2)
                 {
-                    cost = recruitCosts.get(colony.getWorld().rand.nextInt(recruitCosts.size()));
+                    cost = recruitCosts.get(building.getColony().getWorld().rand.nextInt(recruitCosts.size()));
                 }
                 // Iron
                 citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.IRON_BOOTS));
@@ -254,7 +221,7 @@ public class BuildingTavern extends BuildingHome
             {
                 if (cost.getB() <= 3)
                 {
-                    cost = recruitCosts.get(colony.getWorld().rand.nextInt(recruitCosts.size()));
+                    cost = recruitCosts.get(building.getColony().getWorld().rand.nextInt(recruitCosts.size()));
                 }
                 // Diamond
                 citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.DIAMOND_BOOTS));
@@ -263,13 +230,12 @@ public class BuildingTavern extends BuildingHome
 
         newCitizen.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));
         newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
-          "com.minecolonies.coremod.gui.chat.recruitstory" + (colony.getWorld().rand.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+          "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().rand.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]), ChatPriority.IMPORTANT));
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public void serializeNBT(final CompoundNBT nbt)
     {
-        CompoundNBT nbt = super.serializeNBT();
         final ListNBT visitorlist = new ListNBT();
         for (final Integer id : externalCitizens)
         {
@@ -280,23 +246,20 @@ public class BuildingTavern extends BuildingHome
 
         nbt.put(TAG_VISITORS, visitorlist);
         nbt.putInt(TAG_NOVISITTIME, noVisitorTime);
-
-        return nbt;
     }
 
     @Override
     public void deserializeNBT(final CompoundNBT nbt)
     {
-        super.deserializeNBT(nbt);
         final ListNBT visitorlist = nbt.getList(TAG_VISITORS, TAG_COMPOUND);
         for (final INBT data : visitorlist)
         {
             final int id = ((CompoundNBT) data).getInt(TAG_VISITOR_ID);
-            final ICitizenData citizenData = colony.getVisitorManager().getCivilian(id);
+            final ICitizenData citizenData = building.getColony().getVisitorManager().getCivilian(id);
             if (citizenData != null)
             {
                 externalCitizens.add(id);
-                citizenData.setHomeBuilding(this);
+                citizenData.setHomeBuilding(building);
             }
         }
         noVisitorTime = nbt.getInt(TAG_NOVISITTIME);
@@ -318,7 +281,7 @@ public class BuildingTavern extends BuildingHome
 
         for (final Integer id : externalCitizens)
         {
-            final IVisitorData data = colony.getVisitorManager().getVisitor(id);
+            final IVisitorData data = building.getColony().getVisitorManager().getVisitor(id);
             if (data != null)
             {
                 positions.remove(data.getSittingPosition());
@@ -327,7 +290,7 @@ public class BuildingTavern extends BuildingHome
 
         if (!positions.isEmpty())
         {
-            return positions.get(colony.getWorld().rand.nextInt(positions.size()));
+            return positions.get(building.getColony().getWorld().rand.nextInt(positions.size()));
         }
 
         return null;
@@ -336,10 +299,9 @@ public class BuildingTavern extends BuildingHome
     @Override
     public void onDestroyed()
     {
-        super.onDestroyed();
         for (final Integer id : externalCitizens)
         {
-            colony.getVisitorManager().removeCivilian(colony.getVisitorManager().getVisitor(id));
+            building.getColony().getVisitorManager().removeCivilian(building.getColony().getVisitorManager().getVisitor(id));
         }
     }
 
@@ -362,7 +324,7 @@ public class BuildingTavern extends BuildingHome
     {
         if (!getWorkPositions().isEmpty())
         {
-            return workPositions.get(colony.getWorld().rand.nextInt(workPositions.size()));
+            return workPositions.get(building.getColony().getWorld().rand.nextInt(workPositions.size()));
         }
         return null;
     }
@@ -399,7 +361,7 @@ public class BuildingTavern extends BuildingHome
             return;
         }
 
-        final IBlueprintDataProvider te = getTileEntity();
+        final IBlueprintDataProvider te = building.getTileEntity();
         if (te != null)
         {
             initTags = true;
@@ -423,9 +385,10 @@ public class BuildingTavern extends BuildingHome
      *
      * @param id to remove
      */
-    public void removeCitizen(final Integer id)
+    public boolean removeCitizen(final Integer id)
     {
         externalCitizens.remove(id);
+        return false;
     }
 
     /**
@@ -441,7 +404,7 @@ public class BuildingTavern extends BuildingHome
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends BuildingHome.View
+    public static class View extends LivingBuildingView
     {
         /**
          * Instantiates the view of the building.

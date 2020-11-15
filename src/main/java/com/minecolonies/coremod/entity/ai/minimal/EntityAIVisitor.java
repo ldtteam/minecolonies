@@ -10,7 +10,8 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.VisitorData;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTavern;
+import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
+import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.util.NamedDamageSource;
@@ -59,7 +60,7 @@ public class EntityAIVisitor extends Goal
     /**
      * The tavern building for the citizen
      */
-    private BuildingTavern tavern;
+    private DefaultBuildingInstance tavern;
 
     /**
      * Times out entity action going back to a deciding state
@@ -109,7 +110,7 @@ public class EntityAIVisitor extends Goal
             citizen.getCitizenColonyHandler().getColony().getVisitorManager().removeCivilian(citizen.getCitizenData());
             if (tavern != null)
             {
-                tavern.removeCitizen(citizen.getCivilianID());
+                tavern.getModule(TavernBuildingModule.class).ifPresent(module -> module.removeCitizen(citizen.getCivilianID()));
             }
             return true;
         }
@@ -179,9 +180,9 @@ public class EntityAIVisitor extends Goal
         }
 
         final int random = citizen.getRandom().nextInt(5);
-        if (tavern != null && (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColony().isDay()))
+        if (tavern != null && (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColony().isDay()) && tavern.hasModule(TavernBuildingModule.class))
         {
-            final BlockPos pos = tavern.getFreeSitPosition();
+            final BlockPos pos = tavern.getModule(TavernBuildingModule.class).get().getFreeSitPosition();
             if (pos != null)
             {
                 ((VisitorData) citizen.getCitizenData()).setSittingPosition(pos);
@@ -242,9 +243,9 @@ public class EntityAIVisitor extends Goal
         }
 
         IBuilding building = citizen.getCitizenData().getHomeBuilding();
-        if (building instanceof BuildingTavern)
+        if (building.hasModule(TavernBuildingModule.class))
         {
-            tavern = (BuildingTavern) building;
+            tavern = (DefaultBuildingInstance) building;
         }
 
         ((VisitorData) citizen.getCitizenData()).setSittingPosition(BlockPos.ZERO);

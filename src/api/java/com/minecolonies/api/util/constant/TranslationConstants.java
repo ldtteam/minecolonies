@@ -506,13 +506,13 @@ public final class TranslationConstants
     @NonNls
     public static final String FINISHED = "com.minecolonies.coremod.finished";
     @NonNls
-    public static final String DIST = "com.minecolonies.coremod.dist.blocks";
-    @NonNls
     public static final String NOT_RESOLVED = "com.minecolonies.coremod.notresolved";
     @NonNls
     public static final String REQUEST_CRAFTING_DISPLAY = "com.minecolonies.coremod.request.crafting.display";
     @NonNls
-    public static final String RECIPE_STATUS ="com.minecolonies.coremod.gui.workerhuts.recipestatus";
+    public static final String RECIPE_STATUS="com.minecolonies.coremod.gui.workerhuts.recipestatus";
+    @NonNls
+    public static final String DIST = "com.minecolonies.coremod.dist.blocks";
     @NonNls
     public static final String RACK = "block.minecolonies.blockminecoloniesrack";
 

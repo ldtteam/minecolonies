@@ -115,6 +115,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
         return Skill.Agility;
     }
 
+    @NotNull
     @Override
     public String getSchematicName()
     {
