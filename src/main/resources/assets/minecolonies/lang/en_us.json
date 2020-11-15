@@ -1064,8 +1064,7 @@
 
   "com.minecolonies.coremod.gui.workerhuts.library": "Library",
 
-  "item.minecolonies.resourcescroll": "Resource-Scroll",
-  "com.minecolonies.coremod.gui.resourcescroll.nobuilder": "Couldn't find a registered Builder. Please sneak + right-click a Builder's Hut to register the resource scroll.",
+  "item.minecolonies.resourcescroll": "Resource Scroll",
 
   "com.minecolonies.coremod.gui.workerhuts.baker.recipes": "Recipes",
   "com.minecolonies.coremod.gui.workerhuts.gettool": "Get Guard Tool",
