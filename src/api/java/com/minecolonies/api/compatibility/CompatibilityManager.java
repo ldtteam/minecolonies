@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
 import net.minecraft.enchantment.Enchantment;
@@ -281,22 +282,7 @@ public class CompatibilityManager implements ICompatibilityManager
             return true;
         }
 
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().listOfCompostableItems.get())
-        {
-            if (itemStack.getItem().getRegistryName().toString().equals(string))
-            {
-                return true;
-            }
-
-            for (final ResourceLocation tag : itemStack.getItem().getTags())
-            {
-                if (tag.toString().contains(string))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return ModTags.compostables.contains(itemStack.getItem());
     }
 
     @Override
@@ -340,28 +326,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public boolean isLuckyBlock(final ItemStack itemStack)
+    public boolean isLuckyBlock(final Block block)
     {
-        if (itemStack.isEmpty())
-        {
-            return false;
-        }
-
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyBlocks.get())
-        {
-            if (itemStack.getItem().getRegistryName().toString().equals(string))
-            {
-                return true;
-            }
-            for (final ResourceLocation tag : itemStack.getItem().getTags())
-            {
-                if (tag.getPath().equals(string))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return ModTags.oreChanceBlocks.contains(block);
     }
 
     @Override
@@ -586,16 +553,6 @@ public class CompatibilityManager implements ICompatibilityManager
                                                     .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
                                                     .map(stack -> ((BlockItem) stack.getItem()).getBlock())
                                                     .collect(Collectors.toList())));
-
-            for (final String oreString : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().extraOres.get())
-            {
-                final String[] split = oreString.split(":");
-                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0], split[1]));
-                if (block != null && !oreBlocks.contains(block) && !(block instanceof AirBlock))
-                {
-                    oreBlocks.add(block);
-                }
-            }
         }
         Log.getLogger().info("Finished discovering Ores");
     }

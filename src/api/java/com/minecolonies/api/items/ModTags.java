@@ -14,6 +14,9 @@ public class ModTags
     public static Tag<Block>    concreteBlock;
     public static Tag<Block>    pathingBlocks;
 
+    public static Tag<Block>    oreChanceBlocks;
+    public static Tag<Item>     compostables;
+
     public static final Map<String, Tag<Item>> crafterProduct = new HashMap<>();
     public static final Map<String, Tag<Item>> crafterProductExclusions = new HashMap<>();
     public static final Map<String, Tag<Item>> crafterIngredient = new HashMap<>();
