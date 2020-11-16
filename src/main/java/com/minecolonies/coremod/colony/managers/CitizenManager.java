@@ -20,6 +20,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -381,17 +382,13 @@ public class CitizenManager implements ICitizenManager
         {
             if (b.getBuildingLevel() > 0)
             {
-                if (b instanceof IWorkerLivingBuilding)
+                if (b instanceof IBuildingBedProvider || b instanceof IWorkerLivingBuilding || b.hasModule(LivingBuildingModule.class))
                 {
                     newMaxCitizens += b.getAssignedCitizen().size();
                     if ((b instanceof AbstractBuildingGuards) && b.getAssignedCitizen().size() == 0 && b.getBuildingLevel() > 0)
                     {
                         potentialMax += 1;
                     }
-                }
-                else if (b instanceof IBuildingBedProvider)
-                {
-                    newMaxCitizens += b.getMaxInhabitants();
                 }
             }
         }

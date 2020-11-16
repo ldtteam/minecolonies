@@ -195,11 +195,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             and wait for new items.
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> getState() != INVENTORY_FULL &&
-                                                                     this.getOwnBuilding().hasOpenSyncRequest(worker.getCitizenData()) || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()), NEEDS_ITEM, 20),
+                                                                     this.getOwnBuilding().hasOpenSyncRequest(worker.getCitizenData()) || this.getOwnBuilding()
+                                                                                                                                            .hasCitizenCompletedRequestsToPickup(
+                                                                                                                                              worker.getCitizenData()),
+            NEEDS_ITEM,
+            20),
 
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()) && this.cleanAsync(), NEEDS_ITEM, 200),
 
-          new AITarget(NEEDS_ITEM, this::waitForRequests, 10),
+          new AITarget(NEEDS_ITEM, this::waitForRequests, 40),
           /*
            * Gather a needed item.
            */
@@ -511,15 +515,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return;
         }
 
-        IRequest<?> request = getOwnBuilding().getCompletedRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
-        if (request == null)
+        Collection<IRequest<?>> requests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
+        if (requests.isEmpty())
         {
-            request = getOwnBuilding().getOpenRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
+            requests = getOwnBuilding().getOpenRequests(worker.getCitizenData());
         }
 
-        if (request != null)
+        if (!requests.isEmpty())
         {
-            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"), request.getShortDisplayString());
+            worker.getCitizenStatusHandler()
+              .setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"), requests.iterator().next().getShortDisplayString());
         }
     }
 
@@ -538,7 +543,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
         if (!walkToBuilding() && getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            final ImmutableList<IRequest<?>> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
+            final Collection<IRequest<?>> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
 
             completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getId()));
             final IRequest<?> firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
@@ -617,7 +622,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private boolean cleanAsync()
     {
-        final ImmutableList<IRequest<?>> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
+        final Collection<IRequest<?>> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
 
         for (IRequest<?> request : completedRequests)
         {

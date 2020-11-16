@@ -104,7 +104,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     /**
      * Block to mine.
      */
-    private BlockPos blockToMine;
+    protected BlockPos blockToMine;
 
     /**
      * Creates this ai base class and set's up important things.
@@ -422,7 +422,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * Separate step for mining.
      * @return the next state to go to.
      */
-    private IAIState doMining()
+    public IAIState doMining()
     {
         if (blockToMine == null || world.getBlockState(blockToMine).getBlock() instanceof AirBlock)
         {
@@ -722,7 +722,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      *
      * @return the current working position.
      */
-    private BlockPos getCurrentWorkingPosition()
+    protected BlockPos getCurrentWorkingPosition()
     {
         return workFrom == null ? getWorkingPosition(structurePlacer.getB().getProgressPosInWorld(structurePlacer.getA().getIterator().getProgressPos())) : workFrom;
     }

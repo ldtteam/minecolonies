@@ -95,6 +95,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         return Skill.Knowledge;
     }
 
+    @NotNull
     @Override
     public String getSchematicName()
     {

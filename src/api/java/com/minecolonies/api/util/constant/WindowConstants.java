@@ -466,6 +466,7 @@ public final class WindowConstants
     public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutbuilder.xml";
     public static final String LIST_RESOURCES              = "resources";
     public static final String PAGE_RESOURCES              = "resourceActions";
+    public static final String LIST_WORK_ORDERS            = "workOrders";
     public static final String RESOURCE_NAME               = "resourceName";
     public static final String RESOURCE_AVAILABLE_NEEDED   = "resourceAvailableNeeded";
     public static final String RESOURCE_MISSING            = "resourceMissing";
@@ -478,6 +479,10 @@ public final class WindowConstants
     public static final String QUANTITY_LABEL            = "resourceQty";
     public static final String IN_DELIVERY_ICON          = "indeliveryicon";
     public static final String IN_DELIVERY_AMOUNT        = "indeliveryamount";
+    public static final String WORK_ORDER_NAME   = "buildingName";
+    public static final String WORK_ORDER_POS    = "buildingPos";
+    public static final String WORK_ORDER_SELECT = "workOrderSelect";
+    public static final String WORK_ORDER_ID     = "orderId";
 
     public static final String GUIDE_RESOURCE_SUFFIX = ":gui/windowhutguide.xml";
     public static final String GUIDE_CONFIRM         = "confirm";

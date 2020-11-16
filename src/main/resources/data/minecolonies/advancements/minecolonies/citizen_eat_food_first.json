@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:minecolonies/create_build_request_1_builder",
+  "parent": "minecolonies:minecolonies/place_townhall",
   "display": {
     "icon": {
       "item": "minecraft:cooked_beef"

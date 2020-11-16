@@ -9,6 +9,11 @@ import java.util.function.Predicate;
 
 public abstract class AbstractConfiguration
 {
+    private final static String BOOLEAN_DEFAULT_KEY = "minecolonies.config.default.boolean";
+    private final static String INT_DEFAULT_KEY     = "minecolonies.config.default.int";
+    private final static String LONG_DEFAULT_KEY    = "minecolonies.config.default.long";
+    private final static String DOUBLE_DEFAULT_KEY  = "minecolonies.config.default.double";
+
     protected void createCategory(final Builder builder, final String key)
     {
         // TODO: missing name, translation not allowed for now
@@ -36,14 +41,14 @@ public abstract class AbstractConfiguration
         return nameTKey(key) + ".comment";
     }
 
-    private static Builder buildBase(final Builder builder, final String key)
+    private static Builder buildBase(final Builder builder, final String key, final String defaultDesc)
     {
-        return builder.comment(LanguageHandler.translateKey(commentTKey(key))).translation(nameTKey(key));
+        return builder.comment(LanguageHandler.translateKey(commentTKey(key)) + " " + defaultDesc).translation(nameTKey(key));
     }
 
     protected static BooleanValue defineBoolean(final Builder builder, final String key, final boolean defaultValue)
     {
-        return buildBase(builder, key).define(key, defaultValue);
+        return buildBase(builder, key, LanguageHandler.translateKeyWithFormat(BOOLEAN_DEFAULT_KEY, defaultValue)).define(key, defaultValue);
     }
 
     protected static IntValue defineInteger(final Builder builder, final String key, final int defaultValue)
@@ -53,7 +58,7 @@ public abstract class AbstractConfiguration
 
     protected static IntValue defineInteger(final Builder builder, final String key, final int defaultValue, final int min, final int max)
     {
-        return buildBase(builder, key).defineInRange(key, defaultValue, min, max);
+        return buildBase(builder, key, LanguageHandler.translateKeyWithFormat(INT_DEFAULT_KEY, defaultValue, min, max)).defineInRange(key, defaultValue, min, max);
     }
 
     protected static LongValue defineLong(final Builder builder, final String key, final long defaultValue)
@@ -63,7 +68,7 @@ public abstract class AbstractConfiguration
 
     protected static LongValue defineLong(final Builder builder, final String key, final long defaultValue, final long min, final long max)
     {
-        return buildBase(builder, key).defineInRange(key, defaultValue, min, max);
+        return buildBase(builder, key, LanguageHandler.translateKeyWithFormat(LONG_DEFAULT_KEY, defaultValue, min, max)).defineInRange(key, defaultValue, min, max);
     }
 
     protected static DoubleValue defineDouble(final Builder builder, final String key, final double defaultValue)
@@ -73,7 +78,7 @@ public abstract class AbstractConfiguration
 
     protected static DoubleValue defineDouble(final Builder builder, final String key, final double defaultValue, final double min, final double max)
     {
-        return buildBase(builder, key).defineInRange(key, defaultValue, min, max);
+        return buildBase(builder, key, LanguageHandler.translateKeyWithFormat(DOUBLE_DEFAULT_KEY, defaultValue, min, max)).defineInRange(key, defaultValue, min, max);
     }
 
     protected static <T> ConfigValue<List<? extends T>> defineList(
@@ -82,11 +87,11 @@ public abstract class AbstractConfiguration
       final List<? extends T> defaultValue,
       final Predicate<Object> elementValidator)
     {
-        return buildBase(builder, key).defineList(key, defaultValue, elementValidator);
+        return buildBase(builder, key, "").defineList(key, defaultValue, elementValidator);
     }
 
     protected static <V extends Enum<V>> EnumValue<V> defineEnum(final Builder builder, final String key, final V defaultValue)
     {
-        return buildBase(builder, key).defineEnum(key, defaultValue);
+        return buildBase(builder, key, "").defineEnum(key, defaultValue);
     }
 }
