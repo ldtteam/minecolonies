@@ -9,6 +9,11 @@ import net.minecraft.tags.Tag;
 
 public class ModTags
 {
+    /**
+     * Flag to check if tags are already loaded.
+     */
+    public static boolean tagsLoaded = false;
+
     public static Tag<Block>    decorationItems;
     public static Tag<Item>     concretePowder;
     public static Tag<Block>    concreteBlock;
