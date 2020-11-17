@@ -5,24 +5,21 @@ import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.potion.Potions;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.IProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -226,32 +223,13 @@ public class CompatibilityManager implements ICompatibilityManager
     private void discoverAllItems()
     {
         final List<ItemStack> stacks = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), true)
-                                           .filter(item -> !(item instanceof EnchantedBookItem || item instanceof PotionItem))
-                                           .map(ItemStack::new)
+                                           .flatMap(item ->
+                                             {
+                                                 final NonNullList<ItemStack> list = NonNullList.create();
+                                                 item.fillItemGroup(ItemGroup.SEARCH, list);
+                                                 return list.stream();
+                                             })
                                            .collect(Collectors.toList());
-        for(Enchantment enchantment : Registry.ENCHANTMENT)
-        {
-            for(int i = enchantment.getMinLevel(); i <= enchantment.getMaxLevel(); ++i)
-            {
-                stacks.add(getEnchantedItemStack(new EnchantmentData(enchantment, i)));
-            }
-        }
-
-        for(Potion potion : Registry.POTION)
-        {
-            if (potion != Potions.EMPTY)
-            {
-                stacks.add(PotionUtils.addPotionToItemStack(new ItemStack(Items.POTION), potion));
-            }
-        }
-
-        for(Potion potion : Registry.POTION)
-        {
-            if (!potion.getEffects().isEmpty())
-            {
-                stacks.add(PotionUtils.addPotionToItemStack(new ItemStack(Items.TIPPED_ARROW), potion));
-            }
-        }
 
         allItems = ImmutableList.copyOf(stacks);
     }
@@ -281,22 +259,7 @@ public class CompatibilityManager implements ICompatibilityManager
             return true;
         }
 
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().listOfCompostableItems.get())
-        {
-            if (itemStack.getItem().getRegistryName().toString().equals(string))
-            {
-                return true;
-            }
-
-            for (final ResourceLocation tag : itemStack.getItem().getTags())
-            {
-                if (tag.toString().contains(string))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return ModTags.compostables.contains(itemStack.getItem());
     }
 
     @Override
@@ -340,28 +303,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public boolean isLuckyBlock(final ItemStack itemStack)
+    public boolean isLuckyBlock(final Block block)
     {
-        if (itemStack.isEmpty())
-        {
-            return false;
-        }
-
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyBlocks.get())
-        {
-            if (itemStack.getItem().getRegistryName().toString().equals(string))
-            {
-                return true;
-            }
-            for (final ResourceLocation tag : itemStack.getItem().getTags())
-            {
-                if (tag.getPath().equals(string))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return ModTags.oreChanceBlocks.contains(block);
     }
 
     @Override
@@ -586,16 +530,6 @@ public class CompatibilityManager implements ICompatibilityManager
                                                     .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
                                                     .map(stack -> ((BlockItem) stack.getItem()).getBlock())
                                                     .collect(Collectors.toList())));
-
-            for (final String oreString : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().extraOres.get())
-            {
-                final String[] split = oreString.split(":");
-                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0], split[1]));
-                if (block != null && !oreBlocks.contains(block) && !(block instanceof AirBlock))
-                {
-                    oreBlocks.add(block);
-                }
-            }
         }
         Log.getLogger().info("Finished discovering Ores");
     }
