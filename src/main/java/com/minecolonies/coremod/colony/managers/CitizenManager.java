@@ -382,13 +382,17 @@ public class CitizenManager implements ICitizenManager
         {
             if (b.getBuildingLevel() > 0)
             {
-                if (b instanceof IBuildingBedProvider || b instanceof IWorkerLivingBuilding || b.hasModule(LivingBuildingModule.class))
+                if (b instanceof IWorkerLivingBuilding)
                 {
                     newMaxCitizens += b.getAssignedCitizen().size();
                     if ((b instanceof AbstractBuildingGuards) && b.getAssignedCitizen().size() == 0 && b.getBuildingLevel() > 0)
                     {
                         potentialMax += 1;
                     }
+                }
+                else if (b.hasModule(LivingBuildingModule.class))
+                {
+                    newMaxCitizens += b.getMaxInhabitants();
                 }
             }
         }

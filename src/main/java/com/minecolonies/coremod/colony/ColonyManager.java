@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.apiimp.initializer.ModTagsInitializer;
@@ -762,7 +763,7 @@ public final class ColonyManager implements IColonyManager
             colonyViews.clear();
         }
 
-        if (!compatibilityManager.isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
+        if (ModTags.tagsLoaded && !compatibilityManager.isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
         {
             compatibilityManager.discover(false);
         }
@@ -776,7 +777,7 @@ public final class ColonyManager implements IColonyManager
             getColonies(event.world).forEach(c -> c.onWorldTick(event));
         }
 
-        if (!compatibilityManager.isDiscoveredAlready() && FurnaceRecipes.getInstance().loaded())
+        if (ModTags.tagsLoaded && !compatibilityManager.isDiscoveredAlready() && FurnaceRecipes.getInstance().loaded())
         {
             compatibilityManager.discover(true);
         }
