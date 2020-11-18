@@ -27,7 +27,7 @@ public class BuildingRabbitHutch extends AbstractBuildingHerder
     /**
      * Description of the job executed in the hut.
      */
-    private static final String RABBIT_HUTCH = "rabbithutch";
+    private static final String RABBIT_HUTCH = "com.minecolonies.coremod.job.rabbitherder";
 
     /**
      * Max building level of the hut.
