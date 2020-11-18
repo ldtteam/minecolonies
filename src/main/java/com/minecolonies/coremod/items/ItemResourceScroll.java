@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.items;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -81,11 +82,9 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                   ((AbstractTileEntityColonyBuilding) entity).getColony().getName());
             }
         }
-        else if (compound.keySet().contains(TAG_COLONY_ID) && compound.keySet().contains(TAG_BUILDER) && ctx.getWorld().isRemote)
+        else if (ctx.getWorld().isRemote)
         {
-            final int colonyId = compound.getInt(TAG_COLONY_ID);
-            final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
-            MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos);
+            openWindow(compound, ctx.getPlayer());
         }
 
         return ActionResultType.SUCCESS;
@@ -113,19 +112,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
         }
 
-        final CompoundNBT compound = checkForCompound(clipboard);
-
-        if (compound.keySet().contains(TAG_COLONY_ID) && compound.keySet().contains(TAG_BUILDER))
-        {
-            final int colonyId = compound.getInt(TAG_COLONY_ID);
-            final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
-            MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos);
-        }
-        else
-        {
-            // LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY);
-            playerIn.sendStatusMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NEED_BUILDER), true);
-        }
+        openWindow(checkForCompound(clipboard), playerIn);
 
         return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
     }
@@ -169,5 +156,24 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             item.setTag(new CompoundNBT());
         }
         return item.getTag();
+    }
+
+    /**
+     * Opens the scroll window if there is a valid builder linked
+     * @param compound the item compound
+     * @param player the player entity opening the window
+     */
+    private static void openWindow(CompoundNBT compound, PlayerEntity player)
+    {
+        if (compound.keySet().contains(TAG_COLONY_ID) && compound.keySet().contains(TAG_BUILDER))
+        {
+            final int colonyId = compound.getInt(TAG_COLONY_ID);
+            final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
+            MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos);
+        }
+        else
+        {
+            player.sendStatusMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NEED_BUILDER), true);
+        }
     }
 }
