@@ -54,7 +54,7 @@ public class BuildingFarmer extends AbstractBuildingCrafter
     /**
      * Descriptive string of the profession.
      */
-    private static final String FARMER = "farmer";
+    private static final String FARMER = "com.minecolonies.coremod.job.farmer";
 
     /**
      * The maximum building level of the hut.
