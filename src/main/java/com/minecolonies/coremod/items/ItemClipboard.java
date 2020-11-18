@@ -55,8 +55,10 @@ public class ItemClipboard extends AbstractItemMinecolonies
         if (entity instanceof TileEntityColonyBuilding)
         {
             compound.putInt(TAG_COLONY, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
-            if (!ctx.getWorld().isRemote) {
-                LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
+            if (!ctx.getWorld().isRemote)
+            {
+                LanguageHandler.sendPlayerMessage(
+                        ctx.getPlayer(),
                         TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET,
                         ((AbstractTileEntityColonyBuilding) entity).getColony().getName());
             }
@@ -82,8 +84,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
     public ActionResult<ItemStack> onItemRightClick(
             final World worldIn,
             final PlayerEntity playerIn,
-            final Hand hand
-    )
+            final Hand hand)
     {
         final ItemStack clipboard = playerIn.getHeldItem(hand);
 
@@ -104,9 +105,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
      */
     private static CompoundNBT checkForCompound(final ItemStack clipboard)
     {
-        if (!clipboard.hasTag()) {
-            clipboard.setTag(new CompoundNBT());
-        }
+        if (!clipboard.hasTag()) clipboard.setTag(new CompoundNBT());
         return clipboard.getTag();
     }
 
