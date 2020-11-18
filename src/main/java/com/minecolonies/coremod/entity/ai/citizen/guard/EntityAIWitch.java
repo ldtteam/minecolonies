@@ -136,6 +136,11 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
             return START_WORKING;
         }
 
+        if (debuffTarget == null)
+        {
+            return GUARD_DECIDE;
+        }
+
         return targetAndThrowAtEntity(buffTarget, WITCH_GUARD_ATTACK_DEBUFF);
     }
 
@@ -158,10 +163,15 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
             return START_WORKING;
         }
 
+        if (buffTarget == null)
+        {
+            return GUARD_DECIDE;
+        }
+
         return targetAndThrowAtEntity(buffTarget, WITCH_GUARD_ATTACK_BUFF);
     }
 
-    private IAIState targetAndThrowAtEntity(final LivingEntity target, final IAIState returnOnSuccess)
+    private IAIState targetAndThrowAtEntity(@NotNull final LivingEntity target, @NotNull final IAIState returnOnSuccess)
     {
         final boolean canSee = worker.getEntitySenses().canSee(target);
         final double sqDistanceToEntity = target.getDistanceSq(worker);
