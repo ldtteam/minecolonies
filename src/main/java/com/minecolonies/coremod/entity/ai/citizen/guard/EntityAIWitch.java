@@ -22,10 +22,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.EffectType;
 import net.minecraft.potion.Effects;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.AxisAlignedBB;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
@@ -48,6 +48,7 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     private static final double SWITCH_STRAFING_DIRECTION                 = 0.3d;
     private static final int    MIN_POTION_DISTANCE                       = 6; //TODO What should this value be?
     public static final  float  POTION_VELOCITY                           = 0.5f;
+    private static final double PARTY_RANGE                               = 8;
 
     /**
      * Whether the guard is moving towards his target
@@ -452,21 +453,26 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     @Override
     protected IAIState checkAndAttackTarget()
     {
-        if (checkForBuffTarget())
+        final AxisAlignedBB aabb = worker.getBoundingBox().grow(PARTY_RANGE);
+        final List<LivingEntity> allies = world.getEntitiesWithinAABB(LivingEntity.class, aabb, this::isAlly);
+        if (!allies.isEmpty())
         {
-            if (hasMainWeapon())
+            if (checkForBuffTarget())
             {
-                return WITCH_GUARD_ATTACK_BUFF;
+                if (hasMainWeapon())
+                {
+                    return WITCH_GUARD_ATTACK_BUFF;
+                }
+                return START_WORKING;
             }
-            return START_WORKING;
-        }
-        else if (checkForDebuffTarget())
-        {
-            if (hasMainWeapon())
+            else if (checkForDebuffTarget())
             {
-                return WITCH_GUARD_ATTACK_DEBUFF;
+                if (hasMainWeapon())
+                {
+                    return WITCH_GUARD_ATTACK_DEBUFF;
+                }
+                return START_WORKING;
             }
-            return START_WORKING;
         }
         return null;
     }
