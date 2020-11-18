@@ -218,7 +218,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBu
     @Override
     public String getJobName()
     {
-        return "melee";
+        return "com.minecolonies.coremod.job.combattraining";
     }
 
     @NotNull
