@@ -203,7 +203,7 @@ public class BuildingArchery extends AbstractBuildingWorker implements IBuilding
     @Override
     public String getJobName()
     {
-        return "com.minecolonies.coremod.job.ranger";
+        return "com.minecolonies.coremod.job.archertraining";
     }
 
     @NotNull
