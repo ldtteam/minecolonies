@@ -9,6 +9,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
+
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 public class ModTagsInitializer
@@ -42,6 +43,8 @@ public class ModTagsInitializer
     private static final ResourceLocation CONCRETE_POWDER = new ResourceLocation(MOD_ID, "concrete_powder");
     private static final ResourceLocation CONCRETE_BLOCK  = new ResourceLocation(MOD_ID, "concrete");
     private static final ResourceLocation PATHING_BLOCKS = new ResourceLocation(MOD_ID, "pathblocks");
+    private static final ResourceLocation COMPOSTABLES = new ResourceLocation(MOD_ID, "compostables");
+    private static final ResourceLocation ORECHANCEBLOCKS = new ResourceLocation(MOD_ID, "orechanceblocks");
 
     private static boolean loaded = false;
 
@@ -57,6 +60,8 @@ public class ModTagsInitializer
         ModTags.concretePowder = getItemTags(CONCRETE_POWDER);
         ModTags.concreteBlock = getBlockTags(CONCRETE_BLOCK);
         ModTags.pathingBlocks = getBlockTags(PATHING_BLOCKS);
+        ModTags.compostables = getItemTags(COMPOSTABLES);
+        ModTags.oreChanceBlocks = getBlockTags(ORECHANCEBLOCKS);
 
         initCrafterRules("baker");
         initCrafterRules("blacksmith");

@@ -82,6 +82,7 @@ public class BuildingBarracks extends AbstractBuilding
         keepX.put((stack) -> stack.getItem() == Items.GOLD_INGOT, new Tuple<>(STACKSIZE, true));
     }
 
+    @NotNull
     @Override
     public String getSchematicName()
     {
@@ -231,6 +232,11 @@ public class BuildingBarracks extends AbstractBuilding
         compound.put(TAG_TOWERS, towerTagList);
 
         return compound;
+    }
+
+    public List<BlockPos> getTowers()
+    {
+        return towers;
     }
 
     /**

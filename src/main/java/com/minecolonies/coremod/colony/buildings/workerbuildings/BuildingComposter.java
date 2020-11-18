@@ -120,6 +120,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
         return Skill.Athletics;
     }
 
+    @NotNull
     @Override
     public String getSchematicName()
     {
