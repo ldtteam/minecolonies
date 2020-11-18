@@ -55,7 +55,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     /**
      * Description string of the building.
      */
-    private static final String DYER = "dyer";
+    private static final String DYER = "com.minecolonies.coremod.job.dyer";
 
     /**
      * Instantiates a new dyer building.
