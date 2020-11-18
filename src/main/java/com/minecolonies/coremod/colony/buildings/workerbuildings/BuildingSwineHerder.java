@@ -26,7 +26,7 @@ public class BuildingSwineHerder extends AbstractBuildingHerder
     /**
      * Description of the job executed in the hut.
      */
-    private static final String JOB = "swineherder";
+    private static final String JOB = "com.minecolonies.coremod.job.swineherder";
 
     /**
      * Description of the block used to set this block.
