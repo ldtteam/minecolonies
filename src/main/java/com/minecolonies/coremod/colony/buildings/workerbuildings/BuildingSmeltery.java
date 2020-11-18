@@ -93,7 +93,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     @Override
     public String getJobName()
     {
-        return "smelter";
+        return "com.minecolonies.coremod.job.smelter";
     }
 
     @NotNull
