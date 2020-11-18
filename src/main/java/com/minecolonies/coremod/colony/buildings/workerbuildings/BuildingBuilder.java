@@ -51,7 +51,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     /**
      * The job description.
      */
-    private static final String BUILDER = "builder";
+    private static final String BUILDER = "com.minecolonies.coremod.job.builder";
 
     /**
      * Check if the builder purged mobs already at this day.
