@@ -868,8 +868,8 @@
 
   "item.minecolonies.clipboard": "Clipboard",
 
-  "com.minecolonies.coremod.item.clipboard.needcolony": "Please sneak + right-click your Town Hall to register your clipboard to the colony.",
-  "com.minecolonies.coremod.item.clipboard.registered": "Registered to colony %d.",
+  "com.minecolonies.coremod.item.clipboard.needcolony": "No colony set (sneak-click the Town Hall)",
+  "com.minecolonies.coremod.item.clipboard.registered": "Noting requests on the clipboard from %s.",
   "com.minecolonies.coremod.item.scroll.needcolony": "No Builder set (sneak-click a Builder's Hut)",
   "com.minecolonies.coremod.item.scroll.registered": "Linked resources for Builder's Hut at %s.",
   "com.minecolonies.coremod.item.scroll.no_builder": "§oNo Builder",
