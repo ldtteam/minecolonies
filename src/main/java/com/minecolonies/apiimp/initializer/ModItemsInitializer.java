@@ -63,7 +63,7 @@ public final class ModItemsInitializer
         ModItems.ancientTome = new ItemAncientTome(new Item.Properties());
         ModItems.chiefSword = new ItemChiefSword(new Item.Properties());
         ModItems.scimitar = new ItemIronScimitar(new Item.Properties());
-        ModItems.clipboard = new ItemClipBoard(new Item.Properties());
+        ModItems.clipboard = new ItemClipboard(new Item.Properties());
         ModItems.compost = new ItemCompost(new Item.Properties());
         ModItems.resourceScroll = new ItemResourceScroll(new Item.Properties());
         ModItems.pharaoscepter = new ItemPharaoScepter(new Item.Properties());

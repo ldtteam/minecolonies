@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -17,11 +18,13 @@ import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
+import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -87,6 +90,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private static final int LADDER_SEARCH_RANGE = 10;
     private static final int SHAFT_RADIUS        = 3;
     private static final int SAFE_CHECK_RANGE    = 5;
+
+    /**
+     * Considered the base of the shaft
+     */
+    private static final int SHAFT_BASE_DEPTH = 8;
 
     /**
      * Possible rotations.
@@ -191,7 +199,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @Override
     protected void updateRenderMetaData()
     {
-        //TODO: Have pickaxe etc. displayed?
         worker.setRenderMetadata(getRenderMetaStone() + getRenderMetaTorch());
     }
 
@@ -233,6 +240,54 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             return MINER_SEARCHING_LADDER;
         }
         return MINER_CHECK_MINESHAFT;
+    }
+
+    @Override
+    public IAIState doMining()
+    {
+        if (blockToMine == null)
+        {
+            return BUILDING_STEP;
+        }
+
+        final BlockState blockState = world.getBlockState(blockToMine);
+        if (!IColonyManager.getInstance().getCompatibilityManager().isOre(blockState))
+        {
+            blockToMine = getSurroundingOreOrDefault(blockToMine);
+        }
+
+        if (world.getBlockState(blockToMine).getBlock() instanceof AirBlock)
+        {
+            return BUILDING_STEP;
+        }
+
+        if (!mineBlock(blockToMine, getCurrentWorkingPosition()))
+        {
+            worker.swingArm(Hand.MAIN_HAND);
+            return getState();
+        }
+
+        blockToMine = getSurroundingOreOrDefault(blockToMine);
+        if (IColonyManager.getInstance().getCompatibilityManager().isOre(world.getBlockState(blockToMine)))
+        {
+            return getState();
+        }
+
+        worker.decreaseSaturationForContinuousAction();
+        return BUILDING_STEP;
+    }
+
+    private BlockPos getSurroundingOreOrDefault(final BlockPos pos)
+    {
+        for (Direction direction : Direction.values())
+        {
+            final BlockPos offset = pos.offset(direction);
+            if (IColonyManager.getInstance().getCompatibilityManager().isOre(world.getBlockState(offset)))
+            {
+                return offset;
+            }
+        }
+        return pos;
     }
 
     /**
@@ -307,7 +362,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private IAIState checkMineShaft()
     {
         final BuildingMiner buildingMiner = getOwnBuilding();
-        //Check if we reached the mineshaft depth limit
+        // Check if we reached the bottom of the shaft
+        if (getLastLadder(buildingMiner.getLadderLocation(), world) < SHAFT_BASE_DEPTH)
+        {
+            AdvancementUtils.TriggerAdvancementPlayersForColony(job.getColony(), AdvancementTriggers.DEEP_MINE::trigger);
+        }
+
+        // Check if we reached the mineshaft depth limit
         if (getLastLadder(buildingMiner.getLadderLocation(), world) < buildingMiner.getDepthLimit())
         {
             //If the miner hut has been placed too deep.
@@ -1027,7 +1088,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             chance += effect.getEffect();
         }
 
-        if (IColonyManager.getInstance().getCompatibilityManager().isLuckyBlock(new ItemStack(blockToMine.getBlock())))
+        if (IColonyManager.getInstance().getCompatibilityManager().isLuckyBlock(blockToMine.getBlock()))
         {
             InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(IColonyManager.getInstance().getCompatibilityManager().getRandomLuckyOre(chance),
               worker.getInventoryCitizen());

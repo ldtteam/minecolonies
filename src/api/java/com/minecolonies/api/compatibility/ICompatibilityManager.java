@@ -3,6 +3,7 @@ package com.minecolonies.api.compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.Tuple;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -158,7 +159,7 @@ public interface ICompatibilityManager
      *
      * @return the immutable list.
      */
-    List<ItemStack> getBlockList();
+    List<ItemStack> getListOfAllItems();
 
     /**
      * Test if an itemStack is compostable
@@ -213,12 +214,12 @@ public interface ICompatibilityManager
     boolean isPlantable(ItemStack itemStack);
 
     /**
-     * If an itemStack is a lucky block which can result in an extra ore drop.
+     * If a block is a lucky block which can result in an extra ore drop.
      *
-     * @param itemStack the stack to check.
+     * @param block the block to check.
      * @return true if so.
      */
-    boolean isLuckyBlock(final ItemStack itemStack);
+    boolean isLuckyBlock(final Block block);
 
     /**
      * Get a random lucky ore from a luckyblock.

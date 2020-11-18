@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
 import net.minecraft.enchantment.EnchantmentData;
@@ -17,6 +18,7 @@ import net.minecraft.state.IProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
@@ -31,6 +33,7 @@ import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.Constants.ORE_STRING;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
+import static net.minecraft.item.EnchantedBookItem.getEnchantedItemStack;
 
 /**
  * CompatibilityManager handling certain list and maps of itemStacks of certain types.
@@ -148,7 +151,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * List of all blocks.
      */
-    private static ImmutableList<ItemStack> allBlocks = ImmutableList.<ItemStack>builder().build();
+    private static ImmutableList<ItemStack> allItems = ImmutableList.<ItemStack>builder().build();
 
     /**
      * Instantiates the compatibilityManager.
@@ -195,7 +198,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void discover(final boolean serverSide)
     {
-        discoverBlockList();
+        discoverAllItems();
 
         discoverSaplings();
         discoverOres();
@@ -215,13 +218,20 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Create complete list of blocks, client side only.
+     * Create complete list of all existing items, client side only.
      */
-    private void discoverBlockList()
+    private void discoverAllItems()
     {
-        allBlocks = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
-                                           .map(ItemStack::new)
-                                           .collect(Collectors.toList()));
+        final List<ItemStack> stacks = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), true)
+                                           .flatMap(item ->
+                                             {
+                                                 final NonNullList<ItemStack> list = NonNullList.create();
+                                                 item.fillItemGroup(ItemGroup.SEARCH, list);
+                                                 return list.stream();
+                                             })
+                                           .collect(Collectors.toList());
+
+        allItems = ImmutableList.copyOf(stacks);
     }
 
     /**
@@ -230,9 +240,9 @@ public class CompatibilityManager implements ICompatibilityManager
      * @return the list of itemStacks.
      */
     @Override
-    public List<ItemStack> getBlockList()
+    public List<ItemStack> getListOfAllItems()
     {
-        return allBlocks;
+        return allItems;
     }
 
     @Override
@@ -249,22 +259,7 @@ public class CompatibilityManager implements ICompatibilityManager
             return true;
         }
 
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().listOfCompostableItems.get())
-        {
-            if (itemStack.getItem().getRegistryName().toString().equals(string))
-            {
-                return true;
-            }
-
-            for (final ResourceLocation tag : itemStack.getItem().getTags())
-            {
-                if (tag.toString().contains(string))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return ModTags.compostables.contains(itemStack.getItem());
     }
 
     @Override
@@ -292,6 +287,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 newSplit[0] = "minecraft";
                 split = newSplit;
             }
+            
             if (split.length == 2)
             {
                 for (final ResourceLocation tag : itemStack.getItem().getTags())
@@ -307,28 +303,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public boolean isLuckyBlock(final ItemStack itemStack)
+    public boolean isLuckyBlock(final Block block)
     {
-        if (itemStack.isEmpty())
-        {
-            return false;
-        }
-
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyBlocks.get())
-        {
-            if (itemStack.getItem().getRegistryName().toString().equals(string))
-            {
-                return true;
-            }
-            for (final ResourceLocation tag : itemStack.getItem().getTags())
-            {
-                if (tag.getPath().equals(string))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return ModTags.oreChanceBlocks.contains(block);
     }
 
     @Override
@@ -534,7 +511,7 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             ench = list.get(random.nextInt(list.size()));
         }
-        return new Tuple<>(EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())),
+        return new Tuple<>(getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())),
           ench.getB());
     }
 
@@ -544,25 +521,15 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (smeltableOres.isEmpty())
         {
-            smeltableOres.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isOre).map(ItemStorage::new).collect(Collectors.toList())));
+            smeltableOres.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isOre).map(ItemStorage::new).collect(Collectors.toList())));
         }
 
         if (oreBlocks.isEmpty())
         {
-            oreBlocks.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isMineableOre)
+            oreBlocks.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isMineableOre)
                                                     .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
                                                     .map(stack -> ((BlockItem) stack.getItem()).getBlock())
                                                     .collect(Collectors.toList())));
-
-            for (final String oreString : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().extraOres.get())
-            {
-                final String[] split = oreString.split(":");
-                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0], split[1]));
-                if (block != null && !oreBlocks.contains(block) && !(block instanceof AirBlock))
-                {
-                    oreBlocks.add(block);
-                }
-            }
         }
         Log.getLogger().info("Finished discovering Ores");
     }
@@ -587,7 +554,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (compostableItems.isEmpty())
         {
-            compostableItems.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
+            compostableItems.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering compostables");
     }
@@ -599,7 +566,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (plantables.isEmpty())
         {
-            plantables.addAll(ImmutableList.copyOf(allBlocks.stream()
+            plantables.addAll(ImmutableList.copyOf(allItems.stream()
                                                      .filter(this::isPlantable)
                                                      .map(ItemStorage::new)
                                                      .collect(Collectors.toList())));
@@ -614,7 +581,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (fuel.isEmpty())
         {
-            fuel.addAll(ImmutableList.copyOf(allBlocks.stream().filter(FurnaceTileEntity::isFuel).map(ItemStorage::new).collect(Collectors.toList())));
+            fuel.addAll(ImmutableList.copyOf(allItems.stream().filter(FurnaceTileEntity::isFuel).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering fuel");
     }
@@ -626,7 +593,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (food.isEmpty())
         {
-            food.addAll(ImmutableList.copyOf(allBlocks.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
+            food.addAll(ImmutableList.copyOf(allItems.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering food");
     }

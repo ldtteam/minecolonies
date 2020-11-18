@@ -282,7 +282,6 @@ public final class ItemStackUtils
         {
             return -1;
         }
-        //todo: use 'better' version of this thing
         if (ToolType.HOE.equals(toolType))
         {
             if (stack.getItem() instanceof HoeItem)

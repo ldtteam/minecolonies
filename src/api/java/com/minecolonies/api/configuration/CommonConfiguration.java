@@ -54,6 +54,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue     diseaseModifier;
     public final ForgeConfigSpec.BooleanValue generateSupplyLoot;
     public final ForgeConfigSpec.BooleanValue forceLoadColony;
+    public final ForgeConfigSpec.IntValue     badVisitorsChance;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -122,13 +123,10 @@ public class CommonConfiguration extends AbstractConfiguration
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
      *  -------------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> extraOres;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> enabledModTags;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> guardResourceLocations;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> listOfCompostableItems;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyBlocks;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyOres;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> crusherProduction;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> sifterMeshes;
@@ -414,6 +412,7 @@ public class CommonConfiguration extends AbstractConfiguration
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
         generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
         forceLoadColony = defineBoolean(builder, "forceloadcolony", false);
+        badVisitorsChance = defineInteger(builder, "badvisitorchance", 2, 1, 100);
 
         swapToCategory(builder, "commands");
 
@@ -480,12 +479,6 @@ public class CommonConfiguration extends AbstractConfiguration
 
 
         swapToCategory(builder, "compatibility");
-
-        extraOres = defineList(builder, "extraOres",
-          Arrays.asList
-                   ("minestuck:ore_cruxite",
-                     "minestuck:ore_uranium"),
-          s -> s instanceof String);
 
         enabledModTags = defineList(builder, "enabledmodtags",
           Arrays.asList(
@@ -672,42 +665,6 @@ public class CommonConfiguration extends AbstractConfiguration
                      "minecraft:sunflower;5",
                      "minecraft:honeycomb;6",
                      "minecraft:quartz;3"),
-          s -> s instanceof String);
-        listOfCompostableItems = defineList(builder, "listOfCompostableItems",
-          Arrays.asList
-                   ("minecraft:rotten_flesh",
-                     "minecraft:brown_mushroom",
-                     "minecraft:red_mushroom",
-                     "minecraft:feather",
-                     "minecraft:pumpkin",
-                     "minecraft:carved_pumpkin",
-                     "minecraft:grass",
-                     "minecraft:tall_grass",
-                     "minecraft:fern",
-                     "minecraft:large_fern",
-                     "minecraft:kelp",
-                     "minecraft:seagrass",
-                     "minecraft:cactus",
-                     "minecraft:sugar_cane",
-                     "minecraft:vine",
-                     "minecraft:cocoa_beans",
-                     "minecraft:lily_pad",
-                     "minecraft:sea_pickle",
-                     "minecraft:wheat",
-                     "minecraft:brown_mushroom_block",
-                     "minecraft:red_mushroom_block",
-                     "minecraft:mushroom_stem",
-                     "minecraft:cake",
-                     "minecraft:rabbit_foot",
-                     "minecraft:fermented_spider_eye",
-                     "saplings",
-                     "flowers",
-                     "leaves"),
-          s -> s instanceof String);
-        luckyBlocks = defineList(builder, "luckyblocks",
-          Arrays.asList
-                   ("minecraft:stone",
-                     "minecraft:cobblestone"),
           s -> s instanceof String);
         luckyOres = defineList(builder, "luckyores",
           Arrays.asList
