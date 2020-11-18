@@ -37,7 +37,7 @@ public class BuildingMechanic extends AbstractBuildingCrafter
     /**
      * Description string of the building.
      */
-    private static final String MECHANIC = "mechanic";
+    private static final String MECHANIC = "com.minecolonies.coremod.job.mechanic";
 
     /**
      * Instantiates a new mechanic building.
