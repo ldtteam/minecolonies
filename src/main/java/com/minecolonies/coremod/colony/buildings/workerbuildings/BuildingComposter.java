@@ -38,7 +38,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     /**
      * Description of the job for this building
      */
-    private static final String COMPOSTER = "composter";
+    private static final String COMPOSTER = "com.minecolonies.coremod.job.composter";
 
     /**
      * Maximum building level
