@@ -262,7 +262,9 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         final ItemStack stack = mainInventory.get(slot);
         if (!ItemStackUtils.isEmpty(stack))
         {
-            stack.getItem().damageItem(stack, amount, entityIn, onBroken);
+            // The 4 parameter inner call from forge is for adding a callback to alter the damage caused,
+            // but unlike its description does not actually damage the item(despite the same function name). So used to just calculate the damage.
+            stack.damageItem(stack.getItem().damageItem(stack, amount, entityIn, onBroken), entityIn, onBroken);
 
             if (ItemStackUtils.isEmpty(stack))
             {
