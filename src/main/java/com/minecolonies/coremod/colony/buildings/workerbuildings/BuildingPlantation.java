@@ -53,7 +53,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     /**
      * Description string of the building.
      */
-    private static final String PLANTATION = "plantation";
+    private static final String PLANTATION = "com.minecolonies.coremod.job.planter";
 
     /**
      * List of sand blocks to grow onto.
