@@ -39,7 +39,7 @@ public class BuildingFletcher extends AbstractBuildingCrafter
     /**
      * Description string of the building.
      */
-    private static final String FLETCHER = "fletcher";
+    private static final String FLETCHER = "com.minecolonies.coremod.job.fletcher";
 
     /**
      * Instantiates a new fletcher building.
