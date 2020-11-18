@@ -36,7 +36,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
     /**
      * Description of the job executed in the hut.
      */
-    private static final String BLACKSMITH = "blacksmith";
+    private static final String BLACKSMITH = "com.minecolonies.coremod.job.blacksmith";
 
     /**
      * Instantiates the building.
