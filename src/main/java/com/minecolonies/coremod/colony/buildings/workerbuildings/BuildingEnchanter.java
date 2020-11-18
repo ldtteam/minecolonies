@@ -38,7 +38,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
     /**
      * Enchanter.
      */
-    private static final String ENCHANTER = "enchanter";
+    private static final String ENCHANTER = "com.minecolonies.coremod.job.enchanter";
 
     /**
      * Maximum building level
