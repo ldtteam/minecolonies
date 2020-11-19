@@ -430,7 +430,7 @@
   "com.minecolonies.command.playernotfound": "Player %s could not be found.",
   "com.minecolonies.command.notenabledinconfig": "This command is disabled in the config.",
   "com.minecolonies.command.resetsupply": "Successfully reset the Supply Camp and Ship placement.",
-  "com.minecolonies.command.prune.next": "This command will delete large chunks of your world! Use with care! Make a backup first! If you want to continue repeat this command with %d as first parameter",
+  "com.minecolonies.command.prune.next": "This command will delete large chunks of your world! Use with care! Make a backup first! If you want to continue, repeat this command with %d as the first parameter.",
 
 
   "com.minecolonies.coremod.status.worker.goingtohut": "Going to Hut",
