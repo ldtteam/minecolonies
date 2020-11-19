@@ -47,7 +47,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     /**
      * Description of the job executed in the hut.
      */
-    private static final String STUDENT = "com.minecolonies.coremod.job.student";
+    private static final String STUDENT = "student";
 
     /**
      * Description of the block used to set this block.
