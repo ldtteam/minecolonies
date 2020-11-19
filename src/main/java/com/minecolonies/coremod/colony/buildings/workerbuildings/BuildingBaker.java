@@ -68,7 +68,7 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
     /**
      * General bakery description key.
      */
-    private static final String BAKER = "com.minecolonies.coremod.job.bakery";
+    private static final String BAKER = "baker";
 
     /**
      * Max hut level of the bakery.
