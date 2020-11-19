@@ -38,7 +38,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
     /**
      * Description string of the building.
      */
-    private static final String SAWMILL = "com.minecolonies.coremod.job.sawmill";
+    private static final String SAWMILL = "sawmill";
 
     /**
      * The min percentage something has to have out of wood to be craftable by this worker.
