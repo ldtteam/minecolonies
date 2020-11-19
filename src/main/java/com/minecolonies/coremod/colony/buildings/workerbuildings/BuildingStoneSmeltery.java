@@ -37,7 +37,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     /**
      * Description string of the building.
      */
-    private static final String STONE_SMELTERY = "com.minecolonies.coremod.job.stonesmeltery";
+    private static final String STONE_SMELTERY = "stonesmeltery";
 
     /**
      * Instantiates a new stone smeltery building.
