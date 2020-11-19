@@ -22,7 +22,7 @@ public class BuildingChickenHerder extends AbstractBuildingHerder
     /**
      * Description of the job executed in the hut.
      */
-    private static final String JOB = "com.minecolonies.coremod.job.chickenherder";
+    private static final String JOB = "chickenherder";
 
     /**
      * Max building level of the hut.
