@@ -54,7 +54,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     /**
      * Description string of the building.
      */
-    private static final String GLASS_BLOWER = "com.minecolonies.coremod.job.glassblower";
+    private static final String GLASS_BLOWER = "glassblower";
 
     /**
      * Instantiates a new stone smeltery building.
