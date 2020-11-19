@@ -56,7 +56,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     /**
      * The crusher string.
      */
-    private static final String CRUSHER_DESC = "com.minecolonies.coremod.job.crusher";
+    private static final String CRUSHER_DESC = "crusher";
 
     /**
      * Max building level of the crusher.
