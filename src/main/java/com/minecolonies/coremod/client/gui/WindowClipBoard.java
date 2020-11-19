@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.CLIPBOARD_TOGGLE;
+import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest.MISSING;
 
 /**
  * ClipBoard window.
@@ -161,7 +162,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
                     exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
                 }
             }
-            else
+            else if (!request.getDisplayIcon().equals(MISSING))
             {
                 final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
                 logo.setVisible(true);

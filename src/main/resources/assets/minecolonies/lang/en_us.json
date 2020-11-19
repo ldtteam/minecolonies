@@ -318,7 +318,7 @@
 
   "item.minecolonies.ancienttome": "Ancient Tome",
   "item.minecolonies.chiefsword": "Chief Sword",
-  "item.minecolonies.scepterGuard": "Guard Scepter",
+  "item.minecolonies.scepterguard": "Guard Scepter",
   "item.minecolonies.iron_scimitar": "Iron Scimitar",
   "item.minecolonies.pharaoscepter": "Pharao Scepter",
   "item.minecolonies.firearrow": "Fire Arrow",
@@ -883,8 +883,11 @@
 
   "item.minecolonies.clipboard": "Clipboard",
 
-  "com.minecolonies.coremod.item.clipboard.needcolony": "Please sneak + right-click your Town Hall to register your clipboard to the colony.",
-  "com.minecolonies.coremod.item.clipboard.registered": "Registered to colony %d.",
+  "com.minecolonies.coremod.item.clipboard.needcolony": "No colony set (sneak-click the Town Hall)",
+  "com.minecolonies.coremod.item.clipboard.registered": "Noting requests on the clipboard from %s.",
+  "com.minecolonies.coremod.item.scroll.needcolony": "No Builder set (sneak-click a Builder's Hut)",
+  "com.minecolonies.coremod.item.scroll.registered": "Linked resources for Builder's Hut at %s.",
+  "com.minecolonies.coremod.item.scroll.no_builder": "§oNo Builder",
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
   "com.minecolonies.coremod.buildings.warehouse.name": "Warehouse",
 
@@ -1076,8 +1079,7 @@
 
   "com.minecolonies.coremod.gui.workerhuts.library": "Library",
 
-  "item.minecolonies.resourcescroll": "Resource-Scroll",
-  "com.minecolonies.coremod.gui.resourcescroll.nobuilder": "Couldn't find a registered Builder. Please sneak + right-click a Builder's Hut to register the resource scroll.",
+  "item.minecolonies.resourcescroll": "Resource Scroll",
 
   "com.minecolonies.coremod.gui.workerhuts.baker.recipes": "Recipes",
   "com.minecolonies.coremod.gui.workerhuts.gettool": "Get Guard Tool",

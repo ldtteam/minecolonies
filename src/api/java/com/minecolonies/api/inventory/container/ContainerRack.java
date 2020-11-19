@@ -58,7 +58,7 @@ public class ContainerRack extends Container
         final BlockPos neighbor = extra.readBlockPos();
 
         final AbstractTileEntityRack abstractTileEntityRack = (AbstractTileEntityRack) inv.player.world.getTileEntity(rack);
-        final AbstractTileEntityRack neighborRack = (AbstractTileEntityRack) inv.player.world.getTileEntity(neighbor);
+        final AbstractTileEntityRack neighborRack = neighbor.equals(BlockPos.ZERO) ? null : (AbstractTileEntityRack) inv.player.world.getTileEntity(neighbor);
 
         if (neighborRack != null)
         {
