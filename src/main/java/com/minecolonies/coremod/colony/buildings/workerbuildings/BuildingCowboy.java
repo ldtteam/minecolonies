@@ -30,7 +30,7 @@ public class BuildingCowboy extends AbstractBuildingHerder
     /**
      * Description of the job executed in the hut.
      */
-    private static final String COWBOY = "com.minecolonies.coremod.job.cowboy";
+    private static final String COWBOY = "cowboy";
 
     /**
      * Max building level of the hut.
