@@ -45,7 +45,7 @@ public class BuildingSifter extends AbstractBuildingWorker
     /**
      * The sifter string.
      */
-    private static final String SIFTER_DESC = "com.minecolonies.coremod.job.sifter";
+    private static final String SIFTER_DESC = "sifter";
 
     /**
      * Max building level of the sifter.
