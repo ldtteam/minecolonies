@@ -26,10 +26,20 @@ import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
  */
 public class CommandPruneWorld implements IMCOPCommand
 {
+    /**
+     * Command radius arg, for giving the protection range around buildings
+     */
     private static final String RADIUS_ARG = "additional block protection radius";
 
-    private static final String REGION_FOLDER = "region";
+    /**
+     * Command stage arg, for execution repeats
+     */
     private static final String COMMAND_STAGE = "stage";
+
+    /**
+     * Base name of region data folders
+     */
+    private static final String REGION_FOLDER = "region";
 
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
@@ -47,6 +57,13 @@ public class CommandPruneWorld implements IMCOPCommand
         return tryPrune(context, IntegerArgumentType.getInteger(context, COMMAND_STAGE));
     }
 
+    /**
+     * Tries to prune the world, protects colony buildings in this world by the given radius(min 100)
+     *
+     * @param context command context
+     * @param arg     progress arg
+     * @return command return
+     */
     private int tryPrune(final CommandContext<CommandSource> context, final int arg)
     {
         if (arg < 3)
