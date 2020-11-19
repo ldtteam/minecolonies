@@ -36,7 +36,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     /**
      * Description of the job executed in the hut.
      */
-    private static final String BEEKEEPER = "com.minecolonies.coremod.job.beekeeper";
+    private static final String BEEKEEPER = "beekeeper";
 
     /**
      * List of hives.
