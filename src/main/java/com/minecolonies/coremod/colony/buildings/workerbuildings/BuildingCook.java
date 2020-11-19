@@ -66,7 +66,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     /**
      * The cook string.
      */
-    private static final String COOK_DESC = "com.minecolonies.coremod.job.cook";
+    private static final String COOK_DESC = "cook";
 
     /**
      * Max building level of the cook.
