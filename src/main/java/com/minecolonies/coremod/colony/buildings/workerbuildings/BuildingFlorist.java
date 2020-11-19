@@ -53,7 +53,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
     /**
      * Florist.
      */
-    private static final String FLORIST = "com.minecolonies.coremod.job.florist";
+    private static final String FLORIST = "florist";
 
     /**
      * Maximum building level
