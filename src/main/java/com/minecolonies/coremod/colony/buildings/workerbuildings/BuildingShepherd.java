@@ -28,7 +28,7 @@ public class BuildingShepherd extends AbstractBuildingHerder
     /**
      * Description of the job executed in the hut.
      */
-    private static final String SHEPHERD = "com.minecolonies.coremod.job.shepherd";
+    private static final String SHEPHERD = "shepherd";
 
     /**
      * NBT Tag for dyeSheeps boolean.
