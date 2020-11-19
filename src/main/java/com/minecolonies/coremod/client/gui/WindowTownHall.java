@@ -605,7 +605,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 int max = ((AbstractBuildingWorker.View) building).getMaxInhabitants();
                 int workers = ((AbstractBuildingWorker.View) building).getWorkerId().size();
 
-                String jobName = ((AbstractBuildingWorker.View) building).building.getJobDisplayName().toLowerCase(Locale.ENGLISH);
+                String jobName = ((AbstractBuildingWorker.View) building).getJobDisplayName().toLowerCase(Locale.ENGLISH);
                 if (building instanceof AbstractBuildingGuards.View)
                 {
                     jobName = ((AbstractBuildingGuards.View) building).getGuardType().getJobTranslationKey();
