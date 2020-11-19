@@ -57,7 +57,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     /**
      * Description string of the building.
      */
-    private static final String CONCRETE_MIXER = "com.minecolonies.coremod.job.concretemixer";
+    private static final String CONCRETE_MIXER = "concretemixer";
 
     /**
      * How deep the water can max be to place concrete in it.
