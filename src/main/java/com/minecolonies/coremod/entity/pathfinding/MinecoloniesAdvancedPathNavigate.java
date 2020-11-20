@@ -16,6 +16,7 @@ import com.minecolonies.coremod.entity.pathfinding.pathjobs.*;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.LadderBlock;
 import net.minecraft.block.VineBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
@@ -683,7 +684,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
             if (newSpeed > 0)
             {
-                if (world.getBlockState(ourEntity.getPosition()).getBlock() instanceof VineBlock)
+                if (!(world.getBlockState(ourEntity.getPosition()).getBlock() instanceof LadderBlock))
                 {
                     this.ourEntity.setMotion(this.ourEntity.getMotion().add(0, 0.1D, 0));
                 }
