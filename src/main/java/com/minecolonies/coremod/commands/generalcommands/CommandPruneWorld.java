@@ -80,7 +80,7 @@ public class CommandPruneWorld implements IMCOPCommand
         {
             // Local save folder for this word
             final File saveDir =
-              new File(((ServerWorld) world).getSaveHandler().getWorldDirectory(), REGION_FOLDER);
+              new File(world.getDimension().getType().getDirectory(((ServerWorld) world).getSaveHandler().getWorldDirectory()), REGION_FOLDER);
 
             // Colony list for this world
             List<IColony> colonies = new ArrayList<>();
