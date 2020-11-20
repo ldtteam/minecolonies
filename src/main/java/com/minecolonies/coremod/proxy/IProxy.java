@@ -76,7 +76,7 @@ public interface IProxy
      *
      * @param colonyView the colony id.
      */
-    void openClipBoardWindow(IColonyView colonyView);
+    void openClipboardWindow(IColonyView colonyView);
 
     /**
      * Opens the resource scroll window.

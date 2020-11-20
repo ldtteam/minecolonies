@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +26,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Class describing the clipboard item.
  */
-public class ItemClipBoard extends AbstractItemMinecolonies
+public class ItemClipboard extends AbstractItemMinecolonies
 {
     /**
      * Tag of the colony.
@@ -33,11 +34,11 @@ public class ItemClipBoard extends AbstractItemMinecolonies
     private static final String TAG_COLONY = "colony";
 
     /**
-     * Sets the name, creative tab, and registers the Ancient Tome item.
+     * Sets the name, creative tab, and registers the Clipboard item.
      *
      * @param properties the properties.
      */
-    public ItemClipBoard(final Item.Properties properties)
+    public ItemClipboard(final Item.Properties properties)
     {
         super("clipboard", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
     }
@@ -56,21 +57,15 @@ public class ItemClipBoard extends AbstractItemMinecolonies
             compound.putInt(TAG_COLONY, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
             if (!ctx.getWorld().isRemote)
             {
-                LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
-                  TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET,
-                  ((AbstractTileEntityColonyBuilding) entity).getColonyId());
+                LanguageHandler.sendPlayerMessage(
+                        ctx.getPlayer(),
+                        TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET,
+                        ((AbstractTileEntityColonyBuilding) entity).getColony().getName());
             }
         }
-        else if (compound.keySet().contains(TAG_COLONY))
+        else if (ctx.getWorld().isRemote)
         {
-            if (ctx.getWorld().isRemote)
-            {
-                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), ctx.getWorld().getDimensionKey().getLocation());
-                if (colonyView != null)
-                {
-                    MineColonies.proxy.openClipBoardWindow(colonyView);
-                }
-            }
+            openWindow(compound, ctx.getWorld(), ctx.getPlayer());
         }
 
         return ActionResultType.SUCCESS;
@@ -87,47 +82,48 @@ public class ItemClipBoard extends AbstractItemMinecolonies
     @Override
     @NotNull
     public ActionResult<ItemStack> onItemRightClick(
-      final World worldIn,
-      final PlayerEntity playerIn,
-      final Hand hand)
+            final World worldIn,
+            final PlayerEntity playerIn,
+            final Hand hand)
     {
-        final ItemStack cllipboard = playerIn.getHeldItem(hand);
+        final ItemStack clipboard = playerIn.getHeldItem(hand);
 
-        if (!worldIn.isRemote)
-        {
-            return new ActionResult<>(ActionResultType.SUCCESS, cllipboard);
+        if (!worldIn.isRemote) {
+            return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
         }
 
-        final CompoundNBT compound = checkForCompound(cllipboard);
+        openWindow(checkForCompound(clipboard), worldIn, playerIn);
 
-        if (compound.keySet().contains(TAG_COLONY))
-        {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), worldIn.getDimensionKey().getLocation());
-            if (colonyView != null)
-            {
-                MineColonies.proxy.openClipBoardWindow(colonyView);
-            }
-        }
-        else
-        {
-            LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY);
-        }
-
-        return new ActionResult<>(ActionResultType.SUCCESS, cllipboard);
+        return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
     }
 
     /**
      * Check for the compound and return it. If not available create and return it.
      *
-     * @param scepter the scepter to check in for.
-     * @return the compound of the scepter.
+     * @param clipboard the clipboard to check for.
+     * @return the compound of the clipboard.
      */
-    private static CompoundNBT checkForCompound(final ItemStack scepter)
+    private static CompoundNBT checkForCompound(final ItemStack clipboard)
     {
-        if (!scepter.hasTag())
+        if (!clipboard.hasTag()) clipboard.setTag(new CompoundNBT());
+        return clipboard.getTag();
+    }
+
+    /**
+     * Opens the clipboard window if there is a valid colony linked
+     * @param compound the item compound
+     * @param player the player entity opening the window
+     */
+    private static void openWindow(CompoundNBT compound, World world, PlayerEntity player)
+    {
+        if (compound.keySet().contains(TAG_COLONY))
         {
-            scepter.setTag(new CompoundNBT());
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), world.getDimensionKey().getLocation());
+            if (colonyView != null) MineColonies.proxy.openClipboardWindow(colonyView);
         }
-        return scepter.getTag();
+        else
+        {
+            player.sendStatusMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY), true);
+        }
     }
 }

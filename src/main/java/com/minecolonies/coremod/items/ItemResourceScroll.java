@@ -1,12 +1,17 @@
 package com.minecolonies.coremod.items;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,8 +22,17 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDER;
@@ -52,7 +66,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         final ItemStack scroll = ctx.getPlayer().getHeldItem(ctx.getHand());
 
         final CompoundNBT compound = checkForCompound(scroll);
-        final TileEntity entity = ctx.getWorld().getTileEntity(ctx.getPos());
+        TileEntity entity = ctx.getWorld().getTileEntity(ctx.getPos());
 
         if (entity instanceof TileEntityColonyBuilding)
         {
@@ -62,15 +76,13 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             if (!ctx.getWorld().isRemote)
             {
                 LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
-                  TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET,
-                  ((AbstractTileEntityColonyBuilding) entity).getColonyId());
+                  TranslationConstants.COM_MINECOLONIES_SCROLL_BUILDER_SET,
+                  ((AbstractTileEntityColonyBuilding) entity).getColony().getName());
             }
         }
-        else if (compound.keySet().contains(TAG_COLONY_ID) && compound.keySet().contains(TAG_BUILDER) && ctx.getWorld().isRemote)
+        else if (ctx.getWorld().isRemote)
         {
-            final int colonyId = compound.getInt(TAG_COLONY_ID);
-            final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
-            MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos);
+            openWindow(compound, ctx.getPlayer());
         }
 
         return ActionResultType.SUCCESS;
@@ -91,27 +103,42 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
       final PlayerEntity playerIn,
       final Hand hand)
     {
-        final ItemStack cllipboard = playerIn.getHeldItem(hand);
+        final ItemStack clipboard = playerIn.getHeldItem(hand);
 
         if (!worldIn.isRemote)
         {
-            return new ActionResult<>(ActionResultType.SUCCESS, cllipboard);
+            return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
         }
 
-        final CompoundNBT compound = checkForCompound(cllipboard);
+        openWindow(checkForCompound(clipboard), playerIn);
 
-        if (compound.keySet().contains(TAG_COLONY_ID) && compound.keySet().contains(TAG_BUILDER))
+        return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+    {
+        super.addInformation(stack, worldIn, tooltip, flagIn);
+
+        if (worldIn == null) return;
+
+        final CompoundNBT compound = checkForCompound(stack);
+        final int colonyId = compound.getInt(TAG_COLONY_ID);
+        final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
+
+        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, worldIn.getDimensionKey().getLocation());
+        if (colonyView != null)
         {
-            final int colonyId = compound.getInt(TAG_COLONY_ID);
-            final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
-            MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos);
+            final IBuildingView buildingView = colonyView.getBuilding(builderPos);
+            if (buildingView instanceof BuildingBuilder.View)
+            {
+                String name = ((BuildingBuilder.View) buildingView).getWorkerName();
+                tooltip.add(name != null && !name.trim().isEmpty()
+                  ? new StringTextComponent(TextFormatting.DARK_PURPLE + name)
+                  : new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_BUILDER));
+            }
         }
-        else
-        {
-            LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY);
-        }
-
-        return new ActionResult<>(ActionResultType.SUCCESS, cllipboard);
     }
 
     /**
@@ -127,5 +154,24 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             item.setTag(new CompoundNBT());
         }
         return item.getTag();
+    }
+
+    /**
+     * Opens the scroll window if there is a valid builder linked
+     * @param compound the item compound
+     * @param player the player entity opening the window
+     */
+    private static void openWindow(CompoundNBT compound, PlayerEntity player)
+    {
+        if (compound.keySet().contains(TAG_COLONY_ID) && compound.keySet().contains(TAG_BUILDER))
+        {
+            final int colonyId = compound.getInt(TAG_COLONY_ID);
+            final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
+            MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos);
+        }
+        else
+        {
+            player.sendStatusMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NEED_BUILDER), true);
+        }
     }
 }
