@@ -15,6 +15,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> maleFirstNames;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> femaleFirstNames;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> lastNames;
+    public final ForgeConfigSpec.BooleanValue builderInfiniteResources;
 
     /**
      * Builds server configuration.
@@ -33,6 +34,9 @@ public class ServerConfiguration extends AbstractConfiguration
 
         lastNames = defineList(builder, "lastnames", Arrays.asList(NameConstants.lastNames), s -> s instanceof String);
 
+        swapToCategory(builder, "Debug Tools");
+
+        builderInfiniteResources = defineBoolean(builder, "builderinfiniteresources", false);
         finishCategory(builder);
     }
 }
