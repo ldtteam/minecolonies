@@ -25,6 +25,7 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest.MISSING;
 
 /**
  * Window for the request detail.
@@ -173,7 +174,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         {
             exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
         }
-        else
+        else if (!request.getDisplayIcon().equals(MISSING))
         {
             logo.setVisible(true);
             logo.setImage(request.getDisplayIcon());
