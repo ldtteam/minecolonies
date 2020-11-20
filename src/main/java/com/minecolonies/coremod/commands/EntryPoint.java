@@ -85,7 +85,8 @@ public class EntryPoint
                                                .addNode(new CommandRaidAllNow().build())
                                                .addNode(new CommandBackup().build())
                                                .addNode(new CommandResetPlayerSupplies().build())
-                                               .addNode(new CommandHelp().build());
+                                               .addNode(new CommandHelp().build())
+                                               .addNode(new CommandPruneWorld().build());
 
         /**
          * Root minecolonies alias command tree, all subtrees are added here.
@@ -103,7 +104,8 @@ public class EntryPoint
                                                     .addNode(new CommandRaidAllNow().build())
                                                     .addNode(new CommandBackup().build())
                                                     .addNode(new CommandResetPlayerSupplies().build())
-                                                    .addNode(new CommandHelp().build());
+                                                    .addNode(new CommandHelp().build())
+                                                    .addNode(new CommandPruneWorld().build());
 
         // Adds all command trees to the dispatcher to register the commands.
         dispatcher.register(minecoloniesRoot.build());
