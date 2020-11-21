@@ -315,7 +315,7 @@ public final class BackUpHelper
     public static void loadColonyBackup(final int colonyId, final RegistryKey<World> dimension, boolean loadDeleted, boolean claimChunks)
     {
         @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
-        @NotNull final File backupFile = new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension));
+        @NotNull final File backupFile = new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension.getLocation()));
         CompoundNBT compound = loadNBTFromPath(backupFile);
         if (compound == null)
         {

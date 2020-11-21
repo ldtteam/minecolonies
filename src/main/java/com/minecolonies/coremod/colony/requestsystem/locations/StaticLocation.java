@@ -182,12 +182,12 @@ public class StaticLocation implements ILocation
                 throw new IllegalArgumentException("Unsupported context - Not the correct amount available. Needed is 1!");
             }
 
-            if (!(context[0] instanceof ResourceLocation))
+            if (!(context[0] instanceof RegistryKey))
             {
                 throw new IllegalArgumentException("Unsupported context - First context object is not a ResourceLocation. Provide an ResourceLocation as Dimension.");
             }
 
-            return new StaticLocation(blockPos, RegistryKey.getOrCreateKey(Registry.WORLD_KEY, (ResourceLocation) context[0]));
+            return new StaticLocation(blockPos, (RegistryKey<World>) context[0]);
         }
 
         /**
