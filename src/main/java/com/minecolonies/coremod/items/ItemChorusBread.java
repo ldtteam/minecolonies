@@ -5,6 +5,7 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.world.Dimension;
 import net.minecraft.world.DimensionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +52,7 @@ public class ItemChorusBread extends AbstractItemMinecolonies
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving)
     {
-        if (!worldIn.isRemote && entityLiving instanceof ServerPlayerEntity && worldIn.getDimensionType().isSame(DimensionType.OVERWORLD_TYPE))
+        if (!worldIn.isRemote && entityLiving instanceof ServerPlayerEntity && worldIn.getDimensionKey().getLocation().equals(Dimension.OVERWORLD.getLocation()))
         {
             TeleportHelper.surfaceTeleport((ServerPlayerEntity)entityLiving);
         }

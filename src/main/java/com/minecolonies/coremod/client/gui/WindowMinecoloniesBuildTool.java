@@ -19,6 +19,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Dimension;
 import net.minecraft.world.DimensionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -162,7 +163,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
                 switch (placementErrorType)
                 {
                     case NOT_WATER:
-                        final String dim = Minecraft.getInstance().world.getDimensionType().isSame(DimensionType.NETHER_TYPE)
+                        final String dim = Minecraft.getInstance().world.getDimensionKey().getLocation().equals(Dimension.THE_NETHER.getLocation())
                                 ? TranslationConstants.SUPPLY_CAMP_INVALID_NOT_LAVA_MESSAGE_KEY
                                 : TranslationConstants.SUPPLY_CAMP_INVALID_NOT_WATER_MESSAGE_KEY;
                         errorMessage = String.format(dim, outputList);
