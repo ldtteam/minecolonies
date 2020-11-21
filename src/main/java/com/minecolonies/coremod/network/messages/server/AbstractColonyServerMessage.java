@@ -7,7 +7,10 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +20,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     /**
      * The dimensionId this message originates from
      */
-    private ResourceLocation dimensionId;
+    private RegistryKey<World> dimensionId;
 
     /**
      * The colonyId this message originates from
@@ -27,9 +30,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     /**
      * Empty standard constructor.
      */
-    public AbstractColonyServerMessage()
-    {
-    }
+    public AbstractColonyServerMessage() { }
 
     /**
      * Network message for executing things on colonies on the server
@@ -47,7 +48,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
      * @param dimensionId The dimension of the colony
      * @param colonyId    The colony ID
      */
-    public AbstractColonyServerMessage(final ResourceLocation dimensionId, final int colonyId)
+    public AbstractColonyServerMessage(final RegistryKey<World> dimensionId, final int colonyId)
     {
         this.dimensionId = dimensionId;
         this.colonyId = colonyId;
@@ -78,7 +79,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     @Override
     public final void toBytes(final PacketBuffer buf)
     {
-        buf.writeString(dimensionId.toString());
+        buf.writeString(dimensionId.getLocation().toString());
         buf.writeInt(colonyId);
         toBytesAbstractOverride(buf);
         toBytesOverride(buf);
@@ -96,7 +97,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     @Override
     public final void fromBytes(final PacketBuffer buf)
     {
-        this.dimensionId = new ResourceLocation(buf.readString(32767));
+        this.dimensionId = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
         this.colonyId = buf.readInt();
         fromBytesAbstractOverride(buf);
         fromBytesOverride(buf);
@@ -122,10 +123,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
                     return;
                 }
 
-                LanguageHandler.sendPlayerMessage(
-                  player,
-                  "com.minecolonies.coremod.item.permissionscepter.permission.deny"
-                );
+                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.permission.deny");
                 return;
             }
             else if (ownerOnly() && (player == null || colony.getPermissions().getOwner().equals(player.getUniqueID())))
@@ -135,10 +133,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
                     return;
                 }
 
-                LanguageHandler.sendPlayerMessage(
-                  player,
-                  "com.minecolonies.coremod.item.permissionscepter.permission.deny"
-                );
+                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.permission.deny");
                 return;
             }
 
@@ -146,10 +141,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
         }
         else
         {
-            LanguageHandler.sendPlayerMessage(
-              player,
-              "com.minecolonies.command.nocolony", this.getClass().getSimpleName()
-            );
+            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.nocolony", this.getClass().getSimpleName());
         }
     }
 }

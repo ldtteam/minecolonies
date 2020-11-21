@@ -322,7 +322,7 @@ public class ContainerCrafting extends Container
     @Override
     public boolean canMergeSlot(final ItemStack stack, final Slot slotIn)
     {
-        return slotIn.inventory != this.craftResultSlot && super.canMergeSlot(stack, slotIn);
+        return slotIn != this.craftResultSlot && super.canMergeSlot(stack, slotIn);
     }
 
     /**

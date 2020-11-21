@@ -438,7 +438,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     /**
      * Request wrapper class used to construct the request tree.
      */
-    protected final class RequestWrapper
+    protected static final class RequestWrapper
     {
         /**
          * The request.

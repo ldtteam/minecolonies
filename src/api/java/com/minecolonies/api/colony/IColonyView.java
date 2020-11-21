@@ -14,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -72,7 +73,7 @@ public interface IColonyView extends IColony
      *
      * @return dimension ID of the view.
      */
-    ResourceLocation getDimension();
+    RegistryKey<World> getDimension();
 
     /**
      * Getter for the manual hiring or not.

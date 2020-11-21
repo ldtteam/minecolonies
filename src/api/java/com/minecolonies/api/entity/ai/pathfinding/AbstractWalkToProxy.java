@@ -117,7 +117,8 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
                                              : BlockPosUtil.getDistanceSquared(pos, proxyList.get(0));
         final double distanceProxyNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared(currentProxy, target)
                                                 : BlockPosUtil.getDistanceSquared(currentProxy, proxyList.get(0));
-        if (distanceToProxy < MIN_DISTANCE || distanceToNextProxy < distanceProxyNextProxy)
+
+            if (distanceToProxy < MIN_DISTANCE || distanceToNextProxy < distanceProxyNextProxy)
         {
             if (proxyList.isEmpty())
             {

@@ -304,7 +304,7 @@ public class ClientEventHandler
         }
         final CompoundNBT compound = stack.getTag();
 
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), player.world.getDimensionKey().getLocation());
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), player.world.getDimensionKey());
         if (colony == null)
         {
             return;
@@ -339,7 +339,7 @@ public class ClientEventHandler
 
         for (final ILocation guardTower : guardTowers)
         {
-            if (world.getDimensionKey().getLocation() != guardTower.getDimension())
+            if (world.getDimensionKey() != guardTower.getDimension())
             {
                 RenderUtils.renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), 0, 0, 0, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
             }

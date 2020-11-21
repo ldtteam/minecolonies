@@ -3,6 +3,7 @@ package com.minecolonies.coremod.network.messages.client.colony;
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -33,7 +34,7 @@ public class PlayMusicAtPosMessage implements IMessage
     /**
      * The dimension id to play in
      */
-    private ResourceLocation dimensionID;
+    private RegistryKey<World> dimensionID;
 
     /**
      * The volume to use
@@ -63,7 +64,7 @@ public class PlayMusicAtPosMessage implements IMessage
         super();
         this.soundEvent = event;
         this.pos = pos;
-        this.dimensionID = world.getDimensionKey().getLocation();
+        this.dimensionID = world.getDimensionKey();
         this.volume = volume;
         this.pitch = pitch;
     }
@@ -73,7 +74,7 @@ public class PlayMusicAtPosMessage implements IMessage
     {
         buf.writeVarInt(Registry.SOUND_EVENT.getId(this.soundEvent));
         buf.writeBlockPos(pos);
-        buf.writeString(dimensionID.toString());
+        buf.writeString(dimensionID.getLocation().toString());
         buf.writeFloat(volume);
         buf.writeFloat(pitch);
     }
@@ -83,7 +84,7 @@ public class PlayMusicAtPosMessage implements IMessage
     {
         this.soundEvent = Registry.SOUND_EVENT.getByValue(buf.readVarInt());
         this.pos = buf.readBlockPos();
-        this.dimensionID = new ResourceLocation(buf.readString(32767));
+        this.dimensionID = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
         this.volume = buf.readFloat();
         this.pitch = buf.readFloat();
     }
@@ -99,7 +100,7 @@ public class PlayMusicAtPosMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        if (Minecraft.getInstance().world.getDimensionKey().getLocation().equals(dimensionID))
+        if (Minecraft.getInstance().world.getDimensionKey() == dimensionID)
         {
             Minecraft.getInstance().world.playSound(Minecraft.getInstance().player, pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundCategory.AMBIENT, volume, pitch);
         }

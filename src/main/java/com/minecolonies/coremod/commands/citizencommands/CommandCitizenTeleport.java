@@ -39,7 +39,7 @@ public class CommandCitizenTeleport implements IMCColonyOfficerCommand
         final Entity sender = context.getSource().getEntity();
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender == null ? World.OVERWORLD.getLocation() : context.getSource().getWorld().getDimensionKey().getLocation());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender == null ? World.OVERWORLD : context.getSource().getWorld().getDimensionKey());
         if (colony == null)
         {
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);

@@ -31,7 +31,7 @@ public class NBTUtils
           Collectors.toList(),
           list -> {
               final ListNBT tagList = new ListNBT();
-              list.forEach(tagList::add);
+              tagList.addAll(list);
 
               return tagList;
           });

@@ -103,7 +103,7 @@ public class MobAIRegistry implements IMobAIRegistry
      *
      * @param <M> The mob type.
      */
-    private final class TaskInformationWrapper<M extends Entity>
+    private static final class TaskInformationWrapper<M extends Entity>
     {
         private final int                                           priority;
         private final Function<AbstractEntityMinecoloniesMob, Goal> aiTaskProducer;

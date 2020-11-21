@@ -168,7 +168,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
         final ItemIcon exampleStackDisplay = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
         final List<ItemStack> displayStacks = request.getDisplayStacks();
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().getLocation());
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey());
 
         if (!displayStacks.isEmpty())
         {
@@ -206,7 +206,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         }
         catch (@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {
-            /**
+            /*
              * Do nothing we just need to know if it has a resolver or not.
              */
             Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---", e);

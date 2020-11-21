@@ -72,7 +72,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     {
         super(container, playerInventory, iTextComponent);
         this.container = container;
-        this.building = (AbstractBuildingSmelterCrafter.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.world.getDimensionKey().getLocation(), container.getPos());
+        this.building = (AbstractBuildingSmelterCrafter.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.world.getDimensionKey(), container.getPos());
     }
 
     @Override
@@ -94,7 +94,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     public class OnButtonPress implements Button.IPressable
     {
         @Override
-        public void onPress(final Button button)
+        public void onPress(@NotNull final Button button)
         {
             if (building.canRecipeBeAdded())
             {

@@ -5,8 +5,11 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.network.IMessage;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +27,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
     /**
      * Dimension of the colony.
      */
-    private ResourceLocation dimension;
+    private RegistryKey<World> dimension;
 
     /**
      * Empty constructor used when registering the
@@ -54,7 +57,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
     {
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
-        dimension = new ResourceLocation(buf.readString(32767));
+        dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
         buildingData = new PacketBuffer(Unpooled.buffer(buf.readableBytes()));
         buf.readBytes(buildingData, buf.readableBytes());
     }
@@ -64,7 +67,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
     {
         buf.writeInt(colonyId);
         buf.writeBlockPos(buildingId);
-        buf.writeString(dimension.toString());
+        buf.writeString(dimension.getLocation().toString());
         buf.writeBytes(buildingData);
     }
 

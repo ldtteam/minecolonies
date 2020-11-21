@@ -239,7 +239,7 @@ public class EventHandler
         {
             final ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
             final Chunk oldChunk = player.world.getChunk(player.chunkCoordX, player.chunkCoordZ);
-            final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
+            final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
 
             if (oldCloseColonies != null)
             {
@@ -270,8 +270,7 @@ public class EventHandler
             final ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
 
             final Chunk newChunk = player.world.getChunk(player.chunkCoordX, player.chunkCoordZ);
-            final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
-
+            final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
             if (newCloseColonies != null)
             {
                 // Add visiting/subscriber to new colony
@@ -315,13 +314,19 @@ public class EventHandler
                 event.getNewChunkZ(),
                 8, true), (ServerPlayerEntity) event.getEntity());
 
-            final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
-
+            final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+            if (newCloseColonies == null)
+            {
+                return;
+            }
             Network.getNetwork().sendToPlayer(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.getPos().x, newChunk.getPos().z), (ServerPlayerEntity) entity);
             @NotNull final ServerPlayerEntity player = (ServerPlayerEntity) entity;
             final Chunk oldChunk = world.getChunk(event.getOldChunkX(), event.getOldChunkZ());
-            final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
-
+            final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+            if (oldCloseColonies == null)
+            {
+                return;
+            }
             // Check if we get into a differently claimed chunk
             if (newCloseColonies.getOwningColony() != oldCloseColonies.getOwningColony())
             {
@@ -389,10 +394,10 @@ public class EventHandler
 
             // Add visiting/subscriber to colony we're logging into
             final Chunk chunk = (Chunk) player.world.getChunk(new BlockPos(player.getPositionVec()));
-            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
+            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
             if (cap != null && cap.getOwningColony() != 0)
             {
-                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), player.world.getDimensionKey().getLocation());
+                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), player.world.getDimensionKey());
                 if (colony != null)
                 {
                     colony.addVisitingPlayer(player);
@@ -454,7 +459,7 @@ public class EventHandler
                 final World world = entityCitizen.getEntityWorld();
 
                 final Chunk chunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
-                final IColonyTagCapability chunkCapability = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+                final IColonyTagCapability chunkCapability = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
                 if (chunkCapability != null && chunkCapability.getOwningColony() != 0
                       && entityCitizen.getCitizenColonyHandler().getColonyId() != chunkCapability.getOwningColony())
                 {
@@ -484,13 +489,15 @@ public class EventHandler
         if (event.getState().getBlock() instanceof SpawnerBlock)
         {
             final MobSpawnerTileEntity spawner = (MobSpawnerTileEntity) event.getWorld().getTileEntity(event.getPos());
-
-            final IColony colony = IColonyManager.getInstance()
-                                     .getColonyByDimension(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_COLONY_ID),
-                                       world.getDimensionKey().getLocation());
-            if (colony != null)
+            if (spawner != null)
             {
-                colony.getEventManager().onTileEntityBreak(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_EVENT_ID), spawner);
+                final IColony colony = IColonyManager.getInstance()
+                                         .getColonyByDimension(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_COLONY_ID),
+                                           world.getDimensionKey());
+                if (colony != null)
+                {
+                    colony.getEventManager().onTileEntityBreak(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_EVENT_ID), spawner);
+                }
             }
         }
     }
@@ -662,7 +669,7 @@ public class EventHandler
      */
     public static boolean onBlockHutPlaced(@NotNull final World world, @NotNull final PlayerEntity player, final Block block, final BlockPos pos)
     {
-        if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !world.getDimensionKey().getLocation().equals(World.OVERWORLD.getLocation()))
+        if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(world))
         {
             LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_IN_OTHER_DIM);
             return false;

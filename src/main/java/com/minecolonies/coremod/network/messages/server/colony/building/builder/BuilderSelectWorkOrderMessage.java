@@ -25,7 +25,7 @@ public class BuilderSelectWorkOrderMessage extends AbstractBuildingServerMessage
      * Creates a new BuilderSetManualModeMessage.
      *
      * @param building View of the building to read data from.
-     * @param manualMode Whether the builder should accept build requests automatically.
+     * @param workOrder workorder id.
      */
     public BuilderSelectWorkOrderMessage(@NotNull final BuildingBuilder.View building, final int workOrder)
     {

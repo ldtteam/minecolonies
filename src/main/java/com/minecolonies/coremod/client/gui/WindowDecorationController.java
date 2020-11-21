@@ -190,7 +190,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     private void confirmClicked()
     {
         Network.getNetwork()
-          .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel() + 1, world.getDimensionKey().getLocation()));
+          .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel() + 1, world.getDimensionKey()));
         close();
     }
 
@@ -200,7 +200,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     private void repairClicked()
     {
         Network.getNetwork()
-          .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel(), world.getDimensionKey().getLocation()));
+          .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel(), world.getDimensionKey()));
         close();
     }
 }

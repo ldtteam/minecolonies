@@ -8,7 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -87,18 +87,19 @@ public class EntityLocation implements ILocation
      *
      * @return The dimension of the location.
      */
+    @NotNull
     @Override
-    public ResourceLocation getDimension()
+    public RegistryKey<World> getDimension()
     {
         checkEntity();
         final Entity entityRef = entity.get();
         if (entityRef == null)
         {
-            return World.OVERWORLD.getLocation();
+            return World.OVERWORLD;
         }
         else
         {
-            return entityRef.getEntityWorld().getDimensionKey().getLocation();
+            return entityRef.getEntityWorld().getDimensionKey();
         }
     }
 
@@ -112,7 +113,7 @@ public class EntityLocation implements ILocation
     public boolean isReachableFromLocation(@NotNull final ILocation location)
     {
         checkEntity();
-        return !(entity == null || entity.get() == null) && location.getDimension().equals(getDimension());
+        return !(entity == null || entity.get() == null) && location.getDimension() == getDimension();
     }
 
     /**

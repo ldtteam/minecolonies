@@ -477,7 +477,7 @@ public class NetworkChannel
      *
      * @param <MSG> The message type.
      */
-    public final class NetworkingMessageEntry<MSG extends IMessage>
+    public static final class NetworkingMessageEntry<MSG extends IMessage>
     {
         /**
          * Atomic boolean that tracks if a splitting warning has been written to the log for a given packet type.

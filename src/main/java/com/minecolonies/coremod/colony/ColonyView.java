@@ -42,8 +42,10 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.tileentity.BannerPattern;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -81,7 +83,7 @@ public final class ColonyView implements IColonyView
     private final Map<Integer, ICitizenDataView> citizens    = new HashMap<>();
     private       Map<Integer, IVisitorViewData> visitors    = new HashMap<>();
     private       String                         name        = "Unknown";
-    private       ResourceLocation                            dimensionId;
+    private       RegistryKey<World>                            dimensionId;
 
     /**
      * Colony team color.
@@ -244,7 +246,7 @@ public final class ColonyView implements IColonyView
     {
         //  General Attributes
         buf.writeString(colony.getName());
-        buf.writeString(colony.getDimension().toString());
+        buf.writeString(colony.getDimension().getLocation().toString());
         buf.writeBlockPos(colony.getCenter());
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
@@ -339,7 +341,7 @@ public final class ColonyView implements IColonyView
             buf.writeBlockPos(col.getCenter());
             buf.writeInt(col.getID());
             buf.writeBoolean(col.hasTownHall());
-            buf.writeString(col.getDimension().toString());
+            buf.writeString(col.getDimension().getLocation().toString());
         }
 
         final List<IColony> feuds = new ArrayList<>();
@@ -364,7 +366,7 @@ public final class ColonyView implements IColonyView
             buf.writeString(col.getName());
             buf.writeBlockPos(col.getCenter());
             buf.writeInt(col.getID());
-            buf.writeString(col.getDimension().toString());
+            buf.writeString(col.getDimension().getLocation().toString());
         }
 
         final CompoundNBT treeTag = new CompoundNBT();
@@ -450,7 +452,7 @@ public final class ColonyView implements IColonyView
      * @return dimension ID of the view.
      */
     @Override
-    public ResourceLocation getDimension()
+    public RegistryKey<World> getDimension()
     {
         return dimensionId;
     }
@@ -754,7 +756,7 @@ public final class ColonyView implements IColonyView
         this.world = world;
         //  General Attributes
         name = buf.readString(32767);
-        dimensionId = new ResourceLocation(buf.readString(32767));
+        dimensionId = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
         center = buf.readBlockPos();
         manualHiring = buf.readBoolean();
         //  Citizenry
@@ -827,13 +829,13 @@ public final class ColonyView implements IColonyView
         final int noOfAllies = buf.readInt();
         for (int i = 0; i < noOfAllies; i++)
         {
-            allies.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), buf.readBoolean(), new ResourceLocation(buf.readString(32767))));
+            allies.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), buf.readBoolean(), RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)))));
         }
 
         final int noOfFeuds = buf.readInt();
         for (int i = 0; i < noOfFeuds; i++)
         {
-            feuds.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), false, new ResourceLocation(buf.readString(32767))));
+            feuds.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), false, RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)))));
         }
 
         this.manager.readFromNBT(buf.readCompoundTag());
@@ -1351,7 +1353,7 @@ public final class ColonyView implements IColonyView
     @Override
     public void setStyle(final String style)
     {
-        ////////TODO: Figure out how to implement these on
+        // Not needed.
     }
 
     @Override

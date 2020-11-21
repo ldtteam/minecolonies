@@ -325,7 +325,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public IBuildingView getBuildingView()
     {
-        final IColonyView c = IColonyManager.getInstance().getColonyView(colonyId, world.getDimensionKey().getLocation());
+        final IColonyView c = IColonyManager.getInstance().getColonyView(colonyId, world.getDimensionKey());
         return c == null ? null : c.getBuilding(getPosition());
     }
 

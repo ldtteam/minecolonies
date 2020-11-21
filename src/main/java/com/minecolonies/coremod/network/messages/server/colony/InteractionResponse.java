@@ -4,8 +4,9 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +50,7 @@ public class InteractionResponse extends AbstractColonyServerMessage
     public InteractionResponse(
       final int colonyId,
       final int citizenId,
-      final ResourceLocation dimension,
+      final RegistryKey<World> dimension,
       @NotNull final ITextComponent key,
       @NotNull final ITextComponent response)
     {

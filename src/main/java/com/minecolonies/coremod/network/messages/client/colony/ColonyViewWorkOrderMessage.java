@@ -7,7 +7,10 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -20,9 +23,9 @@ import java.util.List;
  */
 public class ColonyViewWorkOrderMessage implements IMessage
 {
-    private int              colonyId;
-    private ResourceLocation dimension;
-    private PacketBuffer     workOrderBuffer;
+    private int                colonyId;
+    private RegistryKey<World> dimension;
+    private PacketBuffer       workOrderBuffer;
 
     /**
      * Empty constructor used when registering the
@@ -56,7 +59,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     {
         final PacketBuffer newbuf = new PacketBuffer(buf.retain());
         colonyId = newbuf.readInt();
-        dimension = new ResourceLocation(newbuf.readString(32767));
+        dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(newbuf.readString(32767)));
         workOrderBuffer = newbuf;
     }
 
@@ -64,7 +67,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        buf.writeString(dimension.toString());
+        buf.writeString(dimension.getLocation().toString());
         buf.writeBytes(workOrderBuffer);
     }
 

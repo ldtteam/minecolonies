@@ -208,7 +208,7 @@ public class CitizenDataView implements ICitizenDataView
      * DEPRECATED
      */
     @Override
-    public void setWorkBuilding(final BlockPos bp)
+    public void setWorkBuilding(@Nullable final BlockPos bp)
     {
         this.workBuilding = bp;
     }
@@ -302,7 +302,7 @@ public class CitizenDataView implements ICitizenDataView
 
         if (buf.readBoolean())
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().getLocation());
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey());
             jobView = IJobDataManager.getInstance().createViewFrom(colonyView, this, buf);
         }
     }

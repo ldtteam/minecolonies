@@ -1,7 +1,8 @@
 package com.minecolonies.api.colony.requestsystem.location;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +25,7 @@ public interface ILocation
      * @return The dimension of the location.
      */
     @NotNull
-    ResourceLocation getDimension();
+    RegistryKey<World> getDimension();
 
     /**
      * Method to check if this location is reachable from the other.
