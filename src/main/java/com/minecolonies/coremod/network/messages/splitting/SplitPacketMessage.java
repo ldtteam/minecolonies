@@ -111,14 +111,6 @@ public class SplitPacketMessage implements IMessage
 
             //Create a message.
             final IMessage message = messageEntry.getCreator().get();
-            final LogicalSide packetOrigin = ctxIn.getDirection().getOriginationSide();
-
-            // boolean param MUST equals true if packet arrived at logical server
-            if (message.getExecutionSide() != null && packetOrigin.equals(message.getExecutionSide()))
-            {
-                Log.getLogger().warn("Receving {} at wrong side!", message.getClass().getName());
-                return;
-            }
 
             //Create a new buffer that reads from the packet data and then deserialize the inner message.
             final ByteBuf buffer = Unpooled.wrappedBuffer(packetData);
@@ -126,6 +118,13 @@ public class SplitPacketMessage implements IMessage
             buffer.release();
 
             //Execute the message.
+            final LogicalSide packetOrigin = ctxIn.getDirection().getOriginationSide();
+            if (message.getExecutionSide() != null && packetOrigin.equals(message.getExecutionSide()))
+            {
+                Log.getLogger().warn("Receving {} at wrong side!", message.getClass().getName());
+                return;
+            }
+            // boolean param MUST equals true if packet arrived at logical server
             ctxIn.enqueueWork(() -> message.onExecute(ctxIn, packetOrigin.equals(LogicalSide.CLIENT)));
         }
         catch (ExecutionException e)
