@@ -7,7 +7,7 @@ public class Network
     /**
      * The network instance.
      */
-    public static NetworkChannel network;
+    private static NetworkChannel network;
 
     /**
      * Get the network handler.
