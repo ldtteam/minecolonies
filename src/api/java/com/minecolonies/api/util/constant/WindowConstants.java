@@ -1167,6 +1167,11 @@ public final class WindowConstants
     public static final String LIST_CITIZEN = "assignedCitizen";
 
     /**
+     * The progress update label.
+     */
+    public static final String UPGRADE_PROGRESS_LABEL = "upgradeProgress";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()
