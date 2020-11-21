@@ -92,17 +92,20 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
                 for (final IToken<?> taskToken : assignedTaskIds)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
-                    final IRecipeStorage recipeStorage = getFirstFullFillableRecipe(request.getRequest().getStack(), false);
-                    if (recipeStorage != null)
+                    if (request != null)
                     {
-                        for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
+                        final IRecipeStorage recipeStorage = getFirstFullFillableRecipe(request.getRequest().getStack(), false);
+                        if (recipeStorage != null)
                         {
-                            int amount = itemStorage.getAmount() * request.getRequest().getCount();
-                            if (recipeOutputs.containsKey(itemStorage))
+                            for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
                             {
-                                amount += recipeOutputs.get(itemStorage).getA();
+                                int amount = itemStorage.getAmount() * request.getRequest().getCount();
+                                if (recipeOutputs.containsKey(itemStorage))
+                                {
+                                    amount += recipeOutputs.get(itemStorage).getA();
+                                }
+                                recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
                             }
-                            recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
                         }
                     }
                 }
