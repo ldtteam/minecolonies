@@ -821,16 +821,16 @@ public class ResearchInitializer
         final GlobalResearch quickDraw = new GlobalResearch("quickdraw", "combat", "Quick Draw", 2, new AdditionModifierResearchEffect(MELEE_DAMAGE, 0.5));
         quickDraw.setRequirement(new BuildingResearchRequirement(3, "barracks"));
 
-        final GlobalResearch powerAttack = new GlobalResearch("powerattack", "combat", "Power Attack", 3, new AdditionModifierResearchEffect(MELEE_DAMAGE, 0.5));
+        final GlobalResearch powerAttack = new GlobalResearch("powerattack", "combat", "Power Attack", 3, new AdditionModifierResearchEffect(MELEE_DAMAGE, 1.0));
         powerAttack.setRequirement(new BuildingResearchRequirement(3, "combatacademy"));
 
-        final GlobalResearch cleave = new GlobalResearch("cleave", "combat", "Cleave", 4, new AdditionModifierResearchEffect(MELEE_DAMAGE, 0.5));
+        final GlobalResearch cleave = new GlobalResearch("cleave", "combat", "Cleave", 4, new AdditionModifierResearchEffect(MELEE_DAMAGE, 1.5));
         cleave.setRequirement(new BuildingResearchRequirement(10, "guardtower"));
 
-        final GlobalResearch mightyCleave = new GlobalResearch("mightycleave", "combat", "Mightly Cleave", 5, new AdditionModifierResearchEffect(MELEE_DAMAGE, 0.5));
+        final GlobalResearch mightyCleave = new GlobalResearch("mightycleave", "combat", "Mightly Cleave", 5, new AdditionModifierResearchEffect(MELEE_DAMAGE, 2.0));
         mightyCleave.setRequirement(new BuildingResearchRequirement(5, "barracks"));
 
-        final GlobalResearch whirlwind = new GlobalResearch("whirlwind", "combat", "Whirlwind", 6, new AdditionModifierResearchEffect(MELEE_DAMAGE, 2.0));
+        final GlobalResearch whirlwind = new GlobalResearch("whirlwind", "combat", "Whirlwind", 6, new AdditionModifierResearchEffect(MELEE_DAMAGE, 4.0));
 
         accuracy.addChild(quickDraw);
         quickDraw.addChild(powerAttack);
@@ -841,16 +841,16 @@ public class ResearchInitializer
         final GlobalResearch preciseShot = new GlobalResearch("preciseshot", "combat", "Precise Shot", 2, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 0.5));
         preciseShot.setRequirement(new BuildingResearchRequirement(3, "barracks"));
 
-        final GlobalResearch penetratingShot = new GlobalResearch("penetratingshot", "combat", "Penetrating Shot", 3, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 0.5));
+        final GlobalResearch penetratingShot = new GlobalResearch("penetratingshot", "combat", "Penetrating Shot", 3, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 1.0));
         penetratingShot.setRequirement(new BuildingResearchRequirement(3, "archery"));
 
-        final GlobalResearch piercingShot = new GlobalResearch("piercingshot", "combat", "Piercing Shot", 4, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 0.5));
+        final GlobalResearch piercingShot = new GlobalResearch("piercingshot", "combat", "Piercing Shot", 4, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 1.5));
         piercingShot.setRequirement(new BuildingResearchRequirement(10, "guardtower"));
 
-        final GlobalResearch woundingShot = new GlobalResearch("woundingshot", "combat", "Wounding Shot", 5, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 0.5));
+        final GlobalResearch woundingShot = new GlobalResearch("woundingshot", "combat", "Wounding Shot", 5, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 2.0));
         woundingShot.setRequirement(new BuildingResearchRequirement(5, "barracks"));
 
-        final GlobalResearch deadlyAim = new GlobalResearch("deadlyaim", "combat", "Deadly Aim", 6, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 2.0));
+        final GlobalResearch deadlyAim = new GlobalResearch("deadlyaim", "combat", "Deadly Aim", 6, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 4.0));
 
         accuracy.addChild(preciseShot);
         preciseShot.addChild(penetratingShot);
