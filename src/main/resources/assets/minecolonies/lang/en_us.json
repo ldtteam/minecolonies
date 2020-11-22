@@ -1871,5 +1871,10 @@
   "com.minecolonies.coremod.item.chorus.bread.gui": "Teleports you to the surface",
   "com.minecolonies.coremod.item.bread.available.gui": "Only available from a MineColonies Bakery",
 
-  "com.minecolonies.coremod.gui.xofz": "%d of %d"
+  "com.minecolonies.coremod.gui.xofz": "%d of %d",
+  "com.minecolonies.coremod.gui.happiness.negative": "Negative",
+  "com.minecolonies.coremod.gui.happiness.slightlynegative": "Slightly Negative",
+  "com.minecolonies.coremod.gui.happiness.neutral": "Neutral",
+  "com.minecolonies.coremod.gui.happiness.positive": "Positive"
+
 }
