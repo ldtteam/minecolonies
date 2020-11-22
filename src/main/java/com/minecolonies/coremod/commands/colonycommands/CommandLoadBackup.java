@@ -25,7 +25,7 @@ public class CommandLoadBackup implements IMCOPCommand
     public int onExecute(final CommandContext<CommandSource> context)
     {
         final int colonyId = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        BackUpHelper.loadColonyBackup(colonyId, context.getSource().getWorld().getDimensionKey().getLocation(), true, true);
+        BackUpHelper.loadColonyBackup(colonyId, context.getSource().getWorld().getDimensionKey(), true, true);
         context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.loadbackup.success"), true);
         return 1;
     }

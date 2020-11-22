@@ -118,7 +118,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
     {
         if (compound.keySet().contains(TAG_COLONY))
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), world.getDimensionKey().getLocation());
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), world.getDimensionKey());
             if (colonyView != null) MineColonies.proxy.openClipboardWindow(colonyView);
         }
         else

@@ -67,7 +67,7 @@ public class CitizenBornEvent extends AbstractCitizenEvent
     /**
      * Loads the citizen born event from the given packet buffer.
      *
-     * @param compound the packet buffer.
+     * @param buf the packet buffer.
      * @return the colony to load.
      */
     public static CitizenBornEvent loadFromPacketBuffer(@NotNull final PacketBuffer buf)

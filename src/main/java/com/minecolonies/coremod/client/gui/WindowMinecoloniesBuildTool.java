@@ -7,6 +7,7 @@ import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
@@ -19,8 +20,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Dimension;
-import net.minecraft.world.DimensionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -163,18 +162,18 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
                 switch (placementErrorType)
                 {
                     case NOT_WATER:
-                        final String dim = Minecraft.getInstance().world.getDimensionKey().getLocation().equals(Dimension.THE_NETHER.getLocation())
+                        final String dim = WorldUtil.isNetherType(Minecraft.getInstance().world)
                                 ? TranslationConstants.SUPPLY_CAMP_INVALID_NOT_LAVA_MESSAGE_KEY
                                 : TranslationConstants.SUPPLY_CAMP_INVALID_NOT_WATER_MESSAGE_KEY;
                         errorMessage = String.format(dim, outputList);
                         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
                         break;
                     case NOT_SOLID:
-                        errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
+                        errorMessage = LanguageHandler.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
                         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
                         break;
                     case NEEDS_AIR_ABOVE:
-                        errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList);
+                        errorMessage = LanguageHandler.format(TranslationConstants.SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList);
                         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
                         break;
                     case INSIDE_COLONY:

@@ -68,7 +68,7 @@ public class BuildingBuiltEvent extends AbstractBuildingEvent
     /**
      * Loads the citizen born event from the given packet buffer.
      *
-     * @param compound the packet buffer.
+     * @param buf the packet buffer.
      * @return the colony to load.
      */
     public static BuildingBuiltEvent loadFromPacketBuffer(@NotNull final PacketBuffer buf)

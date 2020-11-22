@@ -96,8 +96,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
 
         for (final Item item : ModTags.concretePowder.getAllElements())
         {
-            final List<ItemStack> customInput = new ArrayList<>();
-            customInput.addAll(input);
+            final List<ItemStack> customInput = new ArrayList<>(input);
 
             final Item dye = DyeItem.getItem(DyeColor.byTranslationKey(item.getRegistryName().getPath().replace("_concrete_powder", ""), DyeColor.WHITE));
             customInput.add(new ItemStack(dye, 1));

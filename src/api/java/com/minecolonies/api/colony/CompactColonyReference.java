@@ -1,7 +1,8 @@
 package com.minecolonies.api.colony;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 /**
  * Compact colony for allies and feud data.
@@ -31,7 +32,7 @@ public class CompactColonyReference
     /**
      * The dimension the colony is in.
      */
-    public final ResourceLocation dimension;
+    public final RegistryKey<World> dimension;
 
     /**
      * Create a new compact colony object.
@@ -42,7 +43,7 @@ public class CompactColonyReference
      * @param hasTownHall if it has a town hall.
      * @param dimension   the dimension it is in.
      */
-    public CompactColonyReference(final String name, final BlockPos center, final int id, final boolean hasTownHall, final ResourceLocation dimension)
+    public CompactColonyReference(final String name, final BlockPos center, final int id, final boolean hasTownHall, final RegistryKey<World> dimension)
     {
         this.name = name;
         this.center = center;

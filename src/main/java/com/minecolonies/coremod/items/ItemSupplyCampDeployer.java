@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -66,7 +67,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     {
         if (ctx.getWorld().isRemote)
         {
-            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !ctx.getWorld().getDimensionKey().getLocation().equals(World.OVERWORLD.getLocation()))
+            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(ctx.getWorld()))
             {
                 LanguageHandler.sendPlayerMessage(ctx.getPlayer(), CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return ActionResultType.FAIL;
@@ -84,7 +85,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         final ItemStack stack = playerIn.getHeldItem(hand);
         if (worldIn.isRemote)
         {
-            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !worldIn.getDimensionKey().getLocation().equals(World.OVERWORLD.getLocation()))
+            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(worldIn))
             {
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return new ActionResult<>(ActionResultType.FAIL, stack);

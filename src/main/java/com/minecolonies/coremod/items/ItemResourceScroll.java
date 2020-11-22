@@ -127,7 +127,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         final int colonyId = compound.getInt(TAG_COLONY_ID);
         final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
 
-        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, worldIn.getDimensionKey().getLocation());
+        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, worldIn.getDimensionKey());
         if (colonyView != null)
         {
             final IBuildingView buildingView = colonyView.getBuilding(builderPos);

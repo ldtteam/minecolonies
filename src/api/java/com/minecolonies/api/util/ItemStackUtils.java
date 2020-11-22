@@ -270,7 +270,6 @@ public final class ItemStackUtils
      * @param toolType the tool category.
      * @return integer value for mining level &gt;= 0 is okay.
      */
-    @SuppressWarnings(DEPRECATION)
     public static int getMiningLevel(@Nullable final ItemStack stack, @Nullable final IToolType toolType)
     {
         if (toolType == ToolType.NONE)

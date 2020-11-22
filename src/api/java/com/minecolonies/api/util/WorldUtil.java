@@ -1,12 +1,19 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.registry.DynamicRegistries;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.Dimension;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkStatus;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
 
@@ -136,5 +143,43 @@ public class WorldUtil
     public static boolean isPastTime(final World world, final int pastTime)
     {
         return world.getDayTime() % 24000 <= pastTime;
+    }
+
+    /**
+     * Check if a world is of the overworld type.
+     * @param world the world to check.
+     * @return true if so.
+     */
+    public static boolean isOverworldType(@NotNull final World world)
+    {
+        return isOfWorldType(world, DimensionType.OVERWORLD);
+    }
+
+    /**
+     * Check if a world is of the nether type.
+     * @param world the world to check.
+     * @return true if so.
+     */
+    public static boolean isNetherType(@NotNull final World world)
+    {
+        return isOfWorldType(world, DimensionType.THE_NETHER);
+    }
+
+    /**
+     * Check if a world has a specific dimension type.
+     * @param world the world to check.
+     * @param type the type to compare.
+     * @return true if it matches.
+     */
+    public static boolean isOfWorldType(@NotNull final World world, @NotNull final RegistryKey<DimensionType> type)
+    {
+        DynamicRegistries dynRegistries = world.func_241828_r();
+        ResourceLocation loc = dynRegistries.func_230520_a_().getKey(world.getDimensionType());
+        if (loc == null)
+        {
+            return false;
+        }
+        RegistryKey<DimensionType> regKey = RegistryKey.getOrCreateKey(Registry.DIMENSION_TYPE_KEY, loc);
+        return regKey == type;
     }
 }

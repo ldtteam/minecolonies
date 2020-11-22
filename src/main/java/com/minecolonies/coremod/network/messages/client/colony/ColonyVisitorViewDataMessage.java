@@ -5,7 +5,10 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.VisitorDataView;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +35,7 @@ public class ColonyVisitorViewDataMessage implements IMessage
     /**
      * The dimension the citizen is in.
      */
-    private ResourceLocation dimension;
+    private RegistryKey<World> dimension;
 
     /**
      * Visiting entity data
@@ -70,7 +73,7 @@ public class ColonyVisitorViewDataMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        dimension = new ResourceLocation(buf.readString(32767));
+        dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
         refresh = buf.readBoolean();
 
         final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, dimension);
@@ -96,7 +99,7 @@ public class ColonyVisitorViewDataMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        buf.writeString(dimension.toString());
+        buf.writeString(dimension.getLocation().toString());
         buf.writeBoolean(refresh);
         buf.writeInt(visitors.size());
 

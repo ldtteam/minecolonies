@@ -403,7 +403,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
         this.read(getBlockState(), compound);
         if (compound.keySet().contains(TAG_COLONY_ID))
         {
-            setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), world.getDimensionKey().getLocation()));
+            setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), world.getDimensionKey()));
         }
     }
 

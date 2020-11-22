@@ -149,7 +149,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     {
         if (list[id] == null)
         {
-            Log.getLogger().warn("Tried to remove colony with id=%d, but it didn't exist.", id);
+            Log.getLogger().warn("Tried to remove colony with id={}, but it didn't exist.", id);
         }
 
         size--;

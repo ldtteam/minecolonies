@@ -53,7 +53,8 @@ public class Permissions implements IPermissions
      */
     @NotNull
     private static final Map<Rank, RankPair> promotionRanks = new EnumMap<>(Rank.class);
-    /**
+
+    /*
      * Fill the promotion ranks.
      */
     static
@@ -721,7 +722,7 @@ public class Permissions implements IPermissions
                     final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                     if (colonyCap != null)
                     {
-                        if (colonyCap.getOwningColony() == colony.getID() && world.getDimensionKey().getLocation() == colony.getDimension())
+                        if (colonyCap.getOwningColony() == colony.getID() && world.getDimensionKey() == colony.getDimension())
                         {
                             colony.getPackageManager().addCloseSubscriber(playerEntity);
                             colony.getPackageManager().updateSubscribers();

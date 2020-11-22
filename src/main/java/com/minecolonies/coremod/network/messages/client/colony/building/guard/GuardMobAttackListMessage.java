@@ -85,7 +85,7 @@ public class GuardMobAttackListMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final IColonyView IColonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey().getLocation());
+        final IColonyView IColonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey());
 
         if (IColonyView != null)
         {

@@ -1117,7 +1117,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 iCitizenData.decreaseSaturation(LOW_SATURATION);
             }
 
-            final AbstractJobGuard job = iCitizenData.getJob(AbstractJobGuard.class);
+            final AbstractJobGuard<?> job = iCitizenData.getJob(AbstractJobGuard.class);
             if (job != null && job.getWorkerAI() != null)
             {
                 job.getWorkerAI().registerTarget(new AIOneTimeEventTarget(AIWorkerState.GUARD_DECIDE));
@@ -1132,7 +1132,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         for (final ICitizenData iCitizenData : getAssignedCitizen())
         {
-            final AbstractJobGuard job = iCitizenData.getJob(AbstractJobGuard.class);
+            final AbstractJobGuard<?> job = iCitizenData.getJob(AbstractJobGuard.class);
             if (job != null && job.getWorkerAI() != null)
             {
                 job.getWorkerAI().registerTarget(new AIOneTimeEventTarget(AIWorkerState.DECIDE));
@@ -1242,7 +1242,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
     /**
      * is hiring from training facilities enabled
-     * @return
+     * @return true if so.
      */
     public boolean isHireTrainees()
     {

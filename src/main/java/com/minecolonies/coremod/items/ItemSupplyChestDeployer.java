@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
@@ -77,7 +78,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     {
         if (ctx.getWorld().isRemote)
         {
-            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !ctx.getWorld().getDimensionKey().getLocation().equals(World.OVERWORLD.getLocation()))
+            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(ctx.getWorld()))
             {
                 return ActionResultType.FAIL;
             }
@@ -94,7 +95,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         final ItemStack stack = playerIn.getHeldItem(hand);
         if (worldIn.isRemote)
         {
-            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !worldIn.getDimensionKey().getLocation().equals(World.OVERWORLD.getLocation()))
+            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(worldIn))
             {
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return new ActionResult<>(ActionResultType.FAIL, stack);
@@ -113,7 +114,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private void placeSupplyShip(World world, @Nullable final BlockPos pos, @NotNull final Direction direction)
     {
-        final String name = world.getDimensionKey().getLocation().equals(Dimension.THE_NETHER.getLocation())
+        final String name = WorldUtil.isNetherType(world)
                 ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
                 : SUPPLY_SHIP_STRUCTURE_NAME;
 
@@ -203,7 +204,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private static void checkFluidAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final PlayerEntity placer)
     {
-        final boolean isOverworld = world.getDimensionKey().getLocation().equals(Dimension.OVERWORLD.getLocation());
+        final boolean isOverworld = WorldUtil.isOverworldType(world);
         final boolean isWater = BlockUtils.isWater(world.getBlockState(pos));
         final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
         if (!isWater && isOverworld)
