@@ -546,7 +546,7 @@ public class ResearchInitializer
         spectacle.setRequirement(new BuildingResearchRequirement(4, "cook"));
 
         final GlobalResearch nightowl2 = new GlobalResearch("nightowl2", "civilian", "Nightowl II", 4, new AdditionModifierResearchEffect(WORK_LONGER, 2));
-        nightowl.setRequirement(new BuildingResearchRequirement(3, "townhall"));
+        nightowl2.setRequirement(new BuildingResearchRequirement(3, "townhall"));
 
         final GlobalResearch opera = new GlobalResearch("opera", "civilian", "Opera", 5, new MultiplierModifierResearchEffect("Happiness", 0.2));
         opera.setRequirement(new BuildingResearchRequirement(5, "cook"));

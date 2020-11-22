@@ -7,7 +7,7 @@ public class Network
     /**
      * The network instance.
      */
-    private static NetworkChannel network = new NetworkChannel("net-channel");
+    private static NetworkChannel network;
 
     /**
      * Get the network handler.
@@ -16,6 +16,10 @@ public class Network
      */
     public static NetworkChannel getNetwork()
     {
+        if (network == null)
+        {
+            network = new NetworkChannel("net-channel");
+        }
         return network;
     }
 }

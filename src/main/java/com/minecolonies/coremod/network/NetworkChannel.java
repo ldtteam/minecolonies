@@ -56,6 +56,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -75,8 +76,6 @@ import java.util.function.Supplier;
  */
 public class NetworkChannel
 {
-    private static final String        LATEST_PROTO_VER    = "1.0";
-    private static final String        ACCEPTED_PROTO_VERS = LATEST_PROTO_VER;
     /**
      * Forge network channel
      */
@@ -113,8 +112,8 @@ public class NetworkChannel
      */
     public NetworkChannel(final String channelName)
     {
-        rawChannel =
-          NetworkRegistry.newSimpleChannel(new ResourceLocation(Constants.MOD_ID, channelName), () -> LATEST_PROTO_VER, ACCEPTED_PROTO_VERS::equals, ACCEPTED_PROTO_VERS::equals);
+        final String modVersion = ModList.get().getModContainerById(Constants.MOD_ID).get().getModInfo().getVersion().toString();
+        rawChannel = NetworkRegistry.newSimpleChannel(new ResourceLocation(Constants.MOD_ID, channelName), () -> modVersion, str -> str.equals(modVersion), str -> str.equals(modVersion));
     }
 
     /**
