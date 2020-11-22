@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.cook;
 
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -18,6 +19,7 @@ import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -168,7 +170,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         worker.getCitizenData().setVisibleStatus(COOK);
 
         final Entity living = citizenToServe.isEmpty() ? playerToServe.get(0) : citizenToServe.get(0);
-
         if (range == null)
         {
             range = getOwnBuilding().getTargetableArea(world);
@@ -206,6 +207,11 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             removeFromQueue();
             return getState();
         }
+        else if (InventoryUtils.hasItemInItemHandler(handler, CAN_EAT))
+        {
+            removeFromQueue();
+            return getState();
+        }
 
         InventoryUtils.transferFoodUpToSaturation(worker, handler, getOwnBuilding().getBuildingLevel() * SATURATION_TO_SERVE, stack -> CAN_EAT.test(stack));
 
@@ -216,7 +222,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
 
         if (citizenToServe.isEmpty() && living instanceof PlayerEntity)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) living, "com.minecolonies.coremod.cook.serve.player", worker.getName());
+            LanguageHandler.sendPlayerMessage((PlayerEntity) living, "com.minecolonies.coremod.cook.serve.player", worker.getName().getString());
         }
         removeFromQueue();
 
@@ -266,7 +272,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                                                           .collect(Collectors.toList());
 
         final List<PlayerEntity> playerList = world.getEntitiesWithinAABB(PlayerEntity.class,
-          range, player -> player != null && player.getFoodStats().getFoodLevel() < LEVEL_TO_FEED_PLAYER);
+          range, player -> player != null
+                      && player.getFoodStats().getFoodLevel() < LEVEL_TO_FEED_PLAYER
+                      && getOwnBuilding().getColony().getPermissions().hasPermission(player, Action.MANAGE_HUTS)
+        );
 
         if (!citizenList.isEmpty() || !playerList.isEmpty())
         {
