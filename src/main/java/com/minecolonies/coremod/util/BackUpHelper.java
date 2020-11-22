@@ -321,7 +321,7 @@ public final class BackUpHelper
         {
             if (loadDeleted)
             {
-                compound = loadNBTFromPath(backupFile);
+                compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyId, dimension)));
             }
             if (compound == null)
             {
