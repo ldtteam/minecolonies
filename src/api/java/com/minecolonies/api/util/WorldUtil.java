@@ -1,6 +1,7 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -177,6 +178,11 @@ public class WorldUtil
         ResourceLocation loc = dynRegistries.func_230520_a_().getKey(world.getDimensionType());
         if (loc == null)
         {
+            if (world instanceof ClientWorld)
+            {
+                //todo Remove this line once forge fixes this.
+                return world.getDimensionType().getEffects().equals(type.getLocation());
+            }
             return false;
         }
         RegistryKey<DimensionType> regKey = RegistryKey.getOrCreateKey(Registry.DIMENSION_TYPE_KEY, loc);

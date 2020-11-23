@@ -31,10 +31,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -521,22 +518,22 @@ public class WindowCitizen extends AbstractWindowRequestTree
             if (value > 1.0)
             {
                 image.setImage(GREEN_ICON);
-                image.setHoverToolTip(ImmutableList.of(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.positive")));
+                image.setHoverToolTip(ImmutableList.of(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.positive")));
             }
             else if (value == 1)
             {
                 image.setImage(BLUE_ICON);
-                image.setHoverToolTip(ImmutableList.of(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.neutral")));
+                image.setHoverToolTip(ImmutableList.of(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.neutral")));
             }
             else if (value > 0.75)
             {
                 image.setImage(YELLOW_ICON);
-                image.setHoverToolTip(ImmutableList.of(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.slightlynegative")));
+                image.setHoverToolTip(ImmutableList.of(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.slightlynegative")));
             }
             else
             {
                 image.setImage(RED_ICON);
-                image.setHoverToolTip(ImmutableList.of(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.negative")));
+                image.setHoverToolTip(ImmutableList.of(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.negative")));
             }
             pane.addChild(image);
             pane.addChild(label);
