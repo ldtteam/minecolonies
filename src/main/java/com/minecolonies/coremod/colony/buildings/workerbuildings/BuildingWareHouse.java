@@ -79,7 +79,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     /**
      * Max storage upgrades.
      */
-    private static final int MAX_STORAGE_UPGRADE = 3;
+    public static final int MAX_STORAGE_UPGRADE = 3;
 
     /**
      * Storage upgrade level.
@@ -265,7 +265,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        buf.writeBoolean(storageUpgrade < MAX_STORAGE_UPGRADE);
+        buf.writeInt(storageUpgrade);
     }
 
     @Override
@@ -389,9 +389,9 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     public static class View extends AbstractBuildingView
     {
         /**
-         * Should the building allow further storage upgrades.
+         * Storage upgrade level.
          */
-        private boolean allowUpgrade = true;
+        private int storageUpgrade = 0;
 
         /**
          * Instantiate the warehouse view.
@@ -415,17 +415,25 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
-            allowUpgrade = buf.readBoolean();
+            storageUpgrade = buf.readInt();
         }
 
         /**
-         * Check if the warehouse building storage can be upgraded further.
-         *
-         * @return true if so.
+         * Increment storage upgrade.
          */
-        public boolean canUpgradeStorage()
+        public void incrementStorageUpgrade()
         {
-            return allowUpgrade;
+            storageUpgrade++;
+        }
+
+        /**
+         * Get the current storage upgrade level.
+         *
+         * @return the level.
+         */
+        public int getStorageUpgradeLevel()
+        {
+            return storageUpgrade;
         }
     }
 }

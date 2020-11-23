@@ -507,6 +507,6 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
             freeSlots++;
         }
 
-        mainInventory.set(slot, stack.copy());
+        mainInventory.set(slot, stack);
     }
 }

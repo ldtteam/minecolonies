@@ -209,10 +209,8 @@ public class ColonyPackageManager implements IColonyPackageManager
         if (workManager.isDirty() || !newSubscribers.isEmpty())
         {
             final Set<ServerPlayerEntity> players = new HashSet<>();
-            if (isDirty)
-            {
-                players.addAll(closeSubscribers);
-            }
+
+            players.addAll(closeSubscribers);
             players.addAll(newSubscribers);
 
             List<IWorkOrder> workOrders = new ArrayList<>();
