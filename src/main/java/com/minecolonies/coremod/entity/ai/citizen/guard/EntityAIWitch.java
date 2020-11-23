@@ -358,7 +358,12 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
             return null;
         }
 
-        final List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, getSearchArea());
+        final List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, getSearchArea(), LivingEntity::isAlive);
+
+        if (entities.isEmpty())
+        {
+            return null;
+        }
 
         boolean isAlly = false;
         boolean allyNear = false;
@@ -367,52 +372,49 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
 
         for (final LivingEntity entity : entities)
         {
-            if (entity.isAlive() && worker.canEntityBeSeen(entity))
+            final int tempDistance = (int) BlockPosUtil.getDistanceSquared(worker.getPosition(), entity.getPosition());
+            if (isAlly(entity))
             {
-                final int tempDistance = (int) BlockPosUtil.getDistanceSquared(worker.getPosition(), entity.getPosition());
-                if (isAlly(entity))
+                if (entity instanceof AbstractEntityCitizen)
                 {
-                    if (entity instanceof AbstractEntityCitizen)
-                    {
-                        final AbstractEntityCitizen citizen = (AbstractEntityCitizen) entity;
+                    final AbstractEntityCitizen citizen = (AbstractEntityCitizen) entity;
 
-                        // Found a sleeping guard nearby
-                        if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+                    // Found a sleeping guard nearby
+                    if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+                    {
+                        if (((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep())
                         {
-                            if (((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep())
-                            {
-                                sleepingGuard = new WeakReference<>(citizen);
-                                wakeTimer = 0;
-                                registerTarget(new AIOneTimeEventTarget(GUARD_WAKE));
-                                return null;
-                            }
-                            if (!(citizen.getCitizenJobHandler().getColonyJob() instanceof JobWitch))
-                            {
-                                allyNear = true;
-                            }
+                            sleepingGuard = new WeakReference<>(citizen);
+                            wakeTimer = 0;
+                            registerTarget(new AIOneTimeEventTarget(GUARD_WAKE));
+                            return null;
+                        }
+                        if (!(citizen.getCitizenJobHandler().getColonyJob() instanceof JobWitch))
+                        {
+                            allyNear = true;
                         }
                     }
-                    else if (entity instanceof PlayerEntity)
-                    {
-                        allyNear = true;
-                    }
-
-                    if (tempDistance < closest)
-                    {
-                        closest = tempDistance;
-                        closestTarget = entity;
-                        isAlly = true;
-                    }
                 }
-                else if (isEntityValidTarget(entity))
+                else if (entity instanceof PlayerEntity)
                 {
-                    // Find closest
-                    if (tempDistance < closest)
-                    {
-                        closest = tempDistance;
-                        closestTarget = entity;
-                        isAlly = false;
-                    }
+                    allyNear = true;
+                }
+
+                if (tempDistance < closest && worker.canEntityBeSeen(entity))
+                {
+                    closest = tempDistance;
+                    closestTarget = entity;
+                    isAlly = true;
+                }
+            }
+            else if (isEntityValidTarget(entity) && worker.canEntityBeSeen(entity))
+            {
+                // Find closest
+                if (tempDistance < closest)
+                {
+                    closest = tempDistance;
+                    closestTarget = entity;
+                    isAlly = false;
                 }
             }
         }

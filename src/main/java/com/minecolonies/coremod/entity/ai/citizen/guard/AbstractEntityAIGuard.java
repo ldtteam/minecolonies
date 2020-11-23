@@ -970,18 +970,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return null;
         }
 
-        final List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, getSearchArea());
+        final List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, getSearchArea(), LivingEntity::isAlive);
 
         int closest = Integer.MAX_VALUE;
         LivingEntity targetEntity = null;
 
         for (final LivingEntity entity : entities)
         {
-            if (!entity.isAlive())
-            {
-                continue;
-            }
-
             // Found a sleeping guard nearby
             if (entity instanceof EntityCitizen)
             {
