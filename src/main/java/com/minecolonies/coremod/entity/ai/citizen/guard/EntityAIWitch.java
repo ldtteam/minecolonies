@@ -16,7 +16,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobWitch;
 import com.minecolonies.coremod.entity.WitchPotionEntity;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -25,7 +24,6 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
@@ -48,7 +46,6 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     private static final double SWITCH_STRAFING_DIRECTION                 = 0.3d;
     private static final int    MIN_POTION_DISTANCE                       = 6; //TODO What should this value be?
     public static final  float  POTION_VELOCITY                           = 0.5f;
-    private static final double PARTY_RANGE                               = 8;
 
     /**
      * Whether the guard is moving towards his target
@@ -364,6 +361,7 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
         final List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, getSearchArea());
 
         boolean isAlly = false;
+        boolean allyNear = false;
         int closest = Integer.MAX_VALUE;
         LivingEntity closestTarget = null;
 
@@ -379,14 +377,26 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
                         final AbstractEntityCitizen citizen = (AbstractEntityCitizen) entity;
 
                         // Found a sleeping guard nearby
-                        if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep())
+                        if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
                         {
-                            sleepingGuard = new WeakReference<>(citizen);
-                            wakeTimer = 0;
-                            registerTarget(new AIOneTimeEventTarget(GUARD_WAKE));
-                            return null;
+                            if (((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep())
+                            {
+                                sleepingGuard = new WeakReference<>(citizen);
+                                wakeTimer = 0;
+                                registerTarget(new AIOneTimeEventTarget(GUARD_WAKE));
+                                return null;
+                            }
+                            if (!(citizen.getCitizenJobHandler().getColonyJob() instanceof JobWitch))
+                            {
+                                allyNear = true;
+                            }
                         }
                     }
+                    else if (entity instanceof PlayerEntity)
+                    {
+                        allyNear = true;
+                    }
+
                     if (tempDistance < closest)
                     {
                         closest = tempDistance;
@@ -415,11 +425,11 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
                 debuffTarget = null;
                 return buffTarget;
             }
-            else
+            else if (allyNear)
             {
                 debuffTarget = closestTarget;
                 buffTarget = null;
-                return target;
+                return debuffTarget;
             }
         }
 
@@ -453,26 +463,21 @@ public class EntityAIWitch extends AbstractEntityAIGuard<JobWitch, AbstractBuild
     @Override
     protected IAIState checkAndAttackTarget()
     {
-        final AxisAlignedBB aabb = worker.getBoundingBox().grow(PARTY_RANGE);
-        final List<LivingEntity> allies = world.getEntitiesWithinAABB(LivingEntity.class, aabb, this::isAlly);
-        if (!allies.isEmpty())
+        if (checkForBuffTarget())
         {
-            if (checkForBuffTarget())
+            if (hasMainWeapon())
             {
-                if (hasMainWeapon())
-                {
-                    return WITCH_GUARD_ATTACK_BUFF;
-                }
-                return START_WORKING;
+                return WITCH_GUARD_ATTACK_BUFF;
             }
-            else if (checkForDebuffTarget())
+            return START_WORKING;
+        }
+        else if (checkForDebuffTarget())
+        {
+            if (hasMainWeapon())
             {
-                if (hasMainWeapon())
-                {
-                    return WITCH_GUARD_ATTACK_DEBUFF;
-                }
-                return START_WORKING;
+                return WITCH_GUARD_ATTACK_DEBUFF;
             }
+            return START_WORKING;
         }
         return null;
     }
