@@ -16,6 +16,10 @@ public class ColonyPopulationTrigger extends AbstractCriterionTrigger<ColonyPopu
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COLONY_POPULATION), ColonyPopulationListeners::new);
     }
 
+    /**
+     * Triggers the listener checks if there are any listening in
+     * @param player the player the check regards
+     */
     public void trigger(final ServerPlayerEntity player, final int populationCount)
     {
         final ColonyPopulationListeners listeners = this.getListeners(player.getAdvancements());

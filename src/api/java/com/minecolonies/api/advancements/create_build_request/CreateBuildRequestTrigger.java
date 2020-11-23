@@ -10,6 +10,9 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A Trigger for any building request that gets made
+ */
 public class CreateBuildRequestTrigger extends AbstractCriterionTrigger<CreateBuildRequestListeners, CreateBuildRequestCriterionInstance>
 {
     public CreateBuildRequestTrigger()
@@ -17,6 +20,12 @@ public class CreateBuildRequestTrigger extends AbstractCriterionTrigger<CreateBu
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), CreateBuildRequestListeners::new);
     }
 
+    /**
+     * Triggers the listener checks if there are any listening in
+     * @param player the player the check regards
+     * @param structureName the structure that is to be created
+     * @param level the level that the request will complete
+     */
     public void trigger(final ServerPlayerEntity player, final StructureName structureName, final int level)
     {
         if (player != null)

@@ -90,6 +90,10 @@ public final class Constants
     public static final String CRITERION_BUILDING_ADD_RECIPE    = "building_add_recipe";
     public static final String CRITERION_COMPLETE_BUILD_REQUEST = "complete_build_request";
     public static final String CRITERION_COLONY_POPULATION      = "colony_population";
+    public static final String CRITERION_ARMY_POPULATION        = "army_population";
+    public static final String CRITERION_ALL_TOWERS             = "all_barracks_towers";
+    public static final String CRITERION_DEEP_MINE              = "deep_mine";
+    public static final String CRITERION_MAX_FIELDS             = "max_fields";
 
     /**
      * Placement key for item nbt

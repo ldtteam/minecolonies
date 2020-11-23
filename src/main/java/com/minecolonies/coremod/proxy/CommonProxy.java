@@ -182,7 +182,7 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
-    public void openClipBoardWindow(final IColonyView colonyView)
+    public void openClipboardWindow(final IColonyView colonyView)
     {
         /*
          * Intentionally left empty.

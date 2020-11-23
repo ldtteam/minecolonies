@@ -10,6 +10,9 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Triggers whenever the build tool is used to position a new structure
+ */
 public class PlaceStructureTrigger extends AbstractCriterionTrigger<PlaceStructureListeners, PlaceStructureCriterionInstance>
 {
     public PlaceStructureTrigger()
@@ -17,6 +20,11 @@ public class PlaceStructureTrigger extends AbstractCriterionTrigger<PlaceStructu
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), PlaceStructureListeners::new);
     }
 
+    /**
+     * Triggers the listener checks if there are any listening in
+     * @param player the player the check regards
+     * @param structureName the structure id of what was just placed
+     */
     public void trigger(final ServerPlayerEntity player, final StructureName structureName)
     {
         final PlaceStructureListeners listeners = this.getListeners(player.getAdvancements());

@@ -64,7 +64,7 @@ public abstract class AbstractHutFilterableLists extends AbstractWindowWorkerBui
         }
         return ImmutableList.copyOf(IColonyManager.getInstance()
                                       .getCompatibilityManager()
-                                      .getBlockList()
+                                      .getListOfAllItems()
                                       .stream()
                                       .filter(filterPredicate.and(itemStackPredicate.get(id)))
                                       .map(ItemStorage::new)

@@ -19,7 +19,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
@@ -579,7 +578,7 @@ public final class StandardRequests
             {
                 foodExamples = ImmutableList.copyOf(IColonyManager.getInstance()
                                                       .getCompatibilityManager()
-                                                      .getBlockList()
+                                                      .getListOfAllItems()
                                                       .stream()
                                                       .filter(item -> item.getItem().isFood())
                                                       .collect(Collectors.toList()));
@@ -628,7 +627,7 @@ public final class StandardRequests
             {
                 oreExamples = ImmutableList.copyOf(IColonyManager.getInstance()
                                                      .getCompatibilityManager()
-                                                     .getBlockList()
+                                                     .getListOfAllItems()
                                                      .stream()
                                                      .filter(IColonyManager.getInstance().getCompatibilityManager()::isOre)
                                                      .collect(Collectors.toList()));
@@ -678,7 +677,7 @@ public final class StandardRequests
             {
                 burnableExamples = ImmutableList.copyOf(IColonyManager.getInstance()
                                                           .getCompatibilityManager()
-                                                          .getBlockList()
+                                                          .getListOfAllItems()
                                                           .stream()
                                                           .filter(FurnaceTileEntity::isFuel)
                                                           .collect(Collectors.toList()));

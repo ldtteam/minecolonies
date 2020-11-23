@@ -9,6 +9,8 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import com.minecolonies.coremod.util.AdvancementUtils;
@@ -232,7 +234,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         {
             final int level = ((WorkOrderBuildBuilding) this).getUpgradeLevel();
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                                                                          AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, level));
+                AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, level));
         }
         else if (this instanceof WorkOrderBuildRemoval)
         {
@@ -251,10 +253,18 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             }
             else
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC,
-                  citizen.getName(),
-                  this.getName());
+                if (citizen.getWorkBuilding() instanceof BuildingBuilder && ((BuildingBuilder) citizen.getWorkBuilding()).getManualMode())
+                {
+                    LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                          COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC_MANUAL,
+                          citizen.getName(), this.getName());
+                }
+                else
+                {
+                    LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                          COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC,
+                          citizen.getName(), this.getName());
+                }
             }
         }
 
