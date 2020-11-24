@@ -178,7 +178,7 @@ public class WorldUtil
         ResourceLocation loc = dynRegistries.func_230520_a_().getKey(world.getDimensionType());
         if (loc == null)
         {
-            if (world instanceof ClientWorld)
+            if (world.isRemote)
             {
                 //todo Remove this line once forge fixes this.
                 return world.getDimensionType().getEffects().equals(type.getLocation());
