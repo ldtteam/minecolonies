@@ -39,6 +39,20 @@ public final class ToolLevelConstants
     public static final int TOOL_LEVEL_BETTER_THAN_DIAMOND = 4;
 
     /**
+     * Maximum durability before an item is likely not made of wood or gold.  Ie iron, diamond, modded materials
+     * Significantly higher than vanilla defaults (<70) to handle Anvil Repair or Tinker/Tetra situations.
+     */
+    @NonNls
+    public static final int    DURABILITY_MAX_WOOD_OR_GOLD      = 120;
+
+    /**
+     * Maximum durability before an item is likely not made of wood, gold, or iron. ie diamond, modded materials
+     * Significantly higher than vanilla defaults (<140) to handle Anvil Repair or Tinker/Tetra situations.
+     */
+    @NonNls
+    public static final int    DURABILITY_MAX_IRON              = 400;
+
+    /**
      * Armor level for leather.
      */
     @NonNls

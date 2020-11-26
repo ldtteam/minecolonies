@@ -33,6 +33,8 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
 import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.DURABILITY_MAX_IRON;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.DURABILITY_MAX_WOOD_OR_GOLD;
 
 /**
  * Utility methods for the inventories.
@@ -311,6 +313,20 @@ public final class ItemStackUtils
                 final ArmorItem ArmorItem = (ArmorItem) stack.getItem();
                 return getArmorLevel(ArmorItem.getArmorMaterial());
             }
+        }
+        else if (stack.getItem() instanceof FishingRodItem)
+        {
+            if(stack.getItem().isDamageable())
+            {
+                if(stack.getMaxDamage() < DURABILITY_MAX_WOOD_OR_GOLD)
+                    return(1 + getMaxEnchantmentLevel(stack));
+                else if (stack.getMaxDamage() < DURABILITY_MAX_IRON)
+                    return(2 + getMaxEnchantmentLevel(stack));
+                else
+                    return(3 + getMaxEnchantmentLevel(stack));
+            }
+            else
+                return 1;
         }
         else if (!toolType.hasVariableMaterials())
         {
