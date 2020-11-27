@@ -33,8 +33,6 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
 import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.DURABILITY_MAX_IRON;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.DURABILITY_MAX_WOOD_OR_GOLD;
 
 /**
  * Utility methods for the inventories.
@@ -316,17 +314,7 @@ public final class ItemStackUtils
         }
         else if (stack.getItem() instanceof FishingRodItem)
         {
-            if(stack.getItem().isDamageable())
-            {
-                if(stack.getMaxDamage() < DURABILITY_MAX_WOOD_OR_GOLD)
-                    return(1 + getMaxEnchantmentLevel(stack));
-                else if (stack.getMaxDamage() < DURABILITY_MAX_IRON)
-                    return(2 + getMaxEnchantmentLevel(stack));
-                else
-                    return(3 + getMaxEnchantmentLevel(stack));
-            }
-            else
-                return 1;
+            return getFishingRodLevel(stack);
         }
         else if (!toolType.hasVariableMaterials())
         {
@@ -493,6 +481,33 @@ public final class ItemStackUtils
         }
 
         return 5;
+    }
+
+    /**
+     * Estimates the fishing rod tier from available durability and enchantment status.
+     * @param itemStack the tool to check.
+     * @return equivalent tool level.
+     */
+    private static int getFishingRodLevel(final ItemStack itemStack)
+    {
+        if(itemStack.getItem() == Items.FISHING_ROD)
+            return (1 + getMaxEnchantmentLevel(itemStack));
+        if(!itemStack.isDamageable())
+            return 1;
+        /**
+         *  Because fishing rods don't follow ItemTier values, these numbers require an offset.
+         *  Wood + 6 is required to allow T1 huts to use up to vanilla fishing rods equivalents.
+         *  Wood + 22 allows T1 huts to use up to ThermalFoundation Silver fishing rods.
+         *  Iron + 6 allows T2 huts to use up to ThermalFoundation Iron fishing rods or Aquaculture Iron,
+         *  while still requiring T3 for ThermalFoundation advanced alloys, Aquaculture Neptunium,
+         *  or Aquaculture diamond rods.
+         * */
+        final int rodDurability = itemStack.getMaxDamage();
+        if(rodDurability <= (ItemTier.WOOD.getMaxUses() + 22))
+            return (1 + getMaxEnchantmentLevel(itemStack));
+        else if(rodDurability <= (ItemTier.IRON.getMaxUses() + 6))
+            return (2 + getMaxEnchantmentLevel(itemStack));
+        return (3 + getMaxEnchantmentLevel(itemStack));
     }
 
     /**

@@ -248,7 +248,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean hasRodButNotEquipped()
     {
-        return InventoryUtils.hasItemInItemHandler(getInventory(), item -> item.getItem() instanceof FishingRodItem) //worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD)
+        return InventoryUtils.hasItemInItemHandler(getInventory(), item -> item.getItem() instanceof FishingRodItem)
                 && worker.getHeldItemMainhand() != null
                 && !(worker.getHeldItemMainhand().getItem() instanceof FishingRodItem);
     }
