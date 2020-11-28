@@ -34,7 +34,6 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
-import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -327,7 +326,6 @@ public class Colony implements IColony
             checkOrCreateTeam();
         }
         this.permissions = new Permissions(this);
-        loadFreeBlocksAndPosFromConfig();
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e -> {});
 
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
@@ -666,32 +664,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Load free blocks and pos from the config and add to colony.
-     */
-    private void loadFreeBlocksAndPosFromConfig()
-    {
-        for (final String s : MineColonies.getConfig().getCommon().freeToInteractBlocks.get())
-        {
-            try
-            {
-                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
-                if (block != null && !(block instanceof AirBlock))
-                {
-                    freeBlocks.add(block);
-                }
-            }
-            catch (final Exception ex)
-            {
-                final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
-                if (pos != null)
-                {
-                    freePositions.add(pos);
-                }
-            }
-        }
-    }
-
-    /**
      * Read colony from saved data.
      *
      * @param compound compound to read from.
@@ -769,7 +741,6 @@ public class Colony implements IColony
             final BlockPos block = BlockPosUtil.read(blockTag, TAG_FREE_POSITIONS);
             freePositions.add(block);
         }
-        loadFreeBlocksAndPosFromConfig();
 
         packageManager.setLastContactInHours(compound.getInt(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
