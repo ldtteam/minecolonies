@@ -457,7 +457,7 @@ public class ServerConfiguration extends AbstractConfiguration
         averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 12, 1, 10);
         minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 8, 1, 30);
         mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
-        shouldRaidersBreakDoors = defineBoolean(builder, "shouldraiderbreakdoorsshouldraiderbreakdoors", true);
+        shouldRaidersBreakDoors = defineBoolean(builder, "shouldraiderbreakdoors", true);
         citizenCallForHelp = defineBoolean(builder, "citizencallforhelp", true);
         rangerEnchants = defineBoolean(builder, "rangerenchants", true);
         rangerDamageMult = defineDouble(builder, "rangerdamagemult", 1.0, 0.1, 5.0);
