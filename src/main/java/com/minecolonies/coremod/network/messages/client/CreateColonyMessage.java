@@ -101,7 +101,7 @@ public class CreateColonyMessage implements IMessage
         }
 
         final int distance = MineColonies.getConfig().getServer().minColonyDistance.get() * BLOCKS_PER_CHUNK;
-        BlockPos blockpos = ((ServerWorld) world).func_241117_a_(Structure.field_236381_q_, townHall, distance, false);
+        BlockPos blockpos = ((ServerWorld) world).func_241117_a_(Structure.VILLAGE, townHall, distance, false);
         if (MineColonies.getConfig().getServer().protectVillages.get() && blockpos != null && blockpos.withinDistance(townHall, distance))
         {
             Log.getLogger().warn("Village close by!");

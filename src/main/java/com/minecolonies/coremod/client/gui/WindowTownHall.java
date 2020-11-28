@@ -589,7 +589,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
 
         findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
-        final int citizensSize = townHall.getColony().getCitizens().size();
+        final int citizensSize = townHall.getColony().getCitizenCountLimit();
 
         final String numberOfCitizens =
           LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS, citizensSize, townHall.getColony().getCitizenCount());
