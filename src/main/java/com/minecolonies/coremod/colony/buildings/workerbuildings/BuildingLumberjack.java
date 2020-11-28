@@ -96,7 +96,7 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     /**
      * The job description.
      */
-    private static final String LUMBERJACK         = "lumberjack";
+    private static final String LUMBERJACK = "lumberjack";
 
     /**
      * Public constructor of the building, creates an object of the building.

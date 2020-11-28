@@ -44,7 +44,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     private Set<BlockPos> hives = new HashSet<>();
 
     /**
-     * Wether the beekeeper should harvest honeycombs or honey bottles
+     * Whether the beekeeper should harvest honeycombs or honey bottles
      */
     private boolean harvestHoneycombs = true;
 
