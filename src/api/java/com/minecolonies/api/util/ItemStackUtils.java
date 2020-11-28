@@ -485,15 +485,20 @@ public final class ItemStackUtils
 
     /**
      * Estimates the fishing rod tier from available durability and enchantment status.
+     *
      * @param itemStack the tool to check.
      * @return equivalent tool level.
      */
     private static int getFishingRodLevel(final ItemStack itemStack)
     {
-        if(itemStack.getItem() == Items.FISHING_ROD)
+        if (itemStack.getItem() == Items.FISHING_ROD)
+        {
             return (1 + getMaxEnchantmentLevel(itemStack));
-        if(!itemStack.isDamageable())
+        }
+        if (!itemStack.isDamageable())
+        {
             return 1;
+        }
         /**
          *  Because fishing rods don't follow ItemTier values, these numbers require an offset.
          *  Wood + 6 is required to allow T1 huts to use up to vanilla fishing rods equivalents.
@@ -503,10 +508,14 @@ public final class ItemStackUtils
          *  or Aquaculture diamond rods.
          * */
         final int rodDurability = itemStack.getMaxDamage();
-        if(rodDurability <= (ItemTier.WOOD.getMaxUses() + 22))
+        if (rodDurability <= (ItemTier.WOOD.getMaxUses() + 22))
+        {
             return (1 + getMaxEnchantmentLevel(itemStack));
-        else if(rodDurability <= (ItemTier.IRON.getMaxUses() + 6))
+        }
+        else if (rodDurability <= (ItemTier.IRON.getMaxUses() + 6))
+        {
             return (2 + getMaxEnchantmentLevel(itemStack));
+        }
         return (3 + getMaxEnchantmentLevel(itemStack));
     }
 
