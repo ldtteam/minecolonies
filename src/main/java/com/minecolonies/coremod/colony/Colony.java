@@ -747,7 +747,6 @@ public class Colony implements IColony
             wayPoints.put(pos, state);
         }
 
-        freeBlocks.clear();
         // Free blocks
         final ListNBT freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
         for (int i = 0; i < freeBlockTagList.size(); ++i)

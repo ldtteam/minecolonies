@@ -368,7 +368,7 @@ public class ColonyPermissionEventHandler
      */
     private boolean isFreeToInteractWith(@Nullable final Block block, final BlockPos pos)
     {
-        return (block != null && colony.getFreeBlocks().stream().anyMatch(b -> b.equals(block))) || colony.getFreePositions().stream().anyMatch(position -> position.equals(pos));
+        return (block != null && colony.getFreeBlocks().contains(block)) || colony.getFreePositions().contains(pos);
     }
 
     /**
