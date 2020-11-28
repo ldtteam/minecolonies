@@ -327,28 +327,7 @@ public class Colony implements IColony
             checkOrCreateTeam();
         }
         this.permissions = new Permissions(this);
-
-        for (final String s : MineColonies.getConfig().getCommon().freeToInteractBlocks.get())
-        {
-            try
-            {
-                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
-                if (block != null && !(block instanceof AirBlock))
-                {
-                    freeBlocks.add(block);
-                }
-            }
-            catch (final Exception ex)
-            {
-                final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
-                if (pos != null)
-                {
-                    freePositions.add(pos);
-                }
-            }
-        }
-
-
+        loadFreeBlocksAndPosFromConfig();
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e -> {});
 
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
@@ -687,6 +666,32 @@ public class Colony implements IColony
     }
 
     /**
+     * Load free blocks and pos from the config and add to colony.
+     */
+    private void loadFreeBlocksAndPosFromConfig()
+    {
+        for (final String s : MineColonies.getConfig().getCommon().freeToInteractBlocks.get())
+        {
+            try
+            {
+                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
+                if (block != null && !(block instanceof AirBlock))
+                {
+                    freeBlocks.add(block);
+                }
+            }
+            catch (final Exception ex)
+            {
+                final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
+                if (pos != null)
+                {
+                    freePositions.add(pos);
+                }
+            }
+        }
+    }
+
+    /**
      * Read colony from saved data.
      *
      * @param compound compound to read from.
@@ -748,6 +753,7 @@ public class Colony implements IColony
         }
 
         // Free blocks
+        freeBlocks.clear();
         final ListNBT freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
         for (int i = 0; i < freeBlockTagList.size(); ++i)
         {
@@ -763,6 +769,7 @@ public class Colony implements IColony
             final BlockPos block = BlockPosUtil.read(blockTag, TAG_FREE_POSITIONS);
             freePositions.add(block);
         }
+        loadFreeBlocksAndPosFromConfig();
 
         packageManager.setLastContactInHours(compound.getInt(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
