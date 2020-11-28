@@ -138,6 +138,8 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> enchantments;
     public final ForgeConfigSpec.DoubleValue                         enchanterExperienceMultiplier;
     public final ForgeConfigSpec.IntValue                            dynamicTreeHarvestSize;
+    public final ForgeConfigSpec.IntValue                            fishingRodDurabilityAdjustT1;
+    public final ForgeConfigSpec.IntValue                            fishingRodDurabilityAdjustT2;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> diseases;
     public final ForgeConfigSpec.BooleanValue                        debugInventories;
 
@@ -455,7 +457,7 @@ public class ServerConfiguration extends AbstractConfiguration
         averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 12, 1, 10);
         minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 8, 1, 30);
         mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
-        shouldRaidersBreakDoors = defineBoolean(builder, "shouldraiderbreakdoors", true);
+        shouldRaidersBreakDoors = defineBoolean(builder, "shouldraiderbreakdoorsshouldraiderbreakdoors", true);
         citizenCallForHelp = defineBoolean(builder, "citizencallforhelp", true);
         rangerEnchants = defineBoolean(builder, "rangerenchants", true);
         rangerDamageMult = defineDouble(builder, "rangerdamagemult", 1.0, 0.1, 5.0);
@@ -954,6 +956,9 @@ public class ServerConfiguration extends AbstractConfiguration
         enchanterExperienceMultiplier = defineDouble(builder, "enchanterexperiencemultiplier", 2, 1, 10);
 
         dynamicTreeHarvestSize = defineInteger(builder, "dynamictreeharvestsize", 5, 1, 5);
+
+        fishingRodDurabilityAdjustT2 = defineInteger(builder, "fishingroddurabilityadjustt2", 6, -249, 250000);
+        fishingRodDurabilityAdjustT1 = defineInteger(builder, "fishingroddurabilityadjustt1", 22, -58, 250000);
 
         diseases = defineList(builder, "diseases",
           Arrays.asList("Influenza,100,minecraft:carrot,minecraft:potato",
