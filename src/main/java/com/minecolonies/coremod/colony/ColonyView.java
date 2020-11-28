@@ -868,6 +868,7 @@ public final class ColonyView implements IColonyView
     @Nullable
     public IMessage handleColonyViewWorkOrderMessage(final PacketBuffer buf)
     {
+        workOrders.clear();
         final int amount = buf.readInt();
         for (int i = 0; i < amount; i++)
         {
@@ -958,7 +959,6 @@ public final class ColonyView implements IColonyView
     public IMessage handleColonyViewRemoveWorkOrderMessage(final int workOrderId)
     {
         workOrders.remove(workOrderId);
-
         return null;
     }
 

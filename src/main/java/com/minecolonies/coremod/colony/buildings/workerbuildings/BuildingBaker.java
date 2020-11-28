@@ -18,21 +18,15 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
-import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
-import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
-import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 
 import net.minecraft.block.Blocks;
@@ -43,16 +37,13 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.crafting.FurnaceRecipe;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import io.netty.buffer.Unpooled;
@@ -74,21 +65,6 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
      * Max hut level of the bakery.
      */
     private static final int BAKER_HUT_MAX_LEVEL = 5;
-
-    /**
-     * Tag to retrieve the tasks hashmap.
-     */
-    private static final String TAG_TASKS = "tasks";
-
-    /**
-     * Tag to retrieve the state of an entry.
-     */
-    private static final String TAG_STATE = "state";
-
-    /**
-     * Tag to retrieve the products list.
-     */
-    private static final String TAG_PRODUCTS = "products";
 
     /**
      * Always try to keep at least 2 stacks of recipe inputs in the inventory and in the worker chest.
@@ -163,26 +139,6 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-
-        final ListNBT taskTagList = compound.getList(TAG_TASKS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < taskTagList.size(); ++i)
-        {
-            final CompoundNBT taskCompound = taskTagList.getCompound(i);
-            final ProductState state = ProductState.values()[taskCompound.getInt(TAG_STATE)];
-            final List<BakingProduct> bakingProducts = new ArrayList<>();
-
-            final ListNBT productTagList = taskCompound.getList(TAG_PRODUCTS, Constants.NBT.TAG_COMPOUND);
-            for (int j = 0; j < productTagList.size(); ++j)
-            {
-                final CompoundNBT productCompound = taskTagList.getCompound(i);
-                final BakingProduct bakingProduct = BakingProduct.createFromNBT(productCompound);
-                bakingProducts.add(bakingProduct);
-                if(state != ProductState.UNCRAFTED)
-                {
-                    InventoryUtils.addItemStackToProvider(this, bakingProduct.getEndProduct());
-                }
-            }
-        }
     }
 
     @Override
@@ -306,11 +262,7 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
     @Override
     public boolean isRecipeAlterationAllowed()
     {
-        if(getBuildingLevel() < 3)
-        {
-            return false;
-        }
-        return true;
+        return getBuildingLevel() >= 3;
     }
 
     @NotNull
