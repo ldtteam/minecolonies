@@ -154,9 +154,9 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class, getPosition()));
 
             list.removeIf(order -> order instanceof WorkOrderBuildMiner);
-            list.removeIf(order -> order.isClaimed());
+            list.removeIf(order -> order.isClaimed() && !order.getClaimedBy().equals(getPosition()));
             list.removeIf(order -> order instanceof WorkOrderBuild && !(order instanceof WorkOrderBuildRemoval) &&
-                  !((WorkOrderBuild) order).canBuild(getMainCitizen()));
+                  !((WorkOrderBuild) order).canBuildIngoringDistance(getMainCitizen()));
 
             buf.writeInt(list.size());
 
@@ -329,7 +329,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         }
 
         IWorkOrder wo = getColony().getWorkManager().getWorkOrder(orderId);
-        if (wo == null || wo.getClaimedBy() != null)
+        if (wo == null || (wo.getClaimedBy() != null && !wo.getClaimedBy().equals(getPosition())))
         {
             return;
         }
