@@ -39,12 +39,12 @@ import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 public class BuildingSmeltery extends AbstractBuildingFurnaceUser
 {
     /**
-     * The cook string.
+     * The smelter string.
      */
     private static final String SMELTERY_DESC = "smeltery";
 
     /**
-     * Max building level of the cook.
+     * Max building level of the smeltery.
      */
     private static final int MAX_BUILDING_LEVEL = 5;
 
@@ -54,7 +54,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     private static final int STUFF_TO_KEEP = 10;
 
     /**
-     * Instantiates a new cook building.
+     * Instantiates a new smeltery building.
      *
      * @param c the colony.
      * @param l the location
