@@ -1178,6 +1178,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                                                                        && ((IDeliverable) manager.getRequestForToken(token).getRequest()).matches(stack))),
           new Tuple<>(Integer.MAX_VALUE, true));
 
+        if(!minimumStock.isEmpty())
+        {
+            for(ItemStorage item:minimumStock.keySet())
+            {
+                toKeep.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, item.getItemStack()), new Tuple<>(minimumStock.get(item).intValue(), false));
+            }
+        }
+
         return toKeep;
     }
 
