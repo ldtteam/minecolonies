@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_STATE_INTERVAL;
 import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 
@@ -120,7 +121,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                 lastContactInHours++;
                 colony.markDirty();
             }
-            ticksPassed += UPDATE_SUBSCRIBERS_INTERVAL;
+            ticksPassed += UPDATE_STATE_INTERVAL;
         }
         else if (lastContactInHours != 0)
         {
