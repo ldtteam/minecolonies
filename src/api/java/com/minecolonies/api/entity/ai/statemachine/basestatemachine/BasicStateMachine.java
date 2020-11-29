@@ -27,6 +27,9 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
     @NotNull
     protected final Map<IStateEventType, ArrayList<T>> eventTransitionMap;
 
+    /**
+     * The current states list of transitions
+     */
     protected ArrayList<T> currentStateTransitions;
 
     /**
