@@ -341,7 +341,7 @@
   "item.minecolonies.scroll_tp": "Ultrasafe colony teleport scroll",
   "item.minecolonies.scroll_tp.tip": "Safely teleports you to the set colony",
   "item.minecolonies.scroll.colony.tip": "Colony: %s",
-  "item.minecolonies.scroll.colony.none": "None, set one with sneak rightclick",
+  "item.minecolonies.scroll.colony.none": "None, set one with sneak + right-click",
   "item.minecolonies.scroll_area_tp": "Ultrasafe colony group-teleport scroll",
   "item.minecolonies.scroll_area_tp.tip": "Teleport yourself and nearby players to the colony",
   "item.minecolonies.scroll_buff": "Sacred Scroll of Regeneration",
