@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -368,7 +369,7 @@ public class ColonyPermissionEventHandler
      */
     private boolean isFreeToInteractWith(@Nullable final Block block, final BlockPos pos)
     {
-        return (block != null && colony.getFreeBlocks().stream().anyMatch(b -> b.equals(block))) || colony.getFreePositions().stream().anyMatch(position -> position.equals(pos));
+        return (block != null && (IColonyManager.getInstance().getCompatibilityManager().isFreeBlock(block) || colony.getFreeBlocks().contains(block) || ModTags.colonyProtectionException.contains(block))) || colony.getFreePositions().contains(pos) || IColonyManager.getInstance().getCompatibilityManager().isFreePos(pos);
     }
 
     /**

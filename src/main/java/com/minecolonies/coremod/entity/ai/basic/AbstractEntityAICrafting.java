@@ -124,6 +124,21 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return getState();
         }
 
+        return getNextCraftingState();
+    }
+
+    /**
+     * Gets the next crafting state required, if a task exists.
+     *
+     * @return next state
+     */
+    protected IAIState getNextCraftingState()
+    {
+        if (job.getCurrentTask() == null)
+        {
+            return getState();
+        }
+
         if (currentRequest != null && currentRecipeStorage != null)
         {
             return QUERY_ITEMS;

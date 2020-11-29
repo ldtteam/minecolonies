@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TO_DRAIN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WAITING_TICKS;
 
-public class JobEnchanter extends AbstractJob<EntityAIWorkEnchanter, JobEnchanter>
+public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobEnchanter>
 {
     /**
      * Max waiting ticks.

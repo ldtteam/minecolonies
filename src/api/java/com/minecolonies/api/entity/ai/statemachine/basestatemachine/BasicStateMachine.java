@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -23,9 +24,14 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      * The lists of transitions and events
      */
     @NotNull
-    protected final Map<S, ArrayList<T>>               transitionMap;
+    protected final Map<S, List<T>>               transitionMap;
     @NotNull
-    protected final Map<IStateEventType, ArrayList<T>> eventTransitionMap;
+    protected final Map<IStateEventType, List<T>> eventTransitionMap;
+
+    /**
+     * The current states list of transitions
+     */
+    protected List<T> currentStateTransitions;
 
     /**
      * The current state we're in
@@ -57,7 +63,8 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
         this.initState = initialState;
         this.exceptionHandler = exceptionHandler;
         this.transitionMap = new HashMap<>();
-        this.transitionMap.put(initialState, new ArrayList<>());
+        currentStateTransitions = new ArrayList<>();
+        this.transitionMap.put(initialState, currentStateTransitions);
         this.eventTransitionMap = new HashMap<>();
     }
 
@@ -85,13 +92,13 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
     {
         if (transition instanceof IStateMachineEvent)
         {
-            final ArrayList<T> temp = new ArrayList<>(eventTransitionMap.get(((IStateMachineEvent<?>) transition).getEventType()));
+            final List<T> temp = new ArrayList<>(eventTransitionMap.get(((IStateMachineEvent<?>) transition).getEventType()));
             temp.remove(transition);
             eventTransitionMap.put(((IStateMachineEvent<?>) transition).getEventType(), temp);
         }
         else
         {
-            final ArrayList<T> temp = new ArrayList<>(transitionMap.get(transition.getState()));
+            final List<T> temp = new ArrayList<>(transitionMap.get(transition.getState()));
             temp.remove(transition);
             transitionMap.put(transition.getState(), temp);
         }
@@ -102,11 +109,23 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      */
     public void tick()
     {
-        // Check if any Events happens before doing state transitions
-        if (!eventTransitionMap.values().stream().anyMatch(k -> k.stream().anyMatch(this::checkTransition)))
+        for (final List<T> transitions : eventTransitionMap.values())
         {
-            // State transitions
-            transitionMap.get(state).stream().anyMatch(this::checkTransition);
+            for (final T transition : transitions)
+            {
+                if (checkTransition(transition))
+                {
+                    return;
+                }
+            }
+        }
+
+        for (final T transition : currentStateTransitions)
+        {
+            if (checkTransition(transition))
+            {
+                return;
+            }
         }
     }
 
@@ -161,6 +180,19 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
                 removeTransition(transition);
             }
 
+            if (newState != state)
+            {
+                currentStateTransitions = transitionMap.get(newState);
+
+                if (currentStateTransitions == null || currentStateTransitions.isEmpty())
+                {
+                    // Reached Trap/Sink state we cannot leave.
+                    onException(new RuntimeException("Missing AI transition for state: " + getState()));
+                    reset();
+                    return false;
+                }
+            }
+
             state = newState;
             return true;
         }
@@ -193,5 +225,6 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
     public void reset()
     {
         state = initState;
+        currentStateTransitions = transitionMap.get(initState);
     }
 }

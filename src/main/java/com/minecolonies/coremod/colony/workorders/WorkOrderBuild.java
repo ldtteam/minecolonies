@@ -139,11 +139,27 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         //  - OR the WorkOrder is for the TownHall
         //  - OR the WorkOrder is not farther away than 100 blocks from any builder
 
+        return canBuildIngoringDistance(citizen)
+                       && citizen.getWorkBuilding().getPosition().distanceSq(this.getBuildingLocation()) <= MAX_DISTANCE_SQ;
+    }
+
+    /**
+     * Checks if a builder may accept this workOrder while ignoring the distance to the builder.
+     * 
+     * @param citizen the builder who to check.
+     * @return Whether the builder may accept this workOrder.
+     */
+    public boolean canBuildIngoringDistance(@NotNull final ICitizenData citizen)
+    {
+        //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
+        //  - The Builder's Work AbstractBuilding is built
+        //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
+        //  - OR the WorkOrder is for the TownHall
+
         final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
         return (builderLevel >= upgradeLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL
                   || (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getID().equals(buildingLocation))
-                  || isLocationTownhall(citizen.getColony(), buildingLocation)
-                       && citizen.getWorkBuilding().getPosition().distanceSq(this.getBuildingLocation()) <= MAX_DISTANCE_SQ);
+                  || isLocationTownhall(citizen.getColony(), buildingLocation));
     }
 
     @Override
