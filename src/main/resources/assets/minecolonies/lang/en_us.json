@@ -351,7 +351,7 @@
   "item.minecolonies.scroll_highlight": "Worker-where-are-you scroll",
   "item.minecolonies.scroll_highlight.tip": "Sneak-Use on a minecolonies building, to highlight and speed up its workers",
   "minecolonies.scroll.nopermission": "You do not have the required permissions for this colony.",
-  "minecolonies.scroll.needcolony": "Please register this to a colony first with shift-rightclicking a building.",
+  "minecolonies.scroll.needcolony": "Please register this to a colony first with shift + right-clicking a building.",
   "minecolonies.scroll.noguardbuilding": "Please register this to a guard building by shift-rightclicking it.",
   "minecolonies.scroll.wrongdim": "Can only be used in the same dimension as the colony.",
   "minecolonies.scroll.registered": "Registered scroll with colony %s",
