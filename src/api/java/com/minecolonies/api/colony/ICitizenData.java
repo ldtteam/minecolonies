@@ -243,4 +243,11 @@ public interface ICitizenData extends ICivilianData
      * Triggered when the citizen is going to sleep
      */
     void onGoSleep();
+
+    /**
+     * Sets the next position to respawn at
+     *
+     * @param pos position to set
+     */
+    void setNextRespawnPosition(final BlockPos pos);
 }

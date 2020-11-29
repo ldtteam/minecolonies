@@ -288,6 +288,9 @@ public class ResearchInitializer
         knowtheend.setRequirement(new BuildingResearchRequirement(3, "bakery"));
         theflintstones.addChild(knowtheend);
 
+        final GlobalResearch morescrolls = new GlobalResearch("morescrolls", "technology", "More scrolls", 1, new UnlockAbilityResearchEffect(MORE_SCROLLS, true));
+        morescrolls.setRequirement(new BuildingResearchRequirement(3, "enchanter"));
+
         researchTree.addResearch(pavetheroad.getBranch(), pavetheroad);
         researchTree.addResearch(gildedhammer.getBranch(), gildedhammer);
         researchTree.addResearch(hotboots.getBranch(), hotboots);
@@ -358,6 +361,7 @@ public class ResearchInitializer
         researchTree.addResearch(magicCompost.getBranch(), magicCompost);
 
         researchTree.addResearch(knowtheend.getBranch(), knowtheend);
+        researchTree.addResearch(morescrolls.getBranch(), morescrolls);
     }
 
     private static void buildCivilianTree(final IGlobalResearchTree researchTree)

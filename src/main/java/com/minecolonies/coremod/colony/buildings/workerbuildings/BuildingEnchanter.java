@@ -13,6 +13,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutEnchanter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
 import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
@@ -33,7 +34,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * The enchanter building.
  */
-public class BuildingEnchanter extends AbstractBuildingWorker
+public class BuildingEnchanter extends AbstractBuildingCrafter
 {
     /**
      * Enchanter.

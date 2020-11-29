@@ -11,12 +11,13 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.client.StreamParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
@@ -42,7 +43,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.NO_WORKERS
 /**
  * Enchanter AI class.
  */
-public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter, BuildingEnchanter>
+public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter, BuildingEnchanter>
 {
     /**
      * Predicate to define an ancient tome which can be enchanted.
@@ -112,12 +113,18 @@ public class EntityAIWorkEnchanter extends AbstractEntityAIInteract<JobEnchanter
      *
      * @return the next state to go to.
      */
-    private IAIState decide()
+    protected IAIState decide()
     {
         worker.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
         if (walkToBuilding())
         {
             return DECIDE;
+        }
+
+        final IAIState craftState = getNextCraftingState();
+        if (craftState != getState() && !WorldUtil.isPastTime(world, 13000))
+        {
+            return craftState;
         }
 
         if (getPrimarySkillLevel() < getOwnBuilding().getBuildingLevel() * MANA_REQ_PER_LEVEL)

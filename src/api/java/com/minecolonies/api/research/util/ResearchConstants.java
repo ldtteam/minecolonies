@@ -104,6 +104,7 @@ public final class ResearchConstants
     public static final String FIRE_RES    = "Miner Fire Res";
 
     public static final String END_KNOWLEGE = "Knowledge of The End";
+    public static final String MORE_SCROLLS = "more scroll recipes";
 
     /**
      * Private constructor to hide implicit public one.
