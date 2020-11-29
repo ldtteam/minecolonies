@@ -285,6 +285,15 @@ public final class StandardRequests
 
         @NotNull
         @Override
+        public ImmutableList<ItemStack> getDeliveries()
+        {
+            //This request type has no deliverable.
+            //It is a pickup.
+            return ImmutableList.of();
+        }
+
+        @NotNull
+        @Override
         public ITextComponent getShortDisplayString()
         {
             final ITextComponent result = new NonSiblingFormattingTextComponent();
