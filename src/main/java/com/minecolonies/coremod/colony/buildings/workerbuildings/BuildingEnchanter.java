@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -219,6 +220,13 @@ public class BuildingEnchanter extends AbstractBuildingCrafter
             return null;
         }
         return buildings.get(random.nextInt(buildings.size()));
+    }
+
+    @Override
+    public boolean addRecipe(IToken<?> token)
+    {
+        // Enchanter only has custom recipes for now
+        return false;
     }
 
     /**
