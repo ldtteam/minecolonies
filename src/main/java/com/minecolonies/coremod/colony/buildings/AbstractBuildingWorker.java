@@ -78,7 +78,6 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  */
 public abstract class AbstractBuildingWorker extends AbstractBuilding implements IBuildingWorker
 {
- 
     /**
      * The base chance for a recipe to be improved. This is modified by worker skill and the number of items crafted
      */
@@ -184,7 +183,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         IRecipeStorage foundRecipe = null;
         final HashMap<IRecipeStorage, Integer> candidates = new HashMap<>();
 
-        
         //Scan through and collect all possible recipes that could fulfill this, taking special note of the first one
         for (final IToken<?> token : recipes)
         {
@@ -346,6 +344,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
     /**
      * Has a chance to reduce the resource requirements for the recipe in this building
+     * 
      * @param recipe the recipe we're possibly improving
      * @param count the number of items (chances)
      * @param citizen The citizen, as the primary skill can improve the chances
