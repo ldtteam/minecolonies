@@ -20,6 +20,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -154,6 +155,16 @@ public class CompatibilityManager implements ICompatibilityManager
     private static ImmutableList<ItemStack> allItems = ImmutableList.<ItemStack>builder().build();
 
     /**
+     * Free block positions everyone can interact with.
+     */
+    private Set<Block> freeBlocks = new HashSet<>();
+
+    /**
+     * Free positions everyone can interact with.
+     */
+    private Set<BlockPos> freePositions = new HashSet<>();
+
+    /**
      * Instantiates the compatibilityManager.
      */
     public CompatibilityManager()
@@ -212,6 +223,7 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverFood();
         discoverFuel();
         discoverEnchantments();
+        discoverFreeBlocksAndPos();
 
         discoveredAlready = true;
     }
@@ -502,6 +514,18 @@ public class CompatibilityManager implements ICompatibilityManager
         }
         return new Tuple<>(getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())),
           ench.getB());
+    }
+
+    @Override
+    public boolean isFreeBlock(final Block block)
+    {
+        return freeBlocks.contains(block);
+    }
+
+    @Override
+    public boolean isFreePos(final BlockPos block)
+    {
+        return freePositions.contains(block);
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
@@ -982,5 +1006,31 @@ public class CompatibilityManager implements ICompatibilityManager
     private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(final CompoundNBT compound)
     {
         return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStorage(ItemStack.read(compound), false, true));
+    }
+
+    /**
+     * Load free blocks and pos from the config and add to colony.
+     */
+    private void discoverFreeBlocksAndPos()
+    {
+        for (final String s : MinecoloniesAPIProxy.getInstance().getConfig().getServer().freeToInteractBlocks.get())
+        {
+            try
+            {
+                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
+                if (block != null && !(block instanceof AirBlock))
+                {
+                    freeBlocks.add(block);
+                }
+            }
+            catch (final Exception ex)
+            {
+                final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
+                if (pos != null)
+                {
+                    freePositions.add(pos);
+                }
+            }
+        }
     }
 }

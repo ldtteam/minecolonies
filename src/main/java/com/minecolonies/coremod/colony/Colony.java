@@ -34,7 +34,6 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
-import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -329,28 +328,6 @@ public class Colony implements IColony
             checkOrCreateTeam();
         }
         this.permissions = new Permissions(this);
-
-        for (final String s : MineColonies.getConfig().getServer().freeToInteractBlocks.get())
-        {
-            try
-            {
-                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
-                if (block != null && !(block instanceof AirBlock))
-                {
-                    freeBlocks.add(block);
-                }
-            }
-            catch (final Exception ex)
-            {
-                final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
-                if (pos != null)
-                {
-                    freePositions.add(pos);
-                }
-            }
-        }
-
-
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e -> {});
 
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
@@ -751,8 +728,8 @@ public class Colony implements IColony
             wayPoints.put(pos, state);
         }
 
-        freeBlocks.clear();
         // Free blocks
+        freeBlocks.clear();
         final ListNBT freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
         for (int i = 0; i < freeBlockTagList.size(); ++i)
         {

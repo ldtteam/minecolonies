@@ -330,10 +330,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         if (compound.keySet().contains(TAG_SIZE))
         {
             size = compound.getInt(TAG_SIZE);
-            if (size > 0)
-            {
-                inventory = new RackInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
-            }
+            inventory = new RackInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
         }
 
         if (compound.keySet().contains(TAG_RELATIVE_NEIGHBOR))
@@ -352,8 +349,9 @@ public class TileEntityRack extends AbstractTileEntityRack
                 setSingle(false);
             }
         }
+
         final ListNBT inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
-        for (int i = 0; i < inventoryTagList.size(); ++i)
+        for (int i = 0; i < inventoryTagList.size(); i++)
         {
             final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
             if (!inventoryCompound.contains(TAG_EMPTY))

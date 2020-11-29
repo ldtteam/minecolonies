@@ -19,6 +19,8 @@ public class ModTags
     public static ITag<Block>    concreteBlock;
     public static ITag<Block>    pathingBlocks;
 
+    public static ITag<Block>    colonyProtectionException;
+
     public static ITag<Block>    oreChanceBlocks;
     public static ITag<Item>     compostables;
 
