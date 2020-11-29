@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -23,14 +24,14 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      * The lists of transitions and events
      */
     @NotNull
-    protected final Map<S, ArrayList<T>>               transitionMap;
+    protected final Map<S, List<T>>               transitionMap;
     @NotNull
-    protected final Map<IStateEventType, ArrayList<T>> eventTransitionMap;
+    protected final Map<IStateEventType, List<T>> eventTransitionMap;
 
     /**
      * The current states list of transitions
      */
-    protected ArrayList<T> currentStateTransitions;
+    protected List<T> currentStateTransitions;
 
     /**
      * The current state we're in
@@ -91,13 +92,13 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
     {
         if (transition instanceof IStateMachineEvent)
         {
-            final ArrayList<T> temp = new ArrayList<>(eventTransitionMap.get(((IStateMachineEvent<?>) transition).getEventType()));
+            final List<T> temp = new ArrayList<>(eventTransitionMap.get(((IStateMachineEvent<?>) transition).getEventType()));
             temp.remove(transition);
             eventTransitionMap.put(((IStateMachineEvent<?>) transition).getEventType(), temp);
         }
         else
         {
-            final ArrayList<T> temp = new ArrayList<>(transitionMap.get(transition.getState()));
+            final List<T> temp = new ArrayList<>(transitionMap.get(transition.getState()));
             temp.remove(transition);
             transitionMap.put(transition.getState(), temp);
         }
@@ -108,7 +109,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      */
     public void tick()
     {
-        for (final ArrayList<T> transitions : eventTransitionMap.values())
+        for (final List<T> transitions : eventTransitionMap.values())
         {
             for (final T transition : transitions)
             {
