@@ -16,7 +16,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.NotNull;
@@ -119,6 +118,21 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         if (job.getActionsDone() >= getActionsDoneUntilDumping())
         {
             // Wait to dump before continuing.
+            return getState();
+        }
+
+        return getNextCraftingState();
+    }
+
+    /**
+     * Gets the next crafting state required, if a task exists.
+     *
+     * @return next state
+     */
+    protected IAIState getNextCraftingState()
+    {
+        if (job.getCurrentTask() == null)
+        {
             return getState();
         }
 

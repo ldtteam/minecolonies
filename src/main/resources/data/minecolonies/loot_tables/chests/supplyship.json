@@ -23,6 +23,17 @@
               "name": "SupplyShip Chest - free"
             }
           ]
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecraft:random_chance",
+              "chance": 0.2
+            }
+          ],
+          "name": "minecolonies:scroll_buff",
+          "count": 8
         }
       ]
     }
