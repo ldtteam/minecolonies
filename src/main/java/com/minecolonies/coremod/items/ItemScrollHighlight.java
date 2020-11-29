@@ -25,6 +25,9 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
+/**
+ * Magic scroll which highlights and speedbuffs workers of the building it is applied to
+ */
 public class ItemScrollHighlight extends AbstractItemScroll
 {
     /**

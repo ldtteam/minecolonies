@@ -40,6 +40,9 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
+/**
+ * Magic scroll which summons guards to the users aid, with a limited duration. Only works within the same world as the colony.
+ */
 public class ItemScrollGuardHelp extends AbstractItemScroll
 {
     /**

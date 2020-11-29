@@ -24,6 +24,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+/**
+ * Colony teleport scroll, which teleports the user and any nearby players to the colony, invite a friend-style
+ */
 public class ItemScrollColonyAreaTP extends AbstractItemScroll
 {
     /**
