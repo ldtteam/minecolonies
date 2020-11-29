@@ -1,16 +1,14 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
 import com.minecolonies.api.sounds.EventType;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
@@ -191,6 +189,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     {
         if (checkForToolOrWeapon(ToolType.FISHINGROD))
         {
+            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
             playNeedRodSound();
             return getState();
         }
@@ -249,8 +248,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean hasRodButNotEquipped()
     {
-        return worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand()
-                                                                                                                                        .getItem() instanceof FishingRodItem);
+        return InventoryUtils.hasItemInItemHandler(getInventory(), item -> item.getItem() instanceof FishingRodItem)
+                && worker.getHeldItemMainhand() != null
+                && !(worker.getHeldItemMainhand().getItem() instanceof FishingRodItem);
     }
 
     /**
@@ -552,9 +552,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private IAIState isReadyToFish()
     {
+        final int rodSlot = getRodSlot();
         //We really do have our Rod in our inventory?
-        if (getRodSlot() == -1)
+        if (rodSlot == -1)
         {
+            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
             return PREPARING;
         }
 
@@ -565,7 +567,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         }
 
         //Check if Rod is held item if not put it as held item
-        if (worker.getHeldItemMainhand() == null || !worker.getHeldItemMainhand().getItem().equals(Items.FISHING_ROD))
+        if (worker.getHeldItemMainhand() == null || (worker.getHeldItemMainhand().getItem() != worker.getItemHandlerCitizen().getStackInSlot(rodSlot).getItem()))
         {
             equipRod();
             return getState();

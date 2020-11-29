@@ -1,6 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.google.common.collect.Lists;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -312,6 +313,10 @@ public final class ItemStackUtils
                 return getArmorLevel(ArmorItem.getArmorMaterial());
             }
         }
+        else if (stack.getItem() instanceof FishingRodItem)
+        {
+            return getFishingRodLevel(stack);
+        }
         else if (!toolType.hasVariableMaterials())
         {
             //We need a hut level 1 minimum
@@ -477,6 +482,34 @@ public final class ItemStackUtils
         }
 
         return 5;
+    }
+
+    /**
+     * Estimates the fishing rod tier from available durability and enchantment status.
+     *
+     * @param itemStack the tool to check.
+     * @return equivalent tool level.
+     */
+    private static int getFishingRodLevel(final ItemStack itemStack)
+    {
+        if (itemStack.getItem() == Items.FISHING_ROD)
+        {
+            return (1 + getMaxEnchantmentLevel(itemStack));
+        }
+        if (!itemStack.isDamageable())
+        {
+            return 5;
+        }
+        final int rodDurability = itemStack.getMaxDamage();
+        if (rodDurability <= (ItemTier.WOOD.getMaxUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT1.get()))
+        {
+            return (1 + getMaxEnchantmentLevel(itemStack));
+        }
+        else if (rodDurability <= (ItemTier.IRON.getMaxUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT2.get()))
+        {
+            return (2 + getMaxEnchantmentLevel(itemStack));
+        }
+        return (3 + getMaxEnchantmentLevel(itemStack));
     }
 
     /**
