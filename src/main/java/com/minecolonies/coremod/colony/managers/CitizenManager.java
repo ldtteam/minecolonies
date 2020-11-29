@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
 import com.minecolonies.api.colony.buildings.IWorkerLivingBuilding;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
@@ -235,7 +234,7 @@ public class CitizenManager implements ICitizenManager
             spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
         }
 
-        if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), spawnLocation))
+        if (WorldUtil.isEntityBlockLoaded(world, spawnLocation))
         {
             BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
             if (calculatedSpawn != null)
