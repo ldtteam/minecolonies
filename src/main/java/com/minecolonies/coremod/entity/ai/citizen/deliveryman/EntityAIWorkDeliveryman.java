@@ -216,57 +216,40 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return false;
         }
-
-        final IRequest<? extends IDeliverymanRequestable> currentTask = job.getCurrentTask();
-        if(currentTask instanceof PickupRequest && ((PickupRequest) currentTask).getDeliveries().size() > 0)
+        
+        if (currentSlot >= handler.getSlots())
         {
-            List<ItemStack> deliveries = ((PickupRequest) currentTask).getDeliveries();
-            for(ItemStack item: deliveries)
-            {
-                InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(building, stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(item, stack, false, true), item.getCount(), worker.getInventoryCitizen());
-                // The worker gets a little bit of exp for every itemstack he grabs.
-                worker.getCitizenExperienceHandler().addExperience(0.01D);
-                worker.decreaseSaturationForContinuousAction();
-            }
-            building.markDirty();
             return true;
         }
-        else
+
+        final ItemStack stack = handler.getStackInSlot(currentSlot);
+
+        if (stack.isEmpty())
         {
-            if (currentSlot >= handler.getSlots())
-            {
-                return true;
-            }
-
-            final ItemStack stack = handler.getStackInSlot(currentSlot);
-
-            if (stack.isEmpty())
-            {
-                return false;
-            }
-
-            final int amount = workerRequiresItem(building, stack, alreadyKept);
-            if (amount <= 0
-                || (building instanceof BuildingCook && CAN_EAT.test(stack)))
-            {
-                return false;
-            }
-
-            if (ItemStackUtils.isEmpty(handler.getStackInSlot(currentSlot)))
-            {
-                return false;
-            }
-
-            final ItemStack activeStack = handler.extractItem(currentSlot, amount, false);
-            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, worker.getInventoryCitizen());
-            building.markDirty();
-            worker.decreaseSaturationForContinuousAction();
-    
-            // The worker gets a little bit of exp for every itemstack he grabs.
-            worker.getCitizenExperienceHandler().addExperience(0.01D);
-            worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, SLOT_HAND);
             return false;
         }
+
+        final int amount = workerRequiresItem(building, stack, alreadyKept);
+        if (amount <= 0
+              || (building instanceof BuildingCook && CAN_EAT.test(stack)))
+        {
+            return false;
+        }
+
+        if (ItemStackUtils.isEmpty(handler.getStackInSlot(currentSlot)))
+        {
+            return false;
+        }
+
+        final ItemStack activeStack = handler.extractItem(currentSlot, amount, false);
+        InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, worker.getInventoryCitizen());
+        building.markDirty();
+        worker.decreaseSaturationForContinuousAction();
+
+        // The worker gets a little bit of exp for every itemstack he grabs.
+        worker.getCitizenExperienceHandler().addExperience(0.01D);
+        worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, SLOT_HAND);
+        return false;
     }
 
     /**
