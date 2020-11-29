@@ -352,7 +352,7 @@
   "item.minecolonies.scroll_highlight.tip": "Sneak-Use on a minecolonies building, to highlight and speed up its workers",
   "minecolonies.scroll.nopermission": "You do not have the required permissions for this colony.",
   "minecolonies.scroll.needcolony": "Please register this to a colony first with shift + right-clicking a building.",
-  "minecolonies.scroll.noguardbuilding": "Please register this to a guard building by shift-rightclicking it.",
+  "minecolonies.scroll.noguardbuilding": "Please register this to a guard building by shift + right-clicking it.",
   "minecolonies.scroll.wrongdim": "Can only be used in the same dimension as the colony.",
   "minecolonies.scroll.registered": "Registered scroll with colony %s",
   "minecolonies.scroll.failed1": "The unstable magic of the scroll backfired!",
