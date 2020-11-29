@@ -110,11 +110,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     private String jobDisplayName = "";
 
     /**
-     * The items that will be fast delivered for this building
-     */
-    private List<ItemStack> fastPickupItems = new ArrayList<>();
-
-    /**
      * The abstract constructor of the building.
      *
      * @param c the colony
@@ -1177,23 +1172,5 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             return jobDisplayName;
         }
-    }
-
-    /**
-     * Items that should be picked up and delivered faster than normal pickups
-     * @return List of Items
-     */
-    public List<ItemStack> getFastPickupItems()
-    {
-        return fastPickupItems;
-    }
-
-    /**
-     * Add an item for fast pickup 
-     * @param item to add
-     */
-    public void addFastPickupItem(ItemStack item)
-    {
-        this.fastPickupItems.add(item);
     }
 }

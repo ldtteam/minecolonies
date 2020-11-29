@@ -350,17 +350,6 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      */
     boolean createPickupRequest(final int scaledPriority);
 
-    /**
-     * Creates a pickup request for the building. It will make sure that only one pickup request exists per building, so it's safe to call multiple times. The call will return
-     * false if a pickup request already exists, or if the priority is not within the proper range, or if the pickup priority is set to NEVER (0).
-     *
-     * @param scaledPriority The priority of the pickup request. This value is considered already scaled!
-     * @param pickups a list of specific items to pick up. If empty, pickup everything eligible
-     * @return true if a pickup request could be created, false if not.
-     */
-    boolean createPickupRequest(final int scaledPriority, List<ItemStack> pickups);
-
-
     @Override
     ImmutableCollection<IRequestResolver<?>> getResolvers();
 
