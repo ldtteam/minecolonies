@@ -8,6 +8,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -236,4 +237,18 @@ public interface ICompatibilityManager
      * @return a tuple containing the stack and the level applied to it.
      */
     Tuple<ItemStack, Integer> getRandomEnchantmentBook(final int buildingLevel);
+
+    /**
+     * Check if the block is configured to bypass the colony restrictions.
+     * @param block the block to check.
+     * @return true if so.
+     */
+    boolean isFreeBlock(Block block);
+
+    /**
+     * Check if the position is configured to bypass the colony restrictions.
+     * @param block the position to check.
+     * @return true if so.
+     */
+    boolean isFreePos(BlockPos block);
 }

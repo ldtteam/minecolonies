@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "waystones:sandy_waystone",
+    "waystones:waystone",
+    "waystones:mossy_waystone"
+  ]
+}

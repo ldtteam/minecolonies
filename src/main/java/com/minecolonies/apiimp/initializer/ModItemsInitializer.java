@@ -80,6 +80,20 @@ public final class ModItemsInitializer
         ModItems.goldenBread = new ItemGoldenBread(new Item.Properties());
         ModItems.chorusBread= new ItemChorusBread(new Item.Properties());
 
+        ModItems.scrollColonyTP = new ItemScrollColonyTP(new Item.Properties().maxStackSize(16).group(ModCreativeTabs.MINECOLONIES));
+        registry.register(ModItems.scrollColonyTP);
+
+        ModItems.scrollColonyAreaTP = new ItemScrollColonyAreaTP(new Item.Properties().maxStackSize(16).group(ModCreativeTabs.MINECOLONIES));
+        registry.register(ModItems.scrollColonyAreaTP);
+
+        ModItems.scrollBuff = new ItemScrollBuff(new Item.Properties().maxStackSize(16).group(ModCreativeTabs.MINECOLONIES));
+        registry.register(ModItems.scrollBuff);
+
+        ModItems.scrollGuardHelp = new ItemScrollGuardHelp(new Item.Properties().maxStackSize(16).group(ModCreativeTabs.MINECOLONIES));
+        registry.register(ModItems.scrollGuardHelp);
+
+        ModItems.scrollHighLight = new ItemScrollHighlight(new Item.Properties().maxStackSize(16).group(ModCreativeTabs.MINECOLONIES));
+        registry.register(ModItems.scrollHighLight);
 
         ModItems.santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, EquipmentSlotType.HEAD, new Item.Properties());
         ModItems.irongate = new ItemGate(IRON_GATE, ModBlocks.blockIronGate, ModCreativeTabs.MINECOLONIES, new Item.Properties());

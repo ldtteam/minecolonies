@@ -605,7 +605,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 int max = ((AbstractBuildingWorker.View) building).getMaxInhabitants();
                 int workers = ((AbstractBuildingWorker.View) building).getWorkerId().size();
 
-                String jobName = ((AbstractBuildingWorker.View) building).getJobName().toLowerCase(Locale.ENGLISH);
+                String jobName = ((AbstractBuildingWorker.View) building).getJobDisplayName().toLowerCase(Locale.ENGLISH);
                 if (building instanceof AbstractBuildingGuards.View)
                 {
                     jobName = ((AbstractBuildingGuards.View) building).getGuardType().getJobTranslationKey();
@@ -613,7 +613,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
                 if (building instanceof BuildingSchool.View)
                 {
-                    String teacherJobName = LanguageHandler.format("com.minecolonies.coremod.job.teacher");
+                    String teacherJobName = "com.minecolonies.coremod.job.teacher";
 
                     int maxTeachers = 1;
                     max = max - 1;
