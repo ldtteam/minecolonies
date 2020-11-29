@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -17,6 +18,7 @@ import com.minecolonies.api.crafting.MultiOutputRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
+import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
@@ -109,7 +111,32 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
             recipeOutputs.put(output, new Tuple<>(amount, false));
         }
 
-        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
+        final Collection<IRequestResolver<?>> resolvers = getResolvers();
+        for (final IRequestResolver<?> resolver : resolvers)
+        {
+            final IStandardRequestManager requestManager = (IStandardRequestManager) getColony().getRequestManager();
+            final List<IRequest<? extends IDeliverable>> deliverableRequests =
+                requestManager.getRequestHandler().getRequestsMadeByRequester(resolver)
+                    .stream()
+                    .filter(iRequest -> iRequest.getRequest() instanceof IDeliverable)
+                    .map(iRequest -> (IRequest<? extends IDeliverable>) iRequest)
+                    .collect(Collectors.toList());
+            for(IRequest<? extends IDeliverable> request: deliverableRequests)
+            {
+                for(ItemStack item : request.getDeliveries())
+                {
+                    final ItemStorage output = new ItemStorage(item);
+                    int amount = output.getAmount();
+                    if (recipeOutputs.containsKey(output))
+                    {
+                        amount += recipeOutputs.get(output).getA();
+                    }
+                    recipeOutputs.put(output, new Tuple<>(amount, false));
+                }
+            }
+        }
+
+        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = super.getRequiredItemsAndAmount();
         toKeep.putAll(recipeOutputs.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
         return toKeep;
     }
