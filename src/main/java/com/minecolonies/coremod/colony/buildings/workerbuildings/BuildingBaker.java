@@ -89,8 +89,6 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
                 keepX.put(stack::isItemEqual, new Tuple<>(RECIPE_INPUT_HOLD, false));
             }
         }
-
-        addFastPickupItem(new ItemStack(Items.BUCKET));
     }
 
     /**

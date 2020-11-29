@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -14,15 +13,14 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
+
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.NotNull;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -347,13 +345,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 }
 
                 currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
-                for(ItemStack item: currentRecipeStorage.getSecondaryOutputs())
-                {
-                    if(ItemStackUtils.compareItemStackListIgnoreStackSize(getOwnBuilding().getFastPickupItems(), item, false, true))
-                    {
-                        addItemForFastPickup(item);
-                    }
-                }
                 job.setCraftCounter(job.getCraftCounter() + 1);
 
                 if (job.getCraftCounter() >= job.getMaxCraftingCount())
