@@ -32,6 +32,13 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     private int tickRateCounter = 0;
 
     /**
+     * Reference to our used global transition lists
+     */
+    private final ArrayList<ITickingTransition<S>> aiBlockingTransitions;
+    private final ArrayList<ITickingTransition<S>> stateBlockingTransitions;
+    private final ArrayList<ITickingTransition<S>> eventTransitions;
+
+    /**
      * Construct a new StateMachine
      *
      * @param exceptionHandler the exception handler.
@@ -42,9 +49,12 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
         super(initialState, exceptionHandler);
 
         // Initial Lists
-        this.eventTransitionMap.put(AIBlockingEventType.AI_BLOCKING, new ArrayList<>());
-        this.eventTransitionMap.put(AIBlockingEventType.STATE_BLOCKING, new ArrayList<>());
-        this.eventTransitionMap.put(AIBlockingEventType.EVENT, new ArrayList<>());
+        aiBlockingTransitions = new ArrayList<>();
+        this.eventTransitionMap.put(AIBlockingEventType.AI_BLOCKING, aiBlockingTransitions);
+        stateBlockingTransitions = new ArrayList<>();
+        this.eventTransitionMap.put(AIBlockingEventType.STATE_BLOCKING, stateBlockingTransitions);
+        eventTransitions = new ArrayList<>();
+        this.eventTransitionMap.put(AIBlockingEventType.EVENT, eventTransitions);
     }
 
     /**
@@ -68,7 +78,7 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
             tickCounter = 1;
         }
 
-        for (final ITickingTransition<S> transition : eventTransitionMap.get(AIBlockingEventType.AI_BLOCKING))
+        for (final ITickingTransition<S> transition : aiBlockingTransitions)
         {
             if (checkTransition(transition))
             {
@@ -76,7 +86,7 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
             }
         }
 
-        for (final ITickingTransition<S> transition : eventTransitionMap.get(AIBlockingEventType.EVENT))
+        for (final ITickingTransition<S> transition : eventTransitions)
         {
             if (checkTransition(transition))
             {
@@ -84,7 +94,7 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
             }
         }
 
-        for (final ITickingTransition<S> transition : eventTransitionMap.get(AIBlockingEventType.STATE_BLOCKING))
+        for (final ITickingTransition<S> transition : stateBlockingTransitions)
         {
             if (checkTransition(transition))
             {
@@ -92,15 +102,7 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
             }
         }
 
-        if (!transitionMap.containsKey(getState()))
-        {
-            // Reached Trap/Sink state we cannot leave.
-            onException(new RuntimeException("Missing AI transition for state: " + getState()));
-            reset();
-            return;
-        }
-
-        for (final ITickingTransition<S> transition : transitionMap.get(getState()))
+        for (final ITickingTransition<S> transition : currentStateTransitions)
         {
             if (checkTransition(transition))
             {
