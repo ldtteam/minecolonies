@@ -351,7 +351,7 @@
   "item.minecolonies.scroll_highlight": "Worker Locator Scroll",
   "item.minecolonies.scroll_highlight.tip": "Sneak + use on a hut block to highlight and speed up its worker(s)",
   "minecolonies.scroll.nopermission": "You do not have the required permissions for this colony.",
-  "minecolonies.scroll.needcolony": "Please register this to a colony first by sneak + using a hut block.",
+  "minecolonies.scroll.needcolony": "Please register this to a colony first by sneak + using it on a hut block.",
   "minecolonies.scroll.noguardbuilding": "Please register this to a Guard or Barracks Tower by sneak + using it.",
   "minecolonies.scroll.wrongdim": "This scroll can only be used in the same dimension as the colony.",
   "minecolonies.scroll.registered": "Registered scroll with colony %s.",
