@@ -1,8 +1,8 @@
 {
   "replace": false,
   "values": [
-    "waystones:sandy_waystone",
-    "waystones:waystone",
-    "waystones:mossy_waystone"
+    {"id": "waystones:sandy_waystone", "required": false},
+    {"id": "waystones:waystone", "required": false},
+    {"id": "waystones:mossy_waystone", "required": false}
   ]
 }
