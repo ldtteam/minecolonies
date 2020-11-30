@@ -721,7 +721,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         buf.writeInt(getSecondarySkill().ordinal());
         buf.writeInt(getMaxInhabitants());
         buf.writeBoolean(isRecipeAlterationAllowed());
-        buf.writeString(jobDisplayName);
+        buf.writeString(this.getJobDisplayName());
         buf.writeInt(getMaxRecipes());
     }
 
