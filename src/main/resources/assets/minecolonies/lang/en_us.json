@@ -343,7 +343,7 @@
   "item.minecolonies.scroll.colony.tip": "Colony: %s",
   "item.minecolonies.scroll.colony.none": "None, set one with sneak + right-click",
   "item.minecolonies.scroll_area_tp": "Ultrasafe colony group-teleport scroll",
-  "item.minecolonies.scroll_area_tp.tip": "Teleports yourself and nearby players to the colony",
+  "item.minecolonies.scroll_area_tp.tip": "Teleports you and nearby players to the colony",
   "item.minecolonies.scroll_buff": "Sacred Scroll of Regeneration",
   "item.minecolonies.scroll_buff.tip": "Applies regeneration to citizens around you, at least most of the time...",
   "item.minecolonies.scroll_guard_help": "Spatial guard reinforcement scroll",
