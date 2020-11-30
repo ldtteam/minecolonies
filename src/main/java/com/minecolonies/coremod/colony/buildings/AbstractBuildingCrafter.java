@@ -89,55 +89,30 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
     @Override
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
-        final Map<ItemStorage, Tuple<Integer, Boolean>> recipeOutputs = new HashMap<>();
+        final Map<ItemStorage, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
         for (final Tuple<IRecipeStorage, Integer> recipeStorage : getPendingRequestQueue())
         {
             for (final ItemStorage itemStorage : recipeStorage.getA().getCleanedInput())
             {
                 int amount = itemStorage.getAmount() * recipeStorage.getB();
-                if (recipeOutputs.containsKey(itemStorage))
+                if (requiredItems.containsKey(itemStorage))
                 {
-                    amount += recipeOutputs.get(itemStorage).getA();
+                    amount += requiredItems.get(itemStorage).getA();
                 }
-                recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
+                requiredItems.put(itemStorage, new Tuple<>(amount, false));
             }
 
             final ItemStorage output = new ItemStorage(recipeStorage.getA().getPrimaryOutput());
             int amount = output.getAmount() * recipeStorage.getB();
-            if (recipeOutputs.containsKey(output))
+            if (requiredItems.containsKey(output))
             {
-                amount += recipeOutputs.get(output).getA();
+                amount += requiredItems.get(output).getA();
             }
-            recipeOutputs.put(output, new Tuple<>(amount, false));
-        }
-
-        final Collection<IRequestResolver<?>> resolvers = getResolvers();
-        for (final IRequestResolver<?> resolver : resolvers)
-        {
-            final IStandardRequestManager requestManager = (IStandardRequestManager) getColony().getRequestManager();
-            final List<IRequest<? extends IDeliverable>> deliverableRequests =
-                requestManager.getRequestHandler().getRequestsMadeByRequester(resolver)
-                    .stream()
-                    .filter(iRequest -> iRequest.getRequest() instanceof IDeliverable)
-                    .map(iRequest -> (IRequest<? extends IDeliverable>) iRequest)
-                    .collect(Collectors.toList());
-            for(IRequest<? extends IDeliverable> request: deliverableRequests)
-            {
-                for(ItemStack item : request.getDeliveries())
-                {
-                    final ItemStorage output = new ItemStorage(item);
-                    int amount = output.getAmount();
-                    if (recipeOutputs.containsKey(output))
-                    {
-                        amount += recipeOutputs.get(output).getA();
-                    }
-                    recipeOutputs.put(output, new Tuple<>(amount, false));
-                }
-            }
+            requiredItems.put(output, new Tuple<>(amount, false));
         }
 
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = super.getRequiredItemsAndAmount();
-        toKeep.putAll(recipeOutputs.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
+        toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
         return toKeep;
     }
 
