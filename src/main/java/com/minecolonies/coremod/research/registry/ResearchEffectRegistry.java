@@ -11,7 +11,7 @@ import java.util.*;
 
 public class ResearchEffectRegistry implements IResearchEffectRegistry
 {
-    private Map<String, IResearchEffect> researchEffects = new HashMap<>();
+    private Map<String, Map<IResearchEffect, Boolean>> researchEffects = new HashMap<>();
     private Set<String> researchResettable = new HashSet<>();
     private Set<String> unlockBuildingEffects = new HashSet<>();
     private Set<String> unlockAbilityEffects = new HashSet<>();
@@ -24,17 +24,23 @@ public class ResearchEffectRegistry implements IResearchEffectRegistry
      */
     public boolean register(IResearchEffect effect, Boolean isSetOnWorldLoad)
     {
-        if(!researchEffects.containsKey(effect))
+        if(!researchEffects.containsKey(effect.getId()))
         {
-            researchEffects.put(effect.getId(), effect);
-            if(isSetOnWorldLoad)
+            final HashMap<IResearchEffect, Boolean> effectMap = new HashMap<IResearchEffect, Boolean>();
+            effectMap.put(effect, isSetOnWorldLoad);
+            researchEffects.put(effect.getId(), effectMap);
+            if (isSetOnWorldLoad)
             {
                 researchResettable.add(effect.getId());
             }
         }
         else
         {
-            return false;
+            researchEffects.get(effect.getId()).put(effect, isSetOnWorldLoad);
+            if(!isSetOnWorldLoad && researchResettable.contains(effect.getId()))
+            {
+                researchResettable.remove((effect.getId()));
+            }
         }
 
         if(effect instanceof UnlockBuildingResearchEffect && !unlockBuildingEffects.contains(effect.getId()))
@@ -53,14 +59,14 @@ public class ResearchEffectRegistry implements IResearchEffectRegistry
 
     public Collection<IResearchEffect> getAllEffects()
     {
-        return researchEffects.values();
+        return ((Map<IResearchEffect,Boolean>)researchEffects.values()).keySet();
     }
 
-    public IResearchEffect<?> getEffect(String id)
+    public Collection<IResearchEffect> getEffect(String id)
     {
         if(researchEffects.containsKey(id))
         {
-            return researchEffects.get(id);
+            return researchEffects.get(id).keySet();
         }
         else
         {
@@ -99,9 +105,21 @@ public class ResearchEffectRegistry implements IResearchEffectRegistry
     {
         for(String id : researchResettable)
         {
-            researchEffects.remove(id);
+            final Iterator<Map.Entry<IResearchEffect, Boolean>> iterator = researchEffects.get(id).entrySet().iterator();
+            while(researchEffects.size() > 0 && iterator.hasNext())
+            {
+                if(iterator.next().getValue())
+                {
+                    iterator.remove();
+                }
+            }
+            if(researchEffects.get(id).size() <= 0)
+            {
+                researchEffects.remove(id);
+            }
             unlockAbilityEffects.remove(id);
             unlockBuildingEffects.remove(id);
         }
+        researchResettable.clear();
     }
 }

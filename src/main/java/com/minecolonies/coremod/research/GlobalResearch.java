@@ -486,7 +486,7 @@ public class GlobalResearch implements IGlobalResearch
                         {
                             effectResult = true; // default to unlocking abilities.
                         }
-                        effect = new UnlockAbilityResearchEffect(
+                        effect = new UnlockBuildingResearchEffect(
                           itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_UNLOCK_BUILDING_PROP).getAsString(),
                           effectResult);
                     }

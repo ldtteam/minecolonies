@@ -27,7 +27,7 @@ public interface IResearchEffectRegistry
 
     Collection<IResearchEffect> getAllEffects();
 
-    IResearchEffect<?> getEffect(String id);
+    Collection<IResearchEffect> getEffect(String id);
 
     // Deriving underlying types of effects is relatively complex in code.
     // These caches should simplify code access, at little memory cost.
