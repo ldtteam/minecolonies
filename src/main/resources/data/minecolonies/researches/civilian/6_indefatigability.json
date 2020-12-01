@@ -1,0 +1,21 @@
+{
+  "id": "indefatigability",
+  "name": "Indefatigability",
+  "branch": "civilian",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "fortitude",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:golden_apple",
+    "itemCount": 64
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Healing Saturation Limit",
+    "value": -5
+  }
+  ]
+}

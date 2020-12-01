@@ -1,0 +1,28 @@
+{
+  "id": "ironarmor",
+  "name": "Iron Armor",
+  "branch": "combat",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "ironskin",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_ingot",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "townhall",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Armor Durability",
+    "value": 0.4
+  }
+  ]
+}

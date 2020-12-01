@@ -32,11 +32,6 @@ public interface IGlobalResearch
     boolean canDisplay(int uni_level);
 
     /**
-     * Load the cost for the research from the configuration file.
-     */
-    void loadCostFromConfig();
-
-    /**
      * Check whether all resources are available to execute the research.
      *
      * @param inventory the inventory to check in.
@@ -140,21 +135,21 @@ public interface IGlobalResearch
     /**
      * Set the research requirement.
      *
-     * @param requirement the requirement.
+     * @param requirements the requirements.
      */
-    void setRequirement(final IResearchRequirement requirement);
+    void setRequirement(final List<IResearchRequirement> requirements);
 
     /**
      * Getter for the research requirement.
      *
      * @return the requirement.
      */
-    IResearchRequirement getResearchRequirement();
+    List<IResearchRequirement> getResearchRequirement();
 
     /**
      * Get the effect of the research.
      *
      * @return the effect.
      */
-    IResearchEffect<?> getEffect();
+    List<IResearchEffect<?>> getEffects();
 }

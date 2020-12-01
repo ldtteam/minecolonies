@@ -1,0 +1,28 @@
+{
+  "id": "spectacle",
+  "name": "Spectacle",
+  "branch": "civilian",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "festival",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cake",
+    "itemCount": 18
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "cook",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Happiness",
+    "value": 0.15
+  }
+  ]
+}

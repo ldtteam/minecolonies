@@ -1,0 +1,21 @@
+{
+  "id": "agilearcher",
+  "name": "Agile Archer",
+  "branch": "combat",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "improvedevasion",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:diamond",
+    "itemCount": 64
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Archer Armor",
+    "value": 1
+  }
+  ]
+}

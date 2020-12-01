@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.EnumSet;
 
-import static com.minecolonies.coremod.research.ResearchInitializer.MECHANIC_ENHANCED_GATES;
+import static com.minecolonies.api.research.util.ResearchConstants.MECHANIC_ENHANCED_GATES;
 
 /**
  * Break door entity AI with mutex.

@@ -1,0 +1,28 @@
+{
+  "id": "epicure",
+  "name": "Epicure",
+  "branch": "civilian",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "stuffer",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cookie",
+    "itemCount": 256
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "cook",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Saturation",
+    "value": 1
+  }
+  ]
+}

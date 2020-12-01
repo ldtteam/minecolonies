@@ -1,0 +1,28 @@
+{
+  "id": "avoid",
+  "name": "Avoid",
+  "branch": "combat",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "regeneration",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:emerald",
+    "itemCount": 8
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "guardtower",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Fleeing Speed",
+    "value": 1
+  }
+  ]
+}

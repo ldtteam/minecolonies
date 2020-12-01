@@ -1,0 +1,27 @@
+{
+  "id": "improvedleather",
+  "name": "Improved Leather",
+  "branch": "combat",
+  "requiredUniversityLevel": 1,
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:leather",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "townhall",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Armor Durability",
+    "value": 0.1
+  }
+  ]
+}

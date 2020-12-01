@@ -1,0 +1,28 @@
+{
+  "id": "capacity",
+  "name": "Capacity",
+  "branch": "technology",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "space",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecolonies:blockminecoloniesrack",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "miner",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Minimum Stock",
+    "value": 1
+  }
+  ]
+}

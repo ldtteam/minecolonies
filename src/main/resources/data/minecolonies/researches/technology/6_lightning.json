@@ -1,0 +1,21 @@
+{
+  "id": "lightning",
+  "name": "Lightning",
+  "branch": "technology",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "whatisthisspeed",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:redstone",
+    "itemCount": 2048
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Block Break Speed",
+    "value": 2
+  }
+  ]
+}

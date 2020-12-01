@@ -1,0 +1,28 @@
+{
+  "id": "provost",
+  "name": "Provost",
+  "branch": "combat",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "duelist",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:diamond",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "combatacademy",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Melee Armor",
+    "value": 0.5
+  }
+  ]
+}

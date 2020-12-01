@@ -1,0 +1,21 @@
+{
+  "id": "academic",
+  "name": "Academic",
+  "branch": "civilian",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "reflective",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:book",
+    "itemCount": 128
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Leveling",
+    "value": 1
+  }
+  ]
+}

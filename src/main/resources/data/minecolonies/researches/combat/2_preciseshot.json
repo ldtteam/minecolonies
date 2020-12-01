@@ -1,0 +1,28 @@
+{
+  "id": "preciseshot",
+  "name": "Precise Shot",
+  "branch": "combat",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "accuracy",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:flint",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "barracks",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Archer Damage",
+    "value": 0.5
+  }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "fear",
+  "name": "Fear",
+  "branch": "combat",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "feint",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:emerald",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "guardtower",
+    "buildingLevel": 8
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Fleeing Damage",
+    "value": 0.3
+  }
+  ]
+}

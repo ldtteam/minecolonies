@@ -1,0 +1,28 @@
+{
+  "id": "compress",
+  "name": "Compress",
+  "branch": "civilian",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "bandages",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:golden_carrot",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "library",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Regeneration",
+    "value": 1
+  }
+  ]
+}

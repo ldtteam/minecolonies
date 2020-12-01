@@ -1,0 +1,27 @@
+{
+  "id": "woodwork",
+  "name": "Woodwork",
+  "branch": "technology",
+  "requiredUniversityLevel": 1,
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:oak_planks",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "lumberjack",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Sawmill",
+    "value": true
+  }
+  ]
+}

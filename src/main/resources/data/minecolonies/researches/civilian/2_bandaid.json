@@ -1,0 +1,28 @@
+{
+  "id": "bandaid",
+  "name": "Band Aid",
+  "branch": "civilian",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "stamina",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:golden_carrot",
+    "itemCount": 1
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "library",
+    "buildingLevel": 2
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Regeneration",
+    "value": 0.1
+  }
+  ]
+}

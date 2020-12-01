@@ -1,0 +1,35 @@
+{
+  "id": "taunt",
+  "name": "Taunt",
+  "branch": "combat",
+  "requiredUniversityLevel": 1,
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:rotten_flesh",
+    "itemCount": 8
+  },
+  {
+    "itemName": "minecraft:bone",
+    "itemCount": 8
+  },
+  {
+    "itemName": "minecraft:spider_eye",
+    "itemCount": 8
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "guardtower",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockAbility": "Knight taunt mobs",
+    "value": true
+  }
+  ]
+}

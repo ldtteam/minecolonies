@@ -1,0 +1,28 @@
+{
+  "id": "swift",
+  "name": "Swift",
+  "branch": "civilian",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "agile",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:rabbit_foot",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "townhall",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Walking",
+    "value": 0.15
+  }
+  ]
+}

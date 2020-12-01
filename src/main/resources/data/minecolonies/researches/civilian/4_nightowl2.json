@@ -1,0 +1,28 @@
+{
+  "id": "nightowl2",
+  "name": "Nightowl II",
+  "branch": "civilian",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "festival",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:golden_carrot",
+    "itemCount": 75
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "townhall",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Working Day",
+    "value": 2
+  }
+  ]
+}

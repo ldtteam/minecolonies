@@ -1,0 +1,21 @@
+{
+  "id": "rainman",
+  "name": "Rainman",
+  "branch": "technology",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "rtm",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:salmon_bucket",
+    "itemCount": 27
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockAbility": "Working in Rain",
+    "value": true
+  }
+  ]
+}

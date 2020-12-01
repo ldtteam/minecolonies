@@ -1,0 +1,21 @@
+{
+  "id": "heavymachinery",
+  "name": "Heavy Machinery",
+  "branch": "technology",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "redstonepowered",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:redstone",
+    "itemCount": 512
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Block Break Speed",
+    "value": 0.5
+  }
+  ]
+}

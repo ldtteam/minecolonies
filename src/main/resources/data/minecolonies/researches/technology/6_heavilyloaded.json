@@ -1,0 +1,21 @@
+{
+  "id": "heavilyloaded",
+  "name": "Heavily Loaded",
+  "branch": "technology",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "loaded",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:emerald",
+    "itemCount": 128
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Citizen Inv Slots",
+    "value": 27
+  }
+  ]
+}

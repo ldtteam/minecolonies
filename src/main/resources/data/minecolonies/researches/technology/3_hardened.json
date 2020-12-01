@@ -1,0 +1,28 @@
+{
+  "id": "hardened",
+  "name": "Hardened",
+  "branch": "technology",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "strong",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:diamond",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "blacksmith",
+    "buildingLevel": 2
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Tool Durability",
+    "value": 0.1
+  }
+  ]
+}

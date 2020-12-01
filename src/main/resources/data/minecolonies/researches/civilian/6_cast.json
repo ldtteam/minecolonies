@@ -1,0 +1,21 @@
+{
+  "id": "cast",
+  "name": "Cast",
+  "branch": "civilian",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "compress",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:golden_carrot",
+    "itemCount": 64
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Regeneration",
+    "value": 2
+  }
+  ]
+}

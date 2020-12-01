@@ -1,0 +1,28 @@
+{
+  "id": "avoidance",
+  "name": "Avoidance",
+  "branch": "combat",
+  "exclusiveChildResearch": true,
+  "requiredUniversityLevel": 1,
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_block",
+    "itemCount": 3
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "guardtower",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockAbility": "Shield Usage",
+    "value": true
+  }
+  ]
+}

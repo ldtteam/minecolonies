@@ -1,0 +1,28 @@
+{
+  "id": "accuracy",
+  "name": "Accuracy",
+  "branch": "combat",
+  "exclusiveChildResearch": true,
+  "requiredUniversityLevel": 1,
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_ingot",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "guardtower",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Sleep Less",
+    "value": 0.5
+  }
+  ]
+}

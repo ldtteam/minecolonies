@@ -1,0 +1,28 @@
+{
+  "id": "dung",
+  "name": "Dung",
+  "branch": "technology",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "bonemeal",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:wheat_seeds",
+    "itemCount": 128
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "miner",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Farming",
+    "value": 0.25
+  }
+  ]
+}

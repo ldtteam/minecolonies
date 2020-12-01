@@ -1,0 +1,28 @@
+{
+  "id": "gourmand",
+  "name": "Gourmand",
+  "branch": "civilian",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "firstaid",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cookie",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "cook",
+    "buildingLevel": 2
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Saturation",
+    "value": 0.1
+  }
+  ]
+}

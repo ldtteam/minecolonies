@@ -1,0 +1,28 @@
+{
+  "id": "letitgrow",
+  "name": "Let it Grow",
+  "branch": "technology",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "biodegradable",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecolonies:compost",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "farmer",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Plantation",
+    "value": true
+  }
+  ]
+}

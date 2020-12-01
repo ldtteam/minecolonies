@@ -1,0 +1,29 @@
+{
+  "id": "enhanced_gates1",
+  "name": "Enhanced Gates I",
+  "branch": "technology",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "whatyaneed",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecolonies:gate_wood",
+    "itemCount": 64
+  },
+  {
+    "itemName": "minecolonies:ancienttome",
+    "itemCount": 2
+  },
+  {
+    "itemName": "minecraft:iron_block",
+    "itemCount": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Enhances Gate Durability",
+    "value": 5
+  }
+  ]
+}

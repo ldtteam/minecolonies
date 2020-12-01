@@ -1,0 +1,28 @@
+{
+  "id": "recipebook",
+  "name": "Recipe book",
+  "branch": "technology",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "cheatsheet",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:paper",
+    "itemCount": 128
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "sawmill",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Recipes",
+    "value": 1
+  }
+  ]
+}

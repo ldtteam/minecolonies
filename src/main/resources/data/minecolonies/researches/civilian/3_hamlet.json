@@ -1,0 +1,28 @@
+{
+  "id": "hamlet",
+  "name": "Hamlet",
+  "branch": "civilian",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "outpost",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cooked_beef",
+    "itemCount": 128
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "citizen",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Citizen-Cap",
+    "value": 50
+  }
+  ]
+}

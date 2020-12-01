@@ -1,0 +1,28 @@
+{
+  "id": "skills",
+  "name": "Skills",
+  "branch": "technology",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "ability",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_ingot",
+    "itemCount": 128
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "miner",
+    "buildingLevel": 2
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Block Place Speed",
+    "value": 0.25
+  }
+  ]
+}

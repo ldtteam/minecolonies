@@ -1,0 +1,28 @@
+{
+  "id": "flee",
+  "name": "Flee",
+  "branch": "combat",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "evade",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:emerald",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "guardtower",
+    "buildingLevel": 12
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Fleeing Speed",
+    "value": 3
+  }
+  ]
+}

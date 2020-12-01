@@ -1,0 +1,28 @@
+{
+  "id": "mightycleave",
+  "name": "Mighty Cleave",
+  "branch": "combat",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "cleave",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_block",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "barracks",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Melee Damage",
+    "value": 2
+  }
+  ]
+}

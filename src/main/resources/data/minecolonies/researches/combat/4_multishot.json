@@ -1,0 +1,28 @@
+{
+  "id": "multishot",
+  "name": "Multi Shot",
+  "branch": "combat",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "trickshot",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:bow",
+    "itemCount": 9
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "archery",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Double Arrows",
+    "value": 0.1
+  }
+  ]
+}

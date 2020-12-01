@@ -1,0 +1,28 @@
+{
+  "id": "improveddodge",
+  "name": "Improved Dodge",
+  "branch": "combat",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "dodge",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:leather",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "archery",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Archer Armor",
+    "value": 0.1
+  }
+  ]
+}

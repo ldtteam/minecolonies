@@ -1,0 +1,28 @@
+{
+  "id": "bookworm",
+  "name": "Bookworm",
+  "branch": "civilian",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "morebooks",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:bookshelf",
+    "itemCount": 6
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "school",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Teaching",
+    "value": 0.1
+  }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "id": "regeneration",
+  "name": "Regeneration",
+  "branch": "combat",
+  "exclusiveChildResearch": true,
+  "requiredUniversityLevel": 2,
+  "parentResearch": "improvedleather",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:emerald",
+    "itemCount": 1
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "guardtower",
+    "buildingLevel": 2
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockAbility": "Retreat",
+    "value": true
+  }
+  ]
+}

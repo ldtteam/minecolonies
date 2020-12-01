@@ -1,0 +1,21 @@
+{
+  "id": "whatisthisspeed",
+  "name": "What Is This Speed?",
+  "branch": "technology",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "heavymachinery",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:redstone",
+    "itemCount": 1024
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Block Break Speed",
+    "value": 1
+  }
+  ]
+}

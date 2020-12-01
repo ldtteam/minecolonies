@@ -1,0 +1,28 @@
+{
+  "id": "gorger",
+  "name": "Gorger",
+  "branch": "civilian",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "gourmand",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cookie",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "cook",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Saturation",
+    "value": 0.25
+  }
+  ]
+}

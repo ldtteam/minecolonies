@@ -1,0 +1,28 @@
+{
+  "id": "steelbracing",
+  "name": "Steel Bracing",
+  "branch": "technology",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "reinforced",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:diamond",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "blacksmith",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Tool Durability",
+    "value": 0.5
+  }
+  ]
+}

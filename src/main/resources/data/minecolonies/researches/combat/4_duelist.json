@@ -1,0 +1,28 @@
+{
+  "id": "duelist",
+  "name": "Duelist",
+  "branch": "combat",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "riposte",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_ingot",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "smeltery",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Melee Armor",
+    "value": 0.25
+  }
+  ]
+}

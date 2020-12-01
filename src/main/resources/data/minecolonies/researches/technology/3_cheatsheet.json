@@ -1,0 +1,28 @@
+{
+  "id": "cheatsheet",
+  "name": "Cheat Sheet",
+  "branch": "technology",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "memoryaid",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:paper",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "sawmill",
+    "buildingLevel": 2
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Recipes",
+    "value": 0.5
+  }
+  ]
+}

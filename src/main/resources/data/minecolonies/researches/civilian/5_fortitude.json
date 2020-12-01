@@ -1,0 +1,28 @@
+{
+  "id": "fortitude",
+  "name": "Fortitude",
+  "branch": "civilian",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "vitality",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:golden_apple",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "cook",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Healing Saturation Limit",
+    "value": -2
+  }
+  ]
+}

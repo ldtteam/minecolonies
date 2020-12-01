@@ -1,0 +1,28 @@
+{
+  "id": "rails",
+  "name": "Rails",
+  "branch": "civilian",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "keen",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:rail",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "deliveryman",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockAbility": "Rails",
+    "value": true
+  }
+  ]
+}

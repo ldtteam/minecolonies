@@ -1,0 +1,28 @@
+{
+  "id": "vitality",
+  "name": "Vitality",
+  "branch": "civilian",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "resilience",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:golden_apple",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "cook",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Healing Saturation Limit",
+    "value": -1.5
+  }
+  ]
+}

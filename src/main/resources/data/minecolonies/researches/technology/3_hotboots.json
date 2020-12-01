@@ -1,0 +1,32 @@
+{
+  "id": "hotboots",
+  "name": "Hot Boots",
+  "branch": "technology",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "stringwork",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:leather",
+    "itemCount": 32
+  },
+  {
+    "itemName": "minecraft:iron_ingot",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "fletcher",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockAbility": "Miner Fire Res",
+    "value": true
+  }
+  ]
+}

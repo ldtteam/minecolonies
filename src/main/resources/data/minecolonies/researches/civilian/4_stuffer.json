@@ -1,0 +1,28 @@
+{
+  "id": "stuffer",
+  "name": "Stuffer",
+  "branch": "civilian",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "gorger",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cookie",
+    "itemCount": 128
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "cook",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Saturation",
+    "value": 0.5
+  }
+  ]
+}

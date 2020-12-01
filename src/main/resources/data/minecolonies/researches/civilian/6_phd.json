@@ -1,0 +1,21 @@
+{
+  "id": "phd",
+  "name": "PhD",
+  "branch": "civilian",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "master",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:bookshelf",
+    "itemCount": 64
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Teaching",
+    "value": 1
+  }
+  ]
+}

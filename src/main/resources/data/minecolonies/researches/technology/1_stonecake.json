@@ -1,0 +1,27 @@
+{
+  "id": "stonecake",
+  "name": "Stone Cake",
+  "branch": "technology",
+  "requiredUniversityLevel": 1,
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:chiseled_stone_bricks",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "miner",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Stonemason",
+    "value": true
+  }
+  ]
+}

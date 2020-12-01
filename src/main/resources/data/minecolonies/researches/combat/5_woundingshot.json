@@ -1,0 +1,28 @@
+{
+  "id": "woundingshot",
+  "name": "Wounding Shot",
+  "branch": "combat",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "piercingshot",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:flint",
+    "itemCount": 128
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "barracks",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Archer Damage",
+    "value": 2
+  }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": "hittingiron",
+  "name": "Hitting Iron!",
+  "branch": "technology",
+  "requiredUniversityLevel": 1,
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:anvil",
+    "itemCount": 1
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "miner",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Blacksmith",
+    "value": true
+  }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "nurture",
+  "name": "Nurture",
+  "branch": "civilian",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "higherlearning",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cooked_chicken",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "school",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Growth",
+    "value": 0.05
+  }
+  ]
+}

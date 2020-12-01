@@ -1,0 +1,28 @@
+{
+  "id": "trickshot",
+  "name": "Trick Shot",
+  "branch": "combat",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "improvedbows",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:bow",
+    "itemCount": 5
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "archery",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Double Arrows",
+    "value": 0.05
+  }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "athlete",
+  "name": "Athlete",
+  "branch": "civilian",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "swift",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:rabbit_foot",
+    "itemCount": 64
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Walking",
+    "value": 0.25
+  }
+  ]
+}

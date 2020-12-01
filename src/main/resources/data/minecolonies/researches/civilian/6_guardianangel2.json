@@ -1,0 +1,21 @@
+{
+  "id": "guardianangel2",
+  "name": "Guardian Angel II",
+  "branch": "civilian",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "guardianangel",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:hay_block",
+    "itemCount": 256
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Health",
+    "value": 20
+  }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "evade",
+  "name": "Evade",
+  "branch": "combat",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "avoid",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:emerald",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "guardtower",
+    "buildingLevel": 8
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Fleeing Speed",
+    "value": 2
+  }
+  ]
+}

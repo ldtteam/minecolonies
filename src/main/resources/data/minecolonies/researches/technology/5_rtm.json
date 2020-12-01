@@ -1,0 +1,28 @@
+{
+  "id": "rtm",
+  "name": "RTM",
+  "branch": "technology",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "recipebook",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:paper",
+    "itemCount": 256
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "sawmill",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Recipes",
+    "value": 2
+  }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "isthisredstone",
+  "name": "Is this Redstone?",
+  "branch": "technology",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "hot",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:redstone",
+    "itemCount": 128
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Block Break Speed",
+    "value": 0.1
+  }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "boiledleather",
+  "name": "Boiled Leather",
+  "branch": "combat",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "improvedleather",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:leather",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "townhall",
+    "buildingLevel": 2
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Armor Durability",
+    "value": 0.2
+  }
+  ]
+}

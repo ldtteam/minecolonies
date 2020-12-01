@@ -1,0 +1,28 @@
+{
+  "id": "morebooks",
+  "name": "More Books",
+  "branch": "civilian",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "higherlearning",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:book",
+    "itemCount": 6
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "school",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Teaching",
+    "value": 0.05
+  }
+  ]
+}

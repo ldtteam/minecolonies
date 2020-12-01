@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.research;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.configuration.ServerConfiguration;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.effects.IResearchEffect;
+import com.minecolonies.api.research.registry.IResearchEffectRegistry;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -14,7 +15,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +27,98 @@ import java.util.List;
  */
 public class GlobalResearch implements IGlobalResearch
 {
+    //region JSON Prop Management
+    /**
+     * The property name that indicates research identifier, used in code or for lookups. Required.
+     */
+    public static final String RESEARCH_ID_PROP = "id";
+
+    /**
+     * The property name that indicates research name, as presented to users.  Consider localization in future. Required.
+     */
+    public static final String RESEARCH_NAME_PROP = "name";
+
+    /**
+     * The property name that indicates research branch. For now, only "civilian", "technology", and "combat" render. Required.
+     */
+    public static final String RESEARCH_BRANCH_PROP = "branch";
+
+    /**
+     * The property name for Required University Level.
+     */
+    public static final String RESEARCH_UNIVERSITY_LEVEL_PROP = "requiredUniversityLevel";
+
+    /**
+     * The property name that indicates onlyChild status
+     */
+    public static final String RESEARCH_EXCLUSIVE_CHILD_PROP = "exclusiveChildResearch";
+
+    /**
+     * The property name for parent research id.
+     */
+    private static final String RESEARCH_PARENT_PROP = "parentResearch";
+
+    /**
+     * The property name for the list of submitted items.
+     */
+    private static final String RESEARCH_REQUIRED_ITEMS_PROP = "requiredItems";
+
+    /**
+     * The property name for the submitted items names
+     */
+    private static final String RESEARCH_ITEM_NAME_PROP = "itemName";
+
+    /**
+     * The property name for the submitted item count
+     */
+    private static final String RESEARCH_ITEM_COUNT_PROP = "itemCount";
+
+    /**
+     * The property name for the list of required buildings.
+     */
+    private static final String RESEARCH_REQUIRED_BUILDINGS_PROP = "requiredBuildings";
+
+    /**
+     * The property name that indicates a required building's name.
+     */
+    private static final String RESEARCH_REQUIRED_BUILDING_NAME_PROP = "building";
+
+    /**
+     * The property name that indicates required buildings.
+     */
+    private static final String RESEARCH_REQUIRED_BUILDING_LEVEL_PROP = "buildingLevel";
+
+    /**
+     * The property name for the list of research completion effects
+     */
+    private static final String RESEARCH_EFFECTS_PROP = "effects";
+
+    /**
+     * The property name for Multiplier Modifier effects, containing string of target statistic.
+     */
+    private static final String RESEARCH_EFFECT_MULTIPLIER_PROP = "multiplierModifier";
+
+    /**
+     * The property name for Addition Modifier effects, containing string of target statistic.
+     */
+    private static final String RESEARCH_EFFECT_ADDITION = "additionModifier";
+
+    /**
+     * The property name for building unlock effects, containing string of hut id.
+     */
+    public static final String RESEARCH_EFFECT_UNLOCK_BUILDING_PROP = "unlockBuilding";
+
+    /**
+     * The property name for ability unlock effects, containing a string of ability id.
+     */
+    public static final String RESEARCH_EFFECT_UNLOCK_ABILITY_PROP = "unlockAbility";
+
+    /**
+     * The property name for values of effects. Boolean for unlockBuilding and unlockAbilities, numeric for Multiplier or Addition modifiers.
+     */
+    public static final String RESEARCH_EFFECT_VALUE_PROP = "value";
+    ///endregion
+
     /**
      * The costList of the research.
      */
@@ -53,9 +145,9 @@ public class GlobalResearch implements IGlobalResearch
     private final String desc;
 
     /**
-     * The research effect of this research.
+     * The research effects of this research.
      */
-    private final IResearchEffect<?> effect;
+    private final List<IResearchEffect<?>> effects = new ArrayList<>();
 
     /**
      * The depth level in the tree.
@@ -75,7 +167,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The requirement for this research.
      */
-    private IResearchRequirement requirement;
+    private List<IResearchRequirement> requirements = new ArrayList<>();
 
     /**
      * Create the new research.
@@ -90,9 +182,10 @@ public class GlobalResearch implements IGlobalResearch
     {
         this.id = id;
         this.desc = desc;
-        this.effect = effect;
+        this.effects.add(effect);
         this.depth = universityLevel;
         this.branch = branch;
+        IResearchEffectRegistry.getInstance().register(effect, true);
     }
 
     @Override
@@ -112,34 +205,6 @@ public class GlobalResearch implements IGlobalResearch
     public boolean canDisplay(final int uni_level)
     {
         return uni_level >= depth;
-    }
-
-    @Override
-    public void loadCostFromConfig()
-    {
-        costList.clear();
-        try
-        {
-            // TODO: Migrate to datapacks eventually.
-            final ServerConfiguration configuration = MinecoloniesAPIProxy.getInstance().getConfig().getServer();
-            final ForgeConfigSpec.ConfigValue<List<? extends String>> researchCost =
-              (ForgeConfigSpec.ConfigValue<List<? extends String>>) configuration.getClass().getDeclaredField(id).get(configuration);
-            for (final String cost : researchCost.get())
-            {
-                final String[] tuple = cost.split("\\*");
-                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(tuple[0]));
-                if (item == null)
-                {
-                    Log.getLogger().warn("Couldn't retrieve research costList from config for " + branch + "/" + id + " for item: " + tuple[0]);
-                    return;
-                }
-                costList.add(new ItemStorage(new ItemStack(item, 1), Integer.parseInt(tuple[1]), false));
-            }
-        }
-        catch (final NoSuchFieldException | IllegalAccessException | NumberFormatException e)
-        {
-            Log.getLogger().warn("Couldn't retrieve research costList from config for " + branch + "/" + id + " !", e);
-        }
     }
 
     @Override
@@ -238,15 +303,15 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public void setRequirement(final IResearchRequirement requirement)
+    public void setRequirement(final List<IResearchRequirement> requirements)
     {
-        this.requirement = requirement;
+        this.requirements = requirements;
     }
 
     @Override
-    public IResearchRequirement getResearchRequirement()
+    public List<IResearchRequirement> getResearchRequirement()
     {
-        return this.requirement;
+        return this.requirements;
     }
 
     @Override
@@ -262,8 +327,180 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public IResearchEffect<?> getEffect()
+    public List<IResearchEffect<?>> getEffects()
     {
-        return effect;
+        return effects;
+    }
+
+    /**
+     * Parse a Json object into a new GlobalResearch.
+     *
+     * @param researchJson the json representing the recipe
+     * @return new instance of ResearchRecipe
+     */
+    public GlobalResearch(@NotNull final JsonObject researchJson)
+    {
+        if (researchJson.has(RESEARCH_ID_PROP) && researchJson.get(RESEARCH_ID_PROP).isJsonPrimitive())
+        {
+            this.id = researchJson.get(RESEARCH_ID_PROP).getAsString();
+        }
+        else
+        {
+            this.id = "";
+        }
+
+        if (researchJson.has(RESEARCH_NAME_PROP) && researchJson.get(RESEARCH_NAME_PROP).isJsonPrimitive())
+        {
+            this.desc = researchJson.get(RESEARCH_NAME_PROP).getAsString();
+        }
+        else
+        {
+            this.desc = "ParseError";
+        }
+
+        if (researchJson.has(RESEARCH_BRANCH_PROP) && researchJson.get(RESEARCH_BRANCH_PROP).isJsonPrimitive())
+        {
+            this.branch = researchJson.get(RESEARCH_BRANCH_PROP).getAsString();
+        }
+        else
+        {
+            this.branch = "parseerrors";
+        }
+
+        if (researchJson.has(RESEARCH_EXCLUSIVE_CHILD_PROP) && researchJson.get(RESEARCH_EXCLUSIVE_CHILD_PROP).isJsonPrimitive())
+        {
+            this.onlyChild = researchJson.get(RESEARCH_EXCLUSIVE_CHILD_PROP).getAsBoolean();
+        }
+
+        if (researchJson.has(RESEARCH_UNIVERSITY_LEVEL_PROP) && researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).isJsonPrimitive())
+        {
+            this.depth = researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).getAsInt();
+        }
+        else
+        {
+            this.depth = 1;
+            Log.getLogger().info("No declared university level for " + this.branch + "/" + this.id );
+        }
+
+        if (researchJson.has(RESEARCH_PARENT_PROP) && researchJson.get(RESEARCH_PARENT_PROP).isJsonPrimitive())
+        {
+            this.parent = researchJson.get(RESEARCH_PARENT_PROP).getAsString();
+        }
+        else
+        {
+            this.parent = "";
+        }
+
+        if (researchJson.has(RESEARCH_REQUIRED_ITEMS_PROP) && researchJson.get(RESEARCH_REQUIRED_ITEMS_PROP).isJsonArray())
+        {
+            for (final JsonElement itemArrayElement : researchJson.get(RESEARCH_REQUIRED_ITEMS_PROP).getAsJsonArray())
+            {
+                if (itemArrayElement.isJsonObject() && itemArrayElement.getAsJsonObject().has(RESEARCH_ITEM_NAME_PROP))
+                {
+
+                    final String[] itemName = itemArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsString().split(":");
+                    final Item item;
+                    if (itemName.length == 2)
+                    {
+                        item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName[0], itemName[1]));
+                    }
+                    else if (itemName.length == 1)
+                    {
+                        item = ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", itemName[0]));
+                    }
+                    else
+                    {
+                        Log.getLogger().warn("Invalid ResearchCost formatting for " + this.branch + "/" + this.id);
+                        continue;
+                    }
+                    final ItemStack itemStack = new ItemStack(item);
+                    if (itemArrayElement.getAsJsonObject().has(RESEARCH_ITEM_COUNT_PROP))
+                    {
+                        itemStack.setCount(itemArrayElement.getAsJsonObject().get(RESEARCH_ITEM_COUNT_PROP).getAsInt());
+                    }
+                    this.costList.add(new ItemStorage(itemStack, false));
+                }
+            }
+        }
+
+        if (researchJson.has(RESEARCH_REQUIRED_BUILDINGS_PROP) && researchJson.get(RESEARCH_REQUIRED_BUILDINGS_PROP).isJsonArray())
+        {
+            for (final JsonElement itemArrayElement : researchJson.get(RESEARCH_REQUIRED_BUILDINGS_PROP).getAsJsonArray())
+            {
+                if (itemArrayElement.isJsonObject() && itemArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_BUILDING_NAME_PROP)
+                      && itemArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_BUILDING_LEVEL_PROP))
+                {
+
+                    BuildingResearchRequirement requirement = new BuildingResearchRequirement(
+                      itemArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_LEVEL_PROP).getAsInt(),
+                      itemArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_NAME_PROP).getAsString());
+                    this.requirements.add(requirement);
+                }
+            }
+        }
+
+        if (researchJson.has(RESEARCH_EFFECTS_PROP) && researchJson.get(RESEARCH_EFFECTS_PROP).isJsonArray())
+        {
+
+            for (final JsonElement itemArrayElement : researchJson.get(RESEARCH_EFFECTS_PROP).getAsJsonArray())
+            {
+                if (itemArrayElement.isJsonObject())
+                {
+                    final IResearchEffect effect;
+                    if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_ADDITION) && itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP))
+                    {
+                        effect = new AdditionModifierResearchEffect(
+                          itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_ADDITION).getAsString(),
+                          itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsDouble());
+                    }
+                    else if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_MULTIPLIER_PROP) && itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP))
+                    {
+                        effect = new MultiplierModifierResearchEffect(
+                          itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_MULTIPLIER_PROP).getAsString(),
+                          itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsDouble());
+                    }
+                    else if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_UNLOCK_ABILITY_PROP))
+                    {
+                        final boolean effectResult;
+                        if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP))
+                        {
+                            effectResult = itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsBoolean();
+                        }
+                        else
+                        {
+                            effectResult = true; // default to unlocking abilities.
+                        }
+                        effect = new UnlockAbilityResearchEffect(
+                          itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_UNLOCK_ABILITY_PROP).getAsString(),
+                          effectResult);
+                        this.effects.add(effect);
+                    }
+                    else if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_UNLOCK_BUILDING_PROP))
+                    {
+                        final boolean effectResult;
+                        if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP))
+                        {
+                            effectResult = itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsBoolean();
+                        }
+                        else
+                        {
+                            effectResult = true; // default to unlocking abilities.
+                        }
+                        effect = new UnlockAbilityResearchEffect(
+                          itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_UNLOCK_BUILDING_PROP).getAsString(),
+                          effectResult);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                    this.effects.add(effect);
+
+                    // JSONs are loaded and reloaded regularly, so we need to make their effects separately from
+                    // those created in Forge init or otherwise registered only once.
+                    IResearchEffectRegistry.getInstance().register(effect, true);
+                }
+            }
+        }
     }
 }

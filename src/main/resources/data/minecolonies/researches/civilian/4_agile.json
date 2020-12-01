@@ -1,0 +1,28 @@
+{
+  "id": "agile",
+  "name": "Agile",
+  "branch": "civilian",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "nimble",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:rabbit_foot",
+    "itemCount": 10
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "townhall",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Walking",
+    "value": 0.1
+  }
+  ]
+}

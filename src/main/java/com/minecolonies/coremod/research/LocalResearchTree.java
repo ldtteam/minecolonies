@@ -5,6 +5,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.ILocalResearchTree;
+import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.NBTUtils;
@@ -119,7 +120,10 @@ public class LocalResearchTree implements ILocalResearchTree
               addResearch(research.getBranch(), research);
               if (research.getState() == ResearchState.FINISHED)
               {
-                  effects.applyEffect(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearch(research.getBranch(), research.getId()).getEffect());
+                  for(IResearchEffect effect : MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearch(research.getBranch(), research.getId()).getEffects())
+                  {
+                      effects.applyEffect(effect);
+                  }
               }
           });
     }

@@ -1,0 +1,36 @@
+{
+  "id": "knockbackaoe",
+  "name": "Knockback",
+  "branch": "combat",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "arrowpierce",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:redstone",
+    "itemCount": 64
+  },
+  {
+    "itemName": "minecraft:gold_ingot",
+    "itemCount": 64
+  },
+  {
+    "itemName": "minecraft:lapis_lazuli",
+    "itemCount": 128
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "barracks",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockAbility": "Whirlwind Ability",
+    "value": true
+  }
+  ]
+}

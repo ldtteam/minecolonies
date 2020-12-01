@@ -1,0 +1,28 @@
+{
+  "id": "growth",
+  "name": "Growth",
+  "branch": "civilian",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "puberty",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cooked_chicken",
+    "itemCount": 256
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "library",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Growth",
+    "value": 0.5
+  }
+  ]
+}

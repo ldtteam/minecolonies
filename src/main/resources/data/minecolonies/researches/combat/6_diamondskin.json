@@ -1,0 +1,21 @@
+{
+  "id": "diamondskin",
+  "name": "Diamond Skin",
+  "branch": "combat",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "steelarmor",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:diamond",
+    "itemCount": 64
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Armor Durability",
+    "value": 1
+  }
+  ]
+}

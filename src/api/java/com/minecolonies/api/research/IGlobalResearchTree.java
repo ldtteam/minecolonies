@@ -55,6 +55,11 @@ public interface IGlobalResearchTree
     List<String> getBranches();
 
     /**
+     * Clear the list of all branches.
+     */
+    void clearBranches();
+
+    /**
      * Get the primary research of a certain branch.
      *
      * @param branch the branch it belongs to.
@@ -75,9 +80,4 @@ public interface IGlobalResearchTree
      * @param compound the compound to read it from. +
      */
     void readFromNBT(final CompoundNBT compound);
-
-    /**
-     * Load cost for all research.
-     */
-    void loadCost();
 }

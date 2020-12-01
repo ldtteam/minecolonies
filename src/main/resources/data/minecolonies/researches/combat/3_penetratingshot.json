@@ -1,0 +1,28 @@
+{
+  "id": "penetratingshot",
+  "name": "Penetrating Shot",
+  "branch": "combat",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "preciseshot",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:flint",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "archery",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Archer Damage",
+    "value": 1
+  }
+  ]
+}

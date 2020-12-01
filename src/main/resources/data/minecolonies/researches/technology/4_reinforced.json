@@ -1,0 +1,28 @@
+{
+  "id": "reinforced",
+  "name": "Reinforced",
+  "branch": "technology",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "hardened",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:diamond",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "blacksmith",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Tool Durability",
+    "value": 0.25
+  }
+  ]
+}

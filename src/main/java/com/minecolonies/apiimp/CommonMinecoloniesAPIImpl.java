@@ -21,6 +21,7 @@ import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.registry.IResearchEffectRegistry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataManager;
@@ -31,6 +32,7 @@ import com.minecolonies.coremod.colony.jobs.registry.JobDataManager;
 import com.minecolonies.coremod.entity.ai.registry.MobAIRegistry;
 import com.minecolonies.coremod.entity.pathfinding.registry.PathNavigateRegistry;
 import com.minecolonies.coremod.research.GlobalResearchTree;
+import com.minecolonies.coremod.research.registry.ResearchEffectRegistry;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -56,6 +58,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<ColonyEventDescriptionTypeRegistryEntry> colonyEventDescriptionRegistry;
     private static IGlobalResearchTree                                     globalResearchTree     = new GlobalResearchTree();
     private        IForgeRegistry<RecipeTypeEntry>                         recipeTypeEntryRegistry;
+    private        IResearchEffectRegistry                                 researchEffectRegistry = new ResearchEffectRegistry();
 
     @Override
     @NotNull
@@ -158,6 +161,9 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     {
         return globalResearchTree;
     }
+
+    @Override
+    public IResearchEffectRegistry getResearchEffectRegistry() { return researchEffectRegistry; }
 
     public void onRegistryNewRegistry(final RegistryEvent.NewRegistry event)
     {

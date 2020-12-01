@@ -1,0 +1,27 @@
+{
+  "id": "firstaid",
+  "name": "First Aid",
+  "branch": "civilian",
+  "requiredUniversityLevel": 1,
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:hay_block",
+    "itemCount": 8
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "townhall",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Health",
+    "value": 2
+  }
+  ]
+}

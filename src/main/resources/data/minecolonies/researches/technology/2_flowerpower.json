@@ -1,0 +1,28 @@
+{
+  "id": "flowerpower",
+  "name": "Flower Power",
+  "branch": "technology",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "biodegradable",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecolonies:compost",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "composter",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Florist",
+    "value": true
+  }
+  ]
+}

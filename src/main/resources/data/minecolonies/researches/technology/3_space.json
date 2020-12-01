@@ -1,0 +1,28 @@
+{
+  "id": "space",
+  "name": "Space",
+  "branch": "technology",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "sieving",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecolonies:blockminecoloniesrack",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "miner",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Minimum Stock",
+    "value": 0.5
+  }
+  ]
+}

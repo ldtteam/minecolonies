@@ -1,0 +1,28 @@
+{
+  "id": "resilience",
+  "name": "Resilience",
+  "branch": "civilian",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "resistance",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:golden_apple",
+    "itemCount": 8
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "cook",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Healing Saturation Limit",
+    "value": -1
+  }
+  ]
+}

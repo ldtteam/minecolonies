@@ -1,0 +1,28 @@
+{
+  "id": "steelarmor",
+  "name": "Steel Armor",
+  "branch": "combat",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "ironarmor",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_ingot",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "townhall",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Armor Durability",
+    "value": 0.5
+  }
+  ]
+}

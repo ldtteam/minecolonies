@@ -1,0 +1,28 @@
+{
+  "id": "master",
+  "name": "Master",
+  "branch": "civilian",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "bachelor",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:bookshelf",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "library",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Teaching",
+    "value": 0.5
+  }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "scholarly",
+  "name": "Scholarly",
+  "branch": "civilian",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "studious",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:book",
+    "itemCount": 24
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "library",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Leveling",
+    "value": 0.25
+  }
+  ]
+}

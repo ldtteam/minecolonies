@@ -1,0 +1,28 @@
+{
+  "id": "retreat",
+  "name": "Retreat",
+  "branch": "combat",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "fear",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:emerald",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "guardtower",
+    "buildingLevel": 12
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Fleeing Damage",
+    "value": 0.4
+  }
+  ]
+}

@@ -69,6 +69,12 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
+    public void clearBranches()
+    {
+        researchTree.clear();
+    }
+
+    @Override
     public void writeToNBT(final CompoundNBT compound)
     {
         @NotNull final ListNBT
@@ -87,25 +93,5 @@ public class GlobalResearchTree implements IGlobalResearchTree
         NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Constants.NBT.TAG_COMPOUND))
           .map(researchCompound -> (IGlobalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
           .forEach(research -> addResearch(research.getBranch(), research));
-    }
-
-    @Override
-    public void loadCost()
-    {
-        researchTree.values().forEach(b -> b.values().forEach(IGlobalResearch::loadCostFromConfig));
-    }
-
-    @Override
-    public String getEffectIdForResearch(final String id)
-    {
-        for(final String branch: this.getBranches())
-        {
-            final IGlobalResearch r = this.getResearch(branch, id);
-            if (r != null)
-            {
-                return r.getEffect().getId();
-            }
-        }
-        return null; 
     }
 }

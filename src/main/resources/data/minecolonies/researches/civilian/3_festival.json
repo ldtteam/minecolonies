@@ -1,0 +1,28 @@
+{
+  "id": "festival",
+  "name": "Festival",
+  "branch": "civilian",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "circus",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cake",
+    "itemCount": 9
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "cook",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Happiness",
+    "value": 0.1
+  }
+  ]
+}

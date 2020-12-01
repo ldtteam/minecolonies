@@ -1,0 +1,28 @@
+{
+  "id": "stringwork",
+  "name": "Stringwork",
+  "branch": "technology",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "woodwork",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:string",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "sawmill",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Fletcher",
+    "value": true
+  }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "motherlode",
+  "name": "Motherlode",
+  "branch": "technology",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "amazingveins",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:diamond_ore",
+    "itemCount": 64
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "More Ores",
+    "value": 2
+  }
+  ]
+}

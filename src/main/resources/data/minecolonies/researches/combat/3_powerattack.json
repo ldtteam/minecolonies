@@ -1,0 +1,28 @@
+{
+  "id": "powerattack",
+  "name": "Power Attack",
+  "branch": "combat",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "quickdraw",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_block",
+    "itemCount": 4
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "combatacademy",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Melee Damage",
+    "value": 1
+  }
+  ]
+}

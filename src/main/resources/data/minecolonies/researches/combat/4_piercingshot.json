@@ -1,0 +1,28 @@
+{
+  "id": "piercingshot",
+  "name": "Piercing Shot",
+  "branch": "combat",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "penetratingshot",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:flint",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "guardtower",
+    "buildingLevel": 10
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Archer Damage",
+    "value": 1.5
+  }
+  ]
+}

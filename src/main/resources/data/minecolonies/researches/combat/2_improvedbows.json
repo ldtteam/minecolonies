@@ -1,0 +1,28 @@
+{
+  "id": "improvedbows",
+  "name": "Improved Bows",
+  "branch": "combat",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "tactictraining",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_block",
+    "itemCount": 6
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "barracks",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Archery",
+    "value": true
+  }
+  ]
+}

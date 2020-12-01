@@ -1,0 +1,28 @@
+{
+  "id": "opera",
+  "name": "Opera",
+  "branch": "civilian",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "spectacle",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cake",
+    "itemCount": 27
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "cook",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Happiness",
+    "value": 0.2
+  }
+  ]
+}

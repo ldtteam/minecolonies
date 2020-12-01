@@ -1,0 +1,28 @@
+{
+  "id": "memoryaid",
+  "name": "Memory Aid",
+  "branch": "technology",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "woodwork",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:paper",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "sawmill",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Recipes",
+    "value": 0.25
+  }
+  ]
+}

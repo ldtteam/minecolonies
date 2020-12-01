@@ -1,0 +1,28 @@
+{
+  "id": "healingcream",
+  "name": "Healing Cream",
+  "branch": "civilian",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "bandaid",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:golden_carrot",
+    "itemCount": 8
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "library",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Regeneration",
+    "value": 0.25
+  }
+  ]
+}

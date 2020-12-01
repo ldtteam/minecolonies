@@ -1,0 +1,36 @@
+{
+  "id": "doubletrouble",
+  "name": "Double Trouble",
+  "branch": "technology",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "letitgrow",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:bamboo",
+    "itemCount": 64
+  },
+  {
+    "itemName": "minecraft:sugar_cane",
+    "itemCount": 64
+  },
+  {
+    "itemName": "minecraft:cactus",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "plantation",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockAbility": "Plant 2",
+    "value": true
+  }
+  ]
+}

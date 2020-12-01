@@ -1,0 +1,28 @@
+{
+  "id": "cleave",
+  "name": "Cleave",
+  "branch": "combat",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "powerattack",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_block",
+    "itemCount": 8
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "guardtower",
+    "buildingLevel": 10
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Melee Damage",
+    "value": 1.5
+  }
+  ]
+}

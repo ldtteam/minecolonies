@@ -1,0 +1,28 @@
+{
+  "id": "strong",
+  "name": "Strong",
+  "branch": "technology",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "hittingiron",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:diamond",
+    "itemCount": 8
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "blacksmith",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Tool Durability",
+    "value": 0.05
+  }
+  ]
+}

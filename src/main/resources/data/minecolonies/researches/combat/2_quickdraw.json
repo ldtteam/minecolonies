@@ -1,0 +1,28 @@
+{
+  "id": "quickdraw",
+  "name": "Quick Draw",
+  "branch": "combat",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "accuracy",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_block",
+    "itemCount": 2
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "barracks",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Melee Damage",
+    "value": 0.5
+  }
+  ]
+}

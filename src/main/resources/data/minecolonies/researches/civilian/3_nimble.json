@@ -1,0 +1,28 @@
+{
+  "id": "nimble",
+  "name": "Nimble",
+  "branch": "civilian",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "rails",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:rabbit_foot",
+    "itemCount": 1
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "townhall",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Walking",
+    "value": 0.05
+  }
+  ]
+}

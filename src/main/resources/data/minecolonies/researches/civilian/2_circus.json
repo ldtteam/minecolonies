@@ -1,0 +1,28 @@
+{
+  "id": "circus",
+  "name": "Circus",
+  "branch": "civilian",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "firstaid",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cake",
+    "itemCount": 1
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "cook",
+    "buildingLevel": 2
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Happiness",
+    "value": 0.05
+  }
+  ]
+}

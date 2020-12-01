@@ -1,0 +1,21 @@
+{
+  "id": "theater",
+  "name": "Theater",
+  "branch": "civilian",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "opera",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:enchanted_golden_apple",
+    "itemCount": 16
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Happiness",
+    "value": 0.5
+  }
+  ]
+}

@@ -81,7 +81,6 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final boolean onlyChild = nbt.getBoolean(TAG_ONLY_CHILD);
 
         final IGlobalResearch research = getNewInstance(id, parent, branch, desc, depth, StandardFactoryController.getInstance().deserialize(effect));
-        research.loadCostFromConfig();
         research.setOnlyChild(onlyChild);
 
         NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> IGlobalResearchTree.getInstance().getResearch(branch, compound.getString(
@@ -116,7 +115,6 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final boolean onlyChild = buffer.readBoolean();
 
         final IGlobalResearch research = getNewInstance(id, parent, branch, desc, depth, effect);
-        research.loadCostFromConfig();
         research.setOnlyChild(onlyChild);
 
         final int childsSize = buffer.readInt();

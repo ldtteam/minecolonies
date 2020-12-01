@@ -1,0 +1,28 @@
+{
+  "id": "rockingroll",
+  "name": "Rocking Roll",
+  "branch": "technology",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "stonecake",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:stone",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "stonemason",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Crusher",
+    "value": true
+  }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "parry",
+  "name": "Parry",
+  "branch": "combat",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "avoidance",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_ingot",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "smeltery",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Melee Armor",
+    "value": 0.05
+  }
+  ]
+}

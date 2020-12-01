@@ -1,0 +1,21 @@
+{
+  "id": "madness",
+  "name": "Madness!",
+  "branch": "technology",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "seemsautomatic",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_ingot",
+    "itemCount": 1024
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Block Place Speed",
+    "value": 2
+  }
+  ]
+}

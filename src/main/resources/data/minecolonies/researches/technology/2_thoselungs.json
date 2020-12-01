@@ -1,0 +1,28 @@
+{
+  "id": "thoselungs",
+  "name": "Those Lungs!",
+  "branch": "technology",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "hot",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:glass",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "smeltery",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Glassblower",
+    "value": true
+  }
+  ]
+}

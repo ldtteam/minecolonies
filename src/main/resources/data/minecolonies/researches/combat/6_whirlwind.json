@@ -1,0 +1,21 @@
+{
+  "id": "whirlwind",
+  "name": "Whirlwind",
+  "branch": "combat",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "mightycleave",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_block",
+    "itemCount": 32
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Melee Damage",
+    "value": 4
+  }
+  ]
+}

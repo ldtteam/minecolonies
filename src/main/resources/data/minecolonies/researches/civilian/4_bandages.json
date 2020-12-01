@@ -1,0 +1,28 @@
+{
+  "id": "bandages",
+  "name": "Bandages",
+  "branch": "civilian",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "healingcream",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:golden_carrot",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "library",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Regeneration",
+    "value": 0.5
+  }
+  ]
+}

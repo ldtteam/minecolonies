@@ -1,0 +1,28 @@
+{
+  "id": "amazingveins",
+  "name": "Amazing Veins",
+  "branch": "technology",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "richveins",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:gold_ore",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "blacksmith",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "More Ores",
+    "value": 1
+  }
+  ]
+}

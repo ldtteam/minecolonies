@@ -1,0 +1,28 @@
+{
+  "id": "village",
+  "name": "Village",
+  "branch": "civilian",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "hamlet",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cooked_beef",
+    "itemCount": 256
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "townhall",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Citizen-Cap",
+    "value": 75
+  }
+  ]
+}

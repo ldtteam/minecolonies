@@ -1,0 +1,28 @@
+{
+  "id": "guardianangel",
+  "name": "Guardian Angel",
+  "branch": "civilian",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "livesaver2",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:hay_block",
+    "itemCount": 128
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "townhall",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Health",
+    "value": 10
+  }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "seemsautomatic",
+  "name": "Seems Automatic",
+  "branch": "technology",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "tools",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_ingot",
+    "itemCount": 512
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "blacksmith",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Block Place Speed",
+    "value": 1
+  }
+  ]
+}

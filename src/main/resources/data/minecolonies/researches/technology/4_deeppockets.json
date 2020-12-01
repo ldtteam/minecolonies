@@ -1,0 +1,28 @@
+{
+  "id": "deeppockets",
+  "name": "Deep Pockets",
+  "branch": "technology",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "cheatsheet",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:emerald",
+    "itemCount": 256
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "library",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Citizen Inv Slots",
+    "value": 9
+  }
+  ]
+}

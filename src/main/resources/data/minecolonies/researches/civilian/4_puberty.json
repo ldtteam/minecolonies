@@ -1,0 +1,28 @@
+{
+  "id": "puberty",
+  "name": "Puberty",
+  "branch": "civilian",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "hormones",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cooked_chicken",
+    "itemCount": 128
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "library",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Growth",
+    "value": 0.25
+  }
+  ]
+}

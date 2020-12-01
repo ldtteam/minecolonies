@@ -1,0 +1,28 @@
+{
+  "id": "outpost",
+  "name": "Outpost",
+  "branch": "civilian",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "keen",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cooked_beef",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "citizen",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Citizen-Cap",
+    "value": 25
+  }
+  ]
+}

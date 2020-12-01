@@ -1,0 +1,28 @@
+{
+  "id": "dodge",
+  "name": "Dodge",
+  "branch": "combat",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "avoidance",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:leather",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "smeltery",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Archer Armor",
+    "value": 0.05
+  }
+  ]
+}

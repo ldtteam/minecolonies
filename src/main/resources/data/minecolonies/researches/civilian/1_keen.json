@@ -1,0 +1,27 @@
+{
+  "id": "keen",
+  "name": "Keen",
+  "branch": "civilian",
+  "requiredUniversityLevel": 1,
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:book",
+    "itemCount": 3
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "citizen",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Library",
+    "value": true
+  }
+  ]
+}

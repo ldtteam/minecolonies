@@ -1,0 +1,21 @@
+{
+  "id": "magiccompost",
+  "name": "Magic Compost",
+  "branch": "technology",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "fertilizer",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:wheat_seeds",
+    "itemCount": 2048
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Farming",
+    "value": 2
+  }
+  ]
+}

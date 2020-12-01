@@ -1,0 +1,28 @@
+{
+  "id": "rainbowheaven",
+  "name": "Rainbow Heaven",
+  "branch": "technology",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "flowerpower",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:poppy",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "florist",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Dyer",
+    "value": true
+  }
+  ]
+}

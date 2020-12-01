@@ -1,0 +1,28 @@
+{
+  "id": "bachelor",
+  "name": "Bachelor",
+  "branch": "civilian",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "bookworm",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:bookshelf",
+    "itemCount": 12
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "library",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Teaching",
+    "value": 0.25
+  }
+  ]
+}

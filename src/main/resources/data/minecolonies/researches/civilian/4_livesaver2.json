@@ -1,0 +1,28 @@
+{
+  "id": "livesaver2",
+  "name": "Livesaver II",
+  "branch": "civilian",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "livesaver",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:hay_block",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "townhall",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Health",
+    "value": 8
+  }
+  ]
+}

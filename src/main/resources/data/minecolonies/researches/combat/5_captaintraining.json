@@ -1,0 +1,28 @@
+{
+  "id": "captaintraining",
+  "name": "Captain Training",
+  "branch": "combat",
+  "requiredUniversityLevel": 5,
+  "parentResearch": "knighttraining",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:shield",
+    "itemCount": 16
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "combatacademy",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Block Attacks",
+    "value": 0.25
+  }
+  ]
+}

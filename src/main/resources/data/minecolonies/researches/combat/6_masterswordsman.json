@@ -1,0 +1,21 @@
+{
+  "id": "masterswordsman",
+  "name": "Master Swordsman",
+  "branch": "combat",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "provost",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:diamond",
+    "itemCount": 64
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Melee Armor",
+    "value": 1
+  }
+  ]
+}

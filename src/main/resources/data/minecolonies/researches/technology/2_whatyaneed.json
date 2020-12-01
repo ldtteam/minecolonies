@@ -1,0 +1,28 @@
+{
+  "id": "whatyaneed",
+  "name": "What ya Need?",
+  "branch": "technology",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "hittingiron",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:redstone",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "blacksmith",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Mechanic",
+    "value": true
+  }
+  ]
+}

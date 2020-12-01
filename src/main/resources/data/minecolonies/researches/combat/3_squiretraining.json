@@ -1,0 +1,28 @@
+{
+  "id": "squiretraining",
+  "name": "Squire Training",
+  "branch": "combat",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "improvedswords",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:shield",
+    "itemCount": 4
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "combatacademy",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Block Attacks",
+    "value": 0.05
+  }
+  ]
+}

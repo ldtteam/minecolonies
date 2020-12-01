@@ -1,0 +1,28 @@
+{
+  "id": "studious",
+  "name": "Studious",
+  "branch": "civilian",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "diligent",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:book",
+    "itemCount": 12
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "library",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Leveling",
+    "value": 0.1
+  }
+  ]
+}

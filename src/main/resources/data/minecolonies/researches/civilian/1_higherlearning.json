@@ -1,0 +1,28 @@
+{
+  "id": "higherlearning",
+  "name": "Higher Learning",
+  "branch": "civilian",
+  "exclusiveChildResearch": true,
+  "requiredUniversityLevel": 1,
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:book",
+    "itemCount": 3
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "citizen",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "School",
+    "value": true
+  }
+  ]
+}

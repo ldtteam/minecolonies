@@ -1,0 +1,28 @@
+{
+  "id": "nightowl",
+  "name": "Nightowl",
+  "branch": "civilian",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "circus",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:golden_carrot",
+    "itemCount": 25
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "library",
+    "buildingLevel": 2
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Working Day H",
+    "value": 1
+  }
+  ]
+}

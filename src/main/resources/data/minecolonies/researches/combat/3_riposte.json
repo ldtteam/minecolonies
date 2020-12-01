@@ -1,0 +1,28 @@
+{
+  "id": "riposte",
+  "name": "Riposte",
+  "branch": "combat",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "parry",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_ingot",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "combatacademy",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Melee Armor",
+    "value": 0.1
+  }
+  ]
+}

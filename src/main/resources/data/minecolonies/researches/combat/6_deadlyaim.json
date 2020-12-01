@@ -1,0 +1,21 @@
+{
+  "id": "deadlyaim",
+  "name": "Deadly Aim",
+  "branch": "combat",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "woundingshot",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:flint",
+    "itemCount": 256
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Archer Damage",
+    "value": 4
+  }
+  ]
+}

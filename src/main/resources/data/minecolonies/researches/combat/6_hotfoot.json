@@ -1,0 +1,21 @@
+{
+  "id": "hotfoot",
+  "name": "Hotfoot",
+  "branch": "combat",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "flee",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:emerald",
+    "itemCount": 64
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Fleeing Speed",
+    "value": 5
+  }
+  ]
+}

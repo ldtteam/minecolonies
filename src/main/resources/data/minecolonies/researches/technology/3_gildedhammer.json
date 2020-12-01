@@ -1,0 +1,36 @@
+{
+  "id": "gildedhammer",
+  "name": "Gilded Hammer",
+  "branch": "technology",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "rockingroll",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:gravel",
+    "itemCount": 64
+  },
+  {
+    "itemName": "minecraft:sand",
+    "itemCount": 64
+  },
+  {
+    "itemName": "minecraft:clay",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "crusher",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockAbility": "1:1 Crushing",
+    "value": true
+  }
+  ]
+}

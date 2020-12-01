@@ -245,20 +245,33 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
             else if (research.getResearchRequirement() != null && state != ResearchState.FINISHED)
             {
+                String requirementText = "";
+                for(int txt = 0; txt < research.getResearchRequirement().size(); txt++)
+                {
+                    //TODO: handle display of more than one research requirement clearly.
+                    requirementText += research.getResearchRequirement().get(txt).getDesc().getString();
+                }
                 final Label requirementLabel = new Label();
-                requirementLabel.setLabelText(research.getResearchRequirement().getDesc().getString());
                 requirementLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() + INITIAL_Y_OFFSET);
                 requirementLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
-
+                requirementLabel.setLabelText(requirementText);
                 view.addChild(requirementLabel);
             }
 
             final Label effectLabel = new Label();
-            effectLabel.setLabelText(research.getEffect().getDesc().getString());
-            effectLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() * 2 + INITIAL_Y_OFFSET + INITIAL_Y_OFFSET);
-            effectLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
-
-            view.addChild(effectLabel);
+            if (research.getEffects() != null)
+            {
+                String effectText = "";
+                for (int txt = 0; txt < research.getEffects().size(); txt++)
+                {
+                    //TODO: handle display of more than one research effect clearly.
+                    effectText = research.getEffects().get(txt).getDesc().getString();
+                }
+                effectLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() * 2 + INITIAL_Y_OFFSET + INITIAL_Y_OFFSET);
+                effectLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
+                effectLabel.setLabelText(effectText);
+                view.addChild(effectLabel);
+            }
 
             if (parentResearched && state == ResearchState.NOT_STARTED && !trueAbandoned)
             {

@@ -1,0 +1,28 @@
+{
+  "id": "arrowuse",
+  "name": "Consume Arrows",
+  "branch": "combat",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "taunt",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:arrow",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "guardtower",
+    "buildingLevel": 2
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockAbility": "Consume Arrows",
+    "value": true
+  }
+  ]
+}

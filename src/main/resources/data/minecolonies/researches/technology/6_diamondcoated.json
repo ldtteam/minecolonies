@@ -1,0 +1,21 @@
+{
+  "id": "diamondcoated",
+  "name": "Diamond Coated",
+  "branch": "technology",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "steelbracing",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:diamond",
+    "itemCount": 128
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Tool Durability",
+    "value": 0.9
+  }
+  ]
+}

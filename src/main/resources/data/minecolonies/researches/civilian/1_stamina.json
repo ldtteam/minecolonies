@@ -1,0 +1,21 @@
+{
+  "id": "stamina",
+  "name": "Stamina",
+  "branch": "civilian",
+  "exclusiveChildResearch": true,
+  "requiredUniversityLevel": 1,
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:carrot",
+    "itemCount": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Hospital",
+    "value": true
+  }
+  ]
+}

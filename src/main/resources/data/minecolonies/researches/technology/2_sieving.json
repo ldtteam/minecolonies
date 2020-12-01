@@ -1,0 +1,28 @@
+{
+  "id": "sieving",
+  "name": "Sieving",
+  "branch": "technology",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "woodwork",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:string",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "fisherman",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Sifter",
+    "value": true
+  }
+  ]
+}

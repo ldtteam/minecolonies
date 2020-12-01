@@ -1,0 +1,21 @@
+{
+  "id": "glutton",
+  "name": "Glutton",
+  "branch": "civilian",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "epicure",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cookie",
+    "itemCount": 512
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Saturation",
+    "value": 2
+  }
+  ]
+}

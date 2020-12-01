@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
@@ -90,9 +91,15 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
                       .getResearch(branch, research.getId())
                       .setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
                 }
-                else if (research.getResearchRequirement() != null && !research.getResearchRequirement().isFulfilled(colony))
+                else if (research.getResearchRequirement() != null && !research.getResearchRequirement().isEmpty())
                 {
-                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.requirementnotmet"), player.getUniqueID());
+                    for(IResearchRequirement requirement : research.getResearchRequirement())
+                    {
+                        if(!requirement.isFulfilled(colony))
+                        {
+                            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.requirementnotmet"), player.getUniqueID());
+                        }
+                    }
                     return;
                 }
                 else

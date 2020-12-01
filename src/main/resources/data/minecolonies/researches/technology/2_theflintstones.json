@@ -1,0 +1,28 @@
+{
+  "id": "theflintstones",
+  "name": "The Flintstones",
+  "branch": "technology",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "hot",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:stone_bricks",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "smeltery",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Stonesmeltery",
+    "value": true
+  }
+  ]
+}

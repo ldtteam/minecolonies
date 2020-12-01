@@ -1,0 +1,28 @@
+{
+  "id": "knighttraining",
+  "name": "Knight Training",
+  "branch": "combat",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "squiretraining",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:shield",
+    "itemCount": 8
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "combatacademy",
+    "buildingLevel": 4
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Block Attacks",
+    "value": 0.1
+  }
+  ]
+}

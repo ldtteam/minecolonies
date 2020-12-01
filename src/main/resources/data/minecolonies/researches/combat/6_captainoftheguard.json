@@ -1,0 +1,21 @@
+{
+  "id": "captainoftheguard",
+  "name": "Captain of the Guard",
+  "branch": "combat",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "captaintraining",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:shield",
+    "itemCount": 27
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Block Attacks",
+    "value": 0.5
+  }
+  ]
+}

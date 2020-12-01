@@ -1,0 +1,21 @@
+{
+  "id": "redstonepowered",
+  "name": "Redstone Powered",
+  "branch": "technology",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "isthisredstone",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:redstone",
+    "itemCount": 256
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Block Break Speed",
+    "value": 0.25
+  }
+  ]
+}

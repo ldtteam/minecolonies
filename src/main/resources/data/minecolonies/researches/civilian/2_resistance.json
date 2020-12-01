@@ -1,0 +1,28 @@
+{
+  "id": "resistance",
+  "name": "Resistance",
+  "branch": "civilian",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "stamina",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:golden_apple",
+    "itemCount": 1
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "cook",
+    "buildingLevel": 2
+  }
+  ],
+  "effects":
+  [
+  {
+    "additionModifier": "Healing Saturation Limit",
+    "value": -0.5
+  }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "diligent",
+  "name": "Diligent",
+  "branch": "civilian",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "keen",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:book",
+    "itemCount": 6
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "library",
+    "buildingLevel": 2
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Leveling",
+    "value": 0.05
+  }
+  ]
+}

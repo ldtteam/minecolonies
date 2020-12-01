@@ -1,0 +1,28 @@
+{
+  "id": "evasion",
+  "name": "Evasion",
+  "branch": "combat",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "improveddodge",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:leather",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "smeltery",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Archer Armor",
+    "value": 0.25
+  }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "pavetheroad",
+  "name": "Pave the Road",
+  "branch": "technology",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "rockingroll",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:white_concrete",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "crusher",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Concrete Mixer",
+    "value": true
+  }
+  ]
+}

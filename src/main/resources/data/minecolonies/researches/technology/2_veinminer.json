@@ -1,0 +1,28 @@
+{
+  "id": "veinminer",
+  "name": "Veinminer",
+  "branch": "technology",
+  "requiredUniversityLevel": 2,
+  "parentResearch": "hittingiron",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:iron_ore",
+    "itemCount": 32
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "miner",
+    "buildingLevel": 1
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "More Ores",
+    "value": 0.1
+  }
+  ]
+}

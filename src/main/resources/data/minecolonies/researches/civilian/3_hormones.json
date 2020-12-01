@@ -1,0 +1,28 @@
+{
+  "id": "hormones",
+  "name": "Hormones",
+  "branch": "civilian",
+  "requiredUniversityLevel": 3,
+  "parentResearch": "nurture",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cooked_chicken",
+    "itemCount": 64
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "school",
+    "buildingLevel": 3
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Growth",
+    "value": 0.1
+  }
+  ]
+}

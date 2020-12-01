@@ -1,0 +1,21 @@
+{
+  "id": "beanstalk",
+  "name": "Beanstalk",
+  "branch": "civilian",
+  "requiredUniversityLevel": 6,
+  "parentResearch": "growth",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:cooked_chicken",
+    "itemCount": 512
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Growth",
+    "value": 1
+  }
+  ]
+}

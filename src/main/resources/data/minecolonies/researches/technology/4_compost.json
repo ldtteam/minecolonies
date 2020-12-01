@@ -1,0 +1,28 @@
+{
+  "id": "compost",
+  "name": "Compost",
+  "branch": "technology",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "dung",
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:wheat_seeds",
+    "itemCount": 256
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "miner",
+    "buildingLevel": 5
+  }
+  ],
+  "effects":
+  [
+  {
+    "multiplierModifier": "Farming",
+    "value": 0.5
+  }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": "hot",
+  "name": "Hot!",
+  "branch": "technology",
+  "requiredUniversityLevel": 1,
+  "requiredItems":
+  [
+  {
+    "itemName": "minecraft:lava_bucket",
+    "itemCount": 4
+  }
+  ],
+  "requiredBuildings":
+  [
+  {
+    "building": "miner",
+    "buildingLevel": 2
+  }
+  ],
+  "effects":
+  [
+  {
+    "unlockBuilding": "Smeltery",
+    "value": true
+  }
+  ]
+}

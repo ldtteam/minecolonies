@@ -3,6 +3,7 @@ package com.minecolonies.coremod.research;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.ILocalResearchTree;
+import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 
@@ -61,7 +62,10 @@ public class LocalResearch implements ILocalResearch
             if (progress >= BASE_RESEARCH_TIME * Math.pow(2, depth - 1))
             {
                 state = ResearchState.FINISHED;
-                effects.applyEffect(IGlobalResearchTree.getInstance().getResearch(this.branch, this.getId()).getEffect());
+                for(IResearchEffect effect : IGlobalResearchTree.getInstance().getResearch(this.branch, this.getId()).getEffects())
+                {
+                    effects.applyEffect(effect);
+                }
                 tree.finishResearch(this.id);
                 return true;
             }
