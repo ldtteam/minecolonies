@@ -189,6 +189,14 @@ public class WorldUtil
         return regKey == type;
     }
 
+    /**
+     * Check to see if the world is peaceful. 
+     * 
+     * There are several checks performed here, currently both gamerule and difficulty. 
+     * 
+     * @param world world to check
+     * @return true if peaceful
+     */
     public static boolean isPeaceful(@NotNull final World world)
     {
         return !world.getWorldInfo().getGameRulesInstance().getBoolean(GameRules.DO_MOB_SPAWNING) || world.getDifficulty().equals(Difficulty.PEACEFUL);
