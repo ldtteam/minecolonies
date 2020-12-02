@@ -257,7 +257,7 @@ public final class BackUpHelper
         {
             final CompoundNBT colonyCompound = new CompoundNBT();
             colony.write(colonyCompound);
-            saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension())), colonyCompound);
+            saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension().getLocation())), colonyCompound);
         }
     }
 
@@ -321,7 +321,7 @@ public final class BackUpHelper
         {
             if (loadDeleted)
             {
-                compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyId, dimension)));
+                compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyId, dimension.getLocation())));
             }
             if (compound == null)
             {
