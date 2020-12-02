@@ -3,11 +3,14 @@ package com.minecolonies.coremod.research;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.ILocalResearchTree;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
+import com.minecolonies.api.research.factories.ILocalResearchFactory;
 import com.minecolonies.api.research.util.ResearchState;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -120,9 +123,42 @@ public class LocalResearchTree implements ILocalResearchTree
               addResearch(research.getBranch(), research);
               if (research.getState() == ResearchState.FINISHED)
               {
-                  for(IResearchEffect effect : MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearch(research.getBranch(), research.getId()).getEffects())
+                  /// region Updated ID helper.  TODO: Remove for 1.17+, or after sufficient update time.
+                  if (!MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearch(research.getBranch(), research.getId()))
                   {
-                      effects.applyEffect(effect);
+                      switch (research.getId())
+                      {
+                          case "tickshot":
+                              research = new LocalResearch("trickshot", "combat", 3);
+                              break;
+                          case "whirldwind":
+                              research = new LocalResearch("whirlwind", "combat", 6);
+                              break;
+                          case "repost":
+                              research = new LocalResearch("riposte", "combat", 3);
+                              break;
+                          case "ironarmour":
+                              research = new LocalResearch("ironarmor", "combat", 4);
+                              break;
+                          case "steelarmour":
+                              research = new LocalResearch("steelarmor", "combat", 5);
+                              break;
+                      }
+                  }
+                  /// endregion
+
+                  // Even after correction, we do still need to check; it's possible for someone to have old save data and remove the research,
+                  // or to have a different research that was in a now-removed datapack.
+                  if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearch(research.getBranch(), research.getId()))
+                  {
+                      for (IResearchEffect effect : MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearch(research.getBranch(), research.getId()).getEffects())
+                      {
+                          effects.applyEffect(effect);
+                      }
+                  }
+                  else
+                  {
+                      Log.getLogger().warn("Research " + research.getId() + " was in colony save file, but not found as valid current research.  Progress on this research may be reset.");
                   }
               }
           });

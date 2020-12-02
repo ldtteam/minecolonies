@@ -340,7 +340,7 @@ public class GlobalResearch implements IGlobalResearch
      */
     public GlobalResearch(@NotNull final JsonObject researchJson)
     {
-        if (researchJson.has(RESEARCH_ID_PROP) && researchJson.get(RESEARCH_ID_PROP).isJsonPrimitive())
+        if (researchJson.has(RESEARCH_ID_PROP) && researchJson.get(RESEARCH_ID_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_ID_PROP).getAsJsonPrimitive().isString())
         {
             this.id = researchJson.get(RESEARCH_ID_PROP).getAsString();
         }
@@ -349,7 +349,7 @@ public class GlobalResearch implements IGlobalResearch
             this.id = "";
         }
 
-        if (researchJson.has(RESEARCH_NAME_PROP) && researchJson.get(RESEARCH_NAME_PROP).isJsonPrimitive())
+        if (researchJson.has(RESEARCH_NAME_PROP) && researchJson.get(RESEARCH_NAME_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_NAME_PROP).getAsJsonPrimitive().isString())
         {
             this.desc = researchJson.get(RESEARCH_NAME_PROP).getAsString();
         }
@@ -358,7 +358,7 @@ public class GlobalResearch implements IGlobalResearch
             this.desc = "ParseError";
         }
 
-        if (researchJson.has(RESEARCH_BRANCH_PROP) && researchJson.get(RESEARCH_BRANCH_PROP).isJsonPrimitive())
+        if (researchJson.has(RESEARCH_BRANCH_PROP) && researchJson.get(RESEARCH_BRANCH_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_BRANCH_PROP).getAsJsonPrimitive().isString())
         {
             this.branch = researchJson.get(RESEARCH_BRANCH_PROP).getAsString();
         }
@@ -367,14 +367,14 @@ public class GlobalResearch implements IGlobalResearch
             this.branch = "parseerrors";
         }
 
-        if (researchJson.has(RESEARCH_EXCLUSIVE_CHILD_PROP) && researchJson.get(RESEARCH_EXCLUSIVE_CHILD_PROP).isJsonPrimitive())
+        if (researchJson.has(RESEARCH_EXCLUSIVE_CHILD_PROP) && researchJson.get(RESEARCH_EXCLUSIVE_CHILD_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_EXCLUSIVE_CHILD_PROP).getAsJsonPrimitive().isBoolean())
         {
             this.onlyChild = researchJson.get(RESEARCH_EXCLUSIVE_CHILD_PROP).getAsBoolean();
         }
 
-        if (researchJson.has(RESEARCH_UNIVERSITY_LEVEL_PROP) && researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).isJsonPrimitive())
+        if (researchJson.has(RESEARCH_UNIVERSITY_LEVEL_PROP) && researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).getAsJsonPrimitive().isNumber())
         {
-            this.depth = researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).getAsInt();
+            this.depth = researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).getAsNumber().intValue();
         }
         else
         {
@@ -382,7 +382,7 @@ public class GlobalResearch implements IGlobalResearch
             Log.getLogger().info("No declared university level for " + this.branch + "/" + this.id );
         }
 
-        if (researchJson.has(RESEARCH_PARENT_PROP) && researchJson.get(RESEARCH_PARENT_PROP).isJsonPrimitive())
+        if (researchJson.has(RESEARCH_PARENT_PROP) && researchJson.get(RESEARCH_PARENT_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_PARENT_PROP).getAsJsonPrimitive().isString())
         {
             this.parent = researchJson.get(RESEARCH_PARENT_PROP).getAsString();
         }
@@ -395,7 +395,7 @@ public class GlobalResearch implements IGlobalResearch
         {
             for (final JsonElement itemArrayElement : researchJson.get(RESEARCH_REQUIRED_ITEMS_PROP).getAsJsonArray())
             {
-                if (itemArrayElement.isJsonObject() && itemArrayElement.getAsJsonObject().has(RESEARCH_ITEM_NAME_PROP))
+                if (itemArrayElement.isJsonObject() && itemArrayElement.getAsJsonObject().has(RESEARCH_ITEM_NAME_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsJsonPrimitive().isString())
                 {
 
                     final String[] itemName = itemArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsString().split(":");
@@ -414,9 +414,9 @@ public class GlobalResearch implements IGlobalResearch
                         continue;
                     }
                     final ItemStack itemStack = new ItemStack(item);
-                    if (itemArrayElement.getAsJsonObject().has(RESEARCH_ITEM_COUNT_PROP))
+                    if (itemArrayElement.getAsJsonObject().has(RESEARCH_ITEM_COUNT_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_ITEM_COUNT_PROP).getAsJsonPrimitive().isNumber())
                     {
-                        itemStack.setCount(itemArrayElement.getAsJsonObject().get(RESEARCH_ITEM_COUNT_PROP).getAsInt());
+                        itemStack.setCount(itemArrayElement.getAsJsonObject().get(RESEARCH_ITEM_COUNT_PROP).getAsNumber().intValue());
                     }
                     this.costList.add(new ItemStorage(itemStack, false));
                 }
@@ -427,12 +427,13 @@ public class GlobalResearch implements IGlobalResearch
         {
             for (final JsonElement itemArrayElement : researchJson.get(RESEARCH_REQUIRED_BUILDINGS_PROP).getAsJsonArray())
             {
-                if (itemArrayElement.isJsonObject() && itemArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_BUILDING_NAME_PROP)
-                      && itemArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_BUILDING_LEVEL_PROP))
+                if (itemArrayElement.isJsonObject() &&
+                      itemArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_BUILDING_NAME_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_NAME_PROP).getAsJsonPrimitive().isString()
+                      && itemArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_BUILDING_LEVEL_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_LEVEL_PROP).getAsJsonPrimitive().isNumber())
                 {
 
                     BuildingResearchRequirement requirement = new BuildingResearchRequirement(
-                      itemArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_LEVEL_PROP).getAsInt(),
+                      itemArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_LEVEL_PROP).getAsNumber().intValue(),
                       itemArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_NAME_PROP).getAsString());
                     this.requirements.add(requirement);
                 }
@@ -447,22 +448,24 @@ public class GlobalResearch implements IGlobalResearch
                 if (itemArrayElement.isJsonObject())
                 {
                     final IResearchEffect effect;
-                    if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_ADDITION) && itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP))
+                    if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_ADDITION) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_ADDITION).getAsJsonPrimitive().isString()
+                          && itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsJsonPrimitive().isNumber())
                     {
                         effect = new AdditionModifierResearchEffect(
                           itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_ADDITION).getAsString(),
                           itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsDouble());
                     }
-                    else if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_MULTIPLIER_PROP) && itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP))
+                    else if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_MULTIPLIER_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_MULTIPLIER_PROP).getAsJsonPrimitive().isString()
+                          && itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsJsonPrimitive().isNumber())
                     {
                         effect = new MultiplierModifierResearchEffect(
                           itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_MULTIPLIER_PROP).getAsString(),
                           itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsDouble());
                     }
-                    else if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_UNLOCK_ABILITY_PROP))
+                    else if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_UNLOCK_ABILITY_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_UNLOCK_ABILITY_PROP).getAsJsonPrimitive().isString())
                     {
                         final boolean effectResult;
-                        if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP))
+                        if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsJsonPrimitive().isBoolean())
                         {
                             effectResult = itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsBoolean();
                         }
@@ -475,10 +478,10 @@ public class GlobalResearch implements IGlobalResearch
                           effectResult);
                         this.effects.add(effect);
                     }
-                    else if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_UNLOCK_BUILDING_PROP))
+                    else if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_UNLOCK_BUILDING_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_UNLOCK_BUILDING_PROP).getAsJsonPrimitive().isString())
                     {
                         final boolean effectResult;
-                        if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP))
+                        if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsJsonPrimitive().isBoolean())
                         {
                             effectResult = itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsBoolean();
                         }
@@ -502,5 +505,8 @@ public class GlobalResearch implements IGlobalResearch
                 }
             }
         }
+
+        
+
     }
 }

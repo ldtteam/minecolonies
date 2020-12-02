@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages.server.colony.building.university;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -86,10 +87,13 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
                 if (player.isCreative())
                 {
                     research.startResearch(player, colony.getResearchManager().getResearchTree());
-                    colony.getResearchManager()
-                      .getResearchTree()
-                      .getResearch(branch, research.getId())
-                      .setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
+                    if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get())
+                    {
+                        colony.getResearchManager()
+                          .getResearchTree()
+                          .getResearch(branch, research.getId())
+                          .setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
+                    }
                 }
                 else if (research.getResearchRequirement() != null && !research.getResearchRequirement().isEmpty())
                 {

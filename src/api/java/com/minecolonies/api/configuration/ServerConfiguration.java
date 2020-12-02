@@ -57,6 +57,8 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue     diseaseModifier;
     public final ForgeConfigSpec.BooleanValue forceLoadColony;
     public final ForgeConfigSpec.IntValue     badVisitorsChance;
+    public final ForgeConfigSpec.IntValue     researchSpeedMultiplier;
+    public final ForgeConfigSpec.BooleanValue researchCreativeCompletion;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -204,6 +206,8 @@ public class ServerConfiguration extends AbstractConfiguration
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
         forceLoadColony = defineBoolean(builder, "forceloadcolony", false);
         badVisitorsChance = defineInteger(builder, "badvisitorchance", 2, 1, 100);
+        researchSpeedMultiplier = defineInteger(builder, "researchspeedmultiplier", 1, 1, 10);
+        researchCreativeCompletion = defineBoolean(builder, "researchcreativecompletion", true);
 
         swapToCategory(builder, "commands");
         

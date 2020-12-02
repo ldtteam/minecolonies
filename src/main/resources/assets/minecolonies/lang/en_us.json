@@ -37,6 +37,12 @@
   "minecolonies.config.badvisitorchance": "Bad Recruitment Chance",
   "minecolonies.config.badvisitorchance.comment": "Chance to get an evil Tavern visitor that will run off with the resources you give them. This is a %. [Default: 2]",
 
+  "minecolonies.config.researchspeedmultiplier": "Research Speed Multiplier",
+  "minecolonies.config.researchspeedmultiplier.comment": "Rate research is completed.  Default will correspond to ~ 1h, 2h, 4h, 8h, 16h, 32h. \n Because of sleep cycles, high values will progress much faster. \n Generally only recommended for packs that increase research unlock costs, or add many additional researches.",
+
+  "minecolonies.config.researchcreativecompletion": "Research Creative Completion",
+  "minecolonies.config.researchcreativecompletion.comment": "Allows automatic and (near) instant completion of research for players in creative mode.  If false, creative players will still be able to begun research, but will see normal progress rates.",
+
   "minecolonies.config.listofplantables": "Florist Flowers",
   "minecolonies.config.listofplantables.comment": "The items and item-tags that the Florist can plant.",
 

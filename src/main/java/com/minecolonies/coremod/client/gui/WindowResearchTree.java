@@ -217,7 +217,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             if (state == ResearchState.IN_PROGRESS)
             {
                 //The player will reach the end of the research if he is in creative mode and the research was in progress
-                if (mc.player.isCreative() && localResearch.getProgress() < BASE_RESEARCH_TIME * Math.pow(2, depth - 1))
+                if (mc.player.isCreative() && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get() && localResearch.getProgress() < BASE_RESEARCH_TIME * Math.pow(2, depth - 1))
                 {
                     Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch()));
                 }

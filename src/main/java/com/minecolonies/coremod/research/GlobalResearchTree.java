@@ -32,6 +32,13 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
+    public boolean hasResearch(final String branch, final String id)
+    {
+        return (researchTree.containsKey(branch) && researchTree.get(branch).containsKey(id));
+
+    }
+
+    @Override
     public void addResearch(final String branch, final IGlobalResearch research)
     {
         final Map<String, IGlobalResearch> branchMap;

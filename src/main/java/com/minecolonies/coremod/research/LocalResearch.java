@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.research;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.ILocalResearchTree;
@@ -58,7 +59,7 @@ public class LocalResearch implements ILocalResearch
     {
         if (state == ResearchState.IN_PROGRESS)
         {
-            progress++;
+            progress += (1 * MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchSpeedMultiplier.get());
             if (progress >= BASE_RESEARCH_TIME * Math.pow(2, depth - 1))
             {
                 state = ResearchState.FINISHED;

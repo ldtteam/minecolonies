@@ -3,11 +3,9 @@ package com.minecolonies.coremod.datalistener;
 import com.google.gson.*;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.registry.IResearchEffectRegistry;
 import com.minecolonies.api.util.Log;
 
 import com.minecolonies.coremod.research.GlobalResearch;
-import com.minecolonies.coremod.research.registry.ResearchEffectRegistry;
 import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
@@ -46,13 +44,17 @@ public class ResearchListener extends JsonReloadListener
             JsonObject researchJson = entry.getValue().getAsJsonObject();
 
             //Check for absolute minimum required types, and log as warning if malformed.
-            if (!researchJson.has(GlobalResearch.RESEARCH_ID_PROP)
-                  || !researchJson.has(GlobalResearch.RESEARCH_NAME_PROP)
-                  || !researchJson.has(GlobalResearch.RESEARCH_BRANCH_PROP)
-                  || !researchJson.has(GlobalResearch.RESEARCH_UNIVERSITY_LEVEL_PROP))
+            if (!(researchJson.has(GlobalResearch.RESEARCH_ID_PROP) && researchJson.get(GlobalResearch.RESEARCH_ID_PROP).getAsJsonPrimitive().isString())
+                  || !(researchJson.has(GlobalResearch.RESEARCH_NAME_PROP) && researchJson.get(GlobalResearch.RESEARCH_ID_PROP).getAsJsonPrimitive().isString())
+                  || !(researchJson.has(GlobalResearch.RESEARCH_BRANCH_PROP) && researchJson.get(GlobalResearch.RESEARCH_ID_PROP).getAsJsonPrimitive().isString()))
             {
                 Log.getLogger().warn(entry.getKey() + "missing required fields");
                 continue;
+            }
+
+            if((researchJson.has(GlobalResearch.RESEARCH_UNIVERSITY_LEVEL_PROP) && researchJson.get(GlobalResearch.RESEARCH_ID_PROP).getAsJsonPrimitive().isNumber()))
+            {
+                Log.getLogger().warn(entry.getKey() + "reading numbers wrong.");
             }
 
             //Pretty much anything else should be allowed: it's plausible pack designers may want a research type without a cost or effect.

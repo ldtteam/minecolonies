@@ -33,11 +33,13 @@ public interface IGlobalResearchTree
     IGlobalResearch getResearch(final String branch, final String id);
 
     /**
-     * Get an effect id for a particular research
-     * @param id    the id of the research.
-     * @return the effect id
+     * Check if a research exists, by id.
+     *
+     * @param id     the id of the research.
+     * @param branch the branch of the research.
+     * @return true if the research exists, false if it does not.
      */
-    String getEffectIdForResearch(final @NotNull String id);
+    boolean hasResearch(final String branch, final String id);
 
     /**
      * Add a research to the tree.
