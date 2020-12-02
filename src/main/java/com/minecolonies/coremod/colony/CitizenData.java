@@ -1214,12 +1214,12 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-        if (workBuilding != null && !workBuilding.isGuardBuildingNear())
+        if (workBuilding != null && !workBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
             triggerInteraction(new SimpleNotificationInteraction(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.noguardnearwork"), ChatPriority.CHITCHAT));
         }
 
-        if (homeBuilding != null && !homeBuilding.isGuardBuildingNear())
+        if (homeBuilding != null && !homeBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
             triggerInteraction(new SimpleNotificationInteraction(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.noguardnearhome"), ChatPriority.CHITCHAT));
         }

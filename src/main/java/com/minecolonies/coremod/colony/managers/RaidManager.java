@@ -595,7 +595,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public boolean canRaid()
     {
-        return colony.getWorld().getDifficulty() != Difficulty.PEACEFUL
+        return !WorldUtil.isPeaceful(colony.getWorld())
                  && MineColonies.getConfig().getServer().doBarbariansSpawn.get()
                  && colony.getRaiderManager().canHaveRaiderEvents()
                  && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();
