@@ -363,6 +363,7 @@ task("createChangelog") {
 
         out << "# Minecolonies Changelog \n"
         out << "## Version: _" + version + "_ \n"
+        out << "## Structurize Version: _" + config.structurize_version + "_ \n"
 
         if (changes.size() > 0) {
             for (int i = 0; i < changes.size(); i++) {
