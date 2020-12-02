@@ -1,6 +1,6 @@
 {
   "id": "recipebook",
-  "name": "Recipe book",
+  "name": "Recipe Book",
   "branch": "technology",
   "requiredUniversityLevel": 4,
   "parentResearch": "cheatsheet",
