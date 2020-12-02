@@ -60,6 +60,7 @@ public class ResearchListener extends JsonReloadListener
             //Pretty much anything else should be allowed: it's plausible pack designers may want a research type without a cost or effect.
             //It's possible we could dynamically derive university levels from parents, but doing so as a rule will prevent research branches that start at T2 or deeper.
             final GlobalResearch research = new GlobalResearch(researchJson);
+            Log.getLogger().info("Parsed research recipe from " + entry.getKey() + " [" + research.getBranch() + "/" + research.getId() + "]"  );
             researchMap.put(research.getId(), research);
         }
 

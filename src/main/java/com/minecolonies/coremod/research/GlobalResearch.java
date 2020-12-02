@@ -185,7 +185,8 @@ public class GlobalResearch implements IGlobalResearch
         this.effects.add(effect);
         this.depth = universityLevel;
         this.branch = branch;
-        IResearchEffectRegistry.getInstance().register(effect, true);
+        IResearchEffectRegistry.getInstance().register(effect, false);
+        Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
     }
 
     @Override
