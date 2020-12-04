@@ -10,9 +10,10 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.research.effects.IResearchEffect;
+import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.block.Block;
@@ -354,19 +355,20 @@ public class CustomRecipe
      */
     public boolean isValidForBuilding(IBuildingWorker building)
     {
-        IResearchEffect<?> requiredEffect = null;
-        IResearchEffect<?> excludedEffect = null;
+        AbstractResearchEffect<?> requiredEffect = null;
+        AbstractResearchEffect<?> excludedEffect = null;
         final IColony colony = building.getColony();
         final int bldgLevel = building.getBuildingLevel();
-        
+
+        IGlobalResearchTree gr = IGlobalResearchTree.getInstance();
         if (researchId != null)
         {
-            requiredEffect = colony.getResearchManager().getResearchEffects().getEffect(researchId, UnlockAbilityResearchEffect.class);
+            requiredEffect = colony.getResearchManager().getResearchEffects().getEffect(gr.getEffectIdForResearch(researchId), AbstractResearchEffect.class);
         }
 
         if (excludedResearchId != null)
         {
-            excludedEffect = colony.getResearchManager().getResearchEffects().getEffect(excludedResearchId, UnlockAbilityResearchEffect.class);
+            excludedEffect = colony.getResearchManager().getResearchEffects().getEffect(gr.getEffectIdForResearch(excludedResearchId), AbstractResearchEffect.class);
         }
 
         if(mustExist)
