@@ -521,7 +521,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public int calculateRaiderAmount(final int raidLevel)
     {
-        return Math.min(MineColonies.getConfig().getCommon().maxBarbarianSize.get(),
+        return 1 + Math.min(MineColonies.getConfig().getCommon().maxBarbarianSize.get(),
           (int) ((raidLevel / SPAWN_MODIFIER) * getRaidDifficultyModifier() * (1.0 + colony.getMessagePlayerEntities().size() * INCREASE_PER_PLAYER) * ((
             colony.getWorld().rand.nextDouble() * 0.5d) + 0.75)));
     }
