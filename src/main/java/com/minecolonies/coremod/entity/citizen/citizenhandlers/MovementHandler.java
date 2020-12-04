@@ -104,7 +104,7 @@ public class MovementHandler extends MovementController
         }
         else if (this.action == net.minecraft.entity.ai.controller.MovementController.Action.JUMPING)
         {
-            this.mob.setAIMoveSpeed((float) (this.speed * this.mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue()));
+            this.mob.setAIMoveSpeed((float) (this.speed * speedAtr.getValue()));
 
             // Avoid beeing stuck in jumping while in liquids
             final BlockPos blockpos = new BlockPos(this.mob);
