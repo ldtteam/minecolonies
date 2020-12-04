@@ -177,7 +177,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (super.attackEntityFrom(damageSource, damage))
+        if ( !( damageSource.getTrueSource() instanceof EntityCitizen ) && super.attackEntityFrom(damageSource, damage))
         {
             if (damageSource.getTrueSource() instanceof LivingEntity && damage > 1.01f)
             {
