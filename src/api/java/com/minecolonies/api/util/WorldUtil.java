@@ -8,7 +8,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DimensionType;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkStatus;
@@ -185,5 +187,18 @@ public class WorldUtil
         }
         RegistryKey<DimensionType> regKey = RegistryKey.getOrCreateKey(Registry.DIMENSION_TYPE_KEY, loc);
         return regKey == type;
+    }
+
+    /**
+     * Check to see if the world is peaceful. 
+     * 
+     * There are several checks performed here, currently both gamerule and difficulty. 
+     * 
+     * @param world world to check
+     * @return true if peaceful
+     */
+    public static boolean isPeaceful(@NotNull final World world)
+    {
+        return !world.getWorldInfo().getGameRulesInstance().getBoolean(GameRules.DO_MOB_SPAWNING) || world.getDifficulty().equals(Difficulty.PEACEFUL);
     }
 }
