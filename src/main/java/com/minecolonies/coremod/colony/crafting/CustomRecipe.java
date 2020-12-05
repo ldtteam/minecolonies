@@ -470,7 +470,7 @@ public class CustomRecipe
                     this.getRecipeId(),
                     ModRecipeTypes.CLASSIC_ID,
                     null, //alternate outputs
-                    null, //secondary output
+                    secondary, //secondary output
                     lootTable
                     );
             }
@@ -486,7 +486,7 @@ public class CustomRecipe
                     this.getRecipeId(),
                     ModRecipeTypes.MULTI_OUTPUT_ID,
                     altOutputs, //alternate outputs
-                    null, //secondary output
+                    secondary, //secondary output
                     lootTable
                     );
             }
