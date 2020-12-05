@@ -63,6 +63,11 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
      */
     private static final String TYPE_TAG = "type";
 
+    /**
+     * Compound tag for Loot Table
+     */
+    private static final String LOOT_TAG = "loot-table";
+
     @NotNull
     @Override
     public TypeToken<RecipeStorage> getFactoryOutputType()
@@ -88,9 +93,10 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
       final ResourceLocation source,
       final ResourceLocation type,
       final List<ItemStack> altOutputs,
-      final List<ItemStack> secOutputs)
+      final List<ItemStack> secOutputs,
+      final ResourceLocation lootTable)
     {
-        return new RecipeStorage(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs);
+        return new RecipeStorage(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs, lootTable);
     }
 
     @NotNull
@@ -138,6 +144,10 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         }
         compound.put(SECOUTPUT_TAG, secOutputTagList);
 
+        if(recipeStorage.getLootTable() != null)
+        {
+            compound.putString(LOOT_TAG, recipeStorage.getLootTable().toString());
+        }
 
         return compound;
     }
@@ -181,7 +191,9 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             secOutputs.add(ItemStack.read(secOutputTag));
         }
 
-        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs);
+        final ResourceLocation lootTable = nbt.contains(LOOT_TAG) ? new ResourceLocation(nbt.getString(LOOT_TAG)) : null; 
+
+        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable);
     }
 
     @Override
@@ -206,6 +218,8 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         packetBuffer.writeInt(input.getSecondaryOutputs().size());
         input.getSecondaryOutputs().forEach(stack -> packetBuffer.writeItemStack(stack));
+
+        packetBuffer.writeResourceLocation(input.getLootTable());
 
         controller.serialize(packetBuffer, input.getToken());
     }
@@ -239,9 +253,10 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             secOutputs.add(buffer.readItemStack());
         }
 
+        final ResourceLocation lootTable = buffer.readResourceLocation();
 
         final IToken<?> token = controller.deserialize(buffer);
-        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, null, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs);
+        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, null, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable);
     }
 
     @Override

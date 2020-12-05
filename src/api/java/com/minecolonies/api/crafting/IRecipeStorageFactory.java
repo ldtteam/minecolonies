@@ -68,6 +68,11 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
             throw new IllegalArgumentException("Eighth parameter is supposed to be a List<ItemStack> or Null!");
         }
 
+        if (context.length > MIN_PARAMS_IRECIPESTORAGE + 5 && context[8] != null && !(context[8] instanceof ResourceLocation))
+        {
+            throw new IllegalArgumentException("Eighth parameter is supposed to be a List<ItemStack> or Null!");
+        }
+
         final List<ItemStack> input = (List<ItemStack>) context[0];
         final int gridSize = (int) context[1];
         final ItemStack primaryOutput = (ItemStack) context[2];
@@ -76,7 +81,8 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
         final ResourceLocation type  = context.length < 6 ? null : (ResourceLocation) context[5];
         final List<ItemStack> altOutputs = context.length < 7 ? null :  (List<ItemStack>) context[6];
         final List<ItemStack> secOutputs = context.length < 8 ? null :  (List<ItemStack>) context[7];
-        return getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs);
+        final ResourceLocation lootTable = context.length < 9 ? null : (ResourceLocation) context[8];
+        return getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs, lootTable);
     }
 
     /**
@@ -103,7 +109,8 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
       @Nullable final ResourceLocation source,
       @Nullable final ResourceLocation type,
       @Nullable final List<ItemStack> altOutputs,
-      @Nullable final List<ItemStack> secOutputs
+      @Nullable final List<ItemStack> secOutputs,
+      @Nullable final ResourceLocation lootTable
       );
 }
 

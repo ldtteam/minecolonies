@@ -268,7 +268,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public boolean fullFillRecipe(final IRecipeStorage storage)
     {
         final List<IItemHandler> handlers = getHandlers();
-        return storage.fullfillRecipe(handlers);
+        return storage.fullfillRecipe(this.getColony().getWorld(), handlers);
     }
 
     @Override
