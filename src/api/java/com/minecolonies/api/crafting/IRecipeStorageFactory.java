@@ -70,7 +70,7 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
 
         if (context.length > MIN_PARAMS_IRECIPESTORAGE + 5 && context[8] != null && !(context[8] instanceof ResourceLocation))
         {
-            throw new IllegalArgumentException("Eighth parameter is supposed to be a List<ItemStack> or Null!");
+            throw new IllegalArgumentException("Ninth parameter is supposed to be a ResourceLocation or Null!");
         }
 
         final List<ItemStack> input = (List<ItemStack>) context[0];
