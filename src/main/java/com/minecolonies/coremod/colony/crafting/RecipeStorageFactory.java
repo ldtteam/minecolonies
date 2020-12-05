@@ -219,7 +219,11 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         packetBuffer.writeInt(input.getSecondaryOutputs().size());
         input.getSecondaryOutputs().forEach(stack -> packetBuffer.writeItemStack(stack));
 
-        packetBuffer.writeResourceLocation(input.getLootTable());
+        packetBuffer.writeBoolean(input.getLootTable() != null);
+        if(input.getLootTable() != null)
+        {
+            packetBuffer.writeResourceLocation(input.getLootTable());
+        }
 
         controller.serialize(packetBuffer, input.getToken());
     }
@@ -253,7 +257,11 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             secOutputs.add(buffer.readItemStack());
         }
 
-        final ResourceLocation lootTable = buffer.readResourceLocation();
+        ResourceLocation lootTable = null;
+        if(buffer.readBoolean())
+        {
+            lootTable = buffer.readResourceLocation();
+        }
 
         final IToken<?> token = controller.deserialize(buffer);
         return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, null, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable);
