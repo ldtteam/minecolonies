@@ -19,7 +19,6 @@ import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.registry.IResearchEffectRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public interface IMinecoloniesAPI
@@ -61,8 +60,6 @@ public interface IMinecoloniesAPI
     IInteractionResponseHandlerDataManager getInteractionResponseHandlerDataManager();
 
     IGlobalResearchTree getGlobalResearchTree();
-
-    IResearchEffectRegistry getResearchEffectRegistry();
 
     IForgeRegistry<ColonyEventTypeRegistryEntry> getColonyEventRegistry();
 

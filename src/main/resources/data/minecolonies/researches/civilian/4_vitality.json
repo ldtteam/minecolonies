@@ -1,28 +1,16 @@
 {
+  "comment": "name: Vitality * description : Healing Saturation Limit",
   "id": "vitality",
-  "name": "Vitality",
   "branch": "civilian",
   "requiredUniversityLevel": 4,
   "parentResearch": "resilience",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:golden_apple",
-    "itemCount": 16
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "cook",
-    "buildingLevel": 4
-  }
+   { "item": "minecraft:golden_apple", "quantity": 16 },
+   { "building": "cook", "level": 4 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Healing Saturation Limit",
-    "value": -1.5
-  }
+   { "healingsaturationlimitaddition": 3 }
   ]
 }

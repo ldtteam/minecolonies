@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.DYER_RESEARCH;
-
 /**
  * Hut for the dyer. No different from {@link AbstractBlockHut}
  */
@@ -30,10 +28,4 @@ public class BlockHutDyer extends AbstractBlockHut<BlockHutDyer>
         return ModBuildings.dyer;
     }
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, DYER_RESEARCH);
-    }
 }

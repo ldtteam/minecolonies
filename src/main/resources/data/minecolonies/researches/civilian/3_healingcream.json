@@ -1,28 +1,16 @@
 {
+  "comment": "name: Healing Cream * description : Regeneration",
   "id": "healingcream",
-  "name": "Healing Cream",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
   "parentResearch": "bandaid",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:golden_carrot",
-    "itemCount": 8
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "library",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:golden_carrot", "quantity": 8 },
+   { "building": "library", "level": 3 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Regeneration",
-    "value": 0.25
-  }
+   { "regenerationmultiplier": 2 }
   ]
 }

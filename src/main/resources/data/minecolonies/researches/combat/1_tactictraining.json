@@ -1,27 +1,15 @@
 {
+  "comment": "name: Tactic Training * description : Barracks",
   "id": "tactictraining",
-  "name": "Tactic Training",
   "branch": "combat",
   "requiredUniversityLevel": 1,
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:iron_block",
-    "itemCount": 3
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "guardtower",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:iron_block", "quantity": 3 },
+   { "building": "guardtower", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Barracks",
-    "value": true
-  }
+   { "blockhutbarracks": 1 }
   ]
 }

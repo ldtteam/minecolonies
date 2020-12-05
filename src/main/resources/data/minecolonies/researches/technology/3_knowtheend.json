@@ -1,28 +1,16 @@
 {
+  "comment": "name: Know the End? * description : Knowledge of The End",
   "id": "knowtheend",
-  "name": "Know the End?",
   "branch": "technology",
   "requiredUniversityLevel": 3,
   "parentResearch": "theflintstones",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:chorus_fruit",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "bakery",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:chorus_fruit", "quantity": 64 },
+   { "building": "bakery", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockAbility": "Knowledge of The End",
-    "value": true
-  }
+   { "knowledgeoftheendunlock": 1 }
   ]
 }

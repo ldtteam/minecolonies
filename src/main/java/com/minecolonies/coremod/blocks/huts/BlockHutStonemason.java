@@ -5,8 +5,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 
-import static com.minecolonies.api.research.util.ResearchConstants.STONEMASON_RESEARCH;
-
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -28,12 +26,5 @@ public class BlockHutStonemason extends AbstractBlockHut<BlockHutStonemason>
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.stoneMason;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, STONEMASON_RESEARCH);
     }
 }

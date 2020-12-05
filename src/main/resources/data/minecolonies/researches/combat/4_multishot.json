@@ -1,28 +1,16 @@
 {
+  "comment": "name: Multi Shot * description : Double Arrows",
   "id": "multishot",
-  "name": "Multi Shot",
   "branch": "combat",
   "requiredUniversityLevel": 4,
   "parentResearch": "trickshot",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:bow",
-    "itemCount": 9
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "archery",
-    "buildingLevel": 4
-  }
+   { "item": "minecraft:bow", "quantity": 9 },
+   { "building": "archery", "level": 4 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Double Arrows",
-    "value": 0.1
-  }
+   { "doublearrowsmultiplier": 2 }
   ]
 }

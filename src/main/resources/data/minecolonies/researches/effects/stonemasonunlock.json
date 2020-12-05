@@ -1,0 +1,6 @@
+{
+  "comment": "name: Stonemason * description : Unlocks Stonemason",
+  "id": "stonemasonunlock",
+  "effect": true,
+  "effectType": "unlockBuilding"
+}

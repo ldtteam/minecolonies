@@ -1,28 +1,16 @@
 {
+  "comment": "name: Those Lungs! * description : Glassblower",
   "id": "thoselungs",
-  "name": "Those Lungs!",
   "branch": "technology",
   "requiredUniversityLevel": 2,
   "parentResearch": "hot",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:glass",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "smeltery",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:glass", "quantity": 64 },
+   { "building": "smeltery", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Glassblower",
-    "value": true
-  }
+   { "blockhutglassblower": 1 }
   ]
 }

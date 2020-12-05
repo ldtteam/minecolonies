@@ -1,0 +1,6 @@
+{
+  "comment": "name: Archery * description : Unlocks Archery Building",
+  "id": "archeryunlock",
+  "effect": true,
+  "effectType": "unlockBuilding"
+}

@@ -1,28 +1,16 @@
 {
+  "comment": "name: Loaded * description : Citizen Inv Slots",
   "id": "loaded",
-  "name": "Loaded",
   "branch": "technology",
   "requiredUniversityLevel": 5,
   "parentResearch": "deeppockets",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:emerald",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "library",
-    "buildingLevel": 5
-  }
+   { "item": "minecraft:emerald", "quantity": 64 },
+   { "building": "library", "level": 5 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Citizen Inv Slots",
-    "value": 18
-  }
+   { "citizeninvslotsaddition": 2 }
   ]
 }

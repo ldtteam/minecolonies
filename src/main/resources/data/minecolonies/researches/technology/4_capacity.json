@@ -1,28 +1,16 @@
 {
+  "comment": "name: Capacity * description : Minimum Stock",
   "id": "capacity",
-  "name": "Capacity",
   "branch": "technology",
   "requiredUniversityLevel": 4,
   "parentResearch": "space",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecolonies:blockminecoloniesrack",
-    "itemCount": 32
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "miner",
-    "buildingLevel": 4
-  }
+   { "item": "minecolonies:blockminecoloniesrack", "quantity": 32 },
+   { "building": "miner", "level": 4 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Minimum Stock",
-    "value": 1
-  }
+   { "minimumstockmultiplier": 2 }
   ]
 }

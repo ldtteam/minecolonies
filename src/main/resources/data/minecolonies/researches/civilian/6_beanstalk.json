@@ -1,21 +1,15 @@
 {
+  "comment": "name: Beanstalk * description : Growth",
   "id": "beanstalk",
-  "name": "Beanstalk",
   "branch": "civilian",
   "requiredUniversityLevel": 6,
   "parentResearch": "growth",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:cooked_chicken",
-    "itemCount": 512
-  }
+   { "item": "minecraft:cooked_chicken", "quantity": 512 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Growth",
-    "value": 1
-  }
+   { "growthmultiplier": 5 }
   ]
 }

@@ -1,28 +1,16 @@
 {
+  "comment": "name: Let It Grow * description : Plantation",
   "id": "letitgrow",
-  "name": "Let it Grow",
   "branch": "technology",
   "requiredUniversityLevel": 2,
   "parentResearch": "biodegradable",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecolonies:compost",
-    "itemCount": 16
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "farmer",
-    "buildingLevel": 3
-  }
+   { "item": "minecolonies:compost", "quantity": 16 },
+   { "building": "farmer", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Plantation",
-    "value": true
-  }
+   { "blockhutplantation": 1 }
   ]
 }

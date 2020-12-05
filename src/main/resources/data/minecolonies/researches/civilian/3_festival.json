@@ -1,28 +1,16 @@
 {
+  "comment": "name: Festival * description : Happiness",
   "id": "festival",
-  "name": "Festival",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
   "parentResearch": "circus",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:cake",
-    "itemCount": 9
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "cook",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:cake", "quantity": 9 },
+   { "building": "cook", "level": 3 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Happiness",
-    "value": 0.1
-  }
+   { "happinessmultiplier": 2 }
   ]
 }

@@ -1,28 +1,16 @@
 {
+  "comment": "name: Full Stock! * description : Minimum Stock",
   "id": "fullstock",
-  "name": "Full Stock!",
   "branch": "technology",
   "requiredUniversityLevel": 5,
   "parentResearch": "capacity",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecolonies:blockminecoloniesrack",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "miner",
-    "buildingLevel": 5
-  }
+   { "item": "minecolonies:blockminecoloniesrack", "quantity": 64 },
+   { "building": "miner", "level": 5 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Minimum Stock",
-    "value": 2
-  }
+   { "minimumstockmultiplier": 3 }
   ]
 }

@@ -1,28 +1,16 @@
 {
+  "comment": "name: Resilience * description : Healing Saturation Limit",
   "id": "resilience",
-  "name": "Resilience",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
   "parentResearch": "resistance",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:golden_apple",
-    "itemCount": 8
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "cook",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:golden_apple", "quantity": 8 },
+   { "building": "cook", "level": 3 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Healing Saturation Limit",
-    "value": -1
-  }
+   { "healingsaturationlimitaddition": 2 }
   ]
 }

@@ -1,29 +1,16 @@
 {
+  "comment": "name: Regeneration * description : Retreat",
   "id": "regeneration",
-  "name": "Regeneration",
   "branch": "combat",
-  "exclusiveChildResearch": true,
   "requiredUniversityLevel": 2,
   "parentResearch": "improvedleather",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:emerald",
-    "itemCount": 1
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "guardtower",
-    "buildingLevel": 2
-  }
+   { "item": "minecraft:emerald", "quantity": 1 },
+   { "building": "guardtower", "level": 2 }
   ],
   "effects":
   [
-  {
-    "unlockAbility": "Retreat",
-    "value": true
-  }
+   { "retreatunlock": 1 }
   ]
 }

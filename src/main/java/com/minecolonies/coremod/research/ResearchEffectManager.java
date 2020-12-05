@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.research;
 
+import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +27,22 @@ public class ResearchEffectManager implements IResearchEffectManager
         {
             return (W) effect;
         }
+        return null;
+    }
 
+    public Boolean getEffect(final String id)
+    {
+        if(effectMap.containsKey(id))
+        {
+            return true;
+        }
+        else
+        {
+            if(IMinecoloniesAPI.getInstance().getGlobalResearchTree().hasUnlockBuildingEffect(id))
+            {
+                return false;
+            }
+        }
         return null;
     }
 

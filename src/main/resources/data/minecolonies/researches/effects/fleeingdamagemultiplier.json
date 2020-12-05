@@ -1,0 +1,13 @@
+{
+  "comment": "name: Fleeing Damage * description : Guards Gain +%d%% Damage When Fleeing",
+  "id": "fleeingdamagemultiplier",
+  "effect": true,
+  "effectType": "multiplierModifier",
+  "levels": 
+  [
+   0.2,
+   0.3,
+   0.4,
+    1
+  ]
+}

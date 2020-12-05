@@ -1,21 +1,15 @@
 {
+  "comment": "name: Indefatigability * description : Healing Saturation Limit",
   "id": "indefatigability",
-  "name": "Indefatigability",
   "branch": "civilian",
   "requiredUniversityLevel": 6,
   "parentResearch": "fortitude",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:golden_apple",
-    "itemCount": 64
-  }
+   { "item": "minecraft:golden_apple", "quantity": 64 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Healing Saturation Limit",
-    "value": -5
-  }
+   { "healingsaturationlimitaddition": 5 }
   ]
 }

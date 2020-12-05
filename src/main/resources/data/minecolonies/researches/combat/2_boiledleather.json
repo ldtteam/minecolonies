@@ -1,28 +1,16 @@
 {
+  "comment": "name: Boiled Leather * description : Armor Durability",
   "id": "boiledleather",
-  "name": "Boiled Leather",
   "branch": "combat",
   "requiredUniversityLevel": 2,
   "parentResearch": "improvedleather",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:leather",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "townhall",
-    "buildingLevel": 2
-  }
+   { "item": "minecraft:leather", "quantity": 64 },
+   { "building": "townhall", "level": 2 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Armor Durability",
-    "value": 0.2
-  }
+   { "armordurabilitymultiplier": 2 }
   ]
 }

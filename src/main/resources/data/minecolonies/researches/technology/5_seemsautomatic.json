@@ -1,28 +1,16 @@
 {
+  "comment": "name: Seems Automatic * description : Block Place Speed",
   "id": "seemsautomatic",
-  "name": "Seems Automatic",
   "branch": "technology",
   "requiredUniversityLevel": 5,
   "parentResearch": "tools",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:iron_ingot",
-    "itemCount": 512
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "blacksmith",
-    "buildingLevel": 5
-  }
+   { "item": "minecraft:iron_ingot", "quantity": 512 },
+   { "building": "blacksmith", "level": 5 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Block Place Speed",
-    "value": 1
-  }
+   { "blockplacespeedmultiplier": 4 }
   ]
 }

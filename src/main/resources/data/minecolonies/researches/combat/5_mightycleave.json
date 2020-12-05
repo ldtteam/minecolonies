@@ -1,28 +1,16 @@
 {
+  "comment": "name: Mighty Cleave * description : Melee Damage",
   "id": "mightycleave",
-  "name": "Mighty Cleave",
   "branch": "combat",
   "requiredUniversityLevel": 5,
   "parentResearch": "cleave",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:iron_block",
-    "itemCount": 16
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "barracks",
-    "buildingLevel": 5
-  }
+   { "item": "minecraft:iron_block", "quantity": 16 },
+   { "building": "barracks", "level": 5 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Melee Damage",
-    "value": 2
-  }
+   { "meleedamageaddition": 4 }
   ]
 }

@@ -1,28 +1,16 @@
 {
+  "comment": "name: Provost * description : Melee Armor",
   "id": "provost",
-  "name": "Provost",
   "branch": "combat",
   "requiredUniversityLevel": 5,
   "parentResearch": "duelist",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:diamond",
-    "itemCount": 16
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "combatacademy",
-    "buildingLevel": 5
-  }
+   { "item": "minecraft:diamond", "quantity": 16 },
+   { "building": "combatacademy", "level": 5 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Melee Armor",
-    "value": 0.5
-  }
+   { "meleearmormultiplier": 4 }
   ]
 }

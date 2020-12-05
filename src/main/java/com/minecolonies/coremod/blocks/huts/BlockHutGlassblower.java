@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.GLASSBLOWER_RESEARCH;
-
 /**
  * Hut for the glassblower. No different from {@link AbstractBlockHut}
  */
@@ -28,12 +26,5 @@ public class BlockHutGlassblower extends AbstractBlockHut<BlockHutGlassblower>
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.glassblower;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, GLASSBLOWER_RESEARCH);
     }
 }

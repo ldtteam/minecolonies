@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.STONESMELTERY_RESEARCH;
-
 /**
  * Hut for the StoneSmeltery. No different from {@link AbstractBlockHut}
  */
@@ -28,12 +26,5 @@ public class BlockHutStoneSmeltery extends AbstractBlockHut<BlockHutStoneSmelter
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.stoneSmelter;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, STONESMELTERY_RESEARCH);
     }
 }

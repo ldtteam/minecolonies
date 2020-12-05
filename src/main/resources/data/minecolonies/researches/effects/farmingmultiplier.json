@@ -1,0 +1,14 @@
+{
+  "comment": "name: Farming * description : Farmers Harvest +%d%% Crops",
+  "id": "farmingmultiplier",
+  "effect": true,
+  "effectType": "multiplierModifier",
+  "levels": 
+  [
+   0.1,
+   0.25,
+   0.5,
+   0.75,
+    2
+  ]
+}

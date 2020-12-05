@@ -39,7 +39,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.research.util.ResearchConstants.CAP;
+import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_CAP;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
 import static com.minecolonies.api.util.constant.TranslationConstants.ALL_CITIZENS_ARE_SLEEPING;
@@ -464,7 +464,7 @@ public class CitizenManager implements ICitizenManager
     private double maxCitizensFromResearch()
     {
         double max = 25;
-        final AdditionModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(CAP, AdditionModifierResearchEffect.class);
+        final AdditionModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(CITIZEN_CAP, AdditionModifierResearchEffect.class);
         if (effect != null)
         {
             max += effect.getEffect();

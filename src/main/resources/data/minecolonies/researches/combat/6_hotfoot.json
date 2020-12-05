@@ -1,21 +1,15 @@
 {
+  "comment": "name: Hotfoot * description : Fleeing Speed",
   "id": "hotfoot",
-  "name": "Hotfoot",
   "branch": "combat",
   "requiredUniversityLevel": 6,
   "parentResearch": "flee",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:emerald",
-    "itemCount": 64
-  }
+   { "item": "minecraft:emerald", "quantity": 64 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Fleeing Speed",
-    "value": 5
-  }
+   { "fleeingspeedaddition": 4 }
   ]
 }

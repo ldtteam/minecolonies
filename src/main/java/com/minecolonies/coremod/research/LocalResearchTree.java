@@ -17,6 +17,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,23 @@ public class LocalResearchTree implements ILocalResearchTree
             return null;
         }
         return researchTree.get(branch).get(id);
+    }
+
+    @Override
+    public List<ILocalResearch> getCompletedResearch()
+    {
+        final List<ILocalResearch> allCompletedResearch = new ArrayList<>();
+        for(Map<String, ILocalResearch> branchResearch : researchTree.values())
+        {
+            for(ILocalResearch research : branchResearch.values())
+            {
+                if(research.getState() == ResearchState.FINISHED)
+                {
+                    allCompletedResearch.add(research);
+                }
+            }
+        }
+        return allCompletedResearch;
     }
 
     @Override
@@ -142,6 +160,12 @@ public class LocalResearchTree implements ILocalResearchTree
                               break;
                           case "steelarmour":
                               research = new LocalResearch("steelarmor", "combat", 5);
+                              break;
+                          case "livesaver":
+                              research = new LocalResearch("lifesaver", "civilian", 3);
+                              break;
+                          case "livesaver2":
+                              research = new LocalResearch("lifesaver2", "civilian", 4);
                               break;
                       }
                   }

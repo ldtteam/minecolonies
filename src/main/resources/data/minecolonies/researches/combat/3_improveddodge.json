@@ -1,28 +1,16 @@
 {
+  "comment": "name: Improved Dodge * description : Archer Armor",
   "id": "improveddodge",
-  "name": "Improved Dodge",
   "branch": "combat",
   "requiredUniversityLevel": 3,
   "parentResearch": "dodge",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:leather",
-    "itemCount": 32
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "archery",
-    "buildingLevel": 1
-  }
+   { "item": "minecraft:leather", "quantity": 32 },
+   { "building": "archery", "level": 1 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Archer Armor",
-    "value": 0.1
-  }
+   { "archerarmormultiplier": 2 }
   ]
 }

@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.SIFTER_RESEARCH;
-
 /**
  * Hut for the sifter. No different from {@link AbstractBlockHut}
  */
@@ -28,12 +26,5 @@ public class BlockHutSifter extends AbstractBlockHut<BlockHutSifter>
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.sifter;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, SIFTER_RESEARCH);
     }
 }

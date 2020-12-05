@@ -1,28 +1,16 @@
 {
+  "comment": "name: Improved Swords * description : Combat Academy",
   "id": "improvedswords",
-  "name": "Improved Swords",
   "branch": "combat",
   "requiredUniversityLevel": 2,
   "parentResearch": "tactictraining",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:iron_block",
-    "itemCount": 6
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "barracks",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:iron_block", "quantity": 6 },
+   { "building": "barracks", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Combat Academy",
-    "value": true
-  }
+   { "blockhutcombatacademy": 1 }
   ]
 }

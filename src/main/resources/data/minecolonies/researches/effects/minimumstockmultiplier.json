@@ -1,0 +1,12 @@
+{
+  "comment": "name: Minimum Stock * description : Buildings Can Stock %d%% More",
+  "id": "minimumstockmultiplier",
+  "effect": true,
+  "effectType": "multiplierModifier",
+  "levels": 
+  [
+   0.5,
+   1,
+    2
+  ]
+}

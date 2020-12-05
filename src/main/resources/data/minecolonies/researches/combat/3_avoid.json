@@ -1,28 +1,16 @@
 {
+  "comment": "name: Avoid * description : Fleeing Speed",
   "id": "avoid",
-  "name": "Avoid",
   "branch": "combat",
   "requiredUniversityLevel": 3,
   "parentResearch": "regeneration",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:emerald",
-    "itemCount": 8
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "guardtower",
-    "buildingLevel": 4
-  }
+   { "item": "minecraft:emerald", "quantity": 8 },
+   { "building": "guardtower", "level": 4 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Fleeing Speed",
-    "value": 1
-  }
+   { "fleeingspeedaddition": 1 }
   ]
 }

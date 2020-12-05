@@ -1,21 +1,15 @@
 {
+  "comment": "name: Whirlwind * description : Melee Damage",
   "id": "whirlwind",
-  "name": "Whirlwind",
   "branch": "combat",
   "requiredUniversityLevel": 6,
   "parentResearch": "mightycleave",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:iron_block",
-    "itemCount": 32
-  }
+   { "item": "minecraft:iron_block", "quantity": 32 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Melee Damage",
-    "value": 4
-  }
+   { "meleedamageaddition": 5 }
   ]
 }

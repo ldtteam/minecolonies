@@ -1,21 +1,15 @@
 {
+  "comment": "name: Heavy Machinery * description : Block Break Speed",
   "id": "heavymachinery",
-  "name": "Heavy Machinery",
   "branch": "technology",
   "requiredUniversityLevel": 4,
   "parentResearch": "redstonepowered",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:redstone",
-    "itemCount": 512
-  }
+   { "item": "minecraft:redstone", "quantity": 512 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Block Break Speed",
-    "value": 0.5
-  }
+   { "blockbreakspeedmultiplier": 3 }
   ]
 }

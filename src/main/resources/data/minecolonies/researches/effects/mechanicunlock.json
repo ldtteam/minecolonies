@@ -1,0 +1,6 @@
+{
+  "comment": "name: Mechanic * description : Unlocks Mechanic",
+  "id": "mechanicunlock",
+  "effect": true,
+  "effectType": "unlockBuilding"
+}

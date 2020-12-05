@@ -1,21 +1,14 @@
 {
+  "comment": "name: Stamina * description : Hospital",
   "id": "stamina",
-  "name": "Stamina",
   "branch": "civilian",
-  "exclusiveChildResearch": true,
   "requiredUniversityLevel": 1,
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:carrot",
-    "itemCount": 1
-  }
+   { "item": "minecraft:carrot", "quantity": 1 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Hospital",
-    "value": true
-  }
+   { "blockhuthospital": 1 }
   ]
 }

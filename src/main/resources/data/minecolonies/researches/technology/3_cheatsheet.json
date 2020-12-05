@@ -1,28 +1,16 @@
 {
+  "comment": "name: Cheat Sheet * description : Recipes",
   "id": "cheatsheet",
-  "name": "Cheat Sheet",
   "branch": "technology",
   "requiredUniversityLevel": 3,
   "parentResearch": "memoryaid",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:paper",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "sawmill",
-    "buildingLevel": 2
-  }
+   { "item": "minecraft:paper", "quantity": 64 },
+   { "building": "sawmill", "level": 2 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Recipes",
-    "value": 0.5
-  }
+   { "recipesmultiplier": 2 }
   ]
 }

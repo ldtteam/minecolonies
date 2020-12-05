@@ -1,0 +1,6 @@
+{
+  "comment": "name: Fletcher * description : Unlocks Fletcher",
+  "id": "fletcherunlock",
+  "effect": true,
+  "effectType": "unlockBuilding"
+}

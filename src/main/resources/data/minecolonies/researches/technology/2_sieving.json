@@ -1,28 +1,16 @@
 {
+  "comment": "name: Sieving * description : Sifter",
   "id": "sieving",
-  "name": "Sieving",
   "branch": "technology",
   "requiredUniversityLevel": 2,
   "parentResearch": "woodwork",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:string",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "fisherman",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:string", "quantity": 64 },
+   { "building": "fisherman", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Sifter",
-    "value": true
-  }
+   { "blockhutsifter": 1 }
   ]
 }

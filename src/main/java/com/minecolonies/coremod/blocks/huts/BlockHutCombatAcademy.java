@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.COMBAT_ACADEMY_RESEARCH;
-
 /**
  * Block of the combat academy camp.
  */
@@ -28,12 +26,5 @@ public class BlockHutCombatAcademy extends AbstractBlockHut<BlockHutCombatAcadem
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.combatAcademy;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, COMBAT_ACADEMY_RESEARCH);
     }
 }

@@ -1,36 +1,18 @@
 {
+  "comment": "name: Gilded Hammer * description : 1:1 Crushing",
   "id": "gildedhammer",
-  "name": "Gilded Hammer",
   "branch": "technology",
   "requiredUniversityLevel": 3,
   "parentResearch": "rockingroll",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:gravel",
-    "itemCount": 64
-  },
-  {
-    "itemName": "minecraft:sand",
-    "itemCount": 64
-  },
-  {
-    "itemName": "minecraft:clay",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "crusher",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:gravel", "quantity": 64 },
+   { "item": "minecraft:sand", "quantity": 64 },
+   { "item": "minecraft:clay", "quantity": 64 },
+   { "building": "crusher", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockAbility": "1:1 Crushing",
-    "value": true
-  }
+   { "crushing11unlock": 1 }
   ]
 }

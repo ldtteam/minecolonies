@@ -1,28 +1,16 @@
 {
+  "comment": "name: Strong * description : Tool Durability",
   "id": "strong",
-  "name": "Strong",
   "branch": "technology",
   "requiredUniversityLevel": 2,
   "parentResearch": "hittingiron",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:diamond",
-    "itemCount": 8
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "blacksmith",
-    "buildingLevel": 1
-  }
+   { "item": "minecraft:diamond", "quantity": 8 },
+   { "building": "blacksmith", "level": 1 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Tool Durability",
-    "value": 0.05
-  }
+   { "tooldurabilitymultiplier": 1 }
   ]
 }

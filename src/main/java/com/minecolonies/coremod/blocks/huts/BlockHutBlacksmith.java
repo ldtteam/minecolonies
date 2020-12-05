@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.BLACKSMITH_RESEARCH;
-
 /**
  * Hut for the blacksmith. No different from {@link AbstractBlockHut}
  */
@@ -34,12 +32,5 @@ public class BlockHutBlacksmith extends AbstractBlockHut<BlockHutBlacksmith>
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.blacksmith;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, BLACKSMITH_RESEARCH);
     }
 }

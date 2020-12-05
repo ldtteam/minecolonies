@@ -1,27 +1,15 @@
 {
+  "comment": "name: Keen * description : Library",
   "id": "keen",
-  "name": "Keen",
   "branch": "civilian",
   "requiredUniversityLevel": 1,
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:book",
-    "itemCount": 3
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "citizen",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:book", "quantity": 3 },
+   { "building": "citizen", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Library",
-    "value": true
-  }
+   { "blockhutlibrary": 1 }
   ]
 }

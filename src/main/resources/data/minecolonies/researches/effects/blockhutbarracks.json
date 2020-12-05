@@ -1,0 +1,6 @@
+{
+  "comment": "name: Barracks * description : Unlocks Barracks",
+  "id": "blockhutbarracks",
+  "effect": true,
+  "effectType": "unlockBuilding"
+}

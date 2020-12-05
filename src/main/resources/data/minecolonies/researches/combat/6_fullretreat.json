@@ -1,21 +1,15 @@
 {
+  "comment": "name: Full Retreat * description : Fleeing Damage",
   "id": "fullretreat",
-  "name": "Full Retreat",
   "branch": "combat",
   "requiredUniversityLevel": 6,
   "parentResearch": "retreat",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:emerald",
-    "itemCount": 64
-  }
+   { "item": "minecraft:emerald", "quantity": 64 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Fleeing Damage",
-    "value": 1
-  }
+   { "fleeingdamagemultiplier": 4 }
   ]
 }

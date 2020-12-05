@@ -1,0 +1,13 @@
+{
+  "comment": "name: CitizenCap * description : Increase Max Citizens +%d",
+  "id": "citizencapaddition",
+  "effect": true,
+  "effectType": "additionModifier",
+  "levels": 
+  [
+   25,
+   50,
+   75,
+    175
+  ]
+}

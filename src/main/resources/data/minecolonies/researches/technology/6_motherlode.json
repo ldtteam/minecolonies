@@ -1,21 +1,15 @@
 {
+  "comment": "name: Motherlode * description : More Ores",
   "id": "motherlode",
-  "name": "Motherlode",
   "branch": "technology",
   "requiredUniversityLevel": 6,
   "parentResearch": "amazingveins",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:diamond_ore",
-    "itemCount": 64
-  }
+   { "item": "minecraft:diamond_ore", "quantity": 64 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "More Ores",
-    "value": 2
-  }
+   { "moreoresmultiplier": 5 }
   ]
 }

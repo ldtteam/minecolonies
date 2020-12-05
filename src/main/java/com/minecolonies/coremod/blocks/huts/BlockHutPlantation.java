@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_RESEARCH;
-
 /**
  * Hut for the plantation. No different from {@link AbstractBlockHut}
  */
@@ -29,12 +27,5 @@ public class BlockHutPlantation extends AbstractBlockHut<BlockHutPlantation>
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.plantation;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, PLANTATION_RESEARCH);
     }
 }

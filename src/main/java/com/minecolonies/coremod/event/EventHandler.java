@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.ItemBlockHut;
-import com.minecolonies.api.research.registry.IResearchEffectRegistry;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -762,8 +761,5 @@ public class EventHandler
             ItemBlockHut.checkResearch(null);
             Log.getLogger().info("Removed all colony views");
         }
-        // Since there doesn't seem to be a Forge event for a datapack being unloaded, there's not many better places to handle this.
-        // Otherwise, loading a world with any custom research will show research effects that don't exist on other worlds in the same instance.
-        IResearchEffectRegistry.getInstance().resetRegistry();
     }
 }

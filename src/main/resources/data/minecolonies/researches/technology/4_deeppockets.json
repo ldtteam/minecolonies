@@ -1,28 +1,16 @@
 {
+  "comment": "name: Deep Pockets * description : Citizen Inv Slots",
   "id": "deeppockets",
-  "name": "Deep Pockets",
   "branch": "technology",
   "requiredUniversityLevel": 4,
   "parentResearch": "cheatsheet",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:emerald",
-    "itemCount": 256
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "library",
-    "buildingLevel": 4
-  }
+   { "item": "minecraft:emerald", "quantity": 256 },
+   { "building": "library", "level": 4 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Citizen Inv Slots",
-    "value": 9
-  }
+   { "citizeninvslotsaddition": 1 }
   ]
 }

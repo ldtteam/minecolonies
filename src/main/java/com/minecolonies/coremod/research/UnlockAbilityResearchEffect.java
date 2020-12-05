@@ -2,6 +2,7 @@ package com.minecolonies.coremod.research;
 
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffect;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,36 +14,36 @@ public class UnlockAbilityResearchEffect extends AbstractResearchEffect<Boolean>
     /**
      * Whether the effect has been unlocked or not.
      */
-    private boolean unlocked;
+    private int level;
 
     /**
      * The constructor to create a new unlock research effect.
      *
      * @param id                  the id to unlock.
-     * @param unlockedReturnValue if unlocked or locked.
+     * @param level               greater than zero if unlocked.
      */
-    public UnlockAbilityResearchEffect(final String id, final boolean unlockedReturnValue)
+    public UnlockAbilityResearchEffect(final String id, final int level)
     {
         super(id);
-        this.unlocked = unlockedReturnValue;
+        this.level = level;
     }
 
     @Override
     public Boolean getEffect()
     {
-        return this.unlocked;
+        return (this.level > 0);
     }
 
     @Override
     public void setEffect(final Boolean effect)
     {
-        this.unlocked = effect;
+        this.level = (effect ? 1 : 0);
     }
 
     @Override
     public TranslationTextComponent getDesc()
     {
-        return new TranslationTextComponent("com.minecolonies.coremod.research.effect.unlock", this.getId());
+        return new TranslationTextComponent(TranslationConstants.RESEARCH_EFFECTS + this.getId() + ".description");
     }
 
     @Override

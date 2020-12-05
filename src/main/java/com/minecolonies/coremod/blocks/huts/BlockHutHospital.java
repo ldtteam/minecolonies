@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.HOSPITAL_RESEARCH;
-
 /**
  * Hut for the hospital. No different from {@link AbstractBlockHut}
  */
@@ -34,12 +32,5 @@ public class BlockHutHospital extends AbstractBlockHut<BlockHutHospital>
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.hospital;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, HOSPITAL_RESEARCH);
     }
 }

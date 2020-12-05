@@ -1,0 +1,6 @@
+{
+  "comment": "name: Working In Rain * description : Citizens Work Even In Rain",
+  "id": "workinginrainunlock",
+  "effect": true,
+  "effectType": "unlockAbility"
+}

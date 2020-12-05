@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.LIBRARY_RESEARCH;
-
 /**
  * Hut for the library. No different from {@link AbstractBlockHut}
  */
@@ -28,12 +26,5 @@ public class BlockHutLibrary extends AbstractBlockHut<BlockHutLibrary>
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.library;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, LIBRARY_RESEARCH);
     }
 }

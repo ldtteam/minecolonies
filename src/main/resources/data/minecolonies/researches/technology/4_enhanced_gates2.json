@@ -1,29 +1,17 @@
 {
+  "comment": "name: Enhanced Gates II * description : Enhances Gate Durability",
   "id": "enhanced_gates2",
-  "name": "Enhanced Gates II",
   "branch": "technology",
   "requiredUniversityLevel": 4,
   "parentResearch": "enhanced_gates1",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecolonies:gate_iron",
-    "itemCount": 64
-  },
-  {
-    "itemName": "minecolonies:ancienttome",
-    "itemCount": 2
-  },
-  {
-    "itemName": "minecraft:obsidian",
-    "itemCount": 32
-  }
+   { "item": "minecolonies:gate_iron", "quantity": 64 },
+   { "item": "minecolonies:ancienttome", "quantity": 2 },
+   { "item": "minecraft:obsidian", "quantity": 32 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Enhances Gate Durability",
-    "value": 15
-  }
+   { "enhancesgatedurabilityaddition": 2 }
   ]
 }

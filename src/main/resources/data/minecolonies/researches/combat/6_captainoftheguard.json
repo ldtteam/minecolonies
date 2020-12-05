@@ -1,21 +1,15 @@
 {
+  "comment": "name: Captain of the Guard * description : Block Attacks",
   "id": "captainoftheguard",
-  "name": "Captain of the Guard",
   "branch": "combat",
   "requiredUniversityLevel": 6,
   "parentResearch": "captaintraining",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:shield",
-    "itemCount": 27
-  }
+   { "item": "minecraft:shield", "quantity": 27 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Block Attacks",
-    "value": 0.5
-  }
+   { "blockattacksmultiplier": 4 }
   ]
 }

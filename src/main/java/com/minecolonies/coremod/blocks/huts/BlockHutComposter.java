@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.COMPOSTER_RESEARCH;
-
 public class BlockHutComposter extends AbstractBlockHut<BlockHutComposter>
 {
 
@@ -23,15 +21,5 @@ public class BlockHutComposter extends AbstractBlockHut<BlockHutComposter>
     }
 
     @Override
-    public BuildingEntry getBuildingEntry()
-    {
-        return ModBuildings.composter;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, COMPOSTER_RESEARCH);
-    }
+    public BuildingEntry getBuildingEntry() { return ModBuildings.composter; }
 }

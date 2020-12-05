@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.ARCHERY_RESEARCH;
-
 /**
  * Block of the Archers trainings camp.
  */
@@ -30,10 +28,5 @@ public class BlockHutArchery extends AbstractBlockHut<BlockHutArchery>
         return ModBuildings.archery;
     }
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, ARCHERY_RESEARCH);
-    }
+
 }

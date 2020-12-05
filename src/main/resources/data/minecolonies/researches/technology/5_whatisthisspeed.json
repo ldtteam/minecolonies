@@ -1,21 +1,15 @@
 {
+  "comment": "name: What Is This Speed? * description : Block Break Speed",
   "id": "whatisthisspeed",
-  "name": "What Is This Speed?",
   "branch": "technology",
   "requiredUniversityLevel": 5,
   "parentResearch": "heavymachinery",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:redstone",
-    "itemCount": 1024
-  }
+   { "item": "minecraft:redstone", "quantity": 1024 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Block Break Speed",
-    "value": 1
-  }
+   { "blockbreakspeedmultiplier": 4 }
   ]
 }

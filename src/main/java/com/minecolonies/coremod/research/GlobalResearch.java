@@ -1,33 +1,39 @@
 package com.minecolonies.coremod.research;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.effects.IResearchEffect;
-import com.minecolonies.api.research.registry.IResearchEffectRegistry;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.TranslationConstants;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The implementation of the IGlobalResearch interface which represents the research on the global level.
  */
 public class GlobalResearch implements IGlobalResearch
 {
-    //region JSON Prop Management
+    /// region JSON Prop Management
     /**
      * The property name that indicates research identifier, used in code or for lookups. Required.
      */
@@ -42,6 +48,11 @@ public class GlobalResearch implements IGlobalResearch
      * The property name that indicates research branch. For now, only "civilian", "technology", and "combat" render. Required.
      */
     public static final String RESEARCH_BRANCH_PROP = "branch";
+
+    /**
+     * The property name that indicates this recipe removes a research.
+     */
+    public static final String RESEARCH_REMOVE_PROP = "remove";
 
     /**
      * The property name for Required University Level.
@@ -59,65 +70,50 @@ public class GlobalResearch implements IGlobalResearch
     private static final String RESEARCH_PARENT_PROP = "parentResearch";
 
     /**
-     * The property name for the list of submitted items.
+     * The property name for the list of requirement objects.
      */
-    private static final String RESEARCH_REQUIRED_ITEMS_PROP = "requiredItems";
+    private static final String RESEARCH_REQUIREMENTS_PROP = "requirements";
 
     /**
-     * The property name for the submitted items names
+     * The property name for items.
      */
-    private static final String RESEARCH_ITEM_NAME_PROP = "itemName";
+    private static final String RESEARCH_ITEM_NAME_PROP = "item";
 
     /**
-     * The property name for the submitted item count
+     * The property name for a quantity.
      */
-    private static final String RESEARCH_ITEM_COUNT_PROP = "itemCount";
+    private static final String RESEARCH_QUANTITY_PROP = "quantity";
 
     /**
-     * The property name for the list of required buildings.
+     * The property name for a non-university building requirement.
      */
-    private static final String RESEARCH_REQUIRED_BUILDINGS_PROP = "requiredBuildings";
+    private static final String RESEARCH_REQUIRED_BUILDING_PROP = "building";
 
     /**
-     * The property name that indicates a required building's name.
+     * The property name for a non-parent research requirement.
      */
-    private static final String RESEARCH_REQUIRED_BUILDING_NAME_PROP = "building";
+    private static final String RESEARCH_REQUIRED_RESEARCH_PROP = "research";
 
     /**
-     * The property name that indicates required buildings.
+     * The property name for a numeric level.
      */
-    private static final String RESEARCH_REQUIRED_BUILDING_LEVEL_PROP = "buildingLevel";
+    private static final String RESEARCH_LEVEL_PROP = "level";
+
+    /**
+     * The property name for the research which is only visible, when its requirements are completed.
+     */
+    private static final String RESEARCH_HIDDEN_PROP = "hidden";
+
+    /**
+     * The property name for instant completion of research, when its requirements are completed.
+     */
+    private static final String RESEARCH_INSTANT_PROP = "instant";
 
     /**
      * The property name for the list of research completion effects
      */
     private static final String RESEARCH_EFFECTS_PROP = "effects";
-
-    /**
-     * The property name for Multiplier Modifier effects, containing string of target statistic.
-     */
-    private static final String RESEARCH_EFFECT_MULTIPLIER_PROP = "multiplierModifier";
-
-    /**
-     * The property name for Addition Modifier effects, containing string of target statistic.
-     */
-    private static final String RESEARCH_EFFECT_ADDITION = "additionModifier";
-
-    /**
-     * The property name for building unlock effects, containing string of hut id.
-     */
-    public static final String RESEARCH_EFFECT_UNLOCK_BUILDING_PROP = "unlockBuilding";
-
-    /**
-     * The property name for ability unlock effects, containing a string of ability id.
-     */
-    public static final String RESEARCH_EFFECT_UNLOCK_ABILITY_PROP = "unlockAbility";
-
-    /**
-     * The property name for values of effects. Boolean for unlockBuilding and unlockAbilities, numeric for Multiplier or Addition modifiers.
-     */
-    public static final String RESEARCH_EFFECT_VALUE_PROP = "value";
-    ///endregion
+    /// endregion
 
     /**
      * The costList of the research.
@@ -135,14 +131,19 @@ public class GlobalResearch implements IGlobalResearch
     private final String id;
 
     /**
+     * The resource location of the research, if created through data packs.
+     */
+    private final ResourceLocation resourceLocation;
+
+    /**
      * The research branch.
      */
     private final String branch;
 
     /**
-     * The description of the research.
+     * The pre-localized name for the research.  Used only if name tag is in json.
      */
-    private final String desc;
+    private final String name;
 
     /**
      * The research effects of this research.
@@ -160,6 +161,16 @@ public class GlobalResearch implements IGlobalResearch
     private boolean onlyChild;
 
     /**
+     * If the research has an only child.
+     */
+    private final boolean hidden;
+
+    /**
+     * If the research has an only child.
+     */
+    private final boolean instant;
+
+    /**
      * List of childs of a research.
      */
     private final List<String> childs = new ArrayList<>();
@@ -172,20 +183,42 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * Create the new research.
      *
-     * @param id              it's id.
-     * @param desc            it's description text.
-     * @param effect          it's effect.
+     * @param id              its id.
+     * @param effect          its effect.
      * @param universityLevel the depth in the tree.
      * @param branch          the branch it is on.
      */
-    public GlobalResearch(final String id, final String branch, final String desc, final int universityLevel, final IResearchEffect<?> effect)
+    public GlobalResearch(final String id, final String branch, final String name, final int universityLevel, final IResearchEffect<?> effect)
     {
         this.id = id;
-        this.desc = desc;
         this.effects.add(effect);
+        this.name = name;
         this.depth = universityLevel;
         this.branch = branch;
-        IResearchEffectRegistry.getInstance().register(effect, false);
+        this.resourceLocation = new ResourceLocation("minecolonies","staticresearch");
+        this.hidden = false;
+        this.instant = false;
+        Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
+    }
+
+    /**
+     * Create the new research with multiple effects
+     *
+     * @param id              its id.
+     * @param effects          its effects.
+     * @param universityLevel the depth in the tree.
+     * @param branch          the branch it is on.
+     */
+    public GlobalResearch(final String id, final String branch, final int universityLevel, final List<IResearchEffect<?>> effects)
+    {
+        this.id = id;
+        this.name = id;
+        this.effects.addAll(effects);
+        this.depth = universityLevel;
+        this.branch = branch;
+        this.resourceLocation = new ResourceLocation("minecolonies","staticresearch");
+        this.hidden = false;
+        this.instant = false;
         Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
     }
 
@@ -240,16 +273,26 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public String getDesc()
-    {
-        return this.desc;
-    }
-
-    @Override
     public String getId()
     {
         return this.id;
     }
+
+    @Override
+    public String getDesc()
+    {
+        if (this.name.isEmpty())
+        {
+            return TranslationConstants.RESEARCH + id + ".name";
+        }
+        else
+        {
+            return this.name;
+        }
+    }
+
+    @Override
+    public ResourceLocation getResourceLocation() { return this.resourceLocation; }
 
     @Override
     public String getParent()
@@ -339,69 +382,111 @@ public class GlobalResearch implements IGlobalResearch
      * @param researchJson the json representing the recipe
      * @return new instance of ResearchRecipe
      */
-    public GlobalResearch(@NotNull final JsonObject researchJson)
+    public GlobalResearch(@NotNull final JsonObject researchJson, ResourceLocation resourceLocation, Map<String, ResearchEffectCategory> effectCategories)
+    {
+        this.resourceLocation = resourceLocation;
+
+        this.id = getResearchId(researchJson, resourceLocation);
+        this.name = getResearchName(researchJson);
+        this.branch = getBranch(researchJson, resourceLocation);
+        this.depth = getUniversityLevel(researchJson);
+        this.parent = getParent(researchJson);
+        this.onlyChild = getBooleanSafe(researchJson, RESEARCH_EXCLUSIVE_CHILD_PROP);
+        this.instant = getBooleanSafe(researchJson, RESEARCH_INSTANT_PROP);
+        this.hidden = getBooleanSafe(researchJson, RESEARCH_HIDDEN_PROP);
+
+        parseRequirements(researchJson);
+        parseEffects(researchJson, effectCategories);
+    }
+
+    private String getResearchId(JsonObject researchJson, ResourceLocation resourceLocation)
     {
         if (researchJson.has(RESEARCH_ID_PROP) && researchJson.get(RESEARCH_ID_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_ID_PROP).getAsJsonPrimitive().isString())
         {
-            this.id = researchJson.get(RESEARCH_ID_PROP).getAsString();
+            return researchJson.get(RESEARCH_ID_PROP).getAsString();
         }
         else
         {
-            this.id = "";
+            Log.getLogger().error("Error in Research ID for" + resourceLocation);
+            return "";
         }
+    }
 
+    private String getResearchName(JsonObject researchJson)
+    {
         if (researchJson.has(RESEARCH_NAME_PROP) && researchJson.get(RESEARCH_NAME_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_NAME_PROP).getAsJsonPrimitive().isString())
         {
-            this.desc = researchJson.get(RESEARCH_NAME_PROP).getAsString();
+            return researchJson.get(RESEARCH_NAME_PROP).getAsString();
         }
         else
         {
-            this.desc = "ParseError";
+            return "";
         }
+    }
 
+    private String getBranch(JsonObject researchJson, ResourceLocation resourceLocation)
+    {
         if (researchJson.has(RESEARCH_BRANCH_PROP) && researchJson.get(RESEARCH_BRANCH_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_BRANCH_PROP).getAsJsonPrimitive().isString())
         {
-            this.branch = researchJson.get(RESEARCH_BRANCH_PROP).getAsString();
+            return researchJson.get(RESEARCH_BRANCH_PROP).getAsString();
         }
         else
         {
-            this.branch = "parseerrors";
+            Log.getLogger().error("Error in Research Branch for" + resourceLocation);
+            return "parserrors";
         }
+    }
 
-        if (researchJson.has(RESEARCH_EXCLUSIVE_CHILD_PROP) && researchJson.get(RESEARCH_EXCLUSIVE_CHILD_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_EXCLUSIVE_CHILD_PROP).getAsJsonPrimitive().isBoolean())
-        {
-            this.onlyChild = researchJson.get(RESEARCH_EXCLUSIVE_CHILD_PROP).getAsBoolean();
-        }
-
+    private int getUniversityLevel(JsonObject researchJson)
+    {
         if (researchJson.has(RESEARCH_UNIVERSITY_LEVEL_PROP) && researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).getAsJsonPrimitive().isNumber())
         {
-            this.depth = researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).getAsNumber().intValue();
+            return researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).getAsNumber().intValue();
         }
         else
         {
-            this.depth = 1;
             Log.getLogger().info("No declared university level for " + this.branch + "/" + this.id );
+            return 1;
         }
+    }
 
+    private String getParent(JsonObject researchJson)
+    {
         if (researchJson.has(RESEARCH_PARENT_PROP) && researchJson.get(RESEARCH_PARENT_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_PARENT_PROP).getAsJsonPrimitive().isString())
         {
-            this.parent = researchJson.get(RESEARCH_PARENT_PROP).getAsString();
+            return researchJson.get(RESEARCH_PARENT_PROP).getAsString();
         }
         else
         {
-            this.parent = "";
+            return "";
         }
+    }
 
-        if (researchJson.has(RESEARCH_REQUIRED_ITEMS_PROP) && researchJson.get(RESEARCH_REQUIRED_ITEMS_PROP).isJsonArray())
+    private boolean getBooleanSafe(JsonObject researchJson, String property)
+    {
+        if (researchJson.has(property) && researchJson.get(property).isJsonPrimitive() && researchJson.get(property).getAsJsonPrimitive().isBoolean())
         {
-            for (final JsonElement itemArrayElement : researchJson.get(RESEARCH_REQUIRED_ITEMS_PROP).getAsJsonArray())
-            {
-                if (itemArrayElement.isJsonObject() && itemArrayElement.getAsJsonObject().has(RESEARCH_ITEM_NAME_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsJsonPrimitive().isString())
-                {
+            return researchJson.get(property).getAsBoolean();
+        }
+        else
+        {
+            return false;
+        }
+    }
 
-                    final String[] itemName = itemArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsString().split(":");
+    private void parseRequirements(JsonObject researchJson)
+    {
+        if (researchJson.has(RESEARCH_REQUIREMENTS_PROP) && researchJson.get(RESEARCH_REQUIREMENTS_PROP).isJsonArray())
+        {
+            for (final JsonElement reqArrayElement : researchJson.get(RESEARCH_REQUIREMENTS_PROP).getAsJsonArray())
+            {
+                // ItemRequirements.  If no count, assumes 1x.
+                if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_ITEM_NAME_PROP) &&
+                     reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsJsonPrimitive().isString())
+                {
+                    final String[] itemName = reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsString().split(":");
                     final Item item;
-                    if (itemName.length == 2)
+                    if  (itemName.length == 2)
                     {
                         item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName[0], itemName[1]));
                     }
@@ -411,103 +496,114 @@ public class GlobalResearch implements IGlobalResearch
                     }
                     else
                     {
-                        Log.getLogger().warn("Invalid ResearchCost formatting for " + this.branch + "/" + this.id);
-                        continue;
+                        item = ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", "cobblestone"));
                     }
                     final ItemStack itemStack = new ItemStack(item);
-                    if (itemArrayElement.getAsJsonObject().has(RESEARCH_ITEM_COUNT_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_ITEM_COUNT_PROP).getAsJsonPrimitive().isNumber())
+                    if(reqArrayElement.getAsJsonObject().has(RESEARCH_QUANTITY_PROP) && reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).isJsonPrimitive()
+                         && reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).getAsJsonPrimitive().isNumber())
                     {
-                        itemStack.setCount(itemArrayElement.getAsJsonObject().get(RESEARCH_ITEM_COUNT_PROP).getAsNumber().intValue());
+                        itemStack.setCount(reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).getAsNumber().intValue());
                     }
                     this.costList.add(new ItemStorage(itemStack, false));
                 }
-            }
-        }
-
-        if (researchJson.has(RESEARCH_REQUIRED_BUILDINGS_PROP) && researchJson.get(RESEARCH_REQUIRED_BUILDINGS_PROP).isJsonArray())
-        {
-            for (final JsonElement itemArrayElement : researchJson.get(RESEARCH_REQUIRED_BUILDINGS_PROP).getAsJsonArray())
-            {
-                if (itemArrayElement.isJsonObject() &&
-                      itemArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_BUILDING_NAME_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_NAME_PROP).getAsJsonPrimitive().isString()
-                      && itemArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_BUILDING_LEVEL_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_LEVEL_PROP).getAsJsonPrimitive().isNumber())
+                // Building Requirements.  If no level, assume 1x.
+                else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_BUILDING_PROP) &&
+                          reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_PROP).getAsJsonPrimitive().isString())
                 {
-
-                    BuildingResearchRequirement requirement = new BuildingResearchRequirement(
-                      itemArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_LEVEL_PROP).getAsNumber().intValue(),
-                      itemArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_NAME_PROP).getAsString());
-                    this.requirements.add(requirement);
-                }
-            }
-        }
-
-        if (researchJson.has(RESEARCH_EFFECTS_PROP) && researchJson.get(RESEARCH_EFFECTS_PROP).isJsonArray())
-        {
-
-            for (final JsonElement itemArrayElement : researchJson.get(RESEARCH_EFFECTS_PROP).getAsJsonArray())
-            {
-                if (itemArrayElement.isJsonObject())
-                {
-                    final IResearchEffect effect;
-                    if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_ADDITION) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_ADDITION).getAsJsonPrimitive().isString()
-                          && itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsJsonPrimitive().isNumber())
+                    final int level;
+                    if(reqArrayElement.getAsJsonObject().has(RESEARCH_LEVEL_PROP) && reqArrayElement.getAsJsonObject().get(RESEARCH_LEVEL_PROP).isJsonPrimitive()
+                         && reqArrayElement.getAsJsonObject().get(RESEARCH_LEVEL_PROP).getAsJsonPrimitive().isNumber())
                     {
-                        effect = new AdditionModifierResearchEffect(
-                          itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_ADDITION).getAsString(),
-                          itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsDouble());
-                    }
-                    else if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_MULTIPLIER_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_MULTIPLIER_PROP).getAsJsonPrimitive().isString()
-                          && itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsJsonPrimitive().isNumber())
-                    {
-                        effect = new MultiplierModifierResearchEffect(
-                          itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_MULTIPLIER_PROP).getAsString(),
-                          itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsDouble());
-                    }
-                    else if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_UNLOCK_ABILITY_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_UNLOCK_ABILITY_PROP).getAsJsonPrimitive().isString())
-                    {
-                        final boolean effectResult;
-                        if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsJsonPrimitive().isBoolean())
-                        {
-                            effectResult = itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsBoolean();
-                        }
-                        else
-                        {
-                            effectResult = true; // default to unlocking abilities.
-                        }
-                        effect = new UnlockAbilityResearchEffect(
-                          itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_UNLOCK_ABILITY_PROP).getAsString(),
-                          effectResult);
-                        this.effects.add(effect);
-                    }
-                    else if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_UNLOCK_BUILDING_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_UNLOCK_BUILDING_PROP).getAsJsonPrimitive().isString())
-                    {
-                        final boolean effectResult;
-                        if (itemArrayElement.getAsJsonObject().has(RESEARCH_EFFECT_VALUE_PROP) && itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsJsonPrimitive().isBoolean())
-                        {
-                            effectResult = itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_VALUE_PROP).getAsBoolean();
-                        }
-                        else
-                        {
-                            effectResult = true; // default to unlocking abilities.
-                        }
-                        effect = new UnlockBuildingResearchEffect(
-                          itemArrayElement.getAsJsonObject().get(RESEARCH_EFFECT_UNLOCK_BUILDING_PROP).getAsString(),
-                          effectResult);
+                        level = reqArrayElement.getAsJsonObject().get(RESEARCH_LEVEL_PROP).getAsNumber().intValue();
                     }
                     else
                     {
-                        continue;
+                        level = 1;
                     }
-                    this.effects.add(effect);
-
-                    // JSONs are loaded and reloaded regularly, so we need to make their effects separately from
-                    // those created in Forge init or otherwise registered only once.
-                    IResearchEffectRegistry.getInstance().register(effect, true);
+                    BuildingResearchRequirement requirement = new BuildingResearchRequirement(level, reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_PROP).getAsString());
+                    this.requirements.add(requirement);
+                }
+                // Research Requirements.  Only partially implemented.
+                else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_RESEARCH_PROP) &&
+                          reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsJsonPrimitive().isString())
+                {
+                    this.requirements.add(new ResearchResearchRequirement(reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsString(), this.name));
+                }
+                else
+                {
+                    Log.getLogger().warn("Invalid Research Requirement formatting for " + this.branch + "/" + this.id);
                 }
             }
         }
+    }
 
-        
+    private void parseEffects(JsonObject researchJson, Map<String, ResearchEffectCategory> effectCategories)
+    {
+        if (researchJson.has(RESEARCH_EFFECTS_PROP) && researchJson.get(RESEARCH_EFFECTS_PROP).isJsonArray())
+        {
+            for (final JsonElement itemArrayElement : researchJson.get(RESEARCH_EFFECTS_PROP).getAsJsonArray())
+            {
+                if(itemArrayElement.isJsonObject())
+                {
+                    for(final Map.Entry<String, JsonElement> entry : itemArrayElement.getAsJsonObject().entrySet() )
+                    {
+                        if(effectCategories.containsKey(entry.getKey()))
+                        {
+                            final int strength;
+                            if (entry.getValue().isJsonPrimitive() && entry.getValue().getAsJsonPrimitive().isNumber() && effectCategories.containsKey(entry.getKey()))
+                            {
+                                int requested = entry.getValue().getAsNumber().intValue();
+                                int max = effectCategories.get(entry.getKey()).getMaxLevel();
+                                if(requested <= max)
+                                {
+                                    strength = entry.getValue().getAsNumber().intValue();
+                                }
+                                else
+                                {
+                                    //if trying to go above max strength, give to max strength, but warn.
+                                    strength = effectCategories.get(entry.getKey()).getMaxLevel();
+                                    Log.getLogger().warn("Research " + this.id + " requested higher effect strength than exists.");
+                                }
+                            }
+                            // default to a strength of 1, for unlocks or parse errors.
+                            else
+                            {
+                                Log.getLogger().warn("Research " + this.id + " did not have a valid effect strength.");
+                                strength = 1;
+                            }
+                            final IResearchEffect effect;
+                            if(effectCategories.get(entry.getKey()).getType().contains("multiplier"))
+                            {
+                                effect = new MultiplierModifierResearchEffect(entry.getKey(),
+                                  effectCategories.get(entry.getKey()).getAbsolute(strength), effectCategories.get(entry.getKey()).getRelative(strength));
+                            }
+                            else if(effectCategories.get(entry.getKey()).getType().contains("addition"))
+                            {
+                                effect = new AdditionModifierResearchEffect(entry.getKey(),
+                                  effectCategories.get(entry.getKey()).getAbsolute(strength), effectCategories.get(entry.getKey()).getRelative(strength));
+                            }
+                            else if(effectCategories.get(entry.getKey()).getType().contains("unlockAbility"))
+                            {
+                                effect = new UnlockAbilityResearchEffect(entry.getKey(), strength);
+                            }
+                            else if(effectCategories.get(entry.getKey()).getType().contains("unlockBuilding"))
+                            {
+                                effect = new UnlockBuildingResearchEffect(entry.getKey(), strength);
+                            }
+                            else
+                            {
+                                effect = new UnlockAbilityResearchEffect("", 1);
+                            }
+                            this.effects.add(effect);
+                        }
+                        else
+                        {
+                            Log.getLogger().error(this.branch + "/" + this.id + "looking for non-existent research effects" + entry);
+                        }
+                    }
+                }
+            }
+        }
 
     }
 }

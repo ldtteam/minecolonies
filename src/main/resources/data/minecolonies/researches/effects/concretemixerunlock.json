@@ -1,0 +1,6 @@
+{
+  "comment": "name: Concrete Mixer * description : Unlocks Concrete Mixer",
+  "id": "concretemixerunlock",
+  "effect": true,
+  "effectType": "unlockBuilding"
+}

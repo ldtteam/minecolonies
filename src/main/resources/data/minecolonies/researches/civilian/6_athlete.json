@@ -1,21 +1,15 @@
 {
+  "comment": "name: Athlete * description : Walking",
   "id": "athlete",
-  "name": "Athlete",
   "branch": "civilian",
   "requiredUniversityLevel": 6,
   "parentResearch": "swift",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:rabbit_foot",
-    "itemCount": 64
-  }
+   { "item": "minecraft:rabbit_foot", "quantity": 64 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Walking",
-    "value": 0.25
-  }
+   { "walkingmultiplier": 4 }
   ]
 }

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public interface IResearchEffect<T>
 {
     /**
-     * Get the effect of the research.
+     * Get the absolute effect of the research.
      *
      * @return the effect.
      */

@@ -1,27 +1,15 @@
 {
+  "comment": "name: First Aid * description : Health",
   "id": "firstaid",
-  "name": "First Aid",
   "branch": "civilian",
   "requiredUniversityLevel": 1,
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:hay_block",
-    "itemCount": 8
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "townhall",
-    "buildingLevel": 1
-  }
+   { "item": "minecraft:hay_block", "quantity": 8 },
+   { "building": "townhall", "level": 1 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Health",
-    "value": 2
-  }
+   { "healthaddition": 1 }
   ]
 }

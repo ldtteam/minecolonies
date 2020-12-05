@@ -1,0 +1,13 @@
+{
+  "comment": "name: Recipes * description : Workers Learn +%d%% More Recipes",
+  "id": "recipesmultiplier",
+  "effect": true,
+  "effectType": "multiplierModifier",
+  "levels": 
+  [
+   0.25,
+   0.5,
+   1,
+    2
+  ]
+}

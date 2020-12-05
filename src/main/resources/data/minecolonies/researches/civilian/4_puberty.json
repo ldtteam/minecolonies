@@ -1,28 +1,16 @@
 {
+  "comment": "name: Puberty * description : Growth",
   "id": "puberty",
-  "name": "Puberty",
   "branch": "civilian",
   "requiredUniversityLevel": 4,
   "parentResearch": "hormones",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:cooked_chicken",
-    "itemCount": 128
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "library",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:cooked_chicken", "quantity": 128 },
+   { "building": "library", "level": 3 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Growth",
-    "value": 0.25
-  }
+   { "growthmultiplier": 3 }
   ]
 }

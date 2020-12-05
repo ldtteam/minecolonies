@@ -1,28 +1,16 @@
 {
+  "comment": "name: Quick Draw * description : Melee Damage",
   "id": "quickdraw",
-  "name": "Quick Draw",
   "branch": "combat",
   "requiredUniversityLevel": 2,
   "parentResearch": "accuracy",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:iron_block",
-    "itemCount": 2
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "barracks",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:iron_block", "quantity": 2 },
+   { "building": "barracks", "level": 3 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Melee Damage",
-    "value": 0.5
-  }
+   { "meleedamageaddition": 1 }
   ]
 }

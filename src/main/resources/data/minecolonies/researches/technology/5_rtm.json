@@ -1,28 +1,16 @@
 {
+  "comment": "name: RTM * description : Recipes",
   "id": "rtm",
-  "name": "RTM",
   "branch": "technology",
   "requiredUniversityLevel": 5,
   "parentResearch": "recipebook",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:paper",
-    "itemCount": 256
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "sawmill",
-    "buildingLevel": 4
-  }
+   { "item": "minecraft:paper", "quantity": 256 },
+   { "building": "sawmill", "level": 4 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Recipes",
-    "value": 2
-  }
+   { "recipesmultiplier": 4 }
   ]
 }

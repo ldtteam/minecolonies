@@ -43,6 +43,13 @@ public interface ILocalResearchTree
     List<ILocalResearch> getResearchInProgress();
 
     /**
+     * Get a list of all completed research.
+     *
+     * @return the list.
+     */
+    List<ILocalResearch> getCompletedResearch();
+
+    /**
      * Finish a research and remove it from the inProgress list.
      *
      * @param id the id of the research to remove.

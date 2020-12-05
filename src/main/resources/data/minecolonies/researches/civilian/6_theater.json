@@ -1,21 +1,15 @@
 {
+  "comment": "name: Theater * description : Happiness",
   "id": "theater",
-  "name": "Theater",
   "branch": "civilian",
   "requiredUniversityLevel": 6,
   "parentResearch": "opera",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:enchanted_golden_apple",
-    "itemCount": 16
-  }
+   { "item": "minecraft:enchanted_golden_apple", "quantity": 16 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Happiness",
-    "value": 0.5
-  }
+   { "happinessmultiplier": 5 }
   ]
 }

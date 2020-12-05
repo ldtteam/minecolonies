@@ -1,28 +1,16 @@
 {
+  "comment": "name: Dodge * description : Archer Armor",
   "id": "dodge",
-  "name": "Dodge",
   "branch": "combat",
   "requiredUniversityLevel": 2,
   "parentResearch": "avoidance",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:leather",
-    "itemCount": 16
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "smeltery",
-    "buildingLevel": 1
-  }
+   { "item": "minecraft:leather", "quantity": 16 },
+   { "building": "smeltery", "level": 1 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Archer Armor",
-    "value": 0.05
-  }
+   { "archerarmormultiplier": 1 }
   ]
 }

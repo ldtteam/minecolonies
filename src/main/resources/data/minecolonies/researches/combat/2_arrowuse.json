@@ -1,28 +1,16 @@
 {
+  "comment": "name: Consume Arrows * description : Consume Arrows",
   "id": "arrowuse",
-  "name": "Consume Arrows",
   "branch": "combat",
   "requiredUniversityLevel": 2,
   "parentResearch": "taunt",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:arrow",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "guardtower",
-    "buildingLevel": 2
-  }
+   { "item": "minecraft:arrow", "quantity": 64 },
+   { "building": "guardtower", "level": 2 }
   ],
   "effects":
   [
-  {
-    "unlockAbility": "Consume Arrows",
-    "value": true
-  }
+   { "consumearrowsunlock": 1 }
   ]
 }

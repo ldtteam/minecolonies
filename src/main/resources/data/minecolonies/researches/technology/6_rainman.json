@@ -1,21 +1,15 @@
 {
+  "comment": "name: Rainman * description : Working In Rain",
   "id": "rainman",
-  "name": "Rainman",
   "branch": "technology",
   "requiredUniversityLevel": 6,
   "parentResearch": "rtm",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:salmon_bucket",
-    "itemCount": 27
-  }
+   { "item": "minecraft:salmon_bucket", "quantity": 27 }
   ],
   "effects":
   [
-  {
-    "unlockAbility": "Working in Rain",
-    "value": true
-  }
+   { "workinginrainunlock": 1 }
   ]
 }

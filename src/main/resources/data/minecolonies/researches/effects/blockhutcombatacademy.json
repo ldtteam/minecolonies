@@ -1,0 +1,6 @@
+{
+  "comment": "name: Combat Academy * description : Unlock Combat Academy",
+  "id": "blockhutcombatacademy",
+  "effect": true,
+  "effectType": "unlockBuilding"
+}

@@ -1,27 +1,15 @@
 {
+  "comment": "name: Biodegradable * description : Composter",
   "id": "biodegradable",
-  "name": "Biodegradable",
   "branch": "technology",
   "requiredUniversityLevel": 1,
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:bone_meal",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "farmer",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:bone_meal", "quantity": 64 },
+   { "building": "farmer", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Composter",
-    "value": true
-  }
+   { "blockhutcomposter": 1 }
   ]
 }

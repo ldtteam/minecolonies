@@ -1,28 +1,16 @@
 {
+  "comment": "name: Rocking Roll * description : Crusher",
   "id": "rockingroll",
-  "name": "Rocking Roll",
   "branch": "technology",
   "requiredUniversityLevel": 2,
   "parentResearch": "stonecake",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:stone",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "stonemason",
-    "buildingLevel": 1
-  }
+   { "item": "minecraft:stone", "quantity": 64 },
+   { "building": "stonemason", "level": 1 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Crusher",
-    "value": true
-  }
+   { "blockhutcrusher": 1 }
   ]
 }

@@ -1,0 +1,6 @@
+{
+  "comment": "name: Glassblower * description : Unlocks Glassblower",
+  "id": "blockhutglassblower",
+  "effect": true,
+  "effectType": "unlockBuilding"
+}

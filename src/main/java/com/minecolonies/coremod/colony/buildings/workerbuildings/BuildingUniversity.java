@@ -17,11 +17,14 @@ import com.minecolonies.coremod.colony.jobs.JobResearch;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -241,8 +244,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
         }
 
         LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-          RESEARCH_CONCLUDED + random.nextInt(3),
-          IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc());
+          RESEARCH_CONCLUDED + random.nextInt(3), I18n.format(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc()));
         this.markDirty();
     }
 

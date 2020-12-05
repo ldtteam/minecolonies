@@ -18,6 +18,13 @@ public interface IResearchEffectManager
     <W extends IResearchEffect<?>> W getEffect(final String id, @NotNull final Class<W> type);
 
     /**
+     * Check if the research effect exists, and if so, if it has been completed.
+     * @param  id   the id of the effect
+     * @return null if not existing, false if incomplete, true if complete.
+     */
+    Boolean getEffect(final String id);
+
+    /**
      * Apply the effect to the research effects class.
      *
      * @param effect the effect to apply.

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +57,6 @@ public interface IGlobalResearch
 
     /**
      * Human readable description of research.
-     *
      * @return the description.
      */
     String getDesc();
@@ -67,6 +67,14 @@ public interface IGlobalResearch
      * @return the String id.
      */
     String getId();
+
+    /**
+     * Getter of the resource location of the research, if loaded by datapack.
+     *
+     * @return the resource location for a dynamically loaded research,
+     * or minecolonies/staticresearch if statically assigned.
+     */
+    ResourceLocation getResourceLocation();
 
     /**
      * Get the id of the parent IResearch.

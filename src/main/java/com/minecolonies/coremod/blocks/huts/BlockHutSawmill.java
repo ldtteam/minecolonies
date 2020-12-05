@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.SAWMILL_RESEARCH;
-
 /**
  * Hut for the sawmill. No different from {@link AbstractBlockHut}
  */
@@ -28,12 +26,5 @@ public class BlockHutSawmill extends AbstractBlockHut<BlockHutSawmill>
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.sawmill;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, SAWMILL_RESEARCH);
     }
 }

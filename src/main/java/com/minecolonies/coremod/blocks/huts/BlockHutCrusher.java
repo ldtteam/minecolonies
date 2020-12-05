@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.CRUSHER_RESEARCH;
-
 /**
  * Hut for the crusher. No different from {@link AbstractBlockHut}
  */
@@ -28,12 +26,5 @@ public class BlockHutCrusher extends AbstractBlockHut<BlockHutCrusher>
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.crusher;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, CRUSHER_RESEARCH);
     }
 }

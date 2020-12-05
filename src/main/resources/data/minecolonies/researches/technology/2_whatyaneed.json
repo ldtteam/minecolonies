@@ -1,28 +1,16 @@
 {
+  "comment": "name: What ya Need? * description : Mechanic",
   "id": "whatyaneed",
-  "name": "What ya Need?",
   "branch": "technology",
   "requiredUniversityLevel": 2,
   "parentResearch": "hittingiron",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:redstone",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "blacksmith",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:redstone", "quantity": 64 },
+   { "building": "blacksmith", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Mechanic",
-    "value": true
-  }
+   { "blockhutmechanic": 1 }
   ]
 }

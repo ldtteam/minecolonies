@@ -1,21 +1,15 @@
 {
+  "comment": "name: PhD * description : Teaching",
   "id": "phd",
-  "name": "PhD",
   "branch": "civilian",
   "requiredUniversityLevel": 6,
   "parentResearch": "master",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:bookshelf",
-    "itemCount": 64
-  }
+   { "item": "minecraft:bookshelf", "quantity": 64 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Teaching",
-    "value": 1
-  }
+   { "teachingmultiplier": 5 }
   ]
 }

@@ -1,21 +1,15 @@
 {
+  "comment": "name: Lightning * description : Block Break Speed",
   "id": "lightning",
-  "name": "Lightning",
   "branch": "technology",
   "requiredUniversityLevel": 6,
   "parentResearch": "whatisthisspeed",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:redstone",
-    "itemCount": 2048
-  }
+   { "item": "minecraft:redstone", "quantity": 2048 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Block Break Speed",
-    "value": 2
-  }
+   { "blockbreakspeedmultiplier": 5 }
   ]
 }

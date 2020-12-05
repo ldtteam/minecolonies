@@ -1,28 +1,16 @@
 {
+  "comment": "name: Scholarly * description : Leveling",
   "id": "scholarly",
-  "name": "Scholarly",
   "branch": "civilian",
   "requiredUniversityLevel": 4,
   "parentResearch": "studious",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:book",
-    "itemCount": 24
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "library",
-    "buildingLevel": 4
-  }
+   { "item": "minecraft:book", "quantity": 24 },
+   { "building": "library", "level": 4 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Leveling",
-    "value": 0.25
-  }
+   { "levelingmultiplier": 3 }
   ]
 }

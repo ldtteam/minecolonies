@@ -1,21 +1,15 @@
 {
+  "comment": "name: Redstone Powered * description : Block Break Speed",
   "id": "redstonepowered",
-  "name": "Redstone Powered",
   "branch": "technology",
   "requiredUniversityLevel": 3,
   "parentResearch": "isthisredstone",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:redstone",
-    "itemCount": 256
-  }
+   { "item": "minecraft:redstone", "quantity": 256 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Block Break Speed",
-    "value": 0.25
-  }
+   { "blockbreakspeedmultiplier": 2 }
   ]
 }

@@ -1,28 +1,16 @@
 {
+  "comment": "name: Iron Skin * description : Armor Durability",
   "id": "ironskin",
-  "name": "Iron Skin",
   "branch": "combat",
   "requiredUniversityLevel": 3,
   "parentResearch": "boiledleather",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:iron_ingot",
-    "itemCount": 16
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "townhall",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:iron_ingot", "quantity": 16 },
+   { "building": "townhall", "level": 3 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Armor Durability",
-    "value": 0.3
-  }
+   { "armordurabilitymultiplier": 3 }
   ]
 }

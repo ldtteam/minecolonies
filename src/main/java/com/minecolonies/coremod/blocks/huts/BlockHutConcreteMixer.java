@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.CONCRETE_MIXER_RESEARCH;
-
 /**
  * Hut for the concrete mason. No different from {@link AbstractBlockHut}
  */
@@ -28,12 +26,5 @@ public class BlockHutConcreteMixer extends AbstractBlockHut<BlockHutConcreteMixe
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.concreteMixer;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, CONCRETE_MIXER_RESEARCH);
     }
 }

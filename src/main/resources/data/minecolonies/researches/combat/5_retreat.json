@@ -1,28 +1,16 @@
 {
+  "comment": "name: Retreat * description : Fleeing Damage",
   "id": "retreat",
-  "name": "Retreat",
   "branch": "combat",
   "requiredUniversityLevel": 5,
   "parentResearch": "fear",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:emerald",
-    "itemCount": 32
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "guardtower",
-    "buildingLevel": 12
-  }
+   { "item": "minecraft:emerald", "quantity": 32 },
+   { "building": "guardtower", "level": 12 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Fleeing Damage",
-    "value": 0.4
-  }
+   { "fleeingdamagemultiplier": 3 }
   ]
 }

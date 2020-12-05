@@ -1,28 +1,16 @@
 {
+  "comment": "name: Space * description : Minimum Stock",
   "id": "space",
-  "name": "Space",
   "branch": "technology",
   "requiredUniversityLevel": 3,
   "parentResearch": "sieving",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecolonies:blockminecoloniesrack",
-    "itemCount": 16
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "miner",
-    "buildingLevel": 3
-  }
+   { "item": "minecolonies:blockminecoloniesrack", "quantity": 16 },
+   { "building": "miner", "level": 3 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Minimum Stock",
-    "value": 0.5
-  }
+   { "minimumstockmultiplier": 1 }
   ]
 }

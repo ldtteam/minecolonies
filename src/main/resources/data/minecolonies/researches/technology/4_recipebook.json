@@ -1,28 +1,16 @@
 {
+  "comment": "name: Recipe Book * description : Recipes",
   "id": "recipebook",
-  "name": "Recipe Book",
   "branch": "technology",
   "requiredUniversityLevel": 4,
   "parentResearch": "cheatsheet",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:paper",
-    "itemCount": 128
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "sawmill",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:paper", "quantity": 128 },
+   { "building": "sawmill", "level": 3 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Recipes",
-    "value": 1
-  }
+   { "recipesmultiplier": 3 }
   ]
 }

@@ -1,28 +1,16 @@
 {
+  "comment": "name: Rainbow Heaven * description : Dyer",
   "id": "rainbowheaven",
-  "name": "Rainbow Heaven",
   "branch": "technology",
   "requiredUniversityLevel": 3,
   "parentResearch": "flowerpower",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:poppy",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "florist",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:poppy", "quantity": 64 },
+   { "building": "florist", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Dyer",
-    "value": true
-  }
+   { "blockhutdyer": 1 }
   ]
 }

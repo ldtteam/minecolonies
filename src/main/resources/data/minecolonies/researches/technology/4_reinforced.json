@@ -1,28 +1,16 @@
 {
+  "comment": "name: Reinforced * description : Tool Durability",
   "id": "reinforced",
-  "name": "Reinforced",
   "branch": "technology",
   "requiredUniversityLevel": 4,
   "parentResearch": "hardened",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:diamond",
-    "itemCount": 32
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "blacksmith",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:diamond", "quantity": 32 },
+   { "building": "blacksmith", "level": 3 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Tool Durability",
-    "value": 0.25
-  }
+   { "tooldurabilitymultiplier": 3 }
   ]
 }

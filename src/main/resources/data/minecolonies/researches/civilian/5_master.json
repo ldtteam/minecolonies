@@ -1,28 +1,16 @@
 {
+  "comment": "name: Master * description : Teaching",
   "id": "master",
-  "name": "Master",
   "branch": "civilian",
   "requiredUniversityLevel": 5,
   "parentResearch": "bachelor",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:bookshelf",
-    "itemCount": 32
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "library",
-    "buildingLevel": 5
-  }
+   { "item": "minecraft:bookshelf", "quantity": 32 },
+   { "building": "library", "level": 5 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Teaching",
-    "value": 0.5
-  }
+   { "teachingmultiplier": 4 }
   ]
 }

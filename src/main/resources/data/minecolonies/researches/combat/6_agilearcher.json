@@ -1,21 +1,15 @@
 {
+  "comment": "name: Agile Archer * description : Archer Armor",
   "id": "agilearcher",
-  "name": "Agile Archer",
   "branch": "combat",
   "requiredUniversityLevel": 6,
   "parentResearch": "improvedevasion",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:diamond",
-    "itemCount": 64
-  }
+   { "item": "minecraft:diamond", "quantity": 64 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Archer Armor",
-    "value": 1
-  }
+   { "archerarmormultiplier": 5 }
   ]
 }

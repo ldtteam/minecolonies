@@ -1,28 +1,16 @@
 {
+  "comment": "name: Steel Bracing * description : Tool Durability",
   "id": "steelbracing",
-  "name": "Steel Bracing",
   "branch": "technology",
   "requiredUniversityLevel": 5,
   "parentResearch": "reinforced",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:diamond",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "blacksmith",
-    "buildingLevel": 5
-  }
+   { "item": "minecraft:diamond", "quantity": 64 },
+   { "building": "blacksmith", "level": 5 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Tool Durability",
-    "value": 0.5
-  }
+   { "tooldurabilitymultiplier": 4 }
   ]
 }

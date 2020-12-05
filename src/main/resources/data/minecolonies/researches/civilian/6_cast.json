@@ -1,21 +1,15 @@
 {
+  "comment": "name: Cast * description : Regeneration",
   "id": "cast",
-  "name": "Cast",
   "branch": "civilian",
   "requiredUniversityLevel": 6,
   "parentResearch": "compress",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:golden_carrot",
-    "itemCount": 64
-  }
+   { "item": "minecraft:golden_carrot", "quantity": 64 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Regeneration",
-    "value": 2
-  }
+   { "regenerationmultiplier": 5 }
   ]
 }

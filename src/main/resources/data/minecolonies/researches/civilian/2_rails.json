@@ -1,28 +1,16 @@
 {
+  "comment": "name: Rails * description : Rails",
   "id": "rails",
-  "name": "Rails",
   "branch": "civilian",
   "requiredUniversityLevel": 2,
   "parentResearch": "keen",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:rail",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "deliveryman",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:rail", "quantity": 64 },
+   { "building": "deliveryman", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockAbility": "Rails",
-    "value": true
-  }
+   { "railsunlock": 1 }
   ]
 }

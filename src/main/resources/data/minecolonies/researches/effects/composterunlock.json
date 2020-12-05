@@ -1,0 +1,6 @@
+{
+  "comment": "name: Composter * description : Unlocks Composter",
+  "id": "composterunlock",
+  "effect": true,
+  "effectType": "unlockBuilding"
+}

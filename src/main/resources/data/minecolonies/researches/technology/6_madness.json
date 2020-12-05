@@ -1,21 +1,15 @@
 {
+  "comment": "name: Madness! * description : Block Place Speed",
   "id": "madness",
-  "name": "Madness!",
   "branch": "technology",
   "requiredUniversityLevel": 6,
   "parentResearch": "seemsautomatic",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:iron_ingot",
-    "itemCount": 1024
-  }
+   { "item": "minecraft:iron_ingot", "quantity": 1024 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Block Place Speed",
-    "value": 2
-  }
+   { "blockplacespeedmultiplier": 5 }
   ]
 }

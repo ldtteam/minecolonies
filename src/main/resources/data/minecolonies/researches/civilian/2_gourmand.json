@@ -1,28 +1,16 @@
 {
+  "comment": "name: Gourmand * description : Saturation",
   "id": "gourmand",
-  "name": "Gourmand",
   "branch": "civilian",
   "requiredUniversityLevel": 2,
   "parentResearch": "firstaid",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:cookie",
-    "itemCount": 32
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "cook",
-    "buildingLevel": 2
-  }
+   { "item": "minecraft:cookie", "quantity": 32 },
+   { "building": "cook", "level": 2 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Saturation",
-    "value": 0.1
-  }
+   { "saturationmultiplier": 1 }
   ]
 }

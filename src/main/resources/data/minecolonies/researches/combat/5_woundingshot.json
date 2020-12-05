@@ -1,28 +1,16 @@
 {
+  "comment": "name: Wounding Shot * description : Archer Damage",
   "id": "woundingshot",
-  "name": "Wounding Shot",
   "branch": "combat",
   "requiredUniversityLevel": 5,
   "parentResearch": "piercingshot",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:flint",
-    "itemCount": 128
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "barracks",
-    "buildingLevel": 5
-  }
+   { "item": "minecraft:flint", "quantity": 128 },
+   { "building": "barracks", "level": 5 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Archer Damage",
-    "value": 2
-  }
+   { "archerdamageaddition": 4 }
   ]
 }

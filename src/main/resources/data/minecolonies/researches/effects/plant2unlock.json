@@ -1,0 +1,6 @@
+{
+  "comment": "name: Plant 2 * description : Plantations Grow Cactus/Bamboo",
+  "id": "plant2unlock",
+  "effect": true,
+  "effectType": "unlockAbility"
+}

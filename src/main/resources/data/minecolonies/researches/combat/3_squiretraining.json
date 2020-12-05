@@ -1,28 +1,16 @@
 {
+  "comment": "name: Squire Training * description : Block Attacks",
   "id": "squiretraining",
-  "name": "Squire Training",
   "branch": "combat",
   "requiredUniversityLevel": 3,
   "parentResearch": "improvedswords",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:shield",
-    "itemCount": 4
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "combatacademy",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:shield", "quantity": 4 },
+   { "building": "combatacademy", "level": 3 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Block Attacks",
-    "value": 0.05
-  }
+   { "blockattacksmultiplier": 1 }
   ]
 }

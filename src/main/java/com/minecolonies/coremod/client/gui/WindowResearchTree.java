@@ -5,13 +5,11 @@ import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ZoomDragView;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.research.IGlobalResearch;
-import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.ILocalResearch;
-import com.minecolonies.api.research.ILocalResearchTree;
+import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -20,11 +18,16 @@ import com.minecolonies.coremod.network.messages.server.colony.building.universi
 import com.minecolonies.coremod.research.BuildingResearchRequirement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
@@ -210,10 +213,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             view.addChild(box);
 
             final Label nameLabel = new Label();
-            nameLabel.setLabelText(research.getDesc());
+            nameLabel.setLabelText(new TranslationTextComponent(research.getDesc()));
             nameLabel.setPosition(offsetX + INITIAL_X_OFFSET + NAME_OFFSET, (nextHeight + Math.min(i, 1)) * (GRADIENT_HEIGHT + Y_SPACING) + Y_SPACING + INITIAL_Y_OFFSET);
             nameLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
             view.addChild(nameLabel);
+
+            final List<IFormattableTextComponent> hoverTexts = new ArrayList<>();
 
             if (state == ResearchState.IN_PROGRESS)
             {
@@ -246,12 +251,13 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
             else if (research.getResearchRequirement() != null && state != ResearchState.FINISHED)
             {
-                String requirementText = "";
+                TranslationTextComponent requirementText = new TranslationTextComponent("");
                 for(int txt = 0; txt < research.getResearchRequirement().size(); txt++)
                 {
-                    //TODO: handle display of more than one research requirement clearly.
-                    requirementText += research.getResearchRequirement().get(txt).getDesc().getString();
+                    hoverTexts.add(research.getResearchRequirement().get(txt).getDesc());
+                    requirementText.append(research.getResearchRequirement().get(txt).getDesc());
                 }
+
                 final Label requirementLabel = new Label();
                 requirementLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() + INITIAL_Y_OFFSET);
                 requirementLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
@@ -262,17 +268,21 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final Label effectLabel = new Label();
             if (research.getEffects() != null)
             {
-                String effectText = "";
+                TranslationTextComponent effectText = new TranslationTextComponent("");
                 for (int txt = 0; txt < research.getEffects().size(); txt++)
                 {
-                    //TODO: handle display of more than one research effect clearly.
-                    effectText = research.getEffects().get(txt).getDesc().getString();
+                    hoverTexts.add(research.getEffects().get(txt).getDesc());
+                    effectText.append(research.getEffects().get(txt).getDesc());
                 }
                 effectLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() * 2 + INITIAL_Y_OFFSET + INITIAL_Y_OFFSET);
                 effectLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
                 effectLabel.setLabelText(effectText);
                 view.addChild(effectLabel);
             }
+
+            //TODO: use hovertext exclusively for effects and requirement texts.
+            //      Probably requires code changes in structurize?
+            box.setHoverToolTip(hoverTexts);
 
             if (parentResearched && state == ResearchState.NOT_STARTED && !trueAbandoned)
             {
@@ -324,6 +334,26 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 view.addChild(buttonImage);
 
                 int storageOffset = 2;
+                for (final IResearchRequirement requirement : research.getResearchRequirement())
+                {
+                    if(requirement instanceof BuildingResearchRequirement)
+                    {
+                        if(IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())))
+                        {
+                            Item item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
+                              new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())).getBuildingBlock().asItem();
+                            ItemStack stack = new ItemStack(item);
+                            stack.setCount(((BuildingResearchRequirement) requirement).getBuildingLevel());
+                            final ItemIcon icon = new ItemIcon();
+                            icon.setItem(stack);
+                            icon.setPosition(buttonImage.getX() + buttonImage.getWidth() + storageOffset, effectLabel.getY() + effectLabel.getHeight() + INITIAL_Y_OFFSET);
+                            icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+                            view.addChild(icon);
+
+                            storageOffset += COST_OFFSET;
+                        }
+                    }
+                }
                 for (final ItemStorage storage : research.getCostList())
                 {
                     final ItemStack stack = storage.getItemStack().copy();

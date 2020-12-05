@@ -1,28 +1,16 @@
 {
+  "comment": "name: Diligent * description : Leveling",
   "id": "diligent",
-  "name": "Diligent",
   "branch": "civilian",
   "requiredUniversityLevel": 2,
   "parentResearch": "keen",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:book",
-    "itemCount": 6
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "library",
-    "buildingLevel": 2
-  }
+   { "item": "minecraft:book", "quantity": 6 },
+   { "building": "library", "level": 2 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Leveling",
-    "value": 0.05
-  }
+   { "levelingmultiplier": 1 }
   ]
 }

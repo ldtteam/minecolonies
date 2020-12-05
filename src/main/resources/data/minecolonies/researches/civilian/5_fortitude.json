@@ -1,28 +1,16 @@
 {
+  "comment": "name: Fortitude * description : Healing Saturation Limit",
   "id": "fortitude",
-  "name": "Fortitude",
   "branch": "civilian",
   "requiredUniversityLevel": 5,
   "parentResearch": "vitality",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:golden_apple",
-    "itemCount": 32
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "cook",
-    "buildingLevel": 5
-  }
+   { "item": "minecraft:golden_apple", "quantity": 32 },
+   { "building": "cook", "level": 5 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Healing Saturation Limit",
-    "value": -2
-  }
+   { "healingsaturationlimitaddition": 4 }
   ]
 }

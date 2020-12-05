@@ -1,21 +1,15 @@
 {
+  "comment": "name: Master Swordsman * description : Melee Armor",
   "id": "masterswordsman",
-  "name": "Master Swordsman",
   "branch": "combat",
   "requiredUniversityLevel": 6,
   "parentResearch": "provost",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:diamond",
-    "itemCount": 64
-  }
+   { "item": "minecraft:diamond", "quantity": 64 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Melee Armor",
-    "value": 1
-  }
+   { "meleearmormultiplier": 5 }
   ]
 }

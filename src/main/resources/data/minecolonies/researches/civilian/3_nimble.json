@@ -1,28 +1,16 @@
 {
+  "comment": "name: Nimble * description : Walking",
   "id": "nimble",
-  "name": "Nimble",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
   "parentResearch": "rails",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:rabbit_foot",
-    "itemCount": 1
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "townhall",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:rabbit_foot", "quantity": 1 },
+   { "building": "townhall", "level": 3 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Walking",
-    "value": 0.05
-  }
+   { "walkingmultiplier": 1 }
   ]
 }

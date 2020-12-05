@@ -1,28 +1,16 @@
 {
+  "comment": "name: City * description : CitizenCap",
   "id": "city",
-  "name": "City",
   "branch": "civilian",
   "requiredUniversityLevel": 5,
   "parentResearch": "village",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:cooked_beef",
-    "itemCount": 512
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "townhall",
-    "buildingLevel": 5
-  }
+   { "item": "minecraft:cooked_beef", "quantity": 512 },
+   { "building": "townhall", "level": 5 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Citizen-Cap",
-    "value": 175
-  }
+   { "citizencapaddition": 4 }
   ]
 }

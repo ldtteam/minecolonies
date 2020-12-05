@@ -1,0 +1,13 @@
+{
+  "comment": "name: Fleeing Speed * description : Fleeing Citizens Gain +%d Swiftness",
+  "id": "fleeingspeedaddition",
+  "effect": true,
+  "effectType": "additionModifier",
+  "levels": 
+  [
+   1,
+   2,
+   3,
+    5
+  ]
+}

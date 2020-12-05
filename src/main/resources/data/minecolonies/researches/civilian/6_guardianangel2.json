@@ -1,21 +1,15 @@
 {
+  "comment": "name: Guardian Angel II * description : Health",
   "id": "guardianangel2",
-  "name": "Guardian Angel II",
   "branch": "civilian",
   "requiredUniversityLevel": 6,
   "parentResearch": "guardianangel",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:hay_block",
-    "itemCount": 256
-  }
+   { "item": "minecraft:hay_block", "quantity": 256 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Health",
-    "value": 20
-  }
+   { "healthaddition": 6 }
   ]
 }

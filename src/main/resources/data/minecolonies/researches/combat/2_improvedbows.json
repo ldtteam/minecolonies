@@ -1,28 +1,16 @@
 {
+  "comment": "name: Improved Bows * description : Archery",
   "id": "improvedbows",
-  "name": "Improved Bows",
   "branch": "combat",
   "requiredUniversityLevel": 2,
   "parentResearch": "tactictraining",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:iron_block",
-    "itemCount": 6
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "barracks",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:iron_block", "quantity": 6 },
+   { "building": "barracks", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Archery",
-    "value": true
-  }
+   { "blockhutarchery": 1 }
   ]
 }

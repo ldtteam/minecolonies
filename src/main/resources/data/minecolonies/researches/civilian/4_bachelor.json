@@ -1,28 +1,16 @@
 {
+  "comment": "name: Bachelor * description : Teaching",
   "id": "bachelor",
-  "name": "Bachelor",
   "branch": "civilian",
   "requiredUniversityLevel": 4,
   "parentResearch": "bookworm",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:bookshelf",
-    "itemCount": 12
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "library",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:bookshelf", "quantity": 12 },
+   { "building": "library", "level": 3 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Teaching",
-    "value": 0.25
-  }
+   { "teachingmultiplier": 3 }
   ]
 }

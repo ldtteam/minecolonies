@@ -1,28 +1,15 @@
 {
+  "comment": "name: Accuracy * description : Sleep Less",
   "id": "accuracy",
-  "name": "Accuracy",
   "branch": "combat",
-  "exclusiveChildResearch": true,
   "requiredUniversityLevel": 1,
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:iron_ingot",
-    "itemCount": 16
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "guardtower",
-    "buildingLevel": 1
-  }
+   { "item": "minecraft:iron_ingot", "quantity": 16 },
+   { "building": "guardtower", "level": 1 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Sleep Less",
-    "value": 0.5
-  }
+   { "sleeplessmultiplier": 1 }
   ]
 }

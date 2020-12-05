@@ -1,21 +1,15 @@
 {
+  "comment": "name: Deadly Aim * description : Archer Damage",
   "id": "deadlyaim",
-  "name": "Deadly Aim",
   "branch": "combat",
   "requiredUniversityLevel": 6,
   "parentResearch": "woundingshot",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:flint",
-    "itemCount": 256
-  }
+   { "item": "minecraft:flint", "quantity": 256 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Archer Damage",
-    "value": 4
-  }
+   { "archerdamageaddition": 5 }
   ]
 }

@@ -1,27 +1,15 @@
 {
+  "comment": "name: Hitting Iron! * description : Blacksmith",
   "id": "hittingiron",
-  "name": "Hitting Iron!",
   "branch": "technology",
   "requiredUniversityLevel": 1,
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:anvil",
-    "itemCount": 1
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "miner",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:anvil", "quantity": 1 },
+   { "building": "miner", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Blacksmith",
-    "value": true
-  }
+   { "blockhutblacksmith": 1 }
   ]
 }

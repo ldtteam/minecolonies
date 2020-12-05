@@ -1,35 +1,17 @@
 {
+  "comment": "name: More Scrolls * description : morescrolls",
   "id": "morescrolls",
-  "name": "More Scrolls",
   "branch": "technology",
   "requiredUniversityLevel": 1,
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:paper",
-    "itemCount": 64
-  },
-  {
-    "itemName": "minecolonies:ancienttome",
-    "itemCount": 1
-  },
-  {
-    "itemName": "minecraft:lapis_lazuli",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "enchanter",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:paper", "quantity": 64 },
+   { "item": "minecolonies:ancienttome", "quantity": 1 },
+   { "item": "minecraft:lapis_lazuli", "quantity": 64 },
+   { "building": "enchanter", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockAbility": "More Scroll Recipes",
-    "value": true
-  }
+   { "morescrollsunlock": 1 }
   ]
 }

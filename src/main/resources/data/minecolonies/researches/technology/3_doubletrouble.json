@@ -1,36 +1,18 @@
 {
+  "comment": "name: Double Trouble * description : Plant 2",
   "id": "doubletrouble",
-  "name": "Double Trouble",
   "branch": "technology",
   "requiredUniversityLevel": 3,
   "parentResearch": "letitgrow",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:bamboo",
-    "itemCount": 64
-  },
-  {
-    "itemName": "minecraft:sugar_cane",
-    "itemCount": 64
-  },
-  {
-    "itemName": "minecraft:cactus",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "plantation",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:bamboo", "quantity": 64 },
+   { "item": "minecraft:sugar_cane", "quantity": 64 },
+   { "item": "minecraft:cactus", "quantity": 64 },
+   { "building": "plantation", "level": 3 }
   ],
   "effects":
   [
-  {
-    "unlockAbility": "Plant 2",
-    "value": true
-  }
+   { "plant2unlock": 1 }
   ]
 }

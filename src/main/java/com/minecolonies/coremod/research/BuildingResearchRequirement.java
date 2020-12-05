@@ -47,6 +47,14 @@ public class BuildingResearchRequirement implements IResearchRequirement
         return buildingLevel;
     }
 
+    /**
+     * @return the building's item form.
+     */
+    public String getBlock()
+    {
+        return "blockhut" + building;
+    }
+
     @Override
     public boolean isFulfilled(final IColony colony)
     {

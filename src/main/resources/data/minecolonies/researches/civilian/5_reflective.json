@@ -1,28 +1,16 @@
 {
+  "comment": "name: Reflective * description : Leveling",
   "id": "reflective",
-  "name": "Reflective",
   "branch": "civilian",
   "requiredUniversityLevel": 5,
   "parentResearch": "scholarly",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:book",
-    "itemCount": 48
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "library",
-    "buildingLevel": 5
-  }
+   { "item": "minecraft:book", "quantity": 48 },
+   { "building": "library", "level": 5 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Leveling",
-    "value": 0.5
-  }
+   { "levelingmultiplier": 4 }
   ]
 }

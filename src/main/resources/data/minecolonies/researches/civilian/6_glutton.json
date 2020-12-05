@@ -1,21 +1,15 @@
 {
+  "comment": "name: Glutton * description : Saturation",
   "id": "glutton",
-  "name": "Glutton",
   "branch": "civilian",
   "requiredUniversityLevel": 6,
   "parentResearch": "epicure",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:cookie",
-    "itemCount": 512
-  }
+   { "item": "minecraft:cookie", "quantity": 512 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Saturation",
-    "value": 2
-  }
+   { "saturationmultiplier": 5 }
   ]
 }

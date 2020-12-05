@@ -1,28 +1,16 @@
 {
+  "comment": "name: Fertilizer * description : Farming",
   "id": "fertilizer",
-  "name": "Fertilizer",
   "branch": "technology",
   "requiredUniversityLevel": 5,
   "parentResearch": "compost",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:wheat_seeds",
-    "itemCount": 512
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "smeltery",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:wheat_seeds", "quantity": 512 },
+   { "building": "smeltery", "level": 3 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Farming",
-    "value": 0.75
-  }
+   { "farmingmultiplier": 4 }
   ]
 }

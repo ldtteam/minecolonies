@@ -55,7 +55,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
-import static com.minecolonies.api.research.util.ResearchConstants.HEALTH;
+import static com.minecolonies.api.research.util.ResearchConstants.HEALTH_BOOST;
 import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -1205,10 +1205,10 @@ public class CitizenData implements ICitizenData
             }
 
             final AdditionModifierResearchEffect healthEffect =
-              colony.getResearchManager().getResearchEffects().getEffect(HEALTH, AdditionModifierResearchEffect.class);
+              colony.getResearchManager().getResearchEffects().getEffect(HEALTH_BOOST, AdditionModifierResearchEffect.class);
             if (healthEffect != null)
             {
-                final AttributeModifier healthModLevel = new AttributeModifier(HEALTH, healthEffect.getEffect(), AttributeModifier.Operation.ADDITION);
+                final AttributeModifier healthModLevel = new AttributeModifier(HEALTH_BOOST, healthEffect.getEffect(), AttributeModifier.Operation.ADDITION);
                 AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
             }
         }

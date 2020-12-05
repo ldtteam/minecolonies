@@ -1,28 +1,16 @@
 {
+  "comment": "name: Stringwork * description : Fletcher",
   "id": "stringwork",
-  "name": "Stringwork",
   "branch": "technology",
   "requiredUniversityLevel": 2,
   "parentResearch": "woodwork",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:string",
-    "itemCount": 16
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "sawmill",
-    "buildingLevel": 1
-  }
+   { "item": "minecraft:string", "quantity": 16 },
+   { "building": "sawmill", "level": 1 }
   ],
   "effects":
   [
-  {
-    "unlockBuilding": "Fletcher",
-    "value": true
-  }
+   { "blockhutfletcher": 1 }
   ]
 }

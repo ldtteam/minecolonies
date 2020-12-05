@@ -1,0 +1,6 @@
+{
+  "comment": "name: Consume Arrows * description : Archers Use Arrows For +2 Damage",
+  "id": "consumearrowsunlock",
+  "effect": true,
+  "effectType": "unlockAbility"
+}

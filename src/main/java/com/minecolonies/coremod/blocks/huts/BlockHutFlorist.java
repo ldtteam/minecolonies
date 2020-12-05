@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.FLORIST_RESEARCH;
-
 public class BlockHutFlorist extends AbstractBlockHut<BlockHutFlorist>
 {
     @NotNull
@@ -25,12 +23,5 @@ public class BlockHutFlorist extends AbstractBlockHut<BlockHutFlorist>
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.florist;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, FLORIST_RESEARCH);
     }
 }

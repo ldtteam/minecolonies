@@ -62,7 +62,7 @@ public class ItemBlockHut extends BlockItem
     {
         for(AbstractBlockHut<?> hut : ModBlocks.getHuts())
         {
-            hut.checkResearch(colony);
+            hut.checkResearch(colony, hut.getName());
         }
     }
 

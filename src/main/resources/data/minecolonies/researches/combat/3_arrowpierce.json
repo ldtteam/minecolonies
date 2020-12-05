@@ -1,32 +1,17 @@
 {
+  "comment": "name: Arrow Piercing * description : Piercing Arrows",
   "id": "arrowpierce",
-  "name": "Arrow Piercing",
   "branch": "combat",
   "requiredUniversityLevel": 3,
   "parentResearch": "arrowuse",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:arrow",
-    "itemCount": 64
-  },
-  {
-    "itemName": "minecraft:redstone",
-    "itemCount": 64
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "archery",
-    "buildingLevel": 1
-  }
+   { "item": "minecraft:arrow", "quantity": 64 },
+   { "item": "minecraft:redstone", "quantity": 64 },
+   { "building": "archery", "level": 1 }
   ],
   "effects":
   [
-  {
-    "unlockAbility": "Piercing Arrows",
-    "value": true
-  }
+   { "piercingarrowsunlock": 1 }
   ]
 }

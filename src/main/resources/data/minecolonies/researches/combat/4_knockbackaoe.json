@@ -1,36 +1,18 @@
 {
+  "comment": "name: Knockback * description : Whirlwind ability",
   "id": "knockbackaoe",
-  "name": "Knockback",
   "branch": "combat",
   "requiredUniversityLevel": 4,
   "parentResearch": "arrowpierce",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:redstone",
-    "itemCount": 64
-  },
-  {
-    "itemName": "minecraft:gold_ingot",
-    "itemCount": 64
-  },
-  {
-    "itemName": "minecraft:lapis_lazuli",
-    "itemCount": 128
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "barracks",
-    "buildingLevel": 4
-  }
+   { "item": "minecraft:redstone", "quantity": 64 },
+   { "item": "minecraft:gold_ingot", "quantity": 64 },
+   { "item": "minecraft:lapis_lazuli", "quantity": 128 },
+   { "building": "barracks", "level": 4 }
   ],
   "effects":
   [
-  {
-    "unlockAbility": "Whirlwind Ability",
-    "value": true
-  }
+   { "whirlwindabilityunlock": 1 }
   ]
 }

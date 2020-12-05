@@ -1,28 +1,16 @@
 {
+  "comment": "name: Nightowl * description : Working Day H",
   "id": "nightowl",
-  "name": "Nightowl",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
   "parentResearch": "circus",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:golden_carrot",
-    "itemCount": 25
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "library",
-    "buildingLevel": 2
-  }
+   { "item": "minecraft:golden_carrot", "quantity": 25 },
+   { "building": "library", "level": 2 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Working Day H",
-    "value": 1
-  }
+   { "workingdayhaddition": 1 }
   ]
 }

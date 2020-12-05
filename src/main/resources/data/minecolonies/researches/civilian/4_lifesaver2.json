@@ -1,0 +1,16 @@
+{
+  "comment": "name: Lifesaver II * description : Health",
+  "id": "lifesaver2",
+  "branch": "civilian",
+  "requiredUniversityLevel": 4,
+  "parentResearch": "lifesaver",
+  "requirements":
+  [
+   { "item": "minecraft:hay_block", "quantity": 64 },
+   { "building": "townhall", "level": 4 }
+  ],
+  "effects":
+  [
+   { "healthaddition": 4 }
+  ]
+}

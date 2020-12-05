@@ -1,28 +1,16 @@
 {
+  "comment": "name: Riposte * description : Melee Armor",
   "id": "riposte",
-  "name": "Riposte",
   "branch": "combat",
   "requiredUniversityLevel": 3,
   "parentResearch": "parry",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:iron_ingot",
-    "itemCount": 32
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "combatacademy",
-    "buildingLevel": 1
-  }
+   { "item": "minecraft:iron_ingot", "quantity": 32 },
+   { "building": "combatacademy", "level": 1 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Melee Armor",
-    "value": 0.1
-  }
+   { "meleearmormultiplier": 2 }
   ]
 }

@@ -31,7 +31,7 @@ import java.util.function.Predicate;
 
 
 import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DEPTH;
-import static com.minecolonies.api.research.util.ResearchConstants.INV_SLOTS;
+import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_INV_SLOTS;
 
 /**
  * Abstract crafting resolver for all crafting tasks.
@@ -267,7 +267,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     {
         final List<ItemStorage> inputs = recipeRequest.getCleanedInput();
         final ItemStack requestStack = recipeRequest.getPrimaryOutput();
-        final AbstractResearchEffect<Double> researchEffect =  manager.getColony().getResearchManager().getResearchEffects().getEffect(INV_SLOTS, AbstractResearchEffect.class);
+        final AbstractResearchEffect<Double> researchEffect =  manager.getColony().getResearchManager().getResearchEffects().getEffect(CITIZEN_INV_SLOTS, AbstractResearchEffect.class);
         final int extraSlots = researchEffect != null ? researchEffect.getEffect().intValue() : 0;         
         final int maxSlots = (27 + extraSlots) - (27 + extraSlots) % 8;  // retaining 1 slot per row for 'overhead'
 

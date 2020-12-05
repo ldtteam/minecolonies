@@ -1,21 +1,15 @@
 {
+  "comment": "name: Heavily Loaded * description : Citizen Inv Slots",
   "id": "heavilyloaded",
-  "name": "Heavily Loaded",
   "branch": "technology",
   "requiredUniversityLevel": 6,
   "parentResearch": "loaded",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:emerald",
-    "itemCount": 128
-  }
+   { "item": "minecraft:emerald", "quantity": 128 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Citizen Inv Slots",
-    "value": 27
-  }
+   { "citizeninvslotsaddition": 3 }
   ]
 }

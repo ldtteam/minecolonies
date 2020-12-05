@@ -1,0 +1,14 @@
+{
+  "comment": "name: More Ores * description : Miners Find +%d%% More Ores",
+  "id": "moreoresmultiplier",
+  "effect": true,
+  "effectType": "multiplierModifier",
+  "levels": 
+  [
+   0.1,
+   0.25,
+   0.5,
+   1,
+    2
+  ]
+}

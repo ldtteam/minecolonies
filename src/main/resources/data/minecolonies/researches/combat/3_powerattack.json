@@ -1,28 +1,16 @@
 {
+  "comment": "name: Power Attack * description : Melee Damage",
   "id": "powerattack",
-  "name": "Power Attack",
   "branch": "combat",
   "requiredUniversityLevel": 3,
   "parentResearch": "quickdraw",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:iron_block",
-    "itemCount": 4
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "combatacademy",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:iron_block", "quantity": 4 },
+   { "building": "combatacademy", "level": 3 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Melee Damage",
-    "value": 1
-  }
+   { "meleedamageaddition": 2 }
   ]
 }

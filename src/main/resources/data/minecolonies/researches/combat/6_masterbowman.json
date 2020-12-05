@@ -1,21 +1,15 @@
 {
+  "comment": "name: Master Bowman * description : Double Arrows",
   "id": "masterbowman",
-  "name": "Master Bowman",
   "branch": "combat",
   "requiredUniversityLevel": 6,
   "parentResearch": "rapidshot",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:bow",
-    "itemCount": 27
-  }
+   { "item": "minecraft:bow", "quantity": 27 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Double Arrows",
-    "value": 0.5
-  }
+   { "doublearrowsmultiplier": 4 }
   ]
 }

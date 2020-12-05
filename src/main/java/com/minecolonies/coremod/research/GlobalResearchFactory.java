@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 
 /**
- * Factory implementation taking care of creating new instances, serializing and deserializing GloblaResearch.
+ * Factory implementation taking care of creating new instances, serializing and deserializing GloblalResearch.
  */
 public class GlobalResearchFactory implements IGlobalResearchFactory
 {

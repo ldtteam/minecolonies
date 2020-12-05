@@ -1,28 +1,16 @@
 {
+  "comment": "name: Knight Training * description : Block Attacks",
   "id": "knighttraining",
-  "name": "Knight Training",
   "branch": "combat",
   "requiredUniversityLevel": 4,
   "parentResearch": "squiretraining",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:shield",
-    "itemCount": 8
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "combatacademy",
-    "buildingLevel": 4
-  }
+   { "item": "minecraft:shield", "quantity": 8 },
+   { "building": "combatacademy", "level": 4 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Block Attacks",
-    "value": 0.1
-  }
+   { "blockattacksmultiplier": 2 }
   ]
 }

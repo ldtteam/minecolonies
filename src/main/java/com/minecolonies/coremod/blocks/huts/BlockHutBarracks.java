@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.BARRACKS_RESEARCH;
-
 /**
  * Block of the Barracks.
  */
@@ -37,12 +35,5 @@ public class BlockHutBarracks extends AbstractBlockHut<BlockHutBarracks>
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.barracks;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, BARRACKS_RESEARCH);
     }
 }

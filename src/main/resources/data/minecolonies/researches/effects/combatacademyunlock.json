@@ -1,0 +1,6 @@
+{
+  "comment": "name: Combat Academy * description : Unlock Combat Academy",
+  "id": "combatacademyunlock",
+  "effect": true,
+  "effectType": "unlockBuilding"
+}

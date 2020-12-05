@@ -1,0 +1,12 @@
+{
+  "comment": "name: Citizen Inv Slots * description : Citizen Inventory +%d Slots",
+  "id": "citizeninvslotsaddition",
+  "effect": true,
+  "effectType": "additionModifier",
+  "levels": 
+  [
+   9,
+   18,
+    27
+  ]
+}

@@ -1,28 +1,16 @@
 {
+  "comment": "name: Nightowl II * description : Working Day H",
   "id": "nightowl2",
-  "name": "Nightowl II",
   "branch": "civilian",
   "requiredUniversityLevel": 4,
   "parentResearch": "festival",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:golden_carrot",
-    "itemCount": 75
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "townhall",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:golden_carrot", "quantity": 75 },
+   { "building": "townhall", "level": 3 }
   ],
   "effects":
   [
-  {
-    "additionModifier": "Working Day",
-    "value": 2
-  }
+   { "workingdayhaddition": 2 }
   ]
 }

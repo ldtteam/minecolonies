@@ -1,28 +1,16 @@
 {
+  "comment": "name: Bookworm * description : Teaching",
   "id": "bookworm",
-  "name": "Bookworm",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
   "parentResearch": "morebooks",
-  "requiredItems":
+  "requirements":
   [
-  {
-    "itemName": "minecraft:bookshelf",
-    "itemCount": 6
-  }
-  ],
-  "requiredBuildings":
-  [
-  {
-    "building": "school",
-    "buildingLevel": 3
-  }
+   { "item": "minecraft:bookshelf", "quantity": 6 },
+   { "building": "school", "level": 3 }
   ],
   "effects":
   [
-  {
-    "multiplierModifier": "Teaching",
-    "value": 0.1
-  }
+   { "teachingmultiplier": 2 }
   ]
 }
