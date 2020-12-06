@@ -1,6 +1,0 @@
-{
-  "comment": "name: Smeltery * description : Unlocks Smeltery",
-  "id": "smelteryunlock",
-  "effect": true,
-  "effectType": "unlockBuilding"
-}

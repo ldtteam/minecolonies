@@ -15,7 +15,7 @@ import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.research.LocalResearch;
@@ -439,11 +439,14 @@ public class CustomRecipe
             }
             else
             {
-                for (ILocalResearch research : colony.getResearchManager().getResearchTree().getCompletedResearch())
+                if(Boolean.TRUE.equals(colony.getResearchManager().getResearchTree().hasCompletedResearch(researchId)))
                 {
-                    if(research.getId().equals(requiredEffect) && MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasUnlockAbilityEffect(research.getId()))
+                    for(IResearchEffect effect : IGlobalResearchTree.getInstance().getEffectsForResearch(researchId))
                     {
-                        requiredEffect = true;
+                        if(effect instanceof UnlockAbilityResearchEffect)
+                        {
+                            requiredEffect = true;
+                        }
                     }
                 }
             }
@@ -453,16 +456,18 @@ public class CustomRecipe
         {
             if(Boolean.TRUE.equals(IGlobalResearchTree.getInstance().hasUnlockAbilityEffect(excludedResearchId)))
             {
-                excludedEffect = true;
+                requiredEffect = true;
             }
             else
             {
-                for (ILocalResearch research : colony.getResearchManager().getResearchTree().getCompletedResearch())
+                if(Boolean.TRUE.equals(colony.getResearchManager().getResearchTree().hasCompletedResearch(excludedResearchId)))
                 {
-                    if(research.getId().equals(excludedResearchId) && MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasUnlockAbilityEffect(research.getId()))
+                    for(IResearchEffect effect : IGlobalResearchTree.getInstance().getEffectsForResearch(excludedResearchId))
                     {
-                        excludedEffect = true;
-                        //return false;
+                        if(effect instanceof UnlockAbilityResearchEffect)
+                        {
+                            requiredEffect = true;
+                        }
                     }
                 }
             }

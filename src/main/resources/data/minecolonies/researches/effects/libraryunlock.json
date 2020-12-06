@@ -1,6 +1,0 @@
-{
-  "comment": "name: Library * description : Unlocks Library",
-  "id": "libraryunlock",
-  "effect": true,
-  "effectType": "unlockBuilding"
-}

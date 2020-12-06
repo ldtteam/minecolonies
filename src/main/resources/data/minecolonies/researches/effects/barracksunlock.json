@@ -1,6 +1,0 @@
-{
-  "comment": "name: Barracks * description : Unlocks Barracks",
-  "id": "barracksunlock",
-  "effect": true,
-  "effectType": "unlockBuilding"
-}

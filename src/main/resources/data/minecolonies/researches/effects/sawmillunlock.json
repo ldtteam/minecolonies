@@ -1,6 +1,0 @@
-{
-  "comment": "name: Sawmill * description : Unlocks Sawmill",
-  "id": "sawmillunlock",
-  "effect": true,
-  "effectType": "unlockBuilding"
-}

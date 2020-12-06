@@ -1,6 +1,0 @@
-{
-  "comment": "name: Sifter * description : Unlocks Sifter",
-  "id": "sifterunlock",
-  "effect": true,
-  "effectType": "unlockBuilding"
-}

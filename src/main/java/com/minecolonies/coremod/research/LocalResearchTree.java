@@ -3,12 +3,10 @@ package com.minecolonies.coremod.research;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.ILocalResearchTree;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
-import com.minecolonies.api.research.factories.ILocalResearchFactory;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
@@ -40,6 +38,11 @@ public class LocalResearchTree implements ILocalResearchTree
     private final Map<String, ILocalResearch> inProgress = new HashMap<>();
 
     /**
+     * All completed research.
+     */
+    private final List<String> isComplete = new ArrayList<>();
+
+    /**
      * Map containing all branches for which the level 6 research has been occupied already.
      */
     private final Map<String, Boolean> levelSixResearchReached = new HashMap<>();
@@ -55,20 +58,28 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
-    public List<ILocalResearch> getCompletedResearch()
+    public Boolean hasCompletedResearch(String researchId)
     {
-        final List<ILocalResearch> allCompletedResearch = new ArrayList<>();
-        for(Map<String, ILocalResearch> branchResearch : researchTree.values())
+        boolean researchIsLoaded = false;
+        for(Map.Entry<String, Map<String, ILocalResearch>> branches : researchTree.entrySet())
         {
-            for(ILocalResearch research : branchResearch.values())
+            if(branches.getValue().containsKey(researchId))
             {
-                if(research.getState() == ResearchState.FINISHED)
-                {
-                    allCompletedResearch.add(research);
-                }
+                researchIsLoaded = true;
             }
         }
-        return allCompletedResearch;
+        if(!researchIsLoaded)
+        {
+            return null;
+        }
+        if(isComplete.contains(researchId))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     @Override
@@ -93,6 +104,7 @@ public class LocalResearchTree implements ILocalResearchTree
         else if (research.getState() == ResearchState.FINISHED)
         {
             inProgress.remove(research.getId());
+            isComplete.add(research.getId());
         }
 
         if (research.getDepth() == 6)
@@ -167,6 +179,10 @@ public class LocalResearchTree implements ILocalResearchTree
                           case "livesaver2":
                               research = new LocalResearch("lifesaver2", "civilian", 4);
                               break;
+                      }
+                      if(!isComplete.contains(research))
+                      {
+                          isComplete.add(research.getId());
                       }
                   }
                   /// endregion

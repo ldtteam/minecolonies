@@ -1,6 +1,0 @@
-{
-  "comment": "name: Stonesmeltery * description : Unlocks Stonesmeltery",
-  "id": "stonesmelteryunlock",
-  "effect": true,
-  "effectType": "unlockBuilding"
-}

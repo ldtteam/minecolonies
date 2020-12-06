@@ -1,6 +1,0 @@
-{
-  "comment": "name: Crusher * description : Unlocks Crusher",
-  "id": "crusherunlock",
-  "effect": true,
-  "effectType": "unlockBuilding"
-}

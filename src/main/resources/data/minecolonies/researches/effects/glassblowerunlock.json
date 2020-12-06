@@ -1,6 +1,0 @@
-{
-  "comment": "name: Glassblower * description : Unlocks Glassblower",
-  "id": "glassblowerunlock",
-  "effect": true,
-  "effectType": "unlockBuilding"
-}

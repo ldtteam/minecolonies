@@ -24,7 +24,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.TAG_RESEARCH_
 public class GlobalResearchTree implements IGlobalResearchTree
 {
     /**
-     * The map containing all researches by ID.
+     * The map containing all researches by ID and branch.
      */
     private final Map<String, Map<String, IGlobalResearch>> researchTree = new HashMap<>();
 

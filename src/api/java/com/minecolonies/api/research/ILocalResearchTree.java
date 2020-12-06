@@ -43,11 +43,11 @@ public interface ILocalResearchTree
     List<ILocalResearch> getResearchInProgress();
 
     /**
-     * Get a list of all completed research.
+     * Checks if a given research is complete.
      *
-     * @return the list.
+     * @return null if doesn't exist, true if complete, false if not completed.
      */
-    List<ILocalResearch> getCompletedResearch();
+     Boolean hasCompletedResearch(String researchId);
 
     /**
      * Finish a research and remove it from the inProgress list.

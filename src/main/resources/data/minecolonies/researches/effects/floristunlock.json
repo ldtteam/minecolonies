@@ -1,6 +1,0 @@
-{
-  "comment": "name: Florist * description : Unlocks Florist",
-  "id": "floristunlock",
-  "effect": true,
-  "effectType": "unlockBuilding"
-}

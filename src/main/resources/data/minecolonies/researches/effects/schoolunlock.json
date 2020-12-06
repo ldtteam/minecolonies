@@ -1,6 +1,0 @@
-{
-  "comment": "name: School * description : Unlocks School",
-  "id": "schoolunlock",
-  "effect": true,
-  "effectType": "unlockBuilding"
-}

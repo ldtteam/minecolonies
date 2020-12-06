@@ -42,10 +42,6 @@ public class ResearchEffectManager implements IResearchEffectManager
         }
         else
         {
-            if(IMinecoloniesAPI.getInstance().getGlobalResearchTree().hasUnlockAbilityEffect(id))
-            {
-                return false;
-            }
             if(IMinecoloniesAPI.getInstance().getGlobalResearchTree().hasUnlockBuildingEffect(id))
             {
                 return false;
