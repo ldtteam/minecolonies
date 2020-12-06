@@ -17,7 +17,6 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LadderBlock;
-import net.minecraft.block.VineBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -225,6 +224,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         this.ourEntity.setMoveVertical(0);
         if (handleLadders(oldIndex))
         {
+            pathFollow();
             return;
         }
         if (handleRails())
@@ -698,7 +698,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
                 else
                 {
-                    this.ourEntity.getNavigator().clearPath();
+                    return false;
                 }
                 return true;
             }
@@ -764,39 +764,37 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 {
                     this.currentPath.setCurrentPathIndex(curNodeNext);
                 }
-
-                this.checkForStuck(vec3);
                 return;
             }
         }
 
-        Vector3d Vector3d = this.getEntityPosition();
-        this.maxDistanceToWaypoint = this.entity.getWidth() > 0.75F ? this.entity.getWidth() / 2.0F : 0.75F - this.entity.getWidth() / 2.0F;
-        Vector3d Vector3d1 = this.currentPath.getVectorFromIndex(this.entity, this.currentPath.getCurrentPathIndex());
-        // Forge: fix MC-94054
-        if (Math.abs(this.entity.getPosX() - Vector3d1.x) < (double) this.maxDistanceToWaypoint
-              && Math.abs(this.entity.getPosZ() - Vector3d1.z) < (double) this.maxDistanceToWaypoint &&
-              Math.abs(this.entity.getPosY() - Vector3d1.y) < 1.0D)
+        this.maxDistanceToWaypoint = 0.75F;
+
+        // Look at multiple points, incase we're too fast
+        for (int i = this.currentPath.getCurrentPathIndex(); i < Math.min(this.currentPath.getCurrentPathLength(), this.currentPath.getCurrentPathIndex() + 4); i++)
         {
-            this.currentPath.incrementPathIndex();
-        }
-        else
-        {
-            // Look ahead if we were too fast.
-            for (int i = this.currentPath.getCurrentPathIndex(); i < Math.min(this.currentPath.getCurrentPathLength(), this.currentPath.getCurrentPathIndex() + 4); i++)
+            Vector3d vec3d2 = this.currentPath.getVectorFromIndex(this.entity, i);
+            if (Math.abs(this.entity.getPosX() - vec3d2.x) < (double) this.maxDistanceToWaypoint - Math.abs(this.entity.getPosY() - (vec3d2.y)) * 0.1
+                  && Math.abs(this.entity.getPosZ() - vec3d2.z) < (double) this.maxDistanceToWaypoint - Math.abs(this.entity.getPosY() - (vec3d2.y)) * 0.1 &&
+                  Math.abs(this.entity.getPosY() - (vec3d2.y - 0.5f)) < 1.0D)
             {
-                Vector3d Vector3d2 = this.currentPath.getVectorFromIndex(this.entity, i);
-                if (Math.abs(this.entity.getPosX() - Vector3d2.x) < (double) this.maxDistanceToWaypoint
-                      && Math.abs(this.entity.getPosZ() - Vector3d2.z) < (double) this.maxDistanceToWaypoint &&
-                      Math.abs(this.entity.getPosY() - Vector3d2.y) < 1.0D)
+                this.currentPath.incrementPathIndex();
+                // Mark reached nodes for debug path drawing
+                if (AbstractPathJob.lastDebugNodesPath != null)
                 {
-                    this.currentPath.setCurrentPathIndex(i);
-                    break;
+                    final PathPoint point = currentPath.getPathPointFromIndex(i);
+                    final BlockPos pos = new BlockPos(point.x, point.y, point.z);
+                    for (final Node node : AbstractPathJob.lastDebugNodesPath)
+                    {
+                        if (node.pos.equals(pos))
+                        {
+                            node.setReachedByWorker();
+                            break;
+                        }
+                    }
                 }
             }
         }
-
-        this.checkForStuck(Vector3d);
     }
 
     public void updatePath() {}

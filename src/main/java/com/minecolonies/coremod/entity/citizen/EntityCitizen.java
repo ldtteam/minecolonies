@@ -1635,12 +1635,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return world.getScoreboard().getTeam(this.cachedTeamName);
         }
 
-        if (getCitizenColonyHandler().getColony() != null)
-        {
-            return getCitizenColonyHandler().getColony().getTeam();
-        }
-
-        return null;
+        return world.getScoreboard().getTeam(getScoreboardName());
     }
 
     @Override
