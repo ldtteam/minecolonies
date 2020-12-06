@@ -120,8 +120,8 @@
   "minecolonies.config.fisherprismarinechance": "Prismarine Chance",
   "minecolonies.config.minthleveltoteleport": "Town Hall Teleport",
   "minecolonies.config.minthleveltoteleport.comment": "The minimum level a Town Hall has to be to allow teleportation to allied colonies.",
-  "minecolonies.config.suggestbuildtoolplacement": "Building Tool Placement",
-  "minecolonies.config.suggestbuildtoolplacement.comment": "Suggest building tool usage when trying to place a building without the building tool.",
+  "minecolonies.config.suggestbuildtoolplacement": "Build Tool Placement",
+  "minecolonies.config.suggestbuildtoolplacement.comment": "Suggest build tool usage when trying to place a building without the build tool.",
   "minecolonies.config.foodmodifier": "Food Modifier",
   "minecolonies.config.foodmodifier.comment": "Food consumption modifier. Min: 1.0.",
   "minecolonies.config.teleportbuffer": "Teleport Buffer",
@@ -916,9 +916,9 @@
 
   "item.minecolonies.clipboard": "Clipboard",
 
-  "com.minecolonies.coremod.item.clipboard.needcolony": "No colony set (sneak-click the Town Hall)",
+  "com.minecolonies.coremod.item.clipboard.needcolony": "No colony set (sneak + use the clipboard on the Town Hall)",
   "com.minecolonies.coremod.item.clipboard.registered": "Noting requests on the clipboard from %s.",
-  "com.minecolonies.coremod.item.scroll.needcolony": "No Builder set (sneak-click a Builder's Hut)",
+  "com.minecolonies.coremod.item.scroll.needcolony": "No Builder set (sneak + use the scroll on the Builder's Hut)",
   "com.minecolonies.coremod.item.scroll.registered": "Linked resources for Builder's Hut at %s.",
   "com.minecolonies.coremod.item.scroll.no_builder": "§oNo Builder",
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
