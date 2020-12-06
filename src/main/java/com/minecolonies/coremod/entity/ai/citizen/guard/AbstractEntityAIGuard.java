@@ -33,6 +33,7 @@ import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import com.minecolonies.coremod.util.TeleportHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
@@ -1145,5 +1146,26 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return false;
         }
         return super.canBeInterrupted();
+    }
+
+    /**
+     * Method which determines whether to apply attack actions.
+     *
+     * @return the boolean of whether or not to apply attack actions.
+     */
+    public boolean handleAttackExceptions(final Entity targetEntity)
+    {
+        if (targetEntity instanceof PlayerEntity)
+        {
+            if( worker.getCitizenColonyHandler().getColony() != null && worker.getCitizenColonyHandler().getColony().getPermissions().isColonyMember((PlayerEntity) targetEntity))
+            {
+                if (worker.getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
+                {
+                    return false;
+                }
+                return !(buildingGuards.getTask() == GuardTask.FOLLOW && targetEntity.equals(buildingGuards.getPlayerToFollowOrRally()));
+            }
+        }
+        return true;
     }
 }

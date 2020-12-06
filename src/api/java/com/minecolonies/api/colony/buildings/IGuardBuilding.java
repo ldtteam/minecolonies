@@ -21,27 +21,6 @@ public interface IGuardBuilding extends IBuildingWorker
     int PATROL_DISTANCE = 30;
 
     /**
-     * Check if a guard should take damage by a player..
-     *
-     * @param citizen the citizen.
-     * @param player  the player.
-     * @return false if in follow mode and following the player.
-     */
-    static boolean checkIfGuardShouldTakeDamage(final AbstractEntityCitizen citizen, final PlayerEntity player)
-    {
-        final IBuildingWorker buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
-        if (!(buildingWorker instanceof IGuardBuilding))
-        {
-            return true;
-        }
-        if (player.equals(((IGuardBuilding) buildingWorker).getPlayerToFollowOrRally()))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Get the guard's {@link GuardTask}.
      *
      * @return The task of the guard.

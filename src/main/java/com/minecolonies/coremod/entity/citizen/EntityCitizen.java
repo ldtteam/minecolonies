@@ -14,6 +14,7 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
@@ -1281,15 +1282,19 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
         }
 
-        if (sourceEntity instanceof ServerPlayerEntity)
+        if (sourceEntity instanceof PlayerEntity)
         {
-            if (citizenColonyHandler.getColony().getRaiderManager().isRaided())
+            if( citizenColonyHandler.getColony() != null && citizenColonyHandler.getColony().getPermissions().isColonyMember((PlayerEntity) sourceEntity))
             {
-                return false;
-            }
-            if (getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
-            {
-                return !IGuardBuilding.checkIfGuardShouldTakeDamage(this, (PlayerEntity) sourceEntity);
+                if (citizenColonyHandler.getColony().getRaiderManager().isRaided())
+                {
+                    return true;
+                }
+                if (citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
+                {
+                    final AbstractBuildingGuards buildingGuards = (AbstractBuildingGuards) citizenData.getWorkBuilding();
+                    return ( buildingGuards.getTask() == GuardTask.FOLLOW && sourceEntity.equals(buildingGuards.getPlayerToFollowOrRally()) );
+                }
             }
         }
         return false;

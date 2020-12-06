@@ -253,7 +253,10 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
                               2F,
                               MathHelper.sin(livingentity.rotationYaw * ((float) Math.PI)),
                               (-MathHelper.cos(livingentity.rotationYaw * ((float) Math.PI))));
-                            livingentity.attackEntityFrom(source, (float) (damageToBeDealt / entities.size()));
+                            if(handleAttackExceptions(livingentity))
+                            {
+                                livingentity.attackEntityFrom(source, (float) (damageToBeDealt / entities.size()));
+                            }
                         }
                     }
 
@@ -285,9 +288,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
                 }
             }
 
-
-            target.attackEntityFrom(source, (float) damageToBeDealt);
-            target.setRevengeTarget(worker);
+            if(handleAttackExceptions(target))
+            {
+                target.attackEntityFrom(source, (float) damageToBeDealt);
+                target.setRevengeTarget(worker);
+            }
             if (target instanceof MobEntity)
             {
                 UnlockAbilityResearchEffect effect = worker.getCitizenColonyHandler()
