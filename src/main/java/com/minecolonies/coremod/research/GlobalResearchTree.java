@@ -63,6 +63,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         {
             branchMap = new HashMap<>();
         }
+
         if (branchMap.containsKey(research.getId()))
         {
             Log.getLogger().error("Duplicate research key:" + research.getId());
@@ -70,6 +71,9 @@ public class GlobalResearchTree implements IGlobalResearchTree
 
         branchMap.put(research.getId(), research);
         researchTree.put(branch, branchMap);
+
+        researchResourceLocations.put(research.getResourceLocation(), research.getId());
+
         if(isReloadedWithWorld)
         {
             resettableResearch.add(research.getResourceLocation());
@@ -118,7 +122,9 @@ public class GlobalResearchTree implements IGlobalResearchTree
         {
             return Collections.emptyList();
         }
-        return researchTree.get(branch).values().stream().filter(research -> research.getParent().isEmpty()).map(IGlobalResearch::getId).collect(Collectors.toList());
+        return researchTree.get(branch).values().stream().filter(research -> research.getParent().isEmpty())
+                 .sorted(Comparator.comparing(IGlobalResearch::getResourceLocation))
+                 .map(IGlobalResearch::getId).collect(Collectors.toList());
     }
 
     @Override
@@ -127,18 +133,21 @@ public class GlobalResearchTree implements IGlobalResearchTree
         // and the reason we're not using BiMaps or identifying static research by resourceLocation.
         for(ResourceLocation reset : resettableResearch)
         {
-            if(unlockAbilityEffect.containsValue(reset))
+            for(IResearchEffect effect : getEffectsForResearch(researchResourceLocations.get(reset)))
             {
-                unlockAbilityEffect.remove(researchResourceLocations.get(reset));
-            }
-            if(unlockBuildingEffect.containsValue(reset))
-            {
-                unlockBuildingEffect.remove(researchResourceLocations.get(reset));
+                if(unlockAbilityEffect.containsKey(effect.getId()))
+                {
+                    unlockAbilityEffect.remove(effect.getId());
+                }
+                if(unlockBuildingEffect.containsKey(effect.getId()))
+                {
+                    unlockBuildingEffect.remove(effect.getId());
+                }
             }
         }
         for(ResourceLocation reset : resettableResearch)
         {
-            if(researchResourceLocations.containsValue(reset))
+            if(researchResourceLocations.containsKey(reset))
             {
                 researchResourceLocations.remove(reset);
             }

@@ -222,7 +222,6 @@ public class ResearchListener extends JsonReloadListener
                     //For now, log and re-graft entries with inconsistent parent-child relationships to a separate branch.
                     Log.getLogger().error(entry.getValue().getBranch() + "/" + entry.getKey() + "could not find parent" + researchMap.containsKey(entry.getValue().getParent()));
                     entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects()));
-                    continue;
                 }
             }
             researchTree.addResearch(entry.getValue().getBranch(), entry.getValue(), true);

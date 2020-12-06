@@ -10,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_UNIVERSITY;
@@ -36,7 +37,10 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
 
         final View view = this.findPaneOfTypeByID(BRANCH_VIEW_ID, View.class);
         int offset = 0;
-        for (final String branch : IGlobalResearchTree.getInstance().getBranches())
+        // For now, sort research branches by name, as they may be loaded in any order.
+        branches.addAll(IGlobalResearchTree.getInstance().getBranches());
+        branches.sort(Comparator.comparing(String::toString));
+        for (final String branch : branches)
         {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
@@ -45,7 +49,6 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
             button.setTextColor(SLIGHTLY_BLUE);
             button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
             view.addChild(button);
-            branches.add(branch);
 
             offset += button.getHeight() + BUTTON_PADDING;
         }
