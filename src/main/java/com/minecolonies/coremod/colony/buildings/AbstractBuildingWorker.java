@@ -912,13 +912,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     public String getJobDisplayName()
     {
-        if(jobDisplayName.isEmpty())
-        {
-            //This will only happen if getJobDisplayName is called before the first citizen is assigned. 
-            ICitizenData citizen = colony.getCitizenManager().createAndRegisterCivilianData();
-            jobDisplayName = this.createJob(citizen).getName();
-            colony.getCitizenManager().removeCivilian(citizen);
-        }
         return jobDisplayName;
     }
 
