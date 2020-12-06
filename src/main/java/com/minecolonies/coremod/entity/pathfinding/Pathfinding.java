@@ -151,7 +151,14 @@ public final class Pathfinding
 
             for (@NotNull final Node n : debugNodesPath)
             {
-                debugDrawNode(n, 0F, 1.0F, 0F, matrixStack);
+                if (n.isReachedByWorker())
+                {
+                    debugDrawNode(n, 1F, 0.4F, 0F, matrixStack);
+                }
+                else
+                {
+                    debugDrawNode(n, 0F, 1.0F, 0F, matrixStack);
+                }
             }
         }
         catch (final ConcurrentModificationException exc)
