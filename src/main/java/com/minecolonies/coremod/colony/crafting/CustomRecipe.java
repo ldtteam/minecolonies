@@ -456,7 +456,7 @@ public class CustomRecipe
         {
             if(Boolean.TRUE.equals(IGlobalResearchTree.getInstance().hasUnlockAbilityEffect(excludedResearchId)))
             {
-                requiredEffect = true;
+                excludedEffect = true;
             }
             else
             {
@@ -466,7 +466,7 @@ public class CustomRecipe
                     {
                         if(effect instanceof UnlockAbilityResearchEffect)
                         {
-                            requiredEffect = true;
+                            excludedEffect = true;
                         }
                     }
                 }
