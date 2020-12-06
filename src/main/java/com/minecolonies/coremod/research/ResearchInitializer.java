@@ -288,7 +288,7 @@ public class ResearchInitializer
         knowtheend.setRequirement(new BuildingResearchRequirement(3, "bakery"));
         theflintstones.addChild(knowtheend);
 
-        final GlobalResearch morescrolls = new GlobalResearch("morescrolls", "technology", "More scrolls", 1, new UnlockAbilityResearchEffect(MORE_SCROLLS, true));
+        final GlobalResearch morescrolls = new GlobalResearch("morescrolls", "technology", "More Scrolls", 1, new UnlockAbilityResearchEffect(MORE_SCROLLS, true));
         morescrolls.setRequirement(new BuildingResearchRequirement(3, "enchanter"));
 
         researchTree.addResearch(pavetheroad.getBranch(), pavetheroad);
