@@ -282,7 +282,7 @@ public class EntityAIEatTask extends Goal
         citizenData.markDirty();
         citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
 
-        if (citizenData.getSaturation() < CitizenConstants.FULL_SATURATION && !stack.isEmpty())
+        if (citizenData.getSaturation() < CitizenConstants.FULL_SATURATION && !citizenData.getInventory().getStackInSlot(foodSlot).isEmpty())
         {
             waitingTicks = 0;
             return EAT;
