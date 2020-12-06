@@ -20,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -220,6 +221,27 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
             final List<IFormattableTextComponent> hoverTexts = new ArrayList<>();
 
+            final Label effectLabel = new Label();
+            if (research.getEffects() != null)
+            {
+                TranslationTextComponent effectText = new TranslationTextComponent("");
+                for (int txt = 0; txt < research.getEffects().size(); txt++)
+                {
+                    hoverTexts.add(research.getEffects().get(txt).getDesc());
+                    //if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+                    //{
+                        effectText.append(research.getEffects().get(txt).getDesc());
+                    //}
+                }
+                // used to set relative positions of too many other components to not draw, even if empty, for now.
+                //TODO: use hovertext exclusively for effects and requirement texts.
+                //      need to fix issue with rendering 'below' max height of window.
+                effectLabel.setPosition(offsetX + INITIAL_X_OFFSET + 2 * TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() * 2 + INITIAL_Y_OFFSET + INITIAL_Y_OFFSET);
+                effectLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
+                effectLabel.setLabelText(effectText);
+                view.addChild(effectLabel);
+            }
+
             if (state == ResearchState.IN_PROGRESS)
             {
                 //The player will reach the end of the research if he is in creative mode and the research was in progress
@@ -257,12 +279,14 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     hoverTexts.add(research.getResearchRequirement().get(txt).getDesc());
                     requirementText.append(research.getResearchRequirement().get(txt).getDesc());
                 }
-
-                final Label requirementLabel = new Label();
-                requirementLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() + INITIAL_Y_OFFSET);
-                requirementLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
-                requirementLabel.setLabelText(requirementText);
-                view.addChild(requirementLabel);
+                if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+                {
+                    final Label requirementLabel = new Label();
+                    requirementLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() + INITIAL_Y_OFFSET);
+                    requirementLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
+                    requirementLabel.setLabelText(requirementText);
+                    view.addChild(requirementLabel);
+                }
             }
 
             final Label effectLabel = new Label();
@@ -333,27 +357,36 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
                 view.addChild(buttonImage);
 
-                int storageOffset = 2;
+                int storageOffset = 4;
                 for (final IResearchRequirement requirement : research.getResearchRequirement())
                 {
                     if(requirement instanceof BuildingResearchRequirement)
                     {
-                        if(IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())))
+                        final Item item;
+                        if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
+                          new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())))
                         {
-                            Item item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
+                            item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
                               new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())).getBuildingBlock().asItem();
-                            ItemStack stack = new ItemStack(item);
-                            stack.setCount(((BuildingResearchRequirement) requirement).getBuildingLevel());
-                            final ItemIcon icon = new ItemIcon();
-                            icon.setItem(stack);
-                            icon.setPosition(buttonImage.getX() + buttonImage.getWidth() + storageOffset, effectLabel.getY() + effectLabel.getHeight() + INITIAL_Y_OFFSET);
-                            icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-                            view.addChild(icon);
+                        }
+                        else
+                        {
+                            item = Items.AIR.asItem();
+                        }
+                        ItemStack stack = new ItemStack(item);
+                        stack.setCount(((BuildingResearchRequirement) requirement).getBuildingLevel());
+                        final ItemIcon icon = new ItemIcon();
+                        icon.setItem(stack);
+                        icon.setPosition(box.getX() + 4, box.getY() + storageOffset);
+                        icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+                        view.addChild(icon);
 
                             storageOffset += COST_OFFSET;
                         }
                     }
                 }
+
+                storageOffset = 4;
                 for (final ItemStorage storage : research.getCostList())
                 {
                     final ItemStack stack = storage.getItemStack().copy();

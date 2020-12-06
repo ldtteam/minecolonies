@@ -32,8 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.research.util.ResearchConstants.COMPOSTER_RESEARCH;
-
 public class BuildingComposter extends AbstractFilterableListBuilding
 {
     /**
@@ -208,18 +206,6 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     {
         this.retrieveDirtFromCompostBin = shouldRetrieveDirt;
         markDirty();
-    }
-
-    @Override
-    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
-    {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(COMPOSTER_RESEARCH, UnlockBuildingResearchEffect.class);
-        if (effect == null)
-        {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
-            return;
-        }
-        super.requestUpgrade(player, builder);
     }
 
     /**

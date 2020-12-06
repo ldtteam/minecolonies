@@ -7,7 +7,7 @@
   "requirements":
   [
    { "item": "minecraft:chorus_fruit", "quantity": 64 },
-   { "building": "bakery", "level": 3 }
+   { "building": "baker", "level": 3 }
   ],
   "effects":
   [

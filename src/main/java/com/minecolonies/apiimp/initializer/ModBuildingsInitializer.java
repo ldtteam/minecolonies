@@ -33,6 +33,13 @@ public final class ModBuildingsInitializer
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ARCHERY_ID))
                                  .createBuildingEntry();
 
+        ModBuildings.baker = new BuildingEntry.Builder()
+                                .setBuildingBlock(ModBlocks.blockHutBaker)
+                                .setBuildingProducer(BuildingBaker::new)
+                                .setBuildingViewProducer(() -> BuildingBaker.View::new)
+                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BAKER_ID))
+                                .createBuildingEntry();
+
         ModBuildings.bakery = new BuildingEntry.Builder()
                                 .setBuildingBlock(ModBlocks.blockHutBaker)
                                 .setBuildingProducer(BuildingBaker::new)
@@ -144,6 +151,13 @@ public final class ModBuildingsInitializer
                               .setBuildingViewProducer(() -> HomeBuildingModule.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOME_ID))
                               .createBuildingEntry();
+
+        ModBuildings.citizen = new BuildingEntry.Builder()
+                                 .setBuildingBlock(ModBlocks.blockHutHome)
+                                 .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "citizen", 5, ModBuildings.home))
+                                 .setBuildingViewProducer(() -> HomeBuildingModule.View::new)
+                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CITIZEN_ID))
+                                 .createBuildingEntry();
 
         ModBuildings.library = new BuildingEntry.Builder()
                                  .setBuildingBlock(ModBlocks.blockHutLibrary)
@@ -342,6 +356,7 @@ public final class ModBuildingsInitializer
                                    .createBuildingEntry();
 
         reg.register(ModBuildings.archery);
+        reg.register(ModBuildings.baker);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
         reg.register(ModBuildings.barracksTower);
@@ -358,6 +373,7 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.fisherman);
         reg.register(ModBuildings.guardTower);
         reg.register(ModBuildings.home);
+        reg.register(ModBuildings.citizen);
         reg.register(ModBuildings.library);
         reg.register(ModBuildings.lumberjack);
         reg.register(ModBuildings.miner);

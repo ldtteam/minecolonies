@@ -104,16 +104,13 @@ public final class ResearchConstants
     public static final String KNIGHT_WHIRLWIND  = "whirlwindabilityunlock";
     public static final String WORKING_IN_RAIN   = "workinginrainunlock";
 
-    /* // Recipe-only unlocks don't use the Effects system.  Leaving here in case we do want to add Effects to them.
+    /* // Recipe-only unlocks don't really need specific effects.  Leaving here in case we do want to add AbilityEffects to them.
     /public static final String END_KNOWLEDGE     = "knowledgeoftheendunlock";
     /public static final String MORE_SCROLLS      = "morescrollsunlock";
      */
 
-
     //Unlock Building modifiers.
-    // TODO: these are derived from blocknames in their BlockHut items, applied in AbstractBlockHut.
-    // Something similar should be possible for the building equivalents.
-    public static final String COMPOSTER_RESEARCH      = "blockhutcomposter";
+    /*public static final String COMPOSTER_RESEARCH      = "blockhutcomposter";
     public static final String FLORIST_RESEARCH        = "blockhutflorist";
     public static final String DYER_RESEARCH           = "blockhutdyer";
     public static final String CONCRETE_MIXER_RESEARCH = "blockhutconcretemixer";
@@ -134,6 +131,7 @@ public final class ResearchConstants
     public static final String BARRACKS_RESEARCH       = "blockhutbarracks";
     public static final String COMBAT_ACADEMY_RESEARCH = "blockhutcombatacademy";
     public static final String ARCHERY_RESEARCH        = "blockhutarchery";
+     */
 
     /**
      * Private constructor to hide implicit public one.

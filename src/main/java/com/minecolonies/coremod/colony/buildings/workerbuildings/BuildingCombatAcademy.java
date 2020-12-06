@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.research.util.ResearchConstants.COMBAT_ACADEMY_RESEARCH;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -119,18 +118,6 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBu
             fightingPos.add(pos.down());
         }
         super.registerBlockPosition(block, pos, world);
-    }
-
-    @Override
-    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
-    {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(COMBAT_ACADEMY_RESEARCH, UnlockBuildingResearchEffect.class);
-        if (effect == null)
-        {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
-            return;
-        }
-        super.requestUpgrade(player, builder);
     }
 
     @Override

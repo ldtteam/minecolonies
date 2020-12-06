@@ -47,7 +47,6 @@ import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.research.util.ResearchConstants.GLASSBLOWER_RESEARCH;
 
 /**
  * Class of the glassblower building.
@@ -203,19 +202,6 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.glassblower;
-    }
-
-    @Override
-    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
-    {
-        super.requestUpgrade(player, builder);
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(GLASSBLOWER_RESEARCH, UnlockBuildingResearchEffect.class);
-        if (effect == null)
-        {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
-            return;
-        }
-        super.requestUpgrade(player, builder);
     }
 
     /**

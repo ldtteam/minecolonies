@@ -90,8 +90,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     protected boolean needsResearch = false;
 
     /**
-     * Whether this hut is yet to be researched in the current colony.
-     * This is only ever used client side, but adding @OnlyIn(Dist.CLIENT) causes the server to crash, so its not there.
+     * The hut's lower-case building-registry-compatible name.
      */
     private final String name;
 
@@ -311,7 +310,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             needsResearch = false;
             return;
         }
-        needsResearch = Boolean.FALSE.equals(colony.getResearchManager().getResearchEffects().getEffect(researchId));
+        needsResearch = Boolean.FALSE.equals(colony.getResearchManager().getResearchEffects().hasUnlockBuildingEffect(researchId));
     }
 
     @Override

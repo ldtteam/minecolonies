@@ -87,6 +87,13 @@ public interface IGlobalResearchTree
     boolean hasUnlockBuildingEffect(String id);
 
     /**
+     * Checks if a specific unlockAbilityEffect has been registered, whether or not it is unlocked.
+     * @param id   the effect's identifier.
+     * @return true if present
+     */
+    boolean hasUnlockAbilityEffect(String id);
+
+    /**
      * Write the research tree to NBT.
      *
      * @param compound the compound.

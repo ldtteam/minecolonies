@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.research.util.ResearchConstants.ARCHERY_RESEARCH;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -119,18 +118,6 @@ public class BuildingArchery extends AbstractBuildingWorker implements IBuilding
             shootingStands.add(pos);
         }
         super.registerBlockPosition(block, pos, world);
-    }
-
-    @Override
-    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
-    {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ARCHERY_RESEARCH, UnlockBuildingResearchEffect.class);
-        if (effect == null)
-        {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
-            return;
-        }
-        super.requestUpgrade(player, builder);
     }
 
     @Override

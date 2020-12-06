@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.crafting;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
@@ -9,12 +10,16 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
-import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.research.IGlobalResearch;
+import com.minecolonies.api.research.ILocalResearch;
+import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.research.LocalResearch;
+import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.block.Block;
@@ -25,6 +30,7 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -417,20 +423,49 @@ public class CustomRecipe
      */
     public boolean isValidForBuilding(IBuildingWorker building)
     {
-        AbstractResearchEffect<?> requiredEffect = null;
-        AbstractResearchEffect<?> excludedEffect = null;
+        boolean requiredEffect = false;
+        boolean excludedEffect = false;
+        //List<AbstractResearchEffect<?>> requiredEffects = new ArrayList<>();
+        //List<AbstractResearchEffect<?>> excludedEffects = new ArrayList<>();
         final IColony colony = building.getColony();
         final int bldgLevel = building.getBuildingLevel();
 
         IGlobalResearchTree gr = IGlobalResearchTree.getInstance();
         if (researchId != null)
         {
-            requiredEffect = colony.getResearchManager().getResearchEffects().getEffect(gr.getEffectIdForResearch(researchId), AbstractResearchEffect.class);
+            if(Boolean.TRUE.equals(IGlobalResearchTree.getInstance().hasUnlockAbilityEffect(researchId)))
+            {
+                requiredEffect = true;
+            }
+            else
+            {
+                for (ILocalResearch research : colony.getResearchManager().getResearchTree().getCompletedResearch())
+                {
+                    if(research.getId().equals(requiredEffect) && MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasUnlockAbilityEffect(research.getId()))
+                    {
+                        requiredEffect = true;
+                    }
+                }
+            }
         }
 
         if (excludedResearchId != null)
         {
-            excludedEffect = colony.getResearchManager().getResearchEffects().getEffect(gr.getEffectIdForResearch(excludedResearchId), AbstractResearchEffect.class);
+            if(Boolean.TRUE.equals(IGlobalResearchTree.getInstance().hasUnlockAbilityEffect(excludedResearchId)))
+            {
+                excludedEffect = true;
+            }
+            else
+            {
+                for (ILocalResearch research : colony.getResearchManager().getResearchTree().getCompletedResearch())
+                {
+                    if(research.getId().equals(excludedResearchId) && MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasUnlockAbilityEffect(research.getId()))
+                    {
+                        excludedEffect = true;
+                        //return false;
+                    }
+                }
+            }
         }
 
         if(mustExist)
@@ -453,8 +488,8 @@ public class CustomRecipe
             }
         }
 
-        return (researchId == null || requiredEffect != null) 
-            && (excludedResearchId == null || excludedEffect == null)
+        return (researchId == null || requiredEffect)
+            && (excludedResearchId == null || !excludedEffect)
             && (bldgLevel >= minBldgLevel)
             && (bldgLevel <= maxBldgLevel);
     }

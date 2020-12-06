@@ -100,6 +100,12 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
+    public boolean hasUnlockAbilityEffect(String id)
+    {
+        return unlockAbilityEffect.containsKey(id);
+    }
+
+    @Override
     public List<String> getBranches()
     {
         return new ArrayList<>(researchTree.keySet());

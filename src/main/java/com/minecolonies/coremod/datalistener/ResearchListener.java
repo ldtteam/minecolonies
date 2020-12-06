@@ -64,7 +64,7 @@ public class ResearchListener extends JsonReloadListener
         // This is also the phase where we'd try to support back-calculating university levels for researches without them/with incorrect ones.
         IGlobalResearchTree researchTree = calcResearchTree(researchMap);
 
-        Log.getLogger().info("Loaded " + researchMap.values().size() + " recipes for " + researchTree.getBranches().size() + " branches");
+        Log.getLogger().info("Loaded " + researchMap.values().size() + " recipes for " + researchTree.getBranches().size() + " research branches");
     }
 
     private Map<String, ResearchEffectCategory> parseResearchEffects(Map<ResourceLocation, JsonElement> object)

@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.minecolonies.api.research.util.ResearchConstants.SCHOOL_RESEARCH;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
@@ -284,18 +283,6 @@ public class BuildingSchool extends AbstractBuildingWorker
         }
         carpet.remove(returnPos);
         return null;
-    }
-
-    @Override
-    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
-    {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(SCHOOL_RESEARCH, UnlockBuildingResearchEffect.class);
-        if (effect == null)
-        {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
-            return;
-        }
-        super.requestUpgrade(player, builder);
     }
 
     /**
