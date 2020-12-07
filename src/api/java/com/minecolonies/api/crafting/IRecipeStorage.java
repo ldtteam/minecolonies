@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,9 +65,9 @@ public interface IRecipeStorage
      */
     boolean canFullFillRecipe(final int qty, final Map<ItemStorage, Integer> existingRequirements, @NotNull final IItemHandler... inventories);
 
-    default boolean fullFillRecipe(@NotNull final IItemHandler... inventories)
+    default boolean fullFillRecipe(@NotNull final World world, @NotNull final IItemHandler... inventories)
     {
-        return fullfillRecipe(Arrays.asList(inventories));
+        return fullfillRecipe(world, Arrays.asList(inventories));
     }
 
     /**
@@ -75,46 +76,52 @@ public interface IRecipeStorage
      * @param handlers the handlers to use.
      * @return true if succesful.
      */
-    boolean fullfillRecipe(final List<IItemHandler> handlers);
+    boolean fullfillRecipe(final World world, final List<IItemHandler> handlers);
 
     /**
      * Get which type this recipe is
      * This type comes from the RecipeTypes registry
      * @return The recipe type
      */
-    public AbstractRecipeType<IRecipeStorage> getRecipeType();
+    AbstractRecipeType<IRecipeStorage> getRecipeType();
 
     /**
      * Get a list of alternates to getPrimaryOutput
      * @return a list if Itemstacks that this recipe can produce instead of getPrimaryOutput
      */
-    public List<ItemStack> getAlternateOutputs();
+    List<ItemStack> getAlternateOutputs();
 
     /**
      * Get the classic version of this recipe with GetPrimaryOutput targetted correctly from the chosen alternate
      * @param requiredOutput Which output wanted
      * @return the RecipeStorage that is "right" for that output
      */
-    public RecipeStorage getClassicForMultiOutput(ItemStack requiredOutput);
+    RecipeStorage getClassicForMultiOutput(ItemStack requiredOutput);
 
     /**
      * Get the classic version of this recipe with GetPrimaryOutput targetted correctly from the chosen alternate
      * @param stackPredicate Predicate to select the right stack
      * @return the RecipeStorage that is "right" for that output
      */
-    public RecipeStorage getClassicForMultiOutput(final Predicate<ItemStack> stackPredicate);
+    RecipeStorage getClassicForMultiOutput(final Predicate<ItemStack> stackPredicate);
 
     /**
      * Source of the recipe, ie registry name.
      * @return
      */
-    public ResourceLocation getRecipeSource();
+    ResourceLocation getRecipeSource();
 
     /**
      * Get the secondary (leave behind in grid) outputs
      * @return list of items that weren't consumed during crafting
      */
-    public List<ItemStack> getSecondaryOutputs();
+    List<ItemStack> getSecondaryOutputs();
+
+    /** 
+     * Get the location/id of the Loot table used for optional outputs
+     * @return the resource location for the table
+    */
+    ResourceLocation getLootTable();
 
     /**
      * Get the unique token of the recipe.
