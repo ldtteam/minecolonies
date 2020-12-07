@@ -330,47 +330,6 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
-    {
-        final Map<ItemStorage, Tuple<Integer, Boolean>> recipeOutputs = new HashMap<>();
-        for (final ICitizenData citizen : getAssignedCitizen())
-        {
-            if (citizen.getJob() instanceof AbstractJobCrafter)
-            {
-                final List<IToken<?>> assignedTasks = citizen.getJob(AbstractJobCrafter.class).getAssignedTasks();
-                for (final IToken<?> taskToken : assignedTasks)
-                {
-                    final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
-                    final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
-                    if (recipeStorage != null)
-                    {
-                        for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
-                        {
-                            int amount = itemStorage.getAmount();
-                            if (recipeOutputs.containsKey(itemStorage))
-                            {
-                                amount = recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount();
-                            }
-                            recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
-                        }
-
-                        final ItemStorage output = new ItemStorage(recipeStorage.getPrimaryOutput());
-                        if (recipeOutputs.containsKey(output))
-                        {
-                            output.setAmount(recipeOutputs.get(output).getA() + output.getAmount());
-                        }
-                        recipeOutputs.put(output, new Tuple<>(output.getAmount(), false));
-                    }
-                }
-            }
-        }
-
-        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(recipeOutputs.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
-        return toKeep;
-    }
-   
-    @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
         if(getBuildingLevel() < 3)

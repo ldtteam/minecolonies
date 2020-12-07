@@ -583,7 +583,7 @@ public class BuildingManager implements IBuildingManager
         }
 
         final Chunk chunk = colony.getWorld().getChunk(building.getPosition().getX() >> 4, building.getPosition().getZ() >> 4);
-        final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
 
         if (closeCap == null)
         {
