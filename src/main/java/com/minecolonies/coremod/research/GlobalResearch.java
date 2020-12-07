@@ -4,9 +4,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.effects.IResearchEffect;
+import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -16,9 +18,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
 
 /**
  * The implementation of the IGlobalResearch interface which represents the research on the global level.
@@ -267,6 +268,10 @@ public class GlobalResearch implements IGlobalResearch
         if (localResearchTree.getResearch(this.branch, this.id) == null)
         {
             final ILocalResearch research = new LocalResearch(this.id, this.branch, this.depth);
+            if (this.instant)
+            {
+                research.setProgress((int)(BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
+            }
             research.setState(ResearchState.IN_PROGRESS);
             localResearchTree.addResearch(branch, research);
         }
@@ -310,6 +315,12 @@ public class GlobalResearch implements IGlobalResearch
     public int getDepth()
     {
         return this.depth;
+    }
+
+    @Override
+    public boolean isHidden()
+    {
+        return this.hidden;
     }
 
     @Override

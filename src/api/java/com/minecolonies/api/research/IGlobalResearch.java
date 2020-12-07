@@ -98,6 +98,13 @@ public interface IGlobalResearch
     int getDepth();
 
     /**
+     * Check if this research is a hidden research.  If so, it should only be visible if all requirements are met.
+     *
+     * @return true if so.
+     */
+    boolean isHidden();
+
+    /**
      * Check if this research is an only child research. This means, after researching one child no other childs can be researched.
      *
      * @return true if so.

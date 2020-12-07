@@ -10,12 +10,14 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.coremod.research.BuildingResearchRequirement;
+import com.minecolonies.coremod.research.ResearchResearchRequirement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.Item;
@@ -96,25 +98,40 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param researchRequirement requirement to start research
      * @return whether the requirement has been satisfied for research
      */
-    private boolean isResearchFulfilled(final BuildingResearchRequirement researchRequirement)
+    private boolean isResearchFulfilled(final List<IResearchRequirement> researchRequirement)
     {
-        List<IBuildingView> buildings = building.getColony().getBuildings();
-        int levels = 0;
-
-        if (researchRequirement == null)
+        if (researchRequirement == null || researchRequirement.isEmpty())
         {
             return true;
         }
-
-        for (IBuildingView building : buildings)
+        for(IResearchRequirement requirement : researchRequirement)
         {
-            if (building.getSchematicName().equals(researchRequirement.getBuilding()))
+            if(requirement instanceof BuildingResearchRequirement)
             {
-                levels += building.getBuildingLevel();
+                List<IBuildingView> buildings = building.getColony().getBuildings();
+                int levels = 0;
+
+                for (IBuildingView building : buildings)
+                {
+                    if (building.getSchematicName().equals(((BuildingResearchRequirement) requirement).getBuilding()))
+                    {
+                        levels += building.getBuildingLevel();
+                    }
+                }
+                if(levels < ((BuildingResearchRequirement)requirement).getBuildingLevel())
+                {
+                    return false;
+                }
+            }
+            if(requirement instanceof ResearchResearchRequirement)
+            {
+                if(!building.getColony().getResearchManager().getResearchTree().hasCompletedResearch(((ResearchResearchRequirement) requirement).getResearchId()))
+                {
+                    return false;
+                }
             }
         }
-
-        return levels >= researchRequirement.getBuildingLevel();
+        return true;
     }
 
     @Override
@@ -172,6 +189,10 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final ILocalResearch localResearch = tree.getResearch(branch, research.getId());
             final ResearchState state = localResearch == null ? ResearchState.NOT_STARTED : localResearch.getState();
             final IGlobalResearch parentResearch = IGlobalResearchTree.getInstance().getResearch(branch, research.getParent());
+            if(research.isHidden() && !isResearchFulfilled(research.getResearchRequirement()))
+            {
+                continue;
+            }
 
             boolean trueAbandoned = abandoned;
             if (depth != 0 && abandoned == false && state == ResearchState.NOT_STARTED && parentResearch.hasResearchedChild(tree) && parentResearch.hasOnlyChild())
@@ -332,7 +353,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                     buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.toomanyinprogress"));
                 }
-                else if (!isResearchFulfilled((BuildingResearchRequirement) research.getResearchRequirement()))
+                else if (!isResearchFulfilled(research.getResearchRequirement()))
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                     buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.missingrequirements"));

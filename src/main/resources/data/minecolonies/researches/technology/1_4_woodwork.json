@@ -1,0 +1,15 @@
+{
+  "comment": "name: Woodwork * description : Sawmill",
+  "id": "woodwork",
+  "branch": "technology",
+  "requiredUniversityLevel": 1,
+  "requirements":
+  [
+   { "item": "minecraft:oak_planks", "quantity": 64 },
+   { "building": "lumberjack", "level": 3 }
+  ],
+  "effects":
+  [
+   { "blockhutsawmill": 1 }
+  ]
+}

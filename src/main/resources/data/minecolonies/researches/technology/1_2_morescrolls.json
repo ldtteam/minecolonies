@@ -1,0 +1,17 @@
+{
+  "comment": "name: More Scrolls * description : morescrolls",
+  "id": "morescrolls",
+  "branch": "technology",
+  "requiredUniversityLevel": 1,
+  "requirements":
+  [
+   { "item": "minecraft:paper", "quantity": 64 },
+   { "item": "minecolonies:ancienttome", "quantity": 1 },
+   { "item": "minecraft:lapis_lazuli", "quantity": 64 },
+   { "building": "enchanter", "level": 3 }
+  ],
+  "effects":
+  [
+   { "morescrollsunlock": 1 }
+  ]
+}

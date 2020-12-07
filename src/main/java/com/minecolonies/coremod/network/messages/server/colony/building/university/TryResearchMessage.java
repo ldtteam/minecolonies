@@ -104,16 +104,15 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
                             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.requirementnotmet"), player.getUniqueID());
                         }
                     }
-                    return;
                 }
-                else
+                if (!player.isCreative())
                 {
                     for (final ItemStorage cost : research.getCostList())
                     {
                         InventoryUtils.removeStackFromItemHandler(new InvWrapper(player.inventory), cost.getItemStack(), cost.getAmount());
                     }
 
-                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started", research.getDesc()), player.getUniqueID());
+                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started", new TranslationTextComponent(research.getDesc())), player.getUniqueID());
                     research.startResearch(player, colony.getResearchManager().getResearchTree());
                 }
                 colony.markDirty();
