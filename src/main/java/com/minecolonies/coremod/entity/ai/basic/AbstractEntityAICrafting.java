@@ -335,7 +335,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
-                if (!currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen()))
+                if (!currentRecipeStorage.fullFillRecipe(worker.getEntityWorld(), worker.getItemHandlerCitizen()))
                 {
                     currentRequest = null;
                     incrementActionsDone(getActionRewardForCraftingSuccess());

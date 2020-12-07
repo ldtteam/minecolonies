@@ -46,9 +46,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -66,7 +64,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
-import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -266,7 +263,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public boolean fullFillRecipe(final IRecipeStorage storage)
     {
         final List<IItemHandler> handlers = getHandlers();
-        return storage.fullfillRecipe(handlers);
+        return storage.fullfillRecipe(this.getColony().getWorld(), handlers);
     }
 
     @Override
@@ -721,7 +718,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         buf.writeInt(getSecondarySkill().ordinal());
         buf.writeInt(getMaxInhabitants());
         buf.writeBoolean(isRecipeAlterationAllowed());
-        buf.writeString(this.getJobDisplayName());
+        buf.writeString(getJobDisplayName());
         buf.writeInt(getMaxRecipes());
     }
 
@@ -912,21 +909,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     public String getJobDisplayName()
     {
+        if (jobDisplayName.isEmpty())
+        {
+            jobDisplayName = createJob(null).getName();
+        }
         return jobDisplayName;
     }
 
-    /**
-     * Set the job Display name
-     * @param jobDisplayName the localization ID for the display name
-     */
-    public void setJobDisplayName(String jobDisplayName)
-    {
-        if(this.jobDisplayName.isEmpty())
-        {
-            this.jobDisplayName = jobDisplayName;
-        }
-    }
-    
     /**
      * AbstractBuildingWorker View for clients.
      */

@@ -10,10 +10,14 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameterSets;
+import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -85,6 +89,16 @@ public class RecipeStorage implements IRecipeStorage
     private final IToken<?> token;
 
     /**
+     * The Resource location of the Loot Table to use for possible outputs
+     */
+    private final ResourceLocation lootTable;
+
+    /**
+     * The cached loot table for possible outputs
+     */
+    private LootTable loot;
+
+    /**
      * Create an instance of the recipe storage.
      *
      * @param token         the token of the storage.
@@ -96,8 +110,9 @@ public class RecipeStorage implements IRecipeStorage
      * @param type          What type of recipe this is. (ie: minecolonies:classic)
      * @param altOutputs    List of alternate outputs for a multi-output recipe
      * @param secOutputs    List of secondary outputs for a recipe. this includes containers, etc. 
+     * @param lootTable     Loot table to use for possible alternate outputs
      */
-    public RecipeStorage(final IToken<?> token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final ResourceLocation source, final ResourceLocation type, final List<ItemStack> altOutputs, final List<ItemStack> secOutputs)
+    public RecipeStorage(final IToken<?> token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final ResourceLocation source, final ResourceLocation type, final List<ItemStack> altOutputs, final List<ItemStack> secOutputs, final ResourceLocation lootTable)
     {
         this.input = Collections.unmodifiableList(input);
         this.cleanedInput = new ArrayList<>();
@@ -118,6 +133,8 @@ public class RecipeStorage implements IRecipeStorage
         {
             this.recipeType = recipeTypes.getValue(recipeTypes.getDefaultKey()).getHandlerProducer().apply(this);
         }
+
+        this.lootTable = lootTable;
     }
 
     @Override
@@ -301,6 +318,16 @@ public class RecipeStorage implements IRecipeStorage
             return false; 
         }
 
+        if(this.lootTable != null && !this.lootTable.equals(that.lootTable))
+        {
+            return false;
+        }
+
+        if(this.lootTable == null && that.lootTable != null)
+        {
+            return false; 
+        }
+
         if(!this.recipeType.getId().equals(that.recipeType.getId()))
         {
             return false;
@@ -410,7 +437,7 @@ public class RecipeStorage implements IRecipeStorage
      * @return true if succesful.
      */
     @Override
-    public boolean fullfillRecipe(final List<IItemHandler> handlers)
+    public boolean fullfillRecipe(final World world, final List<IItemHandler> handlers)
     {
         if (!checkForFreeSpace(handlers) || !canFullFillRecipe(1, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
         {
@@ -466,7 +493,7 @@ public class RecipeStorage implements IRecipeStorage
             }
         }
 
-        insertCraftedItems(handlers, getPrimaryOutput());
+        insertCraftedItems(handlers, getPrimaryOutput(), world);
         return true;
     }
 
@@ -481,7 +508,7 @@ public class RecipeStorage implements IRecipeStorage
      *
      * @param handlers the handlers.
      */
-    private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack)
+    private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, World world)
     {
         for (final IItemHandler handler : handlers)
         {
@@ -491,7 +518,40 @@ public class RecipeStorage implements IRecipeStorage
             }
         }
 
-        for (final ItemStack stack : secondaryOutputs)
+        if (loot == null && lootTable != null)
+        {
+            loot = world.getServer().getLootTableManager().getLootTableFromLocation(lootTable);
+        }
+        
+        final List<ItemStack> secondaryStacks = new ArrayList<>();
+
+        if(loot != null)
+        {
+            secondaryStacks.addAll(loot.generate((new LootContext.Builder((ServerWorld) world)).build(LootParameterSets.EMPTY)));
+        }
+
+        if(!secondaryOutputs.isEmpty())
+        {
+            secondaryStacks.addAll(secondaryOutputs);
+        }
+        else
+        {
+            for (final ItemStack stack : input)
+            {
+                if (stack.getItem() == ModItems.buildTool)
+                {
+                    continue;
+                }
+
+                final ItemStack container = stack.getItem().getContainerItem(stack);
+                if (!ItemStackUtils.isEmpty(container))
+                {
+                    container.setCount(stack.getCount());
+                    secondaryStacks.add(container);
+                }
+            }
+        }
+        for (final ItemStack stack : secondaryStacks)
         {
             for (final IItemHandler handler : handlers)
             {
@@ -514,8 +574,9 @@ public class RecipeStorage implements IRecipeStorage
             intermediate,
             this.recipeSource,
             ModRecipeTypes.CLASSIC_ID,
-            null, //alternate outputs
-            this.secondaryOutputs //secondary output
+            null,                   // alternate outputs
+            this.secondaryOutputs,  // secondary output
+            this.lootTable          // loot table
             );
 
     }
@@ -561,5 +622,11 @@ public class RecipeStorage implements IRecipeStorage
     public List<ItemStack> getSecondaryOutputs()
     {
         return secondaryOutputs;
+    }
+
+    @Override
+    public ResourceLocation getLootTable()
+    {
+        return lootTable;
     }
 }

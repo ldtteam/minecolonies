@@ -420,7 +420,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
         if (getState() == INIT)
         {
-            this.getOwnBuilding().setJobDisplayName(job.getName());
             return IDLE;
         }
 
@@ -981,7 +980,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
                     if (((TileEntityRack) entity).hasItemStack(toolPredicate))
                     {
-                        InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElseGet(null), toolPredicate, worker.getInventoryCitizen());
+                        if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElseGet(null), toolPredicate, worker.getInventoryCitizen()))
+                        {
+                            return true;
+                        }
                     }
                 }
                 else if (entity instanceof ChestTileEntity)
