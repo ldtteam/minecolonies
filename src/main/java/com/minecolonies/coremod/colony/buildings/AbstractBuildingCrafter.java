@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -17,6 +18,7 @@ import com.minecolonies.api.crafting.MultiOutputRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
+import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
@@ -87,30 +89,30 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
     @Override
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
-        final Map<ItemStorage, Tuple<Integer, Boolean>> recipeOutputs = new HashMap<>();
+        final Map<ItemStorage, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
         for (final Tuple<IRecipeStorage, Integer> recipeStorage : getPendingRequestQueue())
         {
             for (final ItemStorage itemStorage : recipeStorage.getA().getCleanedInput())
             {
                 int amount = itemStorage.getAmount() * recipeStorage.getB();
-                if (recipeOutputs.containsKey(itemStorage))
+                if (requiredItems.containsKey(itemStorage))
                 {
-                    amount += recipeOutputs.get(itemStorage).getA();
+                    amount += requiredItems.get(itemStorage).getA();
                 }
-                recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
+                requiredItems.put(itemStorage, new Tuple<>(amount, false));
             }
 
             final ItemStorage output = new ItemStorage(recipeStorage.getA().getPrimaryOutput());
             int amount = output.getAmount() * recipeStorage.getB();
-            if (recipeOutputs.containsKey(output))
+            if (requiredItems.containsKey(output))
             {
-                amount += recipeOutputs.get(output).getA();
+                amount += requiredItems.get(output).getA();
             }
-            recipeOutputs.put(output, new Tuple<>(amount, false));
+            requiredItems.put(output, new Tuple<>(amount, false));
         }
 
-        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(recipeOutputs.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
+        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = super.getRequiredItemsAndAmount();
+        toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
         return toKeep;
     }
 
