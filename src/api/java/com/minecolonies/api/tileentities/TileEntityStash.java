@@ -23,7 +23,6 @@ public class TileEntityStash extends TileEntityColonyBuilding
     public TileEntityStash(final TileEntityType<? extends TileEntityStash> type)
     {
         super(type);
-        inventory = new NotifyingRackInventory(DEFAULT_SIZE);
     }
 
     /**
@@ -32,7 +31,12 @@ public class TileEntityStash extends TileEntityColonyBuilding
     public TileEntityStash()
     {
         super(MinecoloniesTileEntities.STASH);
-        inventory = new NotifyingRackInventory(DEFAULT_SIZE);
+    }
+
+    @Override
+    public ItemStackHandler createInventory(final int slots)
+    {
+        return new NotifyingRackInventory(slots);
     }
 
     /**
