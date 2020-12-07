@@ -45,7 +45,7 @@ public class PathJobCanSee extends AbstractPathJob
     @Override
     protected boolean isAtDestination(final Node n)
     {
-        if (start.getY() - n.pos.getY() > 3)
+        if (start.getY() - n.pos.getY() > 2)
         {
             return false;
         }
@@ -63,14 +63,13 @@ public class PathJobCanSee extends AbstractPathJob
     protected double getNodeResultScore(@NotNull final Node n)
     {
         //  For Result Score lower is better
-        return lookTarget.getPosition().manhattanDistance(n.pos);
+        return start.manhattanDistance(n.pos);
     }
 
     private boolean canSeeTargetFromPos(final BlockPos pos)
     {
-        Vector3d vec3d = new Vector3d(pos.getX(), pos.getZ() + searchingEntity.getEyeHeight(), pos.getZ());
+        Vector3d vec3d = new Vector3d(pos.getX(), pos.getY() + entity.get().getEyeHeight(), pos.getZ());
         Vector3d vec3d1 = new Vector3d(lookTarget.getPosX(), lookTarget.getPosYEye(), lookTarget.getPosZ());
-        return this.world.rayTraceBlocks(new RayTraceContext(vec3d, vec3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, searchingEntity)).getType()
-                 == RayTraceResult.Type.MISS;
+        return this.world.rayTraceBlocks(new RayTraceContext(vec3d, vec3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, entity.get())).getType() == RayTraceResult.Type.MISS;
     }
 }
