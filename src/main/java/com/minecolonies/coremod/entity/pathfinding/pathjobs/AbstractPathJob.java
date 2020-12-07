@@ -170,7 +170,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
 
-        this.start = new BlockPos((minX + maxX) / 2, (startRestriction.getY() + endRestriction.getY()) / 2, (minZ + maxZ) / 2);
+        this.start = startRestriction;
         this.maxRange = range;
 
         this.result = result;
