@@ -49,6 +49,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -488,15 +489,15 @@ public class EventHandler
 
         if (event.getState().getBlock() instanceof SpawnerBlock)
         {
-            final MobSpawnerTileEntity spawner = (MobSpawnerTileEntity) event.getWorld().getTileEntity(event.getPos());
-            if (spawner != null)
+            final TileEntity spawner = event.getWorld().getTileEntity(event.getPos());
+            if (spawner instanceof MobSpawnerTileEntity)
             {
                 final IColony colony = IColonyManager.getInstance()
-                                         .getColonyByDimension(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_COLONY_ID),
+                                         .getColonyByDimension(((MobSpawnerTileEntity) spawner).getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_COLONY_ID),
                                            world.getDimensionKey());
                 if (colony != null)
                 {
-                    colony.getEventManager().onTileEntityBreak(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_EVENT_ID), spawner);
+                    colony.getEventManager().onTileEntityBreak(((MobSpawnerTileEntity) spawner).getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_EVENT_ID), spawner);
                 }
             }
         }
