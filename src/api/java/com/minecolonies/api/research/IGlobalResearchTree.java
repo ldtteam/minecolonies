@@ -80,6 +80,13 @@ public interface IGlobalResearchTree
     List<String> getPrimaryResearch(final String branch);
 
     /**
+     * Get the list of researches that are intended to start automatically
+     * once their requirements are met.
+     * @return the list of research.
+     */
+    List<IGlobalResearch> getAutostartResearches();
+
+    /**
      * Checks if a specific unlockBuildingEffect has been registered, whether or not it is unlocked.
      * @param id   the effect's identifier.
      * @return true if present
@@ -92,6 +99,14 @@ public interface IGlobalResearchTree
      * @return true if present
      */
     boolean hasUnlockAbilityEffect(String id);
+
+    /**
+     * Checks if the research requirements are completed, for a given colony.
+     * @param requirements   the research requirements.
+     * @param colony         the colony to test against.
+     * @return               true if complete.
+     */
+    boolean isResearchRequirementsFulfilled(final List<IResearchRequirement> requirements, IColony colony);
 
     /**
      * Write the research tree to NBT.

@@ -2,11 +2,17 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
+import com.ldtteam.blockout.controls.Gradient;
 import com.ldtteam.blockout.views.View;
+import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
+import com.minecolonies.coremod.research.BuildingResearchRequirement;
+import com.minecolonies.coremod.research.ResearchResearchRequirement;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -39,19 +45,90 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
         int offset = 0;
         // For now, sort research branches by name, as they may be loaded in any order.
         branches.addAll(IGlobalResearchTree.getInstance().getBranches());
-        branches.sort(Comparator.comparing(String::toString));
+        branches.sort(Comparator.comparing(String::toString, String.CASE_INSENSITIVE_ORDER));
         for (final String branch : branches)
         {
-            final ButtonImage button = new ButtonImage();
-            button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-            button.setLabel(branch);
-            button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
-            button.setTextColor(SLIGHTLY_BLUE);
-            button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
-            view.addChild(button);
+            List<IFormattableTextComponent> requirements = getHidingRequirementDesc(branch);
+            if(requirements.isEmpty())
+            {
+                final ButtonImage button = new ButtonImage();
+                button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
+                button.setLabel(branch);
+                button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
+                button.setTextColor(SLIGHTLY_BLUE);
+                button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
+                view.addChild(button);
 
-            offset += button.getHeight() + BUTTON_PADDING;
+                offset += button.getHeight() + BUTTON_PADDING;
+            }
+            else
+            {
+                final Gradient gradient = new Gradient();
+                gradient.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
+                gradient.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
+                gradient.setGradientStart(239, 230, 215, 255);
+                gradient.setGradientEnd(239, 230, 215, 255);
+                gradient.setHoverToolTip(requirements);
+                view.addChild(gradient);
+                final ButtonImage button = new ButtonImage();
+                button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
+                button.setLabel("-----------");
+                button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
+                button.setTextColor(SLIGHTLY_BLUE);
+                button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
+                view.addChild(button);
+
+                offset += button.getHeight() + BUTTON_PADDING;
+            }
         }
+    }
+
+    public List<IFormattableTextComponent> getHidingRequirementDesc(String branch)
+    {
+        List<IFormattableTextComponent> requirements = new ArrayList<>();
+        for(String primary : IGlobalResearchTree.getInstance().getPrimaryResearch(branch))
+        {
+            if(!IGlobalResearchTree.getInstance().getResearch(branch, primary).isHidden()
+                 || IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement(), building.getColony()))
+            {
+                requirements.clear();
+                break;
+            }
+            else
+            {
+                if(requirements.isEmpty())
+                {
+                    requirements.add(new TranslationTextComponent("com.minecolonies.coremod.research.lockedrequirements"));
+                }
+                else
+                {
+                    requirements.add(new TranslationTextComponent("Or").setStyle((Style.EMPTY).setFormatting(TextFormatting.AQUA)));
+                }
+                for(IResearchRequirement req : IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement())
+                {
+                    if(req instanceof ResearchResearchRequirement)
+                    {
+                        if(!Boolean.TRUE.equals(building.getColony().getResearchManager().getResearchTree().hasCompletedResearch(((ResearchResearchRequirement) req).getResearchId())))
+                        {
+                            requirements.add(req.getDesc().setStyle((Style.EMPTY).setFormatting(TextFormatting.RED)));
+                        }
+                    }
+                    // We'll include even completed buildings in the requirement list, since buildings can get undone/removed.
+                    else if (req instanceof BuildingResearchRequirement)
+                    {
+                        if(!building.getColony().getBuildings().contains(((BuildingResearchRequirement) req).getBuilding()))
+                        {
+                            requirements.add(req.getDesc().setStyle((Style.EMPTY).setFormatting(TextFormatting.RED)));
+                        }
+                        else
+                        {
+                            requirements.add(req.getDesc().setStyle((Style.EMPTY).setFormatting(TextFormatting.AQUA)));
+                        }
+                    }
+                }
+            }
+        }
+        return requirements;
     }
 
     @Override

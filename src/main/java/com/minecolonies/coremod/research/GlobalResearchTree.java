@@ -1,14 +1,20 @@
 package com.minecolonies.coremod.research;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,6 +37,8 @@ public class GlobalResearchTree implements IGlobalResearchTree
     private final Map<ResourceLocation, String> researchResourceLocations = new HashMap<>();
 
     private final List<ResourceLocation> resettableResearch = new ArrayList<>();
+
+    private final List<IGlobalResearch> autostartResearch = new ArrayList<>();
 
     private final Map<String, IResearchEffect> unlockBuildingEffect = new HashMap<>();
 
@@ -74,9 +82,13 @@ public class GlobalResearchTree implements IGlobalResearchTree
 
         researchResourceLocations.put(research.getResourceLocation(), research.getId());
 
-        if(isReloadedWithWorld)
+        if (isReloadedWithWorld)
         {
             resettableResearch.add(research.getResourceLocation());
+        }
+        if (research.isAutostart())
+        {
+           autostartResearch.add(research);
         }
         for (IResearchEffect effect : research.getEffects())
         {
@@ -153,7 +165,59 @@ public class GlobalResearchTree implements IGlobalResearchTree
             }
         }
         resettableResearch.clear();
+        // Autostart is only accessible as a dynamically-assigned trait, so we can reset all of it.
+        autostartResearch.clear();
     }
+
+    @Override
+    public boolean isResearchRequirementsFulfilled(final List<IResearchRequirement> requirements, IColony colony)
+    {
+        if (requirements == null || requirements.isEmpty())
+        {
+            return true;
+        }
+        for(IResearchRequirement requirement : requirements)
+        {
+            if(requirement instanceof BuildingResearchRequirement)
+            {
+                int levels = 0;
+                if(colony instanceof IColonyView)
+                {
+                    for (IBuildingView building : ((IColonyView)colony).getBuildings())
+                    {
+                        if (building.getSchematicName().equals(((BuildingResearchRequirement) requirement).getBuilding()))
+                        {
+                            levels += building.getBuildingLevel();
+                        }
+                    }
+                }
+                else if(colony instanceof IColony)
+                {
+                    for (Map.Entry<BlockPos, IBuilding> building : colony.getBuildingManager().getBuildings().entrySet())
+                    {
+                        if (building.getValue().getSchematicName().equals(((BuildingResearchRequirement) requirement).getBuilding()))
+                        {
+                            levels += building.getValue().getBuildingLevel();
+                        }
+                    }
+                }
+
+                if(levels < ((BuildingResearchRequirement)requirement).getBuildingLevel())
+                {
+                    return false;
+                }
+            }
+            if(requirement instanceof ResearchResearchRequirement)
+            {
+                if(!Boolean.TRUE.equals(colony.getResearchManager().getResearchTree().hasCompletedResearch(((ResearchResearchRequirement) requirement).getResearchId())))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
     @Override
     public void writeToNBT(final CompoundNBT compound)
@@ -174,5 +238,25 @@ public class GlobalResearchTree implements IGlobalResearchTree
         NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Constants.NBT.TAG_COMPOUND))
           .map(researchCompound -> (IGlobalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
           .forEach(research -> addResearch(research.getBranch(), research, true));
+    }
+
+    @Override
+    public List<IResearchEffect<?>> getEffectsForResearch(final String id)
+    {
+        for(final String branch: this.getBranches())
+        {
+            final IGlobalResearch r = this.getResearch(branch, id);
+            if (r != null)
+            {
+                return r.getEffects();
+            }
+        }
+        return null; 
+    }
+
+    @Override
+    public List<IGlobalResearch> getAutostartResearches()
+    {
+        return autostartResearch;
     }
 }

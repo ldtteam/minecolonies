@@ -514,6 +514,8 @@ public final class TranslationConstants
     @NonNls
     public static final String RESEARCH_EFFECTS = "com.minecolonies.research.effects.";
     @NonNls
+    public static final String RESEARCH_AVAILABLE = "com.minecolonies.coremod.research.available";
+    @NonNls
     public static final String RESEARCH_REQUIRES = "com.minecolonies.coremod.research.requirement.research";
 
     private TranslationConstants()

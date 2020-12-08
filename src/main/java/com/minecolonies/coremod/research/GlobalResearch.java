@@ -106,6 +106,12 @@ public class GlobalResearch implements IGlobalResearch
     private static final String RESEARCH_HIDDEN_PROP = "hidden";
 
     /**
+     * The property name for automatic start of research, when its requirements are completed.
+     * This can temporarily exceed the maximum number of concurrent researches.
+     */
+    private static final String RESEARCH_AUTOSTART_PROP = "autostart";
+
+    /**
      * The property name for instant completion of research, when its requirements are completed.
      */
     private static final String RESEARCH_INSTANT_PROP = "instant";
@@ -167,6 +173,11 @@ public class GlobalResearch implements IGlobalResearch
     private final boolean hidden;
 
     /**
+     * If the research starts automatically when requirements met.
+     */
+    private final boolean autostart;
+
+    /**
      * If the research has an only child.
      */
     private final boolean instant;
@@ -199,6 +210,7 @@ public class GlobalResearch implements IGlobalResearch
         this.resourceLocation = new ResourceLocation("minecolonies","staticresearch");
         this.hidden = false;
         this.instant = false;
+        this.autostart = false;
         Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
     }
 
@@ -219,6 +231,7 @@ public class GlobalResearch implements IGlobalResearch
         this.branch = branch;
         this.resourceLocation = new ResourceLocation("minecolonies","staticresearch");
         this.hidden = false;
+        this.autostart = false;
         this.instant = false;
         Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
     }
@@ -263,7 +276,7 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public void startResearch(@NotNull final PlayerEntity player, @NotNull final ILocalResearchTree localResearchTree)
+    public void startResearch(@NotNull final ILocalResearchTree localResearchTree)
     {
         if (localResearchTree.getResearch(this.branch, this.id) == null)
         {
@@ -321,6 +334,12 @@ public class GlobalResearch implements IGlobalResearch
     public boolean isHidden()
     {
         return this.hidden;
+    }
+
+    @Override
+    public boolean isAutostart()
+    {
+        return this.autostart;
     }
 
     @Override
@@ -404,6 +423,7 @@ public class GlobalResearch implements IGlobalResearch
         this.parent = getParent(researchJson);
         this.onlyChild = getBooleanSafe(researchJson, RESEARCH_EXCLUSIVE_CHILD_PROP);
         this.instant = getBooleanSafe(researchJson, RESEARCH_INSTANT_PROP);
+        this.autostart = getBooleanSafe(researchJson, RESEARCH_AUTOSTART_PROP);
         this.hidden = getBooleanSafe(researchJson, RESEARCH_HIDDEN_PROP);
 
         parseRequirements(researchJson);

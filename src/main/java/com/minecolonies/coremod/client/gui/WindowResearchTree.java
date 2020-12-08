@@ -93,47 +93,6 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
     }
 
-    /**
-     *
-     * @param researchRequirement requirement to start research
-     * @return whether the requirement has been satisfied for research
-     */
-    private boolean isResearchFulfilled(final List<IResearchRequirement> researchRequirement)
-    {
-        if (researchRequirement == null || researchRequirement.isEmpty())
-        {
-            return true;
-        }
-        for(IResearchRequirement requirement : researchRequirement)
-        {
-            if(requirement instanceof BuildingResearchRequirement)
-            {
-                List<IBuildingView> buildings = building.getColony().getBuildings();
-                int levels = 0;
-
-                for (IBuildingView building : buildings)
-                {
-                    if (building.getSchematicName().equals(((BuildingResearchRequirement) requirement).getBuilding()))
-                    {
-                        levels += building.getBuildingLevel();
-                    }
-                }
-                if(levels < ((BuildingResearchRequirement)requirement).getBuildingLevel())
-                {
-                    return false;
-                }
-            }
-            if(requirement instanceof ResearchResearchRequirement)
-            {
-                if(!building.getColony().getResearchManager().getResearchTree().hasCompletedResearch(((ResearchResearchRequirement) requirement).getResearchId()))
-                {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
@@ -189,7 +148,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final ILocalResearch localResearch = tree.getResearch(branch, research.getId());
             final ResearchState state = localResearch == null ? ResearchState.NOT_STARTED : localResearch.getState();
             final IGlobalResearch parentResearch = IGlobalResearchTree.getInstance().getResearch(branch, research.getParent());
-            if(research.isHidden() && !isResearchFulfilled(research.getResearchRequirement()))
+            if(research.isHidden() && !IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirement(), this.building.getColony()))
             {
                 continue;
             }
@@ -243,7 +202,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final List<IFormattableTextComponent> hoverTexts = new ArrayList<>();
 
             final Label effectLabel = new Label();
-            if (research.getEffects() != null)
+            if (!research.getEffects().isEmpty())
             {
                 TranslationTextComponent effectText = new TranslationTextComponent("");
                 for (int txt = 0; txt < research.getEffects().size(); txt++)
@@ -266,7 +225,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             if (state == ResearchState.IN_PROGRESS)
             {
                 //The player will reach the end of the research if he is in creative mode and the research was in progress
-                if (mc.player.isCreative() && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get() && localResearch.getProgress() < BASE_RESEARCH_TIME * Math.pow(2, depth - 1))
+                if (mc.player.isCreative() && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get()
+                      && localResearch.getProgress() < BASE_RESEARCH_TIME * Math.pow(2, depth - 1))
                 {
                     Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch()));
                 }
@@ -292,7 +252,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     view.addChild(xpBarFull);
                 }
             }
-            else if (research.getResearchRequirement() != null && state != ResearchState.FINISHED)
+            else if (!research.getResearchRequirement().isEmpty() && state != ResearchState.FINISHED)
             {
                 TranslationTextComponent requirementText = new TranslationTextComponent("");
                 for(int txt = 0; txt < research.getResearchRequirement().size(); txt++)
@@ -353,7 +313,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                     buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.toomanyinprogress"));
                 }
-                else if (!isResearchFulfilled(research.getResearchRequirement()))
+                else if (!IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirement(), this.building.getColony()))
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
                     buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.missingrequirements"));

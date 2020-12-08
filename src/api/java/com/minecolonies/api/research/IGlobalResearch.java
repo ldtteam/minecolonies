@@ -49,11 +49,9 @@ public interface IGlobalResearch
 
     /**
      * Start the research.
-     *
-     * @param player            the player starting it.
      * @param localResearchTree the local research tree to store in the colony.
      */
-    void startResearch(@NotNull final PlayerEntity player, @NotNull final ILocalResearchTree localResearchTree);
+    void startResearch(@NotNull final ILocalResearchTree localResearchTree);
 
     /**
      * Human readable description of research.
@@ -98,7 +96,14 @@ public interface IGlobalResearch
     int getDepth();
 
     /**
-     * Check if this research is a hidden research.  If so, it should only be visible if all requirements are met.
+     * Check if this research should automatically start when requirements are complete.
+     * This can temporarily exceed normal limits of the max number of concurrent researches.
+     * @return true if so.
+     */
+    boolean isAutostart();
+
+    /**
+     * Check if this research is a hidden research.  If so, it (and its children) should only be visible if all requirements are met.
      *
      * @return true if so.
      */

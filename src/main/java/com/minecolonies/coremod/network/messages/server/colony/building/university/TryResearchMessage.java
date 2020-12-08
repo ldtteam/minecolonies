@@ -86,7 +86,7 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
             {
                 if (player.isCreative())
                 {
-                    research.startResearch(player, colony.getResearchManager().getResearchTree());
+                    research.startResearch(colony.getResearchManager().getResearchTree());
                     if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get())
                     {
                         colony.getResearchManager()
@@ -95,28 +95,29 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
                           .setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
                     }
                 }
-                else if (research.getResearchRequirement() != null && !research.getResearchRequirement().isEmpty())
+                else if (!research.getResearchRequirement().isEmpty())
                 {
                     for(IResearchRequirement requirement : research.getResearchRequirement())
                     {
                         if(!requirement.isFulfilled(colony))
                         {
                             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.requirementnotmet"), player.getUniqueID());
+                            return;
                         }
                     }
                 }
                 if (!player.isCreative())
                 {
+                    // Remove items from player
                     for (final ItemStorage cost : research.getCostList())
                     {
                         InventoryUtils.removeStackFromItemHandler(new InvWrapper(player.inventory), cost.getItemStack(), cost.getAmount());
                     }
 
                     player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started", new TranslationTextComponent(research.getDesc())), player.getUniqueID());
-                    research.startResearch(player, colony.getResearchManager().getResearchTree());
+                    research.startResearch(colony.getResearchManager().getResearchTree());
                 }
                 colony.markDirty();
-                // Remove items from player
             }
         }
         else

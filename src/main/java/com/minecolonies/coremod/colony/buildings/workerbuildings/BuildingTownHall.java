@@ -7,25 +7,33 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
+import com.minecolonies.api.research.*;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowTownHall;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 
+import com.minecolonies.coremod.research.BuildingResearchRequirement;
+import com.minecolonies.coremod.research.ResearchResearchRequirement;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
+import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
 import static com.minecolonies.api.util.constant.ColonyConstants.MAX_COLONY_EVENTS;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -83,6 +91,86 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.townHall;
+    }
+
+    @Override
+    public void onColonyTick(final IColony colony)
+    {
+        super.onColonyTick(colony);
+
+        List<IGlobalResearch> removes = new ArrayList<>();
+        for(IGlobalResearch research : MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getAutostartResearches())
+        {
+            if (!IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirement(), colony))
+            {
+                continue;
+            }
+            Map<BlockPos, IBuilding> buildings = colony.getBuildingManager().getBuildings();
+            int level = 0;
+            for (Map.Entry<BlockPos, IBuilding> building : buildings.entrySet())
+            {
+                if (building.getValue().getSchematicName().equals(ModBuildings.UNIVERSITY_ID))
+                {
+                    if (building.getValue().getBuildingLevel() > level)
+                    {
+                        level = building.getValue().getBuildingLevel();
+                    }
+                }
+            }
+            if (level < research.getDepth())
+            {
+                continue;
+            }
+            boolean researchAlreadyRun = false;
+            for (ILocalResearch progressResearch : colony.getResearchManager().getResearchTree().getResearchInProgress())
+            {
+                if(progressResearch.getId().equals(research.getId()))
+                {
+                    researchAlreadyRun = true;
+                    break;
+                }
+            }
+            // Don't want to spam people about in-progress or already-completed research.  Because these might change within a world,
+            // we can't just save them or check against effects.
+            if(researchAlreadyRun || Boolean.TRUE.equals(colony.getResearchManager().getResearchTree().hasCompletedResearch(research.getId())))
+            {
+                removes.add(research);
+                continue;
+            }
+
+            // if research has item requirements, only notify player; we don't want to have items disappearing from inventories.
+            if (!research.getCostList().isEmpty())
+            {
+                for (PlayerEntity player : this.colony.getMessagePlayerEntities())
+                {
+                    player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getDesc()), player.getUniqueID());
+                }
+            }
+            // Otherwise, we can start the research without user intervention.
+            else
+            {
+                boolean creativePlayer = false;
+                for (PlayerEntity player : this.colony.getMessagePlayerEntities())
+                {
+                    player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getDesc()), player.getUniqueID());
+                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started", new TranslationTextComponent(research.getDesc())),
+                      player.getUniqueID());
+                    if (player.isCreative() && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get())
+                    {
+                        creativePlayer = true;
+                    }
+                }
+                if (creativePlayer && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get())
+                {
+                    colony.getResearchManager().getResearchTree().getResearch(research.getBranch(),
+                      research.getId()).setProgress((int)(BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
+                }
+            }
+            //  If we've successfully done all those things, now we can remove the object from the list.
+            //  This will reannounce on world reload, but that's probably ideal, in case someone missed the message once.
+            removes.add(research);
+        }
+        MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getAutostartResearches().removeAll(removes);
     }
 
     @Override
