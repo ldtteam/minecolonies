@@ -2,10 +2,10 @@ package com.minecolonies.coremod.items;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.world.DimensionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.client.util.ITooltipFlag;
@@ -51,7 +51,7 @@ public class ItemChorusBread extends AbstractItemMinecolonies
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving)
     {
-        if (!worldIn.isRemote && entityLiving instanceof ServerPlayerEntity && worldIn.getDimensionType().isSame(DimensionType.OVERWORLD_TYPE))
+        if (!worldIn.isRemote && entityLiving instanceof ServerPlayerEntity && WorldUtil.isOverworldType(worldIn))
         {
             TeleportHelper.surfaceTeleport((ServerPlayerEntity)entityLiving);
         }

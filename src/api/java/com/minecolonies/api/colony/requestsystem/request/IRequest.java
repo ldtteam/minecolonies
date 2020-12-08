@@ -295,4 +295,9 @@ public interface IRequest<R extends IRequestable>
      * @return a list of strings or empty.
      */
     List<IFormattableTextComponent> getResolverToolTip(IColonyView colony);
+
+    /**
+     * Reset the deliveries of the request.
+     */
+    void resetDeliveries();
 }

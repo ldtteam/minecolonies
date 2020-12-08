@@ -22,8 +22,6 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
     /**
      * Formatable string to use the command
      */
-    public static final String COLONY_DELETE_COMMAND = "/mc colony delete %d %s keep buildings";
-
     private static final String DELETE_BUILDNGS_ARG = "delete Buildings?";
 
     /**
@@ -42,7 +40,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
 
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey().getLocation());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey());
         if (colony == null)
         {
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
@@ -52,7 +50,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
         final boolean deleteBuildings = BoolArgumentType.getBool(context, DELETE_BUILDNGS_ARG);
 
         BackUpHelper.backupColonyData();
-        IColonyManager.getInstance().deleteColonyByDimension(colonyID, deleteBuildings, context.getSource().getWorld().getDimensionKey().getLocation());
+        IColonyManager.getInstance().deleteColonyByDimension(colonyID, deleteBuildings, context.getSource().getWorld().getDimensionKey());
         context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.delete.success", colony.getName()), true);
         return 1;
     }

@@ -429,6 +429,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 return START_WORKING;
             }
 
+            worker.setCanBeStuck(false);
+            worker.getNavigator().getPathingOptions().setCanUseRails(false);
             fighttimer = COMBAT_TIME;
             equipInventoryArmor();
             moveInAttackPosition();
@@ -438,6 +440,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         if (fighttimer > 0)
         {
             fighttimer--;
+            if (fighttimer == 0)
+            {
+                worker.getNavigator().getPathingOptions().setCanUseRails(((EntityCitizen) worker).canPathOnRails());
+                worker.setCanBeStuck(true);
+            }
         }
 
         return null;
@@ -770,7 +777,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             // Check sight
             if (!worker.canEntityBeSeen(target))
             {
-                lastSeen += GUARD_TASK_INTERVAL;
+                lastSeen += 10;
             }
             else
             {

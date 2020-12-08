@@ -10,8 +10,6 @@ import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
@@ -73,9 +71,9 @@ public final class BackUpHelper
                     if (file.exists())
                     {
                         // mark existing files
-                        if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType.getLocation()) == null)
+                        if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType) == null)
                         {
-                            markColonyDeleted(i, dimensionType.getLocation());
+                            markColonyDeleted(i, dimensionType);
                             addToZipFile(String.format(FILENAME_COLONY_DELETED, i, dimensionType.getLocation()), zos, saveDir);
                         }
                         else
@@ -121,9 +119,9 @@ public final class BackUpHelper
                 {
                     missingFilesInRow = 0;
                     // Load colony if null
-                    if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType.getLocation()) == null)
+                    if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType) == null)
                     {
-                        loadColonyBackup(i, dimensionType.getLocation(), false, false);
+                        loadColonyBackup(i, dimensionType, false, false);
                     }
                 }
                 else
@@ -209,7 +207,10 @@ public final class BackUpHelper
         {
             if (file != null)
             {
-                file.getParentFile().mkdir();
+                if (!file.getParentFile().mkdir())
+                {
+                    Log.getLogger().error("Unable to create director to store nbt to file.");
+                }
                 CompressedStreamTools.write(compound, file);
             }
         }
@@ -256,7 +257,7 @@ public final class BackUpHelper
         {
             final CompoundNBT colonyCompound = new CompoundNBT();
             colony.write(colonyCompound);
-            saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension())), colonyCompound);
+            saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension().getLocation())), colonyCompound);
         }
     }
 
@@ -266,15 +267,21 @@ public final class BackUpHelper
      * @param colonyID    id of the colony to delete
      * @param dimensionID dimension of the colony to delete
      */
-    public static void markColonyDeleted(final int colonyID, final ResourceLocation dimensionID)
+    public static void markColonyDeleted(final int colonyID, final RegistryKey<World> dimensionID)
     {
         @NotNull final File saveDir =
           new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
-        final File todelete = new File(saveDir, String.format(FILENAME_COLONY, colonyID, dimensionID));
-        if (todelete.exists())
+        final File toDelete = new File(saveDir, String.format(FILENAME_COLONY, colonyID, dimensionID.getLocation()));
+        if (toDelete.exists())
         {
-            new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyID, dimensionID)).delete();
-            todelete.renameTo(new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyID, dimensionID)));
+            final String fileName =  String.format(FILENAME_COLONY_DELETED, colonyID, dimensionID.getLocation());
+            if (new File(saveDir, fileName).delete())
+            {
+                if (!toDelete.renameTo(new File(saveDir, fileName)))
+                {
+                    Log.getLogger().error("Failed renaming: " + FILENAME_COLONY_DELETED);
+                }
+            }
         }
     }
 
@@ -291,7 +298,7 @@ public final class BackUpHelper
                 @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.getLocation()));
                 if (file.exists())
                 {
-                    loadColonyBackup(i, dimensionType.getLocation(), false, false);
+                    loadColonyBackup(i, dimensionType, false, false);
                 }
             }
         });
@@ -305,19 +312,20 @@ public final class BackUpHelper
      * @param loadDeleted whether to load deleted colonies aswell.
      * @param claimChunks if chunks shall be claimed on loading.
      */
-    public static void loadColonyBackup(final int colonyId, final ResourceLocation dimension, boolean loadDeleted, boolean claimChunks)
+    public static void loadColonyBackup(final int colonyId, final RegistryKey<World> dimension, boolean loadDeleted, boolean claimChunks)
     {
         @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
-        CompoundNBT compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));
+        @NotNull final File backupFile = new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension.getLocation()));
+        CompoundNBT compound = loadNBTFromPath(backupFile);
         if (compound == null)
         {
             if (loadDeleted)
             {
-                compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyId, dimension)));
+                compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyId, dimension.getLocation())));
             }
             if (compound == null)
             {
-                Log.getLogger().warn("Can't find NBT of colony: " + colonyId + " at location: " + new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));
+                Log.getLogger().warn("Can't find NBT of colony: " + colonyId + " at location: " + backupFile);
                 return;
             }
         }
@@ -330,30 +338,31 @@ public final class BackUpHelper
         else
         {
             Log.getLogger().warn("Colony:" + colonyId + " is missing, loading backup!");
-            final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, dimension));
-            colony = Colony.loadColony(compound, colonyWorld);
-            if (colony == null)
+            final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(dimension);
+            final Colony loadedColony = Colony.loadColony(compound, colonyWorld);
+            if (loadedColony == null || colonyWorld == null)
             {
                 Log.getLogger().warn("Colony:" + colonyId + " loadBackup failed!");
                 return;
             }
 
-            colonyWorld.getCapability(COLONY_MANAGER_CAP, null).orElse(null).addColony(colony);
+            colonyWorld.getCapability(COLONY_MANAGER_CAP, null).ifPresent(cap -> cap.addColony(loadedColony));
 
             if (claimChunks)
             {
-                IColonyTagCapability cap = ((Chunk) colonyWorld.getChunk(colony.getCenter())).getCapability(CLOSE_COLONY_CAP, null).orElse(null);
-                if (cap != null && cap.getOwningColony() != colonyId)
+                final Chunk chunk = ((Chunk) colonyWorld.getChunk(loadedColony.getCenter()));
+                final int id  = chunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
+                if (id != colonyId)
                 {
-                    for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+                    for (final IBuilding building : loadedColony.getBuildingManager().getBuildings().values())
                     {
-                        ChunkDataHelper.claimColonyChunks(colony,
+                        ChunkDataHelper.claimColonyChunks(loadedColony,
                           true,
                           building.getPosition(),
                           building.getClaimRadius(building.getBuildingLevel()));
                     }
 
-                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), colony.getCenter(), colony.getDimension());
+                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, loadedColony.getID(), loadedColony.getCenter(), loadedColony.getDimension());
                 }
             }
         }

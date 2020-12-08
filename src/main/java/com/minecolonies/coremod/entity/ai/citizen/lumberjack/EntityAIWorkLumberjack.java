@@ -784,7 +784,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     }
 
     //todo: we need to use a different way to get Metadata, check other Mods like BOP for compatibility then
-    @SuppressWarnings("deprecation")
     private void placeSaplings(final int saplingSlot, @NotNull final ItemStack stack, @NotNull final Block block)
     {
         while (!job.getTree().getStumpLocations().isEmpty())

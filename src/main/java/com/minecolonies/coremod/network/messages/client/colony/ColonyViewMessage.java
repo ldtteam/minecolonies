@@ -5,7 +5,10 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
@@ -36,7 +39,7 @@ public class ColonyViewMessage implements IMessage
     /**
      * The dimension of the colony.
      */
-    private ResourceLocation dim;
+    private RegistryKey<World> dim;
 
     /**
      * Empty constructor used when registering the
@@ -67,7 +70,7 @@ public class ColonyViewMessage implements IMessage
         final PacketBuffer newBuf = new PacketBuffer(buf.retain());
         colonyId = newBuf.readInt();
         isNewSubscription = newBuf.readBoolean();
-        dim = new ResourceLocation(newBuf.readString(32767));
+        dim = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(newBuf.readString(32767)));
         colonyBuffer = newBuf;
     }
 
@@ -76,7 +79,7 @@ public class ColonyViewMessage implements IMessage
     {
         buf.writeInt(colonyId);
         buf.writeBoolean(isNewSubscription);
-        buf.writeString(dim.toString());
+        buf.writeString(dim.getLocation().toString());
         buf.writeBytes(colonyBuffer);
     }
 

@@ -170,7 +170,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
 
-        this.start = new BlockPos((minX + maxX) / 2, (startRestriction.getY() + endRestriction.getY()) / 2, (minZ + maxZ) / 2);
+        this.start = startRestriction;
         this.maxRange = range;
 
         this.result = result;
@@ -275,7 +275,8 @@ public abstract class AbstractPathJob implements Callable<Path>
     private static void setLadderFacing(@NotNull final IWorldReader world, final BlockPos pos, @NotNull final PathPointExtended p)
     {
         final BlockState state = world.getBlockState(pos);
-        if (state.getBlock() instanceof VineBlock)
+        final Block block = state.getBlock();
+        if (block instanceof VineBlock)
         {
             if (state.get(VineBlock.SOUTH))
             {
@@ -294,13 +295,13 @@ public abstract class AbstractPathJob implements Callable<Path>
                 p.setLadderFacing(Direction.WEST);
             }
         }
-        else if (state.getBlock() instanceof ScaffoldingBlock)
+        else if (block instanceof LadderBlock)
         {
-            p.setLadderFacing(Direction.UP);
+            p.setLadderFacing(state.get(LadderBlock.FACING));
         }
         else
         {
-            p.setLadderFacing(state.get(LadderBlock.FACING));
+            p.setLadderFacing(Direction.UP);
         }
     }
 
@@ -532,6 +533,19 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         //  We can also go down 1, if the lower block is a ladder
         if (onLadderGoingDown(currentNode, dPos))
+        {
+            walk(currentNode, BLOCKPOS_DOWN);
+        }
+
+        // Only explore downwards when dropping
+        if ((currentNode.parent == null || !currentNode.parent.pos.equals(currentNode.pos.down())) && currentNode.isCornerNode())
+        {
+            walk(currentNode, BLOCKPOS_DOWN);
+            return;
+        }
+
+        // Walk downwards node if passable
+        if (isPassable(currentNode.pos.down(), false))
         {
             walk(currentNode, BLOCKPOS_DOWN);
         }
@@ -775,10 +789,30 @@ public abstract class AbstractPathJob implements Callable<Path>
             return false;
         }
 
+        boolean corner = false;
         if (pos.getY() != newY)
         {
-            dPos = dPos.add(0, newY - pos.getY(), 0);
-            pos = new BlockPos(pos.getX(), newY, pos.getZ());
+            // if the new position is above the current node, we're taking the node directly above
+            if (!parent.isCornerNode() && newY - pos.getY() > 0 && (parent.parent == null || !parent.parent.pos.equals(parent.pos.add(new BlockPos(0, newY - pos.getY(), 0)))))
+            {
+                dPos = new BlockPos(0, newY - pos.getY(), 0);
+                pos = parent.pos.add(dPos);
+                corner = true;
+            }
+            // If we're going down, take the air-corner before going to the lower node
+            else if (!parent.isCornerNode() && newY - pos.getY() < 0 && (dPos.getX() != 0 || dPos.getZ() != 0) && (parent.parent == null || !parent.pos.down()
+                                                                                                                                               .equals(parent.parent.pos)))
+            {
+                dPos = new BlockPos(dPos.getX(), 0, dPos.getZ());
+                pos = parent.pos.add(dPos);
+                corner = true;
+            }
+            // Fix up normal y
+            else
+            {
+                dPos = dPos.add(0, newY - pos.getY(), 0);
+                pos = new BlockPos(pos.getX(), newY, pos.getZ());
+            }
         }
 
         int nodeKey = computeNodeKey(pos);
@@ -810,6 +844,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             node = createNode(parent, pos, nodeKey, isSwimming, heuristic, cost, score);
             node.setOnRails(onRails);
+            node.setCornerNode(corner);
         }
         else if (updateCurrentNode(parent, node, heuristic, cost, score))
         {
@@ -942,7 +977,8 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         final boolean canDrop = parent != null && !parent.isLadder();
         //  Nothing to stand on
-        if (!canDrop || isSwimming)
+        if (!canDrop || isSwimming || ((parent.pos.getX() != pos.getX() || parent.pos.getZ() != pos.getZ()) && isPassable(parent.pos.down(), false)
+                                         && isWalkableSurface(world.getBlockState(parent.pos.down()), parent.pos.down()) == SurfaceType.DROPABLE))
         {
             return -1;
         }
@@ -1225,7 +1261,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * Check if we can walk on a surface, drop into, or neither.
      */
-    private enum SurfaceType
+    protected enum SurfaceType
     {
         WALKABLE,
         DROPABLE,

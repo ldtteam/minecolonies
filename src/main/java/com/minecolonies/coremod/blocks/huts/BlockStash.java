@@ -89,7 +89,7 @@ public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSCompo
     {
         if (worldIn.isRemote)
         {
-            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimensionKey().getLocation(), pos);
+            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimensionKey(), pos);
 
             if (building != null
                   && building.getColony() != null

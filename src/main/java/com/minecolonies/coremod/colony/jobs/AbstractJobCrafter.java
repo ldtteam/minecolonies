@@ -57,7 +57,10 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
     public AbstractJobCrafter(final ICitizenData entity)
     {
         super(entity);
-        setupRsDataStore();
+        if (entity != null)
+        {
+            setupRsDataStore();
+        }
     }
 
     /**

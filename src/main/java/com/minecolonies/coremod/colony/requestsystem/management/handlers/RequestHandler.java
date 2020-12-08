@@ -399,6 +399,7 @@ public class RequestHandler implements IRequestHandler
     {
         final IRequest<?> request = manager.getRequestForToken(token);
         final IRequest<?> parent = manager.getRequestForToken(request.getParent());
+        parent.resetDeliveries();
         parent.getChildren().forEach(this::onRequestCancelledDirectly);
         this.reassignRequest(parent, ImmutableList.of());
     }

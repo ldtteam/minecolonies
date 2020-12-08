@@ -8,7 +8,7 @@ import com.minecolonies.api.crafting.IRecipeManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
@@ -52,7 +52,7 @@ public interface IColonyManager
      * @param canDestroy if can destroy the buildings.
      * @param dimension  the dimension.
      */
-    void deleteColonyByDimension(int id, boolean canDestroy, ResourceLocation dimension);
+    void deleteColonyByDimension(int id, boolean canDestroy, RegistryKey<World> dimension);
 
     /**
      * Removes a colony view
@@ -60,7 +60,7 @@ public interface IColonyManager
      * @param id        the id of the colony.
      * @param dimension the dimension it is in.
      */
-    void removeColonyView(int id, ResourceLocation dimension);
+    void removeColonyView(int id, RegistryKey<World> dimension);
 
     /**
      * Get Colony by UUID.
@@ -80,7 +80,7 @@ public interface IColonyManager
      * @return Colony with given ID.
      */
     @Nullable
-    IColony getColonyByDimension(int id, ResourceLocation dimension);
+    IColony getColonyByDimension(int id, RegistryKey<World> dimension);
 
     /**
      * Get a AbstractBuilding by a World and coordinates.
@@ -108,7 +108,7 @@ public interface IColonyManager
      * @param pos coordinates.
      * @return Colony at the given location.
      */
-    IColony getColonyByPosFromDim(ResourceLocation dim, @NotNull BlockPos pos);
+    IColony getColonyByPosFromDim(RegistryKey<World> dim, @NotNull BlockPos pos);
 
     /**
      * Check if a position is too close to another colony to found a new colony.
@@ -152,7 +152,7 @@ public interface IColonyManager
      * @param dimension the dimension it is in.
      * @return Returns the view belonging to the building at (x, y, z).
      */
-    IBuildingView getBuildingView(final ResourceLocation dimension, BlockPos pos);
+    IBuildingView getBuildingView(final RegistryKey<World> dimension, BlockPos pos);
 
     /**
      * Side neutral method to get colony. On clients it returns the view. On servers it returns the colony itself.
@@ -175,7 +175,7 @@ public interface IColonyManager
     IColony getClosestIColony(@NotNull World w, @NotNull BlockPos pos);
 
     /**
-     * Returns the closest view {@link #getColonyView(int, ResourceLocation)}.
+     * Returns the closest view {@link #getColonyView(int, RegistryKey<World>)}.
      *
      * @param w   World.
      * @param pos Block Position.
@@ -296,7 +296,7 @@ public interface IColonyManager
      * @param dim               the dimension.
      * @param world             the world it is in.
      */
-    void handleColonyViewMessage(int colonyId, @NotNull PacketBuffer colonyData, @NotNull World world, boolean isNewSubscription, ResourceLocation dim);
+    void handleColonyViewMessage(int colonyId, @NotNull PacketBuffer colonyData, @NotNull World world, boolean isNewSubscription, RegistryKey<World> dim);
 
     /**
      * Get IColonyView by ID.
@@ -305,79 +305,79 @@ public interface IColonyManager
      * @param dimension the dimension id.
      * @return The IColonyView belonging to the colony.
      */
-    IColonyView getColonyView(int id, final ResourceLocation dimension);
+    IColonyView getColonyView(int id, final RegistryKey<World> dimension);
 
     /**
-     * Returns result of {@link IColonyView#handlePermissionsViewMessage(PacketBuffer)} if {@link #getColonyView(int, ResourceLocation)}. gives a not-null result. If {@link #getColonyView(int,
-     * ResourceLocation)} is null, returns null.
+     * Returns result of {@link IColonyView#handlePermissionsViewMessage(PacketBuffer)} if {@link #getColonyView(int, RegistryKey)}. gives a not-null result. If {@link #getColonyView(int,
+     * RegistryKey)} is null, returns null.
      *
      * @param colonyID ID of the colony.
      * @param data     {@link PacketBuffer} with colony data.
      * @param dim      the dimension.
      */
-    void handlePermissionsViewMessage(int colonyID, @NotNull PacketBuffer data, ResourceLocation dim);
+    void handlePermissionsViewMessage(int colonyID, @NotNull PacketBuffer data, RegistryKey<World> dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyViewCitizensMessage(int, PacketBuffer)} if {@link #getColonyView(int, ResourceLocation)} gives a not-null result. If {@link
-     * #getColonyView(int, ResourceLocation)} is null, returns null.
+     * Returns result of {@link IColonyView#handleColonyViewCitizensMessage(int, PacketBuffer)} if {@link #getColonyView(int, RegistryKey)} gives a not-null result. If {@link
+     * #getColonyView(int, RegistryKey)} is null, returns null.
      *
      * @param colonyId  ID of the colony.
      * @param citizenId ID of the citizen.
      * @param buf       {@link PacketBuffer} with colony data.
      * @param dim       the dimension.
      */
-    void handleColonyViewCitizensMessage(int colonyId, int citizenId, PacketBuffer buf, ResourceLocation dim);
+    void handleColonyViewCitizensMessage(int colonyId, int citizenId, PacketBuffer buf, RegistryKey<World> dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyViewWorkOrderMessage(PacketBuffer)} (int, ByteBuf)} if {@link #getColonyView(int, ResourceLocation)} gives a not-null result. If {@link
-     * #getColonyView(int, ResourceLocation)} is null, returns null.
+     * Returns result of {@link IColonyView#handleColonyViewWorkOrderMessage(PacketBuffer)} (int, ByteBuf)} if {@link #getColonyView(int, RegistryKey)} gives a not-null result. If {@link
+     * #getColonyView(int, RegistryKey)} is null, returns null.
      *
      * @param colonyId ID of the colony.
      * @param buf      {@link PacketBuffer} with colony data.
      * @param dim      the dimension.
      */
-    void handleColonyViewWorkOrderMessage(int colonyId, PacketBuffer buf, ResourceLocation dim);
+    void handleColonyViewWorkOrderMessage(int colonyId, PacketBuffer buf, RegistryKey<World> dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyViewRemoveCitizenMessage(int)} if {@link #getColonyView(int, ResourceLocation)} gives a not-null result. If {@link #getColonyView(int,
-     * ResourceLocation)} is null, returns null.
+     * Returns result of {@link IColonyView#handleColonyViewRemoveCitizenMessage(int)} if {@link #getColonyView(int, RegistryKey)} gives a not-null result. If {@link #getColonyView(int,
+     * RegistryKey)} is null, returns null.
      *
      * @param colonyId  ID of the colony.
      * @param citizenId ID of the citizen.
      * @param dim       the dimension.
      */
-    void handleColonyViewRemoveCitizenMessage(int colonyId, int citizenId, ResourceLocation dim);
+    void handleColonyViewRemoveCitizenMessage(int colonyId, int citizenId, RegistryKey<World> dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyBuildingViewMessage(BlockPos, PacketBuffer)} if {@link #getColonyView(int, ResourceLocation)} gives a not-null result. If {@link
-     * #getColonyView(int, ResourceLocation)} is null, returns null.
+     * Returns result of {@link IColonyView#handleColonyBuildingViewMessage(BlockPos, PacketBuffer)} if {@link #getColonyView(int, RegistryKey)} gives a not-null result. If {@link
+     * #getColonyView(int, RegistryKey)} is null, returns null.
      *
      * @param colonyId   ID of the colony.
      * @param buildingId ID of the building.
      * @param buf        {@link PacketBuffer} with colony data.
      * @param dim        the dimension.
      */
-    void handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, @NotNull PacketBuffer buf, ResourceLocation dim);
+    void handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, @NotNull PacketBuffer buf, RegistryKey<World> dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)} if {@link #getColonyView(int, ResourceLocation)} gives a not-null result. If {@link
-     * #getColonyView(int, ResourceLocation)} is null, returns null.
+     * Returns result of {@link IColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)} if {@link #getColonyView(int, RegistryKey)} gives a not-null result. If {@link
+     * #getColonyView(int, RegistryKey)} is null, returns null.
      *
      * @param colonyId   ID of the colony.
      * @param buildingId ID of the building.
      * @param dim        the dimension.
      */
-    void handleColonyViewRemoveBuildingMessage(int colonyId, BlockPos buildingId, ResourceLocation dim);
+    void handleColonyViewRemoveBuildingMessage(int colonyId, BlockPos buildingId, RegistryKey<World> dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyViewRemoveWorkOrderMessage(int)} if {@link #getColonyView(int, ResourceLocation)} gives a not-null result. If {@link #getColonyView(int,
-     * ResourceLocation)} is null, returns null.
+     * Returns result of {@link IColonyView#handleColonyViewRemoveWorkOrderMessage(int)} if {@link #getColonyView(int, RegistryKey)} gives a not-null result. If {@link #getColonyView(int,
+     * RegistryKey)} is null, returns null.
      *
      * @param colonyId    ID of the colony.
      * @param workOrderId ID of the workOrder.
      * @param dim         the dimension.
      */
-    void handleColonyViewRemoveWorkOrderMessage(int colonyId, int workOrderId, ResourceLocation dim);
+    void handleColonyViewRemoveWorkOrderMessage(int colonyId, int workOrderId, RegistryKey<World> dim);
 
     /**
      * Whether or not a new schematic have been downloaded.

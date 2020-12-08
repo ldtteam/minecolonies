@@ -413,6 +413,12 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         this.deliveries = InventoryUtils.processItemStackListAndMerge(this.deliveries);
     }
 
+    @Override
+    public void resetDeliveries()
+    {
+        this.deliveries.clear();
+    }
+
     @NotNull
     @Override
     public ITextComponent getLongDisplayString()

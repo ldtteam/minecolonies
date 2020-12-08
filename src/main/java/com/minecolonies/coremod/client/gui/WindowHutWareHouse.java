@@ -42,11 +42,12 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     /**
      * The Warehouse view
      */
-    private final        BuildingWareHouse.View building;
+    private final BuildingWareHouse.View building;
+
     /**
      * Required building level for sorting.
      */
-    private static final int                    BUILDING_LEVEL_FOR_SORTING = 3;
+    private static final int BUILDING_LEVEL_FOR_SORTING = 3;
 
     /**
      * Limit reached label.
@@ -54,14 +55,14 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     private static final String LABEL_LIMIT_REACHED = "com.minecolonies.coremod.gui.warehouse.limitreached";
 
     /**
-     * Allow more upgrades of the storage.
-     */
-    private boolean allowMoreStorageUpgrades = false;
-
-    /**
      * Resource scrolling list.
      */
     private final ScrollingList resourceList;
+
+    /**
+     * If further upgrades should be locked.
+     */
+    private boolean lockUpgrade = false;
 
     /**
      * Constructor for window warehouse hut.
@@ -77,10 +78,6 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
 
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
 
-        if (building.isBuildingMaxLevel() && building.canUpgradeStorage())
-        {
-            allowMoreStorageUpgrades = true;
-        }
         registerButton(STOCK_ADD, this::addStock);
         if (building.hasReachedLimit())
         {
@@ -159,10 +156,14 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
 
         BuildingBuilderResource.RessourceAvailability availability = resource.getAvailabilityStatus();
 
-        if (!allowMoreStorageUpgrades)
+        if (building.getStorageUpgradeLevel() >= BuildingWareHouse.MAX_STORAGE_UPGRADE || building.getBuildingLevel() < building.getBuildingMaxLevel() || lockUpgrade)
         {
             availability = BuildingBuilderResource.RessourceAvailability.NOT_NEEDED;
         }
+
+        findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.xofz",
+          building.getStorageUpgradeLevel(),
+          BuildingWareHouse.MAX_STORAGE_UPGRADE));
 
         switch (availability)
         {
@@ -262,7 +263,8 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
     private void transferItems()
     {
         Network.getNetwork().sendToServer(new UpgradeWarehouseMessage(this.building));
-        allowMoreStorageUpgrades = false;
+        building.incrementStorageUpgrade();
+        lockUpgrade = true;
         this.updateResourcePane();
     }
 
@@ -271,7 +273,6 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
      */
     private void sortWarehouse()
     {
-
         Network.getNetwork().sendToServer(new SortWarehouseMessage(this.building));
         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, WAREHOUSE_SORTED);
     }

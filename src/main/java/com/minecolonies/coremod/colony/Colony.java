@@ -34,7 +34,6 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
-import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -46,9 +45,11 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.tileentity.BannerPattern;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -93,7 +94,7 @@ public class Colony implements IColony
     /**
      * Dimension of the colony.
      */
-    private ResourceLocation dimensionId;
+    private RegistryKey<World> dimensionId;
 
     /**
      * List of loaded chunks for the colony.
@@ -322,33 +323,11 @@ public class Colony implements IColony
         this.id = id;
         if (world != null)
         {
-            this.dimensionId = world.getDimensionKey().getLocation();
+            this.dimensionId = world.getDimensionKey();
             onWorldLoad(world);
             checkOrCreateTeam();
         }
         this.permissions = new Permissions(this);
-
-        for (final String s : MineColonies.getConfig().getServer().freeToInteractBlocks.get())
-        {
-            try
-            {
-                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
-                if (block != null && !(block instanceof AirBlock))
-                {
-                    freeBlocks.add(block);
-                }
-            }
-            catch (final Exception ex)
-            {
-                final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
-                if (pos != null)
-                {
-                    freePositions.add(pos);
-                }
-            }
-        }
-
-
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e -> {});
 
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
@@ -473,8 +452,11 @@ public class Colony implements IColony
                         final int chunkZ = ChunkPos.getZ(pending);
                         if (world instanceof ServerWorld)
                         {
-                            final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-                            ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 31, pos);
+                            if (buildingManager.isWithinBuildingZone(chunkX, chunkZ))
+                            {
+                                final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
+                                ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 31, pos);
+                            }
                         }
                     }
                     return;
@@ -661,7 +643,7 @@ public class Colony implements IColony
             @NotNull final Colony c = new Colony(id, world);
             c.name = compound.getString(TAG_NAME);
             c.center = BlockPosUtil.read(compound, TAG_CENTER);
-            c.dimensionId = new ResourceLocation(compound.getString(TAG_DIMENSION));
+            c.dimensionId = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(compound.getString(TAG_DIMENSION)));
 
             c.setRequestManager();
             c.read(compound);
@@ -696,7 +678,7 @@ public class Colony implements IColony
     public void read(@NotNull final CompoundNBT compound)
     {
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
-        dimensionId = new ResourceLocation(compound.getString(TAG_DIMENSION));
+        dimensionId = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(compound.getString(TAG_DIMENSION)));
 
         if (compound.keySet().contains(TAG_NEED_TO_MOURN))
         {
@@ -749,8 +731,8 @@ public class Colony implements IColony
             wayPoints.put(pos, state);
         }
 
-        freeBlocks.clear();
         // Free blocks
+        freeBlocks.clear();
         final ListNBT freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
         for (int i = 0; i < freeBlockTagList.size(); ++i)
         {
@@ -829,7 +811,7 @@ public class Colony implements IColony
     {
         //  Core attributes
         compound.putInt(TAG_ID, id);
-        compound.putString(TAG_DIMENSION, dimensionId.toString());
+        compound.putString(TAG_DIMENSION, dimensionId.getLocation().toString());
 
         //  Basic data
         compound.putString(TAG_NAME, name);
@@ -919,7 +901,7 @@ public class Colony implements IColony
      *
      * @return Dimension ID.
      */
-    public ResourceLocation getDimension()
+    public RegistryKey<World> getDimension()
     {
         return dimensionId;
     }
@@ -944,7 +926,7 @@ public class Colony implements IColony
     @Override
     public void onWorldLoad(@NotNull final World w)
     {
-        if (w.getDimensionKey().getLocation().equals(dimensionId))
+        if (w.getDimensionKey() == dimensionId)
         {
             this.world = w;
             // Register a new event handler
@@ -966,7 +948,7 @@ public class Colony implements IColony
     {
         if (w != world)
         {
-            /**
+            /*
              * If the event world is not the colony world ignore. This might happen in interactions with other mods.
              * This should not be a problem for minecolonies as long as we take care to do nothing in that moment.
              */
@@ -1072,7 +1054,7 @@ public class Colony implements IColony
     {
         if (event.world != getWorld())
         {
-            /**
+            /*
              * If the event world is not the colony world ignore. This might happen in interactions with other mods.
              * This should not be a problem for minecolonies as long as we take care to do nothing in that moment.
              */
@@ -1167,13 +1149,13 @@ public class Colony implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        if (!w.getDimensionKey().getLocation().equals(this.dimensionId))
+        if (w.getDimensionKey() != this.dimensionId)
         {
             return false;
         }
 
         final Chunk chunk = w.getChunkAt(pos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
         return cap != null && cap.getOwningColony() == this.getID();
     }
 
@@ -1565,8 +1547,11 @@ public class Colony implements IColony
                 final int chunkZ = ChunkPos.getZ(chunkPos);
                 if (world instanceof ServerWorld)
                 {
-                    final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-                    ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 31, pos);
+                    if (buildingManager.isWithinBuildingZone(chunkX, chunkZ))
+                    {
+                        final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
+                        ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 31, pos);
+                    }
                 }
             }
             this.forceLoadTimer = CHUNK_UNLOAD_DELAY;

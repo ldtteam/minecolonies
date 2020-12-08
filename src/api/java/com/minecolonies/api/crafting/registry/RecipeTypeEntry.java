@@ -51,9 +51,9 @@ public final class RecipeTypeEntry extends ForgeRegistryEntry<RecipeTypeEntry>
         }
 
         /**
-         * Creates a new {@link JobEntry} builder.
+         * Creates a new {@link RecipeTypeEntry} builder.
          *
-         * @return The created {@link JobEntry}.
+         * @return The created {@link RecipeTypeEntry}.
          */
         @SuppressWarnings("PMD.AccessorClassGeneration") //The builder is explicitly allowed to create one.
         public RecipeTypeEntry createRecipeTypeEntry()

@@ -7,7 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeBook;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +76,7 @@ public interface IProxy
      *
      * @param colonyView the colony id.
      */
-    void openClipBoardWindow(IColonyView colonyView);
+    void openClipboardWindow(IColonyView colonyView);
 
     /**
      * Opens the resource scroll window.
@@ -116,5 +116,5 @@ public interface IProxy
      * @param dimension the dimension.
      * @return the world.
      */
-    World getWorld(ResourceLocation dimension);
+    World getWorld(RegistryKey<World> dimension);
 }

@@ -18,11 +18,6 @@ import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_AR
 public class CommandSetAbandoned implements IMCColonyOfficerCommand
 {
     /**
-     * Formatable string to use the command
-     */
-    public static final String COLONY_ABANDON_COMMAND = "/mc colony setAbandoned %d";
-
-    /**
      * What happens when the command is executed after preConditions are successful.
      *
      * @param context the context of the command execution
@@ -33,7 +28,7 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
         final Entity sender = context.getSource().getEntity();
 
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey().getLocation());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey());
         if (colony == null)
         {
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);

@@ -3,7 +3,10 @@ package com.minecolonies.coremod.network.messages.client.colony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -14,14 +17,14 @@ import org.jetbrains.annotations.Nullable;
 public class ColonyViewRemoveMessage implements IMessage
 {
     private int id;
-    private ResourceLocation dimension;
+    private RegistryKey<World> dimension;
 
     public ColonyViewRemoveMessage()
     {
         super();
     }
 
-    public ColonyViewRemoveMessage(final int id, final ResourceLocation dimension)
+    public ColonyViewRemoveMessage(final int id, final RegistryKey<World> dimension)
     {
         this.id = id;
         this.dimension = dimension;
@@ -31,14 +34,14 @@ public class ColonyViewRemoveMessage implements IMessage
     public void toBytes(final PacketBuffer buf)
     {
         buf.writeInt(id);
-        buf.writeString(dimension.toString());
+        buf.writeString(dimension.getLocation().toString());
     }
 
     @Override
     public void fromBytes(final PacketBuffer buf)
     {
         id = buf.readInt();
-        dimension = new ResourceLocation(buf.readString(32767));
+        dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
     }
 
     @Nullable

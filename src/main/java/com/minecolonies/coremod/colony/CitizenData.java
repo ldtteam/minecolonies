@@ -230,6 +230,11 @@ public class CitizenData implements ICitizenData
     private static final int NO_GUARD_COMPLAIN_CHANCE = 10;
 
     /**
+     * Consumed position to determine the next position to respawn at.
+     */
+    private BlockPos nextRespawnPos = null;
+
+    /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
      *
      * @param id     ID of the Citizen.
@@ -614,6 +619,12 @@ public class CitizenData implements ICitizenData
             }
         }
 
+        if (nextRespawnPos != null)
+        {
+            colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), nextRespawnPos, true);
+            nextRespawnPos = null;
+        }
+
         colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), lastPosition, true);
     }
 
@@ -874,6 +885,10 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.put(TAG_NEW_SKILLS, citizenSkillHandler.write());
 
         BlockPosUtil.write(nbtTagCompound, TAG_POS, getEntity().isPresent() ? getEntity().get().getPosition() : lastPosition);
+        if (nextRespawnPos != null)
+        {
+            BlockPosUtil.write(nbtTagCompound, TAG_RESPAWN_POS, nextRespawnPos);
+        }
         nbtTagCompound.putDouble(TAG_SATURATION, saturation);
 
         if (job != null)
@@ -926,6 +941,11 @@ public class CitizenData implements ICitizenData
 
         lastPosition = BlockPosUtil.read(nbtTagCompound, TAG_POS);
 
+        if (nbtTagCompound.contains(TAG_RESPAWN_POS))
+        {
+            nextRespawnPos = BlockPosUtil.read(nbtTagCompound, TAG_RESPAWN_POS);
+        }
+
         citizenSkillHandler.read(nbtTagCompound.getCompound(TAG_NEW_SKILLS));
 
         saturation = nbtTagCompound.getDouble(TAG_SATURATION);
@@ -967,8 +987,8 @@ public class CitizenData implements ICitizenData
             {
                 final ServerCitizenInteraction handler =
                   (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance()
-                                                              .getInteractionResponseHandlerDataManager()
-                                                              .createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
+                                               .getInteractionResponseHandlerDataManager()
+                                               .createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
                 citizenChatOptions.put(handler.getInquiry(), handler);
             }
         }
@@ -1194,14 +1214,21 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-        if (workBuilding != null && !workBuilding.isGuardBuildingNear())
+        if (workBuilding != null && !workBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
             triggerInteraction(new SimpleNotificationInteraction(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.noguardnearwork"), ChatPriority.CHITCHAT));
         }
 
-        if (homeBuilding != null && !homeBuilding.isGuardBuildingNear())
+        if (homeBuilding != null && !homeBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
             triggerInteraction(new SimpleNotificationInteraction(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.noguardnearhome"), ChatPriority.CHITCHAT));
         }
     }
+
+    @Override
+    public void setNextRespawnPosition(final BlockPos pos)
+    {
+        nextRespawnPos = pos;
+    }
+
 }

@@ -32,6 +32,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -318,6 +319,12 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
+    public ItemStackHandler createInventory(final int slots)
+    {
+        return new RackInventory(slots);
+    }
+
+    @Override
     public boolean isEmpty()
     {
         return content.isEmpty();
@@ -330,10 +337,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         if (compound.keySet().contains(TAG_SIZE))
         {
             size = compound.getInt(TAG_SIZE);
-            if (size > 0)
-            {
-                inventory = new RackInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
-            }
+            inventory = createInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
         }
 
         if (compound.keySet().contains(TAG_RELATIVE_NEIGHBOR))
@@ -352,8 +356,9 @@ public class TileEntityRack extends AbstractTileEntityRack
                 setSingle(false);
             }
         }
+
         final ListNBT inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
-        for (int i = 0; i < inventoryTagList.size(); ++i)
+        for (int i = 0; i < inventoryTagList.size(); i++)
         {
             final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
             if (!inventoryCompound.contains(TAG_EMPTY))

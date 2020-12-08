@@ -8,10 +8,8 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.server.TicketType;
@@ -115,7 +113,7 @@ public final class TeleportHelper
      * @param player    the player to teleport.
      * @param id        the colony id.
      */
-    public static void colonyTeleportByID(@NotNull final ServerPlayerEntity player, final int id, final ResourceLocation dimension)
+    public static void colonyTeleportByID(@NotNull final ServerPlayerEntity player, final int id, final RegistryKey<World> dimension)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, dimension);
         if (colony == null)
@@ -146,7 +144,7 @@ public final class TeleportHelper
             position = colony.getCenter();
         }
 
-        final ServerWorld world = player.getServer().getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, colony.getDimension()));
+        final ServerWorld world = player.getServer().getWorld(colony.getDimension());
 
 
         ChunkPos chunkpos = new ChunkPos(position);

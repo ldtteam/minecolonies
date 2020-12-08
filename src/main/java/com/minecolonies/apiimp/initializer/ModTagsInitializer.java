@@ -44,6 +44,7 @@ public class ModTagsInitializer
     private static final ResourceLocation PATHING_BLOCKS = new ResourceLocation(MOD_ID, "pathblocks");
     private static final ResourceLocation COMPOSTABLES = new ResourceLocation(MOD_ID, "compostables");
     private static final ResourceLocation ORECHANCEBLOCKS = new ResourceLocation(MOD_ID, "orechanceblocks");
+    private static final ResourceLocation COLONYPROTECTIONEXCEPTION = new ResourceLocation(MOD_ID, "protectionexception");
 
     private static boolean loaded = false;
 
@@ -61,6 +62,7 @@ public class ModTagsInitializer
         ModTags.pathingBlocks = getBlockTags(PATHING_BLOCKS);
         ModTags.compostables = getItemTags(COMPOSTABLES);
         ModTags.oreChanceBlocks = getBlockTags(ORECHANCEBLOCKS);
+        ModTags.colonyProtectionException = getBlockTags(COLONYPROTECTIONEXCEPTION);
 
         initCrafterRules("baker");
         initCrafterRules("blacksmith");

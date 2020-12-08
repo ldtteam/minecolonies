@@ -91,7 +91,7 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
-        if (Math.sqrt(start.distanceSq(n.pos)) > distance)
+        if (Math.sqrt(start.distanceSq(n.pos)) > distance && isWalkableSurface(world.getBlockState(n.pos.down()), n.pos.down()) == SurfaceType.WALKABLE)
         {
             getResult().randomPos = n.pos;
             return true;

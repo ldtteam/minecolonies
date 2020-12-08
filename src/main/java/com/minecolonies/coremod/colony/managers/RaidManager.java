@@ -91,7 +91,7 @@ public class RaidManager implements IRaiderManager
     /**
      * Min required raidlevel
      */
-    private static final int MIN_REQUIRED_RAIDLEVEL = 100;
+    private static final int MIN_REQUIRED_RAIDLEVEL = 75;
 
     /**
      * Percentage increased amount of spawns per player
@@ -462,7 +462,6 @@ public class RaidManager implements IRaiderManager
      * Determines whether the given spawn point is allowed.
      *
      * @param spawnPos        the spawn point to check
-     * @param loadedBuildings the loaded buildings
      * @return true if valid
      */
     private boolean isValidSpawnPoint(final BlockPos spawnPos)
@@ -521,7 +520,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public int calculateRaiderAmount(final int raidLevel)
     {
-        return Math.min(MineColonies.getConfig().getServer().maxBarbarianSize.get(),
+        return 1 + Math.min(MineColonies.getConfig().getServer().maxBarbarianSize.get(),
           (int) ((raidLevel / SPAWN_MODIFIER) * getRaidDifficultyModifier() * (1.0 + colony.getMessagePlayerEntities().size() * INCREASE_PER_PLAYER) * ((
             colony.getWorld().rand.nextDouble() * 0.5d) + 0.75)));
     }
@@ -596,7 +595,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public boolean canRaid()
     {
-        return colony.getWorld().getDifficulty() != Difficulty.PEACEFUL
+        return !WorldUtil.isPeaceful(colony.getWorld())
                  && MineColonies.getConfig().getServer().doBarbariansSpawn.get()
                  && colony.getRaiderManager().canHaveRaiderEvents()
                  && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();

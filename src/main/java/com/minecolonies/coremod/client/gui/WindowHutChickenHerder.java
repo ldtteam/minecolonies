@@ -12,7 +12,7 @@ public class WindowHutChickenHerder extends AbstractWindowHerderBuilding<Buildin
     /**
      * Constructor for the window of the chicken herder.
      *
-     * @param building {@link BuildingCheckenHerder.View}.
+     * @param building {@link BuildingChickenHerder.View}.
      */
     public WindowHutChickenHerder(final BuildingChickenHerder.View building)
     {

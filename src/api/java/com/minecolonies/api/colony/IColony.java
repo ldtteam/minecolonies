@@ -14,7 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -114,7 +114,7 @@ public interface IColony
      */
     default String getTeamName()
     {
-        return TEAM_COLONY_NAME + "_" + getDimension().getPath() + "_" + getID();
+        return TEAM_COLONY_NAME + "_" + getDimension().getLocation().getPath() + "_" + getID();
     }
 
     /**
@@ -277,7 +277,7 @@ public interface IColony
      *
      * @return the dimension id.
      */
-    ResourceLocation getDimension();
+    RegistryKey<World> getDimension();
 
     /**
      * Check if the colony is on the server or client.

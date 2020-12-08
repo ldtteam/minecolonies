@@ -150,7 +150,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
             windowCitizen.open();
         }
 
-        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.world.getDimensionKey().getLocation(), this.getInquiry(), response));
+        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.world.getDimensionKey(), this.getInquiry(), response));
         return true;
     }
 

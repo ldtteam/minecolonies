@@ -16,9 +16,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +52,7 @@ public class DecorationBuildRequestMessage implements IMessage
     /**
      * The dimension.
      */
-    private ResourceLocation dimension;
+    private RegistryKey<World> dimension;
 
     /**
      * Empty constructor used when registering the
@@ -68,7 +70,7 @@ public class DecorationBuildRequestMessage implements IMessage
      * @param level     the level.
      * @param dimension the dimension we're executing on.
      */
-    public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String name, final int level, final ResourceLocation dimension)
+    public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String name, final int level, final RegistryKey<World> dimension)
     {
         super();
         this.pos = pos;
@@ -83,7 +85,7 @@ public class DecorationBuildRequestMessage implements IMessage
         this.pos = buf.readBlockPos();
         this.name = buf.readString(32767);
         this.level = buf.readInt();
-        this.dimension = new ResourceLocation(buf.readString(32767));
+        this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
     }
 
     @Override
@@ -92,7 +94,7 @@ public class DecorationBuildRequestMessage implements IMessage
         buf.writeBlockPos(this.pos);
         buf.writeString(this.name);
         buf.writeInt(this.level);
-        buf.writeString(this.dimension.toString());
+        buf.writeString(this.dimension.getLocation().toString());
     }
 
     @Nullable

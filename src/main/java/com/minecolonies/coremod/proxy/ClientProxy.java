@@ -15,7 +15,7 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeBook;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -75,7 +75,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public World getWorld(final ResourceLocation dimension)
+    public World getWorld(final RegistryKey<World> dimension)
     {
         return Minecraft.getInstance().world;
     }
@@ -106,7 +106,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openClipBoardWindow(final IColonyView colonyView)
+    public void openClipboardWindow(final IColonyView colonyView)
     {
         @Nullable final WindowClipBoard window = new WindowClipBoard(colonyView);
         window.open();

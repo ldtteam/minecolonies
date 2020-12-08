@@ -45,10 +45,9 @@ public class CustomRecipeManager
     }
 
     /**
-     * Add a recipe Json to the manager
+     * Add recipe to manager.
      * @param recipeJson
-     * @param namespace
-     * @param path
+     * @param recipeLocation
      */
     public void addRecipe(@NotNull final JsonObject recipeJson, @NotNull final ResourceLocation recipeLocation)
     {
@@ -64,11 +63,9 @@ public class CustomRecipeManager
     }
 
     /**
-     * Remove a recipe from the manager
-     * This allows modpacks to remove 'bad' recipes in addition to adding good ones
+     * Remove recipe
      * @param recipeJson
-     * @param namespace
-     * @param path
+     * @param recipeLocation
      */
     public void removeRecipe(@NotNull final JsonObject recipeJson, @NotNull final ResourceLocation recipeLocation)
     {
