@@ -28,6 +28,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
@@ -909,6 +910,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     public String getJobDisplayName()
     {
+        if (this instanceof BuildingFarmer)
+        {
+            jobDisplayName = "com.minecolonies.coremod.job.farmer";
+        }
         if (jobDisplayName.isEmpty())
         {
             jobDisplayName = createJob(null).getName();
