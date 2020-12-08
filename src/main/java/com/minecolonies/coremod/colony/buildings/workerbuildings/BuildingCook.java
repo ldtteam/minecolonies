@@ -169,12 +169,15 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     @Override
     public IJob<?> createJob(final ICitizenData citizen)
     {
-        for (final ICitizenData leadCitizen : getAssignedCitizen())
+        if (citizen != null)
         {
-            if (leadCitizen.getJob() instanceof JobCook)   
+            for (final ICitizenData leadCitizen : getAssignedCitizen())
             {
-                assistant = citizen;
-                return new JobCookAssistant(citizen);
+                if (leadCitizen.getJob() instanceof JobCook)
+                {
+                    assistant = citizen;
+                    return new JobCookAssistant(citizen);
+                }
             }
         }
         return new JobCook(citizen);
