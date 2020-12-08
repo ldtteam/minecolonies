@@ -373,8 +373,8 @@
   "entity.worker.inventoryfullchestfull": "Please make space in my chests/racks. I am not able to dump my inventory.",
 
   "entity.builder.messagebuildstart": " started building %s.",
-  "entity.builder.messagebuildcomplete": "finished building %s.",
-  "entity.builder.messagebuildcomplete_manual": "finished building %s. You can assign them another task now!",
+  "entity.builder.messagebuildcomplete": " finished building %s.",
+  "entity.builder.messagebuildcomplete_manual": " finished building %s. You can assign them another task now!",
   "entity.builder.messagebuildcomplete_generic": "%s finished building %s.",
   "entity.builder.messagebuildcomplete_generic_manual": "%s finished building %s. You can assign them another task now!",
   "entity.builder.messageremovalcomplete": " finished deconstructing building %s.",

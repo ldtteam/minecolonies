@@ -21,12 +21,14 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
@@ -450,8 +452,11 @@ public class Colony implements IColony
                         final int chunkZ = ChunkPos.getZ(pending);
                         if (world instanceof ServerWorld)
                         {
-                            final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-                            ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 31, pos);
+                            if (buildingManager.isWithinBuildingZone(chunkX, chunkZ))
+                            {
+                                final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
+                                ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 31, pos);
+                            }
                         }
                     }
                     return;
@@ -1540,8 +1545,11 @@ public class Colony implements IColony
                 final int chunkZ = ChunkPos.getZ(chunkPos);
                 if (world instanceof ServerWorld)
                 {
-                    final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-                    ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 31, pos);
+                    if (buildingManager.isWithinBuildingZone(chunkX, chunkZ))
+                    {
+                        final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
+                        ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 31, pos);
+                    }
                 }
             }
             this.forceLoadTimer = CHUNK_UNLOAD_DELAY;

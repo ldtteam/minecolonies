@@ -777,7 +777,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             // Check sight
             if (!worker.canEntityBeSeen(target))
             {
-                lastSeen += GUARD_TASK_INTERVAL;
+                lastSeen += 10;
             }
             else
             {

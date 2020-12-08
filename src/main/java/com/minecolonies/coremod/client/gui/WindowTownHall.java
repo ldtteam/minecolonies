@@ -592,7 +592,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final int citizensSize = townHall.getColony().getCitizens().size();
 
         final String numberOfCitizens =
-          LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS, citizensSize, townHall.getColony().getCitizenCount());
+          LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS, citizensSize, townHall.getColony().getCitizenCountLimit());
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
         int children = 0;

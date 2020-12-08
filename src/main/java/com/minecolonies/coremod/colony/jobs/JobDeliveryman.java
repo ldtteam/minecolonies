@@ -43,6 +43,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ONGOING;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP;
+import static com.minecolonies.api.util.constant.TranslationConstants.PATIENT_FULL_INVENTORY;
 
 /**
  * Class of the deliveryman job.
@@ -74,7 +75,10 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     public JobDeliveryman(final ICitizenData entity)
     {
         super(entity);
-        setupRsDataStore();
+        if (entity != null)
+        {
+            setupRsDataStore();
+        }
     }
 
     private void setupRsDataStore()

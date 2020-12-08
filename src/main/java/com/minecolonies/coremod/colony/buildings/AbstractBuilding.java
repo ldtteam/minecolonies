@@ -1171,12 +1171,41 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             toKeep.put(ItemStackUtils.CAN_EAT, new Tuple<>(getBuildingLevel() * 2, true));
         }
-        final IRequestManager manager = colony.getRequestManager();
-        toKeep.put(stack -> this.getOpenRequestsByCitizen().values().stream()
-                              .anyMatch(list -> list.stream().filter(token -> manager.getRequestForToken(token) != null)
-                                                  .anyMatch(token -> manager.getRequestForToken(token).getRequest() instanceof IDeliverable
-                                                                       && ((IDeliverable) manager.getRequestForToken(token).getRequest()).matches(stack))),
-          new Tuple<>(Integer.MAX_VALUE, true));
+
+        final Map<ItemStorage, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
+        final Collection<IRequestResolver<?>> resolvers = getResolvers();
+        for (final IRequestResolver<?> resolver : resolvers)
+        {
+            final IStandardRequestManager requestManager = (IStandardRequestManager) getColony().getRequestManager();
+            final List<IRequest<? extends IDeliverable>> deliverableRequests =
+                requestManager.getRequestHandler().getRequestsMadeByRequester(resolver)
+                    .stream()
+                    .filter(iRequest -> iRequest.getRequest() instanceof IDeliverable)
+                    .map(iRequest -> (IRequest<? extends IDeliverable>) iRequest)
+                    .collect(Collectors.toList());
+            for(IRequest<? extends IDeliverable> request: deliverableRequests)
+            {
+                for(ItemStack item : request.getDeliveries())
+                {
+                    final ItemStorage output = new ItemStorage(item);
+                    int amount = output.getAmount();
+                    if (requiredItems.containsKey(output))
+                    {
+                        amount += requiredItems.get(output).getA();
+                    }
+                    requiredItems.put(output, new Tuple<>(amount, false));
+                }
+            }
+        }
+        toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
+
+        if(!minimumStock.isEmpty())
+        {
+            for(ItemStorage item:minimumStock.keySet())
+            {
+                toKeep.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, item.getItemStack(), false, true), new Tuple<>(minimumStock.get(item).intValue() * item.getItemStack().getMaxStackSize(), false));
+            }
+        }
 
         return toKeep;
     }

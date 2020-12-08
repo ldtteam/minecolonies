@@ -16,6 +16,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.NotNull;
@@ -334,7 +335,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
-                if (!currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen()))
+                if (!currentRecipeStorage.fullFillRecipe(worker.getEntityWorld(), worker.getItemHandlerCitizen()))
                 {
                     currentRequest = null;
                     incrementActionsDone(getActionRewardForCraftingSuccess());

@@ -236,9 +236,9 @@ public class BuildingFarmer extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public IJob<?> createJob(@NotNull final ICitizenData citizen)
+    public IJob<?> createJob(@Nullable final ICitizenData citizen)
     {
-        if (!farmerFields.isEmpty())
+        if (citizen != null && !farmerFields.isEmpty())
         {
             for (@NotNull final BlockPos field : farmerFields)
             {
