@@ -22,7 +22,9 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tags.BlockTags;
@@ -42,6 +44,7 @@ import java.util.*;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.items.ModTags.fungi;
 
 /**
  * The lumberjack AI class.
@@ -789,6 +792,20 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         while (!job.getTree().getStumpLocations().isEmpty())
         {
             final BlockPos pos = job.getTree().getStumpLocations().get(0);
+            final Item sapling = getInventory().getStackInSlot(saplingSlot).getItem();
+            final Block new_block;
+            if (sapling.isIn(fungi))
+            {
+                if (sapling == Items.WARPED_FUNGUS)
+                {
+                    new_block = Blocks.WARPED_NYLIUM;
+                }
+                else
+                {
+                    new_block = Blocks.CRIMSON_NYLIUM;
+                }
+                world.setBlockState(pos.down(), new_block.getDefaultState());
+            }
             if ((world.setBlockState(pos, block.getDefaultState()) && getInventory().getStackInSlot(saplingSlot) != null)
                   || Objects.equals(world.getBlockState(pos), block.getDefaultState()))
             {
@@ -818,7 +835,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         if (ItemStackUtils.isEmpty(job.getTree().getSapling()))
         {
-            return true;
+            return false;
         }
         else
         {

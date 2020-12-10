@@ -35,6 +35,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.minecolonies.api.items.ModTags;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -265,6 +266,14 @@ public class Tree
                     return stack;
                 }
             }
+        }
+        else if (block.isIn(BlockTags.WART_BLOCKS))
+        {
+            if (block == Blocks.WARPED_WART_BLOCK)
+            {
+                return new ItemStack(Items.WARPED_FUNGUS, 1);
+            }
+            return new ItemStack(Items.CRIMSON_FUNGUS, 1);
         }
         return null;
     }
