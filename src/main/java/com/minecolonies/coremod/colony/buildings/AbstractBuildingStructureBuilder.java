@@ -669,7 +669,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                         break;
                     }
 
-                    worker.createRequestAsync(new Stack(itemStack.getItemStack(), requestCount * getResourceBatchMultiplier(), requestCount));
+                    worker.createRequestAsync(new Stack(itemStack.getItemStack(), requestCount * getResourceBatchMultiplier(), 1));
                 }
             }
         }

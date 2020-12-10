@@ -412,6 +412,12 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         this.deliveries = InventoryUtils.processItemStackListAndMerge(this.deliveries);
     }
 
+    @Override
+    public void resetDeliveries()
+    {
+        this.deliveries.clear();
+    }
+
     @NotNull
     @Override
     public ITextComponent getLongDisplayString()
@@ -445,7 +451,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         if (itemExamples == null)
         {
             itemExamples =
-              ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(deliverable::matches).collect(Collectors.toList()));
+              ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems().stream().filter(deliverable::matches).collect(Collectors.toList()));
         }
 
         return itemExamples;

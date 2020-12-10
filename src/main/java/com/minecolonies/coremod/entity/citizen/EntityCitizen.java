@@ -1301,7 +1301,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void move(final MoverType typeIn, final Vec3d pos)
     {
-        //todo someaddons: removse this on the minimum AI rework.
+        //todo someaddons: remove this on the minimum AI rework.
         if (pos.x != 0 || pos.z != 0)
         {
             if (getCitizenData() != null && getCitizenData().isAsleep())
@@ -1637,12 +1637,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return world.getScoreboard().getTeam(this.cachedTeamName);
         }
 
-        if (getCitizenColonyHandler().getColony() != null)
-        {
-            return getCitizenColonyHandler().getColony().getTeam();
-        }
-
-        return null;
+        return world.getScoreboard().getTeam(getScoreboardName());
     }
 
     @Override

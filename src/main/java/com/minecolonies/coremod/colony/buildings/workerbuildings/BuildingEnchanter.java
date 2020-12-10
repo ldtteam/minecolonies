@@ -7,12 +7,14 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutEnchanter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
 import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
@@ -33,7 +35,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * The enchanter building.
  */
-public class BuildingEnchanter extends AbstractBuildingWorker
+public class BuildingEnchanter extends AbstractBuildingCrafter
 {
     /**
      * Enchanter.
@@ -95,6 +97,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker
         return Skill.Knowledge;
     }
 
+    @NotNull
     @Override
     public String getSchematicName()
     {
@@ -217,6 +220,13 @@ public class BuildingEnchanter extends AbstractBuildingWorker
             return null;
         }
         return buildings.get(random.nextInt(buildings.size()));
+    }
+
+    @Override
+    public boolean addRecipe(IToken<?> token)
+    {
+        // Enchanter only has custom recipes for now
+        return false;
     }
 
     /**

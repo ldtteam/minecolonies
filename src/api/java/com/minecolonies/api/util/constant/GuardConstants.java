@@ -20,7 +20,7 @@ public final class GuardConstants
     /**
      * Range a guard should be within of Follow for Tight Formation.
      */
-    public static final int GUARD_FOLLOW_TIGHT_RANGE = 8;
+    public static final int GUARD_FOLLOW_TIGHT_RANGE = 6;
 
     /**
      * Range a guard should be within of Follow for Lose Formation.

@@ -14,8 +14,8 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGuardTower;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.amazonevent.AmazonRaidEvent;
@@ -91,12 +91,12 @@ public class RaidManager implements IRaiderManager
     /**
      * Min required raidlevel
      */
-    private static final int MIN_REQUIRED_RAIDLEVEL = 100;
+    private static final int MIN_REQUIRED_RAIDLEVEL = 75;
 
     /**
      * Percentage increased amount of spawns per player
      */
-    private static final double INCREASE_PER_PLAYER = 0.10;
+    private static final double INCREASE_PER_PLAYER = 0.05;
 
     /**
      * Chance to ignore biome selection
@@ -479,10 +479,10 @@ public class RaidManager implements IRaiderManager
             // Additional raid protection for certain buildings, towers can be used now to deal with unlucky - inwall spawns
             if (building instanceof BuildingGuardTower)
             {
-                // 47/59/71/83/95
-                minDist += building.getBuildingLevel() * 12;
+                // 32/39/48/55/62
+                minDist += building.getBuildingLevel() * 7;
             }
-            else if (building instanceof BuildingHome)
+            else if (building.hasModule(LivingBuildingModule.class))
             {
                 // 39/43/47/51/55
                 minDist += building.getBuildingLevel() * 4;
@@ -521,7 +521,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public int calculateRaiderAmount(final int raidLevel)
     {
-        return Math.min(MineColonies.getConfig().getCommon().maxBarbarianSize.get(),
+        return 1 + Math.min(MineColonies.getConfig().getCommon().maxBarbarianSize.get(),
           (int) ((raidLevel / SPAWN_MODIFIER) * getRaidDifficultyModifier() * (1.0 + colony.getMessagePlayerEntities().size() * INCREASE_PER_PLAYER) * ((
             colony.getWorld().rand.nextDouble() * 0.5d) + 0.75)));
     }

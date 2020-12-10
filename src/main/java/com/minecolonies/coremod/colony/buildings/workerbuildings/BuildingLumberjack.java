@@ -21,6 +21,7 @@ import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListCrafter;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
+import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -40,6 +41,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
+import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -94,7 +96,7 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     /**
      * The job description.
      */
-    private static final String LUMBERJACK         = "lumberjack";
+    private static final String LUMBERJACK = "lumberjack";
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -379,8 +381,7 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
         if (citizen != null)
         {
             final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
-            optCitizen.ifPresent(entityCitizen -> entityCitizen.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
-                                                    .setBaseValue(BASE_MOVEMENT_SPEED));
+            optCitizen.ifPresent(entityCitizen -> AttributeModifierUtils.removeModifier(entityCitizen, SKILL_BONUS_ADD, SharedMonsterAttributes.MOVEMENT_SPEED));
         }
         super.removeCitizen(citizen);
     }

@@ -55,6 +55,6 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
     @Override
     protected double getNodeResultScore(final Node n)
     {
-        return entity.get().getPosition().manhattanDistance(n.pos);
+        return start.manhattanDistance(n.pos);
     }
 }

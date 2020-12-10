@@ -175,7 +175,7 @@ public class BuildingSchool extends AbstractBuildingWorker
     @Override
     public IJob<?> createJob(final ICitizenData citizen)
     {
-        if (citizen.isChild())
+        if (citizen != null && citizen.isChild())
         {
             return new JobPupil(citizen);
         }

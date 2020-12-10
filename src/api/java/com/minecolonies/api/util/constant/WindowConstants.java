@@ -466,16 +466,23 @@ public final class WindowConstants
     public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutbuilder.xml";
     public static final String LIST_RESOURCES              = "resources";
     public static final String PAGE_RESOURCES              = "resourceActions";
+    public static final String LIST_WORK_ORDERS            = "workOrders";
     public static final String RESOURCE_NAME               = "resourceName";
     public static final String RESOURCE_AVAILABLE_NEEDED   = "resourceAvailableNeeded";
     public static final String RESOURCE_MISSING            = "resourceMissing";
-    public static final String RESOURCE_ADD                = "resourceAdd";
-    public static final String RESOURCE_ID                 = "resourceId";
-    public static final String RESOURCE_QUANTITY_MISSING   = "resourceQuantity";
-    public static final String RESOURCE_ICON               = "resourceIcon";
-    public static final String STOCK_ADD                   = "addStock";
-    public static final String STOCK_REMOVE                = "removeStock";
-    public static final String QUANTITY_LABEL              = "resourceQty";
+    public static final String RESOURCE_ADD              = "resourceAdd";
+    public static final String RESOURCE_ID               = "resourceId";
+    public static final String RESOURCE_QUANTITY_MISSING = "resourceQuantity";
+    public static final String RESOURCE_ICON             = "resourceIcon";
+    public static final String STOCK_ADD                 = "addStock";
+    public static final String STOCK_REMOVE              = "removeStock";
+    public static final String QUANTITY_LABEL            = "resourceQty";
+    public static final String IN_DELIVERY_ICON          = "indeliveryicon";
+    public static final String IN_DELIVERY_AMOUNT        = "indeliveryamount";
+    public static final String WORK_ORDER_NAME   = "buildingName";
+    public static final String WORK_ORDER_POS    = "buildingPos";
+    public static final String WORK_ORDER_SELECT = "workOrderSelect";
+    public static final String WORK_ORDER_ID     = "orderId";
 
     public static final String GUIDE_RESOURCE_SUFFIX = ":gui/windowhutguide.xml";
     public static final String GUIDE_CONFIRM         = "confirm";
@@ -1143,6 +1150,11 @@ public final class WindowConstants
      * Id to identify the list of the citizen in the view.
      */
     public static final String LIST_CITIZEN = "assignedCitizen";
+
+    /**
+     * The progress update label.
+     */
+    public static final String UPGRADE_PROGRESS_LABEL = "upgradeProgress";
 
     /**
      * public constructor to hide implicit public one.

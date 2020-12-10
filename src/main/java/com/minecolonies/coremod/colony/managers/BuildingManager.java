@@ -25,6 +25,7 @@ import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -38,7 +39,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -93,6 +93,14 @@ public class BuildingManager implements IBuildingManager
     private final Colony colony;
 
     /**
+     * Max chunk pos where a building is placed into a certain direction.
+     */
+    private int minChunkX;
+    private int maxChunkX;
+    private int minChunkZ;
+    private int maxChunkZ;
+
+    /**
      * Creates the BuildingManager for a colony.
      *
      * @param colony the colony.
@@ -106,6 +114,11 @@ public class BuildingManager implements IBuildingManager
     public void read(@NotNull final CompoundNBT compound)
     {
         buildings.clear();
+        maxChunkX = colony.getCenter().getX() >> 4;
+        minChunkX = colony.getCenter().getX() >> 4;
+        maxChunkZ = colony.getCenter().getZ() >> 4;
+        minChunkZ = colony.getCenter().getZ() >> 4;
+
         //  Buildings
         final ListNBT buildingTagList = compound.getList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.size(); ++i)
@@ -115,6 +128,7 @@ public class BuildingManager implements IBuildingManager
             if (b != null)
             {
                 addBuilding(b);
+                setMaxChunk(b);
             }
         }
 
@@ -126,6 +140,35 @@ public class BuildingManager implements IBuildingManager
             {
                 addField(BlockPosUtil.read(fieldTagList.getCompound(i), TAG_POS));
             }
+        }
+    }
+
+    /**
+     * Set the max chunk direction this building is in.
+     * @param b the max chunk dir.
+     */
+    private void setMaxChunk(final IBuilding b)
+    {
+        final int chunkX = b.getPosition().getX() >> 4;
+        final int chunkZ = b.getPosition().getZ() >> 4;
+        if (chunkX >= maxChunkX)
+        {
+            maxChunkX = chunkX + 1;
+        }
+
+        if (chunkX <= minChunkX)
+        {
+            minChunkX = chunkX - 1;
+        }
+
+        if (chunkZ >= maxChunkZ)
+        {
+            maxChunkZ = chunkZ + 1;
+        }
+
+        if (chunkZ <= minChunkZ)
+        {
+            minChunkZ = chunkZ - 1;
         }
     }
 
@@ -280,11 +323,19 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
+    public boolean isWithinBuildingZone(final int chunkX, final int chunkZ)
+    {
+        return chunkX <= maxChunkX && chunkX >= minChunkX && chunkZ <= maxChunkZ && chunkZ >= minChunkZ;
+    }
+
+    @NotNull
+    @Override
     public Map<BlockPos, IBuilding> getBuildings()
     {
         return Collections.unmodifiableMap(buildings);
     }
 
+    @Nullable
     @Override
     public ITownHall getTownHall()
     {
@@ -303,6 +354,7 @@ public class BuildingManager implements IBuildingManager
         return townHall != null;
     }
 
+    @NotNull
     @Override
     public List<BlockPos> getFields()
     {
@@ -393,6 +445,8 @@ public class BuildingManager implements IBuildingManager
 
                 ConstructionTapeHelper.placeConstructionTape(building.getPosition(), building.getCorners(), world);
                 colony.getRequestManager().onProviderAddedToColony(building);
+
+                setMaxChunk(building);
             }
             else
             {
@@ -407,27 +461,6 @@ public class BuildingManager implements IBuildingManager
             return building;
         }
         return null;
-    }
-
-    /**
-     * Gets a rotation from a block facing.
-     *
-     * @param facing the block facing.
-     * @return the int rotation.
-     */
-    public static int getRotationFromFacing(final Direction facing)
-    {
-        switch (facing)
-        {
-            case SOUTH:
-                return 2;
-            case EAST:
-                return 1;
-            case WEST:
-                return 3;
-            default:
-                return 0;
-        }
     }
 
     @Override
@@ -538,7 +571,7 @@ public class BuildingManager implements IBuildingManager
     /**
      * Finds whether there is a guard building close to the given building
      *
-     * @param building
+     * @param building the building to check.
      * @return false if no guard tower close, true in other cases
      */
     @Override
@@ -550,7 +583,7 @@ public class BuildingManager implements IBuildingManager
         }
 
         final Chunk chunk = colony.getWorld().getChunk(building.getPosition().getX() >> 4, building.getPosition().getZ() >> 4);
-        final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+        final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
 
         if (closeCap == null)
         {
@@ -731,7 +764,7 @@ public class BuildingManager implements IBuildingManager
         {
             for (final IBuilding building : buildings.values())
             {
-                if (building instanceof BuildingTavern)
+                if (building.hasModule(TavernBuildingModule.class))
                 {
                     LanguageHandler.sendPlayerMessage(player, "tile.blockhut.tavern.limit");
                     return false;

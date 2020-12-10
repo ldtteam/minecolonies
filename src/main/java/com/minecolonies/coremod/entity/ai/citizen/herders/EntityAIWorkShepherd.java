@@ -169,15 +169,14 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
 
             worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
 
-            worker.getCitizenExperienceHandler().addExperience(EXP_PER_SHEEP);
+            worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
+            incrementActionsDoneAndDecSaturation();
 
             for (final ItemStack item : items)
             {
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, (worker.getInventoryCitizen()));
             }
         }
-        worker.getCitizenExperienceHandler().addExperience(1.0);
-        incrementActionsDoneAndDecSaturation();
 
         return DECIDE;
     }

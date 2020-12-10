@@ -116,6 +116,8 @@ public final class NbtTagConstants
     public static final String TAG_MERCENARY_TIME         = "mercenaryUseTime";
     public static final String TAG_IDLE                   = "idle";
     public static final String TAG_CITIZENDATA_TYPE       = "citizenDataType";
+    public static final String TAG_PURGED_MOBS            = "purgedMobs";
+    public static final String TAG_MANUAL_JOB_SELECTION   = "manualMode";
 
     /**
      * Event tags
@@ -644,6 +646,7 @@ public final class NbtTagConstants
     public static final String TAG_PARENT_POND   = "parentpond";
     public static final String TAG_DECONSTRUCTED = "deconstructed";
     public static final String TAG_GUARD_NEARBY  = "guardnearby";
+    public static final String TAG_RESPAWN_POS   = "nextrespawnpos";
 
     /**
      * Private constructor to hide the implicit one.

@@ -55,7 +55,7 @@ public class ResearchInitializer
         final GlobalResearch biodegradable = new GlobalResearch("biodegradable", "technology", "Biodegradable", 1, new UnlockBuildingResearchEffect(COMPOSTER_RESEARCH, true));
         biodegradable.setRequirement(new BuildingResearchRequirement(3, "farmer"));
 
-        final GlobalResearch flowerpower = new GlobalResearch("flowerpower", "technology", "Flower power", 2, new UnlockBuildingResearchEffect(FLORIST_RESEARCH, true));
+        final GlobalResearch flowerpower = new GlobalResearch("flowerpower", "technology", "Flower Power", 2, new UnlockBuildingResearchEffect(FLORIST_RESEARCH, true));
         flowerpower.setRequirement(new BuildingResearchRequirement(3, "composter"));
 
         final GlobalResearch rainbowheaven = new GlobalResearch("rainbowheaven", "technology", "Rainbow Heaven", 3, new UnlockBuildingResearchEffect(DYER_RESEARCH, true));
@@ -101,7 +101,7 @@ public class ResearchInitializer
         bonemeal.setRequirement(new BuildingResearchRequirement(3, "miner"));
 
         final GlobalResearch redstonepowered =
-          new GlobalResearch("redstonepowered", "technology", "Redstone powered", 3, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.25));
+          new GlobalResearch("redstonepowered", "technology", "Redstone Powered", 3, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 0.25));
         dung.setRequirement(new BuildingResearchRequirement(4, "miner"));
 
         final GlobalResearch heavymachinery =
@@ -109,7 +109,7 @@ public class ResearchInitializer
         compost.setRequirement(new BuildingResearchRequirement(5, "miner"));
 
         final GlobalResearch whatisthisspeed =
-          new GlobalResearch("whatisthisspeed", "technology", "What is this speed?", 5, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 1.0));
+          new GlobalResearch("whatisthisspeed", "technology", "What Is This Speed?", 5, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 1.0));
         fertilizer.setRequirement(new BuildingResearchRequirement(3, "smeltery"));
 
         final GlobalResearch lightning = new GlobalResearch("lightning", "technology", "Lightning", 6, new MultiplierModifierResearchEffect(BLOCK_BREAK_SPEED, 2.0));
@@ -125,7 +125,7 @@ public class ResearchInitializer
 
         hot.addChild(theflintstones);
 
-        final GlobalResearch thoselungs = new GlobalResearch("thoselungs", "technology", "Those lungs!", 2, new UnlockBuildingResearchEffect(GLASSBLOWER_RESEARCH, true));
+        final GlobalResearch thoselungs = new GlobalResearch("thoselungs", "technology", "Those Lungs!", 2, new UnlockBuildingResearchEffect(GLASSBLOWER_RESEARCH, true));
         thoselungs.setRequirement(new BuildingResearchRequirement(3, "smeltery"));
 
         hot.addChild(thoselungs);
@@ -242,7 +242,7 @@ public class ResearchInitializer
         tools.setRequirement(new BuildingResearchRequirement(4, "blacksmith"));
 
         final GlobalResearch seemsautomatic =
-          new GlobalResearch("seemsautomatic", "technology", "Seems automatic", 5, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 1.0));
+          new GlobalResearch("seemsautomatic", "technology", "Seems Automatic", 5, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 1.0));
         seemsautomatic.setRequirement(new BuildingResearchRequirement(5, "blacksmith"));
 
         final GlobalResearch madness = new GlobalResearch("madness", "technology", "Madness!", 6, new MultiplierModifierResearchEffect(BLOCK_PLACE_SPEED, 2.0));
@@ -287,6 +287,9 @@ public class ResearchInitializer
         final GlobalResearch knowtheend = new GlobalResearch("knowtheend", "technology", "Know the End?", 3, new UnlockAbilityResearchEffect(END_KNOWLEGE, true));
         knowtheend.setRequirement(new BuildingResearchRequirement(3, "bakery"));
         theflintstones.addChild(knowtheend);
+
+        final GlobalResearch morescrolls = new GlobalResearch("morescrolls", "technology", "More scrolls", 1, new UnlockAbilityResearchEffect(MORE_SCROLLS, true));
+        morescrolls.setRequirement(new BuildingResearchRequirement(3, "enchanter"));
 
         researchTree.addResearch(pavetheroad.getBranch(), pavetheroad);
         researchTree.addResearch(gildedhammer.getBranch(), gildedhammer);
@@ -358,6 +361,7 @@ public class ResearchInitializer
         researchTree.addResearch(magicCompost.getBranch(), magicCompost);
 
         researchTree.addResearch(knowtheend.getBranch(), knowtheend);
+        researchTree.addResearch(morescrolls.getBranch(), morescrolls);
     }
 
     private static void buildCivilianTree(final IGlobalResearchTree researchTree)
@@ -378,7 +382,7 @@ public class ResearchInitializer
         final GlobalResearch master = new GlobalResearch("master", "civilian", "Master", 5, new MultiplierModifierResearchEffect("Teaching", 0.50));
         master.setRequirement(new BuildingResearchRequirement(5, "library"));
 
-        final GlobalResearch phd = new GlobalResearch("phd", "civilian", "P.h.D", 6, new MultiplierModifierResearchEffect("Teaching", 1));
+        final GlobalResearch phd = new GlobalResearch("phd", "civilian", "PhD", 6, new MultiplierModifierResearchEffect("Teaching", 1));
 
         higherlearning.addChild(morebooks);
         morebooks.addChild(bookworm);
@@ -426,19 +430,19 @@ public class ResearchInitializer
         hamlet.addChild(village);
         village.addChild(city);
 
-        final GlobalResearch diligent = new GlobalResearch("diligent", "civilian", "Diligent", 2, new MultiplierModifierResearchEffect("Leveling", 0.05));
+        final GlobalResearch diligent = new GlobalResearch("diligent", "civilian", "Diligent", 2, new MultiplierModifierResearchEffect(LEVELING, 0.05));
         diligent.setRequirement(new BuildingResearchRequirement(2, "library"));
 
-        final GlobalResearch studious = new GlobalResearch("studious", "civilian", "Studious", 3, new MultiplierModifierResearchEffect("Leveling", 0.1));
+        final GlobalResearch studious = new GlobalResearch("studious", "civilian", "Studious", 3, new MultiplierModifierResearchEffect(LEVELING, 0.1));
         studious.setRequirement(new BuildingResearchRequirement(3, "library"));
 
-        final GlobalResearch scholarly = new GlobalResearch("scholarly", "civilian", "Scholarly", 4, new MultiplierModifierResearchEffect("Leveling", 0.25));
+        final GlobalResearch scholarly = new GlobalResearch("scholarly", "civilian", "Scholarly", 4, new MultiplierModifierResearchEffect(LEVELING, 0.25));
         scholarly.setRequirement(new BuildingResearchRequirement(4, "library"));
 
-        final GlobalResearch reflective = new GlobalResearch("reflective", "civilian", "Reflective", 5, new MultiplierModifierResearchEffect("Leveling", 0.5));
+        final GlobalResearch reflective = new GlobalResearch("reflective", "civilian", "Reflective", 5, new MultiplierModifierResearchEffect(LEVELING, 0.5));
         reflective.setRequirement(new BuildingResearchRequirement(5, "library"));
 
-        final GlobalResearch academic = new GlobalResearch("academic", "civilian", "Academic", 6, new MultiplierModifierResearchEffect("Leveling", 1.0));
+        final GlobalResearch academic = new GlobalResearch("academic", "civilian", "Academic", 6, new MultiplierModifierResearchEffect(LEVELING, 1.0));
 
         keen.addChild(diligent);
         diligent.addChild(studious);
@@ -455,10 +459,10 @@ public class ResearchInitializer
         final GlobalResearch agile = new GlobalResearch("agile", "civilian", "Agile", 4, new MultiplierModifierResearchEffect("Walking", 0.1));
         agile.setRequirement(new BuildingResearchRequirement(4, "townhall"));
 
-        final GlobalResearch swift = new GlobalResearch("swift", "civilian", "Swift", 5, new MultiplierModifierResearchEffect("Walking", 0.25));
+        final GlobalResearch swift = new GlobalResearch("swift", "civilian", "Swift", 5, new MultiplierModifierResearchEffect("Walking", 0.15));
         swift.setRequirement(new BuildingResearchRequirement(5, "townhall"));
 
-        final GlobalResearch athlete = new GlobalResearch("athlete", "civilian", "Athlete", 6, new MultiplierModifierResearchEffect("Walking", 1.0));
+        final GlobalResearch athlete = new GlobalResearch("athlete", "civilian", "Athlete", 6, new MultiplierModifierResearchEffect("Walking", 0.25));
 
         keen.addChild(rails);
         rails.addChild(nimble);
@@ -546,7 +550,7 @@ public class ResearchInitializer
         spectacle.setRequirement(new BuildingResearchRequirement(4, "cook"));
 
         final GlobalResearch nightowl2 = new GlobalResearch("nightowl2", "civilian", "Nightowl II", 4, new AdditionModifierResearchEffect(WORK_LONGER, 2));
-        nightowl.setRequirement(new BuildingResearchRequirement(3, "townhall"));
+        nightowl2.setRequirement(new BuildingResearchRequirement(3, "townhall"));
 
         final GlobalResearch opera = new GlobalResearch("opera", "civilian", "Opera", 5, new MultiplierModifierResearchEffect("Happiness", 0.2));
         opera.setRequirement(new BuildingResearchRequirement(5, "cook"));
@@ -677,7 +681,7 @@ public class ResearchInitializer
         final GlobalResearch improvedBows = new GlobalResearch("improvedbows", "combat", "Improved Bows", 2, new UnlockBuildingResearchEffect(ARCHERY_RESEARCH, true));
         improvedBows.setRequirement(new BuildingResearchRequirement(3, "barracks"));
 
-        final GlobalResearch tickShot = new GlobalResearch("tickshot", "combat", "Tick Shot", 3, new MultiplierModifierResearchEffect(DOUBLE_ARROWS, 0.05));
+        final GlobalResearch tickShot = new GlobalResearch("tickshot", "combat", "Trick Shot", 3, new MultiplierModifierResearchEffect(DOUBLE_ARROWS, 0.05));
         tickShot.setRequirement(new BuildingResearchRequirement(3, "archery"));
 
         final GlobalResearch multiShot = new GlobalResearch("multishot", "combat", "Multi Shot", 4, new MultiplierModifierResearchEffect(DOUBLE_ARROWS, 0.10));
@@ -701,23 +705,23 @@ public class ResearchInitializer
         final GlobalResearch taunt = new GlobalResearch("taunt", "combat", "Taunt", 1, new UnlockAbilityResearchEffect(KNIGHT_TAUNT, true));
         taunt.setRequirement(new BuildingResearchRequirement(1, "guardtower"));
 
-        final GlobalResearch arrowUsage = new GlobalResearch("arrowuse", "combat", "Arrow usage", 2, new UnlockAbilityResearchEffect(ARROW_ITEMS, true));
+        final GlobalResearch arrowUsage = new GlobalResearch("arrowuse", "combat", "Consume Arrows", 2, new UnlockAbilityResearchEffect(ARROW_ITEMS, true));
         arrowUsage.setRequirement(new BuildingResearchRequirement(2, "guardtower"));
         taunt.addChild(arrowUsage);
 
-        final GlobalResearch arrowPiercing = new GlobalResearch("arrowpierce", "combat", "Arrow piercing", 3, new UnlockAbilityResearchEffect(ARROW_PIERCE, true));
+        final GlobalResearch arrowPiercing = new GlobalResearch("arrowpierce", "combat", "Arrow Piercing", 3, new UnlockAbilityResearchEffect(ARROW_PIERCE, true));
         arrowPiercing.setRequirement(new BuildingResearchRequirement(1, "archery"));
         arrowUsage.addChild(arrowPiercing);
 
         final GlobalResearch knockbackAoe =
-          new GlobalResearch("knockbackaoe", "combat", "Unlock whirlwind ability for knights", 4, new UnlockAbilityResearchEffect(KNIGHT_WHIRLWIND, true));
+          new GlobalResearch("knockbackaoe", "combat", "Knockback", 4, new UnlockAbilityResearchEffect(KNIGHT_WHIRLWIND, true));
         knockbackAoe.setRequirement(new BuildingResearchRequirement(4, "barracks"));
         arrowPiercing.addChild(knockbackAoe);
 
         final GlobalResearch parry = new GlobalResearch("parry", "combat", "Parry", 2, new MultiplierModifierResearchEffect(MELEE_ARMOR, 0.05));
         parry.setRequirement(new BuildingResearchRequirement(1, "smeltery"));
 
-        final GlobalResearch repost = new GlobalResearch("repost", "combat", "Repost", 3, new MultiplierModifierResearchEffect(MELEE_ARMOR, 0.10));
+        final GlobalResearch repost = new GlobalResearch("repost", "combat", "Riposte", 3, new MultiplierModifierResearchEffect(MELEE_ARMOR, 0.10));
         repost.setRequirement(new BuildingResearchRequirement(1, "combatacademy"));
 
         final GlobalResearch duelist = new GlobalResearch("duelist", "combat", "Duelist", 4, new MultiplierModifierResearchEffect(MELEE_ARMOR, 0.25));
@@ -763,10 +767,10 @@ public class ResearchInitializer
         final GlobalResearch ironSkin = new GlobalResearch("ironskin", "combat", "Iron Skin", 3, new MultiplierModifierResearchEffect(ARMOR_DURABILITY, 0.3));
         ironSkin.setRequirement(new BuildingResearchRequirement(3, "townhall"));
 
-        final GlobalResearch ironArmour = new GlobalResearch("ironarmour", "combat", "Iron Armour", 4, new MultiplierModifierResearchEffect(ARMOR_DURABILITY, 0.4));
+        final GlobalResearch ironArmour = new GlobalResearch("ironarmour", "combat", "Iron Armor", 4, new MultiplierModifierResearchEffect(ARMOR_DURABILITY, 0.4));
         ironArmour.setRequirement(new BuildingResearchRequirement(4, "townhall"));
 
-        final GlobalResearch steelArmour = new GlobalResearch("steelarmour", "combat", "Steel Armour", 5, new MultiplierModifierResearchEffect(ARMOR_DURABILITY, 0.5));
+        final GlobalResearch steelArmour = new GlobalResearch("steelarmour", "combat", "Steel Armor", 5, new MultiplierModifierResearchEffect(ARMOR_DURABILITY, 0.5));
         steelArmour.setRequirement(new BuildingResearchRequirement(5, "townhall"));
 
         final GlobalResearch diamondSkin = new GlobalResearch("diamondskin", "combat", "Diamond Skin", 6, new MultiplierModifierResearchEffect(ARMOR_DURABILITY, 1.0));
@@ -821,16 +825,16 @@ public class ResearchInitializer
         final GlobalResearch quickDraw = new GlobalResearch("quickdraw", "combat", "Quick Draw", 2, new AdditionModifierResearchEffect(MELEE_DAMAGE, 0.5));
         quickDraw.setRequirement(new BuildingResearchRequirement(3, "barracks"));
 
-        final GlobalResearch powerAttack = new GlobalResearch("powerattack", "combat", "Power Attack", 3, new AdditionModifierResearchEffect(MELEE_DAMAGE, 0.5));
+        final GlobalResearch powerAttack = new GlobalResearch("powerattack", "combat", "Power Attack", 3, new AdditionModifierResearchEffect(MELEE_DAMAGE, 1.0));
         powerAttack.setRequirement(new BuildingResearchRequirement(3, "combatacademy"));
 
-        final GlobalResearch cleave = new GlobalResearch("cleave", "combat", "Cleave", 4, new AdditionModifierResearchEffect(MELEE_DAMAGE, 0.5));
+        final GlobalResearch cleave = new GlobalResearch("cleave", "combat", "Cleave", 4, new AdditionModifierResearchEffect(MELEE_DAMAGE, 1.5));
         cleave.setRequirement(new BuildingResearchRequirement(10, "guardtower"));
 
-        final GlobalResearch mightyCleave = new GlobalResearch("mightycleave", "combat", "Mightly Cleave", 5, new AdditionModifierResearchEffect(MELEE_DAMAGE, 0.5));
+        final GlobalResearch mightyCleave = new GlobalResearch("mightycleave", "combat", "Mighty Cleave", 5, new AdditionModifierResearchEffect(MELEE_DAMAGE, 2.0));
         mightyCleave.setRequirement(new BuildingResearchRequirement(5, "barracks"));
 
-        final GlobalResearch whirlwind = new GlobalResearch("whirlwind", "combat", "Whirlwind", 6, new AdditionModifierResearchEffect(MELEE_DAMAGE, 2.0));
+        final GlobalResearch whirlwind = new GlobalResearch("whirlwind", "combat", "Whirlwind", 6, new AdditionModifierResearchEffect(MELEE_DAMAGE, 4.0));
 
         accuracy.addChild(quickDraw);
         quickDraw.addChild(powerAttack);
@@ -841,16 +845,16 @@ public class ResearchInitializer
         final GlobalResearch preciseShot = new GlobalResearch("preciseshot", "combat", "Precise Shot", 2, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 0.5));
         preciseShot.setRequirement(new BuildingResearchRequirement(3, "barracks"));
 
-        final GlobalResearch penetratingShot = new GlobalResearch("penetratingshot", "combat", "Penetrating Shot", 3, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 0.5));
+        final GlobalResearch penetratingShot = new GlobalResearch("penetratingshot", "combat", "Penetrating Shot", 3, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 1.0));
         penetratingShot.setRequirement(new BuildingResearchRequirement(3, "archery"));
 
-        final GlobalResearch piercingShot = new GlobalResearch("piercingshot", "combat", "Piercing Shot", 4, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 0.5));
+        final GlobalResearch piercingShot = new GlobalResearch("piercingshot", "combat", "Piercing Shot", 4, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 1.5));
         piercingShot.setRequirement(new BuildingResearchRequirement(10, "guardtower"));
 
-        final GlobalResearch woundingShot = new GlobalResearch("woundingshot", "combat", "Wounding Shot", 5, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 0.5));
+        final GlobalResearch woundingShot = new GlobalResearch("woundingshot", "combat", "Wounding Shot", 5, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 2.0));
         woundingShot.setRequirement(new BuildingResearchRequirement(5, "barracks"));
 
-        final GlobalResearch deadlyAim = new GlobalResearch("deadlyaim", "combat", "Deadly Aim", 6, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 2.0));
+        final GlobalResearch deadlyAim = new GlobalResearch("deadlyaim", "combat", "Deadly Aim", 6, new AdditionModifierResearchEffect(ARCHER_DAMAGE, 4.0));
 
         accuracy.addChild(preciseShot);
         preciseShot.addChild(penetratingShot);

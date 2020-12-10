@@ -9,7 +9,7 @@
     "description": {
       "translate": "advancements.minecolonies.root.description"
     },
-    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "background": "minecraft:textures/block/light_gray_wool.png",
     "show_toast": true,
     "announce_to_chat": true
   },

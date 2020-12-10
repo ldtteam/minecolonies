@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
@@ -12,7 +13,9 @@ import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.RaiderSounds;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -41,6 +44,16 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
      * Difficulty at which raiders team up
      */
     private static final double TEAM_DIFFICULTY = 2.0d;
+
+    /**
+     * The percent of life taken per damage modifier
+     */
+    private static final float HP_PERCENT_PER_DMG = 0.03f;
+
+    /**
+     * The max amount of damage converted to scaling
+     */
+    private static final int MAX_SCALED_DAMAGE = 7;
 
     /**
      * The New PathNavigate navigator.
@@ -466,6 +479,18 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
             if (event instanceof IColonyCampFireRaidEvent)
             {
                 ((IColonyCampFireRaidEvent) event).setCampFireTime(0);
+            }
+
+            final Entity source = damageSource.getTrueSource();
+            if (source instanceof PlayerEntity)
+            {
+                final float raiderDamageEnchantLevel = EnchantmentHelper.getEnchantmentLevel(ModEnchants.raiderDamage, ((PlayerEntity) source).getHeldItemMainhand());
+
+                // Up to 7 damage are converted to health scaling damage, 7 is the damage of a diamond sword
+                float baseScalingDamage = Math.min(damage, MAX_SCALED_DAMAGE);
+                float totalWithScaled =
+                  Math.max(damage, (damage - baseScalingDamage) + baseScalingDamage * HP_PERCENT_PER_DMG * this.getMaxHealth() * (1 + (raiderDamageEnchantLevel / 5)));
+                return super.attackEntityFrom(damageSource, totalWithScaled);
             }
         }
 

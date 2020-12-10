@@ -9,8 +9,10 @@ import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.item.Food;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -483,7 +485,7 @@ public class InventoryUtils
     @NotNull
     private static List<ItemStack> getFromProviderForAllSides(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> predicate)
     {
-        final ArrayList<ItemStack> combinedList = new ArrayList<>();
+        final Set<ItemStack> combinedList = new HashSet<>();
 
         for (final IItemHandler handler : getItemHandlersFromProvider(provider))
         {
@@ -492,7 +494,7 @@ public class InventoryUtils
                 combinedList.addAll(filterItemHandler(handler, predicate));
             }
         }
-        return combinedList;
+        return new ArrayList<>(combinedList);
     }
 
     /**
@@ -720,19 +722,9 @@ public class InventoryUtils
     public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final ItemStorage stack, final int count)
     {
         int totalCount = 0;
-        if (provider.getTileEntity() != null)
-        {
-            totalCount += provider.getTileEntity().getAllContent().getOrDefault(stack, 0);
-        }
-
-        if (totalCount > count && count > 0)
-        {
-            return Integer.MAX_VALUE;
-        }
-
         final World world = provider.getColony().getWorld();
 
-        for (final BlockPos pos : provider.getAdditionalCountainers())
+        for (final BlockPos pos : provider.getContainers())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
@@ -741,29 +733,76 @@ public class InventoryUtils
                 {
                     totalCount += ((TileEntityRack) entity).getAllContent().getOrDefault(stack, 0);
                 }
+                else if (entity instanceof ChestTileEntity)
+                {
+                    totalCount += getItemCountInProvider(entity, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
+                }
+
+                if (totalCount > count)
+                {
+                    return Integer.MAX_VALUE;
+                }
             }
         }
 
-        if (totalCount >= count)
-        {
-            return totalCount;
-        }
+        return totalCount;
+    }
 
-        for (final BlockPos pos : provider.getAdditionalCountainers())
+    /**
+     * Count the number of items a building has.
+     *
+     * @param provider building to check in.
+     * @param stack    the stack to check.
+     * @return Amount of occurrences of stacks that match the given stack.
+     */
+    public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final ItemStorage stack)
+    {
+        int totalCount = 0;
+        final World world = provider.getColony().getWorld();
+
+        for (final BlockPos pos : provider.getContainers())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (!(entity instanceof TileEntityRack) && entity != null)
+                if (entity instanceof TileEntityRack)
                 {
-                    for (final IItemHandler handler : getItemHandlersFromProvider(entity))
-                    {
-                        totalCount += getItemCountInItemHandler(handler, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
-                        if (totalCount > count)
-                        {
-                            return Integer.MAX_VALUE;
-                        }
-                    }
+                    totalCount += ((TileEntityRack) entity).getAllContent().getOrDefault(stack, 0);
+                }
+                else if (entity instanceof ChestTileEntity)
+                {
+                    totalCount += getItemCountInProvider(entity, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Count the number of items a building has.
+     *
+     * @param provider  building to check in.
+     * @param predicate the predicate to match.
+     * @return Amount of occurrences of stacks that match the given stack.
+     */
+    public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> predicate)
+    {
+        int totalCount = 0;
+        final World world = provider.getColony().getWorld();
+
+        for (final BlockPos pos : provider.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    totalCount += ((TileEntityRack) entity).getItemCount(predicate);
+                }
+                else if (entity instanceof ChestTileEntity)
+                {
+                    totalCount += getItemCountInProvider(entity, predicate);
                 }
             }
         }
@@ -1595,6 +1634,35 @@ public class InventoryUtils
     }
 
     /**
+     * Method to transfer an ItemStacks from the given source {@link IItemHandler} to the given target {@link IItemHandler}.
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param predicate     the predicate for the stack.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return true when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextBestSlotInItemHandler(
+      @NotNull final IItemHandler sourceHandler,
+      final Predicate<ItemStack> predicate,
+      @NotNull final IItemHandler targetHandler)
+    {
+        for (int i = 0; i < sourceHandler.getSlots(); i++)
+        {
+            if (predicate.test(sourceHandler.getStackInSlot(i)))
+            {
+                ItemStack sourceStack = sourceHandler.extractItem(i, Integer.MAX_VALUE, true);
+                if (!sourceStack.isEmpty() && addItemStackToItemHandler(targetHandler, sourceStack))
+                {
+                    sourceHandler.extractItem(i, Integer.MAX_VALUE, false);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Method to put a given Itemstack in a given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
      *
      * @param stack         the itemStack to transfer.
@@ -1817,24 +1885,24 @@ public class InventoryUtils
      * @param amount                      the max amount to extract
      * @param targetHandler               the target.
      * @param slot                        the slot to put it in.
-     * @return                            the count of items actually transferred
+     * @return the count of items actually transferred
      */
     public static int transferXInItemHandlerIntoSlotInItemHandler(
-        final IItemHandler sourceHandler,
-        final Predicate<ItemStack> itemStackSelectionPredicate,
-        final int amount,
-        final IItemHandler targetHandler, final int slot)
-    {        
+      final IItemHandler sourceHandler,
+      final Predicate<ItemStack> itemStackSelectionPredicate,
+      final int amount,
+      final IItemHandler targetHandler, final int slot)
+    {
         int actualTransferred = 0;
-        while(actualTransferred < amount)
+        while (actualTransferred < amount)
         {
             final int transferred = InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                                sourceHandler, 
-                                itemStackSelectionPredicate, 
-                                amount - actualTransferred,
-                                targetHandler,
-                                slot);
-            if(transferred <= 0)
+              sourceHandler,
+              itemStackSelectionPredicate,
+              amount - actualTransferred,
+              targetHandler,
+              slot);
+            if (transferred <= 0)
             {
                 break;
             }
@@ -1851,7 +1919,7 @@ public class InventoryUtils
      * @param amount                      the max amount to extract
      * @param targetHandler               the target.
      * @param slot                        the slot to put it in.
-     * @return                            the count of items actually transferred
+     * @return the count of items actually transferred
      */
     public static int transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
       final IItemHandler sourceHandler,
@@ -2688,4 +2756,81 @@ public class InventoryUtils
 
         return true;
     }
+
+    /**
+     * Transfers food items from the source with the required saturation value, or as much as possible.
+     *
+     * @param source             to extract items from
+     * @param target             to insert intems into
+     * @param requiredSaturation required saturation value
+     * @param foodPredicate      food choosing predicate
+     * @return true if any food was transferred
+     */
+    public static boolean transferFoodUpToSaturation(
+      final ICapabilityProvider source,
+      final IItemHandler target,
+      final int requiredSaturation,
+      final Predicate<ItemStack> foodPredicate)
+    {
+        Set<IItemHandler> handlers = getItemHandlersFromProvider(source);
+
+        int foundSaturation = 0;
+
+        for (final IItemHandler handler : handlers)
+        {
+            for (int i = 0; i < handler.getSlots(); i++)
+            {
+                final ItemStack stack = handler.getStackInSlot(i);
+
+                if (!ItemStackUtils.isEmpty(stack) && foodPredicate.test(stack))
+                {
+                    // Found food
+                    final Food itemFood = stack.getItem().getFood();
+                    if (itemFood == null)
+                    {
+                        continue;
+                    }
+
+                    int amount = (int) Math.round(Math.ceil((requiredSaturation - foundSaturation) / (float) itemFood.getHealing()));
+
+                    final ItemStack extractedFood;
+                    if (amount > stack.getCount())
+                    {
+                        // Not enough yet
+                        foundSaturation += stack.getCount() * itemFood.getSaturation();
+                        extractedFood = handler.extractItem(i, stack.getCount(), false);
+                    }
+                    else
+                    {
+                        // Stack is sufficient
+                        extractedFood = handler.extractItem(i, amount, false);
+                        foundSaturation = requiredSaturation;
+                    }
+
+                    if (!ItemStackUtils.isEmpty(extractedFood))
+                    {
+                        if (!addItemStackToItemHandler(target, extractedFood))
+                        {
+                            // Swap if need
+                            final int slot = findFirstSlotInItemHandlerNotEmptyWith(target, s -> !foodPredicate.test(s));
+                            if (slot != -1)
+                            {
+                                final ItemStack swappedItem = target.extractItem(slot, target.getStackInSlot(slot).getCount(), false);
+                                addItemStackToProvider(source, swappedItem);
+                                addItemStackToItemHandler(target, extractedFood);
+                            }
+                        }
+                    }
+
+                    if (foundSaturation >= requiredSaturation)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return foundSaturation > 0;
+    }
+
 }

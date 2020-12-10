@@ -122,6 +122,21 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return getState();
         }
 
+        return getNextCraftingState();
+    }
+
+    /**
+     * Gets the next crafting state required, if a task exists.
+     *
+     * @return next state
+     */
+    protected IAIState getNextCraftingState()
+    {
+        if (job.getCurrentTask() == null)
+        {
+            return getState();
+        }
+
         if (currentRequest != null && currentRecipeStorage != null)
         {
             return QUERY_ITEMS;
@@ -180,7 +195,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             {
                 remaining = inputStorage.getAmount() * remainingOpsCount;
             }
-            if (InventoryUtils.getItemCountInProvider(getOwnBuilding(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
+            if (InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
                   + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.isItemEqual(inputStorage.getItemStack()))
                   + getExtendedCount(inputStorage.getItemStack())
                   < remaining)
@@ -320,7 +335,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
-                if (!currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen()))
+                if (!currentRecipeStorage.fullFillRecipe(worker.getEntityWorld(), worker.getItemHandlerCitizen()))
                 {
                     currentRequest = null;
                     incrementActionsDone(getActionRewardForCraftingSuccess());

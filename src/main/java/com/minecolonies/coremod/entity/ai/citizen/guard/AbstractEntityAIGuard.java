@@ -429,6 +429,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 return START_WORKING;
             }
 
+            worker.setCanBeStuck(false);
+            worker.getNavigator().getPathingOptions().setCanUseRails(false);
             fighttimer = COMBAT_TIME;
             equipInventoryArmor();
             moveInAttackPosition();
@@ -438,6 +440,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         if (fighttimer > 0)
         {
             fighttimer--;
+            if (fighttimer == 0)
+            {
+                worker.getNavigator().getPathingOptions().setCanUseRails(((EntityCitizen) worker).canPathOnRails());
+                worker.setCanBeStuck(true);
+            }
         }
 
         return null;
@@ -770,7 +777,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             // Check sight
             if (!worker.canEntityBeSeen(target))
             {
-                lastSeen += GUARD_TASK_INTERVAL;
+                lastSeen += 10;
             }
             else
             {
@@ -978,7 +985,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         for (final LivingEntity entity : entities)
         {
-            if (!worker.canEntityBeSeen(entity) || !entity.isAlive())
+            if (!entity.isAlive())
             {
                 continue;
             }
@@ -987,7 +994,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             if (entity instanceof EntityCitizen)
             {
                 final EntityCitizen citizen = (EntityCitizen) entity;
-                if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep())
+                if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep()
+                      && worker.canEntityBeSeen(entity))
                 {
                     sleepingGuard = new WeakReference<>(citizen);
                     wakeTimer = 0;
@@ -996,7 +1004,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 }
             }
 
-            if (isEntityValidTarget(entity))
+            if (isEntityValidTarget(entity) && worker.canEntityBeSeen(entity))
             {
                 // Find closest
                 final int tempDistance = (int) BlockPosUtil.getDistanceSquared(worker.getPosition(), entity.getPosition());

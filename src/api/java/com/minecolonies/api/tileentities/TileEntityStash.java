@@ -23,7 +23,6 @@ public class TileEntityStash extends TileEntityColonyBuilding
     public TileEntityStash(final TileEntityType<? extends TileEntityStash> type)
     {
         super(type);
-        inventory = new NotifyingRackInventory(DEFAULT_SIZE);
     }
 
     /**
@@ -32,7 +31,12 @@ public class TileEntityStash extends TileEntityColonyBuilding
     public TileEntityStash()
     {
         super(MinecoloniesTileEntities.STASH);
-        inventory = new NotifyingRackInventory(DEFAULT_SIZE);
+    }
+
+    @Override
+    public ItemStackHandler createInventory(final int slots)
+    {
+        return new NotifyingRackInventory(slots);
     }
 
     /**
@@ -56,7 +60,7 @@ public class TileEntityStash extends TileEntityColonyBuilding
                 if (colony != null)
                 {
                     final IBuilding building = colony.getBuildingManager().getBuilding(pos);
-                    if (!freeStacks())
+                    if (!isEmpty())
                     {
                         // Note that createPickupRequest will make sure to only create on request per building.
                         building.createPickupRequest(getPlayerActionPriority(true));

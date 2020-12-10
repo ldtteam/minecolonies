@@ -76,7 +76,7 @@ public class Stack implements IConcreteDeliverable
      */
     public Stack(@NotNull final ItemStack stack)
     {
-        this(stack, true, false, false, ItemStackUtils.EMPTY, Math.min(stack.getCount(), stack.getMaxStackSize()), Math.min(stack.getCount(), stack.getMaxStackSize()));
+        this(stack, true, true, false, ItemStackUtils.EMPTY, Math.min(stack.getCount(), stack.getMaxStackSize()), Math.min(stack.getCount(), stack.getMaxStackSize()));
     }
 
     /**
@@ -88,7 +88,7 @@ public class Stack implements IConcreteDeliverable
      */
     public Stack(@NotNull final ItemStack stack, final int count, final int minCount)
     {
-        this(stack, true, false, false, ItemStackUtils.EMPTY, count, minCount);
+        this(stack, true, true, false, ItemStackUtils.EMPTY, count, minCount);
     }
 
     /**
@@ -98,7 +98,7 @@ public class Stack implements IConcreteDeliverable
      */
     public Stack(@NotNull final ItemStorage itemStorage)
     {
-        this(itemStorage.getItemStack(), !itemStorage.ignoreDamageValue(), false, false, ItemStackUtils.EMPTY, itemStorage.getAmount(), itemStorage.getAmount());
+        this(itemStorage.getItemStack(), !itemStorage.ignoreDamageValue(), !itemStorage.ignoreNBT(), false, ItemStackUtils.EMPTY, itemStorage.getAmount(), itemStorage.getAmount());
     }
 
     /**

@@ -1,0 +1,20 @@
+{
+  "pools": [
+    {
+      "name": "minecolonies:barbarian",
+      "rolls": 1,
+      "bonus_rolls": 1,
+      "entries": [
+        {
+          "type": "empty",
+          "weight": 90
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecraft:flint"
+        }
+      ]
+    }
+  ]
+}

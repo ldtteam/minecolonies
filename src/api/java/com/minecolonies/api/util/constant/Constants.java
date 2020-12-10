@@ -47,7 +47,7 @@ public final class Constants
     public static final int    UPDATE_FLAG                      = 0x03;
     public static final int    TICKS_HOUR                       = TICKS_SECOND * SECONDS_A_MINUTE * SECONDS_A_MINUTE;
     public static final int    TICKS_FOURTY_MIN                 = 48000;
-    public static final int    MAX_PARAMS_IRECIPESTORAGE        = 8;
+    public static final int    MAX_PARAMS_IRECIPESTORAGE        = 9;
     public static final int    MIN_PARAMS_IRECIPESTORAGE        = 3;
     public static final int    PARAMS_ITEMSTORAGE               = 2;
     public static final int    PARAMS_RESEARCH_EFFECT           = 2;
@@ -90,6 +90,10 @@ public final class Constants
     public static final String CRITERION_BUILDING_ADD_RECIPE    = "building_add_recipe";
     public static final String CRITERION_COMPLETE_BUILD_REQUEST = "complete_build_request";
     public static final String CRITERION_COLONY_POPULATION      = "colony_population";
+    public static final String CRITERION_ARMY_POPULATION        = "army_population";
+    public static final String CRITERION_ALL_TOWERS             = "all_barracks_towers";
+    public static final String CRITERION_DEEP_MINE              = "deep_mine";
+    public static final String CRITERION_MAX_FIELDS             = "max_fields";
 
     /**
      * Placement key for item nbt

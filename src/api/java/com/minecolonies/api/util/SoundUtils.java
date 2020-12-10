@@ -235,4 +235,18 @@ public final class SoundUtils
     {
         return PITCH_DIVIDER / (random.nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
     }
+
+    /**
+     * Plays a sound for the given player, but not for surrounding entities
+     */
+    public static void playSoundForPlayer(final ServerPlayerEntity playerEntity, final SoundEvent sound, float volume, final float pitch)
+    {
+        playerEntity.connection.sendPacket(new SPlaySoundEffectPacket(sound,
+          playerEntity.getSoundCategory(),
+          playerEntity.getPosX(),
+          playerEntity.getPosY(),
+          playerEntity.getPosZ(),
+          16.0F * volume,
+          pitch));
+    }
 }

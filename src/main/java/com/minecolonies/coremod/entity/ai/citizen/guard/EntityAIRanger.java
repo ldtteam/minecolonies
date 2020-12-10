@@ -267,7 +267,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
         }
 
         // Check if the target is too close
-        if (sqDistanceToEntity < RANGED_FLEE_SQDIST)
+        if (sqDistanceToEntity < RANGED_FLEE_SQDIST && buildingGuards.getTask() != GuardTask.GUARD)
         {
             tooCloseNumTicks++;
             strafingTime = -1;
@@ -287,7 +287,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
         }
 
         // Combat movement for guards not on guarding block task
-        if (buildingGuards.getTask() != GuardTask.GUARD)
+        if (!shouldStayCloseToPos())
         {
             // Toggle strafing direction randomly if strafing
             if (strafingTime >= TIME_STRAFING_BEFORE_SWITCHING_DIRECTIONS)
@@ -368,7 +368,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                     final double yVector = target.getBoundingBox().minY + target.getHeight() / getAimHeight() - arrow.posY;
                     final double zVector = target.posZ - worker.getPosZ();
 
-                    final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
+                    final double distance = MathHelper.sqrt(xVector * xVector + zVector * zVector);
                     double damage = getRangedAttackDamage() + extraDamage;
 
                     final UnlockAbilityResearchEffect arrowItemEffect =
@@ -553,21 +553,33 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     @Override
     public void moveInAttackPosition()
     {
-        if (buildingGuards.getTask() == GuardTask.GUARD)
-        {
-            ((MinecoloniesAdvancedPathNavigate) worker.getNavigator()).setPathJob(new PathJobCanSee(worker, target, world, buildingGuards.getGuardPos(), 20),
-              null,
-              getCombatMovementSpeed());
-            return;
-        }
+        ((MinecoloniesAdvancedPathNavigate) worker.getNavigator()).setPathJob(new PathJobCanSee(worker,
+            target,
+            world,
+            buildingGuards.getGuardPos(), shouldStayCloseToPos()
+             ? 20 : 40),
+          null,
+          getCombatMovementSpeed());
+    }
 
-        worker.getNavigator()
-          .tryMoveToBlockPos(worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 8), getCombatMovementSpeed());
+    /**
+     * If the guard should stick close to the guard/patroll pos.
+     * @return true if so.
+     */
+    private boolean shouldStayCloseToPos()
+    {
+        return buildingGuards.getTask() == GuardTask.GUARD || (buildingGuards.getTask() == GuardTask.PATROL && buildingGuards.shallPatrolManually());
     }
 
     @Override
     public void guardMovement()
     {
+        if (worker.getRandom().nextInt(3) < 1)
+        {
+            worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 3);
+            return;
+        }
+
         if (worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 10) && Math.abs(buildingGuards.getGuardPos().getY() - worker.getPosition().getY()) < 3)
         {
             // Moves the ranger randomly to close edges, for better vision to mobs

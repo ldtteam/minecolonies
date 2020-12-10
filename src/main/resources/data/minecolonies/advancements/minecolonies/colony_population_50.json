@@ -12,7 +12,7 @@
     },
     "show_toast": true,
     "announce_to_chat": true,
-    "frame": "challenge"
+    "frame": "goal"
   },
   "criteria": {
     "population_5": {

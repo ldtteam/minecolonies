@@ -19,6 +19,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.MultiOutputRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -45,9 +46,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -65,7 +64,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
-import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -77,7 +75,6 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  */
 public abstract class AbstractBuildingWorker extends AbstractBuilding implements IBuildingWorker
 {
-
     /**
      * The base chance for a recipe to be improved. This is modified by worker skill and the number of items crafted
      */
@@ -92,26 +89,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * The name of the tag for improving recipes
      */
     private static final String REDUCEABLE = "reduceable";
-
-    /**
-     * Tag specifier for Products to Include
-     */
-    private static final String PRODUCT = "_product";
-
-    /**
-     * Tag specifier for Products to Exclude
-     */
-    private static final String PRODUCT_EXCLUDED = "_product_excluded";
-
-    /**
-     * Tag specifier for Ingredients to include
-     */
-    private static final String INGREDIENT = "_ingredient";
-
-    /**
-     * Tag specifier for Ingredients to exclude
-     */
-    private static final String INGREDIENT_EXCLUDED = "_ingredient_excluded";
 
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
@@ -203,7 +180,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         IRecipeStorage foundRecipe = null;
         final HashMap<IRecipeStorage, Integer> candidates = new HashMap<>();
 
-
         //Scan through and collect all possible recipes that could fulfill this, taking special note of the first one
         for (final IToken<?> token : recipes)
         {
@@ -247,7 +223,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         for(IWareHouse wareHouse: wareHouses)
         {
-            count += InventoryUtils.hasBuildingEnoughElseCount(wareHouse, item, 0);
+            count += InventoryUtils.getCountFromBuilding(wareHouse, item);
         }
         return count;
     }
@@ -287,7 +263,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public boolean fullFillRecipe(final IRecipeStorage storage)
     {
         final List<IItemHandler> handlers = getHandlers();
-        return storage.fullfillRecipe(handlers);
+        return storage.fullfillRecipe(this.getColony().getWorld(), handlers);
     }
 
     @Override
@@ -323,25 +299,21 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IRecipeStorage storage)
     {
-
-        ResourceLocation products = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(PRODUCT));
-        ResourceLocation ingredients = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(INGREDIENT));
-        ResourceLocation productsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(PRODUCT_EXCLUDED));
-        ResourceLocation ingredientsExcluded = new ResourceLocation(MOD_ID, this.getJobName().toLowerCase().concat(INGREDIENT_EXCLUDED));
-
         if (storage == null)
         {
             return Optional.of(false);
         }
 
+        final String crafterName = this.getJobName().toLowerCase();
+
         // Check against excluded products
-        if (ItemTags.getCollection().getOrCreate(productsExcluded).contains(storage.getPrimaryOutput().getItem()))
+        if (ModTags.crafterProductExclusions.containsKey(crafterName) && ModTags.crafterProductExclusions.get(crafterName).contains(storage.getPrimaryOutput().getItem()))
         {
             return Optional.of(false);
         }
 
         // Check against allowed products
-        if (ItemTags.getCollection().getOrCreate(products).contains(storage.getPrimaryOutput().getItem()))
+        if (ModTags.crafterProduct.containsKey(crafterName) && ModTags.crafterProduct.get(crafterName).contains(storage.getPrimaryOutput().getItem()))
         {
             return Optional.of(true);
         }
@@ -349,7 +321,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         // Check against excluded ingredients
         for (final ItemStack stack : storage.getInput())
         {
-            if (ItemTags.getCollection().getOrCreate(ingredientsExcluded).contains(stack.getItem()))
+            if (ModTags.crafterIngredientExclusions.containsKey(crafterName) && ModTags.crafterIngredientExclusions.get(crafterName).contains(stack.getItem()))
             {
                 return Optional.of(false);
             }
@@ -358,7 +330,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         // Check against allowed ingredients
         for (final ItemStack stack : storage.getInput())
         {
-            if (ItemTags.getCollection().getOrCreate(ingredients).contains(stack.getItem()))
+            if (ModTags.crafterIngredient.containsKey(crafterName) && ModTags.crafterIngredient.get(crafterName).contains(stack.getItem()))
             {
                 return Optional.of(true);
             }
@@ -369,14 +341,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
     /**
      * Has a chance to reduce the resource requirements for the recipe in this building
+     * 
      * @param recipe the recipe we're possibly improving
-     * @param count the number of items (chances) 
+     * @param count the number of items (chances)
      * @param citizen The citizen, as the primary skill can improve the chances
      */
     public void improveRecipe(IRecipeStorage recipe, int count, ICitizenData citizen)
     {
-        final ResourceLocation reducableIngredients = new ResourceLocation(MOD_ID, REDUCEABLE.concat(INGREDIENT));
-        final ResourceLocation reducableProductExclusions = new ResourceLocation(MOD_ID, REDUCEABLE.concat(PRODUCT_EXCLUDED));
         final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
 
         final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(getRecipeImprovementSkill())));
@@ -384,25 +355,26 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         ItemStack reducedItem = null;
 
-        if(roll <= actualChance && !ItemTags.getCollection().getOrCreate(reducableProductExclusions).contains(recipe.getPrimaryOutput().getItem()))
+        if(roll <= actualChance && ModTags.crafterProductExclusions.containsKey(REDUCEABLE) && !ModTags.crafterProductExclusions.get(REDUCEABLE).contains(recipe.getPrimaryOutput().getItem()))
         {
             final ArrayList<ItemStack> newRecipe = new ArrayList<>();
             boolean didReduction = false;
             for(ItemStorage input : inputs)
             {
                 // Check against excluded products
-                if (input.getAmount() > 1 && ItemTags.getCollection().getOrCreate(reducableIngredients).contains(input.getItem()))
+                if (input.getAmount() > 1 && ModTags.crafterIngredient.containsKey(REDUCEABLE) && ModTags.crafterIngredient.get(REDUCEABLE).contains(input.getItem()))
                 {
                     reducedItem = input.getItemStack();
                     reducedItem.setCount(input.getAmount() - 1);
                     newRecipe.add(reducedItem);
                     didReduction = true;
-                } else
+                }
+                else
                 {
                     newRecipe.add(input.getItemStack());
                 }
             }
-            
+
             if (didReduction)
             {
                 final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
@@ -417,10 +389,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
                 // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
                 final TranslationTextComponent message = new TranslationTextComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
-                        new TranslationTextComponent(citizen.getJob().getName().toLowerCase()),
-                        recipe.getPrimaryOutput().getDisplayName(),
-                        reducedItem.getDisplayName(),
-                        citizen.getName());
+                    new TranslationTextComponent(citizen.getJob().getName().toLowerCase()),
+                    recipe.getPrimaryOutput().getDisplayName(),
+                    reducedItem.getDisplayName(),
+                    citizen.getName());
 
                 for(PlayerEntity player :colony.getMessagePlayerEntities())
                 {
@@ -450,8 +422,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     private boolean hasSpaceForMoreRecipes()
     {
-
-        return getMaxRecipes() > getRecipes().size() ;
+        return getMaxRecipes() > getRecipes().size();
     }
 
     /**
@@ -466,7 +437,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             increase = 1 + effect.getEffect();
         }
         if(canCraftComplexRecipes())
+        {
             increase*=EXTRA_RECIPE_MULTIPLIER;
+        }
         return (int) (Math.pow(2, getBuildingLevel()) * increase);
     }
 
@@ -494,9 +467,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             handlers.add(workerEntity.getInventory());
         }
-        handlers.add(getTileEntity().getInventory());
 
-        for (final BlockPos pos : getAdditionalCountainers())
+        for (final BlockPos pos : getContainers())
         {
             final TileEntity entity = colony.getWorld().getTileEntity(pos);
             if (entity != null)
@@ -605,8 +577,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         compound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
         @NotNull final ListNBT recipesTagList = recipes.stream()
-                                                  .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
-                                                  .collect(NBTUtils.toListNBT());
+            .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
+            .collect(NBTUtils.toListNBT());
         compound.put(TAG_RECIPES, recipesTagList);
         return compound;
     }
@@ -628,7 +600,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             if (recipeStorage != null)
             {
                 colony.getRequestManager()
-                  .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                    .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
             }
             return true;
         }
@@ -686,7 +658,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         // If we have no active worker, grab one from the Colony
         if (!isFull() && ((getBuildingLevel() > 0 && isBuilt()) || this instanceof BuildingBuilder)
-              && (this.hiringMode == HiringMode.DEFAULT && !this.getColony().isManualHiring() || this.hiringMode == HiringMode.AUTO))
+            && (this.hiringMode == HiringMode.DEFAULT && !this.getColony().isManualHiring() || this.hiringMode == HiringMode.AUTO))
         {
             final ICitizenData joblessCitizen = getColony().getCitizenManager().getJoblessCitizen();
             if (joblessCitizen != null)
@@ -746,7 +718,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         buf.writeInt(getSecondarySkill().ordinal());
         buf.writeInt(getMaxInhabitants());
         buf.writeBoolean(isRecipeAlterationAllowed());
-        buf.writeString(jobDisplayName);
+        buf.writeString(getJobDisplayName());
         buf.writeInt(getMaxRecipes());
     }
 
@@ -767,19 +739,19 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public boolean canWorkDuringTheRain()
     {
-        return false;
+        return getBuildingLevel() >= getMaxBuildingLevel();
     }
 
     @Override
     public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
         return ImmutableList.of(
-          new BuildingRequestResolver(getRequester().getLocation(), getColony().getRequestManager()
-                                                                      .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
-          new PrivateWorkerCraftingRequestResolver(getRequester().getLocation(), getColony().getRequestManager()
-                                                                                   .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
-          new PrivateWorkerCraftingProductionResolver(getRequester().getLocation(), getColony().getRequestManager()
-                                                                                      .getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+            new BuildingRequestResolver(getRequester().getLocation(), getColony().getRequestManager()
+                                                                        .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+            new PrivateWorkerCraftingRequestResolver(getRequester().getLocation(), getColony().getRequestManager()
+                                                                        .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+            new PrivateWorkerCraftingProductionResolver(getRequester().getLocation(), getColony().getRequestManager()
+                                                                        .getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
     }
 
     @Override
@@ -841,9 +813,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             final IToken<?> recipeToken = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipeStorage);
 
             if(newRecipe.isValidForBuilding(this))
-            {   
+            {
                 IToken<?> duplicateFound = null;
-                boolean forceReplace = false;  
+                boolean forceReplace = false;
                 for(IToken<?> token : recipes)
                 {
                     if(token == recipeToken)
@@ -863,7 +835,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                         {
                             continue;
                         }
-                        
+
                         if(recipeInput1.size() > 1)
                         {
                             recipeInput1.sort(Comparator.comparing(item -> Objects.hash(item.hashCode(), item.getAmount())));
@@ -898,7 +870,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 }
                 if(duplicateFound == null)
                 {
-                    addRecipeToList(recipeToken);    
+                    addRecipeToList(recipeToken);
                     colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
                 }
                 else if((forceReplace || newRecipe.getMustExist()) && duplicateFound != recipeToken)
@@ -919,7 +891,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                     }
                     colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && recipeStorage.getAlternateOutputs().stream().anyMatch(i -> ((IDeliverable) request.getRequest()).matches(i)));
                 }
-            } 
+            }
             else
             {
                 if(recipes.contains(recipeToken))
@@ -937,21 +909,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     public String getJobDisplayName()
     {
+        if (jobDisplayName.isEmpty())
+        {
+            jobDisplayName = createJob(null).getName();
+        }
         return jobDisplayName;
     }
 
-    /**
-     * Set the job Display name
-     * @param jobDisplayName the localization ID for the display name
-     */
-    public void setJobDisplayName(String jobDisplayName)
-    {
-        if(this.jobDisplayName.isEmpty())
-        {
-            this.jobDisplayName = jobDisplayName;
-        }
-    }
-    
     /**
      * AbstractBuildingWorker View for clients.
      */

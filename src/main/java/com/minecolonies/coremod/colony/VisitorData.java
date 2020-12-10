@@ -129,10 +129,13 @@ public class VisitorData extends CitizenData implements IVisitorData
         }
         else if (getHomeBuilding() != null)
         {
-            final BlockPos spawnPos = BlockPosUtil.findAround(getColony().getWorld(), getHomeBuilding().getID(), 1, 1, bs -> bs.getMaterial() == Material.AIR);
-            if (spawnPos != null)
+            if (WorldUtil.isEntityBlockLoaded(getColony().getWorld(), getHomeBuilding().getID()))
             {
-                getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), spawnPos, true);
+                final BlockPos spawnPos = BlockPosUtil.findAround(getColony().getWorld(), getHomeBuilding().getID(), 1, 1, bs -> bs.getMaterial() == Material.AIR);
+                if (spawnPos != null)
+                {
+                    getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), spawnPos, true);
+                }
             }
         }
     }

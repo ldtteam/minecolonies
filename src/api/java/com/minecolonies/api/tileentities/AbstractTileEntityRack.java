@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -52,11 +51,12 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
     /**
      * The inventory of the tileEntity.
      */
-    protected ItemStackHandler inventory = new RackInventory(DEFAULT_SIZE);
+    protected ItemStackHandler inventory;
 
     public AbstractTileEntityRack(final TileEntityType<?> tileEntityTypeIn)
     {
         super(tileEntityTypeIn);
+        inventory = createInventory(DEFAULT_SIZE);
     }
 
     /**
@@ -103,6 +103,13 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
     }
 
     /**
+     * Create the inventory that belongs to the rack.
+     * @param slots the number of slots.
+     * @return the created inventory,
+     */
+    public abstract ItemStackHandler createInventory(final int slots);
+
+    /**
      * Update the warehouse if available with the updated stack.
      *
      * @param stack the incoming stack.
@@ -142,13 +149,6 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
     public abstract void setInWarehouse(Boolean isInWarehouse);
 
     /**
-     * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.
-     *
-     * @return true if so.
-     */
-    public abstract boolean freeStacks();
-
-    /**
      * Get the amount of free slots in the inventory. This method checks the content list, it is therefore extremely fast.
      *
      * @return the amount of free slots (an integer).
@@ -159,10 +159,11 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
      *
      * @param stack             the stack to check.
+     * @param count             the min count it should have.
      * @param ignoreDamageValue ignore the damage value.
      * @return true if so.
      */
-    public abstract boolean hasItemStack(ItemStack stack, boolean ignoreDamageValue);
+    public abstract boolean hasItemStack(ItemStack stack, final int count, boolean ignoreDamageValue);
 
     /**
      * Check if a similar/same item as the stack is in the inventory. And return the count if so.
@@ -182,6 +183,14 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
     public abstract boolean hasItemStack(@NotNull Predicate<ItemStack> itemStackSelectionPredicate);
 
     /**
+     * Check if a similar stack is in the rack.
+     *
+     * @param stack stack to check.
+     * @return a set of different results depending on the similarity metric.
+     */
+    public abstract boolean hasSimilarStack(@NotNull ItemStack stack);
+
+    /**
      * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
      */
     public abstract void upgradeItemStorage();
@@ -193,11 +202,11 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      */
     public void setBuildingPos(final BlockPos pos)
     {
-        this.buildingPos = pos;
-        if (world != null)
+        if (world != null && (buildingPos == null || !buildingPos.equals(pos)))
         {
             markDirty();
         }
+        this.buildingPos = pos;
     }
 
     /* Get the amount of items matching a predicate in the inventory.

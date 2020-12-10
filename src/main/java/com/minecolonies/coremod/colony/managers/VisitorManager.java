@@ -88,7 +88,7 @@ public class VisitorManager implements IVisitorManager
             return;
         }
 
-        if (!visitor.isAlive())
+        if (visitor.isAlive())
         {
             existingCitizen.get().remove();
             data.setEntity(visitor);

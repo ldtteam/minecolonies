@@ -3,10 +3,12 @@ package com.minecolonies.api.compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.Tuple;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -158,7 +160,7 @@ public interface ICompatibilityManager
      *
      * @return the immutable list.
      */
-    List<ItemStack> getBlockList();
+    List<ItemStack> getListOfAllItems();
 
     /**
      * Test if an itemStack is compostable
@@ -213,12 +215,12 @@ public interface ICompatibilityManager
     boolean isPlantable(ItemStack itemStack);
 
     /**
-     * If an itemStack is a lucky block which can result in an extra ore drop.
+     * If a block is a lucky block which can result in an extra ore drop.
      *
-     * @param itemStack the stack to check.
+     * @param block the block to check.
      * @return true if so.
      */
-    boolean isLuckyBlock(final ItemStack itemStack);
+    boolean isLuckyBlock(final Block block);
 
     /**
      * Get a random lucky ore from a luckyblock.
@@ -235,4 +237,18 @@ public interface ICompatibilityManager
      * @return a tuple containing the stack and the level applied to it.
      */
     Tuple<ItemStack, Integer> getRandomEnchantmentBook(final int buildingLevel);
+
+    /**
+     * Check if the block is configured to bypass the colony restrictions.
+     * @param block the block to check.
+     * @return true if so.
+     */
+    boolean isFreeBlock(Block block);
+
+    /**
+     * Check if the position is configured to bypass the colony restrictions.
+     * @param block the position to check.
+     * @return true if so.
+     */
+    boolean isFreePos(BlockPos block);
 }

@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.controls.Image;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
@@ -8,6 +11,9 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -25,10 +31,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
+import static com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource.RessourceAvailability.*;
 
 /**
  * Window for the resource list item.
@@ -64,7 +73,6 @@ public class WindowResourceList extends AbstractWindowSkeleton
             }
         }
 
-        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.resourcescroll.nobuilder");
         this.builder = null;
     }
 
@@ -79,6 +87,12 @@ public class WindowResourceList extends AbstractWindowSkeleton
             final BuildingBuilder.View updatedView = (BuildingBuilder.View) newView;
             final PlayerInventory inventory = this.mc.player.inventory;
             final boolean isCreative = this.mc.player.isCreative();
+
+            final List<Delivery> deliveries = new ArrayList<>();
+            for (Map.Entry<Integer, Collection<IToken<?>>> entry : builder.getOpenRequestsByCitizen().entrySet())
+            {
+                addDeliveryRequestsToList(deliveries, ImmutableList.copyOf(entry.getValue()));
+            }
 
             resources.clear();
             resources.addAll(updatedView.getResources().values());
@@ -96,9 +110,41 @@ public class WindowResourceList extends AbstractWindowSkeleton
                         stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(resource.getItemStack()));
                 }
                 resource.setPlayerAmount(amountToSet);
+
+                resource.setAmountInDelivery(0);
+                for (final Delivery delivery : deliveries)
+                {
+                    if (ItemStackUtils.compareItemStacksIgnoreStackSize(resource.getItemStack(), delivery.getStack(), false, false))
+                    {
+                        resource.setAmountInDelivery(resource.getAmountInDelivery() + delivery.getStack().getCount());
+                    }
+                }
             }
 
-            resources.sort(new BuildingBuilderResource.ResourceComparator());
+            resources.sort(new BuildingBuilderResource.ResourceComparator(NOT_NEEDED, HAVE_ENOUGH, IN_DELIVERY, NEED_MORE, DONT_HAVE));
+        }
+    }
+
+    /**
+     * Adds the deliveries of the given tokens to the list
+     *
+     * @param requestList   list to add to
+     * @param tokensToCheck tokens to check
+     */
+    private void addDeliveryRequestsToList(final List<Delivery> requestList, final ImmutableCollection<IToken<?>> tokensToCheck)
+    {
+        for (final IToken<?> token : tokensToCheck)
+        {
+            final IRequest<?> request = builder.getColony().getRequestManager().getRequestForToken(token);
+            if (request.getRequest() instanceof Delivery && ((Delivery) request.getRequest()).getTarget().getInDimensionLocation().equals(builder.getID()))
+            {
+                requestList.add((Delivery) request.getRequest());
+            }
+
+            if (request.hasChildren())
+            {
+                addDeliveryRequestsToList(requestList, request.getChildren());
+            }
         }
     }
 
@@ -157,6 +203,12 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
         final Label resourceMissingLabel = rowPane.findPaneOfTypeByID(RESOURCE_MISSING, Label.class);
         final Label neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Label.class);
+
+        if (resource.getAmountInDelivery() > 0)
+        {
+            rowPane.findPaneOfTypeByID(IN_DELIVERY_ICON, Image.class).setVisible(true);
+            rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Label.class).setLabelText("" + resource.getAmountInDelivery());
+        }
 
         switch (resource.getAvailabilityStatus())
         {

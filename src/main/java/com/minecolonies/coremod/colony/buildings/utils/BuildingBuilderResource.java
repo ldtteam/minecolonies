@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Information about a resource. - How many are needed to finish the build - How many are available to the builder - How many are in the player's inventory (client side only)
@@ -15,6 +17,11 @@ public class BuildingBuilderResource extends ItemStorage
 {
     private int amountAvailable;
     private int amountPlayer;
+
+    /**
+     * The amount currently beeing delivered
+     */
+    private int amountInDelivery = 0;
 
     /**
      * Constructor for a resource but with available items.
@@ -91,10 +98,18 @@ public class BuildingBuilderResource extends ItemStorage
         {
             if (amountPlayer == 0)
             {
+                if (amountInDelivery > 0)
+                {
+                    return RessourceAvailability.IN_DELIVERY;
+                }
                 return RessourceAvailability.DONT_HAVE;
             }
             if (amountPlayer < (getAmount() - amountAvailable))
             {
+                if (amountInDelivery > 0)
+                {
+                    return RessourceAvailability.IN_DELIVERY;
+                }
                 return RessourceAvailability.NEED_MORE;
             }
             return RessourceAvailability.HAVE_ENOUGH;
@@ -163,12 +178,23 @@ public class BuildingBuilderResource extends ItemStorage
         amountPlayer = amount;
     }
 
+    public int getAmountInDelivery()
+    {
+        return amountInDelivery;
+    }
+
+    public void setAmountInDelivery(final int amountInDelivery)
+    {
+        this.amountInDelivery = amountInDelivery;
+    }
+
     /**
      * Availability status of the resource. according to the builder's chest, inventory and the player's inventory
      */
     public enum RessourceAvailability
     {
         NOT_NEEDED,
+        IN_DELIVERY,
         DONT_HAVE,
         NEED_MORE,
         HAVE_ENOUGH
@@ -181,7 +207,16 @@ public class BuildingBuilderResource extends ItemStorage
      */
     public static class ResourceComparator implements Comparator<BuildingBuilderResource>, Serializable
     {
-        private static final long serialVersionUID = 1;
+        private static final long                                serialVersionUID = 1;
+        private final        Map<RessourceAvailability, Integer> order            = new HashMap<>();
+
+        public ResourceComparator(final RessourceAvailability... resourceOrder)
+        {
+            for (int i = 0; i < resourceOrder.length; i++)
+            {
+                order.put(resourceOrder[i], i);
+            }
+        }
 
         /**
          * Compare to resource together.
@@ -194,6 +229,11 @@ public class BuildingBuilderResource extends ItemStorage
             if (resource1.getAvailabilityStatus() == resource2.getAvailabilityStatus())
             {
                 return resource1.getName().compareTo(resource2.getName());
+            }
+
+            if (!order.isEmpty())
+            {
+                return order.get(resource2.getAvailabilityStatus()).compareTo(order.get(resource1.getAvailabilityStatus()));
             }
 
             return resource2.getAvailabilityStatus().compareTo(resource1.getAvailabilityStatus());

@@ -17,6 +17,7 @@
                 <button id="resourceAdd" size="16 16" label="↥" pos="110 7"/>
                 <label id="resourceId" size="1 1" pos="100 100"/>
                 <label id="resourceQuantity" size="1 1" pos="100 100"/>
+                <label id="upgradeProgress" size="10 30" pos="130 3" color="black"/>
             </box>
             <buttonimage id="sort" size="86 17" pos="50 70" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"

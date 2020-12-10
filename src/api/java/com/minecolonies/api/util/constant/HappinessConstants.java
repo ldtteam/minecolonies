@@ -36,7 +36,6 @@ public final class HappinessConstants
      */
     public static final String TAG_HAPPINESS = "happinessHandler";
 
-    //todo add remainign constants here
     /**
      * Happiness modifiers
      */
