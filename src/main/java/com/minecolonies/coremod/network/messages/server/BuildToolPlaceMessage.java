@@ -371,6 +371,10 @@ public class BuildToolPlaceMessage implements IMessage
 
             building.setStyle(sn.getStyle());
             building.setBuildingLevel(level);
+            if (level > 0)
+            {
+                building.setDeconstructed();
+            }
 
             if (!(building instanceof IRSComponent))
             {

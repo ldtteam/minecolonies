@@ -259,15 +259,11 @@
   "minecolonies.config.maximalretries.comment": "The maximal amount of tries that the request system will perform for retryable requests. Higher increases server load.",
   "minecolonies.config.delaybetweenretries": "Delay Between Retries",
   "minecolonies.config.delaybetweenretries.comment": "The amount of ticks between retries of the request system for retryable requests. Lower increases server load.",
-  "minecolonies.config.maximalbuildingstogather": "Maximal Buildings to Gather from",
-  "minecolonies.config.maximalbuildingstogather.comment": "The maximal amount of buildings the Courier should try to gather from before attempting a drop off at the warehouse.",
-  "minecolonies.config.minimalbuildingstogather": "Minimal Buildings to Gather from",
-  "minecolonies.config.minimalbuildingstogather.comment": "The minimal amount of buildings the Courier should try to gather from before attempting a drop off at the warehouse.",
   "minecolonies.config.creativeresolve": "Creatively Resolve Requests",
   "minecolonies.config.creativeresolve.comment": "Should the request system creatively resolve (if possible) when the player is required to resolve a request.",
   "minecolonies.config.canplayeruseresetcommand": "Can a Player use Reset Command",
   "minecolonies.config.canplayeruseresetcommand.comment": "Should a player be allowed to use the /mc colony rs reset command?",
-
+  
   "minecolonies.config.default.boolean": "[Default: %b]",
   "minecolonies.config.default.int": "[Default: %d, min: %d, max: %d]",
   "minecolonies.config.default.long": "[Default: %d, min: %d, max: %d]",
