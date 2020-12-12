@@ -124,6 +124,11 @@ public class Tree
     private boolean dynamicTree = false;
 
     /**
+     * If the tree is a Nether Tree
+     */
+    private boolean netherTree = false;
+
+    /**
      * Private constructor of the tree. Used by the equals and createFromNBt method.
      */
     private Tree()
@@ -159,6 +164,10 @@ public class Tree
             woodBlocks.clear();
             slimeTree = Compatibility.isSlimeBlock(bottomBlock);
             sapling = calcSapling(world);
+            if (sapling.getItem().isIn(ModTags.fungi))
+            {
+                netherTree = true;
+            }
 
             // Calculate the Tree's variant Property, add mod compat for other property names later when needed
             variant = BlockStateUtils.getPropertyByNameFromState(world.getBlockState(location), "variant");
@@ -691,7 +700,7 @@ public class Tree
                 for (int locZ = locZMin; locZ <= locZMax; locZ++)
                 {
                     final BlockPos leaf = new BlockPos(locX, locY, locZ);
-                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES)
+                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES || world.getBlockState(leaf).getBlock().isIn(BlockTags.WART_BLOCKS) || world.getBlockState(leaf).getBlock() == Blocks.SHROOMLIGHT)
                     {
                         leaves.add(leaf);
                     }
@@ -784,6 +793,14 @@ public class Tree
     public boolean isDynamicTree()
     {
         return dynamicTree;
+    }
+
+    /**
+     * @return if tree is nether tree
+     */
+    public boolean isNetherTree()
+    {
+        return netherTree;
     }
 
     /**

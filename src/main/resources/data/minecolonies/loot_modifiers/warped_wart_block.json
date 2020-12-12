@@ -1,0 +1,24 @@
+{
+  "type": "minecolonies:warped_wart_block",
+  "conditions":
+  [
+    {
+      "condition": "minecraft:block_state_property",
+      "block": "minecraft:warped_wart_block"
+    },
+    {
+      "condition": "minecraft:random_chance",
+      "chance": 0.1
+    },
+    {
+      "condition": "minecraft:entity_properties",
+      "entity": "this",
+      "predicate":
+      {
+        "type": "minecolonies:citizen"
+      }
+    }
+  ],
+  "checkItem": "minecraft:warped_wart_block",
+  "replacement": "minecraft:warped_fungus"
+}

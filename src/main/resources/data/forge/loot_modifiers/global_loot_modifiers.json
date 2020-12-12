@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "entries": [
+   "minecolonies:nether_wart_block",
+    "minecolonies:warped_wart_block"
+  ]
+}
