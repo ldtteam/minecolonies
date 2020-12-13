@@ -160,8 +160,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue enableDebugLogging;
     public final ForgeConfigSpec.IntValue     maximalRetries;
     public final ForgeConfigSpec.IntValue     delayBetweenRetries;
-    public final ForgeConfigSpec.IntValue     maximalBuildingsToGather;
-    public final ForgeConfigSpec.IntValue     minimalBuildingsToGather;
     public final ForgeConfigSpec.BooleanValue creativeResolve;
     public final ForgeConfigSpec.BooleanValue canPlayerUseResetCommand;
 
@@ -981,8 +979,6 @@ public class ServerConfiguration extends AbstractConfiguration
         enableDebugLogging = defineBoolean(builder, "enabledebuglogging", false);
         maximalRetries = defineInteger(builder, "maximalretries", 3, 1, 10);
         delayBetweenRetries = defineInteger(builder, "delaybetweenretries", 1200, 30, 10000);
-        maximalBuildingsToGather = defineInteger(builder, "maximalbuildingstogather", 6, 1, 50);
-        minimalBuildingsToGather = defineInteger(builder, "minimalbuildingstogather", 3, 1, 50);
         creativeResolve = defineBoolean(builder, "creativeresolve", false);
         canPlayerUseResetCommand = defineBoolean(builder, "canplayeruseresetcommand", false);
 
