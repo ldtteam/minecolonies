@@ -45,9 +45,9 @@ public interface ILocalResearchTree
     /**
      * Checks if a given research is complete.
      *
-     * @return null if doesn't exist, true if complete, false if not completed.
+     * @return true if complete or if no such research is loaded, false if not completed.
      */
-     Boolean hasCompletedResearch(String researchId);
+     boolean hasCompletedResearch(final String researchId);
 
     /**
      * Finish a research and remove it from the inProgress list.

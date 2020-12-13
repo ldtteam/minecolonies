@@ -1,6 +1,5 @@
 {
   "comment": "name: Shield Usage * description : Knights Unlock Shield Use",
   "id": "shieldusageunlock",
-  "effect": true,
-  "effectType": "unlockAbility"
+  "effect": true
 }

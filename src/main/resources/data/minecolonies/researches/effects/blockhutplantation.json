@@ -1,6 +1,5 @@
 {
   "comment": "name: Plantation * description : Unlocks Plantation",
   "id": "blockhutplantation",
-  "effect": true,
-  "effectType": "unlockBuilding"
+  "effect": true
 }

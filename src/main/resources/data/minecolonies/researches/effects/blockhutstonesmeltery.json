@@ -1,6 +1,5 @@
 {
   "comment": "name: Stonesmeltery * description : Unlocks Stonesmeltery",
   "id": "blockhutstonesmeltery",
-  "effect": true,
-  "effectType": "unlockBuilding"
+  "effect": true
 }

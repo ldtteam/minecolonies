@@ -204,7 +204,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final Label effectLabel = new Label();
             if (!research.getEffects().isEmpty())
             {
-                TranslationTextComponent effectText = new TranslationTextComponent("");
+                final TranslationTextComponent effectText = new TranslationTextComponent("");
                 for (int txt = 0; txt < research.getEffects().size(); txt++)
                 {
                     hoverTexts.add(research.getEffects().get(txt).getDesc());
@@ -254,7 +254,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
             else if (!research.getResearchRequirement().isEmpty() && state != ResearchState.FINISHED)
             {
-                TranslationTextComponent requirementText = new TranslationTextComponent("");
+                final TranslationTextComponent requirementText = new TranslationTextComponent("");
                 for(int txt = 0; txt < research.getResearchRequirement().size(); txt++)
                 {
                     hoverTexts.add(research.getResearchRequirement().get(txt).getDesc());
@@ -354,7 +354,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                         {
                             item = Items.AIR.asItem();
                         }
-                        ItemStack stack = new ItemStack(item);
+                        final ItemStack stack = new ItemStack(item);
                         stack.setCount(((BuildingResearchRequirement) requirement).getBuildingLevel());
                         final ItemIcon icon = new ItemIcon();
                         icon.setItem(stack);

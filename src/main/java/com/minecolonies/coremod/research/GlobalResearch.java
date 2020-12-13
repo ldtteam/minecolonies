@@ -46,7 +46,7 @@ public class GlobalResearch implements IGlobalResearch
     public static final String RESEARCH_NAME_PROP = "name";
 
     /**
-     * The property name that indicates research branch. For now, only "civilian", "technology", and "combat" render. Required.
+     * The property name that indicates research branch. Required.
      */
     public static final String RESEARCH_BRANCH_PROP = "branch";
 
@@ -130,7 +130,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The parent research which has to be completed first.
      */
-    private String parent = "";
+    private String parent;
 
     /**
      * The string id of the research.
@@ -155,7 +155,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The research effects of this research.
      */
-    private final List<IResearchEffect<?>> effects = new ArrayList<>();
+    private final List<IResearchEffect> effects = new ArrayList<>();
 
     /**
      * The depth level in the tree.
@@ -190,7 +190,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The requirement for this research.
      */
-    private List<IResearchRequirement> requirements = new ArrayList<>();
+    private final List<IResearchRequirement> requirements = new ArrayList<>();
 
     /**
      * Create the new research.
@@ -222,7 +222,7 @@ public class GlobalResearch implements IGlobalResearch
      * @param universityLevel the depth in the tree.
      * @param branch          the branch it is on.
      */
-    public GlobalResearch(final String id, final String branch, final int universityLevel, final List<IResearchEffect<?>> effects)
+    public GlobalResearch(final String id, final String branch, final int universityLevel, final List<IResearchEffect> effects)
     {
         this.id = id;
         this.name = id;
@@ -379,7 +379,7 @@ public class GlobalResearch implements IGlobalResearch
     @Override
     public void setRequirement(final List<IResearchRequirement> requirements)
     {
-        this.requirements = requirements;
+        this.requirements.addAll(requirements);
     }
 
     @Override
@@ -401,7 +401,7 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public List<IResearchEffect<?>> getEffects()
+    public List<IResearchEffect> getEffects()
     {
         return effects;
     }
@@ -412,7 +412,7 @@ public class GlobalResearch implements IGlobalResearch
      * @param researchJson the json representing the recipe
      * @return new instance of ResearchRecipe
      */
-    public GlobalResearch(@NotNull final JsonObject researchJson, ResourceLocation resourceLocation, Map<String, ResearchEffectCategory> effectCategories)
+    public GlobalResearch(@NotNull final JsonObject researchJson, final ResourceLocation resourceLocation, final Map<String, ResearchEffectCategory> effectCategories)
     {
         this.resourceLocation = resourceLocation;
 
@@ -430,7 +430,14 @@ public class GlobalResearch implements IGlobalResearch
         parseEffects(researchJson, effectCategories);
     }
 
-    private String getResearchId(JsonObject researchJson, ResourceLocation resourceLocation)
+    /**
+     * Gets the unique ID for a research from a JSON object, if it exists and is valid, or an empty string otherwise.
+     *
+     * @param researchJson        A json object to retrieve the ID from.
+     * @param resourceLocation    The {@link ResourceLocation} of the json being parsed.
+     * @return                    The ResearchID as a String.
+     */
+    private String getResearchId(final JsonObject researchJson, final ResourceLocation resourceLocation)
     {
         if (researchJson.has(RESEARCH_ID_PROP) && researchJson.get(RESEARCH_ID_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_ID_PROP).getAsJsonPrimitive().isString())
         {
@@ -443,7 +450,13 @@ public class GlobalResearch implements IGlobalResearch
         }
     }
 
-    private String getResearchName(JsonObject researchJson)
+    /**
+     * Gets the optional name for a research from a JSON object, if it exists and is valid, or an empty string otherwise.
+     *
+     * @param researchJson        A json object to retrieve the Name from.
+     * @return                    The Research Name as a String.
+     */
+    private String getResearchName(final JsonObject researchJson)
     {
         if (researchJson.has(RESEARCH_NAME_PROP) && researchJson.get(RESEARCH_NAME_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_NAME_PROP).getAsJsonPrimitive().isString())
         {
@@ -455,7 +468,14 @@ public class GlobalResearch implements IGlobalResearch
         }
     }
 
-    private String getBranch(JsonObject researchJson, ResourceLocation resourceLocation)
+    /**
+     * Gets the branch for a research from a JSON object, if it exists and is valid, or "parseerrors" otherwise.
+     *
+     * @param researchJson        A json object to retrieve the ID from.
+     * @param resourceLocation    The {@link ResourceLocation} of the json being parsed.
+     * @return                    The Research Branch as a String.
+     */
+    private String getBranch(final JsonObject researchJson, final ResourceLocation resourceLocation)
     {
         if (researchJson.has(RESEARCH_BRANCH_PROP) && researchJson.get(RESEARCH_BRANCH_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_BRANCH_PROP).getAsJsonPrimitive().isString())
         {
@@ -464,11 +484,17 @@ public class GlobalResearch implements IGlobalResearch
         else
         {
             Log.getLogger().error("Error in Research Branch for" + resourceLocation);
-            return "parserrors";
+            return "parseerrors";
         }
     }
 
-    private int getUniversityLevel(JsonObject researchJson)
+    /**
+     * Gets the required university level from a JSON object, if it exists and is valid, or returns 1 if not.
+     *
+     * @param researchJson        A json object to retrieve the requiredUniversityLevel from.
+     * @return                    The required university level as an integer.
+     */
+    private int getUniversityLevel(final JsonObject researchJson)
     {
         if (researchJson.has(RESEARCH_UNIVERSITY_LEVEL_PROP) && researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).getAsJsonPrimitive().isNumber())
         {
@@ -481,7 +507,13 @@ public class GlobalResearch implements IGlobalResearch
         }
     }
 
-    private String getParent(JsonObject researchJson)
+    /**
+     * Gets the Parent Research ID for a research from a JSON object, if it exists and is valid, or an empty string otherwise.
+     *
+     * @param researchJson        A json object to retrieve the Parent property from.
+     * @return                    The Parent ResearchID as a String.
+     */
+    private String getParent(final JsonObject researchJson)
     {
         if (researchJson.has(RESEARCH_PARENT_PROP) && researchJson.get(RESEARCH_PARENT_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_PARENT_PROP).getAsJsonPrimitive().isString())
         {
@@ -493,7 +525,14 @@ public class GlobalResearch implements IGlobalResearch
         }
     }
 
-    private boolean getBooleanSafe(JsonObject researchJson, String property)
+    /**
+     * Gets a boolean value from a JSON object, if it exists and is valid, or false otherwise.
+     *
+     * @param researchJson        A json object to retrieve the ID from.
+     * @param property            The property name being searched for.
+     * @return                    True if the field is present and set true, false if false, if not a boolean, or if not present.
+     */
+    private boolean getBooleanSafe(final JsonObject researchJson, final String property)
     {
         if (researchJson.has(property) && researchJson.get(property).isJsonPrimitive() && researchJson.get(property).getAsJsonPrimitive().isBoolean())
         {
@@ -505,7 +544,12 @@ public class GlobalResearch implements IGlobalResearch
         }
     }
 
-    private void parseRequirements(JsonObject researchJson)
+    /**
+     * Gets the Research Building, Item, and Research requirements, and if present and valid, assigns them in the GlobalResearch.
+     *
+     * @param researchJson        A json object to evaluate for requirements properties.
+     */
+    private void parseRequirements(final JsonObject researchJson)
     {
         if (researchJson.has(RESEARCH_REQUIREMENTS_PROP) && researchJson.get(RESEARCH_REQUIREMENTS_PROP).isJsonArray())
         {
@@ -568,7 +612,15 @@ public class GlobalResearch implements IGlobalResearch
         }
     }
 
-    private void parseEffects(JsonObject researchJson, Map<String, ResearchEffectCategory> effectCategories)
+    /**
+     * Parses a JSON object for Research Effects IDs and their levels, and if present and valid,
+     * finds the equivalent Research Effect values from the Effect Categories for those levels.
+     * Builds and assigns IResearchEffect if valid.
+     *
+     * @param researchJson        A json object to retrieve the ID from.
+     * @param effectCategories    The Map of {@link ResearchEffectCategory} used to convert ResearchEffectIds into absolute effects and descriptions.
+     */
+    private void parseEffects(final JsonObject researchJson, final Map<String, ResearchEffectCategory> effectCategories)
     {
         if (researchJson.has(RESEARCH_EFFECTS_PROP) && researchJson.get(RESEARCH_EFFECTS_PROP).isJsonArray())
         {
@@ -583,8 +635,8 @@ public class GlobalResearch implements IGlobalResearch
                             final int strength;
                             if (entry.getValue().isJsonPrimitive() && entry.getValue().getAsJsonPrimitive().isNumber() && effectCategories.containsKey(entry.getKey()))
                             {
-                                int requested = entry.getValue().getAsNumber().intValue();
-                                int max = effectCategories.get(entry.getKey()).getMaxLevel();
+                                final int requested = entry.getValue().getAsNumber().intValue();
+                                final int max = effectCategories.get(entry.getKey()).getMaxLevel();
                                 if(requested <= max)
                                 {
                                     strength = entry.getValue().getAsNumber().intValue();
@@ -602,30 +654,8 @@ public class GlobalResearch implements IGlobalResearch
                                 Log.getLogger().warn("Research " + this.id + " did not have a valid effect strength.");
                                 strength = 1;
                             }
-                            final IResearchEffect effect;
-                            if(effectCategories.get(entry.getKey()).getType().contains("multiplier"))
-                            {
-                                effect = new MultiplierModifierResearchEffect(entry.getKey(),
-                                  effectCategories.get(entry.getKey()).getAbsolute(strength), effectCategories.get(entry.getKey()).getRelative(strength));
-                            }
-                            else if(effectCategories.get(entry.getKey()).getType().contains("addition"))
-                            {
-                                effect = new AdditionModifierResearchEffect(entry.getKey(),
-                                  effectCategories.get(entry.getKey()).getAbsolute(strength), effectCategories.get(entry.getKey()).getRelative(strength));
-                            }
-                            else if(effectCategories.get(entry.getKey()).getType().contains("unlockAbility"))
-                            {
-                                effect = new UnlockAbilityResearchEffect(entry.getKey(), strength);
-                            }
-                            else if(effectCategories.get(entry.getKey()).getType().contains("unlockBuilding"))
-                            {
-                                effect = new UnlockBuildingResearchEffect(entry.getKey(), strength);
-                            }
-                            else
-                            {
-                                effect = new UnlockAbilityResearchEffect("", 1);
-                            }
-                            this.effects.add(effect);
+                            this.effects.add(new GlobalResearchEffect(entry.getKey(),
+                              effectCategories.get(entry.getKey()).get(strength), effectCategories.get(entry.getKey()).getDisplay(strength)));
                         }
                         else
                         {

@@ -5,21 +5,17 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
-import com.minecolonies.api.research.IGlobalResearch;
-import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.effects.AbstractResearchEffect;
-import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.research.LocalResearch;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
+import com.minecolonies.coremod.research.GlobalResearchEffect;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.block.Block;
@@ -30,7 +26,6 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -264,7 +259,7 @@ public class CustomRecipe
 
     /**
      * Parse a Json object into a Custom recipe
-     * 
+     *
      * @param recipeJson the json representing the recipe
      * @return new instance of CustomRecipe
      */
@@ -416,87 +411,103 @@ public class CustomRecipe
     {
         this.recipeId = recipeId;
     }
- 
+
     /**
      * Check to see if the recipe is currently valid for the building
      * This does research checks, to verify that the appropriate researches are in the correct states
+     * @param building      Building to check recipe against.
      */
     public boolean isValidForBuilding(IBuildingWorker building)
     {
-        boolean requiredEffect = false;
-        boolean excludedEffect = false;
-        //List<AbstractResearchEffect<?>> requiredEffects = new ArrayList<>();
-        //List<AbstractResearchEffect<?>> excludedEffects = new ArrayList<>();
         final IColony colony = building.getColony();
-        final int bldgLevel = building.getBuildingLevel();
-
-        IGlobalResearchTree gr = IGlobalResearchTree.getInstance();
+        final boolean requiredEffectPresent;
         if (researchId != null)
         {
-            if(Boolean.TRUE.equals(IGlobalResearchTree.getInstance().hasUnlockAbilityEffect(researchId)))
-            {
-                requiredEffect = true;
-            }
-            else
-            {
-                if(Boolean.TRUE.equals(colony.getResearchManager().getResearchTree().hasCompletedResearch(researchId)))
-                {
-                    for(IResearchEffect effect : IGlobalResearchTree.getInstance().getEffectsForResearch(researchId))
-                    {
-                        if(effect instanceof UnlockAbilityResearchEffect)
-                        {
-                            requiredEffect = true;
-                        }
-                    }
-                }
-            }
+            requiredEffectPresent = isUnlockEffectResearched(researchId, colony);
         }
-
+        else
+        {
+            requiredEffectPresent = false;
+        }
+        final boolean excludedEffectPresent;
         if (excludedResearchId != null)
         {
-            if(Boolean.TRUE.equals(IGlobalResearchTree.getInstance().hasUnlockAbilityEffect(excludedResearchId)))
-            {
-                excludedEffect = true;
-            }
-            else
-            {
-                if(Boolean.TRUE.equals(colony.getResearchManager().getResearchTree().hasCompletedResearch(excludedResearchId)))
-                {
-                    for(IResearchEffect effect : IGlobalResearchTree.getInstance().getEffectsForResearch(excludedResearchId))
-                    {
-                        if(effect instanceof UnlockAbilityResearchEffect)
-                        {
-                            excludedEffect = true;
-                        }
-                    }
-                }
-            }
+            excludedEffectPresent = isUnlockEffectResearched(excludedResearchId, colony);
+        }
+        else
+        {
+            excludedEffectPresent = false;
+        }
+        if (isPrecursorRecipeMissing(building))
+        {
+            return false;
         }
 
+        final int bldgLevel = building.getBuildingLevel();
+
+        return (researchId == null || requiredEffectPresent)
+                 && (excludedResearchId == null || !excludedEffectPresent)
+                 && (bldgLevel >= minBldgLevel)
+                 && (bldgLevel <= maxBldgLevel);
+    }
+
+    /**
+     * Check if a given researchId has been completed and has an unlock ability effect.
+     * @param researchId    The id of the research to check for.
+     * @param colony        The colony being checked against.
+     */
+    private boolean isUnlockEffectResearched(String researchId, IColony colony)
+    {
+        //Check first if the research effect exists.
+        if (!IGlobalResearchTree.getInstance().hasResearchEffect(researchId) && !IGlobalResearchTree.getInstance().hasResearch(researchId))
+        {
+            // If there's nothing registered with this effect, and no research with this key, we'll default to acting as if research was completed.
+            return true;
+        }
+        else
+        {
+            if (colony.getResearchManager().getResearchEffects().getEffectBoolean(researchId))
+            {
+                // Research effect queried, present, and set to true.
+                return true;
+            }
+            if (colony.getResearchManager().getResearchTree().hasCompletedResearch(researchId))
+            {
+                // Research ID queried and present.
+                // This will allow simple Recipe-style unlocks to exist without needing an extra effect category.
+                return true;
+            }
+        }
+        // Research ID queried and present or present as an effect, but not completed or does not have an unlock effect.
+        return false;
+    }
+
+    /**
+     * Check if a precursor recipe is missing from the building.
+     * @param building      The building which would contain the precursor recipe.
+     * @return              True if a precusor recipe was required and not present.
+     */
+    private boolean isPrecursorRecipeMissing(IBuildingWorker building)
+    {
         if(mustExist)
         {
-            boolean found = false;
             final IRecipeStorage compareStorage = this.getRecipeStorage();
             final ResourceLocation recipeSource = this.getRecipeId();
-            for(IToken<?> recipeToken: building.getRecipes())
+            for (IToken<?> recipeToken : building.getRecipes())
             {
                 final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(recipeToken);
-                if((storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeSource)) || (storage.getCleanedInput().containsAll(compareStorage.getCleanedInput()) && compareStorage.getCleanedInput().containsAll(storage.getCleanedInput())))
+                if ((storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeSource)) || (
+                  storage.getCleanedInput().containsAll(compareStorage.getCleanedInput())
+                    && compareStorage.getCleanedInput()
+                         .containsAll(storage.getCleanedInput())))
                 {
-                    found = true;
-                    break;
+                    return false;
                 }
             }
-            if(!found)
-            {
-                return false; 
-            }
+            return true;
         }
-
-        return (researchId == null || requiredEffect)
-            && (excludedResearchId == null || !excludedEffect)
-            && (bldgLevel >= minBldgLevel)
-            && (bldgLevel <= maxBldgLevel);
+        // if no precursor needed.
+        return false;
     }
 
     /**

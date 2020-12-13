@@ -1,5 +1,6 @@
 package com.minecolonies.api.research;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
@@ -36,4 +37,11 @@ public interface IResearchManager
      * @return the ResearchEffects object.
      */
     IResearchEffectManager getResearchEffects();
+
+    /**
+     * Tick the research manager on colony tick.
+     *
+     * @param colony the event.
+     */
+    void onColonyTick(final IColony colony);
 }

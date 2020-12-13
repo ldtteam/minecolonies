@@ -1,6 +1,5 @@
 {
   "comment": "name: Smeltery * description : Unlocks Smeltery",
   "id": "blockhutsmeltery",
-  "effect": true,
-  "effectType": "unlockBuilding"
+  "effect": true
 }

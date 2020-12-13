@@ -25,7 +25,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveCitizenMessage;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -463,16 +462,11 @@ public class CitizenManager implements ICitizenManager
      */
     private double maxCitizensFromResearch()
     {
-        double max = 25;
-        final AdditionModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(CITIZEN_CAP, AdditionModifierResearchEffect.class);
-        if (effect != null)
+        final double max = 25 + colony.getResearchManager().getResearchEffects().getEffectValue(CITIZEN_CAP);
+        // TODO research data rework
+        if (max >= MineColonies.getConfig().getServer().maxCitizenPerColony.get())
         {
-            max += effect.getEffect();
-            // TODO research data rework
-            if (max >= MineColonies.getConfig().getServer().maxCitizenPerColony.get())
-            {
-                return MineColonies.getConfig().getServer().maxCitizenPerColony.get();
-            }
+            return MineColonies.getConfig().getServer().maxCitizenPerColony.get() - 25;
         }
         return max;
     }

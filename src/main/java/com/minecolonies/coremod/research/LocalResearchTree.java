@@ -3,6 +3,7 @@ package com.minecolonies.coremod.research;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.ILocalResearchTree;
 import com.minecolonies.api.research.effects.IResearchEffect;
@@ -58,27 +59,23 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
-    public Boolean hasCompletedResearch(String researchId)
+    public boolean hasCompletedResearch(final String researchId)
     {
-        boolean researchIsLoaded = false;
-        for(Map.Entry<String, Map<String, ILocalResearch>> branches : researchTree.entrySet())
+        if(IGlobalResearchTree.getInstance().hasResearch(researchId))
         {
-            if(branches.getValue().containsKey(researchId))
+            if(isComplete.contains(researchId))
             {
-                researchIsLoaded = true;
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
-        if(!researchIsLoaded)
-        {
-            return null;
-        }
-        if(isComplete.contains(researchId))
-        {
-            return true;
-        }
+        // For now, if a research requirement doesn't exist, we'll act as though it was completed.
         else
         {
-            return false;
+            return true;
         }
     }
 
@@ -128,7 +125,7 @@ public class LocalResearchTree implements ILocalResearchTree
     @Override
     public void finishResearch(final String id)
     {
-        inProgress.remove(id);
+        inProgress.remove(id); isComplete.add(id);
     }
 
     @Override
@@ -191,7 +188,7 @@ public class LocalResearchTree implements ILocalResearchTree
                   // or to have a different research that was in a now-removed datapack.
                   if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearch(research.getBranch(), research.getId()))
                   {
-                      for (IResearchEffect effect : MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearch(research.getBranch(), research.getId()).getEffects())
+                      for (final IResearchEffect effect : MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearch(research.getBranch(), research.getId()).getEffects())
                       {
                           effects.applyEffect(effect);
                       }

@@ -1,6 +1,5 @@
 {
   "comment": "name: Fletcher * description : Unlocks Fletcher",
   "id": "blockhutfletcher",
-  "effect": true,
-  "effectType": "unlockBuilding"
+  "effect": true
 }

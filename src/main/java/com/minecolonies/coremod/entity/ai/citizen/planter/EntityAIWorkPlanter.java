@@ -9,7 +9,6 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import net.minecraft.block.AirBlock;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
@@ -202,8 +201,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             }
         }
 
-        final UnlockAbilityResearchEffect researchEffect = plantation.getColony().getResearchManager().getResearchEffects().getEffect(PLANT_2, UnlockAbilityResearchEffect.class);
-        if (researchEffect != null && researchEffect.getEffect())
+        if (plantation.getColony().getResearchManager().getResearchEffects().getEffectBoolean(PLANT_2))
         {
             plantation.nextPhase();
         }

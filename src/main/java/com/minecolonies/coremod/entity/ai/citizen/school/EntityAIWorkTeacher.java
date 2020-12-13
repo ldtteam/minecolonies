@@ -16,8 +16,6 @@ import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.colony.jobs.JobTeacher;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
@@ -129,7 +127,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
 
         if (maxSittingTicks == 0 || worker.ridingEntity == null)
         {
-            // Sit for 2-100 seconds.
+            // Sit for 2-100 seconds, modified by Skill.Mana
             final int jobModifier = (int) (100 / Math.max(1, getSecondarySkillLevel() / 2.0));
             maxSittingTicks = worker.getRandom().nextInt(jobModifier / 2) + jobModifier / 2;
 
@@ -158,13 +156,9 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
             );
         }
 
+        // Intelligence + PrimarySkill(Knowledge) for amount gained per Teach state.
         double xp = 1.5 * (1.0 + worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) / 10.0);
-        final MultiplierModifierResearchEffect effect =
-          worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TEACHING, MultiplierModifierResearchEffect.class);
-        if (effect != null)
-        {
-            xp *= (1 + effect.getEffect());
-        }
+        xp *= (1 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(TEACHING));
         xp *= (1 + (getPrimarySkillLevel() / 10.0));
 
         pupilToTeach.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, xp, pupilToTeach.getCitizenData());

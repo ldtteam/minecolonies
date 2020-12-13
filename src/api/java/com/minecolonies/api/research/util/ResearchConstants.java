@@ -93,7 +93,7 @@ public final class ResearchConstants
 
     //Unlock Ability modifiers.
     public static final String CRUSHING_11       = "crushing11unlock";
-    public static final String ARROW_ITEMS       = "consumearrowsunlock";
+    public static final String ARCHER_USE_ARROWS = "consumearrowsunlock";
     public static final String KNIGHT_TAUNT      = "knighttauntmobsunlock";
     public static final String FIRE_RES          = "minerfireresunlock";
     public static final String ARROW_PIERCE      = "piercingarrowsunlock";

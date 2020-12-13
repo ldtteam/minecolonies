@@ -1,6 +1,5 @@
 {
   "comment": "name: Composter * description : Unlocks Composter",
   "id": "blockhutcomposter",
-  "effect": true,
-  "effectType": "unlockBuilding"
+  "effect": true
 }

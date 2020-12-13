@@ -10,7 +10,6 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -142,13 +141,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
                 totalWeight += happinessModifier.getWeight();
             }
 
-            double happinessResult = (total / totalWeight);
-            final MultiplierModifierResearchEffect xpBonus =
-              colony.getResearchManager().getResearchEffects().getEffect(HAPPINESS, MultiplierModifierResearchEffect.class);
-            if (xpBonus != null)
-            {
-                happinessResult *= (1 + xpBonus.getEffect());
-            }
+            final double happinessResult = (total / totalWeight) * (1 + colony.getResearchManager().getResearchEffects().getEffectValue(HAPPINESS));
 
             cachedHappiness = Math.min(10.0 * happinessResult, 10);
         }

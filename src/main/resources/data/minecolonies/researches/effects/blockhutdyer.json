@@ -1,6 +1,5 @@
 {
   "comment": "name: Dyer * description : Unlocks Dyer",
   "id": "blockhutdyer",
-  "effect": true,
-  "effectType": "unlockBuilding"
+  "effect": true
 }

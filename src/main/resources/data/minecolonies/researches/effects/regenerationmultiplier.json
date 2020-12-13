@@ -2,7 +2,6 @@
   "comment": "name: Regeneration * description : Citizen Regeneration +%d%%",
   "id": "regenerationmultiplier",
   "effect": true,
-  "effectType": "multiplierModifier",
   "levels": 
   [
    0.1,

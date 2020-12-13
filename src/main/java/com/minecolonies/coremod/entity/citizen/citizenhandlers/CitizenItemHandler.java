@@ -7,7 +7,6 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.BlockParticleEffectMessage;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -242,10 +241,15 @@ public class CitizenItemHandler implements ICitizenItemHandler
             return;
         }
 
+        if(citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(TOOL_DURABILITY))
         final MultiplierModifierResearchEffect effect =
           citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TOOL_DURABILITY, MultiplierModifierResearchEffect.class);
         if (effect != null)
         {
+            if (citizen.getRandom().nextDouble() < citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(TOOL_DURABILITY))
+            {
+                return;
+            }
             if (citizen.getRandom().nextDouble() > (1 / (1 + effect.getEffect())))
             {
                 return;

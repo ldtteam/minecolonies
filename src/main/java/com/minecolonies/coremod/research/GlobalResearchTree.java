@@ -34,21 +34,28 @@ public class GlobalResearchTree implements IGlobalResearchTree
      */
     private final Map<String, Map<String, IGlobalResearch>> researchTree = new HashMap<>();
 
+    /**
+     * The map containing all researches by ResourceLocation and ResearchID.
+     */
     private final Map<ResourceLocation, String> researchResourceLocations = new HashMap<>();
 
+    /**
+     * The list containing all resettable researches by ResourceLocation.
+     */
     private final List<ResourceLocation> resettableResearch = new ArrayList<>();
 
+    /**
+     * The list containing all autostart research.
+     */
     private final List<IGlobalResearch> autostartResearch = new ArrayList<>();
 
-    private final Map<String, IResearchEffect> unlockBuildingEffect = new HashMap<>();
-
-    private final Map<String, IResearchEffect> unlockAbilityEffect = new HashMap<>();
+    /**
+     * The map containing loaded Research Effect IDs.
+     */
+    private final List<String> researchEffectsIds = new ArrayList<>();
 
     @Override
-    public IGlobalResearch getResearch(final String branch, final String id)
-    {
-        return researchTree.get(branch).get(id);
-    }
+    public IGlobalResearch getResearch(final String branch, final String id) { return researchTree.get(branch).get(id); }
 
     @Override
     public ResourceLocation getResearchResourceLocation(final String branch, final String id) {  return researchTree.get(branch).get(id).getResourceLocation(); }
@@ -60,7 +67,20 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public void addResearch(final String branch, final IGlobalResearch research, Boolean isReloadedWithWorld)
+    public boolean hasResearch(final String id)
+    {
+        for(final Map.Entry<String, Map<String, IGlobalResearch>> branch: researchTree.entrySet())
+        {
+            if(branch.getValue().containsKey(id))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void addResearch(final String branch, final IGlobalResearch research, final boolean isReloadedWithWorld)
     {
         final Map<String, IGlobalResearch> branchMap;
         if (researchTree.containsKey(branch))
@@ -92,33 +112,17 @@ public class GlobalResearchTree implements IGlobalResearchTree
         }
         for (IResearchEffect effect : research.getEffects())
         {
-            if (effect instanceof UnlockBuildingResearchEffect)
+            if(!researchEffectsIds.contains(effect.getId()))
             {
-                if(!unlockBuildingEffect.containsKey(effect.getId()))
-                {
-                    unlockBuildingEffect.put(effect.getId(), effect);
-                }
-            }
-            else if (effect instanceof UnlockAbilityResearchEffect)
-            {
-                if(!unlockAbilityEffect.containsKey(effect.getId()))
-                {
-                    unlockAbilityEffect.put(effect.getId(), effect);
-                }
+                researchEffectsIds.add(effect.getId());
             }
         }
     }
 
     @Override
-    public boolean hasUnlockBuildingEffect(String id)
+    public boolean hasResearchEffect(final String id)
     {
-        return unlockBuildingEffect.containsKey(id);
-    }
-
-    @Override
-    public boolean hasUnlockAbilityEffect(String id)
-    {
-        return unlockAbilityEffect.containsKey(id);
+        return researchEffectsIds.contains(id);
     }
 
     @Override
@@ -142,23 +146,19 @@ public class GlobalResearchTree implements IGlobalResearchTree
     @Override
     public void reset()
     {
-        // and the reason we're not using BiMaps or identifying static research by resourceLocation.
         for(ResourceLocation reset : resettableResearch)
         {
-            for(IResearchEffect effect : getEffectsForResearch(researchResourceLocations.get(reset)))
+            if(!researchResourceLocations.containsKey(reset))
             {
-                if(unlockAbilityEffect.containsKey(effect.getId()))
+                continue;
+            }
+            for(Map.Entry<String, Map<String, IGlobalResearch>> branch : researchTree.entrySet())
+            {
+                if(branch.getValue().containsKey(researchResourceLocations.get(reset)));
                 {
-                    unlockAbilityEffect.remove(effect.getId());
-                }
-                if(unlockBuildingEffect.containsKey(effect.getId()))
-                {
-                    unlockBuildingEffect.remove(effect.getId());
+                    branch.getValue().remove(researchResourceLocations.get(reset));
                 }
             }
-        }
-        for(ResourceLocation reset : resettableResearch)
-        {
             if(researchResourceLocations.containsKey(reset))
             {
                 researchResourceLocations.remove(reset);
@@ -167,23 +167,31 @@ public class GlobalResearchTree implements IGlobalResearchTree
         resettableResearch.clear();
         // Autostart is only accessible as a dynamically-assigned trait, so we can reset all of it.
         autostartResearch.clear();
+        final Iterator<Map.Entry<String, Map<String, IGlobalResearch>>> iterator = researchTree.entrySet().iterator();
+        while (researchTree.entrySet().size() > 0 && iterator.hasNext())
+        {
+            if(iterator.next().getValue().size() == 0)
+            {
+                iterator.remove();
+            }
+        }
     }
 
     @Override
-    public boolean isResearchRequirementsFulfilled(final List<IResearchRequirement> requirements, IColony colony)
+    public boolean isResearchRequirementsFulfilled(final List<IResearchRequirement> requirements, final IColony colony)
     {
         if (requirements == null || requirements.isEmpty())
         {
             return true;
         }
-        for(IResearchRequirement requirement : requirements)
+        for(final IResearchRequirement requirement : requirements)
         {
             if(requirement instanceof BuildingResearchRequirement)
             {
                 int levels = 0;
                 if(colony instanceof IColonyView)
                 {
-                    for (IBuildingView building : ((IColonyView)colony).getBuildings())
+                    for (final IBuildingView building : ((IColonyView)colony).getBuildings())
                     {
                         if (building.getSchematicName().equals(((BuildingResearchRequirement) requirement).getBuilding()))
                         {
@@ -193,7 +201,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
                 }
                 else if(colony instanceof IColony)
                 {
-                    for (Map.Entry<BlockPos, IBuilding> building : colony.getBuildingManager().getBuildings().entrySet())
+                    for (final Map.Entry<BlockPos, IBuilding> building : colony.getBuildingManager().getBuildings().entrySet())
                     {
                         if (building.getValue().getSchematicName().equals(((BuildingResearchRequirement) requirement).getBuilding()))
                         {
@@ -209,7 +217,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
             }
             if(requirement instanceof ResearchResearchRequirement)
             {
-                if(!Boolean.TRUE.equals(colony.getResearchManager().getResearchTree().hasCompletedResearch(((ResearchResearchRequirement) requirement).getResearchId())))
+                if(!colony.getResearchManager().getResearchTree().hasCompletedResearch(((ResearchResearchRequirement) requirement).getResearchId()))
                 {
                     return false;
                 }
@@ -241,7 +249,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public List<IResearchEffect<?>> getEffectsForResearch(final String id)
+    public List<IResearchEffect> getEffectsForResearch(final String id)
     {
         for(final String branch: this.getBranches())
         {

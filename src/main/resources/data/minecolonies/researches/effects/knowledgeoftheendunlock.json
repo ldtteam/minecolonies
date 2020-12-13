@@ -1,6 +1,5 @@
 {
   "comment": "name: Knowledge of The End * description : Stonemasons Learn Endstone\nBakers Cook Chorus Bread",
   "id": "knowledgeoftheendunlock",
-  "effect": true,
-  "effectType": "unlockAbility"
+  "effect": true
 }

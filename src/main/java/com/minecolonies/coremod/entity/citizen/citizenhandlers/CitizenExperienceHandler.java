@@ -8,7 +8,6 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHan
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -93,12 +92,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             return;
         }
 
-        final MultiplierModifierResearchEffect xpBonus =
-          citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(LEVELING, MultiplierModifierResearchEffect.class);
-        if (xpBonus != null)
-        {
-            localXp *= (1 + xpBonus.getEffect());
-        }
+        localXp *= (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(LEVELING));
 
         localXp = citizen.getCitizenItemHandler().applyMending(localXp);
 

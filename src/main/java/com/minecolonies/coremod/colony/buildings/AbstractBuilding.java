@@ -7,6 +7,7 @@ import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -49,8 +50,6 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
-import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.Unpooled;
@@ -766,12 +765,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      */
     private int minimumStockSize()
     {
-        double increase = 1;
-        final MultiplierModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(MINIMUM_STOCK, MultiplierModifierResearchEffect.class);
-        if (effect != null)
-        {
-            increase = 1 + effect.getEffect();
-        }
+        final double increase = 1 + colony.getResearchManager().getResearchEffects().getEffectValue(MINIMUM_STOCK);
 
         return (int) (getBuildingLevel() * STOCK_PER_LEVEL * increase);
     }
@@ -929,10 +923,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        String hutBlockName = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
+        final String hutBlockName = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
           new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, this.getSchematicName())).getBuildingBlock().getName();
 
-        if (Boolean.FALSE.equals(colony.getResearchManager().getResearchEffects().hasUnlockBuildingEffect(hutBlockName)))
+        if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutBlockName) && !colony.getResearchManager().getResearchEffects().getEffectBoolean(hutBlockName))
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
             return;

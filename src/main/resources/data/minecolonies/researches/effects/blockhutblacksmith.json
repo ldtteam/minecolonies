@@ -1,6 +1,5 @@
 {
   "comment": "name: Blacksmith * description : Unlocks Blacksmith",
   "id": "blockhutblacksmith",
-  "effect": true,
-  "effectType": "unlockBuilding"
+  "effect": true
 }

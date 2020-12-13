@@ -1,6 +1,5 @@
 {
   "comment": "name: Miner Fire Res * description : Miners Fire And Lava Immunity",
   "id": "minerfireresunlock",
-  "effect": true,
-  "effectType": "unlockAbility"
+  "effect": true
 }

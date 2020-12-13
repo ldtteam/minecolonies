@@ -29,8 +29,6 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -1196,21 +1194,14 @@ public class CitizenData implements ICitizenData
             // Applies entity related research effects.
             citizen.getNavigator().getPathingOptions().setCanUseRails(((EntityCitizen) citizen).canPathOnRails());
 
-            final MultiplierModifierResearchEffect speedEffect =
-              colony.getResearchManager().getResearchEffects().getEffect(WALKING, MultiplierModifierResearchEffect.class);
-            if (speedEffect != null)
-            {
-                final AttributeModifier speedModifier = new AttributeModifier(RESEARCH_BONUS_MULTIPLIER, speedEffect.getEffect(), AttributeModifier.Operation.MULTIPLY_TOTAL);
-                AttributeModifierUtils.addModifier(citizen, speedModifier, Attributes.MOVEMENT_SPEED);
-            }
+            final AttributeModifier speedModifier = new AttributeModifier(RESEARCH_BONUS_MULTIPLIER,
+              colony.getResearchManager().getResearchEffects().getEffectValue(WALKING),
+              AttributeModifier.Operation.MULTIPLY_TOTAL);
+            AttributeModifierUtils.addModifier(citizen, speedModifier, Attributes.MOVEMENT_SPEED);
 
-            final AdditionModifierResearchEffect healthEffect =
-              colony.getResearchManager().getResearchEffects().getEffect(HEALTH_BOOST, AdditionModifierResearchEffect.class);
-            if (healthEffect != null)
-            {
-                final AttributeModifier healthModLevel = new AttributeModifier(HEALTH_BOOST, healthEffect.getEffect(), AttributeModifier.Operation.ADDITION);
-                AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
-            }
+            final AttributeModifier healthModLevel =
+              new AttributeModifier(HEALTH_BOOST, colony.getResearchManager().getResearchEffects().getEffectValue(HEALTH_BOOST), AttributeModifier.Operation.ADDITION);
+            AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
     }
 

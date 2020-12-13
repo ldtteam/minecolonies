@@ -18,18 +18,21 @@ public interface IResearchEffectManager
     <W extends IResearchEffect<?>> W getEffect(final String id, @NotNull final Class<W> type);
 
     /**
-     * Check if the research effect exists and is an unlockAbility, and if so, if it has been completed.
-     * @param  id   the id of the effect
-     * @return null if not existing or wrong type, false if incomplete, true if complete.
+     * Get the research effect strength which is assigned to a particular string
+     * or zero, if no matching effect is present.
+     *
+     * @param id   the id of the effect.
+     * @return the strength of the effect, or zero if it isn't present.
      */
-    Boolean hasUnlockAbilityEffect(final String id);
+     float getEffectValue(final String id);
 
     /**
-     * Check if the research effect exists and is an unlockAbility, and if so, if it has been completed.
-     * @param  id   the id of the effect
-     * @return null if not existing or wrong type, false if incomplete, true if complete.
+     * Gets whether a research effect is enabled with a non-zero value.
+     *
+     * @param id   the id of the effect.
+     * @return true if the is greater than zero, false if less than or equal to zero or not present.
      */
-    Boolean hasUnlockBuildingEffect(final String id);
+    boolean getEffectBoolean(final String id);
 
     /**
      * Apply the effect to the research effects class.

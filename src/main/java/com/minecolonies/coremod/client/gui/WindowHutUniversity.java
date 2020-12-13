@@ -83,10 +83,16 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
         }
     }
 
-    public List<IFormattableTextComponent> getHidingRequirementDesc(String branch)
+    /**
+     * Gets a list describing what requirements must be met to make at least one primary research for a branch visible.
+     *
+     * @param branch  The identifier for a branch.
+     * @return An empty list if at least one primary research is visible, or a list of IFormattableTextComponents describing the dependencies for each hidden primary research.
+     */
+    public List<IFormattableTextComponent> getHidingRequirementDesc(final String branch)
     {
-        List<IFormattableTextComponent> requirements = new ArrayList<>();
-        for(String primary : IGlobalResearchTree.getInstance().getPrimaryResearch(branch))
+        final List<IFormattableTextComponent> requirements = new ArrayList<>();
+        for(final String primary : IGlobalResearchTree.getInstance().getPrimaryResearch(branch))
         {
             if(!IGlobalResearchTree.getInstance().getResearch(branch, primary).isHidden()
                  || IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement(), building.getColony()))
@@ -98,7 +104,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
             {
                 if(requirements.isEmpty())
                 {
-                    requirements.add(new TranslationTextComponent("com.minecolonies.coremod.research.lockedrequirements"));
+                    requirements.add(new TranslationTextComponent("com.minecolonies.coremod.research.locked"));
                 }
                 else
                 {
@@ -108,7 +114,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
                 {
                     if(req instanceof ResearchResearchRequirement)
                     {
-                        if(!Boolean.TRUE.equals(building.getColony().getResearchManager().getResearchTree().hasCompletedResearch(((ResearchResearchRequirement) req).getResearchId())))
+                        if(!building.getColony().getResearchManager().getResearchTree().hasCompletedResearch(((ResearchResearchRequirement) req).getResearchId()))
                         {
                             requirements.add(req.getDesc().setStyle((Style.EMPTY).setFormatting(TextFormatting.RED)));
                         }

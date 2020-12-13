@@ -721,7 +721,6 @@ public final class ColonyManager implements IColonyManager
                 loaded = false;
             }
         }
-        IGlobalResearchTree.getInstance().reset();
     }
 
     @Override

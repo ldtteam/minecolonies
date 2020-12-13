@@ -9,8 +9,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.interactionhandling.SimpleNotificationInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
-import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
@@ -322,11 +320,9 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         final double timeNeeded = (Math.sqrt(xDiff * xDiff + zDiff * zDiff + yDiff * yDiff) + additionalDist) * TIME_PER_BLOCK;
 
-        final AdditionModifierResearchEffect effect =
-          citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(WORK_LONGER, AdditionModifierResearchEffect.class);
-
         // Estimated arrival is 1hour past night
-        final double timeLeft = (effect == null ? NIGHT : NIGHT + effect.getEffect() * 1000) - (citizen.world.getDayTime() % 24000);
+        final double timeLeft = (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(WORK_LONGER)
+                                   ? NIGHT : NIGHT + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(WORK_LONGER) * 1000) - (citizen.world.getDayTime() % 24000);
         if (timeLeft <= 0 || (timeLeft - timeNeeded <= 0))
         {
             if (citizen.getCitizenData().getWorkBuilding() != null)

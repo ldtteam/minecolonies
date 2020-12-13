@@ -2,9 +2,7 @@ package com.minecolonies.coremod.datalistener;
 
 import com.google.gson.*;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.effects.IResearchEffect;
@@ -12,7 +10,6 @@ import com.minecolonies.api.util.Log;
 
 import com.minecolonies.coremod.research.GlobalResearch;
 import com.minecolonies.coremod.research.ResearchEffectCategory;
-import jdk.nashorn.internal.objects.Global;
 import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
@@ -25,7 +22,7 @@ import static com.minecolonies.coremod.research.GlobalResearch.*;
 import static com.minecolonies.coremod.research.ResearchEffectCategory.*;
 
 /**
- * Loader for Json based crafter specific recipes
+ * Loader for Json-based researches
  */
 public class ResearchListener extends JsonReloadListener
 {
@@ -48,12 +45,12 @@ public class ResearchListener extends JsonReloadListener
         // First, index and map out all research effects.  We need to be able to map them before creating Researches themselves.
         // Because datapacks, can't assume effects are in one specific location.
         // For now, we'll populate relative levels when doing so, but we probably want to do that dynamically.
-        Map<String, ResearchEffectCategory> effectCategories = parseResearchEffects(object);
+        final Map<String, ResearchEffectCategory> effectCategories = parseResearchEffects(object);
 
         // Next, populate a new map of IGlobalResearches, identified by researchID.
         // This allows us to figure out root/branch relationships more sanely.
         // We need the effectCategories and levels to do this.
-        Map<String, GlobalResearch> researchMap = parseResearches(object, effectCategories);
+        final Map<String, GlobalResearch> researchMap = parseResearches(object, effectCategories);
 
         // We /shouldn't/ get any removes before the Research they're trying to remove exists,
         // but it can happen if multiple datapacks affect each other.
@@ -62,31 +59,35 @@ public class ResearchListener extends JsonReloadListener
 
         // After we've loaded all researches, we can then try to assign child relationships.
         // This is also the phase where we'd try to support back-calculating university levels for researches without them/with incorrect ones.
-        IGlobalResearchTree researchTree = calcResearchTree(researchMap);
+        final IGlobalResearchTree researchTree = calcResearchTree(researchMap);
 
         Log.getLogger().info("Loaded " + researchMap.values().size() + " recipes for " + researchTree.getBranches().size() + " research branches");
     }
 
-    private Map<String, ResearchEffectCategory> parseResearchEffects(Map<ResourceLocation, JsonElement> object)
+    /**
+     * Parses out a json map for elements containing ResearchEffects, categorizes those effects, and calculates relative values for each effect level.
+     *
+     * @param object    A Map containing the resource location of each json file, and the element within that json file.
+     * @return          A Map containing the ResearchEffectIds and ResearchEffectCategories each ID corresponds to.
+     */
+    private Map<String, ResearchEffectCategory> parseResearchEffects(final Map<ResourceLocation, JsonElement> object)
     {
         final Map<String, ResearchEffectCategory> effectCategories = new HashMap<>();
         for(final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
         {
-            JsonObject effectJson = entry.getValue().getAsJsonObject();
+            final JsonObject effectJson = entry.getValue().getAsJsonObject();
 
             if (effectJson.has(RESEARCH_EFFECT_PROP) && effectJson.has(RESEARCH_ID_PROP)
-                  && effectJson.get(RESEARCH_ID_PROP).isJsonPrimitive() && effectJson.get(RESEARCH_ID_PROP).getAsJsonPrimitive().isString()
-                  &&  effectJson.has(RESEARCH_EFFECT_TYPE_PROP) && effectJson.get(RESEARCH_EFFECT_TYPE_PROP).isJsonPrimitive()
-                  && effectJson.get(RESEARCH_EFFECT_TYPE_PROP).getAsJsonPrimitive().isString())
+                  && effectJson.get(RESEARCH_ID_PROP).isJsonPrimitive() && effectJson.get(RESEARCH_ID_PROP).getAsJsonPrimitive().isString())
             {
                 final ResearchEffectCategory category;
                 if((effectJson.has(RESEARCH_NAME_PROP) && effectJson.get(RESEARCH_NAME_PROP).isJsonPrimitive() && effectJson.get(RESEARCH_NAME_PROP).getAsJsonPrimitive().isString()))
                 {
-                    category = new ResearchEffectCategory(effectJson.get(RESEARCH_ID_PROP).getAsString(), effectJson.get(RESEARCH_NAME_PROP).getAsString(), effectJson.get(RESEARCH_EFFECT_TYPE_PROP).getAsString());
+                    category = new ResearchEffectCategory(effectJson.get(RESEARCH_ID_PROP).getAsString(), effectJson.get(RESEARCH_NAME_PROP).getAsString());
                 }
                 else
                 {
-                    category = new ResearchEffectCategory(effectJson.get(RESEARCH_ID_PROP).getAsString(), effectJson.get(RESEARCH_EFFECT_TYPE_PROP).getAsString());
+                    category = new ResearchEffectCategory(effectJson.get(RESEARCH_ID_PROP).getAsString());
                 }
                 if (effectJson.has(RESEARCH_EFFECT_LEVELS_PROP) && effectJson.get(RESEARCH_EFFECT_LEVELS_PROP).isJsonArray())
                 {
@@ -101,24 +102,42 @@ public class ResearchListener extends JsonReloadListener
                 // If no levels are defined, assume temporarily boolean, and store on/off.
                 else
                 {
-                    category.add(1f);
+                    category.add(10f);
                 }
                 effectCategories.put(category.getId(), category);
+            }
+            // Files which declare effect: or effectType:, but lack ID or have the wrong types are malformed.
+            else if (effectJson.has(RESEARCH_EFFECT_PROP))
+            {
+                Log.getLogger().error(entry.getKey() + "is a research effect, but does not contain all required fields.  Research Effects must have effect: and id:string fields.");
             }
         }
         return effectCategories;
     }
 
-    private Map<String, GlobalResearch> parseResearches(Map<ResourceLocation, JsonElement> object, Map<String, ResearchEffectCategory> effectCategories)
+    /**
+     * Parses out a json map for elements containing Researches, validates that they have required fields, and generates a GlobalResearch for each.
+     *
+     * @param object    A Map containing the resource location of each json file, and the element within that json file.
+     * @return          A Map containing the ResearchIds and the GlobalResearches each ID corresponds to.
+     */
+    private Map<String, GlobalResearch> parseResearches(final Map<ResourceLocation, JsonElement> object, final Map<String, ResearchEffectCategory> effectCategories)
     {
         final Map<String, GlobalResearch> researchMap = new HashMap<String, GlobalResearch>();
         for(final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
         {
             //Note that we don't actually use the resource folders or file names; those are only for organization purposes.
-            JsonObject researchJson = entry.getValue().getAsJsonObject();
+            final JsonObject researchJson = entry.getValue().getAsJsonObject();
 
             //Can ignore those effect jsons now:
             if (researchJson.has(RESEARCH_EFFECT_PROP))
+            {
+                continue;
+            }
+
+            //Next, check for remove-type recipes.  We don't want to accidentally add them just because they have too much detail.
+            if ((researchJson.has(RESEARCH_REMOVE_PROP) && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().isBoolean())
+                  && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().getAsBoolean())
             {
                 continue;
             }
@@ -130,7 +149,7 @@ public class ResearchListener extends JsonReloadListener
                   || !(researchJson.has(RESEARCH_BRANCH_PROP) && researchJson.get(RESEARCH_BRANCH_PROP).isJsonPrimitive()
                          && researchJson.get(RESEARCH_BRANCH_PROP).getAsJsonPrimitive().isString()))
             {
-                Log.getLogger().warn(entry.getKey() + "missing required fields");
+                Log.getLogger().warn(entry.getKey() + "is a Research, but does not contain all required fields.  Researches must have id:string, and branch:string properties.");
                 continue;
             }
 
@@ -138,14 +157,7 @@ public class ResearchListener extends JsonReloadListener
             if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get() &&
                  (researchJson.has(RESEARCH_UNIVERSITY_LEVEL_PROP) && researchJson.get(RESEARCH_ID_PROP).getAsJsonPrimitive().isNumber()))
             {
-                Log.getLogger().warn(entry.getKey() + "has invalid or no university level requirements.");
-            }
-
-            //Next, check for remove-type recipes.  We don't want to accidentally add them just because they have too much detail.
-            if ((researchJson.has(RESEARCH_REMOVE_PROP) && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().isBoolean())
-                  && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().getAsBoolean())
-            {
-                continue;
+                Log.getLogger().warn(entry.getKey() + "is a Research, but has invalid or no university level requirements.");
             }
 
             //Pretty much anything else should be allowed: it's plausible pack designers may want a research type without a cost or effect.
@@ -173,11 +185,17 @@ public class ResearchListener extends JsonReloadListener
         return researchMap;
     }
 
-    private void parseRemoveResearches(Map<ResourceLocation, JsonElement> object, Map<String, GlobalResearch> researchMap)
+    /**
+     * Parses out a researches map for elements containing Remove properties, and applies those removals to the researchMap
+     *
+     * @param object        A Map containing the resource location of each json file, and the element within that json file.
+     * @param researchMap   A Map to apply those Research Removes against.
+     */
+    private void parseRemoveResearches(final Map<ResourceLocation, JsonElement> object, final Map<String, GlobalResearch> researchMap)
     {
         for(final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
         {
-            JsonObject researchJson = entry.getValue().getAsJsonObject();
+            final JsonObject researchJson = entry.getValue().getAsJsonObject();
 
             //not allowing duplicate id across separate branches for now, so we just need removes and Id.
             if ((researchJson.has(RESEARCH_REMOVE_PROP) && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().isBoolean())
@@ -190,13 +208,24 @@ public class ResearchListener extends JsonReloadListener
                     researchMap.remove(researchJson.get(RESEARCH_ID_PROP).getAsString());
                 }
             }
+            // Files which declare remove:, but lack ID or have the wrong types are malformed.
+            else if (researchJson.has(RESEARCH_REMOVE_PROP))
+            {
+                Log.getLogger().error(entry.getKey() + "is a research remove, but does not contain all required fields.  Research Removes must have remove:boolean and id:string.");
+            }
         }
     }
 
-    private IGlobalResearchTree calcResearchTree(Map<String, GlobalResearch> researchMap)
+    /**
+     * Parses out a GlobalResearch map to apply parent/child relationships between researches, and to graft and warn about inconsistent relationships.
+     *
+     * @param researchMap   A Map of ResearchIDs to GlobalResearches to turn into a GlobalResearchTree.
+     * @return              An IGlobalResearchTree containing the validated researches.
+     */
+    private IGlobalResearchTree calcResearchTree(final Map<String, GlobalResearch> researchMap)
     {
-        IGlobalResearchTree researchTree =  MinecoloniesAPIProxy.getInstance().getGlobalResearchTree();
-        //The research tree should be reset on world unload, but certain events and disconnects break that.  Do it here, too.
+        final IGlobalResearchTree researchTree =  MinecoloniesAPIProxy.getInstance().getGlobalResearchTree();
+        // The research tree should be reset on world unload, but certain events and disconnects break that.  Do it here, too.
         researchTree.reset();
         for (final Map.Entry<String, GlobalResearch> entry : researchMap.entrySet())
         {

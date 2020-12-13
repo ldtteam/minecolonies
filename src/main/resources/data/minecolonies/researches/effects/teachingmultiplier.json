@@ -2,7 +2,6 @@
   "comment": "name: Teaching * description : XP Gain When Studying +%d%%",
   "id": "teachingmultiplier",
   "effect": true,
-  "effectType": "multiplierModifier",
   "levels": 
   [
    0.05,

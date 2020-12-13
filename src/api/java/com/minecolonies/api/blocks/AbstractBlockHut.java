@@ -300,17 +300,27 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * Checks whether the research with the given id is already researched in the given colony.
      *
      * @param colony     the colony to check.
-     * @param researchId the id of the research to look for.
+     * @param effectId   the id of the research to look for.
      */
     @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony, final String researchId)
+    public void checkResearch(final IColonyView colony, final String effectId)
     {
         if (colony == null)
         {
             needsResearch = false;
             return;
         }
-        needsResearch = Boolean.FALSE.equals(colony.getResearchManager().getResearchEffects().hasUnlockBuildingEffect(researchId));
+        if(colony.getResearchManager().getResearchEffects().getEffectBoolean(effectId))
+        {
+            needsResearch = false;
+            return;
+        }
+        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(effectId))
+        {
+            needsResearch = true;
+            return;
+        }
+        needsResearch = false;
     }
 
     @Override

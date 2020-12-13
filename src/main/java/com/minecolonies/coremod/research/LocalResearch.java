@@ -63,7 +63,7 @@ public class LocalResearch implements ILocalResearch
             if (progress >= BASE_RESEARCH_TIME * Math.pow(2, depth - 1))
             {
                 state = ResearchState.FINISHED;
-                for(IResearchEffect effect : IGlobalResearchTree.getInstance().getResearch(this.branch, this.getId()).getEffects())
+                for(final IResearchEffect effect : IGlobalResearchTree.getInstance().getResearch(this.branch, this.getId()).getEffects())
                 {
                     effects.applyEffect(effect);
                 }

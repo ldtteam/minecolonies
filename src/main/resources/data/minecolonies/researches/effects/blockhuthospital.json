@@ -1,6 +1,5 @@
 {
   "comment": "name: Hospital * description : Unlocks Hospital",
   "id": "blockhuthospital",
-  "effect": true,
-  "effectType": "unlockBuilding"
+  "effect": true
 }

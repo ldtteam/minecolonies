@@ -19,9 +19,6 @@ import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobCanSee;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobWalkRandomEdge;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.MoverType;
@@ -334,22 +331,12 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                 worker.swingArm(Hand.MAIN_HAND);
 
                 int amountOfArrows = 1;
-                final MultiplierModifierResearchEffect
-                  effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(DOUBLE_ARROWS, MultiplierModifierResearchEffect.class);
-                if (effect != null)
+                if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(DOUBLE_ARROWS))
                 {
-                    if (worker.getRandom().nextDouble() < effect.getEffect())
+                    if (worker.getRandom().nextDouble() < worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(DOUBLE_ARROWS))
                     {
                         amountOfArrows++;
                     }
-                }
-
-                double extraDamage = 0.0D;
-                final AdditionModifierResearchEffect
-                  dmgEffect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARCHER_DAMAGE, AdditionModifierResearchEffect.class);
-                if (dmgEffect != null)
-                {
-                    extraDamage += dmgEffect.getEffect();
                 }
 
                 for (int i = 0; i < amountOfArrows; i++)
@@ -357,9 +344,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                     final ArrowEntity arrow = ModEntities.MC_NORMAL_ARROW.create(world);
                     arrow.setShooter(worker);
 
-                    final UnlockAbilityResearchEffect arrowPierceEffect =
-                      worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARROW_PIERCE, UnlockAbilityResearchEffect.class);
-                    if (arrowPierceEffect != null && arrowPierceEffect.getEffect())
+                    if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(ARROW_PIERCE))
                     {
                         arrow.setPierceLevel((byte) 2);
                     }
@@ -370,14 +355,11 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                     final double zVector = target.getPosZ() - worker.getPosZ();
 
                     final double distance = MathHelper.sqrt(xVector * xVector + zVector * zVector);
-                    double damage = getRangedAttackDamage() + extraDamage;
+                    double damage = getRangedAttackDamage() + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(ARCHER_DAMAGE);
 
-                    final UnlockAbilityResearchEffect arrowItemEffect =
-                      worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARROW_ITEMS, UnlockAbilityResearchEffect.class);
-
-                    if (arrowItemEffect != null && arrowItemEffect.getEffect())
+                    if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(ARCHER_USE_ARROWS))
                     {
-                        // Extra damage from arrows
+                        // Research allows archers to consume arrows from inventory for extra damage.
                         int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem);
                         if (slot != -1)
                         {
@@ -462,10 +444,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
         super.atBuildingActions();
 
 
-        final UnlockAbilityResearchEffect arrowItemEffect =
-          worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARROW_ITEMS, UnlockAbilityResearchEffect.class);
-
-        if (arrowItemEffect != null && arrowItemEffect.getEffect())
+        if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(ARCHER_USE_ARROWS))
         {
             // Pickup arrows and request arrows
             InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(),

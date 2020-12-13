@@ -1,6 +1,5 @@
 {
   "comment": "name: Rails * description : Citizens Use Rails",
   "id": "railsunlock",
-  "effect": true,
-  "effectType": "unlockAbility"
+  "effect": true
 }

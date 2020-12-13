@@ -2,7 +2,6 @@
   "comment": "name: Archer Armor * description : Archer Armor +%d%%",
   "id": "archerarmormultiplier",
   "effect": true,
-  "effectType": "multiplierModifier",
   "levels": 
   [
    0.05,

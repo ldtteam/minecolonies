@@ -1,6 +1,5 @@
 {
   "comment": "name: School * description : Unlocks School",
   "id": "blockhutschool",
-  "effect": true,
-  "effectType": "unlockBuilding"
+  "effect": true
 }

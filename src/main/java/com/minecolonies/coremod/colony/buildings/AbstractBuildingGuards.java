@@ -38,7 +38,6 @@ import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRandomPos;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.minecolonies.coremod.network.messages.client.colony.building.guard.GuardMobAttackListMessage;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -65,7 +64,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.Future;
 
-import static com.minecolonies.api.research.util.ResearchConstants.ARROW_ITEMS;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -215,10 +214,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 return false;
             }
 
-            final UnlockAbilityResearchEffect arrowItemEffect =
-              getColony().getResearchManager().getResearchEffects().getEffect(ARROW_ITEMS, UnlockAbilityResearchEffect.class);
-
-            return arrowItemEffect != null && arrowItemEffect.getEffect() && getGuardType() == ModGuardTypes.ranger;
+            return getColony().getResearchManager().getResearchEffects().getEffectBoolean(ARCHER_USE_ARROWS)
+                     && getGuardType() == ModGuardTypes.ranger;
         }, new Tuple<>(128, true));
 
         calculateMobs();

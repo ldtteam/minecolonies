@@ -1,6 +1,5 @@
 {
   "comment": "name: Knight Taunt Mobs * description : Knights Force Mobs To Target Them",
   "id": "knighttauntmobsunlock",
-  "effect": true,
-  "effectType": "unlockAbility"
+  "effect": true
 }

@@ -2,7 +2,6 @@
   "comment": "name: Walking * description : Citizen Walk Speed +%d%%",
   "id": "walkingmultiplier",
   "effect": true,
-  "effectType": "multiplierModifier",
   "levels": 
   [
    0.05,

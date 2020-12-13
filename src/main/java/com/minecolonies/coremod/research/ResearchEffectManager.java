@@ -31,47 +31,29 @@ public class ResearchEffectManager implements IResearchEffectManager
     }
 
     @Override
-    public Boolean hasUnlockBuildingEffect(final String id)
+    public float getEffectValue(final String id)
     {
         if(effectMap.containsKey(id))
         {
-            if(effectMap.get(id) instanceof UnlockBuildingResearchEffect)
+            if(effectMap.get(id) instanceof GlobalResearchEffect)
             {
-                return true;
+                return ((GlobalResearchEffect)effectMap.get(id)).getEffect();
             }
         }
-        else
-        {
-            if(IMinecoloniesAPI.getInstance().getGlobalResearchTree().hasUnlockBuildingEffect(id))
-            {
-                return false;
-            }
-        }
-        return null;
+        return 0;
     }
 
     @Override
-    public Boolean hasUnlockAbilityEffect(final String id)
+    public boolean getEffectBoolean(final String id)
     {
         if(effectMap.containsKey(id))
         {
-            if(effectMap.get(id) instanceof UnlockAbilityResearchEffect)
+            if(effectMap.get(id) instanceof GlobalResearchEffect)
             {
-                return true;
+                return ((GlobalResearchEffect)effectMap.get(id)).getEffect() > 0;
             }
         }
-        else
-        {
-            if(IMinecoloniesAPI.getInstance().getGlobalResearchTree().hasUnlockAbilityEffect(id))
-            {
-                return false;
-            }
-            if(IMinecoloniesAPI.getInstance().getGlobalResearchTree().hasUnlockBuildingEffect(id))
-            {
-                return false;
-            }
-        }
-        return null;
+        return false;
     }
 
     @Override

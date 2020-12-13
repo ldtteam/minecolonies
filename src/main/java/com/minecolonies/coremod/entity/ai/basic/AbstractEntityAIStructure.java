@@ -30,7 +30,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
@@ -402,13 +401,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         if (MineColonies.getConfig().getServer().builderBuildBlockDelay.get() > 0)
         {
-            double decrease = 1;
-            final MultiplierModifierResearchEffect
-              effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_PLACE_SPEED, MultiplierModifierResearchEffect.class);
-            if (effect != null)
-            {
-                decrease = 1 - effect.getEffect();
-            }
+            final double decrease = 1 - worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(BLOCK_PLACE_SPEED);
 
             setDelay((int) (
               (MineColonies.getConfig().getServer().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (getPlaceSpeedLevel() / 2 + PROGRESS_MULTIPLIER))

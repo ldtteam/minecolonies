@@ -40,7 +40,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     @Override
     public boolean isFulfilled(final IColony colony)
     {
-        if(Boolean.TRUE.equals(colony.getResearchManager().getResearchTree().hasCompletedResearch(researchId)))
+        if(colony.getResearchManager().getResearchTree().hasCompletedResearch(researchId))
         {
             return true;
         }

@@ -171,5 +171,5 @@ public interface IGlobalResearch
      *
      * @return the effect.
      */
-    List<IResearchEffect<?>> getEffects();
+    List<IResearchEffect> getEffects();
 }

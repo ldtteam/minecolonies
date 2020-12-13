@@ -34,7 +34,13 @@ public interface IGlobalResearchTree
     IGlobalResearch getResearch(final String branch, final String id);
 
     /**
-     * Get a research's resource location.
+     * Get an effect id for a particular research
+     * @param id    the id of the research.
+     * @return the effect id
+     */
+    List<IResearchEffect> getEffectsForResearch(final @NotNull String id);
+
+   /** Get a research's resource location.
      *
      * @param id     the id of the research.
      * @return the IResearch object.
@@ -51,13 +57,21 @@ public interface IGlobalResearchTree
     boolean hasResearch(final String branch, final String id);
 
     /**
+     * Check if a research exists, by id.
+     *
+     * @param id     the id of the research.
+     * @return true if the research exists, false if it does not.
+     */
+    boolean hasResearch(final String id);
+
+    /**
      * Add a research to the tree.
      *
      * @param research the research to add.
      * @param branch   the branch of the research.
      * @param isDynamic  true if reloaded with world events (ie datapacks, onWorldLoad), false if assigned statically once.
      */
-    void addResearch(final String branch, final IGlobalResearch research, Boolean isDynamic);
+    void addResearch(final String branch, final IGlobalResearch research, final boolean isDynamic);
 
     /**
      * Get the list of all branches.
@@ -87,18 +101,11 @@ public interface IGlobalResearchTree
     List<IGlobalResearch> getAutostartResearches();
 
     /**
-     * Checks if a specific unlockBuildingEffect has been registered, whether or not it is unlocked.
+     * Checks if a specific research effect has been registered, whether or not it is unlocked.
      * @param id   the effect's identifier.
-     * @return true if present
+     * @return true if present, false if not registered.
      */
-    boolean hasUnlockBuildingEffect(String id);
-
-    /**
-     * Checks if a specific unlockAbilityEffect has been registered, whether or not it is unlocked.
-     * @param id   the effect's identifier.
-     * @return true if present
-     */
-    boolean hasUnlockAbilityEffect(String id);
+    boolean hasResearchEffect(final String id);
 
     /**
      * Checks if the research requirements are completed, for a given colony.
@@ -106,7 +113,7 @@ public interface IGlobalResearchTree
      * @param colony         the colony to test against.
      * @return               true if complete.
      */
-    boolean isResearchRequirementsFulfilled(final List<IResearchRequirement> requirements, IColony colony);
+    boolean isResearchRequirementsFulfilled(final List<IResearchRequirement> requirements, final IColony colony);
 
     /**
      * Write the research tree to NBT.

@@ -2,7 +2,6 @@
   "comment": "name: Block Break Speed * description : Citizen Block Break Speed +%d%%",
   "id": "blockbreakspeedmultiplier",
   "effect": true,
-  "effectType": "multiplierModifier",
   "levels": 
   [
    0.1,

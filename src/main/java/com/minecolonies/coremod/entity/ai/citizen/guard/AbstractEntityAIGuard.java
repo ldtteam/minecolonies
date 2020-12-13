@@ -27,9 +27,6 @@ import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.LivingEntity;
@@ -284,13 +281,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return false;
         }
 
-        double chance = 1;
-        final MultiplierModifierResearchEffect
-          effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SLEEP_LESS, MultiplierModifierResearchEffect.class);
-        if (effect != null)
-        {
-            chance = 1 - effect.getEffect();
-        }
+        final double chance = 1 - worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(SLEEP_LESS);
 
         // Chance to fall asleep every 10sec, Chance is 1 in (10 + level/2) = 1 in Level1:5,Level2:6 Level6:8 Level 12:11 etc
         if (worker.getRandom().nextInt((int) (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) * 0.5) + 20) == 1
@@ -367,13 +358,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState regen()
     {
-        final AdditionModifierResearchEffect
-          effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(FLEEING_SPEED, AdditionModifierResearchEffect.class);
-        if (effect != null)
+        if (!worker.isPotionActive(Effects.SPEED))
         {
-            if (!worker.isPotionActive(Effects.SPEED))
+            final float effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(FLEEING_SPEED);
+            if (effect > 0)
             {
-                worker.addPotionEffect(new EffectInstance(Effects.SPEED, 200, (int) (0 + effect.getEffect())));
+                worker.addPotionEffect(new EffectInstance(Effects.SPEED, 200, (int) (0 + effect)));
             }
         }
 
@@ -936,9 +926,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         if (buildingGuards.shallRetrieveOnLowHealth() && worker.getHealth() < ((int) worker.getMaxHealth() * 0.2D))
         {
-            final UnlockAbilityResearchEffect effect =
-              worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(RETREAT, UnlockAbilityResearchEffect.class);
-            if (effect != null)
+            if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(RETREAT))
             {
                 resetTarget();
                 return GUARD_REGEN;

@@ -1,6 +1,5 @@
 {
   "comment": "name: Archery * description : Unlocks Archery Building",
   "id": "blockhutarchery",
-  "effect": true,
-  "effectType": "unlockBuilding"
+  "effect": true
 }

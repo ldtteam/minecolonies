@@ -18,8 +18,6 @@ import com.minecolonies.coremod.client.gui.WindowHutPlantation;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.network.messages.server.colony.building.plantation.PlantationSetPhaseMessage;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
-import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -298,9 +296,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
      */
     public Item getCurrentPhase()
     {
-        final UnlockAbilityResearchEffect
-          researchEffect = getColony().getResearchManager().getResearchEffects().getEffect(PLANT_2, UnlockAbilityResearchEffect.class);
-        if (researchEffect != null && researchEffect.getEffect())
+        if (getColony().getResearchManager().getResearchEffects().getEffectBoolean(PLANT_2))
         {
             if (currentPhase == setting)
             {
