@@ -1,0 +1,34 @@
+{
+    "pools": [
+      {
+        "name": "Gravel_String_Mesh",
+        "conditions": [
+            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "offhand": {"item" : "minecraft:air"} } }}
+        ],
+        "rolls": 1,
+        "bonus_rolls": 1,
+        "entries": [
+          {
+            "type": "empty",
+            "weight": 85
+          },
+          {
+            "type": "item",
+            "weight": 5,
+            "name": "minecraft:iron_nugget"
+          },
+          {
+            "type": "item",
+            "weight": 5,
+            "name": "minecraft:flint"
+          },
+          {
+            "type": "item",
+            "weight": 5,
+            "name": "minecraft:coal"
+          }
+        ]
+      }
+    ]
+  }
+  
