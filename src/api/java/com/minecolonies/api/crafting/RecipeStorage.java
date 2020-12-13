@@ -437,7 +437,7 @@ public class RecipeStorage implements IRecipeStorage
      * @return true if succesful.
      */
     @Override
-    public boolean fullfillRecipe(final World world, final List<IItemHandler> handlers)
+    public boolean fullfillRecipe(final LootContext context, final List<IItemHandler> handlers)
     {
         if (!checkForFreeSpace(handlers) || !canFullFillRecipe(1, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
         {
@@ -493,7 +493,7 @@ public class RecipeStorage implements IRecipeStorage
             }
         }
 
-        insertCraftedItems(handlers, getPrimaryOutput(), world);
+        insertCraftedItems(handlers, getPrimaryOutput(), context);
         return true;
     }
 
@@ -508,7 +508,7 @@ public class RecipeStorage implements IRecipeStorage
      *
      * @param handlers the handlers.
      */
-    private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, World world)
+    private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context)
     {
         for (final IItemHandler handler : handlers)
         {
@@ -520,14 +520,14 @@ public class RecipeStorage implements IRecipeStorage
 
         if (loot == null && lootTable != null)
         {
-            loot = world.getServer().getLootTableManager().getLootTableFromLocation(lootTable);
+            loot = context.getWorld().getServer().getLootTableManager().getLootTableFromLocation(lootTable);
         }
         
         final List<ItemStack> secondaryStacks = new ArrayList<>();
 
-        if(loot != null)
+        if(loot != null && context != null)
         {
-            secondaryStacks.addAll(loot.generate((new LootContext.Builder((ServerWorld) world)).build(LootParameterSets.EMPTY)));
+            secondaryStacks.addAll(loot.generate(context));
         }
 
         if(!secondaryOutputs.isEmpty())

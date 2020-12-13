@@ -5,6 +5,9 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameterSets;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +79,19 @@ public interface IRecipeStorage
      * @param handlers the handlers to use.
      * @return true if succesful.
      */
-    boolean fullfillRecipe(final World world, final List<IItemHandler> handlers);
+    boolean fullfillRecipe(final LootContext context, final List<IItemHandler> handlers);
+
+
+    /**
+     * Check for space, remove items, and insert crafted items.
+     *
+     * @param handlers the handlers to use.
+     * @return true if succesful.
+     */
+    default boolean fullfillRecipe(final World world, final List<IItemHandler> handlers)
+    {
+        return fullfillRecipe((new LootContext.Builder((ServerWorld) world)).build(LootParameterSets.EMPTY),handlers);
+    }
 
     /**
      * Get which type this recipe is
