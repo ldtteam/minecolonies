@@ -117,11 +117,11 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     {
         if (musicCooldown <= 0 && building.getBuildingLevel() > 0 && !building.getColony().isDay())
         {
-            net.minecraft.util.Tuple<Integer, Integer> corner1 = building.getCorners().getA();
-            net.minecraft.util.Tuple<Integer, Integer> corner2 = building.getCorners().getB();
+            BlockPos corner1 = building.getCorners().getA();
+            BlockPos corner2 = building.getCorners().getB();
 
-            final int x = (int) ((corner1.getA() + corner1.getB()) * 0.5);
-            final int z = (int) ((corner2.getA() + corner2.getB()) * 0.5);
+            final int x = (int) ((corner1.getX() + corner2.getX()) * 0.5);
+            final int z = (int) ((corner1.getZ() + corner2.getZ()) * 0.5);
 
             final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, new BlockPos(x, building.getPosition().getY(), z), building.getColony().getWorld(), 0.7f, 1.0f);
             for (final ServerPlayerEntity curPlayer : building.getColony().getPackageManager().getCloseSubscribers())

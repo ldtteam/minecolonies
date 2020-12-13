@@ -275,13 +275,8 @@ public final class BackUpHelper
         if (toDelete.exists())
         {
             final String fileName =  String.format(FILENAME_COLONY_DELETED, colonyID, dimensionID.getLocation());
-            if (new File(saveDir, fileName).delete())
-            {
-                if (!toDelete.renameTo(new File(saveDir, fileName)))
-                {
-                    Log.getLogger().error("Failed renaming: " + FILENAME_COLONY_DELETED);
-                }
-            }
+            new File(saveDir, fileName).delete();
+            toDelete.renameTo(new File(saveDir, fileName));
         }
     }
 

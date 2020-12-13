@@ -40,7 +40,7 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
-        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
+        final Tuple<BlockPos, BlockPos> corners
           = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(),
           world,
           new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true).getBluePrint(),
@@ -56,7 +56,7 @@ public final class ConstructionTapeHelper
      * @param corners the corner positions.
      * @param world   the world.
      */
-    public static void placeConstructionTape(final BlockPos pos, final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
+    public static void placeConstructionTape(final BlockPos pos, final Tuple<BlockPos, BlockPos> corners, @NotNull final World world)
     {
         if (!MineColonies.getConfig().getServer().builderPlaceConstructionTape.get())
         {
@@ -65,11 +65,11 @@ public final class ConstructionTapeHelper
 
         final BlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
 
-        final int x = Math.min(corners.getA().getA(), corners.getA().getB());
+        final int x = Math.min(corners.getA().getX(), corners.getB().getX());
         final int y = pos.getY();
-        final int z = Math.min(corners.getB().getA(), corners.getB().getB());
-        final int sizeX = Math.abs(corners.getA().getB() - corners.getA().getA());
-        final int sizeZ = Math.abs(corners.getB().getB() - corners.getB().getA());
+        final int z = Math.min(corners.getA().getZ(), corners.getB().getZ());
+        final int sizeX = Math.abs(corners.getA().getX() - corners.getB().getX());
+        final int sizeZ = Math.abs(corners.getA().getZ() - corners.getB().getZ());
         BlockPos working;
 
         for (BlockPos place = new BlockPos(x, y, z); place.getX() < x + sizeX || place.getZ() < z + sizeZ; )
@@ -161,7 +161,7 @@ public final class ConstructionTapeHelper
           new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true);
         if (structure.hasBluePrint())
         {
-            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
+            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
               structure.getBluePrint(), workOrder.getRotation(world), workOrder.isMirrored());
             removeConstructionTape(corners, world);
         }
@@ -173,12 +173,12 @@ public final class ConstructionTapeHelper
      * @param corners the corner positions.
      * @param world   the world.
      */
-    public static void removeConstructionTape(final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
+    public static void removeConstructionTape(final Tuple<BlockPos, BlockPos> corners, @NotNull final World world)
     {
-        final int x1 = corners.getA().getA();
-        final int x3 = corners.getA().getB();
-        final int z1 = corners.getB().getA();
-        final int z3 = corners.getB().getB();
+        final int x1 = corners.getA().getX();
+        final int x3 = corners.getB().getX();
+        final int z1 = corners.getA().getZ();
+        final int z3 = corners.getB().getZ();
         if (x1 < x3)
         {
             for (int i = x1; i <= x3; i++)

@@ -18,11 +18,10 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
-public abstract class AbstractSchematicProvider implements ISchematicProvider
+public abstract class AbstractSchematicProvider implements ISchematicProvider, IBuilding
 {
     /**
      * The Colony for this schematic Provider
@@ -62,10 +61,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     /**
      * Corners of the building.
      */
-    private int cornerX1;
-    private int cornerX2;
-    private int cornerZ1;
-    private int cornerZ2;
+    private BlockPos pos1 = null;
+    private BlockPos pos2 = null;
 
     /**
      * Cached rotation.
@@ -123,10 +120,9 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
 
         compound.putBoolean(TAG_MIRROR, isBuildingMirrored);
 
-        compound.putInt(TAG_CORNER1, this.cornerX1);
-        compound.putInt(TAG_CORNER2, this.cornerX2);
-        compound.putInt(TAG_CORNER3, this.cornerZ1);
-        compound.putInt(TAG_CORNER4, this.cornerZ2);
+        getCorners();
+        BlockPosUtil.write(compound, TAG_CORNER1, this.pos1);
+        BlockPosUtil.write(compound, TAG_CORNER2, this.pos2);
 
         compound.putInt(TAG_HEIGHT, this.height);
 
@@ -148,12 +144,10 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
 
         isBuildingMirrored = compound.getBoolean(TAG_MIRROR);
 
-        if (compound.keySet().contains(TAG_CORNER1))
+        if (compound.keySet().contains(TAG_CORNER1) && !compound.keySet().contains(TAG_CORNER3))
         {
-            this.cornerX1 = compound.getInt(TAG_CORNER1);
-            this.cornerX2 = compound.getInt(TAG_CORNER2);
-            this.cornerZ1 = compound.getInt(TAG_CORNER3);
-            this.cornerZ2 = compound.getInt(TAG_CORNER4);
+            this.pos1 = BlockPosUtil.read(compound, TAG_CORNER1);
+            this.pos2 = BlockPosUtil.read(compound, TAG_CORNER2);
         }
 
         if (compound.contains(TAG_HEIGHT))
@@ -202,61 +196,29 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         }
     }
 
-    /**
-     * Returns the {@link BlockPos} of the current object, also used as ID.
-     *
-     * @return {@link BlockPos} of the current object.
-     */
     @Override
     public BlockPos getPosition()
     {
         return location;
     }
 
-    /**
-     * Sets the corners of the building based on the schematic.
-     *
-     * @param x1 the first x corner.
-     * @param x2 the second x corner.
-     * @param z1 the first z corner.
-     * @param z2 the second z corner.
-     */
     @Override
-    public void setCorners(final int x1, final int x2, final int z1, final int z2)
+    public void setCorners(final BlockPos pos1, final BlockPos pos2)
     {
-        this.cornerX1 = x1;
-        this.cornerX2 = x2;
-        this.cornerZ1 = z1;
-        this.cornerZ2 = z2;
+        this.pos1 = pos1;
+        this.pos2 = pos2;
     }
 
-    /**
-     * Set the height of the building.
-     *
-     * @param height the height to set.
-     */
     @Override
-    public void setHeight(final int height)
+    public Tuple<BlockPos, BlockPos> getCorners()
     {
-        this.height = height;
+        if (pos1 == null || pos2 == null)
+        {
+            this.calculateCorners();
+        }
+        return new Tuple<>(pos1, pos2);
     }
 
-    /**
-     * Get all the corners of the building based on the schematic.
-     *
-     * @return Tuple of X corners, Tuple of Z corners
-     */
-    @Override
-    public Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> getCorners()
-    {
-        return new Tuple<>(new Tuple<>(cornerX1, cornerX2), new Tuple<>(cornerZ1, cornerZ2));
-    }
-
-    /**
-     * Returns the {@link BlockPos} of the current object, also used as ID.
-     *
-     * @return {@link BlockPos} of the current object.
-     */
     @Override
     public BlockPos getID()
     {
@@ -264,27 +226,16 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         return location;
     }
 
-    /**
-     * Calculates the area of the building.
-     *
-     * @param world the world.
-     * @return the AxisAlignedBB.
-     */
     @Override
     public AxisAlignedBB getTargetableArea(final World world)
     {
         if (buildingArea == null)
         {
-            buildingArea = BuildingUtils.getTargetAbleArea(world, this);
+            buildingArea = BuildingUtils.getTargetAbleArea(this);
         }
         return buildingArea;
     }
 
-    /**
-     * Returns the rotation of the current building.
-     *
-     * @return integer value of the rotation.
-     */
     @Override
     public int getRotation()
     {
@@ -336,22 +287,12 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         return 0;
     }
 
-    /**
-     * Returns the style of the current building.
-     *
-     * @return String representation of the current building-style
-     */
     @Override
     public String getStyle()
     {
         return style;
     }
 
-    /**
-     * Sets the style of the building.
-     *
-     * @param style String value of the style.
-     */
     @Override
     public void setStyle(final String style)
     {
@@ -360,33 +301,12 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         this.markDirty();
     }
 
-    /**
-     * Get the height of the building.
-     *
-     * @return the height..
-     */
-    @Override
-    public int getHeight()
-    {
-        return this.height;
-    }
-
-    /**
-     * Returns the level of the current object.
-     *
-     * @return Level of the current object.
-     */
     @Override
     public int getBuildingLevel()
     {
         return buildingLevel;
     }
 
-    /**
-     * Sets the current level of the building.
-     *
-     * @param level Level of the building.
-     */
     @Override
     public void setBuildingLevel(final int level)
     {
@@ -406,11 +326,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         this.isBuildingMirrored = isMirrored;
     }
 
-    /**
-     * Returns the mirror of the current building.
-     *
-     * @return boolean value of the mirror.
-     */
     @Override
     public boolean isMirrored()
     {
