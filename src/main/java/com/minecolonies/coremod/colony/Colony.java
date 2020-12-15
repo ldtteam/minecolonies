@@ -455,7 +455,7 @@ public class Colony implements IColony
                             if (buildingManager.isWithinBuildingZone(chunkX, chunkZ))
                             {
                                 final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-                                ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 31, pos);
+                                ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 2, pos);
                             }
                         }
                     }
@@ -475,7 +475,7 @@ public class Colony implements IColony
                         if (world instanceof ServerWorld)
                         {
                             final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-                            ((ServerChunkProvider) world.getChunkProvider()).releaseTicket(KEEP_LOADED_TYPE, pos, 31, pos);
+                            ((ServerChunkProvider) world.getChunkProvider()).releaseTicket(KEEP_LOADED_TYPE, pos, 2, pos);
                         }
                     }
                 }
@@ -1548,7 +1548,7 @@ public class Colony implements IColony
                     if (buildingManager.isWithinBuildingZone(chunkX, chunkZ))
                     {
                         final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-                        ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 31, pos);
+                        ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 2, pos);
                     }
                 }
             }
