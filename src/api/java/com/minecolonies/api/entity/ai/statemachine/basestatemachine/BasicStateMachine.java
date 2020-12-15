@@ -183,7 +183,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
                 if (currentStateTransitions == null || currentStateTransitions.isEmpty())
                 {
                     // Reached Trap/Sink state we cannot leave.
-                    onException(new RuntimeException("Missing AI transition for state: " + getState()));
+                    onException(new RuntimeException("Missing AI transition for state: " + newState));
                     reset();
                     return false;
                 }
