@@ -163,6 +163,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             Init safety checks and transition to IDLE
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::initSafetyChecks, 1),
+          new AITarget(INIT, this::getState, 1),
           /*
             Update chestbelt and nametag
             Will be executed every time
