@@ -873,13 +873,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return true;
         }
 
-        if (entity instanceof IMob)
+        final MobEntryView entry = buildingGuards.getMobsToAttack().get(entity.getType().getRegistryName());
+        if (entry != null && entry.shouldAttack())
         {
-            final MobEntryView entry = buildingGuards.getMobsToAttack().get(entity.getType().getRegistryName());
-            if (entry != null && entry.shouldAttack())
-            {
-                return true;
-            }
+            return true;
         }
 
         final IColony colony = worker.getCitizenColonyHandler().getColony();
