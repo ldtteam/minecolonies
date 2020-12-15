@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.blocks.schematic.BlockFluidSubstitution;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
@@ -248,7 +249,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     protected static boolean isDecoItem(Block block)
     {
-        return ModTags.decorationItems.contains(block);
+        return ModTags.decorationItems.contains(block) || block instanceof BlockFluidSubstitution;
     }
 
     /**

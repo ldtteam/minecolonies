@@ -19,7 +19,7 @@ public final class PlacementHandlerInitializer
 
     public static void initHandlers()
     {
-        PlacementHandlers.add(new GeneralBlockPlacementHandler());
+        PlacementHandlers.add(new GeneralBlockPlacementHandler(), PlacementHandlers.GeneralBlockPlacementHandler.class);
         PlacementHandlers.add(new FieldPlacementHandler());
         PlacementHandlers.add(new BuildingBarracksTowerSub());
         PlacementHandlers.add(new BuildingSubstitutionBlock());
