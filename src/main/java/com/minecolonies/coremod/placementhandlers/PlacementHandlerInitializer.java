@@ -19,6 +19,7 @@ public final class PlacementHandlerInitializer
 
     public static void initHandlers()
     {
+        // TODO use the new 'add' helper static functions in PlacementHandlers
         PlacementHandlers.handlers.clear();
         PlacementHandlers.handlers.add(new PlacementHandlers.AirPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.FirePlacementHandler());
@@ -38,6 +39,7 @@ public final class PlacementHandlerInitializer
         PlacementHandlers.handlers.add(new RackPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.FallingBlockPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.BannerPlacementHandler());
+        PlacementHandlers.handlers.add(new PlacementHandlers.FluidSubstitutionPlacementHandler());
         PlacementHandlers.handlers.add(new BuildingSubstitutionBlock());
         PlacementHandlers.handlers.add(new BuildingBarracksTowerSub());
         PlacementHandlers.handlers.add(new FieldPlacementHandler());
