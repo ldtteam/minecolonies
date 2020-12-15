@@ -3,7 +3,6 @@ package com.minecolonies.coremod.network.messages.server;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
@@ -14,13 +13,11 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.BuildingUtils;
-import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -30,7 +27,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
@@ -373,19 +369,8 @@ public class BuildToolPlaceMessage implements IMessage
             if (!(building instanceof IRSComponent))
             {
                 ConstructionTapeHelper.removeConstructionTape(building.getCorners(), world);
-                final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
-                final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
-                final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                  = ColonyUtils.calculateCorners(building.getPosition(),
-                  world,
-                  wrapper.getBluePrint(),
-                  workOrder.getRotation(world),
-                  workOrder.isMirrored());
-
-                building.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
-                building.setHeight(wrapper.getBluePrint().getSizeY());
-
-                ConstructionTapeHelper.placeConstructionTape(building.getPosition(), corners, world);
+                building.calculateCorners();
+                ConstructionTapeHelper.placeConstructionTape(building.getPosition(), building.getCorners(), world);
             }
 
             building.setIsMirrored(mirror);

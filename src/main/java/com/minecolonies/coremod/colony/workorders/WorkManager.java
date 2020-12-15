@@ -305,7 +305,7 @@ public class WorkManager implements IWorkManager
     private boolean isWorkOrderWithinColony(final WorkOrderBuildDecoration order)
     {
         final World world = colony.getWorld();
-        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
+        final Tuple<BlockPos, BlockPos> corners
           = ColonyUtils.calculateCorners(order.getBuildingLocation(),
           world,
           new LoadOnlyStructureHandler(world, order.getBuildingLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(),
@@ -313,11 +313,11 @@ public class WorkManager implements IWorkManager
           order.isMirrored());
 
         Set<ChunkPos> chunks = new HashSet<>();
-        final int minX = Math.min(corners.getA().getA(), corners.getA().getB()) + 1;
-        final int maxX = Math.max(corners.getA().getA(), corners.getA().getB());
+        final int minX = Math.min(corners.getA().getX(), corners.getB().getX()) + 1;
+        final int maxX = Math.max(corners.getA().getX(), corners.getB().getX());
 
-        final int minZ = Math.min(corners.getB().getA(), corners.getB().getB()) + 1;
-        final int maxZ = Math.max(corners.getB().getA(), corners.getB().getB());
+        final int minZ = Math.min(corners.getA().getZ(), corners.getB().getZ()) + 1;
+        final int maxZ = Math.max(corners.getA().getZ(), corners.getB().getZ());
 
         for (int x = minX; x < maxX; x+=16)
         {

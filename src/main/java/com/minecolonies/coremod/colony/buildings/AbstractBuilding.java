@@ -97,7 +97,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.NORMAL_REQ
  * blocks.
  */
 @SuppressWarnings({"squid:S2390", "PMD.ExcessiveClassLength"})
-public abstract class AbstractBuilding extends AbstractBuildingContainer implements IBuilding
+public abstract class AbstractBuilding extends AbstractBuildingContainer
 {
     public static final int MAX_BUILD_HEIGHT = 256;
     public static final int MIN_BUILD_HEIGHT = 1;
@@ -515,7 +515,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return;
         }
 
-        if (getPosition().getY() + getHeight() >= MAX_BUILD_HEIGHT)
+        if (getCorners().getA().getY() >= MAX_BUILD_HEIGHT || getCorners().getB().getY() >= MAX_BUILD_HEIGHT)
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
               "entity.builder.messagebuildtoohigh");
@@ -991,12 +991,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void deconstruct()
     {
-        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> tuple = getCorners();
-        for (int x = tuple.getA().getA(); x < tuple.getA().getB(); x++)
+        final Tuple<BlockPos, BlockPos> tuple = getCorners();
+        for (int x = tuple.getA().getX(); x < tuple.getB().getX(); x++)
         {
-            for (int z = tuple.getB().getA(); z < tuple.getB().getB(); z++)
+            for (int z = tuple.getA().getZ(); z < tuple.getB().getZ(); z++)
             {
-                for (int y = getPosition().getY() - 1; y < getPosition().getY() + this.getHeight(); y++)
+                for (int y = tuple.getA().getY(); y < tuple.getB().getY(); y++)
                 {
                     getColony().getWorld().destroyBlock(new BlockPos(x, y, z), false);
                 }
@@ -1058,16 +1058,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
           colony.getBuildingManager().getBuildings().values().stream()
             .filter(building -> building.hasModule(LivingBuildingModule.class)).mapToInt(ISchematicProvider::getBuildingLevel).sum()
         );
-        final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, newLevel);
-        final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
-        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-          = ColonyUtils.calculateCorners(this.getPosition(),
-          colony.getWorld(),
-          wrapper.getBluePrint(),
-          workOrder.getRotation(colony.getWorld()),
-          workOrder.isMirrored());
-        this.setHeight(wrapper.getBluePrint().getSizeY());
-        this.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
+        calculateCorners();
         this.isBuilt = true;
 
         if (newLevel > getBuildingLevel())
@@ -1082,6 +1073,20 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 ((IBuildingEventsModule) module).onUpgradeComplete(newLevel);
             }
         }
+    }
+
+    @Override
+    public void calculateCorners()
+    {
+        final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, Math.max(1, getBuildingLevel()));
+        final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
+        final Tuple<BlockPos, BlockPos> corners
+          = ColonyUtils.calculateCorners(this.getPosition(),
+          colony.getWorld(),
+          wrapper.getBluePrint(),
+          workOrder.getRotation(colony.getWorld()),
+          workOrder.isMirrored());
+        this.setCorners(corners.getA(), corners.getB());
     }
 
     @Override

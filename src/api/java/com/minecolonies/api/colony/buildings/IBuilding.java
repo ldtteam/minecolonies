@@ -394,4 +394,9 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @param time the time in seconds.
      */
     void processOfflineTime(long time);
+
+    /**
+     * Calculate all building corners from the schematic data.
+     */
+    void calculateCorners();
 }

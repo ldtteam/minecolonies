@@ -17,6 +17,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.coremod.client.gui.WindowPostBox;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -83,6 +84,13 @@ public class PostBox extends AbstractBuilding implements IRSComponent
             final IDeliverable req = ((Stack) request.getRequest()).copyWithCount(((Stack) request.getRequest()).getCount());
             createRequest(req, false);
         }
+    }
+
+    @Override
+    public Tuple<BlockPos, BlockPos> getCorners()
+    {
+        this.setCorners(this.getPosition(), this.getPosition());
+        return super.getCorners();
     }
 
     @Override

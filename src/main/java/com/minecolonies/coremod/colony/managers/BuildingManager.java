@@ -15,7 +15,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
@@ -27,19 +26,16 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -426,21 +422,9 @@ public class BuildingManager implements IBuildingManager
                 if (world != null && !(building instanceof IRSComponent))
                 {
                     building.onPlacement();
+                    building.calculateCorners();
 
-                    final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
-                    final LoadOnlyStructureHandler wrapper =
-                      new LoadOnlyStructureHandler(world, building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
-                    final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                      = ColonyUtils.calculateCorners(building.getPosition(),
-                      world,
-                      wrapper.getBluePrint(),
-                      workOrder.getRotation(world),
-                      workOrder.isMirrored());
-
-                    building.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
-                    building.setHeight(wrapper.getBluePrint().getSizeY());
-
-                    ConstructionTapeHelper.placeConstructionTape(building.getPosition(), corners, world);
+                    ConstructionTapeHelper.placeConstructionTape(building.getPosition(), building.getCorners(), world);
                 }
 
                 ConstructionTapeHelper.placeConstructionTape(building.getPosition(), building.getCorners(), world);

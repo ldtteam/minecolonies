@@ -11,6 +11,7 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -78,14 +79,7 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
                 Chunk chunk = (Chunk) building.getTileEntity().getWorld().getChunk(building.getTileEntity().getPos());
                 PacketDistributor.TRACKING_CHUNK.with(() -> chunk).send(building.getTileEntity().getUpdatePacket());
                 building.getTileEntity().markDirty();
-                building.setHeight(structure.getBluePrint().getSizeY());
-                final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                  = ColonyUtils.calculateCorners(building.getPosition(),
-                  colony.getWorld(),
-                  structure.getBluePrint(),
-                  workOrder.getRotation(colony.getWorld()),
-                  workOrder.isMirrored());
-                building.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
+                building.calculateCorners();
             }
         }
     }
