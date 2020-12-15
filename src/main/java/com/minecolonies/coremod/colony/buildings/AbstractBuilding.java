@@ -947,6 +947,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             if (InventoryUtils.addItemStackToProvider(player, stack))
             {
                 colony.getWorld().destroyBlock(this.getPosition(), false);
+                this.destroy();
             }
             else
             {

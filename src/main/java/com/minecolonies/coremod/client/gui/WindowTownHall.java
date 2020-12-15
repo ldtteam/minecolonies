@@ -6,6 +6,7 @@ import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.CompactColonyReference;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -596,7 +597,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
         int children = 0;
-        int totalWorkers = 0;
         final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();
         for (@NotNull final IBuildingView building : townHall.getColony().getBuildings())
         {
@@ -632,7 +632,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     }
                     final Tuple<Integer, Integer> teacherTuple = jobMaxCountMap.getOrDefault(teacherJobName, new Tuple<>(0, 0));
                     jobMaxCountMap.put(teacherJobName, new Tuple<>(teacherTuple.getA() + teachers, teacherTuple.getB() + maxTeachers));
-                    totalWorkers += teachers;
                     final Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new Tuple<>(0, 0));
                     jobMaxCountMap.put(jobName, new Tuple<>(tuple.getA() + workers, tuple.getB() + max));
                 }
@@ -640,21 +639,25 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 {
                     final Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new Tuple<>(0, 0));
                     jobMaxCountMap.put(jobName, new Tuple<>(tuple.getA() + workers, tuple.getB() + max));
-                    totalWorkers += workers;
                 }
             }
         }
 
 
         //calculate number of children
+        int unemployedCount = 0;
         for (ICitizenDataView iCitizenDataView : townHall.getColony().getCitizens().values())
         {
             if (iCitizenDataView.isChild())
             {
                 children++;
             }
+            else if (iCitizenDataView.getJobView() == null)
+            {
+                unemployedCount++;
+            }
         }
-        final String numberOfUnemployed = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED, citizensSize - totalWorkers - children);
+        final String numberOfUnemployed = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED, unemployedCount);
         final String numberOfKids = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS, children);
 
         final ScrollingList list = findPaneOfTypeByID("citizen-stats", ScrollingList.class);
