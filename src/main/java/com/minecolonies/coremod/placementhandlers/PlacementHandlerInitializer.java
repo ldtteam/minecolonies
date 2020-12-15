@@ -19,30 +19,15 @@ public final class PlacementHandlerInitializer
 
     public static void initHandlers()
     {
-        // TODO use the new 'add' helper static functions in PlacementHandlers
-        PlacementHandlers.handlers.clear();
-        PlacementHandlers.handlers.add(new PlacementHandlers.AirPlacementHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.FirePlacementHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.GrassPlacementHandler());
-        PlacementHandlers.handlers.add(new NetherrackPlacementHandler());
-        PlacementHandlers.handlers.add(new GatePlacementHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.DoorPlacementHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.BedPlacementHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.DoublePlantPlacementHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.SpecialBlockPlacementAttemptHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.FlowerPotPlacementHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.BlockGrassPathPlacementHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.StairBlockPlacementHandler());
-        PlacementHandlers.handlers.add(new FencePlacementHandler());
-        PlacementHandlers.handlers.add(new ChestPlacementHandler());
-        PlacementHandlers.handlers.add(new WayPointBlockPlacementHandler());
-        PlacementHandlers.handlers.add(new RackPlacementHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.FallingBlockPlacementHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.BannerPlacementHandler());
-        PlacementHandlers.handlers.add(new PlacementHandlers.FluidSubstitutionPlacementHandler());
-        PlacementHandlers.handlers.add(new BuildingSubstitutionBlock());
-        PlacementHandlers.handlers.add(new BuildingBarracksTowerSub());
-        PlacementHandlers.handlers.add(new FieldPlacementHandler());
-        PlacementHandlers.handlers.add(new GeneralBlockPlacementHandler());
+        PlacementHandlers.add(new GeneralBlockPlacementHandler());
+        PlacementHandlers.add(new FieldPlacementHandler());
+        PlacementHandlers.add(new BuildingBarracksTowerSub());
+        PlacementHandlers.add(new BuildingSubstitutionBlock());
+        PlacementHandlers.add(new RackPlacementHandler());
+        PlacementHandlers.add(new WayPointBlockPlacementHandler());
+        PlacementHandlers.add(new ChestPlacementHandler());
+        PlacementHandlers.add(new FencePlacementHandler());
+        PlacementHandlers.add(new GatePlacementHandler());
+        PlacementHandlers.add(new NetherrackPlacementHandler());
     }
 }
