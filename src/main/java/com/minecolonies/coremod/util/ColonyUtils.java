@@ -32,7 +32,7 @@ public final class ColonyUtils
      * @param isMirrored if its mirrored.
      * @return a tuple with the required corners.
      */
-    public static Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> calculateCorners(
+    public static Tuple<BlockPos, BlockPos> calculateCorners(
       final BlockPos pos,
       final World world,
       final Blueprint blueprint,
@@ -42,11 +42,9 @@ public final class ColonyUtils
         blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
         final BlockPos zeroPos = pos.subtract(blueprint.getPrimaryBlockOffset());
 
-        final int x1 = zeroPos.getX() - 1;
-        final int z1 = zeroPos.getZ() - 1;
-        final int x2 = zeroPos.getX() + blueprint.getSizeX();
-        final int z2 = zeroPos.getZ() + blueprint.getSizeZ();
+        final BlockPos pos1 = new BlockPos(zeroPos.getX() - 1, zeroPos.getY(), zeroPos.getZ() - 1);
+        final BlockPos pos2 = new BlockPos(zeroPos.getX() + blueprint.getSizeX(), zeroPos.getY() + blueprint.getSizeY(), zeroPos.getZ() + blueprint.getSizeZ());
 
-        return new Tuple<>(new Tuple<>(x1, x2), new Tuple<>(z1, z2));
+        return new Tuple<>(pos1, pos2);
     }
 }
