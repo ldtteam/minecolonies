@@ -21,7 +21,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 
-@Mod(LootModifiers.MOD_ID)
 public class LootModifiers {
     public static final String MOD_ID = Constants.MOD_ID;
     public static final boolean ENABLE = true;
@@ -36,7 +35,7 @@ public class LootModifiers {
             if (ENABLE)
             {
                 event.getRegistry().register(new WartLootModifier.Serializer().setRegistryName(new ResourceLocation(MOD_ID, "nether_wart_block")));
-                event.getRegistry().register(new WartLootModifier.Serializer().setRegistryName(new ResourceLocation(MOD_ID, "warped_wart_block")));
+                //event.getRegistry().register(new WartLootModifier.Serializer().setRegistryName(new ResourceLocation(MOD_ID, "warped_wart_block")));
             }
         }
     }
