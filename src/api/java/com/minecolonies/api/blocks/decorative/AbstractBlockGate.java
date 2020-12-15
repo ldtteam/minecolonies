@@ -132,6 +132,11 @@ public abstract class AbstractBlockGate extends DoorBlock
     @Deprecated
     public float getBlockHardness(BlockState blockState, IBlockReader worldIn, BlockPos pos)
     {
+        if (worldIn == null)
+        {
+            return 10f;
+        }
+
         // Combined hardness
         final Direction facing = blockState.get(FACING).rotateY();
         final BlockPos start = findLowerLeftCorner(worldIn, facing, pos);

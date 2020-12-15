@@ -106,13 +106,13 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
                                 }
                                 requiredItems.put(itemStorage, new Tuple<>(amount, false));
                             }
+                            final ItemStorage output = new ItemStorage(recipeStorage.getPrimaryOutput());
+                            if (requiredItems.containsKey(output))
+                            {
+                                output.setAmount(requiredItems.get(output).getA() + output.getAmount());
+                            }
+                            requiredItems.put(output, new Tuple<>(output.getAmount(), false));
                         }
-                        final ItemStorage output = new ItemStorage(recipeStorage.getPrimaryOutput());
-                        if (requiredItems.containsKey(output))
-                        {
-                            output.setAmount(requiredItems.get(output).getA() + output.getAmount());
-                        }
-                        requiredItems.put(output, new Tuple<>(output.getAmount(), false));
                     }
                 }
             }

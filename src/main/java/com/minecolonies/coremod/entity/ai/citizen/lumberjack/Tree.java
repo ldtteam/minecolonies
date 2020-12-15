@@ -12,7 +12,6 @@ import com.minecolonies.coremod.MineColonies;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.NetherWartBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -31,7 +30,6 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -938,11 +936,11 @@ public class Tree
 
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = building.getCorners();
-            final int x1 = corners.getA().getA();
-            final int x2 = corners.getA().getB();
-            final int z1 = corners.getB().getA();
-            final int z2 = corners.getB().getB();
+            final Tuple<BlockPos, BlockPos> corners = building.getCorners();
+            final int x1 = corners.getA().getX();
+            final int x2 = corners.getB().getX();
+            final int z1 = corners.getA().getZ();
+            final int z2 = corners.getB().getZ();
 
             final int x = pos.getX();
             final int z = pos.getZ();

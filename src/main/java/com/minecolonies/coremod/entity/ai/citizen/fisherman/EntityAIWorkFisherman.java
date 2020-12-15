@@ -327,7 +327,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         executedRotations = 0;
         //If he can't find any pond, tell that to the player
         //If 20 ponds are already stored, take a random stored location
-        if (job.getPonds().size() >= MAX_PONDS)
+        //the fishman should not go to find water when fishman can find water but cant find pond
+        if (job.getPonds().size() >= MAX_PONDS || (lastPathResult != null && lastPathResult.pond == null && job.getPonds().size() > 0))
         {
             return setRandomWater();
         }

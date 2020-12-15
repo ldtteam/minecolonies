@@ -109,10 +109,12 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             if (entity instanceof FurnaceTileEntity)
             {
                 final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-                final int countInResultSlot =
-                  ItemStackUtils.isEmpty(furnace.getStackInSlot(RESULT_SLOT)) ? 0 : furnace.getStackInSlot(RESULT_SLOT).getCount();
+                final int countInResultSlot = ItemStackUtils.isEmpty(furnace.getStackInSlot(RESULT_SLOT)) ? 0 : furnace.getStackInSlot(RESULT_SLOT).getCount();
+                final int countInInputSlot = ItemStackUtils.isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT)) ? 0 : furnace.getStackInSlot(SMELTABLE_SLOT).getCount();
+
                 if ((!furnace.isBurning() && countInResultSlot > 0)
-                      || countInResultSlot > RETRIEVE_SMELTABLE_IF_MORE_THAN)
+                      || countInResultSlot > RETRIEVE_SMELTABLE_IF_MORE_THAN
+                      || (countInResultSlot > 0 && countInInputSlot == 0))
                 {
                     worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
@@ -253,16 +255,13 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
 
             if (entity instanceof FurnaceTileEntity)
             {
-                if (!((FurnaceTileEntity) entity).isBurning())
+                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+                if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
+                      || (amountOfSmeltable > 0 && hasFuelInFurnaceAndNoSmeltable(furnace))
+                      || (amountOfFuel > 0 && amountOfSmeltable > 0 && hasNeitherFuelNorSmeltAble(furnace)))
                 {
-                    final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-                    if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
-                          || (amountOfSmeltable > 0 && hasFuelInFurnaceAndNoSmeltable(furnace))
-                          || (amountOfFuel > 0 && amountOfSmeltable > 0 && hasNeitherFuelNorSmeltAble(furnace)))
-                    {
-                        walkTo = pos;
-                        return START_USING_FURNACE;
-                    }
+                    walkTo = pos;
+                    return START_USING_FURNACE;
                 }
             }
             else

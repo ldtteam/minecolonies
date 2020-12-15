@@ -1217,7 +1217,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             {
                 for (final String location : MineColonies.getConfig().getServer().guardResourceLocations.get())
                 {
-                    if (entry.getKey() != null && entry.getKey().toString().equals(location))
+                    if (entry.getKey() != null && entry.getKey().getLocation().toString().equals(location))
                     {
                         i++;
                         mobsToAttack.put(entry.getKey().getLocation(), new MobEntryView(entry.getKey().getLocation(), true, i));
