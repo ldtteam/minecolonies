@@ -97,7 +97,7 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Delay before taking unstuck actions in ticks, default 60 seconds
      */
-    private int delayBeforeActions       = 60 * 20;
+    private int delayBeforeActions       = 30 * 20;
     private int delayToNextUnstuckAction = delayBeforeActions;
 
     private Random rand = new Random();
@@ -271,7 +271,7 @@ public class PathingStuckHandler implements IStuckHandler
         if (stuckLevel == 0)
         {
             stuckLevel++;
-            delayToNextUnstuckAction = 100;
+            delayToNextUnstuckAction = 600;
             navigator.clearPath();
             return;
         }
@@ -280,7 +280,7 @@ public class PathingStuckHandler implements IStuckHandler
         if (stuckLevel == 1)
         {
             stuckLevel++;
-            delayToNextUnstuckAction = 200;
+            delayToNextUnstuckAction = 300;
             navigator.clearPath();
             navigator.moveAwayFromXYZ(new BlockPos(navigator.getOurEntity().getPosition()), 10, 1.0f);
             return;
@@ -297,7 +297,7 @@ public class PathingStuckHandler implements IStuckHandler
                 {
                     final PathPoint togo = navigator.getPath().getPathPointFromIndex(index);
                     navigator.getOurEntity().setPositionAndUpdate(togo.x + 0.5d, togo.y, togo.z + 0.5d);
-                    delayToNextUnstuckAction = 200;
+                    delayToNextUnstuckAction = 300;
                 }
             }
         }
@@ -307,7 +307,7 @@ public class PathingStuckHandler implements IStuckHandler
         {
             if (canPlaceLadders && rand.nextBoolean())
             {
-                delayToNextUnstuckAction = 200;
+                delayToNextUnstuckAction = 300;
                 placeLadders(navigator);
             }
             else if (canBuildLeafBridges && rand.nextBoolean())
