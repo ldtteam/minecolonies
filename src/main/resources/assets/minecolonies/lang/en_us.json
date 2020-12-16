@@ -1927,14 +1927,14 @@
   "com.minecolonies.coremod.gui.happiness.negative": "Negative",
   "com.minecolonies.coremod.gui.happiness.slightlynegative": "Slightly Negative",
   "com.minecolonies.coremod.gui.happiness.neutral": "Neutral",
-  "com.minecolonies.coremod.gui.happiness.positive": "Positive"
+  "com.minecolonies.coremod.gui.happiness.positive": "Positive",
   
-  "com.minecolonies.coremod.gui.townhalltab.information": "Information"
-  "com.minecolonies.coremod.gui.townhalltab.actions": "Actions"
-  "com.minecolonies.coremod.gui.townhalltab.permissions": "Permissions"
-  "com.minecolonies.coremod.gui.townhalltab.citizens": "Citizens"
-  "com.minecolonies.coremod.gui.townhalltab.settings": "Settings"
-  "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders"
+  "com.minecolonies.coremod.gui.townhalltab.information": "Information",
+  "com.minecolonies.coremod.gui.townhalltab.actions": "Actions",
+  "com.minecolonies.coremod.gui.townhalltab.permissions": "Permissions",
+  "com.minecolonies.coremod.gui.townhalltab.citizens": "Citizens",
+  "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
+  "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
   "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness"
 
 }
