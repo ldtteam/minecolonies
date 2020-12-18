@@ -12,13 +12,23 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.ItemStack;
+import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameter;
+import net.minecraft.world.storage.loot.LootParameterSet;
+import net.minecraft.world.storage.loot.LootParameterSets;
+import net.minecraft.world.storage.loot.LootParameters;
+import net.minecraft.world.storage.loot.conditions.LootConditionManager;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -30,7 +40,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Sifter AI class.
  */
-public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, BuildingSifter>
+public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, BuildingSifter>
 {
     /**
      * Max level which should have an effect on the speed of the worker.
@@ -139,7 +149,23 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter, Buil
             return START_WORKING;
         }
 
-        final IAIState check = checkForSievableBlock(sifterBuilding.getSievableBlock(), sifterBuilding);
+        currentRecipeStorage = sifterBuilding.getFirstFullFillableRecipe(item -> item.isEmpty(), 1, false);
+
+        final LootContext.Builder builder = (new LootContext.Builder((ServerWorld) this.world))
+            .withParameter(LootParameters.POSITION, worker.getPosition())
+            .withParameter(LootParameters.THIS_ENTITY, worker)
+            .withParameter(LootParameters.TOOL, worker.getHeldItemMainhand());
+            //.withRandom(this.rand);
+            //.withLuck((float) this.luck);
+
+        //final IAIState check = checkForSievableBlock(sifterBuilding.getSievableBlock(), sifterBuilding);
+
+        if (currentRecipeStorage == null)
+        {
+            return START_WORKING;
+        }
+        
+        final IAIState check = checkForSievableBlock(currentRecipeStorage.getCleanedInput().get(0), sifterBuilding);
         if (progress > MAX_LEVEL - Math.min((getSecondarySkillLevel() / 5) + 1, MAX_LEVEL))
         {
             progress = 0;
