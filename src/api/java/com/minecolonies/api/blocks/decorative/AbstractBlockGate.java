@@ -1,5 +1,6 @@
 package com.minecolonies.api.blocks.decorative;
 
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
@@ -438,11 +439,11 @@ public abstract class AbstractBlockGate extends DoorBlock
                 // Set top blocks to spikes
                 if (world.getBlockState(worldPos.up()).getBlock() != this)
                 {
-                    world.setBlockState(worldPos, state.cycle(DoorBlock.HINGE), 2);
+                    WorldUtil.setBlockState(world, worldPos, state.cycle(DoorBlock.HINGE), 2);
                 }
                 else
                 {
-                    world.setBlockState(worldPos, state.cycle(BlockStateProperties.OPEN), 2);
+                    WorldUtil.setBlockState(world, worldPos, state.cycle(BlockStateProperties.OPEN), 2);
                 }
             }
         }

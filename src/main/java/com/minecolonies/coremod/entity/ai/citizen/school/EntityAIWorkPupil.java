@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.school;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSchool;
@@ -16,6 +14,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
@@ -159,23 +158,19 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         {
             // Sit for 60-120 seconds.
             maxSittingTicks = worker.getRandom().nextInt(120 / 2) + 60;
-
-            final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(world);
-            entity.setPosition(studyPos.getX(), studyPos.getY() - 0.6, studyPos.getZ());
-            entity.setMaxLifeTime(maxSittingTicks * 20);
-            world.addEntity(entity);
-            worker.startRiding(entity);
-            worker.getNavigator().clearPath();
+            SittingEntity.sitDown(studyPos, worker, maxSittingTicks * 20);
         }
 
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), PAPER);
 
         if (slot != -1)
         {
+            worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, worker.getInventoryCitizen().getStackInSlot(slot));
             Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.getPositionVector().add(0, 1, 0), ParticleTypes.ENCHANT, sittingTicks), worker);
         }
         else
         {
+            worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
             Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.getPositionVector().add(0, 1, 0), ParticleTypes.HAPPY_VILLAGER, sittingTicks), worker);
         }
 
@@ -185,6 +180,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
             return getState();
         }
 
+        worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
         if (worker.ridingEntity != null)
         {
             worker.stopRiding();

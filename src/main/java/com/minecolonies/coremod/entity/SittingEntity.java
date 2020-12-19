@@ -1,12 +1,20 @@
 package com.minecolonies.coremod.entity;
 
+import com.minecolonies.api.entity.ModEntities;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
+
+import java.util.List;
 
 /**
  * Entity used to sit on, for animation purposes.
@@ -17,11 +25,6 @@ public class SittingEntity extends Entity
      * The lifetime in ticks of the entity, auto-dismounts after.
      */
     int maxLifeTime = 100;
-
-    /**
-     * The last passenger riding this entity
-     */
-    private Entity lastPassenger;
 
     public SittingEntity(final EntityType<?> type, final World worldIn)
     {
@@ -97,16 +100,10 @@ public class SittingEntity extends Entity
         if (!this.isBeingRidden() || maxLifeTime-- < 0)
         {
             // Upsizes entity again
-            if (lastPassenger != null)
-            {
-                lastPassenger.size = lastPassenger.size.scale(1.0f, 2.0f);
-            }
 
             if (getPassengers().size() > 0)
             {
-                Entity e = getPassengers().get(0);
                 this.removePassengers();
-                e.setPosition(this.posX, this.posY + 1, this.posZ);
             }
 
             this.remove();
@@ -117,15 +114,28 @@ public class SittingEntity extends Entity
     protected void addPassenger(Entity passenger)
     {
         super.addPassenger(passenger);
-
         if (this.world.isRemote)
         {
             return;
         }
 
-        // Resizes entity and keeps a reference to it
-        lastPassenger = passenger;
-        lastPassenger.size = lastPassenger.size.scale(1.0f, 0.5f);
+        passenger.size = passenger.size.scale(1.0f, 0.5f);
+    }
+
+    @Override
+    protected void removePassenger(Entity passenger)
+    {
+        super.removePassenger(passenger);
+        if (this.world.isRemote)
+        {
+            return;
+        }
+
+        if (passenger instanceof LivingEntity)
+        {
+            passenger.size = ((LivingEntity) passenger).isChild() ? passenger.getType().getSize().scale(0.5f) : passenger.getType().getSize();
+        }
+        passenger.setPosition(this.posX, this.posY + 0.6, this.posZ);
     }
 
     /**
@@ -136,5 +146,47 @@ public class SittingEntity extends Entity
     public void setMaxLifeTime(final int maxLifeTime)
     {
         this.maxLifeTime = maxLifeTime;
+    }
+
+    /**
+     * Makes the given entity sit down onto a new sitting entity
+     *
+     * @param pos         the position to sit at
+     * @param entity      entity to sit down
+     * @param maxLifeTime max time to sit
+     */
+    public static void sitDown(final BlockPos pos, final MobEntity entity, final int maxLifeTime)
+    {
+        if (entity.getRidingEntity() != null)
+        {
+            // Already riding an entity, abort
+            return;
+        }
+
+        final SittingEntity sittingEntity = (SittingEntity) ModEntities.SITTINGENTITY.create(entity.world);
+
+        // Find the lowest box and sit on that
+        final BlockState state = entity.world.getBlockState(pos);
+        double minY = 1;
+
+        final List<AxisAlignedBB> shapes = state.getCollisionShape(entity.world, pos).toBoundingBoxList();
+        for (final AxisAlignedBB box : shapes)
+        {
+            if (box.maxY < minY)
+            {
+                minY = box.maxY;
+            }
+        }
+
+        if (shapes.isEmpty())
+        {
+            minY = 0;
+        }
+
+        sittingEntity.setPosition(pos.getX() + 0.5f, (pos.getY() + minY) - entity.getHeight() / 2, pos.getZ() + 0.5f);
+        sittingEntity.setMaxLifeTime(maxLifeTime);
+        entity.world.addEntity(sittingEntity);
+        entity.startRiding(sittingEntity);
+        entity.getNavigator().clearPath();
     }
 }

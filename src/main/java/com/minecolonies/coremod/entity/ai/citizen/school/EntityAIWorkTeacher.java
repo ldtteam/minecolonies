@@ -135,12 +135,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
             final int jobModifier = (int) (100 / Math.max(1, getSecondarySkillLevel() / 2.0));
             maxSittingTicks = worker.getRandom().nextInt(jobModifier / 2) + jobModifier / 2;
 
-            final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(world);
-            entity.setPosition(worker.posX, worker.posY - 1f, worker.posZ);
-            entity.setMaxLifeTime(maxSittingTicks * 20);
-            world.addEntity(entity);
-            worker.startRiding(entity);
-            worker.getNavigator().clearPath();
+            SittingEntity.sitDown(worker.getPosition(), worker, maxSittingTicks * 20);
         }
 
         sittingTicks++;

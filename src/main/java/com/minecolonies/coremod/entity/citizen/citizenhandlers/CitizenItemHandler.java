@@ -282,7 +282,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
                                                                .expand(2.0F, 1.0F, 2.0F)
                                                                .expand(-2.0F, -1.0F, -2.0F)))
         {
-            if (item != null && citizen.canPickUpLoot() && item.isAlive())
+            if (item != null && item.isAlive())
             {
                 tryPickupItemEntity(item);
             }
