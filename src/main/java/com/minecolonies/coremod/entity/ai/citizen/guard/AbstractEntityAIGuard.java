@@ -290,7 +290,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         if (effect != null)
         {
             chance = 1 - effect.getEffect();
-            return true;
         }
 
         // Chance to fall asleep every 10sec, Chance is 1 in (10 + level/2) = 1 in Level1:5,Level2:6 Level6:8 Level 12:11 etc

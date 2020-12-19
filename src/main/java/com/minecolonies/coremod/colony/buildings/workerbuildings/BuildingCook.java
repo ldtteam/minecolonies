@@ -121,6 +121,9 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getContainerItem()) && !stack.getContainerItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
     }
 
+    /**
+     * Reads the tag positions
+     */
     public void initTagPositions()
     {
         if (initTags)
@@ -141,6 +144,13 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
                 }
             }
         }
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+        initTags = false;
     }
 
     /**
