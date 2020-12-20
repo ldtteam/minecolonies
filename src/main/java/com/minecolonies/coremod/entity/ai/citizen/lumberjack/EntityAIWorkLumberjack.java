@@ -590,6 +590,36 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     }
 
     /**
+     * Drop fungus instead of wart block
+     *
+     * @param drops the drops.
+     * @return the list of additional drops.
+     */
+    @Override
+    protected List<ItemStack> increaseBlockDrops(final List<ItemStack> drops)
+    {
+        final List<ItemStack> newDrops = new ArrayList<>();
+        for (final ItemStack stack : drops)
+        {
+            boolean modified = false;
+            if (new Random().nextInt(10) > 8) {
+                if (stack.getItem() == Items.NETHER_WART_BLOCK) {
+                    newDrops.add(new ItemStack(Items.CRIMSON_FUNGUS, 1));
+                    modified = true;
+                } else if (stack.getItem() == Items.WARPED_WART_BLOCK) {
+                    newDrops.add(new ItemStack(Items.WARPED_FUNGUS, 1));
+                    modified = true;
+                }
+            }
+            if (!modified)
+            {
+                newDrops.add(stack.copy());
+            }
+        }
+        return newDrops;
+    }
+
+    /**
      * Walk to the current construction site.
      * <p>
      * Calculates and caches the position where to walk to.
