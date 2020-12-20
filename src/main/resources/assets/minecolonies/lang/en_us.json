@@ -57,7 +57,7 @@
   "minecolonies.config.malefirstnames.comment": "Male first names to be used for colonists",
   "minecolonies.config.femalefirstnames": "Female First Names",
   "minecolonies.config.femalefirstnames.comment": "Female first names to be used for colonists",
-  "minecolonies.config.lastnames": "Last names",
+  "minecolonies.config.lastnames": "Last Names",
   "minecolonies.config.lastnames.comment": "Last names to be used for colonists",
 
   "minecolonies.config.initialcitizenamount": "Initital Citizen Count",
