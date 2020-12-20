@@ -2,22 +2,14 @@
   "type": "minecolonies:nether_wart_block",
   "conditions":
   [
+    {
+      "entity": "this",
+      "condition": "minecraft:entity_properties",
+      "predicate":
       {
-        "condition": "minecraft:block_state_property",
-        "block": "minecraft:nether_wart_block"
-      },
-      {
-        "condition": "minecraft:random_chance",
-        "chance": 1
-      },
-      {
-        "condition": "minecraft:entity_properties",
-        "entity": "this",
-        "predicate":
-        {
-          "type": "minecolonies:citizen"
-        }
+
       }
+    }
   ],
   "checkItem": "minecraft:nether_wart_block",
   "replacement": "minecraft:crimson_fungus"

@@ -416,7 +416,7 @@ public final class BlockPosUtil
                                                       .withLuck(fortune)
                                                       .withParameter(LootParameters.field_237457_g_, entity.getPositionVec())
                                                       .withParameter(LootParameters.TOOL, stack)
-                                                      .withParameter(LootParameters.THIS_ENTITY, entity));
+                                                      .withNullableParameter(LootParameters.THIS_ENTITY, entity));
     }
 
     /**

@@ -1,9 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.PathResult;
@@ -13,12 +16,14 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToWithPassable;
 import com.minecolonies.coremod.util.WorkerUtil;
+import com.mojang.brigadier.Message;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
@@ -36,7 +41,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,6 +53,7 @@ import java.util.*;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.items.ModTags.fungi;
+import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_FURNACES_MESSAGE;
 
 /**
  * The lumberjack AI class.
@@ -69,6 +78,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      * If this limit is reached, no trees are found.
      */
     private static final int SEARCH_LIMIT     = 150;
+
+    /**
+     * Modifier for fungi growing time. Increase to speed up.
+     */
+
+    private static final int FUNGI_MODIFIER = 2;
 
     /**
      * List of saplings.
@@ -164,6 +179,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private PathResult pathToTree;
 
+    /**
+     * A list of all planted nether trees
+     */
+    private final List<BlockPos> netherTrees = new ArrayList<>();
+
     @Override
     protected int getActionRewardForCraftingSuccess()
     {
@@ -186,7 +206,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
           new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees, TICKS_SECOND),
           new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood, TICKS_SECOND),
           new AITarget(LUMBERJACK_GATHERING, this::gathering, TICKS_SECOND),
-          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain, TICKS_SECOND)
+          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain, TICKS_SECOND),
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::bonemealFungi, TICKS_SECOND)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -534,6 +555,41 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     }
 
     /**
+     * Bonemeal fungi in netherTrees
+     */
+
+    private IAIState bonemealFungi()
+    {
+        for (final BlockPos pos : getNetherTrees())
+        {
+            final BlockState blockState = world.getBlockState(pos);
+            final Block block = blockState.getBlock();
+            if (block == Blocks.CRIMSON_FUNGUS || block == Blocks.WARPED_FUNGUS)
+            {
+                final int threshold = worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getPrimarySkill()) * FUNGI_MODIFIER;
+                final int rand = new Random().nextInt(100);
+                if (rand < threshold)
+                {
+                    final IGrowable growable = (IGrowable) block;
+                    if (growable.canGrow(world, pos, blockState, world.isRemote)) {
+                        if (!world.isRemote) {
+                            if (growable.canUseBonemeal(world, world.rand, pos, blockState)) {
+                                growable.grow((ServerWorld) world, world.rand, pos, blockState);
+                            }
+                        }
+                    }
+                }
+
+            }
+            else
+            {
+                removeNetherTree(pos);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Walk to the current construction site.
      * <p>
      * Calculates and caches the position where to walk to.
@@ -736,6 +792,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             {
                 final Block block = ((BlockItem) stack.getItem()).getBlock();
                 placeSaplings(saplingSlot, stack, block);
+                if (stack.getItem().isIn(fungi))
+                {
+                    netherTrees.add(location);
+                }
                 final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, worker);
                 world.playSound(null,
                   this.worker.getPosition(),
@@ -901,5 +961,25 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     private boolean hasLogs()
     {
         return InventoryUtils.hasItemInItemHandler(getInventory(), this::isStackLog);
+    }
+
+    /**
+     * Returns a list of the registered nether tree to grow.
+     * @return a copy of the list
+     */
+
+    public List<BlockPos> getNetherTrees()
+    {
+        return new ArrayList<>(netherTrees);
+    }
+
+    /**
+     * Removes a position from the nether trees
+     * @param pos the position
+     */
+
+    public void removeNetherTree(BlockPos pos)
+    {
+        netherTrees.remove(pos);
     }
 }
