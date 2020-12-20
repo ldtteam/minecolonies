@@ -6,6 +6,7 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -42,7 +43,7 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
             return ActionProcessingResult.PASS;
         }
 
-        if (!world.setBlockState(pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
+        if (!WorldUtil.setBlockState(world, pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
         {
             return ActionProcessingResult.PASS;
         }

@@ -20,18 +20,17 @@ import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
+import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.Food;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.EnumSet;
@@ -40,6 +39,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_RESTAURANT;
 import static com.minecolonies.api.util.constant.TranslationConstants.RAW_FOOD;
@@ -114,7 +114,7 @@ public class EntityAIEatTask extends Goal
     /**
      * The eating position to go to
      */
-    private Vec3d eatPos = null;
+    private BlockPos eatPos = null;
 
     /**
      * Restaurant to which the citizen should path.
@@ -322,10 +322,17 @@ public class EntityAIEatTask extends Goal
      */
     private EatingState goToEatingPlace()
     {
-        if (eatPos == null || citizen.isWorkerAtSiteWithMove(new BlockPos(eatPos), MIN_DISTANCE_TO_RESTAURANT) || timeOutWalking++ > 400)
+        if (eatPos == null || timeOutWalking++ > 400)
         {
             timeOutWalking = 0;
             return EAT;
+        }
+
+        if (citizen.isWorkerAtSiteWithMove(eatPos, 1))
+        {
+            SittingEntity.sitDown(eatPos, citizen, TICKS_SECOND * 60);
+            // Delay till they start eating
+            timeOutWalking += 10;
         }
 
         return GO_TO_EAT_POS;
@@ -336,10 +343,18 @@ public class EntityAIEatTask extends Goal
      *
      * @return the next state to go to.
      */
-    private Vec3d findPlaceToEat()
+    private BlockPos findPlaceToEat()
     {
-        // TODO: get restaurant sitting positions
-        return RandomPositionGenerator.getLandPos(citizen, PLACE_TO_EAT_DISTANCE, 0);
+        if (restaurantPos != null)
+        {
+            final IBuilding restaurant = citizen.getCitizenData().getColony().getBuildingManager().getBuilding(restaurantPos);
+            if (restaurant instanceof BuildingCook)
+            {
+                return ((BuildingCook) restaurant).getNextSittingPosition();
+            }
+        }
+
+        return null;
     }
 
     /**
