@@ -376,7 +376,7 @@ public class BuildToolPlaceMessage implements IMessage
             {
                 ConstructionTapeHelper.removeConstructionTape(building.getCorners(), world);
                 building.calculateCorners();
-                ConstructionTapeHelper.placeConstructionTape(building.getPosition(), building.getCorners(), world);
+                ConstructionTapeHelper.placeConstructionTape(building.getCorners(), world);
             }
 
             building.setIsMirrored(mirror);

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.*;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
@@ -441,13 +442,13 @@ public class EntityAIInteractToggleAble extends Goal
         @Override
         public void toggleBlock(final BlockState state, final World world, final BlockPos pos)
         {
-            world.setBlockState(pos, state.func_235896_a_(BlockStateProperties.OPEN));
+            WorldUtil.setBlockState(world, pos, state.func_235896_a_(BlockStateProperties.OPEN));
         }
 
         @Override
         public void toggleBlockClosed(final BlockState state, final World world, final BlockPos pos)
         {
-            world.setBlockState(pos, state.with(BlockStateProperties.OPEN, false));
+            WorldUtil.setBlockState(world, pos, state.with(BlockStateProperties.OPEN, false));
         }
     }
 
@@ -465,13 +466,13 @@ public class EntityAIInteractToggleAble extends Goal
         @Override
         public void toggleBlock(final BlockState state, final World world, final BlockPos pos)
         {
-            world.setBlockState(pos, state.func_235896_a_(BlockStateProperties.OPEN));
+            WorldUtil.setBlockState(world, pos, state.func_235896_a_(BlockStateProperties.OPEN));
         }
 
         @Override
         public void toggleBlockClosed(final BlockState state, final World world, final BlockPos pos)
         {
-            world.setBlockState(pos, state.with(BlockStateProperties.OPEN, false));
+            WorldUtil.setBlockState(world, pos, state.with(BlockStateProperties.OPEN, false));
         }
     }
 

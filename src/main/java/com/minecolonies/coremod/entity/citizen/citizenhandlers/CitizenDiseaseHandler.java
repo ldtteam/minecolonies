@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenDiseaseHandler;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobHealer;
@@ -54,6 +53,13 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     private int immunityTicks = 0;
 
     /**
+     * The initial citizen count
+     */
+    private static final int initialCitizenCount = IMinecoloniesAPI.getInstance()
+                                                     .getConfig()
+                                                     .getServer().initialCitizenAmount.get();
+
+    /**
      * Constructor for the experience handler.
      *
      * @param citizen the citizen owning the handler.
@@ -95,9 +101,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
              && citizen.getCitizenColonyHandler().getColony().isActive()
              && !(citizen.getCitizenJobHandler().getColonyJob() instanceof JobHealer)
              && immunityTicks <= 0
-             && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > IMinecoloniesAPI.getInstance()
-                                                                                                               .getConfig()
-                                                                                                               .getServer().initialCitizenAmount.get();
+                 && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > initialCitizenCount;
     }
 
     @Override

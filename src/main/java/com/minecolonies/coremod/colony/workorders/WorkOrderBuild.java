@@ -205,7 +205,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
             final IBuilding building = colony.getBuildingManager().getBuilding(this.getBuildingLocation());
             if (building != null)
             {
-                ConstructionTapeHelper.placeConstructionTape(building.getPosition(), building.getCorners(), colony.getWorld());
+                ConstructionTapeHelper.placeConstructionTape(building.getCorners(), colony.getWorld());
             }
         }
     }

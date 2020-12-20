@@ -14,6 +14,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
@@ -51,7 +52,7 @@ public class WorldUtil
     /**
      * Mark a chunk at a position dirty if loaded.
      * @param world the world to mark it dirty in.
-     * @param pos the position within the chunk.
+     * @param pos   the position within the chunk.
      */
     public static void markChunkDirty(final World world, final BlockPos pos)
     {
@@ -200,5 +201,61 @@ public class WorldUtil
     public static boolean isPeaceful(@NotNull final World world)
     {
         return !world.getWorldInfo().getGameRulesInstance().getBoolean(GameRules.DO_MOB_SPAWNING) || world.getDifficulty().equals(Difficulty.PEACEFUL);
+    }
+
+    /**
+     * Custom set block state, with 1 instead of default flag 3, to skip vanilla's path notify upon block change, making setBlockState expensive. The state change still affects
+     * neighbours and is synced
+     *
+     * @param world world to use
+     * @param pos   position to set
+     * @param state state to set
+     */
+    public static boolean setBlockState(final IWorld world, final BlockPos pos, final BlockState state)
+    {
+        if (world.isRemote())
+        {
+            return world.setBlockState(pos, state, 3);
+        }
+
+        final boolean result = world.setBlockState(pos, state, 1);
+        if (result)
+        {
+            ((ServerWorld) world).getChunkProvider().markBlockChanged(pos);
+        }
+
+        return result;
+    }
+
+    /**
+     * Custom set block state, skips vanilla's path notify upon block change, making setBlockState expensive.
+     *
+     * @param world world to use
+     * @param pos   position to set
+     * @param state state to set
+     * @param flags flags to use
+     */
+    public static boolean setBlockState(final IWorld world, final BlockPos pos, final BlockState state, int flags)
+    {
+        if (world.isRemote())
+        {
+            return world.setBlockState(pos, state, flags);
+        }
+
+        if ((flags & 2) != 0)
+        {
+            flags -= 2;
+            final boolean result = world.setBlockState(pos, state, flags);
+            if (result)
+            {
+                ((ServerWorld) world).getChunkProvider().markBlockChanged(pos);
+            }
+
+            return result;
+        }
+        else
+        {
+            return world.setBlockState(pos, state, flags);
+        }
     }
 }
