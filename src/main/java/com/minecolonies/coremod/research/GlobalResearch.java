@@ -1,21 +1,18 @@
 package com.minecolonies.coremod.research;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.effects.IResearchEffect;
-import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -23,11 +20,13 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
+import static com.minecolonies.api.research.util.ResearchConstants.DEFAULT_COST_SIZE;
 
 /**
  * The implementation of the IGlobalResearch interface which represents the research on the global level.
@@ -49,6 +48,11 @@ public class GlobalResearch implements IGlobalResearch
      * The property name that indicates research branch. Required.
      */
     public static final String RESEARCH_BRANCH_PROP = "branch";
+
+    /**
+     * The property name that indicates research icon.
+     */
+    public static final String RESEARCH_ICON_PROP = "icon";
 
     /**
      * The property name that indicates this recipe removes a research.
@@ -89,6 +93,11 @@ public class GlobalResearch implements IGlobalResearch
      * The property name for a non-university building requirement.
      */
     private static final String RESEARCH_REQUIRED_BUILDING_PROP = "building";
+
+    /**
+     * The property name for a non-university building requirement.
+     */
+    private static final String RESEARCH_ALTERNATE_BUILDING_PROP = "alternate-building";
 
     /**
      * The property name for a non-parent research requirement.
@@ -148,6 +157,11 @@ public class GlobalResearch implements IGlobalResearch
     private final String branch;
 
     /**
+     * The research icon's resource location.
+     */
+    private final String icon;
+
+    /**
      * The pre-localized name for the research.  Used only if name tag is in json.
      */
     private final String name;
@@ -183,9 +197,9 @@ public class GlobalResearch implements IGlobalResearch
     private final boolean instant;
 
     /**
-     * List of childs of a research.
+     * List of children of a research.
      */
-    private final List<String> childs = new ArrayList<>();
+    private final List<String> children = new ArrayList<>();
 
     /**
      * The requirement for this research.
@@ -211,6 +225,7 @@ public class GlobalResearch implements IGlobalResearch
         this.hidden = false;
         this.instant = false;
         this.autostart = false;
+        this.icon = "";
         Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
     }
 
@@ -222,7 +237,7 @@ public class GlobalResearch implements IGlobalResearch
      * @param universityLevel the depth in the tree.
      * @param branch          the branch it is on.
      */
-    public GlobalResearch(final String id, final String branch, final int universityLevel, final List<IResearchEffect> effects)
+    public GlobalResearch(final String id, final String branch, final int universityLevel, final List<IResearchEffect> effects, final String icon)
     {
         this.id = id;
         this.name = id;
@@ -233,6 +248,7 @@ public class GlobalResearch implements IGlobalResearch
         this.hidden = false;
         this.autostart = false;
         this.instant = false;
+        this.icon = icon;
         Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
     }
 
@@ -243,7 +259,9 @@ public class GlobalResearch implements IGlobalResearch
         final ILocalResearch localParentResearch = parent.isEmpty() ? null : localTree.getResearch(branch, parentResearch.getId());
         final ILocalResearch localResearch = localTree.getResearch(this.getBranch(), this.getId());
 
-        return localResearch == null && canDisplay(uni_level) && (parentResearch == null || localParentResearch != null && localParentResearch.getState() == ResearchState.FINISHED)
+        return (localResearch == null || (localResearch != null && localResearch.getState() != ResearchState.FINISHED &&localResearch.getState() != ResearchState.CANCELED))
+                 && canDisplay(uni_level)
+                 && (parentResearch == null || localParentResearch != null && localParentResearch.getState() == ResearchState.FINISHED)
                  && (parentResearch == null || !parentResearch.hasResearchedChild(localTree) || !parentResearch.hasOnlyChild()) && (depth < 6
                                                                                                                                       || !localTree.branchFinishedHighestLevel(
           branch));
@@ -287,6 +305,15 @@ public class GlobalResearch implements IGlobalResearch
             }
             research.setState(ResearchState.IN_PROGRESS);
             localResearchTree.addResearch(branch, research);
+        }
+        else if (localResearchTree.getResearch(this.branch, this.id).getState() == ResearchState.CANCELED)
+        {
+            if (this.instant)
+            {
+                localResearchTree.getResearch(this.branch, this.id).setProgress((int)(BASE_RESEARCH_TIME *
+                           Math.pow(2, localResearchTree.getResearch(this.branch, this.id).getDepth() - 1)));
+            }
+            localResearchTree.getResearch(this.branch, this.id).setState(ResearchState.IN_PROGRESS);
         }
     }
 
@@ -357,11 +384,11 @@ public class GlobalResearch implements IGlobalResearch
     @Override
     public boolean hasResearchedChild(@NotNull final ILocalResearchTree localTree)
     {
-        for (final String child : this.childs)
+        for (final String child : this.children)
         {
             final IGlobalResearch childResearch = IGlobalResearchTree.getInstance().getResearch(branch, child);
             final ILocalResearch localResearch = localTree.getResearch(childResearch.getBranch(), childResearch.getId());
-            if (localResearch != null)
+            if (localResearch != null && (localResearch.getState() == ResearchState.CANCELED || localResearch.getState() == ResearchState.FINISHED))
             {
                 return true;
             }
@@ -372,7 +399,7 @@ public class GlobalResearch implements IGlobalResearch
     @Override
     public void addChild(final IGlobalResearch child)
     {
-        this.childs.add(child.getId());
+        this.children.add(child.getId());
         child.setParent(this.getId());
     }
 
@@ -395,16 +422,19 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public ImmutableList<String> getChilds()
+    public ImmutableList<String> getChildren()
     {
-        return ImmutableList.copyOf(this.childs);
+        return ImmutableList.copyOf(this.children);
     }
 
     @Override
     public List<IResearchEffect> getEffects()
     {
-        return effects;
+        return this.effects;
     }
+
+    @Override
+    public String getIcon() {return this.icon;}
 
     /**
      * Parse a Json object into a new GlobalResearch.
@@ -419,6 +449,10 @@ public class GlobalResearch implements IGlobalResearch
         this.id = getResearchId(researchJson, resourceLocation);
         this.name = getResearchName(researchJson);
         this.branch = getBranch(researchJson, resourceLocation);
+        //TODO: make getResearchIcon fire only for client-side.
+        // icons are only used in client, and may reference files that don't exist on server.
+        // Performance impact is relatively low, but may leave erroneous log errors.
+        this.icon = getResearchIcon(researchJson);
         this.depth = getUniversityLevel(researchJson);
         this.parent = getParent(researchJson);
         this.onlyChild = getBooleanSafe(researchJson, RESEARCH_EXCLUSIVE_CHILD_PROP);
@@ -505,6 +539,79 @@ public class GlobalResearch implements IGlobalResearch
             Log.getLogger().info("No declared university level for " + this.branch + "/" + this.id );
             return 1;
         }
+    }
+
+    /**
+     * Gets the optional icon location from a research json, if present.  If not available, or if requests a file or block that does not exist, returns an empty string.
+     * @param researchJson        A json object to retrieve the requiredUniversityLevel from.
+     * @return                    The required university level as an integer.
+     */
+    private String getResearchIcon(final JsonObject researchJson)
+    {
+        if (researchJson.has(RESEARCH_ICON_PROP) && researchJson.get(RESEARCH_ICON_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_ICON_PROP).getAsJsonPrimitive().isString())
+        {
+            final String[] iconParts = researchJson.get(RESEARCH_ICON_PROP).getAsString().split(":");
+            final String[] outputString = new String[3];
+            // Do preliminary validation here, as later uses will always be in UI space.
+            if(iconParts.length > 3)
+            {
+                Log.getLogger().info("Malformed icon property for " + this.branch + "/" + this.id + ".  Icons may contain at most namespace:identifier:count.");
+                return "";
+            }
+
+            if(iconParts.length == 3)
+            {
+                try
+                {
+                    Integer.parseInt(iconParts[2]);
+                    outputString[2] = iconParts[2];
+                }
+                catch(NumberFormatException parseError)
+                {
+                    Log.getLogger().info("Non-integer count assigned to icon of " + this.branch + "/" + this.id + " : " + parseError.getLocalizedMessage());
+                    outputString[2] = "1";
+                }
+            }
+            else
+            {
+                outputString[2] = "";
+            }
+
+            if(iconParts.length == 1)
+            {
+                outputString[0] = "minecraft";
+                outputString[1] = iconParts[0];
+            }
+            else
+            {
+                outputString[0] = iconParts[0];
+                outputString[1] = iconParts[1];
+            }
+
+            // If looking for a texture file, check if the file exists here, both to better assist debugging, and to avoid exceptions in GUI thread.
+            // For non-file missing values, Forge will automatically replace with minecraft:air.
+            if(outputString[1].contains("."))
+            {
+                try
+                {
+                    Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(outputString[0],outputString[1]));
+                }
+                catch (IOException notFoundError)
+                {
+                    Log.getLogger()
+                      .info("Resource file for Minecraft:" + iconParts[1] + " not found for " + this.branch + "/" + this.id + " : " + notFoundError.getLocalizedMessage());
+                    outputString[0] = "minecraft";
+                    outputString[1] = "air";
+                }
+            }
+
+            return outputString[0] + ":" + outputString[1] + ":" + outputString[2];
+        }
+        if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+        {
+            Log.getLogger().info("No or invalid icon assigned to " + this.branch + "/" + this.id);
+        }
+        return "";
     }
 
     /**
@@ -598,18 +705,58 @@ public class GlobalResearch implements IGlobalResearch
                     BuildingResearchRequirement requirement = new BuildingResearchRequirement(level, reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_PROP).getAsString());
                     this.requirements.add(requirement);
                 }
-                // Research Requirements.  Only partially implemented.
+
+                // Research Requirements.
+                // TODO: Only partially implemented.  Needs a GUI implementation in WindowResearchTree.
                 else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_RESEARCH_PROP) &&
                           reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsJsonPrimitive().isString())
                 {
                     this.requirements.add(new ResearchResearchRequirement(reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsString(), this.name));
                 }
+
+                // Alternate Building Requirements.  Requires at least one building type at a specific level out of all Alternate Buildings.
+                // Only supports one group of alternates for a given research, for now:
+                // House:4 OR Fisher:2 OR TownHall:1 OR Mine:3 is supported.
+                // House:4 OR Fisher:2 AND TownHall:1 OR Mine:3 is not.
+                else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_ALTERNATE_BUILDING_PROP) &&
+                          reqArrayElement.getAsJsonObject().get(RESEARCH_ALTERNATE_BUILDING_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_ALTERNATE_BUILDING_PROP).getAsJsonPrimitive().isString())
+                {
+                    parseAndAssignAlternateBuildingRequirement(reqArrayElement.getAsJsonObject());
+                }
+
                 else
                 {
                     Log.getLogger().warn("Invalid Research Requirement formatting for " + this.branch + "/" + this.id);
                 }
             }
         }
+    }
+
+    /**
+     * Parses a JSON object for Research Alternate Building Requirements, and adds them to the requirements list.
+     * @param requirementJson       A validated JSON Object containing a RESEARCH_ALTERNATE_BUILDING_PROP
+     */
+    private void parseAndAssignAlternateBuildingRequirement(final JsonObject requirementJson)
+    {
+        final int level;
+        if(requirementJson.has(RESEARCH_LEVEL_PROP) && requirementJson.get(RESEARCH_LEVEL_PROP).isJsonPrimitive()
+             && requirementJson.get(RESEARCH_LEVEL_PROP).getAsJsonPrimitive().isNumber())
+        {
+            level = requirementJson.get(RESEARCH_LEVEL_PROP).getAsNumber().intValue();
+        }
+        else
+        {
+            level = 1;
+        }
+        for(IResearchRequirement requirement : requirements)
+        {
+            if(requirement instanceof AlternateBuildingResearchRequirement)
+            {
+                ((AlternateBuildingResearchRequirement)requirement).add(requirementJson.get(RESEARCH_ALTERNATE_BUILDING_PROP).getAsString(), level);
+                return;
+            }
+        }
+        this.requirements.add(new AlternateBuildingResearchRequirement().add(requirementJson.getAsJsonObject().get(RESEARCH_ALTERNATE_BUILDING_PROP).getAsString(), level));
     }
 
     /**

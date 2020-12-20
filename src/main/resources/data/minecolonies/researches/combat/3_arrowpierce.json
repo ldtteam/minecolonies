@@ -3,6 +3,7 @@
   "id": "arrowpierce",
   "branch": "combat",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:enchanted_book",
   "parentResearch": "arrowuse",
   "requirements":
   [

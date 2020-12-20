@@ -3,6 +3,7 @@
   "id": "hittingiron",
   "branch": "technology",
   "requiredUniversityLevel": 1,
+  "icon": "minecolonies:blockhutblacksmith",
   "requirements":
   [
    { "item": "minecraft:anvil", "quantity": 1 },

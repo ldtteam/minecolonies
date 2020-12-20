@@ -3,6 +3,7 @@
   "id": "morescrolls",
   "branch": "technology",
   "requiredUniversityLevel": 1,
+  "icon": "minecolonies:scroll_highlight",
   "requirements":
   [
    { "item": "minecraft:paper", "quantity": 64 },

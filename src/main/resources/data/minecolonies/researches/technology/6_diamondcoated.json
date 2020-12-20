@@ -3,6 +3,7 @@
   "id": "diamondcoated",
   "branch": "technology",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:diamond_pickaxe",
   "parentResearch": "steelbracing",
   "requirements":
   [

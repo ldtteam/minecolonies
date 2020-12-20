@@ -3,6 +3,7 @@
   "id": "mightycleave",
   "branch": "combat",
   "requiredUniversityLevel": 5,
+  "icon": "minecraft:golden_sword",
   "parentResearch": "cleave",
   "requirements":
   [

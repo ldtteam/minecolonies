@@ -3,6 +3,7 @@
   "id": "masterbowman",
   "branch": "combat",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:blaze_rod",
   "parentResearch": "rapidshot",
   "requirements":
   [

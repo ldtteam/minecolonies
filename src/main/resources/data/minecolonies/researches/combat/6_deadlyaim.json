@@ -3,6 +3,7 @@
   "id": "deadlyaim",
   "branch": "combat",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:tipped_arrow",
   "parentResearch": "woundingshot",
   "requirements":
   [

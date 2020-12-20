@@ -3,6 +3,7 @@
   "id": "ability",
   "branch": "technology",
   "requiredUniversityLevel": 2,
+  "icon": "minecraft:glowstone_dust",
   "parentResearch": "hittingiron",
   "requirements":
   [

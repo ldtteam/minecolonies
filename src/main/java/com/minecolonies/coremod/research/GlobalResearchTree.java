@@ -186,41 +186,9 @@ public class GlobalResearchTree implements IGlobalResearchTree
         }
         for(final IResearchRequirement requirement : requirements)
         {
-            if(requirement instanceof BuildingResearchRequirement)
+            if(!requirement.isFulfilled(colony))
             {
-                int levels = 0;
-                if(colony instanceof IColonyView)
-                {
-                    for (final IBuildingView building : ((IColonyView)colony).getBuildings())
-                    {
-                        if (building.getSchematicName().equals(((BuildingResearchRequirement) requirement).getBuilding()))
-                        {
-                            levels += building.getBuildingLevel();
-                        }
-                    }
-                }
-                else if(colony instanceof IColony)
-                {
-                    for (final Map.Entry<BlockPos, IBuilding> building : colony.getBuildingManager().getBuildings().entrySet())
-                    {
-                        if (building.getValue().getSchematicName().equals(((BuildingResearchRequirement) requirement).getBuilding()))
-                        {
-                            levels += building.getValue().getBuildingLevel();
-                        }
-                    }
-                }
-
-                if(levels < ((BuildingResearchRequirement)requirement).getBuildingLevel())
-                {
-                    return false;
-                }
-            }
-            if(requirement instanceof ResearchResearchRequirement)
-            {
-                if(!colony.getResearchManager().getResearchTree().hasCompletedResearch(((ResearchResearchRequirement) requirement).getResearchId()))
-                {
-                    return false;
-                }
+                return false;
             }
         }
         return true;

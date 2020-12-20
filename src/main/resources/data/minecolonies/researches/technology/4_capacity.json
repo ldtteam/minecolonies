@@ -3,6 +3,7 @@
   "id": "capacity",
   "branch": "technology",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:shulker_box",
   "parentResearch": "space",
   "requirements":
   [

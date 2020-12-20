@@ -3,6 +3,7 @@
   "id": "gildedhammer",
   "branch": "technology",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:gold_block",
   "parentResearch": "rockingroll",
   "requirements":
   [

@@ -3,6 +3,7 @@
   "id": "space",
   "branch": "technology",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:chest",
   "parentResearch": "sieving",
   "requirements":
   [

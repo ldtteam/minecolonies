@@ -3,6 +3,7 @@
   "id": "hotboots",
   "branch": "technology",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:campfire",
   "parentResearch": "stringwork",
   "requirements":
   [

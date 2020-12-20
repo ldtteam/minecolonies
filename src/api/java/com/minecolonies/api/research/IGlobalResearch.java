@@ -61,10 +61,16 @@ public interface IGlobalResearch
 
     /**
      * Getter of the id of the research.
-     *
      * @return the String id.
      */
     String getId();
+
+    /**
+     * Getter of the research icon's resource location.
+     * @return the string of the ResourceLocation of the icon, in the pattern namespace:directory:(optional count).
+     */
+    public String getIcon();
+
 
     /**
      * Getter of the resource location of the research, if loaded by datapack.
@@ -110,7 +116,7 @@ public interface IGlobalResearch
     boolean isHidden();
 
     /**
-     * Check if this research is an only child research. This means, after researching one child no other childs can be researched.
+     * Check if this research is an only child research. This means, after researching one child no other children can be researched.
      *
      * @return true if so.
      */
@@ -143,7 +149,7 @@ public interface IGlobalResearch
      *
      * @return a copy of the list of child identifiers.
      */
-    ImmutableList<String> getChilds();
+    ImmutableList<String> getChildren();
 
     /**
      * Set the parent of a research.

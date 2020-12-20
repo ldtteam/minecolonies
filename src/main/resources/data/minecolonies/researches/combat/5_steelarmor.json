@@ -3,6 +3,7 @@
   "id": "steelarmor",
   "branch": "combat",
   "requiredUniversityLevel": 5,
+  "icon": "minecraft:golden_helmet",
   "parentResearch": "ironarmor",
   "requirements":
   [

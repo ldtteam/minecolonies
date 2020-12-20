@@ -3,10 +3,11 @@
   "id": "deeppockets",
   "branch": "technology",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:pink_shulker_box",
   "parentResearch": "cheatsheet",
   "requirements":
   [
-   { "item": "minecraft:emerald", "quantity": 256 },
+   { "item": "minecraft:emerald", "quantity": 64 },
    { "building": "library", "level": 4 }
   ],
   "effects":

@@ -3,6 +3,7 @@
   "id": "fear",
   "branch": "combat",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:iron_boots",
   "parentResearch": "feint",
   "requirements":
   [

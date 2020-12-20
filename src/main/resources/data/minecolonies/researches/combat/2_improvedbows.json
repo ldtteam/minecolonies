@@ -3,6 +3,7 @@
   "id": "improvedbows",
   "branch": "combat",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:blockhutarchery",
   "parentResearch": "tactictraining",
   "requirements":
   [

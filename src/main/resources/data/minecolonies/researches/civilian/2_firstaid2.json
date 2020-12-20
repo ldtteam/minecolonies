@@ -3,6 +3,7 @@
   "id": "firstaid2",
   "branch": "civilian",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:textures/icons/research/hp2.png",
   "parentResearch": "firstaid",
   "requirements":
   [

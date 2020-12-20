@@ -3,6 +3,7 @@
   "id": "flee",
   "branch": "combat",
   "requiredUniversityLevel": 5,
+  "icon": "minecraft:feather:3",
   "parentResearch": "evade",
   "requirements":
   [

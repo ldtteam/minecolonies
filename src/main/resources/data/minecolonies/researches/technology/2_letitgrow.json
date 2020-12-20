@@ -3,6 +3,7 @@
   "id": "letitgrow",
   "branch": "technology",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:blockhutplantation",
   "parentResearch": "biodegradable",
   "requirements":
   [

@@ -3,6 +3,7 @@
   "id": "heavymachinery",
   "branch": "technology",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:redstone_block",
   "parentResearch": "redstonepowered",
   "requirements":
   [

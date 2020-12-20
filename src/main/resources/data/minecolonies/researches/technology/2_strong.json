@@ -3,6 +3,7 @@
   "id": "strong",
   "branch": "technology",
   "requiredUniversityLevel": 2,
+  "icon": "minecraft:wooden_pickaxe",
   "parentResearch": "hittingiron",
   "requirements":
   [

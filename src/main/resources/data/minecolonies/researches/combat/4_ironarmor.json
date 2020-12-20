@@ -3,6 +3,7 @@
   "id": "ironarmor",
   "branch": "combat",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:iron_helmet",
   "parentResearch": "ironskin",
   "requirements":
   [

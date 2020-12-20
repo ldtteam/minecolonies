@@ -3,6 +3,7 @@
   "id": "knockbackaoe",
   "branch": "combat",
   "requiredUniversityLevel": 4,
+  "icon": "minecolonies:iron_scimitar",
   "parentResearch": "arrowpierce",
   "requirements":
   [

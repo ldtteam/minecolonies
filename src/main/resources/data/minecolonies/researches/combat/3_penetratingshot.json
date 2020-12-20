@@ -3,6 +3,7 @@
   "id": "penetratingshot",
   "branch": "combat",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:bow",
   "parentResearch": "preciseshot",
   "requirements":
   [

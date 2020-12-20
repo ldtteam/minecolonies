@@ -3,6 +3,7 @@
   "id": "seemsautomatic",
   "branch": "technology",
   "requiredUniversityLevel": 5,
+  "icon": "minecraft:blaze_powder",
   "parentResearch": "tools",
   "requirements":
   [

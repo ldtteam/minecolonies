@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.research;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.research.IResearchRequirement;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -51,15 +54,33 @@ public class BuildingResearchRequirement implements IResearchRequirement
     public boolean isFulfilled(final IColony colony)
     {
         int sum = 0;
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        if(colony instanceof IColonyView)
         {
-            if (building.getSchematicName().equalsIgnoreCase(this.building))
+            for (final IBuildingView building : ((IColonyView) colony).getBuildings())
             {
-                sum += building.getBuildingLevel();
-
-                if (sum >= this.buildingLevel)
+                if (building.getSchematicName().equals(this.getBuilding()))
                 {
-                    return true;
+                    sum += building.getBuildingLevel();
+
+                    if(sum >= this.buildingLevel)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        else if(colony instanceof IColony)
+        {
+            for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+            {
+                if (building.getSchematicName().equalsIgnoreCase(this.building))
+                {
+                    sum += building.getBuildingLevel();
+
+                    if (sum >= this.buildingLevel)
+                    {
+                        return true;
+                    }
                 }
             }
         }
@@ -69,6 +90,6 @@ public class BuildingResearchRequirement implements IResearchRequirement
     @Override
     public TranslationTextComponent getDesc()
     {
-        return new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.level", this.building, this.buildingLevel);
+        return new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.level", new TranslationTextComponent("block.minecolonies.blockhut" + this.building), this.buildingLevel);
     }
 }

@@ -3,6 +3,7 @@
   "id": "avoid",
   "branch": "combat",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:feather",
   "parentResearch": "regeneration",
   "requirements":
   [

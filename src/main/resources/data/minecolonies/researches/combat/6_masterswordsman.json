@@ -3,6 +3,7 @@
   "id": "masterswordsman",
   "branch": "combat",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:diamond_chestplate",
   "parentResearch": "provost",
   "requirements":
   [

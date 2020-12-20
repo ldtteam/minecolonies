@@ -3,6 +3,7 @@
   "id": "healingcream",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
+  "icon": "minecolonies:textures/icons/research/regeneration2.png",
   "parentResearch": "bandaid",
   "requirements":
   [

@@ -3,6 +3,7 @@
   "id": "epicure",
   "branch": "civilian",
   "requiredUniversityLevel": 5,
+  "icon": "minecolonies:textures/icons/research/saturation4.png",
   "parentResearch": "stuffer",
   "requirements":
   [

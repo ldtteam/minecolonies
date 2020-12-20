@@ -9,6 +9,7 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
+import com.minecolonies.coremod.research.AlternateBuildingResearchRequirement;
 import com.minecolonies.coremod.research.BuildingResearchRequirement;
 import com.minecolonies.coremod.research.ResearchResearchRequirement;
 import net.minecraft.util.ResourceLocation;
@@ -117,6 +118,13 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
                         if(!building.getColony().getResearchManager().getResearchTree().hasCompletedResearch(((ResearchResearchRequirement) req).getResearchId()))
                         {
                             requirements.add(req.getDesc().setStyle((Style.EMPTY).setFormatting(TextFormatting.RED)));
+                        }
+                    }
+                    else if(req instanceof AlternateBuildingResearchRequirement)
+                    {
+                        if(req.isFulfilled(building.getColony()))
+                        {
+                            req.getDesc();
                         }
                     }
                     // We'll include even completed buildings in the requirement list, since buildings can get undone/removed.

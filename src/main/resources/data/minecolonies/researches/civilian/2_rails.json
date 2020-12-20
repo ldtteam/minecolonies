@@ -3,6 +3,7 @@
   "id": "rails",
   "branch": "civilian",
   "requiredUniversityLevel": 2,
+  "icon": "minecraft:detector_rail",
   "parentResearch": "keen",
   "requirements":
   [

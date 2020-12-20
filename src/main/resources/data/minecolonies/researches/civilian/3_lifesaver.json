@@ -3,6 +3,7 @@
   "id": "lifesaver",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
+  "icon": "minecolonies:textures/icons/research/hp3.png",
   "parentResearch": "firstaid2",
   "requirements":
   [

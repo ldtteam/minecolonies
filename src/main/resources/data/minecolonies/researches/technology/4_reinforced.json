@@ -3,6 +3,7 @@
   "id": "reinforced",
   "branch": "technology",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:iron_pickaxe",
   "parentResearch": "hardened",
   "requirements":
   [

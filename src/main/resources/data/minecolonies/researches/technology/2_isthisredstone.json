@@ -3,6 +3,7 @@
   "id": "isthisredstone",
   "branch": "technology",
   "requiredUniversityLevel": 2,
+  "icon": "minecraft:redstone",
   "parentResearch": "hot",
   "requirements":
   [

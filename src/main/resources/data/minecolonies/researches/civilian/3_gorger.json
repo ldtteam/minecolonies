@@ -3,6 +3,7 @@
   "id": "gorger",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
+  "icon": "minecolonies:textures/icons/research/saturation2.png",
   "parentResearch": "gourmand",
   "requirements":
   [

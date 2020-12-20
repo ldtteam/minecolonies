@@ -3,6 +3,7 @@
   "id": "nightowl2",
   "branch": "civilian",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:clock:2",
   "parentResearch": "festival",
   "requirements":
   [

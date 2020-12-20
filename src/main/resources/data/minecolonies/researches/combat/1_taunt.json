@@ -3,6 +3,7 @@
   "id": "taunt",
   "branch": "combat",
   "requiredUniversityLevel": 1,
+  "icon": "minecraft:chain",
   "requirements":
   [
    { "item": "minecraft:rotten_flesh", "quantity": 8 },

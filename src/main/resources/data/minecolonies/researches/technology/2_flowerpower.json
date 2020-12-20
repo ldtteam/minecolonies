@@ -3,6 +3,7 @@
   "id": "flowerpower",
   "branch": "technology",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:blockhutflorist",
   "parentResearch": "biodegradable",
   "requirements":
   [

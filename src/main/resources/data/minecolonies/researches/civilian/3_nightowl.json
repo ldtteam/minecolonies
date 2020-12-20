@@ -3,6 +3,7 @@
   "id": "nightowl",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:clock",
   "parentResearch": "circus",
   "requirements":
   [

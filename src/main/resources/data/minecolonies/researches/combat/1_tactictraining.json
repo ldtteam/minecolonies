@@ -3,6 +3,7 @@
   "id": "tactictraining",
   "branch": "combat",
   "requiredUniversityLevel": 1,
+  "icon": "minecolonies:blockhutbarrackstower",
   "requirements":
   [
    { "item": "minecraft:iron_block", "quantity": 3 },

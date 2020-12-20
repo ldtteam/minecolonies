@@ -3,6 +3,7 @@
   "id": "improvedleather",
   "branch": "combat",
   "requiredUniversityLevel": 1,
+  "icon": "minecraft:leather_helmet",
   "requirements":
   [
    { "item": "minecraft:leather", "quantity": 32 },

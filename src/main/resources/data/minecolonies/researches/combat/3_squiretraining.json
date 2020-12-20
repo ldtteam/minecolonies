@@ -3,6 +3,7 @@
   "id": "squiretraining",
   "branch": "combat",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:iron_ingot",
   "parentResearch": "improvedswords",
   "requirements":
   [

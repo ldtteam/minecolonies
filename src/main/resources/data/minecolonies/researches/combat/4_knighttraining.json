@@ -3,6 +3,7 @@
   "id": "knighttraining",
   "branch": "combat",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:barrel",
   "parentResearch": "squiretraining",
   "requirements":
   [

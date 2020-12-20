@@ -3,6 +3,7 @@
   "id": "diamondskin",
   "branch": "combat",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:diamond_helmet",
   "parentResearch": "steelarmor",
   "requirements":
   [

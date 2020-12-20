@@ -3,6 +3,7 @@
   "id": "village",
   "branch": "civilian",
   "requiredUniversityLevel": 4,
+  "icon": "minecolonies:blockhutcitizen:100",
   "parentResearch": "hamlet",
   "requirements":
   [

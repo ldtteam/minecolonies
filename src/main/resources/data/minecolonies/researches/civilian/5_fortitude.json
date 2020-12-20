@@ -3,6 +3,7 @@
   "id": "fortitude",
   "branch": "civilian",
   "requiredUniversityLevel": 5,
+  "icon": "minecraft:honey_bottle",
   "parentResearch": "vitality",
   "requirements":
   [

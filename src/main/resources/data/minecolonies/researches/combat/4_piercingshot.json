@@ -3,6 +3,7 @@
   "id": "piercingshot",
   "branch": "combat",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:crossbow",
   "parentResearch": "penetratingshot",
   "requirements":
   [

@@ -3,6 +3,7 @@
   "id": "growth",
   "branch": "civilian",
   "requiredUniversityLevel": 5,
+  "icon": "minecolonies:textures/icons/research/childgrowth4.png",
   "parentResearch": "puberty",
   "requirements":
   [

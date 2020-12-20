@@ -3,6 +3,7 @@
   "id": "quickdraw",
   "branch": "combat",
   "requiredUniversityLevel": 2,
+  "icon": "minecraft:wooden_sword",
   "parentResearch": "accuracy",
   "requirements":
   [

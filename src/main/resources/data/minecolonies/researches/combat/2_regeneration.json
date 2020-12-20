@@ -3,7 +3,9 @@
   "id": "regeneration",
   "branch": "combat",
   "requiredUniversityLevel": 2,
+  "icon": "minecraft:glistering_melon_slice",
   "parentResearch": "improvedleather",
+  "exclusiveChildResearch": true,
   "requirements":
   [
    { "item": "minecraft:emerald", "quantity": 1 },

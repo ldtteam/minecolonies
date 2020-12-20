@@ -3,6 +3,7 @@
   "id": "whirlwind",
   "branch": "combat",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:diamond_sword",
   "parentResearch": "mightycleave",
   "requirements":
   [

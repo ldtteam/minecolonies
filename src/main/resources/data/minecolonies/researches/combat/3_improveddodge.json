@@ -3,6 +3,7 @@
   "id": "improveddodge",
   "branch": "combat",
   "requiredUniversityLevel": 3,
+  "icon": "minecolonies:pirate_shoes",
   "parentResearch": "dodge",
   "requirements":
   [

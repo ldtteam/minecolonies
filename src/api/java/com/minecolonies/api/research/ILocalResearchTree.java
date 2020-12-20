@@ -52,9 +52,18 @@ public interface ILocalResearchTree
     /**
      * Finish a research and remove it from the inProgress list.
      *
-     * @param id the id of the research to remove.
+     * @param id the id of the research to finish.
      */
     void finishResearch(final String id);
+
+    /**
+     * Cancel a research, and optionally undo its effects.
+     *
+     * @param branch            the branch of the research to remove.
+     * @param id                the id of the research to remove.
+     * @param resetEffects      if true, effects of the research will be reset.
+     */
+    void cancelResearch(final String branch, final String id, final boolean resetEffects);
 
     /**
      * Write the research tree to NBT.

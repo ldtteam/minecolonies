@@ -3,6 +3,7 @@
   "id": "stringwork",
   "branch": "technology",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:blockhutfletcher",
   "parentResearch": "woodwork",
   "requirements":
   [

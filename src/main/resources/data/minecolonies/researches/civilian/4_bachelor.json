@@ -3,6 +3,7 @@
   "id": "bachelor",
   "branch": "civilian",
   "requiredUniversityLevel": 4,
+  "icon": "minecolonies:textures/icons/research/xpgain3.png",
   "parentResearch": "bookworm",
   "requirements":
   [

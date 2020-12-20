@@ -3,6 +3,7 @@
   "id": "agilearcher",
   "branch": "combat",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:diamond_boots",
   "parentResearch": "improvedevasion",
   "requirements":
   [

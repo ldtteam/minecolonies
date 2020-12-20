@@ -3,6 +3,7 @@
   "id": "hotfoot",
   "branch": "combat",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:chicken",
   "parentResearch": "flee",
   "requirements":
   [

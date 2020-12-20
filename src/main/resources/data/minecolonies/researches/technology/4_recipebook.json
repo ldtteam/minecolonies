@@ -3,6 +3,7 @@
   "id": "recipebook",
   "branch": "technology",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:enchanted_book",
   "parentResearch": "cheatsheet",
   "requirements":
   [

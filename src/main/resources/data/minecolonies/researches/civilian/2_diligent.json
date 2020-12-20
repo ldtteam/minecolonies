@@ -3,6 +3,7 @@
   "id": "diligent",
   "branch": "civilian",
   "requiredUniversityLevel": 2,
+  "icon": "minecraft:experience_bottle",
   "parentResearch": "keen",
   "requirements":
   [

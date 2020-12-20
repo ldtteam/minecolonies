@@ -3,6 +3,7 @@
   "id": "arrowuse",
   "branch": "combat",
   "requiredUniversityLevel": 2,
+  "icon": "minecraft:arrow",
   "parentResearch": "taunt",
   "requirements":
   [

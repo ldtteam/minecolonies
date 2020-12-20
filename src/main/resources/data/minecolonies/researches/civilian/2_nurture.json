@@ -3,6 +3,7 @@
   "id": "nurture",
   "branch": "civilian",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:textures/icons/research/childgrowth1.png",
   "parentResearch": "higherlearning",
   "requirements":
   [

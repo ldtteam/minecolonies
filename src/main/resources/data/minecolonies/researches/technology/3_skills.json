@@ -3,6 +3,7 @@
   "id": "skills",
   "branch": "technology",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:glowstone",
   "parentResearch": "ability",
   "requirements":
   [

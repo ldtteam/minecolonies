@@ -3,6 +3,7 @@
   "id": "trickshot",
   "branch": "combat",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:arrow",
   "parentResearch": "improvedbows",
   "requirements":
   [

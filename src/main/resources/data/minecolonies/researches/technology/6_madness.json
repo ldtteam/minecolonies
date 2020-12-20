@@ -3,6 +3,7 @@
   "id": "madness",
   "branch": "technology",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:spectral_arrow",
   "parentResearch": "seemsautomatic",
   "requirements":
   [

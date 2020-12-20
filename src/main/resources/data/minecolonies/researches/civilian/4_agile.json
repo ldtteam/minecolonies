@@ -3,6 +3,7 @@
   "id": "agile",
   "branch": "civilian",
   "requiredUniversityLevel": 4,
+  "icon": "minecolonies:textures/icons/research/speed2.png",
   "parentResearch": "nimble",
   "requirements":
   [

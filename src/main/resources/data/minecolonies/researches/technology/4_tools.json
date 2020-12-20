@@ -3,6 +3,7 @@
   "id": "tools",
   "branch": "technology",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:redstone_lamp",
   "parentResearch": "skills",
   "requirements":
   [

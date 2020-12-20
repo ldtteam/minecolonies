@@ -3,6 +3,7 @@
   "id": "fullstock",
   "branch": "technology",
   "requiredUniversityLevel": 5,
+  "icon": "minecraft:ender_chest",
   "parentResearch": "capacity",
   "requirements":
   [

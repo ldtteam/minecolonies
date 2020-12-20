@@ -3,6 +3,7 @@
   "id": "bandaid",
   "branch": "civilian",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:textures/icons/research/regeneration1.png",
   "parentResearch": "stamina",
   "requirements":
   [

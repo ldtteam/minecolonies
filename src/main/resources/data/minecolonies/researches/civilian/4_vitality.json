@@ -3,6 +3,7 @@
   "id": "vitality",
   "branch": "civilian",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:splash_potion",
   "parentResearch": "resilience",
   "requirements":
   [

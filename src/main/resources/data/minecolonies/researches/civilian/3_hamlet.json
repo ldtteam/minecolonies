@@ -3,6 +3,7 @@
   "id": "hamlet",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
+  "icon": "minecolonies:blockhutcitizen:75",
   "parentResearch": "outpost",
   "requirements":
   [

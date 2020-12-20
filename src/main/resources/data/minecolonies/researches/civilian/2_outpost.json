@@ -3,6 +3,7 @@
   "id": "outpost",
   "branch": "civilian",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:blockhutcitizen:50",
   "parentResearch": "keen",
   "requirements":
   [

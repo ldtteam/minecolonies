@@ -3,6 +3,7 @@
   "id": "woundingshot",
   "branch": "combat",
   "requiredUniversityLevel": 5,
+  "icon": "minecolonies:firearrow",
   "parentResearch": "piercingshot",
   "requirements":
   [

@@ -3,6 +3,7 @@
   "id": "bookworm",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
+  "icon": "minecolonies:textures/icons/research/xpgain2.png",
   "parentResearch": "morebooks",
   "requirements":
   [

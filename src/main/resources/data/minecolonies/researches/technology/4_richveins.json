@@ -3,6 +3,7 @@
   "id": "richveins",
   "branch": "technology",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:gold_block",
   "parentResearch": "goodveins",
   "requirements":
   [

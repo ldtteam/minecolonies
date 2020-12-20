@@ -3,6 +3,7 @@
   "id": "fertilizer",
   "branch": "technology",
   "requiredUniversityLevel": 5,
+  "icon": "minecraft:bone_block",
   "parentResearch": "compost",
   "requirements":
   [

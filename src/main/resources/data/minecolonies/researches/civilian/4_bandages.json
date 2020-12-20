@@ -3,6 +3,7 @@
   "id": "bandages",
   "branch": "civilian",
   "requiredUniversityLevel": 4,
+  "icon": "minecolonies:textures/icons/research/regeneration3.png",
   "parentResearch": "healingcream",
   "requirements":
   [

@@ -3,6 +3,7 @@
   "id": "theflintstones",
   "branch": "technology",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:blockhutstonesmeltery",
   "parentResearch": "hot",
   "requirements":
   [

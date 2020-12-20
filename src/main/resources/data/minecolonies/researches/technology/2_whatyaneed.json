@@ -3,6 +3,7 @@
   "id": "whatyaneed",
   "branch": "technology",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:blockhutmechanic",
   "parentResearch": "hittingiron",
   "requirements":
   [

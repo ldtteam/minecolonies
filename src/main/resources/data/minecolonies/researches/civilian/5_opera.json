@@ -3,6 +3,7 @@
   "id": "opera",
   "branch": "civilian",
   "requiredUniversityLevel": 5,
+  "icon": "minecolonies:textures/icons/research/happy4.png",
   "parentResearch": "spectacle",
   "requirements":
   [

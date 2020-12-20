@@ -3,6 +3,7 @@
   "id": "cast",
   "branch": "civilian",
   "requiredUniversityLevel": 6,
+  "icon": "minecolonies:textures/icons/research/regeneration5.png",
   "parentResearch": "compress",
   "requirements":
   [

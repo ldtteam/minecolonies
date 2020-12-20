@@ -129,6 +129,22 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
+    public void cancelResearch(final String branch, final String id, final boolean resetEffects)
+    {
+        if(inProgress.containsKey(id))
+        {
+            inProgress.remove(id);
+            getResearch(branch, id).setState(ResearchState.CANCELED);
+            getResearch(branch, id).setProgress(0);
+
+            if(resetEffects)
+            {
+                //TODO: if resets of completed research are allowed, they need to be implemented here.
+            }
+        }
+    }
+
+    @Override
     public void writeToNBT(final CompoundNBT compound)
     {
         @NotNull final ListNBT

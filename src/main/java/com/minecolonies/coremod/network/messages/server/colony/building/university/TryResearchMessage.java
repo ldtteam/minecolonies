@@ -78,16 +78,20 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
             return;
         }
 
-        if (colony.getResearchManager().getResearchTree().getResearch(branch, researchId) == null)
+        final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchId);
+        if (colony.getResearchManager().getResearchTree().getResearch(branch, researchId) == null ||
+              (colony.getResearchManager().getResearchTree().getResearch(branch, researchId) != null
+                 && colony.getResearchManager().getResearchTree().getResearch(branch, researchId).getState() == ResearchState.CANCELED))
         {
-            final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchId);
-            if (research.canResearch(building.getBuildingLevel() == building.getMaxBuildingLevel() ? Integer.MAX_VALUE : building.getBuildingLevel(),
-              colony.getResearchManager().getResearchTree()) && research.hasEnoughResources(new InvWrapper(player.inventory)) || player.isCreative())
+            if (research.canResearch(building.getBuildingLevel() == building.getMaxBuildingLevel() ? Integer.MAX_VALUE : building.getBuildingLevel(), colony.getResearchManager().getResearchTree())
+                  && research.hasEnoughResources(new InvWrapper(player.inventory)) || player.isCreative()
+                  || (colony.getResearchManager().getResearchTree().getResearch(branch, researchId) != null
+                        && colony.getResearchManager().getResearchTree().getResearch(branch, researchId).getState() == ResearchState.CANCELED))
             {
                 if (player.isCreative())
                 {
                     research.startResearch(colony.getResearchManager().getResearchTree());
-                    if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get())
+                    if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get())
                     {
                         colony.getResearchManager()
                           .getResearchTree()
@@ -97,40 +101,59 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
                 }
                 else if (!research.getResearchRequirement().isEmpty())
                 {
-                    for(IResearchRequirement requirement : research.getResearchRequirement())
+                    for (IResearchRequirement requirement : research.getResearchRequirement())
                     {
-                        if(!requirement.isFulfilled(colony))
+                        if (!requirement.isFulfilled(colony))
                         {
                             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.requirementnotmet"), player.getUniqueID());
                             return;
                         }
                     }
                 }
-                if (!player.isCreative())
+                if (!player.isCreative() && colony.getResearchManager().getResearchTree().getResearch(branch, research.getId()) != null &&
+                      colony.getResearchManager().getResearchTree().getResearch(branch, research.getId()).getState() != ResearchState.CANCELED)
                 {
                     // Remove items from player
                     for (final ItemStorage cost : research.getCostList())
                     {
                         InventoryUtils.removeStackFromItemHandler(new InvWrapper(player.inventory), cost.getItemStack(), cost.getAmount());
                     }
-
-                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started", new TranslationTextComponent(research.getDesc())), player.getUniqueID());
-                    research.startResearch(colony.getResearchManager().getResearchTree());
                 }
+                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started", new TranslationTextComponent(research.getDesc())),
+                  player.getUniqueID());
+                research.startResearch(colony.getResearchManager().getResearchTree());
                 colony.markDirty();
             }
         }
         else
         {
-            if (player.isCreative() && colony.getResearchManager().getResearchTree().getResearch(branch, researchId).getState() == ResearchState.IN_PROGRESS)
+            if (player.isCreative() && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get()
+                  && colony.getResearchManager().getResearchTree().getResearch(branch, researchId).getState() == ResearchState.IN_PROGRESS)
             {
-                final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchId);
                 colony.getResearchManager().getResearchTree().getResearch(branch, research.getId()).setProgress((int) (BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
+            }
+            // If in progress and get another request, cancel research, and set progress to zero.
+            else if(colony.getResearchManager().getResearchTree().getResearch(branch, researchId).getState() == ResearchState.IN_PROGRESS)
+            {
+                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.stopped", new TranslationTextComponent(research.getDesc())),
+                  player.getUniqueID());
+                colony.getResearchManager().getResearchTree().cancelResearch(branch, researchId, false);
+            }
+            // If complete, it's a request to undo the research.
+            else if (colony.getResearchManager().getResearchTree().getResearch(branch, researchId).getState() == ResearchState.FINISHED)
+            {
+                if(colony.getResearchManager().getResearchTree().getResearch(branch, researchId) != null)
+                {
+                    player.sendMessage(new TranslationTextComponent("Research Removal not enabled."),
+                      player.getUniqueID());
+                    colony.getResearchManager().getResearchTree().cancelResearch(branch, researchId, true);
+                }
             }
             else
             {
                 player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.alreadystarted"), player.getUniqueID());
             }
+            colony.markDirty();
         }
     }
 }

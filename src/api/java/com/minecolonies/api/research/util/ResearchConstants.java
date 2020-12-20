@@ -1,5 +1,7 @@
 package com.minecolonies.api.research.util;
 
+import com.ldtteam.blockout.Color;
+
 /**
  * Class for research constants.
  */
@@ -34,17 +36,19 @@ public final class ResearchConstants
      * Research constants for window.
      */
     public static final String DRAG_VIEW_ID         = "dragView";
-    public static final int    GRADIENT_WIDTH       = 175;
+    public static final int    GRADIENT_WIDTH       = 140;
     public static final int    X_SPACING            = 40;
-    public static final int    GRADIENT_HEIGHT      = 50;
+    public static final int    GRADIENT_HEIGHT      = 40;
     public static final int    Y_SPACING            = 20;
     public static final int    COST_OFFSET          = 20;
     public static final int    TIMELABEL_Y_POSITION = 10;
     public static final int    MAX_DEPTH            = 6;
     public static final int    INITIAL_X_OFFSET     = 10;
-    public static final int    NAME_OFFSET          = 50;
+    public static final int    NAME_OFFSET          = 30;
     public static final int    INITIAL_Y_OFFSET     = 10;
     public static final int    TEXT_X_OFFSET        = 5;
+    public static final int    ICON_X_OFFSET        = 4;
+    public static final int    ICON_Y_OFFSET        = 4;
     public static final int    XPBAR_Y_OFFSET       = 30;
     public static final int    XPBAR_LENGTH         = 90;
     public static final int    TEXT_Y_OFFSET        = 10;
@@ -53,6 +57,14 @@ public final class ResearchConstants
     public static final int    LOCK_HEIGHT          = 17;
     public static final int    OR_X_OFFSET          = 14;
     public static final int    OR_Y_OFFSET          = 10;
+    public static final int    OR_HEIGHT            = 16;
+    public static final int    OR_WIDTH             = 16;
+    public static final int    TIME_HEIGHT          = 5;
+    public static final int    TIME_WIDTH           = 95;
+
+    public static final int    COLOR_TEXT_NEGATIVE  = Color.rgbaToInt(218, 10, 10, 255);
+    public static final int    COLOR_TEXT_LABEL     = Color.rgbaToInt(218, 202, 171, 255);
+    public static final int    COLOR_TEXT_LIGHT     = Color.rgbaToInt(30, 30, 30, 255);
 
     /**
      * Research Effect Name strings, used for ResearchEffectManager and ResearchRegistry lookups.

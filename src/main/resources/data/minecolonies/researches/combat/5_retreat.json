@@ -3,6 +3,7 @@
   "id": "retreat",
   "branch": "combat",
   "requiredUniversityLevel": 5,
+  "icon": "minecraft:golden_boots",
   "parentResearch": "fear",
   "requirements":
   [

@@ -3,6 +3,7 @@
   "id": "whatisthisspeed",
   "branch": "technology",
   "requiredUniversityLevel": 5,
+  "icon": "minecraft:comparator",
   "parentResearch": "heavymachinery",
   "requirements":
   [

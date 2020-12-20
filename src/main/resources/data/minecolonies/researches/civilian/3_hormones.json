@@ -3,6 +3,7 @@
   "id": "hormones",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
+  "icon": "minecolonies:textures/icons/research/childgrowth2.png",
   "parentResearch": "nurture",
   "requirements":
   [

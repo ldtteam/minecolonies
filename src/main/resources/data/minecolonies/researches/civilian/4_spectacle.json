@@ -3,6 +3,7 @@
   "id": "spectacle",
   "branch": "civilian",
   "requiredUniversityLevel": 4,
+  "icon": "minecolonies:textures/icons/research/happy3.png",
   "parentResearch": "festival",
   "requirements":
   [

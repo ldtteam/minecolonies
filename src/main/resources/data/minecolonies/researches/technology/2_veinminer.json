@@ -3,6 +3,7 @@
   "id": "veinminer",
   "branch": "technology",
   "requiredUniversityLevel": 2,
+  "icon": "minecraft:iron_block",
   "parentResearch": "hittingiron",
   "requirements":
   [

@@ -3,6 +3,7 @@
   "id": "boiledleather",
   "branch": "combat",
   "requiredUniversityLevel": 2,
+  "icon": "minecraft:turtle_helmet",
   "parentResearch": "improvedleather",
   "requirements":
   [

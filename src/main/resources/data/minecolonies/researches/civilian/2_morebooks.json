@@ -3,6 +3,7 @@
   "id": "morebooks",
   "branch": "civilian",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:textures/icons/research/xpgain1.png",
   "parentResearch": "higherlearning",
   "requirements":
   [

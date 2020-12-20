@@ -3,6 +3,7 @@
   "id": "ironskin",
   "branch": "combat",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:chainmail_helmet",
   "parentResearch": "boiledleather",
   "requirements":
   [

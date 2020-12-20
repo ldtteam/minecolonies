@@ -3,6 +3,7 @@
   "id": "beanstalk",
   "branch": "civilian",
   "requiredUniversityLevel": 6,
+  "icon": "minecolonies:textures/icons/research/childgrowth5.png",
   "parentResearch": "growth",
   "requirements":
   [

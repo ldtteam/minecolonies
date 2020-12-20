@@ -3,6 +3,7 @@
   "id": "firstaid",
   "branch": "civilian",
   "requiredUniversityLevel": 1,
+  "icon": "minecolonies:textures/icons/research/hp1.png",
   "requirements":
   [
    { "item": "minecraft:hay_block", "quantity": 8 },

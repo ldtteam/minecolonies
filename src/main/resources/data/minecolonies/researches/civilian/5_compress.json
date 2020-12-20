@@ -3,6 +3,7 @@
   "id": "compress",
   "branch": "civilian",
   "requiredUniversityLevel": 5,
+  "icon": "minecolonies:textures/icons/research/regeneration4.png",
   "parentResearch": "bandages",
   "requirements":
   [

@@ -3,6 +3,7 @@
   "id": "riposte",
   "branch": "combat",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:iron_chestplate",
   "parentResearch": "parry",
   "requirements":
   [

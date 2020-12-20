@@ -3,6 +3,7 @@
   "id": "feint",
   "branch": "combat",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:leather_boots",
   "parentResearch": "regeneration",
   "requirements":
   [

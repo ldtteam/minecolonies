@@ -3,6 +3,7 @@
   "id": "sieving",
   "branch": "technology",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:blockhutsifter",
   "parentResearch": "woodwork",
   "requirements":
   [

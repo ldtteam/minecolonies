@@ -3,6 +3,7 @@
   "id": "steelbracing",
   "branch": "technology",
   "requiredUniversityLevel": 5,
+  "icon": "minecraft:golden_pickaxe",
   "parentResearch": "reinforced",
   "requirements":
   [

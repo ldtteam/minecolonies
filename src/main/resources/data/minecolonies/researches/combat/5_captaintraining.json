@@ -3,6 +3,7 @@
   "id": "captaintraining",
   "branch": "combat",
   "requiredUniversityLevel": 5,
+  "icon": "minecraft:iron_bars",
   "parentResearch": "knighttraining",
   "requirements":
   [

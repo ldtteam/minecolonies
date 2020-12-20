@@ -3,6 +3,7 @@
   "id": "knowtheend",
   "branch": "technology",
   "requiredUniversityLevel": 3,
+  "icon": "minecolonies:chorus_bread",
   "parentResearch": "theflintstones",
   "requirements":
   [

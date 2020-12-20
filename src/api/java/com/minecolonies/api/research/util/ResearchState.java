@@ -7,5 +7,6 @@ public enum ResearchState
 {
     NOT_STARTED,
     IN_PROGRESS,
-    FINISHED
+    FINISHED,
+    CANCELED
 }

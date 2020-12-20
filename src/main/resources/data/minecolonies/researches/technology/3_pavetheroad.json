@@ -3,6 +3,7 @@
   "id": "pavetheroad",
   "branch": "technology",
   "requiredUniversityLevel": 3,
+  "icon": "minecolonies:blockhutconcretemixer",
   "parentResearch": "rockingroll",
   "requirements":
   [

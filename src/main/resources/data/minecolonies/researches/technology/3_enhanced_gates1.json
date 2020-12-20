@@ -3,6 +3,7 @@
   "id": "enhanced_gates1",
   "branch": "technology",
   "requiredUniversityLevel": 3,
+  "icon": "structurize:down_gated_dark_oak_stone_timber_frame",
   "parentResearch": "whatyaneed",
   "requirements":
   [

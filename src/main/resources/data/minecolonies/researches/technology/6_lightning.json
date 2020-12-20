@@ -3,6 +3,7 @@
   "id": "lightning",
   "branch": "technology",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:repeater",
   "parentResearch": "whatisthisspeed",
   "requirements":
   [

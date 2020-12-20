@@ -3,6 +3,7 @@
   "id": "resistance",
   "branch": "civilian",
   "requiredUniversityLevel": 2,
+  "icon": "minecraft:glass_bottle",
   "parentResearch": "stamina",
   "requirements":
   [

@@ -3,6 +3,7 @@
   "id": "puberty",
   "branch": "civilian",
   "requiredUniversityLevel": 4,
+  "icon": "minecolonies:textures/icons/research/childgrowth3.png",
   "parentResearch": "hormones",
   "requirements":
   [

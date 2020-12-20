@@ -3,6 +3,7 @@
   "id": "guardianangel",
   "branch": "civilian",
   "requiredUniversityLevel": 5,
+  "icon": "minecolonies:textures/icons/research/hp5.png",
   "parentResearch": "lifesaver2",
   "requirements":
   [

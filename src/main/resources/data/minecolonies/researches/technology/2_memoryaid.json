@@ -3,6 +3,7 @@
   "id": "memoryaid",
   "branch": "technology",
   "requiredUniversityLevel": 2,
+  "icon": "minecraft:paper",
   "parentResearch": "woodwork",
   "requirements":
   [

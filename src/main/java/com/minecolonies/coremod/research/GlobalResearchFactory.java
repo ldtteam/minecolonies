@@ -57,7 +57,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         compound.putInt(TAG_DEPTH, effect.getDepth());
         compound.putBoolean(TAG_ONLY_CHILD, effect.hasOnlyChild());
 
-        @NotNull final ListNBT childTagList = effect.getChilds().stream().map(child ->
+        @NotNull final ListNBT childTagList = effect.getChildren().stream().map(child ->
         {
             final CompoundNBT childCompound = new CompoundNBT();
             childCompound.putString(TAG_RESEARCH_CHILD, child);
@@ -98,8 +98,8 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         controller.serialize(packetBuffer, input);
         packetBuffer.writeInt(input.getDepth());
         packetBuffer.writeBoolean(input.hasOnlyChild());
-        packetBuffer.writeInt(input.getChilds().size());
-        input.getChilds().forEach(child -> packetBuffer.writeString(child));
+        packetBuffer.writeInt(input.getChildren().size());
+        input.getChildren().forEach(child -> packetBuffer.writeString(child));
     }
 
     @Override

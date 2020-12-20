@@ -3,6 +3,7 @@
   "id": "keen",
   "branch": "civilian",
   "requiredUniversityLevel": 1,
+  "icon": "minecolonies:blockhutlibrary",
   "requirements":
   [
    { "item": "minecraft:book", "quantity": 3 },

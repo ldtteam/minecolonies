@@ -3,6 +3,7 @@
   "id": "motherlode",
   "branch": "technology",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:diamond_block",
   "parentResearch": "amazingveins",
   "requirements":
   [

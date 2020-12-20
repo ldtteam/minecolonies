@@ -3,10 +3,11 @@
   "id": "heavilyloaded",
   "branch": "technology",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:blue_shulker_box",
   "parentResearch": "loaded",
   "requirements":
   [
-   { "item": "minecraft:emerald", "quantity": 128 }
+   { "item": "minecraft:emerald", "quantity": 256 }
   ],
   "effects":
   [

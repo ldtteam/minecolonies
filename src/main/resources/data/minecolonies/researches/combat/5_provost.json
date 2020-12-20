@@ -3,6 +3,7 @@
   "id": "provost",
   "branch": "combat",
   "requiredUniversityLevel": 5,
+  "icon": "minecraft:golden_chestplate",
   "parentResearch": "duelist",
   "requirements":
   [

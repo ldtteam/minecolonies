@@ -3,6 +3,7 @@
   "id": "swift",
   "branch": "civilian",
   "requiredUniversityLevel": 5,
+  "icon": "minecolonies:textures/icons/research/speed3.png",
   "parentResearch": "agile",
   "requirements":
   [

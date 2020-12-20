@@ -3,6 +3,7 @@
   "id": "indefatigability",
   "branch": "civilian",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:experience_bottle",
   "parentResearch": "fortitude",
   "requirements":
   [

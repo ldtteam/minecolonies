@@ -3,6 +3,7 @@
   "id": "dung",
   "branch": "technology",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:bone_meal",
   "parentResearch": "bonemeal",
   "requirements":
   [

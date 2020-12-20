@@ -3,6 +3,7 @@
   "id": "cleave",
   "branch": "combat",
   "requiredUniversityLevel": 4,
+  "icon": "minecraft:iron_sword",
   "parentResearch": "powerattack",
   "requirements":
   [

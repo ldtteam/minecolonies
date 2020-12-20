@@ -3,6 +3,7 @@
   "id": "resilience",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:potion",
   "parentResearch": "resistance",
   "requirements":
   [

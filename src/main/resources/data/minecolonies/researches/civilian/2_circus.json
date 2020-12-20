@@ -3,6 +3,7 @@
   "id": "circus",
   "branch": "civilian",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:textures/icons/research/happy1.png",
   "parentResearch": "firstaid",
   "requirements":
   [

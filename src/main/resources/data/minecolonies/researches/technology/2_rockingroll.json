@@ -3,6 +3,7 @@
   "id": "rockingroll",
   "branch": "technology",
   "requiredUniversityLevel": 2,
+  "icon": "minecolonies:blockhutcrusher",
   "parentResearch": "stonecake",
   "requirements":
   [

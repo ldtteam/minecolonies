@@ -3,6 +3,7 @@
   "id": "preciseshot",
   "branch": "combat",
   "requiredUniversityLevel": 2,
+  "icon": "minecraft:arrow",
   "parentResearch": "accuracy",
   "requirements":
   [

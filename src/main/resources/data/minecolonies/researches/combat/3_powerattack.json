@@ -3,6 +3,7 @@
   "id": "powerattack",
   "branch": "combat",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:stone_sword",
   "parentResearch": "quickdraw",
   "requirements":
   [

@@ -3,6 +3,7 @@
   "id": "cheatsheet",
   "branch": "technology",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:book",
   "parentResearch": "memoryaid",
   "requirements":
   [

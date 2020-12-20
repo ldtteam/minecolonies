@@ -3,6 +3,7 @@
   "id": "nimble",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
+  "icon": "minecolonies:textures/icons/research/speed1.png",
   "parentResearch": "rails",
   "requirements":
   [

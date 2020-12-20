@@ -3,6 +3,7 @@
   "id": "captainoftheguard",
   "branch": "combat",
   "requiredUniversityLevel": 6,
+  "icon": "minecraft:iron_block",
   "parentResearch": "captaintraining",
   "requirements":
   [

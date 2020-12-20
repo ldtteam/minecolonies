@@ -3,6 +3,7 @@
   "id": "amazingveins",
   "branch": "technology",
   "requiredUniversityLevel": 5,
+  "icon": "minecraft:lapis_block",
   "parentResearch": "richveins",
   "requirements":
   [

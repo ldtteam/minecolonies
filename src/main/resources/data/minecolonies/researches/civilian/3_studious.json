@@ -3,6 +3,7 @@
   "id": "studious",
   "branch": "civilian",
   "requiredUniversityLevel": 3,
+  "icon": "minecraft:experience_bottle:2",
   "parentResearch": "diligent",
   "requirements":
   [
