@@ -153,16 +153,30 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         xzRestricted = true;
 
-        final int localMinX = Math.min(minX, entity.getPosition().getX()) - 10;
-        final int localMaxX =  Math.max(maxX, entity.getPosition().getX()) + 10;
-        final int localMinZ =  Math.min(minZ, entity.getPosition().getZ()) - 10;
-        final int localMaxZ = Math.max(maxZ, entity.getPosition().getZ()) + 10;
-
+        final int localMinX;
+        final int localMaxX;
+        final int localMinZ;
+        final int localMaxZ;
+        if (entity == null)
+        {
+            localMinX = minX - 10;
+            localMaxX = maxX + 10;
+            localMinZ = minZ - 10;
+            localMaxZ = maxZ + 10;
+            this.start = startRestriction;
+        }
+        else
+        {
+            localMinX = Math.min(minX, entity.getPosition().getX()) - 10;
+            localMaxX = Math.max(maxX, entity.getPosition().getX()) + 10;
+            localMinZ = Math.min(minZ, entity.getPosition().getZ()) - 10;
+            localMaxZ = Math.max(maxZ, entity.getPosition().getZ()) + 10;
+            this.start = entity.getPosition();
+        }
         final int range = (int) Math.sqrt(Math.pow(localMaxX - localMinX, 2) + Math.pow(localMaxZ - localMinZ, 2)) * 2;
 
         this.world = new ChunkCache(world, new BlockPos(localMinX, MIN_Y, localMinZ), new BlockPos(localMaxX, MAX_Y, localMaxZ), range);
 
-        this.start = entity.getPosition();
         this.maxRange = range;
         this.result = result;
         this.init(entity);
