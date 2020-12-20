@@ -10,6 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -108,6 +109,18 @@ public class PathJobFindTree extends AbstractPathJob
         final int dy = pos.getY() - hutLocation.getY();
         final int dz = pos.getZ() - hutLocation.getZ();
 
+        if (xzRestricted)
+        {
+            if ((pos.getX() >= minX && pos.getX() <= maxX && pos.getZ() >= minZ && pos.getZ() <= maxZ))
+            {
+                return TIE_BREAKER;
+            }
+            else
+            {
+                return pos.distanceSq(new Vec3i(pos.getX() > maxX ? maxX : minX, pos.getY(), pos.getZ() > maxZ ? maxZ : minZ));
+            }
+        }
+
         //  Manhattan Distance with a 1/1000th tie-breaker - halved
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * TIE_BREAKER;
     }
@@ -115,6 +128,11 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
+        if (xzRestricted && (n.pos.getX() < minX || n.pos.getX() > maxX || n.pos.getZ() < minZ || n.pos.getZ() > maxZ))
+        {
+            return false;
+        }
+
         return n.parent != null && isNearTree(n);
     }
 
@@ -146,6 +164,26 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected double getNodeResultScore(final Node n)
     {
+        if (!xzRestricted || (n.pos.getX() >= minX && n.pos.getX() <= maxX && n.pos.getZ() >= minZ && n.pos.getZ() <= maxZ))
+        {
+            return 0;
+        }
+        else if (xzRestricted)
+        {
+            if (n.parent != null)
+            {
+                final int x = n.pos.getX() > maxX ? maxX : minX;
+                final int z = n.pos.getZ() > maxZ ? maxZ : minZ;
+                final double parentDist = n.parent.pos.distanceSq(new Vec3i(x, n.parent.pos.getY(), z));
+                final double currDist = n.pos.distanceSq(new Vec3i(x, n.pos.getY(), z));
+                if (parentDist <= currDist)
+                {
+                    return currDist;
+                }
+                return 0.1;
+            }
+        }
+
         return 0;
     }
 
