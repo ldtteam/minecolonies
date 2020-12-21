@@ -219,9 +219,9 @@ public class WindowResourceList extends AbstractWindowSkeleton
                 neededLabel.setColor(RED, RED);
                 break;
             case NEED_MORE:
-                resourceLabel.setColor(RED, RED);
-                resourceMissingLabel.setColor(RED, RED);
-                neededLabel.setColor(RED, RED);
+                resourceLabel.setColor(YELLOW, YELLOW);
+                resourceMissingLabel.setColor(YELLOW, YELLOW);
+                neededLabel.setColor(YELLOW, YELLOW);
                 break;
             case HAVE_ENOUGH:
                 resourceLabel.setColor(DARKGREEN, DARKGREEN);
