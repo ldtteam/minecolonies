@@ -44,6 +44,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     public static final int RED       = Color.getByName("red", 0);
     public static final int DARKGREEN = Color.getByName("darkgreen", 0);
     public static final int BLACK     = Color.getByName("black", 0);
+    public static final int YELLOW    = Color.getByName("yellow", 0);
 
     /**
      * The advancement location.
@@ -214,9 +215,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                 break;
             case NEED_MORE:
                 addButton.enable();
-                resourceLabel.setColor(RED, RED);
-                resourceMissingLabel.setColor(RED, RED);
-                neededLabel.setColor(RED, RED);
+                resourceLabel.setColor(YELLOW, YELLOW);
+                resourceMissingLabel.setColor(YELLOW, YELLOW);
+                neededLabel.setColor(YELLOW, YELLOW);
                 break;
             case HAVE_ENOUGH:
                 addButton.enable();
