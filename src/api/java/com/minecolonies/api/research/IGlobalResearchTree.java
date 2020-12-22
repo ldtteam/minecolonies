@@ -101,6 +101,12 @@ public interface IGlobalResearchTree
     List<IGlobalResearch> getAutostartResearches();
 
     /**
+     * Validates and gets the list of research reset costs, if any are set, from their configuration values.
+     * @return the list of items in namespace:item:integercount format
+     */
+    List<String> getResearchResetCosts();
+
+    /**
      * Checks if a specific research effect has been registered, whether or not it is unlocked.
      * @param id   the effect's identifier.
      * @return true if present, false if not registered.

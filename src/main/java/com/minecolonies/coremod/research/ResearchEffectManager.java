@@ -72,4 +72,10 @@ public class ResearchEffectManager implements IResearchEffectManager
             effectMap.put(effect.getId(), effect);
         }
     }
+
+    @Override
+    public void clear()
+    {
+        effectMap.clear();
+    }
 }

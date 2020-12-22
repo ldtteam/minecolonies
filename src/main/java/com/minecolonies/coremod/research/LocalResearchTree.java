@@ -2,7 +2,9 @@ package com.minecolonies.coremod.research;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.ILocalResearchTree;
@@ -16,11 +18,9 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static com.minecolonies.api.research.util.ResearchConstants.MAX_DEPTH;
 import static com.minecolonies.api.research.util.ResearchConstants.TAG_RESEARCH_TREE;
 
 /**
@@ -44,9 +44,9 @@ public class LocalResearchTree implements ILocalResearchTree
     private final List<String> isComplete = new ArrayList<>();
 
     /**
-     * Map containing all branches for which the level 6 research has been occupied already.
+     * Map containing all branches for which the max level research has been occupied already.
      */
-    private final Map<String, Boolean> levelSixResearchReached = new HashMap<>();
+    private final List<String> maxLevelResearchCompleted = new ArrayList<>();
 
     @Override
     public ILocalResearch getResearch(final String branch, final String id)
@@ -82,17 +82,15 @@ public class LocalResearchTree implements ILocalResearchTree
     @Override
     public void addResearch(final String branch, final ILocalResearch research)
     {
-        final Map<String, ILocalResearch> branchMap;
-        if (researchTree.containsKey(branch))
+        if (!researchTree.containsKey(branch))
         {
-            branchMap = researchTree.get(branch);
+            researchTree.put(branch, new HashMap<>());
         }
-        else
+
+        if (!researchTree.get(branch).containsKey(research.getId()))
         {
-            branchMap = new HashMap<>();
+            researchTree.get(branch).put(research.getId(), research);
         }
-        branchMap.put(research.getId(), research);
-        researchTree.put(branch, branchMap);
 
         if (research.getState() == ResearchState.IN_PROGRESS)
         {
@@ -101,19 +99,25 @@ public class LocalResearchTree implements ILocalResearchTree
         else if (research.getState() == ResearchState.FINISHED)
         {
             inProgress.remove(research.getId());
-            isComplete.add(research.getId());
+            if (!isComplete.contains(research.getId()))
+            {
+                isComplete.add(research.getId());
+            }
         }
 
-        if (research.getDepth() == 6)
+        if (research.getDepth() == MAX_DEPTH)
         {
-            levelSixResearchReached.put(research.getBranch(), true);
+            if (!maxLevelResearchCompleted.contains(branch))
+            {
+                maxLevelResearchCompleted.add(branch);
+            }
         }
     }
 
     @Override
     public boolean branchFinishedHighestLevel(final String branch)
     {
-        return levelSixResearchReached.getOrDefault(branch, false);
+        return maxLevelResearchCompleted.contains(branch);
     }
 
     @Override
@@ -129,17 +133,62 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
-    public void cancelResearch(final String branch, final String id, final boolean resetEffects)
+    public void cancelResearch(final String branch, final String id, final IColony colony)
     {
-        if(inProgress.containsKey(id))
-        {
-            inProgress.remove(id);
-            getResearch(branch, id).setState(ResearchState.CANCELED);
-            getResearch(branch, id).setProgress(0);
+        checkAndResetDescendants(branch, Arrays.asList(id));
 
-            if(resetEffects)
+        if(colony != null)
+        {
+            // There's no guarantee that undoing a research will only push its effects back one strength grade.
+            // Instead, we have to apply every extant effect again.
+            // Because effects may cross branches, must check all branches, not just the current one.
+            colony.getResearchManager().getResearchEffects().clear();
+            for (final Map.Entry<String, Map<String, ILocalResearch>> br : researchTree.entrySet())
             {
-                //TODO: if resets of completed research are allowed, they need to be implemented here.
+                for(final Map.Entry<String, ILocalResearch> research : br.getValue().entrySet())
+                {
+                    if(research.getValue().getState() == ResearchState.FINISHED)
+                    {
+                        for(final IResearchEffect effect : IGlobalResearchTree.getInstance().getResearch(br.getKey(), research.getValue().getId()).getEffects())
+                        {
+                            colony.getResearchManager().getResearchEffects().applyEffect(effect);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    /**
+     *  Recursively checks descendant researches, and resets their status, if complete.
+     * @param branch      branch from which to remove research.
+     * @param ids          identifier of the specific research.
+     */
+    private void checkAndResetDescendants(final String branch, final List<String> ids)
+    {
+        for(String id : ids)
+        {
+            final ILocalResearch localResearch = getResearch(branch, id);
+            if(localResearch == null)
+            {
+                continue;
+            }
+            checkAndResetDescendants(branch, IGlobalResearchTree.getInstance().getResearch(branch, id).getChildren());
+
+            researchTree.get(branch).remove(id);
+            if(inProgress.containsKey(id))
+            {
+                inProgress.remove(id);
+            }
+            if(isComplete.contains(id))
+            {
+                isComplete.remove(id);
+            }
+            if (IGlobalResearchTree.getInstance().getResearch(branch, id).getDepth() == MAX_DEPTH
+                  && maxLevelResearchCompleted.contains(branch))
+            {
+                maxLevelResearchCompleted.remove(branch);
             }
         }
     }
@@ -160,10 +209,12 @@ public class LocalResearchTree implements ILocalResearchTree
     public void readFromNBT(final CompoundNBT compound, final IResearchEffectManager effects)
     {
         researchTree.clear();
+        inProgress.clear();
+        isComplete.clear();
+        maxLevelResearchCompleted.clear();
         NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Constants.NBT.TAG_COMPOUND))
           .map(researchCompound -> (ILocalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
           .forEach(research -> {
-              addResearch(research.getBranch(), research);
               if (research.getState() == ResearchState.FINISHED)
               {
                   /// region Updated ID helper.  TODO: Remove for 1.17+, or after sufficient update time.
@@ -193,12 +244,9 @@ public class LocalResearchTree implements ILocalResearchTree
                               research = new LocalResearch("lifesaver2", "civilian", 4);
                               break;
                       }
-                      if(!isComplete.contains(research))
-                      {
-                          isComplete.add(research.getId());
-                      }
                   }
                   /// endregion
+
 
                   // Even after correction, we do still need to check; it's possible for someone to have old save data and remove the research,
                   // or to have a different research that was in a now-removed datapack.
@@ -214,6 +262,7 @@ public class LocalResearchTree implements ILocalResearchTree
                       Log.getLogger().warn("Research " + research.getId() + " was in colony save file, but not found as valid current research.  Progress on this research may be reset.");
                   }
               }
+              addResearch(research.getBranch(), research);
           });
     }
 }

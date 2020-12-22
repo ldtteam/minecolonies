@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
-import static com.minecolonies.api.research.util.ResearchConstants.DEFAULT_COST_SIZE;
 
 /**
  * The implementation of the IGlobalResearch interface which represents the research on the global level.
@@ -73,6 +72,11 @@ public class GlobalResearch implements IGlobalResearch
      * The property name for parent research id.
      */
     private static final String RESEARCH_PARENT_PROP = "parentResearch";
+
+    /**
+     * The property name for preventing research resets.
+     */
+    private static final String RESEARCH_NO_RESET_PROP = "no-reset";
 
     /**
      * The property name for the list of requirement objects.
@@ -197,6 +201,11 @@ public class GlobalResearch implements IGlobalResearch
     private final boolean instant;
 
     /**
+     * If the research can be reset or unlearned after being unlocked.
+     */
+    private final boolean immutable;
+
+    /**
      * List of children of a research.
      */
     private final List<String> children = new ArrayList<>();
@@ -225,8 +234,12 @@ public class GlobalResearch implements IGlobalResearch
         this.hidden = false;
         this.instant = false;
         this.autostart = false;
+        this.immutable = false;
         this.icon = "";
-        Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
+        if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+        {
+            Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
+        }
     }
 
     /**
@@ -236,8 +249,10 @@ public class GlobalResearch implements IGlobalResearch
      * @param effects          its effects.
      * @param universityLevel the depth in the tree.
      * @param branch          the branch it is on.
+     * @param icon            a string of format namespace:item:count pointing to an item or block, or namespace:texture, to be used as an icon.
+     * @param immutable       if the research can not be reset once unlocked.
      */
-    public GlobalResearch(final String id, final String branch, final int universityLevel, final List<IResearchEffect> effects, final String icon)
+    public GlobalResearch(final String id, final String branch, final int universityLevel, final List<IResearchEffect> effects, final String icon, boolean immutable)
     {
         this.id = id;
         this.name = id;
@@ -249,7 +264,11 @@ public class GlobalResearch implements IGlobalResearch
         this.autostart = false;
         this.instant = false;
         this.icon = icon;
-        Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
+        this.immutable = immutable;
+        if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+        {
+            Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
+        }
     }
 
     @Override
@@ -259,7 +278,7 @@ public class GlobalResearch implements IGlobalResearch
         final ILocalResearch localParentResearch = parent.isEmpty() ? null : localTree.getResearch(branch, parentResearch.getId());
         final ILocalResearch localResearch = localTree.getResearch(this.getBranch(), this.getId());
 
-        return (localResearch == null || (localResearch != null && localResearch.getState() != ResearchState.FINISHED &&localResearch.getState() != ResearchState.CANCELED))
+        return (localResearch == null)
                  && canDisplay(uni_level)
                  && (parentResearch == null || localParentResearch != null && localParentResearch.getState() == ResearchState.FINISHED)
                  && (parentResearch == null || !parentResearch.hasResearchedChild(localTree) || !parentResearch.hasOnlyChild()) && (depth < 6
@@ -305,15 +324,6 @@ public class GlobalResearch implements IGlobalResearch
             }
             research.setState(ResearchState.IN_PROGRESS);
             localResearchTree.addResearch(branch, research);
-        }
-        else if (localResearchTree.getResearch(this.branch, this.id).getState() == ResearchState.CANCELED)
-        {
-            if (this.instant)
-            {
-                localResearchTree.getResearch(this.branch, this.id).setProgress((int)(BASE_RESEARCH_TIME *
-                           Math.pow(2, localResearchTree.getResearch(this.branch, this.id).getDepth() - 1)));
-            }
-            localResearchTree.getResearch(this.branch, this.id).setState(ResearchState.IN_PROGRESS);
         }
     }
 
@@ -370,6 +380,12 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
+    public boolean isImmutable()
+    {
+        return this.immutable;
+    }
+
+    @Override
     public boolean hasOnlyChild()
     {
         return onlyChild;
@@ -388,7 +404,7 @@ public class GlobalResearch implements IGlobalResearch
         {
             final IGlobalResearch childResearch = IGlobalResearchTree.getInstance().getResearch(branch, child);
             final ILocalResearch localResearch = localTree.getResearch(childResearch.getBranch(), childResearch.getId());
-            if (localResearch != null && (localResearch.getState() == ResearchState.CANCELED || localResearch.getState() == ResearchState.FINISHED))
+            if (localResearch != null)
             {
                 return true;
             }
@@ -459,6 +475,7 @@ public class GlobalResearch implements IGlobalResearch
         this.instant = getBooleanSafe(researchJson, RESEARCH_INSTANT_PROP);
         this.autostart = getBooleanSafe(researchJson, RESEARCH_AUTOSTART_PROP);
         this.hidden = getBooleanSafe(researchJson, RESEARCH_HIDDEN_PROP);
+        this.immutable = getBooleanSafe(researchJson, RESEARCH_NO_RESET_PROP);
 
         parseRequirements(researchJson);
         parseEffects(researchJson, effectCategories);

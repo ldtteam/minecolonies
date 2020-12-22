@@ -40,4 +40,9 @@ public interface IResearchEffectManager
      * @param effect the effect to apply.
      */
     void applyEffect(final IResearchEffect<?> effect);
+
+    /**
+     * Clear the contents of the effect manager.
+     */
+    void clear();
 }

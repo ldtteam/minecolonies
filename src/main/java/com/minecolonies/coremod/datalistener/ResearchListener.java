@@ -243,14 +243,14 @@ public class ResearchListener extends JsonReloadListener
                         Log.getLogger()
                           .error(entry.getValue().getBranch() + "/" + entry.getKey() + "could not be attached to " + entry.getValue().getParent() + " on "
                                    + researchMap.get(entry.getValue().getParent()).getBranch());
-                        entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(), entry.getValue().getIcon()));
+                        entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(), entry.getValue().getIcon(), entry.getValue().isImmutable()));
                     }
                 }
                 else
                 {
                     //For now, log and re-graft entries with inconsistent parent-child relationships to a separate branch.
                     Log.getLogger().error(entry.getValue().getBranch() + "/" + entry.getKey() + "could not find parent" + researchMap.containsKey(entry.getValue().getParent()));
-                    entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(), entry.getValue().getIcon()));
+                    entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(), entry.getValue().getIcon(), entry.getValue().isImmutable()));
                 }
             }
             researchTree.addResearch(entry.getValue().getBranch(), entry.getValue(), true);

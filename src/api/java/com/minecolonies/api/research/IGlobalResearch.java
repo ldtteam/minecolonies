@@ -69,7 +69,7 @@ public interface IGlobalResearch
      * Getter of the research icon's resource location.
      * @return the string of the ResourceLocation of the icon, in the pattern namespace:directory:(optional count).
      */
-    public String getIcon();
+    String getIcon();
 
 
     /**
@@ -114,6 +114,13 @@ public interface IGlobalResearch
      * @return true if so.
      */
     boolean isHidden();
+
+    /**
+     * Check if this research is an immutable research.  If so, it (and ancestor research unlocking it) can not be reset once completed.
+     *
+     * @return true if so.
+     */
+    boolean isImmutable();
 
     /**
      * Check if this research is an only child research. This means, after researching one child no other children can be researched.

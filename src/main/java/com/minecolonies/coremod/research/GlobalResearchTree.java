@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.research;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -234,5 +235,49 @@ public class GlobalResearchTree implements IGlobalResearchTree
     public List<IGlobalResearch> getAutostartResearches()
     {
         return autostartResearch;
+    }
+
+    @Override
+    public List<String> getResearchResetCosts()
+    {
+        List<String> outputList = new ArrayList<>();
+        for (final String cost : MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchResetCost.get())
+        {
+            final String[] costParts = cost.split(":");
+            if (costParts.length == 1)
+            {
+                outputList.add("minecraft:" + costParts[0] + ":1");
+            }
+            if (costParts.length == 2)
+            {
+                try
+                {
+                    final int count = Integer.parseInt(costParts[1]);
+                    outputList.add("minecraft:" + costParts[0] + ":" + count);
+                }
+                catch (final NumberFormatException err)
+                {
+                    outputList.add(costParts[0] + ":" + costParts[1] + ":1");
+                }
+            }
+            if (costParts.length == 3)
+            {
+                try
+                {
+                    final int count = Integer.parseInt(costParts[2]);
+                    outputList.add(costParts[0] + ":" + costParts[1] + ":" + count);
+                }
+                catch (final NumberFormatException err)
+                {
+                    Log.getLogger().error("Malformed count value in Research Reset Cost for" + costParts[0] + ":" + costParts[1] + " where " + costParts[2] + "is not a number.");
+                    outputList.add(costParts[0] + ":" + costParts[1] + ":1");
+                }
+            }
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+            {
+                Log.getLogger().info("Validated research reset cost : " + outputList.get(outputList.size() - 1));
+            }
+        }
+        return outputList;
     }
 }

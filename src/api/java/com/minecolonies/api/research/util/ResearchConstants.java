@@ -64,7 +64,7 @@ public final class ResearchConstants
 
     public static final int    COLOR_TEXT_NEGATIVE  = Color.rgbaToInt(218, 10, 10, 255);
     public static final int    COLOR_TEXT_LABEL     = Color.rgbaToInt(218, 202, 171, 255);
-    public static final int    COLOR_TEXT_LIGHT     = Color.rgbaToInt(30, 30, 30, 255);
+    public static final int    COLOR_TEXT_LIGHT     = Color.rgbaToInt(60, 60, 60, 255);
 
     /**
      * Research Effect Name strings, used for ResearchEffectManager and ResearchRegistry lookups.

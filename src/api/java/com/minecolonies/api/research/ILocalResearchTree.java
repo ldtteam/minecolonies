@@ -1,8 +1,10 @@
 package com.minecolonies.api.research;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import net.minecraft.nbt.CompoundNBT;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -61,9 +63,9 @@ public interface ILocalResearchTree
      *
      * @param branch            the branch of the research to remove.
      * @param id                the id of the research to remove.
-     * @param resetEffects      if true, effects of the research will be reset.
+     * @param colony     the colony to remove effects from, or null if no effect reset is desired.
      */
-    void cancelResearch(final String branch, final String id, final boolean resetEffects);
+    void cancelResearch(final String branch, final String id, @Nullable final IColony colony);
 
     /**
      * Write the research tree to NBT.

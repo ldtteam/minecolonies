@@ -61,9 +61,10 @@ public class ServerConfiguration extends AbstractConfiguration
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Research settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
-    public final ForgeConfigSpec.IntValue     researchSpeedMultiplier;
-    public final ForgeConfigSpec.BooleanValue researchCreativeCompletion;
-    public final ForgeConfigSpec.BooleanValue researchDebugLog;
+    public final ForgeConfigSpec.IntValue                            researchSpeedMultiplier;
+    public final ForgeConfigSpec.BooleanValue                        researchCreativeCompletion;
+    public final ForgeConfigSpec.BooleanValue                        researchDebugLog;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> researchResetCost;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -216,6 +217,7 @@ public class ServerConfiguration extends AbstractConfiguration
         researchSpeedMultiplier = defineInteger(builder, "researchspeedmultiplier", 1, 1, 10);
         researchCreativeCompletion = defineBoolean(builder, "researchcreativecompletion", true);
         researchDebugLog = defineBoolean(builder, "researchdebuglog", false);
+        researchResetCost = defineList(builder, "researchresetcost", Arrays.asList("minecolonies:ancienttome:1"), s-> s instanceof String);
 
         swapToCategory(builder, "commands");
         

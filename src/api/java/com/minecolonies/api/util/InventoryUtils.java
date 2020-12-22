@@ -2157,11 +2157,57 @@ public class InventoryUtils
     }
 
     /**
+     * Tries to remove a group of stacks with its size from a given Itemhandler. Only removes stacks if every stack's full count is present.
+     *
+     * @param handler      the itemHandler.
+     * @param input        the stack to remove.
+     * @return true if removed the stack
+     */
+    public static boolean tryRemoveStackFromItemHandler(final IItemHandler handler, final List<ItemStorage> input)
+    {
+        List<ItemStack> removedItems = new ArrayList<>();
+        for(final ItemStorage is : input)
+        {
+            int amount = is.getItemStack().getCount();
+
+            for (int i = 0; i < handler.getSlots(); i++)
+            {
+                if (ItemStackUtils.compareItemStacksIgnoreStackSize(handler.getStackInSlot(i), is.getItemStack(), !is.ignoreDamageValue(), !is.ignoreNBT()))
+                {
+                    amount = amount - handler.extractItem(i, amount, false).getCount();
+
+                    if (amount == 0)
+                    {
+                        break;
+                    }
+                }
+            }
+            if(amount == 0)
+            {
+                removedItems.add(is.getItemStack());
+            }
+            else
+            {
+                final ItemStack revertStack = is.getItemStack().copy();
+                revertStack.setCount(is.getItemStack().getCount() - amount);
+                addItemStackToItemHandler(handler, revertStack);
+                for(final ItemStack returnItems : removedItems)
+                {
+                    addItemStackToItemHandler(handler, returnItems);
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Force remove a stack with a certain amount from a given Itemhandler
      *
      * @param handler the itemHandler.
      * @param input   the stack to remove.
      * @param count   the amount to remove.
+     * @return        true if the requested count was successfully removed.
      */
     public static void removeStackFromItemHandler(final IItemHandler handler, final ItemStack input, final int count)
     {
@@ -2188,6 +2234,7 @@ public class InventoryUtils
             }
             tries++;
         }
+        return;
     }
 
     /**
