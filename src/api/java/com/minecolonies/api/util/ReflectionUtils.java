@@ -46,9 +46,10 @@ public final class ReflectionUtils
 
     public static <T> Set<TypeToken<?>> getSuperClasses(final TypeToken<T> token)
     {
-        if (cache.containsKey(token))
+        final Set<TypeToken<?>> cachedSet = cache.get(token);
+        if (cachedSet != null)
         {
-            return cache.get(token);
+            return cachedSet;
         }
 
         final Set<TypeToken<?>> directSet = new LinkedHashSet<>(token.getTypes());
