@@ -134,7 +134,9 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             if (localResearch == null && building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size()&&
                   (research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)) || (mc.player.isCreative())))
             {
-
+                // this side won't actually start research; it'll be overriden the next colony update from the server.
+                // It will, however, update for the next WindowResearchTree if the colony update is slow to come back.
+                research.startResearch(building.getColony().getResearchManager().getResearchTree());
                 Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch(), false));
                 close();
             }
@@ -159,6 +161,10 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final ILocalResearch cancelResearch = building.getColony().getResearchManager().getResearchTree().getResearch(branch, button.getID().split("\\.")[1]);
             if (cancelResearch != null)
             {
+                // Canceled research will eventually be removed from the local tree on synchronization from server,
+                // But this can be long enough to be confusing.  NOT_STARTED isn't the same thing,
+                // but will render closely enough to prevent some confusion /or/ accidentally restarting.
+                cancelResearch.setState(ResearchState.NOT_STARTED);
                 Network.getNetwork().sendToServer(new TryResearchMessage(building, cancelResearch.getId(), cancelResearch.getBranch(), true));
                 close();
             }
@@ -552,6 +558,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_DIS));
                 buttonImage.setLabel(new TranslationTextComponent("com.minecolonies.coremod.research.research.maxunlocked"));
             }
+            buttonImage.setID(research.getId());
         }
         else if(state != ResearchState.NOT_STARTED)
         {
