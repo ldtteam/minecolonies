@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.ldtteam.structurize.blocks.decorative.BlockFloatingCarpet;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
@@ -75,7 +74,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * Are there hard xz restrictions.
      */
-    private boolean xzRestricted = false;
+    protected boolean xzRestricted = false;
 
     /**
      * The cost values for certain nodes.
@@ -85,10 +84,10 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * The restriction parameters
      */
-    private int maxX;
-    private int minX;
-    private int maxZ;
-    private int minZ;
+    protected int maxX;
+    protected int minX;
+    protected int maxZ;
+    protected int minZ;
 
     /**
      * The entity this job belongs to.
@@ -131,19 +130,8 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         this.start = new BlockPos(start);
         this.maxRange = range;
-
         this.result = result;
-
-        allowJumpPointSearchTypeWalk = false;
-
-        if (MineColonies.getConfig().getCommon().pathfindingDebugDraw.get()) // this is automatically false when on server
-        {
-            debugDrawEnabled = true;
-            debugNodesVisited = new HashSet<>();
-            debugNodesNotVisited = new HashSet<>();
-            debugNodesPath = new HashSet<>();
-        }
-        this.entity = new WeakReference<>(entity);
+        this.init(entity);
     }
 
     /**
@@ -165,19 +153,44 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         xzRestricted = true;
 
+        final int localMinX;
+        final int localMaxX;
+        final int localMinZ;
+        final int localMaxZ;
+        if (entity == null)
+        {
+            localMinX = minX - 10;
+            localMaxX = maxX + 10;
+            localMinZ = minZ - 10;
+            localMaxZ = maxZ + 10;
+            this.start = startRestriction;
+        }
+        else
+        {
+            localMinX = Math.min(minX, entity.getPosition().getX()) - 10;
+            localMaxX = Math.max(maxX, entity.getPosition().getX()) + 10;
+            localMinZ = Math.min(minZ, entity.getPosition().getZ()) - 10;
+            localMaxZ = Math.max(maxZ, entity.getPosition().getZ()) + 10;
+            this.start = entity.getPosition();
+        }
+        final int range = (int) Math.sqrt(Math.pow(localMaxX - localMinX, 2) + Math.pow(localMaxZ - localMinZ, 2)) * 2;
 
-        final int range = (int) Math.sqrt(Math.pow(maxX - minX, 2) + Math.pow(maxZ - minZ, 2)) * 2;
+        this.world = new ChunkCache(world, new BlockPos(localMinX, MIN_Y, localMinZ), new BlockPos(localMaxX, MAX_Y, localMaxZ), range);
 
-        this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
-
-        this.start = startRestriction;
         this.maxRange = range;
-
         this.result = result;
+        this.init(entity);
+    }
 
+    /**
+     * Private constructor for internal use.
+     * @param entity the pathing entity.
+     */
+    private void init(final LivingEntity entity)
+    {
         allowJumpPointSearchTypeWalk = false;
 
-        if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pathfindingDebugDraw.get()) // this is automatically false when on server
+        if (MineColonies.getConfig().getCommon().pathfindingDebugDraw.get()) // this is automatically false when on server
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -478,10 +491,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bestNodeResultScore = nodeResultScore;
             }
 
-            if (!xzRestricted || (currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX && currentNode.pos.getZ() >= minZ && currentNode.pos.getZ() <= maxZ))
-            {
-                walkCurrentNode(currentNode);
-            }
+            walkCurrentNode(currentNode);
         }
 
         @NotNull final Path path = finalizePath(bestNode);
