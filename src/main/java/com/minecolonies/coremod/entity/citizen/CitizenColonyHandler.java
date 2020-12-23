@@ -211,14 +211,11 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     {
         @Nullable final IBuilding homeBuilding = getHomeBuilding();
 
-        if (homeBuilding != null)
+        if (homeBuilding != null && homeBuilding.hasModule(LivingBuildingModule.class))
         {
-            if (homeBuilding.hasModule(LivingBuildingModule.class))
-            {
-                final Tuple<BlockPos, BlockPos> corners = homeBuilding.getCorners();
-                return new AxisAlignedBB(corners.getA(), corners.getB())
-                         .contains(new Vec3d(citizen.getPosition().getX(), citizen.getPosition().getY(), citizen.getPosition().getZ()));
-            }
+            final Tuple<BlockPos, BlockPos> corners = homeBuilding.getCorners();
+            return new AxisAlignedBB(corners.getA(), corners.getB()).expand(1, 1, 1).expand(-1, -1, -1)
+                     .contains(new Vec3d(citizen.getPosition().getX(), citizen.getPosition().getY(), citizen.getPosition().getZ()));
         }
 
         @Nullable final BlockPos homePosition = citizen.getHomePosition();
