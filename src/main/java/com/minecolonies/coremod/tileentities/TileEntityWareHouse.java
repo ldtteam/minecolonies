@@ -21,14 +21,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.FIVE_MINUTES_IN_MILLIS;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL_MAX_UPGRADE;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
- * Class which handles the tileEntity of our colonyBuildings.
+ * Class which handles the tileEntity of our colony warehouse.
  */
 public class TileEntityWareHouse extends AbstractTileEntityWareHouse
 {
+    /**
+     * Time of last sent notifications.
+     */
+    private long lastNotification                   = 0;
+
     public TileEntityWareHouse()
     {
         super(MinecoloniesTileEntities.WAREHOUSE);
@@ -119,7 +126,18 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             @Nullable final TileEntity chest = searchRightChestForStack(stack);
             if (chest == null)
             {
-                LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
+                if(System.currentTimeMillis() - lastNotification > FIVE_MINUTES_IN_MILLIS)
+                {
+                    lastNotification = System.currentTimeMillis();
+                    if(getBuilding().getBuildingLevel() == getBuilding().getMaxBuildingLevel())
+                    {
+                        LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL_MAX_UPGRADE);
+                    }
+                    else
+                    {
+                        LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
+                    }
+                }
                 return;
             }
 

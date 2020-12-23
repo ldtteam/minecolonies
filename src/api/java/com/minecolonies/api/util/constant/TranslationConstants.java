@@ -68,6 +68,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL                              = "com.minecolonies.coremod.warehouse.full";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL_MAX_UPGRADE                       = "com.minecolonies.coremod.warehouse.full.max";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_SATURATION_0                                = "com.minecolonies.coremod.saturation.0";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_SATURATION_3                                = "com.minecolonies.coremod.saturation.3";
