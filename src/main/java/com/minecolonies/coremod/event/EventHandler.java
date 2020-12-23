@@ -132,20 +132,6 @@ public class EventHandler
     }
 
     /**
-     * Event triggered when a mob is spawned, used to limit Pillager Patrols.
-     * @param event
-     */
-    @SubscribeEvent
-    public static void onMobSpawned(@NotNull final LivingSpawnEvent.CheckSpawn event)
-    {
-        if(event.getSpawnReason() == SpawnReason.PATROL && !event.getWorld().isRemote() && event.isCancelable())
-        {
-            Log.getLogger().error("Encountered Patrol Spawn!");
-            //event.setCanceled(true);
-        }
-    }
-
-    /**
      * Event when the debug screen is opened. Event gets called by displayed text on the screen, we only need it when f3 is clicked.
      *
      * @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}

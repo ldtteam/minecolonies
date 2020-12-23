@@ -604,7 +604,7 @@
   "com.minecolonies.coremod.gui.townhall.togglespec": "Toggle Specialization",
   "com.minecolonies.coremod.gui.townhall.actions": "Actions",
   "com.minecolonies.coremod.gui.townhall.jobhiring": "Worker Hiring Mode:",
-  "com.minecolonies.coremod.gui.townhall.population.totalcitizens": "Number of Citizens: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.totalcitizens": "Number of Citizens: %d/%d/§4%d",
   "com.minecolonies.coremod.gui.townhall.population.each": "%s: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.unemployed": "Unemployed: %d",
   "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d",

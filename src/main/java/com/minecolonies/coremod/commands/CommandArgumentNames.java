@@ -5,6 +5,7 @@ public abstract class CommandArgumentNames
     public static final String PLAYERNAME_ARG = "playername";
     public static final String COLONYID_ARG   = "colonyID";
     public static final String CITIZENID_ARG  = "citizenID";
+    public static final String RAID_TYPE_ARG  = "raidtype";
 
     public static final String POS_ARG = "location";
 
