@@ -80,12 +80,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     private static final int SEARCH_LIMIT     = 150;
 
     /**
-     * Modifier for fungi growing time. Increase to speed up.
-     */
-
-    private static final int FUNGI_MODIFIER = 2;
-
-    /**
      * List of saplings.
      */
     private static final String SAPLINGS_LIST = "saplings";
@@ -179,11 +173,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private PathResult pathToTree;
 
-    /**
-     * A list of all planted nether trees
-     */
-    private final List<BlockPos> netherTrees = new ArrayList<>();
-
     @Override
     protected int getActionRewardForCraftingSuccess()
     {
@@ -206,8 +195,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
           new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees, TICKS_SECOND),
           new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood, TICKS_SECOND),
           new AITarget(LUMBERJACK_GATHERING, this::gathering, TICKS_SECOND),
-          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain, TICKS_SECOND),
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::bonemealFungi, TICKS_SECOND)
+          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain, TICKS_SECOND)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -555,41 +543,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     }
 
     /**
-     * Bonemeal fungi in netherTrees
-     */
-
-    private IAIState bonemealFungi()
-    {
-        for (final BlockPos pos : getNetherTrees())
-        {
-            final BlockState blockState = world.getBlockState(pos);
-            final Block block = blockState.getBlock();
-            if (block == Blocks.CRIMSON_FUNGUS || block == Blocks.WARPED_FUNGUS)
-            {
-                final int threshold = worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getPrimarySkill()) * FUNGI_MODIFIER;
-                final int rand = new Random().nextInt(100);
-                if (rand < threshold)
-                {
-                    final IGrowable growable = (IGrowable) block;
-                    if (growable.canGrow(world, pos, blockState, world.isRemote)) {
-                        if (!world.isRemote) {
-                            if (growable.canUseBonemeal(world, world.rand, pos, blockState)) {
-                                growable.grow((ServerWorld) world, world.rand, pos, blockState);
-                            }
-                        }
-                    }
-                }
-
-            }
-            else
-            {
-                removeNetherTree(pos);
-            }
-        }
-        return null;
-    }
-
-    /**
      * Drop fungus instead of wart block
      *
      * @param drops the drops.
@@ -602,7 +555,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         for (final ItemStack stack : drops)
         {
             boolean modified = false;
-            if (new Random().nextInt(10) > 8) {
+            if (world.getRandom().nextInt(100) > 95) {
                 if (stack.getItem() == Items.NETHER_WART_BLOCK) {
                     newDrops.add(new ItemStack(Items.CRIMSON_FUNGUS, 1));
                     modified = true;
@@ -824,7 +777,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 placeSaplings(saplingSlot, stack, block);
                 if (stack.getItem().isIn(fungi))
                 {
-                    netherTrees.add(location);
+                    final BuildingLumberjack building = getOwnBuilding();
+                    building.addNetherTree(location);
                 }
                 final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, worker);
                 world.playSound(null,
@@ -991,25 +945,5 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     private boolean hasLogs()
     {
         return InventoryUtils.hasItemInItemHandler(getInventory(), this::isStackLog);
-    }
-
-    /**
-     * Returns a list of the registered nether tree to grow.
-     * @return a copy of the list
-     */
-
-    public List<BlockPos> getNetherTrees()
-    {
-        return new ArrayList<>(netherTrees);
-    }
-
-    /**
-     * Removes a position from the nether trees
-     * @param pos the position
-     */
-
-    public void removeNetherTree(BlockPos pos)
-    {
-        netherTrees.remove(pos);
     }
 }

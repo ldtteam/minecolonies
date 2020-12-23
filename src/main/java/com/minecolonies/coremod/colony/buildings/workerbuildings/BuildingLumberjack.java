@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.ibm.icu.impl.CollectionSet;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -8,15 +9,21 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListCrafter;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.IGrowable;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -25,11 +32,11 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
@@ -60,6 +67,8 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
      */
     private static final String TAG_RESTRICT = "restrict";
 
+    private static final String TAG_NETHER_TREE = "netherTree";
+
     /**
      * Whether or not the LJ should replant saplings
      */
@@ -88,6 +97,18 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
      * The job description.
      */
     private static final String LUMBERJACK = "lumberjack";
+
+    /**
+     * A list of all planted nether trees
+     */
+    private final HashSet<BlockPos> netherTrees = new HashSet<>();
+
+
+    /**
+     * Modifier for fungi growing time. Increase to speed up.
+     */
+
+    private static final int FUNGI_MODIFIER = 2;
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -225,6 +246,20 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
         {
             endRestriction = null;
         }
+
+        int i = 0;
+        while (true)
+        {
+            if (compound.keySet().contains(TAG_NETHER_TREE + i))
+            {
+                addNetherTree(NBTUtil.readBlockPos(compound.getCompound(TAG_NETHER_TREE + i)));
+                i++;
+            }
+            else
+            {
+                break;
+            }
+        }
     }
 
     @Override
@@ -242,6 +277,13 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
         if (endRestriction != null)
         {
             compound.put(TAG_RESTRICT_END, NBTUtil.writeBlockPos(endRestriction));
+        }
+
+        int i = 0;
+        for (final BlockPos pos : getNetherTrees())
+        {
+            compound.put(TAG_NETHER_TREE + i, NBTUtil.writeBlockPos(pos));
+            i++;
         }
 
         compound.putBoolean(TAG_RESTRICT, restrict);
@@ -376,6 +418,78 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
             optCitizen.ifPresent(entityCitizen -> AttributeModifierUtils.removeModifier(entityCitizen, SKILL_BONUS_ADD, Attributes.MOVEMENT_SPEED));
         }
         super.removeCitizen(citizen);
+    }
+
+    /**
+     * Bonemeal fungi in netherTrees
+     */
+
+    private void bonemealFungi()
+    {
+        for (final BlockPos pos : getNetherTrees())
+        {
+            final World world = colony.getWorld();
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                BlockState blockState = world.getBlockState(pos);
+                Block block = blockState.getBlock();
+                if (block == Blocks.CRIMSON_FUNGUS || block == Blocks.WARPED_FUNGUS)
+                {
+                    int threshold = getMainCitizen().getCitizenSkillHandler().getLevel(getPrimarySkill()) * FUNGI_MODIFIER;
+                    final int rand = world.getRandom().nextInt(100);
+                    if (rand < threshold)
+                    {
+                        final IGrowable growable = (IGrowable) block;
+                        if (growable.canGrow(world, pos, blockState, world.isRemote)) {
+                            if (!world.isRemote) {
+                                if(growable.canUseBonemeal(world, world.rand, pos, blockState)) {
+                                    growable.grow((ServerWorld) world, world.rand, pos, blockState);
+                                }
+                            }
+                        }
+                    }
+                    blockState = world.getBlockState(pos);
+                    block = blockState.getBlock();
+
+                }
+                else
+                {
+                    removeNetherTree(pos);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns a list of the registered nether tree to grow.
+     * @return a copy of the list
+     */
+
+    public HashSet<BlockPos> getNetherTrees()
+    {
+        return new HashSet<>(netherTrees);
+    }
+
+    /**
+     * Removes a position from the nether trees
+     * @param pos the position
+     */
+
+    public void removeNetherTree(BlockPos pos)
+    {
+        netherTrees.remove(pos);
+    }
+
+    public void addNetherTree(BlockPos pos)
+    {
+        netherTrees.add(pos);
+    }
+
+    @Override
+    public void onColonyTick(@NotNull final IColony colony)
+    {
+        super.onColonyTick(colony);
+        bonemealFungi();
     }
 
     /**
