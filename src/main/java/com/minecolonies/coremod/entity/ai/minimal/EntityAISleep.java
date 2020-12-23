@@ -27,11 +27,13 @@ import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.RANGE_TO_BE_HOME;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAISleep.SleepState.*;
 
 /**
@@ -120,14 +122,26 @@ public class EntityAISleep extends Goal
      */
     private SleepState walkHome()
     {
-        // Go home
-        if (!citizen.getCitizenColonyHandler().isAtHome())
+        final IBuilding homeBuilding = citizen.getCitizenData().getHomeBuilding();
+        if (homeBuilding == null)
         {
-            citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SLEEP);
-            goHome();
-            return WALKING_HOME;
+            @Nullable final BlockPos homePosition = citizen.getHomePosition();
+            if (homePosition.distanceSq(Math.floor(citizen.posX), citizen.posY, Math.floor(citizen.posZ), false) <= RANGE_TO_BE_HOME)
+            {
+                return FIND_BED;
+            }
         }
-        return FIND_BED;
+        else
+        {
+            if (homeBuilding.isInBuilding(citizen.getPositionVec()))
+            {
+                return FIND_BED;
+            }
+        }
+
+        citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SLEEP);
+        goHome();
+        return WALKING_HOME;
     }
 
     /**

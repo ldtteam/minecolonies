@@ -17,6 +17,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -330,5 +331,14 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     public boolean isMirrored()
     {
         return isBuildingMirrored;
+    }
+
+    @Override
+    public boolean isInBuilding(final Vec3d positionVec)
+    {
+        final Tuple<BlockPos, BlockPos> corners = getCorners();
+        return positionVec.getX() >= corners.getA().getX() - 1 && positionVec.getX() <= corners.getB().getX() + 1
+                 && positionVec.getY() >= corners.getA().getY() - 1 && positionVec.getX() <= corners.getB().getY() + 1
+                 && positionVec.getZ() >= corners.getA().getZ() - 1 && positionVec.getZ() <= corners.getB().getZ() + 1;
     }
 }
