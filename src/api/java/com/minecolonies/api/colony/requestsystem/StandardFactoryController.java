@@ -16,6 +16,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -116,8 +117,8 @@ public final class StandardFactoryController implements IFactoryController
     public <INPUT, OUTPUT> IFactory<INPUT, OUTPUT> getFactoryForIO(@NotNull final TypeToken<? extends INPUT> inputClass, @NotNull final TypeToken<? extends OUTPUT> outputClass)
       throws IllegalArgumentException
     {
-        final ITypeOverrideHandler<?> inputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(inputClass)).findFirst().orElse(null);
-        final ITypeOverrideHandler<?> outputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(outputClass)).findFirst().orElse(null);
+        final ITypeOverrideHandler<?> inputOverrideHandler = getMatchingOverrideHandler(inputClass);
+        final ITypeOverrideHandler<?> outputOverrideHandler = getMatchingOverrideHandler(inputClass);
 
         final TypeToken<?> input = inputOverrideHandler != null ? inputOverrideHandler.getOutputType() : inputClass;
         final TypeToken<?> output = outputOverrideHandler != null ? outputOverrideHandler.getOutputType() : outputClass;
@@ -158,7 +159,7 @@ public final class StandardFactoryController implements IFactoryController
     @Override
     public <INPUT> IFactory<INPUT, ?> getFactoryForInput(@NotNull final TypeToken<? extends INPUT> inputClass) throws IllegalArgumentException
     {
-        final ITypeOverrideHandler<?> inputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(inputClass)).findFirst().orElse(null);
+        final ITypeOverrideHandler<?> inputOverrideHandler = getMatchingOverrideHandler(inputClass);
 
         final TypeToken<?> input = inputOverrideHandler != null ? inputOverrideHandler.getOutputType() : inputClass;
 
@@ -170,17 +171,35 @@ public final class StandardFactoryController implements IFactoryController
 
             if (factories != null && !factories.isEmpty())
             {
-                return (IFactory<INPUT, ?>) factories.stream().findFirst().get();
+                return (IFactory<INPUT, ?>) factories.iterator().next();
             }
         }
 
         throw new IllegalArgumentException("The given input type is not a input of a factory.");
     }
 
+    /**
+     * Get a matching override handler from the types.
+     * @param inputClass the input class to match.
+     * @return the overridehandler or null.
+     */
+    @Nullable
+    private ITypeOverrideHandler<?> getMatchingOverrideHandler(@NotNull final TypeToken<?> inputClass)
+    {
+        for (final ITypeOverrideHandler<?> handler : typeOverrideHandlers)
+        {
+            if (handler.matches(inputClass))
+            {
+                return handler;
+            }
+        }
+        return null;
+    }
+
     @Override
     public <OUTPUT> IFactory<?, OUTPUT> getFactoryForOutput(@NotNull final TypeToken<? extends OUTPUT> outputClass) throws IllegalArgumentException
     {
-        final ITypeOverrideHandler<?> outputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.matches(outputClass)).findFirst().orElse(null);
+        final ITypeOverrideHandler<?> outputOverrideHandler = getMatchingOverrideHandler(outputClass);
 
         final TypeToken<?> output = outputOverrideHandler != null ? outputOverrideHandler.getOutputType() : outputClass;
 
@@ -192,10 +211,10 @@ public final class StandardFactoryController implements IFactoryController
             }
 
             //Exists as the type exists in the secondary mapping. No specific output is requested, so we will take the first one.
-            return (IFactory<?, OUTPUT>) secondaryOutputMappings.get(output).stream().findFirst().get();
+            return (IFactory<?, OUTPUT>) secondaryOutputMappings.get(output).iterator().next();
         }
 
-        return (IFactory<?, OUTPUT>) primaryOutputMappings.get(output).stream().findFirst().get();
+        return (IFactory<?, OUTPUT>) primaryOutputMappings.get(output).iterator().next();
     }
 
     @Override
@@ -226,7 +245,7 @@ public final class StandardFactoryController implements IFactoryController
         primaryInputFactories.add(factory);
         primaryOutputFactories.add(factory);
 
-        final Set<TypeToken<?>> outputSuperTypes = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
+        final Set<TypeToken<?>> outputSuperTypes = new LinkedHashSet<>(ReflectionUtils.getSuperClasses(factory.getFactoryOutputType()));
 
         outputSuperTypes.remove(factory.getFactoryOutputType());
 
