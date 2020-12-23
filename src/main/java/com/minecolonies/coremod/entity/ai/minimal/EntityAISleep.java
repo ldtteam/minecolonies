@@ -131,12 +131,9 @@ public class EntityAISleep extends Goal
                 return FIND_BED;
             }
         }
-        else
+        else if (homeBuilding.isInBuilding(citizen.getPositionVec()))
         {
-            if (homeBuilding.isInBuilding(citizen.getPositionVec()))
-            {
-                return FIND_BED;
-            }
+            return FIND_BED;
         }
 
         citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SLEEP);
