@@ -350,7 +350,7 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS       = "com.minecolonies.coremod.gui.townHall.population.totalcitizens";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_MAXED  = "com.minecolonies.coremod.gui.townHall.population.totalcitizens.max";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT = "com.minecolonies.coremod.gui.townHall.population.totalcitizens.count";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS              = "com.minecolonies.coremod.gui.townHall.population.childs";
     @NonNls
