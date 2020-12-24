@@ -125,7 +125,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
             hoverText.add(new TranslationTextComponent("com.minecolonies.coremod.gui.warehouse.sort.disabled.1", BUILDING_LEVEL_FOR_SORTING));
             hoverText.add(new TranslationTextComponent("com.minecolonies.coremod.gui.warehouse.sort.disabled.2", BUILDING_LEVEL_FOR_SORTING));
             sortButton.setHoverToolTip(hoverText);
-            sortButton.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
+            sortButton.disable();
         }
 
         super.onOpened();
@@ -228,9 +228,9 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
 
         if(building.getBuildingLevel() >= building.getBuildingMaxLevel())
         {
-            final ItemStack image = new ItemStack(resource.getItem(), 1);
-            image.setTag(resource.getItemStack().getTag());
-            findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(image);
+            final ItemStack resourceStackOfOne = new ItemStack(resource.getItem(), 1);
+            resourceStackOfOne.setTag(resource.getItemStack().getTag());
+            findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resourceStackOfOne);
         }
     }
 
@@ -294,7 +294,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
      */
     private void sortWarehouse()
     {
-        if (building.getBuildingLevel() < BUILDING_LEVEL_FOR_SORTING)
+        if (building.getBuildingLevel() >= BUILDING_LEVEL_FOR_SORTING)
         {
             Network.getNetwork().sendToServer(new SortWarehouseMessage(this.building));
             LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, WAREHOUSE_SORTED);
