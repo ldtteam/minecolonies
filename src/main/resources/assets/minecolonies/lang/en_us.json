@@ -607,7 +607,7 @@
   "com.minecolonies.coremod.gui.townhall.population.totalcitizens": "Number of Citizens: ",
   "com.minecolonies.coremod.gui.townhall.population.totalcitizens.count": "%d/%d",
   "com.minecolonies.coremod.gui.townHall.population.totalcitizens.houselimited": "Needs Housing",
-  "com.minecolonies.coremod.gui.townHall.population.totalcitizens.researchlimited": "Research At University",
+  "com.minecolonies.coremod.gui.townHall.population.totalcitizens.researchlimited": "Research at University",
   "com.minecolonies.coremod.gui.townHall.population.totalcitizens.configlimited": "Reached Configured Limit",
   "com.minecolonies.coremod.gui.townhall.population.each": "%s: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.unemployed": "Unemployed: %d",
