@@ -158,18 +158,17 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             //.withRandom(this.rand);
             //.withLuck((float) this.luck);
 
-        //final IAIState check = checkForSievableBlock(sifterBuilding.getSievableBlock(), sifterBuilding);
-
         if (currentRecipeStorage == null)
         {
             return START_WORKING;
         }
         
-        final IAIState check = checkForSievableBlock(currentRecipeStorage.getCleanedInput().get(0), sifterBuilding);
+        //final IAIState check = checkForSievableBlock(currentRecipeStorage.getCleanedInput().get(0), sifterBuilding);
         if (progress > MAX_LEVEL - Math.min((getSecondarySkillLevel() / 5) + 1, MAX_LEVEL))
         {
             progress = 0;
-            if (check == SIFT)
+            sifterBuilding.setCurrentDailyQuantity(sifterBuilding.getCurrentDailyQuantity() + 1);
+            if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity() || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < CHANCE_TO_DUMP_INV)
             {
                 sifterBuilding.setCurrentDailyQuantity(sifterBuilding.getCurrentDailyQuantity() + 1);
                 if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity() || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < CHANCE_TO_DUMP_INV)
@@ -194,23 +193,33 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
                 worker.decreaseSaturationForContinuousAction();
                 worker.getCitizenExperienceHandler().addExperience(0.2);
 
-                return START_WORKING;
-            }
-            else
+            /*
+            final ItemStack result =
+                IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock(), 1 +  (int) Math.round(getPrimarySkillLevel()/10.0));
+            if (!result.isEmpty())
             {
-                return check;
+                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), result);
             }
-        }
-        if (check == SIFT)
-        {
-            Network.getNetwork()
-              .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getA().getItemStack().copy(), sifterBuilding.getID()), worker);
-            Network.getNetwork()
-              .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), worker);
+            InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), sifterBuilding.getSievableBlock().getItemStack());
 
-            worker.swingArm(Hand.MAIN_HAND);
-            SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.ENTITY_LEASH_KNOT_BREAK);
+            if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
+            {
+                sifterBuilding.resetMesh();
+                worker.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.meshbroke"));
+            }
+            */
+            currentRecipeStorage.fullfillRecipe(builder.build(LootParameterSets.SELECTOR), getOwnBuilding().getHandlers());
+
+            worker.decreaseSaturationForContinuousAction();
+            worker.getCitizenExperienceHandler().addExperience(0.2);
         }
+        Network.getNetwork()
+            .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getA().getItemStack().copy(), sifterBuilding.getID()), worker);
+        Network.getNetwork()
+            .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), worker);
+
+        worker.swingArm(Hand.MAIN_HAND);
+        SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.ENTITY_LEASH_KNOT_BREAK);
         return getState();
     }
 }
