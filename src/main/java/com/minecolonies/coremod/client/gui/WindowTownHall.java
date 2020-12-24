@@ -590,12 +590,24 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
 
         findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
-        final int citizensSize = townHall.getColony().getCitizenCountLimit();
+        final int citizensSize = townHall.getColony().getCitizens().size();
         final AdditionModifierResearchEffect citizenCapBoost = this.building.getColony().getResearchManager().getResearchEffects().getEffect(CAP, AdditionModifierResearchEffect.class);
         final int citizensCap = (int)(Math.min(MineColonies.getConfig().getServer().maxCitizenPerColony.get(), citizenCapBoost != null ? 25 + citizenCapBoost.getEffect() : 25));
 
-        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText
-                     (LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS, citizensSize, townHall.getColony().getCitizenCountLimit(), citizensCap));
+        if(citizensSize < citizensCap)
+        {
+            findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText
+                                                                    (LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS,
+                                                                      citizensSize,
+                                                                      Math.max(citizensSize, townHall.getColony().getCitizenCountLimit())));
+        }
+        else
+        {
+            findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText
+                                                                    (LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_MAXED,
+                                                                      citizensSize,
+                                                                      citizensCap));
+        }
 
         int children = 0;
         final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();

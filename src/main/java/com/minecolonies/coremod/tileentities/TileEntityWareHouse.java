@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.FIVE_MINUTES_IN_MILLIS;
+import static com.minecolonies.api.util.constant.Constants.TICKS_FIVE_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL_MAX_UPGRADE;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -126,9 +126,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             @Nullable final TileEntity chest = searchRightChestForStack(stack);
             if (chest == null)
             {
-                if(System.currentTimeMillis() - lastNotification > FIVE_MINUTES_IN_MILLIS)
+                if(world.getGameTime() - lastNotification > TICKS_FIVE_MIN)
                 {
-                    lastNotification = System.currentTimeMillis();
+                    lastNotification = world.getGameTime();
                     if(getBuilding().getBuildingLevel() == getBuilding().getMaxBuildingLevel())
                     {
                         LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL_MAX_UPGRADE);
