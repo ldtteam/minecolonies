@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
+import com.minecolonies.api.colony.raids.registry.ModRaidTypes;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
@@ -285,7 +286,7 @@ public class RaidManager implements IRaiderManager
               amount,
               shipRotation,
               NorsemenShipRaidEvent.SHIP_NAME)
-              && (raidType.isEmpty() || raidType.contains("norsemen")))
+              && (raidType.isEmpty() || raidType.equals(ModRaidTypes.norsemen.getRaiderName())))
             {
                 final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
@@ -294,7 +295,7 @@ public class RaidManager implements IRaiderManager
                 colony.getEventManager().addEvent(event);
             }
             else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME)
-                     && (raidType.isEmpty() || raidType.contains("pirate")))
+                     && (raidType.isEmpty() || raidType.equals(ModRaidTypes.pirate.getRaiderName())))
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
@@ -307,21 +308,21 @@ public class RaidManager implements IRaiderManager
                 final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getCategory().getName().toLowerCase();
                 final HordeRaidEvent event;
                 if ((biomePath.contains(DESERT_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
-                      && ((raidType.isEmpty() || raidType.contains("egyptian"))))
+                      && ((raidType.isEmpty() || raidType.equals(ModRaidTypes.egyptian.getRaiderName()))))
                 {
                     event = new EgyptianRaidEvent(colony);
                 }
                 else if ((biomePath.contains(JUNGLE_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3))
-                           && ((raidType.isEmpty() || raidType.contains("egyptian"))))
+                           && ((raidType.isEmpty() || raidType.equals(ModRaidTypes.amazon.getRaiderName()))))
                 {
                     event = new AmazonRaidEvent(colony);
                 }
                 else if ((biomePath.contains(TAIGA_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4)
-                           && ((raidType.isEmpty() || raidType.contains("norsemen")))))
+                           && ((raidType.isEmpty() || raidType.equals(ModRaidTypes.norsemen.getRaiderName())))))
                 {
                     event = new NorsemenRaidEvent(colony);
                 }
-                else if(raidType.contains("pirate"))
+                else if(raidType.equals(ModRaidTypes.pirate.getRaiderName()))
                 {
                     event = new PirateGroundRaidEvent(colony);
                 }

@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.interactionhandling.registry.IInteractionResp
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.raids.RaidType;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
@@ -50,6 +51,8 @@ public interface IMinecoloniesAPI
     IGuardTypeDataManager getGuardTypeDataManager();
 
     IForgeRegistry<GuardType> getGuardTypeRegistry();
+
+    IForgeRegistry<RaidType> getRaidTypeRegistry();
 
     IModelTypeRegistry getModelTypeRegistry();
 
