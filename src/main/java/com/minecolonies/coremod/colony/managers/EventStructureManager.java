@@ -121,7 +121,7 @@ public class EventStructureManager implements IEventStructureManager
 
         final BlockPos anchor = new BlockPos(zeroPos.getX() + structure.getSizeX() / 2, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ() / 2);
 
-        final String backupPath = Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER + colony.getID() + colony.getDimension() + anchor;
+        final String backupPath = Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER + colony.getID() + colony.getDimension().getLocation().getNamespace() + colony.getDimension().getLocation().getPath() + anchor;
 
         if (!ItemScanTool.saveStructureOnServer(world,
           zeroPos,
@@ -129,7 +129,7 @@ public class EventStructureManager implements IEventStructureManager
           backupPath,
           false))
         {
-            // No structure spawn if we didnt successfully save the surroundings before
+            // No structure spawn if we didn't successfully save the surroundings before
             Log.getLogger().info("Failed to save schematics for event");
             return false;
         }
@@ -156,7 +156,7 @@ public class EventStructureManager implements IEventStructureManager
 
             if (entry.getValue() == eventID)
             {
-                final String backupPath = String.valueOf(colony.getID()) + colony.getDimension() + entry.getKey();
+                final String backupPath = String.valueOf(colony.getID()) + colony.getDimension().getLocation().getNamespace() + colony.getDimension().getLocation().getPath() + entry.getKey();
                 final String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + backupPath;
 
                 CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
@@ -172,7 +172,7 @@ public class EventStructureManager implements IEventStructureManager
                 }
                 catch (Exception e)
                 {
-                    Log.getLogger().info("Minor issue: Failed at deleteing a backup schematic at " + fileName, e);
+                    Log.getLogger().info("Minor issue: Failed at deleting a backup schematic at " + fileName, e);
                 }
 
                 iterator.remove();
