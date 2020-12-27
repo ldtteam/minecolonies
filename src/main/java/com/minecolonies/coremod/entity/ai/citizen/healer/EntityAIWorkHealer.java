@@ -7,14 +7,10 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Disease;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
@@ -23,11 +19,10 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.client.StreamParticleEffectMessage;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -51,11 +46,6 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      * How many of each cure item it should try to request at a time.
      */
     private static final int REQUEST_COUNT = 16;
-
-    /**
-     * Area the worker targets.
-     */
-    private AxisAlignedBB targetArea = null;
 
     /**
      * The current patient.
@@ -117,7 +107,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         }
 
         final BuildingHospital hospital = getOwnBuilding();
-        for (final AbstractEntityCitizen citizen : world.getEntitiesWithinAABB(ModEntities.CITIZEN, getTargetableArea(), cit -> cit.getCitizenDiseaseHandler().isSick()))
+        for (final AbstractEntityCitizen citizen : WorldUtil.getEntitiesWithinBuilding(world, AbstractEntityCitizen.class, getOwnBuilding(), cit -> cit.getCitizenDiseaseHandler().isSick()))
         {
             hospital.checkOrCreatePatientFile(citizen.getCivilianID());
         }
@@ -222,9 +212,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             }
         }
 
-        for (final PlayerEntity player : world.getEntitiesWithinAABB(EntityType.PLAYER,
-          getTargetableArea(),
-          player -> player.getHealth() < player.getMaxHealth() - 10 - (2 * getOwnBuilding().getBuildingLevel())))
+        for (final PlayerEntity player : WorldUtil.getEntitiesWithinBuilding(world, PlayerEntity.class, getOwnBuilding(), player -> player.getHealth() < player.getMaxHealth() - 10 - (2 * getOwnBuilding().getBuildingLevel())))
         {
             playerToHeal = player;
             return CURE_PLAYER;
@@ -533,20 +521,6 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             }
         }
         return true;
-    }
-
-    /**
-     * Creates a simple area around the Hospitals's Hut used for AABB calculations for finding sick citizens.
-     *
-     * @return The {@link AxisAlignedBB} of the Hut Area
-     */
-    private AxisAlignedBB getTargetableArea()
-    {
-        if (targetArea == null)
-        {
-            targetArea = getOwnBuilding().getTargetableArea(world);
-        }
-        return targetArea;
     }
 
     @Override

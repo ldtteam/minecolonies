@@ -103,7 +103,7 @@ public class EntityAIBreakDoor extends BreakDoorGoal
                 }
             }
             breakChance = Math.max(1,
-              hardness / (1 + (entity.world.getEntitiesWithinAABB(AbstractEntityMinecoloniesMob.class, entity.getBoundingBox().grow(5)).size() / fasterBreakPerXNearby)));
+              hardness / (1 + (entity.world.getLoadedEntitiesWithinAABB(AbstractEntityMinecoloniesMob.class, entity.getBoundingBox().grow(5)).size() / fasterBreakPerXNearby)));
         }
 
         if (this.breakingTime == this.func_220697_f() - 1)

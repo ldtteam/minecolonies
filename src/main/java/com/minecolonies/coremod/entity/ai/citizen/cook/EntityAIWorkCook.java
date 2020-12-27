@@ -12,6 +12,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
@@ -19,12 +20,10 @@ import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -77,11 +76,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      * The list of items needed for the assistant
      */
     private Set<ItemStack> assistantTests = new HashSet<>();
-
-    /**
-     * The building range the cook should search for clients.
-     */
-    private AxisAlignedBB range = null;
 
     /**
      * Constructor for the Cook. Defines the tasks the cook executes.
@@ -169,12 +163,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         worker.getCitizenData().setVisibleStatus(COOK);
 
         final Entity living = citizenToServe.isEmpty() ? playerToServe.get(0) : citizenToServe.get(0);
-        if (range == null)
-        {
-            range = getOwnBuilding().getTargetableArea(world);
-        }
 
-        if (!range.contains(new Vec3d(living.getPosition())))
+        if (!getOwnBuilding().isInBuilding(living.getPositionVec()))
         {
             worker.getNavigator().clearPath();
             removeFromQueue();
@@ -256,22 +246,16 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     protected IAIState checkForImportantJobs()
     {
         this.assistantTests.clear(); //Clear the cache of current pending work
-        if (range == null)
-        {
-            range = getOwnBuilding().getTargetableArea(world);
-        }
 
         citizenToServe.clear();
-        final List<AbstractEntityCitizen> citizenList = world.getEntitiesWithinAABB(Entity.class, range)
+        final List<AbstractEntityCitizen> citizenList = WorldUtil.getEntitiesWithinBuilding(world, AbstractEntityCitizen.class, getOwnBuilding(), null)
                                                           .stream()
-                                                          .filter(e -> e instanceof AbstractEntityCitizen)
-                                                          .map(e -> (AbstractEntityCitizen) e)
                                                           .filter(cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.shouldBeFed())
                                                           .sorted(Comparator.comparingInt(a -> (a.getCitizenJobHandler().getColonyJob() == null ? 1 : 0)))
                                                           .collect(Collectors.toList());
 
-        final List<PlayerEntity> playerList = world.getEntitiesWithinAABB(PlayerEntity.class,
-          range, player -> player != null
+        final List<PlayerEntity> playerList = WorldUtil.getEntitiesWithinBuilding(world, PlayerEntity.class,
+          getOwnBuilding(), player -> player != null
                       && player.getFoodStats().getFoodLevel() < LEVEL_TO_FEED_PLAYER
                       && getOwnBuilding().getColony().getPermissions().hasPermission(player, Action.MANAGE_HUTS)
         );

@@ -23,6 +23,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -910,15 +911,7 @@ public class Tree
 
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            final Tuple<BlockPos, BlockPos> corners = building.getCorners();
-            final int x1 = corners.getA().getX();
-            final int x2 = corners.getB().getX();
-            final int z1 = corners.getA().getZ();
-            final int z2 = corners.getB().getZ();
-
-            final int x = pos.getX();
-            final int z = pos.getZ();
-            if (x > x1 && x < x2 && z > z1 && z < z2)
+            if (building.isInBuilding(new Vec3d(pos.getX(), pos.getY(), pos.getZ())))
             {
                 return false;
             }

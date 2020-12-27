@@ -147,7 +147,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
             return getState();
         }
 
-        if (!world.getEntitiesWithinAABB(EntityCitizen.class,
+        if (!world.getLoadedEntitiesWithinAABB(EntityCitizen.class,
           new AxisAlignedBB(studyPos.getX(), studyPos.getY(), studyPos.getZ(), studyPos.getX(), studyPos.getY(), studyPos.getZ())).isEmpty())
         {
             studyPos = null;

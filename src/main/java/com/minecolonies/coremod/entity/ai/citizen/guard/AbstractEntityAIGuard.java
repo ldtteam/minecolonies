@@ -967,7 +967,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return null;
         }
 
-        final List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, getSearchArea());
+        final List<LivingEntity> entities = world.getLoadedEntitiesWithinAABB(LivingEntity.class, getSearchArea());
 
         int closest = Integer.MAX_VALUE;
         LivingEntity targetEntity = null;

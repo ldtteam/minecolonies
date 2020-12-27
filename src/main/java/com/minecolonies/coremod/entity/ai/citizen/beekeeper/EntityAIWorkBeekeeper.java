@@ -520,7 +520,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                  .stream()
                  .map(AxisAlignedBB::new)
                  .map(aabb -> aabb.grow(HIVE_BEE_RADIUS))
-                 .map(aabb -> world.getEntitiesWithinAABB(BeeEntity.class, aabb))
+                 .map(aabb -> world.getLoadedEntitiesWithinAABB(BeeEntity.class, aabb))
                  .flatMap(Collection::stream)
                  .collect(Collectors.toList());
     }

@@ -70,7 +70,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private static final int OTHER_SIDE_OF_SHAFT = 6;
 
     /**
-     * Batchsizes of cobblestone to request.
+     * Batchsizes of fill blocks to request.
      */
     private static final int COBBLE_REQUEST_BATCHES = 32;
 
@@ -225,7 +225,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @NotNull
     private String getRenderMetaStone()
     {
-        if (worker.getCitizenInventoryHandler().hasItemInInventory(Blocks.COBBLESTONE))
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(getMainFillBlock()))
         {
             return RENDER_META_STONE;
         }
@@ -335,7 +335,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             {
                 return getState();
             }
-            setBlockFromInventory(nextCobble, Blocks.COBBLESTONE);
+            setBlockFromInventory(nextCobble, getMainFillBlock());
             return getState();
         }
 
@@ -356,6 +356,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             return getState();
         }
         return MINER_CHECK_MINESHAFT;
+    }
+
+    /**
+     * Get the main fill block. Cobble for overworld, netherrack for nether.
+     * @return the main fill block.
+     */
+    private Block getMainFillBlock()
+    {
+        return Blocks.COBBLESTONE;
     }
 
     @NotNull
@@ -513,7 +522,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private IAIState advanceLadder(final IAIState state)
     {
-        if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE, COBBLE_REQUEST_BATCHES), new ItemStack(Blocks.LADDER, LADDER_REQUEST_BATCHES)))
+        if (!checkIfRequestForItemExistOrCreate(new ItemStack(getMainFillBlock(), COBBLE_REQUEST_BATCHES), new ItemStack(Blocks.LADDER, LADDER_REQUEST_BATCHES)))
         {
             return state;
         }
@@ -569,8 +578,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         //Get ladder orientation
         final BlockState metadata = getBlockState(safeStand);
 
-        //set cobblestone
-        setBlockFromInventory(nextCobble, Blocks.COBBLESTONE);
+        //set solid block
+        setBlockFromInventory(nextCobble, getMainFillBlock());
         //set ladder
         setBlockFromInventory(nextLadder, Blocks.LADDER, metadata);
         this.incrementActionsDoneAndDecSaturation();
@@ -629,7 +638,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 if (block.equals(Blocks.WATER)
                       || block.equals(Blocks.LAVA))
                 {
-                    setBlockFromInventory(curBlock, Blocks.COBBLESTONE);
+                    setBlockFromInventory(curBlock, getMainFillBlock());
                 }
             }
         }
@@ -654,7 +663,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                     if (block.equals(Blocks.WATER)
                           || block.equals(Blocks.LAVA))
                     {
-                        setBlockFromInventory(curBlock, Blocks.COBBLESTONE);
+                        setBlockFromInventory(curBlock, getMainFillBlock());
                     }
                     nextBlockToMine = curBlock;
                     bestDistance = distance;
@@ -794,12 +803,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 setDelay(1);
                 return false;
             }
-            if (!checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE, COBBLE_REQUEST_BATCHES)))
+            if (!checkIfRequestForItemExistOrCreate(new ItemStack(getMainFillBlock(), COBBLE_REQUEST_BATCHES)))
             {
                 return false;
             }
 
-            setBlockFromInventory(curBlock, Blocks.COBBLESTONE);
+            setBlockFromInventory(curBlock, getMainFillBlock());
             //To set it to clean stone... would be cheating
             return false;
         }
@@ -919,7 +928,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                     if (block.equals(Blocks.WATER)
                           || block.equals(Blocks.LAVA))
                     {
-                        setBlockFromInventory(curBlock, Blocks.COBBLESTONE);
+                        setBlockFromInventory(curBlock, getMainFillBlock());
                     }
                 }
             }
@@ -1098,7 +1107,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @Override
     public BlockState getSolidSubstitution(final BlockPos ignored)
     {
-        return Blocks.COBBLESTONE.getDefaultState();
+        return getMainFillBlock().getDefaultState();
     }
 
     @Override

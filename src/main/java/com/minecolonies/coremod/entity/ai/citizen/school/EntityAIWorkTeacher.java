@@ -9,12 +9,14 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.colony.jobs.JobTeacher;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -46,11 +48,6 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
      */
     private final static VisibleCitizenStatus TEACHING_ICON =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/teacher_student.png"), "com.minecolonies.gui.visiblestatus.teacher_student");
-
-    /**
-     * Area the worker targets.
-     */
-    private AxisAlignedBB targetArea = null;
 
     /**
      * The next pupil to teach.
@@ -104,8 +101,9 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
             return GATHERING_REQUIRED_MATERIALS;
         }
 
-        final List<? extends AbstractEntityCitizen> pupils = world.getEntitiesWithinAABB(ModEntities.CITIZEN,
-          getTargetableArea(),
+        final List<AbstractEntityCitizen> pupils = WorldUtil.getEntitiesWithinBuilding(world,
+          AbstractEntityCitizen.class,
+          getOwnBuilding(),
           cit -> cit.isChild() && cit.ridingEntity != null && cit.getCitizenJobHandler().getColonyJob() instanceof JobPupil);
         if (pupils.size() > 0)
         {
@@ -202,20 +200,6 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
     public Class<BuildingSchool> getExpectedBuildingClass()
     {
         return BuildingSchool.class;
-    }
-
-    /**
-     * Creates a simple area around the Hospitals's Hut used for AABB calculations for finding sick citizens.
-     *
-     * @return The {@link AxisAlignedBB} of the Hut Area
-     */
-    private AxisAlignedBB getTargetableArea()
-    {
-        if (targetArea == null)
-        {
-            targetArea = getOwnBuilding().getTargetableArea(world);
-        }
-        return targetArea;
     }
 
     /**

@@ -273,7 +273,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return;
         }
 
-        if (getTargetableArea(colony.getWorld()).contains(player.getPositionVec()))
+        if (isInBuilding(player.getPositionVec()))
         {
             onPlayerEnterBuilding(player);
         }
@@ -1063,7 +1063,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         if (newLevel > getBuildingLevel())
         {
-            FireworkUtils.spawnFireworksAtAABBCorners(getTargetableArea(colony.getWorld()), colony.getWorld(), newLevel);
+            FireworkUtils.spawnFireworksAtAABBCorners(getCorners(), colony.getWorld(), newLevel);
         }
 
         for (final IBuildingModule module : modules.values())

@@ -168,7 +168,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
         boolean movedXp = false;
 
-        for (@NotNull final ExperienceOrbEntity orb : citizen.world.getEntitiesWithinAABB(ExperienceOrbEntity.class, box))
+        for (@NotNull final ExperienceOrbEntity orb : citizen.world.getLoadedEntitiesWithinAABB(ExperienceOrbEntity.class, box))
         {
             Vec3d vec3d = new Vec3d(citizen.posX - orb.getPosX(), citizen.posY + (double) this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
             double d1 = vec3d.lengthSquared();

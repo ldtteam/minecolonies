@@ -30,11 +30,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -387,8 +383,8 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
                 this.swingArm(Hand.OFF_HAND);
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                   "com.minecolonies.coremod.mercenary.mercenaryStealCitizen",
-                  entityIn.getName(),
-                  stack.getDisplayName());
+                  entityIn.getName().getString(),
+                  stack.getDisplayName().getString());
             }
         }
     }
@@ -492,12 +488,12 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
      */
     private static BlockPos findMercenarySpawnPos(final IColony colony, final int amountOfMercenaries)
     {
-        final AxisAlignedBB buildingArea = colony.getBuildingManager().getTownHall().getTargetableArea(colony.getWorld());
-        BlockPos spawn = new BlockPos((buildingArea.maxX + buildingArea.minX) / 2, 0, buildingArea.minZ);
+        final Tuple<BlockPos, BlockPos> buildingArea = colony.getBuildingManager().getTownHall().getCorners();
+        BlockPos spawn = new BlockPos((buildingArea.getB().getX() + buildingArea.getA().getX()) / 2, 0, buildingArea.getA().getZ());
         double height = colony.getWorld().getHeight(Heightmap.Type.WORLD_SURFACE, spawn.getX(), spawn.getZ());
-        if (height > buildingArea.maxY)
+        if (height > buildingArea.getB().getY())
         {
-            height = buildingArea.minY + 1;
+            height = buildingArea.getA().getY() + 1;
         }
 
         spawn = spawn.add(0, height, 0);

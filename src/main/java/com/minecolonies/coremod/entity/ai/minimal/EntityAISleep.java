@@ -126,7 +126,7 @@ public class EntityAISleep extends Goal
         if (homeBuilding == null)
         {
             @Nullable final BlockPos homePosition = citizen.getHomePosition();
-            if (homePosition.distanceSq(Math.floor(citizen.posX), citizen.posY, Math.floor(citizen.posZ), false) <= RANGE_TO_BE_HOME)
+            if (homePosition.distanceSq(Math.floor(citizen.getPosX()), citizen.getPosY(), Math.floor(citizen.getPosZ()), false) <= RANGE_TO_BE_HOME)
             {
                 return FIND_BED;
             }

@@ -180,17 +180,24 @@ public final class ColonyManager implements IColonyManager
             Log.getLogger().info("Removing buildings for " + id);
             for (final IBuilding building : new ArrayList<>(colony.getBuildingManager().getBuildings().values()))
             {
-                final BlockPos location = building.getPosition();
-                Log.getLogger().info("Delete Building at " + location);
-                if (canDestroy)
+                try
                 {
-                    building.deconstruct();
+                    final BlockPos location = building.getPosition();
+                    Log.getLogger().info("Delete Building at " + location);
+                    if (canDestroy)
+                    {
+                        building.deconstruct();
+                    }
+                    building.destroy();
+                    if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
+                    {
+                        Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
+                        world.removeBlock(location, false);
+                    }
                 }
-                building.destroy();
-                if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
+                catch (final Exception ex)
                 {
-                    Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
-                    world.removeBlock(location, false);
+                    Log.getLogger().warn("Something went wrong deleting a building while deleting the colony!", ex);
                 }
             }
 
