@@ -1,8 +1,12 @@
 package com.minecolonies.api.util;
 
+import com.google.common.collect.Lists;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -13,9 +17,15 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.AbstractChunkProvider;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
 
@@ -257,5 +267,59 @@ public class WorldUtil
         {
             return world.setBlockState(pos, state, flags);
         }
+    }
+
+    /**
+     * Get all entities within a building.
+     * @param world the world to check this for.
+     * @param clazz the entity class.
+     * @param building the building to check the range for.
+     * @param predicate the predicate to check
+     * @param <T> the type of the predicate.
+     * @return a list of all within those borders.
+     */
+    public static <T extends Entity> List<T> getEntitiesWithinBuilding(
+      final @NotNull World world,
+      final @NotNull Class<? extends T> clazz,
+      final @NotNull IBuilding building,
+      @Nullable final Predicate<? super T> predicate)
+    {
+        final Tuple<BlockPos, BlockPos> corners = building.getCorners();
+
+        int minX = corners.getA().getX() >> 4;
+        int maxX = corners.getB().getX() >> 4;
+        int minZ = corners.getA().getZ() >> 4;
+        int maxZ = corners.getB().getZ() >> 4;
+        int minY = corners.getA().getY() >> 4;
+        int maxY = corners.getB().getY() >> 4;
+
+        List<T> list = Lists.newArrayList();
+        AbstractChunkProvider abstractchunkprovider = world.getChunkProvider();
+
+        for(int x = minX; x <= maxX; ++x)
+        {
+            for(int z = minZ; z <= maxZ; ++z)
+            {
+                if (isEntityChunkLoaded(world, x, z))
+                {
+                    Chunk chunk = abstractchunkprovider.getChunkNow(x, z);
+                    if (chunk != null)
+                    {
+                        for (int y = minY; y <= maxY; y++)
+                        {
+                            for (final T entity : chunk.getEntityLists()[y].getByClass(clazz))
+                            {
+                                if (building.isInBuilding(entity.getPositionVec()) && (predicate == null || predicate.test(entity)))
+                                {
+                                    list.add(entity);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return list;
     }
 }

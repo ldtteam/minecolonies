@@ -207,10 +207,7 @@ public final class BackUpHelper
         {
             if (file != null)
             {
-                if (!file.getParentFile().mkdir())
-                {
-                    Log.getLogger().error("Unable to create director to store nbt to file.");
-                }
+                file.getParentFile().mkdir();
                 CompressedStreamTools.write(compound, file);
             }
         }
