@@ -128,7 +128,7 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
 
         String colonyDesc = new TranslationTextComponent("item.minecolonies.scroll.colony.none").getFormattedText();
 
-        final IColony colony = getColony(stack);
+        final IColony colony = getColonyView(stack);
         if (colony != null)
         {
             colonyDesc = colony.getName();

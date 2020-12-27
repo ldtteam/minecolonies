@@ -164,4 +164,20 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
 
         return IColonyManager.getInstance().getColonyByDimension(stack.getTag().getInt(TAG_COLONY_ID), stack.getTag().getInt(TAG_COLONY_DIM));
     }
+
+    /**
+     * Get the colony view from the stack
+     *
+     * @param stack to use
+     * @return colony
+     */
+    protected IColony getColonyView(final ItemStack stack)
+    {
+        if (!stack.hasTag() || !stack.getTag().contains(TAG_COLONY_ID) || !stack.getTag().contains(TAG_COLONY_DIM))
+        {
+            return null;
+        }
+
+        return IColonyManager.getInstance().getColonyView(stack.getTag().getInt(TAG_COLONY_ID), RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(stack.getTag().getString(TAG_COLONY_DIM))));
+    }
 }
