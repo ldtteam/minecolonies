@@ -483,10 +483,7 @@ public class CitizenManager implements ICitizenManager
      * @return The current amount of citizens in the colony.
      */
     @Override
-    public int getCurrentCitizenCount()
-    {
-        return citizens.size();
-    }
+    public int getCurrentCitizenCount() { return citizens.size(); }
 
     @Override
     public void setMaxCitizens(final int newMaxCitizens)

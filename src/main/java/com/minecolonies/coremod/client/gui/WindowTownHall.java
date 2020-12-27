@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
-import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.CompactColonyReference;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -37,16 +37,14 @@ import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.*;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallSingleCitizenMessage;
+import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +54,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.research.util.ResearchConstants.CAP;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -139,6 +138,13 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      * Whether the event list should display permission events, or colony events.
      */
     private boolean permissionEvents;
+
+    /**
+     * Color constants for builder list.
+     */
+    public static final int RED       = Color.getByName("red", 0);
+    public static final int DARKGREEN = Color.getByName("darkgreen", 0);
+    public static final int ORANGE    = Color.getByName("orange", 0);
 
     /**
      * Constructor for the town hall window.
@@ -591,10 +597,40 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
         findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
         final int citizensSize = townHall.getColony().getCitizens().size();
+        final AdditionModifierResearchEffect citizenCapBoost = this.building.getColony().getResearchManager().getResearchEffects().getEffect(CAP, AdditionModifierResearchEffect.class);
+        final int citizensCap = (int)(Math.min(MineColonies.getConfig().getCommon().maxCitizenPerColony.get(), citizenCapBoost != null ? 25 + citizenCapBoost.getEffect() : 25));
 
-        final String numberOfCitizens =
-          LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS, citizensSize, townHall.getColony().getCitizenCountLimit());
-        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
+        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText
+                                                                (LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
+                                                                  citizensSize,
+                                                                  Math.max(citizensSize, townHall.getColony().getCitizenCountLimit())));
+        List<String> hoverText = new ArrayList<>();
+        if(citizensSize < (citizensCap * 0.9) && citizensSize < (townHall.getColony().getCitizenCountLimit() * 0.9))
+        {
+            findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setColor(DARKGREEN);
+        }
+        else if(citizensSize < citizensCap)
+        {
+            hoverText.add(LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalcitizens.houselimited", this.building.getColony().getName()));
+            findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setColor(ORANGE);
+        }
+        else
+        {
+            if(citizensCap < MineColonies.getConfig().getCommon().maxCitizenPerColony.get())
+            {
+                hoverText.add(LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalcitizens.researchlimited", this.building.getColony().getName()));
+            }
+            else
+            {
+                hoverText.add(LanguageHandler.format( "com.minecolonies.coremod.gui.townHall.population.totalcitizens.configlimited", this.building.getColony().getName()));
+            }
+            findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText
+                                                                    (LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
+                                                                      citizensSize,
+                                                                      citizensCap));
+            findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setColor(RED);
+        }
+        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setHoverToolTip(hoverText);
 
         int children = 0;
         final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();

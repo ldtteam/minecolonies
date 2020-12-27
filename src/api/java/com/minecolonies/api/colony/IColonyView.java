@@ -174,14 +174,14 @@ public interface IColonyView extends IColony
     void togglePermission(Rank rank, @NotNull Action action);
 
     /**
-     * Returns the maximum amount of citizen in the colony.
+     * Returns the maximum amount of total citizen beds in the colony.
      *
      * @return maximum amount of citizens.
      */
     int getCitizenCount();
 
     /**
-     * Returns the maximum amount of citizen in the colony considering guard towers
+     * Returns the maximum amount of citizen slots in the colony considering beds and guard towers
      *
      * @return maximum amount of citizens.
      */

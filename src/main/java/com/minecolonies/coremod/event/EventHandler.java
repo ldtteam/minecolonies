@@ -41,6 +41,7 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.monster.IMob;
@@ -66,6 +67,7 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -573,7 +575,7 @@ public class EventHandler
             }
         }
 
-        if (!event.isCanceled() && event.getHand() == Hand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool)
+        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool)
         {
             if (event.getWorld().isRemote)
             {
@@ -591,10 +593,14 @@ public class EventHandler
         }
     }
 
+    /**
+     * Event when a player right-clicks with a build tool.
+     * @param event   {@link PlayerInteractEvent.RightClickItem}
+     */
     @SubscribeEvent
     public static void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
     {
-        if (event.getHand() == Hand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
+        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
         {
             final IColonyView view = IColonyManager.getInstance().getClosestColonyView(event.getWorld(), event.getPos());
             if (view != null && Settings.instance.getStyle().isEmpty())

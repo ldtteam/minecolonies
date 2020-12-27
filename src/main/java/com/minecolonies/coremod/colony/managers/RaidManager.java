@@ -24,6 +24,7 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Hor
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent.NorsemenRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent.NorsemenShipRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateGroundRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
@@ -154,6 +155,11 @@ public class RaidManager implements IRaiderManager
     private int lostCitizens = 0;
 
     /**
+     * The next raidType, or "" if the next raid should be determined from biome.
+     */
+    private String nextForcedType = "";
+
+    /**
      * Creates the RaidManager for a colony.
      *
      * @param colony the colony.
@@ -194,6 +200,13 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
+    public void setRaidNextNight(final boolean willRaid, final String raidType)
+    {
+        this.raidTonight = true;
+        this.nextForcedType = raidType;
+    }
+
+    @Override
     public boolean areSpiesEnabled()
     {
         return spiesEnabled;
@@ -212,7 +225,13 @@ public class RaidManager implements IRaiderManager
     @Override
     public void raiderEvent()
     {
-        if (colony.getWorld() == null || !canRaid())
+        raiderEvent("");
+    }
+
+    @Override
+    public void raiderEvent(final String raidType)
+    {
+        if (colony.getWorld() == null || !canRaid() || raidType == null)
         {
             return;
         }
@@ -265,7 +284,8 @@ public class RaidManager implements IRaiderManager
               targetSpawnPoint,
               amount,
               shipRotation,
-              NorsemenShipRaidEvent.SHIP_NAME))
+              NorsemenShipRaidEvent.SHIP_NAME)
+              && (raidType.isEmpty() || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()) || raidType.equals(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath())))
             {
                 final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
@@ -273,7 +293,8 @@ public class RaidManager implements IRaiderManager
                 event.setShipRotation(shipRotation);
                 colony.getEventManager().addEvent(event);
             }
-            else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME))
+            else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME)
+                     && (raidType.isEmpty() || raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath())))
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
@@ -285,17 +306,25 @@ public class RaidManager implements IRaiderManager
             {
                 final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getRegistryName().getPath();
                 final HordeRaidEvent event;
-                if (biomePath.contains(DESERT_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
+                if (((biomePath.contains(DESERT_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
+                      && raidType.isEmpty()) || raidType.equals(EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new EgyptianRaidEvent(colony);
                 }
-                else if (biomePath.contains(JUNGLE_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3))
+                else if (((biomePath.contains(JUNGLE_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3)
+                           && raidType.isEmpty())) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
                 {
                     event = new AmazonRaidEvent(colony);
                 }
-                else if (biomePath.contains(TAIGA_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
+                else if (((biomePath.contains(TAIGA_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
+                           && raidType.isEmpty()) || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath())
+                           || raidType.equals(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new NorsemenRaidEvent(colony);
+                }
+                else if(raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
+                {
+                    event = new PirateGroundRaidEvent(colony);
                 }
                 else
                 {
@@ -462,7 +491,6 @@ public class RaidManager implements IRaiderManager
      * Determines whether the given spawn point is allowed.
      *
      * @param spawnPos        the spawn point to check
-     * @param loadedBuildings the loaded buildings
      * @return true if valid
      */
     private boolean isValidSpawnPoint(final BlockPos spawnPos)
@@ -568,7 +596,8 @@ public class RaidManager implements IRaiderManager
         if (raidTonight)
         {
             raidTonight = false;
-            raiderEvent();
+            raiderEvent(nextForcedType);
+            nextForcedType = "";
         }
         else
         {
