@@ -399,8 +399,8 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
                 this.swingArm(Hand.OFF_HAND);
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                   "com.minecolonies.coremod.mercenary.mercenaryStealCitizen",
-                  entityIn.getName(),
-                  stack.getDisplayName());
+                  entityIn.getName().getString(),
+                  stack.getDisplayName().getString());
             }
         }
     }
