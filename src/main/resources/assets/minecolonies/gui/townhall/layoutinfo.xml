@@ -20,7 +20,8 @@
                 </box>
             </list>
 
-            <label id="totalCitizens" size="148 11" pos="25 61" color="black"/>
+            <label size="110 11" pos="25 61" color="black" label="$(com.minecolonies.coremod.gui.townhall.population.totalcitizens)"/>
+            <label id="totalCitizens" size="38 11" pos="135 61" color="black"/>
             <list id="citizen-stats" size="148 136" pos="25 83">
                 <box size="100% 11" linewidth="0">
                     <label id="citizensAmount" size="100% 11" color="black"/>

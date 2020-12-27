@@ -68,6 +68,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL                              = "com.minecolonies.coremod.warehouse.full";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL_MAX_UPGRADE                       = "com.minecolonies.coremod.warehouse.full.max";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_SATURATION_0                                = "com.minecolonies.coremod.saturation.0";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_SATURATION_3                                = "com.minecolonies.coremod.saturation.3";
@@ -347,6 +349,8 @@ public final class TranslationConstants
     public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                 = "com.minecolonies.coremod.toofar";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS       = "com.minecolonies.coremod.gui.townHall.population.totalcitizens";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT = "com.minecolonies.coremod.gui.townHall.population.totalcitizens.count";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS              = "com.minecolonies.coremod.gui.townHall.population.childs";
     @NonNls
