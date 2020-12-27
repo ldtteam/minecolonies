@@ -178,6 +178,6 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
             return null;
         }
 
-        return IColonyManager.getInstance().getColonyView(stack.getTag().getInt(TAG_COLONY_ID), RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(stack.getTag().getString(TAG_COLONY_DIM))));
+        return IColonyManager.getInstance().getColonyView(stack.getTag().getInt(TAG_COLONY_ID), stack.getTag().getInt(TAG_COLONY_DIM));
     }
 }
