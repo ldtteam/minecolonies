@@ -8,15 +8,9 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
-import static com.minecolonies.api.util.constant.CitizenConstants.RANGE_TO_BE_HOME;
 import static com.minecolonies.api.util.constant.CitizenConstants.SATURATION_DECREASE_FACTOR;
 
 /**
@@ -199,29 +193,5 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             colony.getCitizenManager().unregisterCivilian(citizen);
             citizen.getCitizenData().setLastPosition(citizen.getPosition());
         }
-    }
-
-    /**
-     * Check if a citizen is at home.
-     *
-     * @return true if so.
-     */
-    @Override
-    public boolean isAtHome()
-    {
-        @Nullable final IBuilding homeBuilding = getHomeBuilding();
-
-        if (homeBuilding != null)
-        {
-            if (homeBuilding.hasModule(LivingBuildingModule.class))
-            {
-                final Tuple<BlockPos, BlockPos> corners = homeBuilding.getCorners();
-                return new AxisAlignedBB(corners.getA(), corners.getB())
-                         .contains(new Vec3d(citizen.getPosition().getX(), citizen.getPosition().getY(), citizen.getPosition().getZ()));
-            }
-        }
-
-        @Nullable final BlockPos homePosition = citizen.getHomePosition();
-        return homePosition.distanceSq(Math.floor(citizen.posX), citizen.posY, Math.floor(citizen.posZ), false) <= RANGE_TO_BE_HOME;
     }
 }
