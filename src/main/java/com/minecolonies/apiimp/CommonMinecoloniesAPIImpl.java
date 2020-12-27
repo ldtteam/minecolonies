@@ -15,7 +15,6 @@ import com.minecolonies.api.colony.interactionhandling.registry.IInteractionResp
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.colony.raids.RaidType;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
@@ -51,7 +50,6 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private final  IGuardTypeDataManager                                   guardTypeDataManager   = new com.minecolonies.coremod.colony.buildings.registry.GuardTypeDataManager();
     private        IForgeRegistry<JobEntry>                                jobRegistry;
     private        IForgeRegistry<GuardType>                               guardTypeRegistry;
-    private        IForgeRegistry<RaidType>                                raidTypeRegistry;
     private        IForgeRegistry<InteractionResponseHandlerEntry>         interactionHandlerRegistry;
     private final  IInteractionResponseHandlerDataManager                  interactionDataManager = new InteractionResponseHandlerManager();
     private        IForgeRegistry<ColonyEventTypeRegistryEntry>            colonyEventRegistry;
@@ -132,12 +130,6 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<RaidType> getRaidTypeRegistry()
-    {
-        return raidTypeRegistry;
-    }
-
-    @Override
     public IModelTypeRegistry getModelTypeRegistry()
     {
         return null;
@@ -196,16 +188,6 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                               .setType(GuardType.class)
                               .setIDRange(0, Integer.MAX_VALUE - 1)
                               .create();
-
-        raidTypeRegistry = new RegistryBuilder<RaidType>()
-                               .setName(new ResourceLocation(Constants.MOD_ID, "raidtypes"))
-                               .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "barbarian"))
-                               .disableSaving()
-                               .allowModification()
-                               .setType(RaidType.class)
-                               .setIDRange(0, Integer.MAX_VALUE - 1)
-                               .create();
-
 
         interactionHandlerRegistry = new RegistryBuilder<InteractionResponseHandlerEntry>()
                                        .setName(new ResourceLocation(Constants.MOD_ID, "interactionresponsehandlers"))

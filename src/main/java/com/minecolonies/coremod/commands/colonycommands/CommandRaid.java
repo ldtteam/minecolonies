@@ -4,7 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.raids.RaidType;
+import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -13,9 +13,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.*;
 
@@ -83,11 +80,11 @@ public class CommandRaid implements IMCOPCommand
     @Override
     public LiteralArgumentBuilder<CommandSource> build()
     {
-        String[] raidTypes = new String[IMinecoloniesAPI.getInstance().getRaidTypeRegistry().getKeys().size()];
+        String[] raidTypes = new String[IMinecoloniesAPI.getInstance().getColonyEventRegistry().getKeys().size()];
         int i = 0;
-        for(final RaidType type : IMinecoloniesAPI.getInstance().getRaidTypeRegistry().getValues())
+        for(final ColonyEventTypeRegistryEntry type : IMinecoloniesAPI.getInstance().getColonyEventRegistry().getValues())
         {
-            raidTypes[i] = type.getRaiderName();
+            raidTypes[i] = type.getRegistryName().getPath();
             i++;
         }
 

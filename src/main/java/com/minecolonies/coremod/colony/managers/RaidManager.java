@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
-import com.minecolonies.api.colony.raids.registry.ModRaidTypes;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
@@ -34,7 +33,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -286,7 +284,7 @@ public class RaidManager implements IRaiderManager
               amount,
               shipRotation,
               NorsemenShipRaidEvent.SHIP_NAME)
-              && (raidType.isEmpty() || raidType.equals(ModRaidTypes.norsemen.getRaiderName())))
+              && (raidType.isEmpty() || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()) || raidType.equals(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath())))
             {
                 final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
@@ -295,7 +293,7 @@ public class RaidManager implements IRaiderManager
                 colony.getEventManager().addEvent(event);
             }
             else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME)
-                     && (raidType.isEmpty() || raidType.equals(ModRaidTypes.pirate.getRaiderName())))
+                     && (raidType.isEmpty() || raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath())))
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
@@ -307,22 +305,23 @@ public class RaidManager implements IRaiderManager
             {
                 final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getCategory().getName().toLowerCase();
                 final HordeRaidEvent event;
-                if ((biomePath.contains(DESERT_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
-                      && ((raidType.isEmpty() || raidType.equals(ModRaidTypes.egyptian.getRaiderName()))))
+                if (((biomePath.contains(DESERT_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
+                      && raidType.isEmpty()) || raidType.equals(EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new EgyptianRaidEvent(colony);
                 }
-                else if ((biomePath.contains(JUNGLE_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3))
-                           && ((raidType.isEmpty() || raidType.equals(ModRaidTypes.amazon.getRaiderName()))))
+                else if (((biomePath.contains(JUNGLE_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3)
+                           && raidType.isEmpty())) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
                 {
                     event = new AmazonRaidEvent(colony);
                 }
-                else if ((biomePath.contains(TAIGA_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4)
-                           && ((raidType.isEmpty() || raidType.equals(ModRaidTypes.norsemen.getRaiderName())))))
+                else if (((biomePath.contains(TAIGA_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
+                           && raidType.isEmpty()) || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath())
+                           || raidType.equals(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new NorsemenRaidEvent(colony);
                 }
-                else if(raidType.equals(ModRaidTypes.pirate.getRaiderName()))
+                else if(raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new PirateGroundRaidEvent(colony);
                 }

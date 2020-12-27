@@ -13,7 +13,6 @@ import com.minecolonies.api.colony.interactionhandling.registry.IInteractionResp
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.colony.raids.RaidType;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
@@ -107,9 +106,6 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     {
         return apiInstance.getGuardTypeRegistry();
     }
-
-    @Override
-    public IForgeRegistry<RaidType> getRaidTypeRegistry() { return apiInstance.getRaidTypeRegistry(); }
 
     @Override
     public IModelTypeRegistry getModelTypeRegistry()
