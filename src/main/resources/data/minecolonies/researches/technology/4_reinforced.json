@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:iron_pickaxe",
   "parentResearch": "hardened",
-  "requirements":
-  [
-   { "item": "minecraft:diamond", "quantity": 32 },
-   { "building": "blacksmith", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:diamond",
+      "quantity": 32
+    },
+    {
+      "building": "blacksmith",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "tooldurabilitymultiplier": 3 }
+  "effects": [
+    {
+      "tooldurabilitymultiplier": 3
+    }
   ]
 }

@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecolonies:textures/icons/research/xpgain1.png",
   "parentResearch": "higherlearning",
-  "requirements":
-  [
-   { "item": "minecraft:book", "quantity": 6 },
-   { "building": "school", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:book",
+      "quantity": 6
+    },
+    {
+      "building": "school",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "teachingmultiplier": 1 }
+  "effects": [
+    {
+      "teachingmultiplier": 1
+    }
   ]
 }

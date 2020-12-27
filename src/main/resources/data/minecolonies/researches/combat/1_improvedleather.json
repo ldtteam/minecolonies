@@ -4,13 +4,19 @@
   "branch": "combat",
   "requiredUniversityLevel": 1,
   "icon": "minecraft:leather_helmet",
-  "requirements":
-  [
-   { "item": "minecraft:leather", "quantity": 32 },
-   { "building": "townhall", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:leather",
+      "quantity": 32
+    },
+    {
+      "building": "townhall",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "armordurabilitymultiplier": 1 }
+  "effects": [
+    {
+      "armordurabilitymultiplier": 1
+    }
   ]
 }

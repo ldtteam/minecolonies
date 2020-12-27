@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecolonies:textures/icons/research/hp6.png",
   "parentResearch": "guardianangel",
-  "requirements":
-  [
-   { "item": "minecraft:hay_block", "quantity": 256 }
+  "requirements": [
+    {
+      "item": "minecraft:hay_block",
+      "quantity": 256
+    }
   ],
-  "effects":
-  [
-   { "healthaddition": 6 }
+  "effects": [
+    {
+      "healthaddition": 6
+    }
   ]
 }

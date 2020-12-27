@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:bone_block",
   "parentResearch": "compost",
-  "requirements":
-  [
-   { "item": "minecraft:wheat_seeds", "quantity": 512 },
-   { "building": "smeltery", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:wheat_seeds",
+      "quantity": 512
+    },
+    {
+      "building": "smeltery",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "farmingmultiplier": 4 }
+  "effects": [
+    {
+      "farmingmultiplier": 4
+    }
   ]
 }

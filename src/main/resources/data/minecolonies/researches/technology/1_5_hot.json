@@ -4,13 +4,19 @@
   "branch": "technology",
   "requiredUniversityLevel": 1,
   "icon": "minecolonies:blockhutsmeltery",
-  "requirements":
-  [
-   { "item": "minecraft:lava_bucket", "quantity": 4 },
-   { "building": "miner", "level": 2 }
+  "requirements": [
+    {
+      "item": "minecraft:lava_bucket",
+      "quantity": 4
+    },
+    {
+      "building": "miner",
+      "level": 2
+    }
   ],
-  "effects":
-  [
-   { "blockhutsmeltery": 1 }
+  "effects": [
+    {
+      "blockhutsmeltery": 1
+    }
   ]
 }

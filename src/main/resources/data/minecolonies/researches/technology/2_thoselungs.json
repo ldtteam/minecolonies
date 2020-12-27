@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecolonies:blockhutglassblower",
   "parentResearch": "hot",
-  "requirements":
-  [
-   { "item": "minecraft:glass", "quantity": 64 },
-   { "building": "smeltery", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:glass",
+      "quantity": 64
+    },
+    {
+      "building": "smeltery",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "blockhutglassblower": 1 }
+  "effects": [
+    {
+      "blockhutglassblower": 1
+    }
   ]
 }

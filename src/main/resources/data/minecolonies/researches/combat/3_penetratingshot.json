@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:bow",
   "parentResearch": "preciseshot",
-  "requirements":
-  [
-   { "item": "minecraft:flint", "quantity": 32 },
-   { "building": "archery", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:flint",
+      "quantity": 32
+    },
+    {
+      "building": "archery",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "archerdamageaddition": 2 }
+  "effects": [
+    {
+      "archerdamageaddition": 2
+    }
   ]
 }

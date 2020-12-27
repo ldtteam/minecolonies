@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecolonies:textures/icons/research/regeneration3.png",
   "parentResearch": "healingcream",
-  "requirements":
-  [
-   { "item": "minecraft:golden_carrot", "quantity": 16 },
-   { "building": "library", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:golden_carrot",
+      "quantity": 16
+    },
+    {
+      "building": "library",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "regenerationmultiplier": 3 }
+  "effects": [
+    {
+      "regenerationmultiplier": 3
+    }
   ]
 }

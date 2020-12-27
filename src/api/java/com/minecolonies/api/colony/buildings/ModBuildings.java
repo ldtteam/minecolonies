@@ -6,14 +6,12 @@ public final class ModBuildings
 {
 
     public static final String ARCHERY_ID        = "archery";
-    public static final String BAKER_ID          = "baker";
-    public static final String BAKERY_ID         = "bakery";
+    public static final String BAKERY_ID         = "baker";
     public static final String BARRACKS_ID       = "barracks";
     public static final String BARRACKS_TOWER_ID = "barrackstower";
     public static final String BLACKSMITH_ID     = "blacksmith";
     public static final String BUILDER_ID        = "builder";
     public static final String CHICKENHERDER_ID  = "chickenherder";
-    public static final String CITIZEN_ID        = "citizen";
     public static final String COMBAT_ACADEMY_ID = "combatacademy";
     public static final String COMPOSTER_ID      = "composter";
     public static final String COOK_ID           = "cook";
@@ -23,7 +21,7 @@ public final class ModBuildings
     public static final String FARMER_ID         = "farmer";
     public static final String FISHERMAN_ID      = "fisherman";
     public static final String GUARD_TOWER_ID    = "guardtower";
-    public static final String HOME_ID           = "home";
+    public static final String HOME_ID           = "citizen";
     public static final String LIBRARY_ID        = "library";
     public static final String LUMBERJACK_ID     = "lumberjack";
     public static final String MINER_ID          = "miner";
@@ -54,14 +52,12 @@ public final class ModBuildings
     public static final String BEEKEEPER_ID      = "beekeeper";
 
     public static BuildingEntry archery;
-    public static BuildingEntry baker;
     public static BuildingEntry bakery;
     public static BuildingEntry barracks;
     public static BuildingEntry barracksTower;
     public static BuildingEntry blacksmith;
     public static BuildingEntry builder;
     public static BuildingEntry chickenHerder;
-    public static BuildingEntry citizen;
     public static BuildingEntry combatAcademy;
     public static BuildingEntry composter;
     public static BuildingEntry cook;

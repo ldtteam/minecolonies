@@ -6,12 +6,15 @@
   "icon": "minecraft:blue_shulker_box",
   "parentResearch": "loaded",
   "no-reset": true,
-  "requirements":
-  [
-   { "item": "minecraft:emerald", "quantity": 256 }
+  "requirements": [
+    {
+      "item": "minecraft:emerald",
+      "quantity": 256
+    }
   ],
-  "effects":
-  [
-   { "citizeninvslotsaddition": 3 }
+  "effects": [
+    {
+      "citizeninvslotsaddition": 3
+    }
   ]
 }

@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:experience_bottle",
   "parentResearch": "fortitude",
-  "requirements":
-  [
-   { "item": "minecraft:golden_apple", "quantity": 64 }
+  "requirements": [
+    {
+      "item": "minecraft:golden_apple",
+      "quantity": 64
+    }
   ],
-  "effects":
-  [
-   { "healingsaturationlimitaddition": 5 }
+  "effects": [
+    {
+      "healingsaturationlimitaddition": 5
+    }
   ]
 }

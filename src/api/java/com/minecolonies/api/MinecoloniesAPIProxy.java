@@ -143,7 +143,6 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
         return apiInstance.getColonyEventRegistry();
     }
 
-
     @Override
     public IForgeRegistry<ColonyEventDescriptionTypeRegistryEntry> getColonyEventDescriptionRegistry()
     {

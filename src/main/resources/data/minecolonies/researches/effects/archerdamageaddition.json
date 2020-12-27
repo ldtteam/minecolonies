@@ -2,12 +2,11 @@
   "comment": "name: Archer Damage * description : Archer Damage +%d",
   "id": "archerdamageaddition",
   "effect": true,
-  "levels": 
-  [
-   0.5,
-   1,
-   1.5,
-   2,
+  "levels": [
+    0.5,
+    1,
+    1.5,
+    2,
     4
   ]
 }

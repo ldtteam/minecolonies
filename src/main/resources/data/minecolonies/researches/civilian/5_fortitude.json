@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:honey_bottle",
   "parentResearch": "vitality",
-  "requirements":
-  [
-   { "item": "minecraft:golden_apple", "quantity": 32 },
-   { "building": "cook", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:golden_apple",
+      "quantity": 32
+    },
+    {
+      "building": "cook",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "healingsaturationlimitaddition": 4 }
+  "effects": [
+    {
+      "healingsaturationlimitaddition": 4
+    }
   ]
 }

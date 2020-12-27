@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:splash_potion",
   "parentResearch": "resilience",
-  "requirements":
-  [
-   { "item": "minecraft:golden_apple", "quantity": 16 },
-   { "building": "cook", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:golden_apple",
+      "quantity": 16
+    },
+    {
+      "building": "cook",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "healingsaturationlimitaddition": 3 }
+  "effects": [
+    {
+      "healingsaturationlimitaddition": 3
+    }
   ]
 }

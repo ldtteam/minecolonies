@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecolonies:textures/icons/research/childgrowth2.png",
   "parentResearch": "nurture",
-  "requirements":
-  [
-   { "item": "minecraft:cooked_chicken", "quantity": 64 },
-   { "building": "school", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:cooked_chicken",
+      "quantity": 64
+    },
+    {
+      "building": "school",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "growthmultiplier": 2 }
+  "effects": [
+    {
+      "growthmultiplier": 2
+    }
   ]
 }

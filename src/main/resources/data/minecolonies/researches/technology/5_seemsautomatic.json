@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:blaze_powder",
   "parentResearch": "tools",
-  "requirements":
-  [
-   { "item": "minecraft:iron_ingot", "quantity": 512 },
-   { "building": "blacksmith", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 512
+    },
+    {
+      "building": "blacksmith",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "blockplacespeedmultiplier": 4 }
+  "effects": [
+    {
+      "blockplacespeedmultiplier": 4
+    }
   ]
 }

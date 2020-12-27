@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:redstone_block",
   "parentResearch": "redstonepowered",
-  "requirements":
-  [
-   { "item": "minecraft:redstone", "quantity": 512 }
+  "requirements": [
+    {
+      "item": "minecraft:redstone",
+      "quantity": 512
+    }
   ],
-  "effects":
-  [
-   { "blockbreakspeedmultiplier": 3 }
+  "effects": [
+    {
+      "blockbreakspeedmultiplier": 3
+    }
   ]
 }

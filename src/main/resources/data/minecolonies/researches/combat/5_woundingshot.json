@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecolonies:firearrow",
   "parentResearch": "piercingshot",
-  "requirements":
-  [
-   { "item": "minecraft:flint", "quantity": 128 },
-   { "building": "barracks", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:flint",
+      "quantity": 128
+    },
+    {
+      "building": "barracks",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "archerdamageaddition": 4 }
+  "effects": [
+    {
+      "archerdamageaddition": 4
+    }
   ]
 }

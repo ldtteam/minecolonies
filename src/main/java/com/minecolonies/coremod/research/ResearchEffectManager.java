@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.research;
 
-import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +29,7 @@ public class ResearchEffectManager implements IResearchEffectManager
     }
 
     @Override
-    public float getEffectValue(final String id)
+    public double getEffectValue(final String id)
     {
         if(effectMap.containsKey(id))
         {

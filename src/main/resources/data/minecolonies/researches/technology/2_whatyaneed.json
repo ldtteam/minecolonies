@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecolonies:blockhutmechanic",
   "parentResearch": "hittingiron",
-  "requirements":
-  [
-   { "item": "minecraft:redstone", "quantity": 64 },
-   { "building": "blacksmith", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:redstone",
+      "quantity": 64
+    },
+    {
+      "building": "blacksmith",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "blockhutmechanic": 1 }
+  "effects": [
+    {
+      "blockhutmechanic": 1
+    }
   ]
 }

@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:coal_block",
   "parentResearch": "veinminer",
-  "requirements":
-  [
-   { "item": "minecraft:iron_ore", "quantity": 64 },
-   { "building": "miner", "level": 2 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_ore",
+      "quantity": 64
+    },
+    {
+      "building": "miner",
+      "level": 2
+    }
   ],
-  "effects":
-  [
-   { "moreoresmultiplier": 2 }
+  "effects": [
+    {
+      "moreoresmultiplier": 2
+    }
   ]
 }

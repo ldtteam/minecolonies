@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:diamond_pickaxe",
   "parentResearch": "steelbracing",
-  "requirements":
-  [
-   { "item": "minecraft:diamond", "quantity": 128 }
+  "requirements": [
+    {
+      "item": "minecraft:diamond",
+      "quantity": 128
+    }
   ],
-  "effects":
-  [
-   { "tooldurabilitymultiplier": 5 }
+  "effects": [
+    {
+      "tooldurabilitymultiplier": 5
+    }
   ]
 }

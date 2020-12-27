@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecraft:wooden_pickaxe",
   "parentResearch": "hittingiron",
-  "requirements":
-  [
-   { "item": "minecraft:diamond", "quantity": 8 },
-   { "building": "blacksmith", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:diamond",
+      "quantity": 8
+    },
+    {
+      "building": "blacksmith",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "tooldurabilitymultiplier": 1 }
+  "effects": [
+    {
+      "tooldurabilitymultiplier": 1
+    }
   ]
 }

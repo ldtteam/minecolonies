@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecolonies:textures/icons/research/saturation1.png",
   "parentResearch": "firstaid",
-  "requirements":
-  [
-   { "item": "minecraft:cookie", "quantity": 32 },
-   { "building": "cook", "level": 2 }
+  "requirements": [
+    {
+      "item": "minecraft:cookie",
+      "quantity": 32
+    },
+    {
+      "building": "cook",
+      "level": 2
+    }
   ],
-  "effects":
-  [
-   { "saturationmultiplier": 1 }
+  "effects": [
+    {
+      "saturationmultiplier": 1
+    }
   ]
 }

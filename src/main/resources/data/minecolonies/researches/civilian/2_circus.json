@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecolonies:textures/icons/research/happy1.png",
   "parentResearch": "firstaid",
-  "requirements":
-  [
-   { "item": "minecraft:cake", "quantity": 1 },
-   { "building": "cook", "level": 2 }
+  "requirements": [
+    {
+      "item": "minecraft:cake",
+      "quantity": 1
+    },
+    {
+      "building": "cook",
+      "level": 2
+    }
   ],
-  "effects":
-  [
-   { "happinessmultiplier": 1 }
+  "effects": [
+    {
+      "happinessmultiplier": 1
+    }
   ]
 }

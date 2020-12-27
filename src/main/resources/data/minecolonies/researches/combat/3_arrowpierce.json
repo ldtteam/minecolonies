@@ -5,14 +5,23 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:enchanted_book",
   "parentResearch": "arrowuse",
-  "requirements":
-  [
-   { "item": "minecraft:arrow", "quantity": 64 },
-   { "item": "minecraft:redstone", "quantity": 64 },
-   { "building": "archery", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:arrow",
+      "quantity": 64
+    },
+    {
+      "item": "minecraft:redstone",
+      "quantity": 64
+    },
+    {
+      "building": "archery",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "piercingarrowsunlock": 1 }
+  "effects": [
+    {
+      "piercingarrowsunlock": 1
+    }
   ]
 }

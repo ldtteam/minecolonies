@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecolonies:textures/icons/research/speed4.png",
   "parentResearch": "swift",
-  "requirements":
-  [
-   { "item": "minecraft:rabbit_foot", "quantity": 64 }
+  "requirements": [
+    {
+      "item": "minecraft:rabbit_foot",
+      "quantity": 64
+    }
   ],
-  "effects":
-  [
-   { "walkingmultiplier": 4 }
+  "effects": [
+    {
+      "walkingmultiplier": 4
+    }
   ]
 }

@@ -4,13 +4,19 @@
   "branch": "technology",
   "requiredUniversityLevel": 1,
   "icon": "minecolonies:blockhutcomposter",
-  "requirements":
-  [
-   { "item": "minecraft:bone_meal", "quantity": 64 },
-   { "building": "farmer", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:bone_meal",
+      "quantity": 64
+    },
+    {
+      "building": "farmer",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "blockhutcomposter": 1 }
+  "effects": [
+    {
+      "blockhutcomposter": 1
+    }
   ]
 }

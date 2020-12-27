@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecraft:paper",
   "parentResearch": "woodwork",
-  "requirements":
-  [
-   { "item": "minecraft:paper", "quantity": 32 },
-   { "building": "sawmill", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:paper",
+      "quantity": 32
+    },
+    {
+      "building": "sawmill",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "recipesmultiplier": 1 }
+  "effects": [
+    {
+      "recipesmultiplier": 1
+    }
   ]
 }

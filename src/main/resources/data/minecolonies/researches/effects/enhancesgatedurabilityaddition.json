@@ -2,9 +2,8 @@
   "comment": "name: Enhances Gate Durability * description : Gates Gain +100%% Swarm Resistance",
   "id": "enhancesgatedurabilityaddition",
   "effect": true,
-  "levels": 
-  [
-   5,
+  "levels": [
+    5,
     15
   ]
 }

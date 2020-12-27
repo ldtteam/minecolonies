@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:diamond_sword",
   "parentResearch": "mightycleave",
-  "requirements":
-  [
-   { "item": "minecraft:iron_block", "quantity": 32 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 32
+    }
   ],
-  "effects":
-  [
-   { "meleedamageaddition": 5 }
+  "effects": [
+    {
+      "meleedamageaddition": 5
+    }
   ]
 }

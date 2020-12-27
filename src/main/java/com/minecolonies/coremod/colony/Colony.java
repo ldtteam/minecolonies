@@ -413,7 +413,6 @@ public class Colony implements IColony
         eventManager.onColonyTick(this);
         buildingManager.onColonyTick(this);
         workManager.onColonyTick(this);
-        researchManager.onColonyTick(this);
 
         final long currTime = System.currentTimeMillis();
         if (lastOnlineTime != 0)

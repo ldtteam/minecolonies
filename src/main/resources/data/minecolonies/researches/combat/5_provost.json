@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:golden_chestplate",
   "parentResearch": "duelist",
-  "requirements":
-  [
-   { "item": "minecraft:diamond", "quantity": 16 },
-   { "building": "combatacademy", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:diamond",
+      "quantity": 16
+    },
+    {
+      "building": "combatacademy",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "meleearmormultiplier": 4 }
+  "effects": [
+    {
+      "meleearmormultiplier": 4
+    }
   ]
 }

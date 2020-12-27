@@ -39,10 +39,30 @@ public interface IResearchEffect<T>
     TranslationTextComponent getDesc();
 
     /**
+     * Effect subtitle description.
+     *
+     * @return the Subtitle desc.
+     */
+    String getSubtitle();
+
+    /**
+     * Returns the effect's display value
+     *
+     * @return the display value.
+     */
+    Double getDisplay();
+
+    /**
      * Does this effect override another effect with the same id?
      *
      * @param other the effect to check.
      * @return true if so.
      */
     boolean overrides(@NotNull final IResearchEffect<?> other);
+
+    /**
+     * Get the attributes of the research effect, for easier serialization.
+     * @return the string representation of the effect and its magnitudes.
+     */
+    String getAttributes();
 }

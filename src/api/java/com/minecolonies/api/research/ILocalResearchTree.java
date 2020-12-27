@@ -2,9 +2,10 @@ package com.minecolonies.api.research;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -59,13 +60,21 @@ public interface ILocalResearchTree
     void finishResearch(final String id);
 
     /**
-     * Cancel a research, and optionally undo its effects.
-     *
-     * @param branch            the branch of the research to remove.
-     * @param id                the id of the research to remove.
-     * @param colony     the colony to remove effects from, or null if no effect reset is desired.
+     * Attempt to begin a research.
+     * @param player     the player(s) making the request (and to apply costs toward)
+     * @param colony     the colony doing the research
+     * @param research   the research.
      */
-    void cancelResearch(final String branch, final String id, @Nullable final IColony colony);
+    void attemptBeginResearch(final PlayerEntity player, final IColony colony, final IGlobalResearch research);
+
+    /**
+     * Reset a research, and optionally undo its effects.  If the research is begun but incomplete, cancel it.
+     *
+     * @param player     the player to notify of research cancellation results.
+     * @param colony     the colony to remove effects from, or null if no effect reset is desired.
+     * @param research   the local research descriptor.
+     */
+    void attemptResetResearch(PlayerEntity player, @Nullable final IColony colony, ILocalResearch research);
 
     /**
      * Write the research tree to NBT.

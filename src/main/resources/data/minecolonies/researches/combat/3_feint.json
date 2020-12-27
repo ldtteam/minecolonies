@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:leather_boots",
   "parentResearch": "regeneration",
-  "requirements":
-  [
-   { "item": "minecraft:emerald", "quantity": 8 },
-   { "building": "guardtower", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:emerald",
+      "quantity": 8
+    },
+    {
+      "building": "guardtower",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "fleeingdamagemultiplier": 1 }
+  "effects": [
+    {
+      "fleeingdamagemultiplier": 1
+    }
   ]
 }

@@ -5,15 +5,27 @@
   "requiredUniversityLevel": 4,
   "icon": "minecolonies:iron_scimitar",
   "parentResearch": "arrowpierce",
-  "requirements":
-  [
-   { "item": "minecraft:redstone", "quantity": 64 },
-   { "item": "minecraft:gold_ingot", "quantity": 64 },
-   { "item": "minecraft:lapis_lazuli", "quantity": 128 },
-   { "building": "barracks", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:redstone",
+      "quantity": 64
+    },
+    {
+      "item": "minecraft:gold_ingot",
+      "quantity": 64
+    },
+    {
+      "item": "minecraft:lapis_lazuli",
+      "quantity": 128
+    },
+    {
+      "building": "barracks",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "whirlwindabilityunlock": 1 }
+  "effects": [
+    {
+      "whirlwindabilityunlock": 1
+    }
   ]
 }

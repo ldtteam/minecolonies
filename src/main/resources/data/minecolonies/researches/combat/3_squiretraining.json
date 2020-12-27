@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:iron_ingot",
   "parentResearch": "improvedswords",
-  "requirements":
-  [
-   { "item": "minecraft:shield", "quantity": 4 },
-   { "building": "combatacademy", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:shield",
+      "quantity": 4
+    },
+    {
+      "building": "combatacademy",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "blockattacksmultiplier": 1 }
+  "effects": [
+    {
+      "blockattacksmultiplier": 1
+    }
   ]
 }

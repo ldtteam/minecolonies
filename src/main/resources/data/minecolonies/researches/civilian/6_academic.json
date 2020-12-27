@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:experience_bottle:5",
   "parentResearch": "reflective",
-  "requirements":
-  [
-   { "item": "minecraft:book", "quantity": 128 }
+  "requirements": [
+    {
+      "item": "minecraft:book",
+      "quantity": 128
+    }
   ],
-  "effects":
-  [
-   { "levelingmultiplier": 5 }
+  "effects": [
+    {
+      "levelingmultiplier": 5
+    }
   ]
 }

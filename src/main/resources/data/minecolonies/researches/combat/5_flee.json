@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:feather:3",
   "parentResearch": "evade",
-  "requirements":
-  [
-   { "item": "minecraft:emerald", "quantity": 32 },
-   { "building": "guardtower", "level": 12 }
+  "requirements": [
+    {
+      "item": "minecraft:emerald",
+      "quantity": 32
+    },
+    {
+      "building": "guardtower",
+      "level": 12
+    }
   ],
-  "effects":
-  [
-   { "fleeingspeedaddition": 3 }
+  "effects": [
+    {
+      "fleeingspeedaddition": 3
+    }
   ]
 }

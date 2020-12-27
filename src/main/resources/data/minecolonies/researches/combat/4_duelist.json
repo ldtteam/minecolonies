@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:chainmail_chestplate",
   "parentResearch": "riposte",
-  "requirements":
-  [
-   { "item": "minecraft:iron_ingot", "quantity": 64 },
-   { "building": "smeltery", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 64
+    },
+    {
+      "building": "smeltery",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "meleearmormultiplier": 3 }
+  "effects": [
+    {
+      "meleearmormultiplier": 3
+    }
   ]
 }

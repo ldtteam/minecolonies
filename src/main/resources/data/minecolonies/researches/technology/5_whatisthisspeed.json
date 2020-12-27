@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:comparator",
   "parentResearch": "heavymachinery",
-  "requirements":
-  [
-   { "item": "minecraft:redstone", "quantity": 1024 }
+  "requirements": [
+    {
+      "item": "minecraft:redstone",
+      "quantity": 1024
+    }
   ],
-  "effects":
-  [
-   { "blockbreakspeedmultiplier": 4 }
+  "effects": [
+    {
+      "blockbreakspeedmultiplier": 4
+    }
   ]
 }

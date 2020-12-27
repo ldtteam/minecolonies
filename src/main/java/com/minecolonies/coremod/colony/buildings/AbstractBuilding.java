@@ -931,6 +931,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
             return;
         }
+        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutBlockName) && (colony.getResearchManager().getResearchEffects().getEffectValue(hutBlockName) <= getBuildingLevel()))
+        {
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.unlocktoupgrade"), player.getUniqueID());
+            return;
+        }
         if (getBuildingLevel() < getMaxBuildingLevel())
         {
             requestWorkOrder(getBuildingLevel() + 1, builder, false);

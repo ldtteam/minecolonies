@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:lapis_block",
   "parentResearch": "richveins",
-  "requirements":
-  [
-   { "item": "minecraft:gold_ore", "quantity": 64 },
-   { "building": "blacksmith", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:gold_ore",
+      "quantity": 64
+    },
+    {
+      "building": "blacksmith",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "moreoresmultiplier": 4 }
+  "effects": [
+    {
+      "moreoresmultiplier": 4
+    }
   ]
 }

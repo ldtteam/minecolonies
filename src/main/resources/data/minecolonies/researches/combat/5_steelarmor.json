@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:golden_helmet",
   "parentResearch": "ironarmor",
-  "requirements":
-  [
-   { "item": "minecraft:iron_ingot", "quantity": 64 },
-   { "building": "townhall", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 64
+    },
+    {
+      "building": "townhall",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "armordurabilitymultiplier": 5 }
+  "effects": [
+    {
+      "armordurabilitymultiplier": 5
+    }
   ]
 }

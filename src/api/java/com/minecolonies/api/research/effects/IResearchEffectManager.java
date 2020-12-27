@@ -24,7 +24,7 @@ public interface IResearchEffectManager
      * @param id   the id of the effect.
      * @return the strength of the effect, or zero if it isn't present.
      */
-     float getEffectValue(final String id);
+     double getEffectValue(final String id);
 
     /**
      * Gets whether a research effect is enabled with a non-zero value.

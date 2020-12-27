@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecolonies:textures/icons/research/xpgain5.png",
   "parentResearch": "master",
-  "requirements":
-  [
-   { "item": "minecraft:bookshelf", "quantity": 64 }
+  "requirements": [
+    {
+      "item": "minecraft:bookshelf",
+      "quantity": 64
+    }
   ],
-  "effects":
-  [
-   { "teachingmultiplier": 5 }
+  "effects": [
+    {
+      "teachingmultiplier": 5
+    }
   ]
 }

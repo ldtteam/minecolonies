@@ -25,11 +25,22 @@ public final class ResearchConstants
     public static final String TAG_ID             = "id";
     public static final String TAG_BRANCH         = "branch";
     public static final String TAG_DESC           = "desc";
-    public static final String TAG_EFFECT         = "effect";
+    public static final String TAG_COSTS_COUNT    = "cost-count";
+    public static final String TAG_COST_ITEM      = "cost-item";
+    public static final String TAG_REQ_COUNT      = "requirement-count";
+    public static final String TAG_REQ_STRING     = "requirement-string";
+    public static final String TAG_EFFECT_COUNT   = "effect-count";
+    public static final String TAG_EFFECT_STRING  = "effect-string";
     public static final String TAG_DEPTH          = "depth";
     public static final String TAG_PROGRESS       = "progress";
     public static final String TAG_CHILDS         = "hasResearchedChild";
     public static final String TAG_ONLY_CHILD     = "onlyChild";
+    public static final String TAG_ICON           = "icon";
+    public static final String TAG_SUBTITLE_NAME      = "subtitle";
+    public static final String TAG_INSTANT        = "instant";
+    public static final String TAG_AUTOSTART      = "autostart";
+    public static final String TAG_IMMUTABLE      = "immutable";
+    public static final String TAG_HIDDEN         = "hidden";
     public static final String TAG_RESEARCH_CHILD = "child";
 
     /**
@@ -88,7 +99,7 @@ public final class ResearchConstants
     public static final String BLOCK_PLACE_SPEED = "blockplacespeedmultiplier";
     public static final String DOUBLE_ARROWS     = "doublearrowsmultiplier";
     public static final String FARMING           = "farmingmultiplier";
-    public static final String FLEEING_DAMAGE    = "fleeingdamagemultiplier";;
+    public static final String FLEEING_DAMAGE    = "fleeingdamagemultiplier";
     public static final String GROWTH            = "growthmultiplier";
     public static final String HAPPINESS         = "happinessmultiplier";
     public static final String LEVELING          = "levelingmultiplier";
@@ -115,35 +126,6 @@ public final class ResearchConstants
     public static final String SHIELD_USAGE      = "shieldusageunlock";
     public static final String KNIGHT_WHIRLWIND  = "whirlwindabilityunlock";
     public static final String WORKING_IN_RAIN   = "workinginrainunlock";
-
-    /* // Recipe-only unlocks don't really need specific effects.  Leaving here in case we do want to add AbilityEffects to them.
-    /public static final String END_KNOWLEDGE     = "knowledgeoftheendunlock";
-    /public static final String MORE_SCROLLS      = "morescrollsunlock";
-     */
-
-    //Unlock Building modifiers.
-    /*public static final String COMPOSTER_RESEARCH      = "blockhutcomposter";
-    public static final String FLORIST_RESEARCH        = "blockhutflorist";
-    public static final String DYER_RESEARCH           = "blockhutdyer";
-    public static final String CONCRETE_MIXER_RESEARCH = "blockhutconcretemixer";
-    public static final String PLANTATION_RESEARCH     = "blockhutplantation";
-    public static final String SMELTERY_RESEARCH       = "blockhutsmeltery";
-    public static final String STONESMELTERY_RESEARCH  = "blockhutstonesmeltery";
-    public static final String CRUSHER_RESEARCH        = "blockhutcrusher";
-    public static final String GLASSBLOWER_RESEARCH    = "blockhutglassblower";
-    public static final String SAWMILL_RESEARCH        = "blockhutsawmill";
-    public static final String SIFTER_RESEARCH         = "blockhutsifter";
-    public static final String FLETCHER_RESEARCH       = "blockhutfletcher";
-    public static final String BLACKSMITH_RESEARCH     = "blockhutblacksmith";
-    public static final String STONEMASON_RESEARCH     = "blockhutstonemason";
-    public static final String MECHANIC_RESEARCH       = "blockhutmechanic";
-    public static final String SCHOOL_RESEARCH         = "blockhutschool";
-    public static final String LIBRARY_RESEARCH        = "blockhutlibrary";
-    public static final String HOSPITAL_RESEARCH       = "blockhuthospital";
-    public static final String BARRACKS_RESEARCH       = "blockhutbarracks";
-    public static final String COMBAT_ACADEMY_RESEARCH = "blockhutcombatacademy";
-    public static final String ARCHERY_RESEARCH        = "blockhutarchery";
-     */
 
     /**
      * Private constructor to hide implicit public one.

@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:experience_bottle:3",
   "parentResearch": "studious",
-  "requirements":
-  [
-   { "item": "minecraft:book", "quantity": 24 },
-   { "building": "library", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:book",
+      "quantity": 24
+    },
+    {
+      "building": "library",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "levelingmultiplier": 3 }
+  "effects": [
+    {
+      "levelingmultiplier": 3
+    }
   ]
 }

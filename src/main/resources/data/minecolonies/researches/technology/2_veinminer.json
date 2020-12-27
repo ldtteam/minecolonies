@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecraft:iron_block",
   "parentResearch": "hittingiron",
-  "requirements":
-  [
-   { "item": "minecraft:iron_ore", "quantity": 32 },
-   { "building": "miner", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_ore",
+      "quantity": 32
+    },
+    {
+      "building": "miner",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "moreoresmultiplier": 1 }
+  "effects": [
+    {
+      "moreoresmultiplier": 1
+    }
   ]
 }

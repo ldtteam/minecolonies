@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecraft:turtle_helmet",
   "parentResearch": "improvedleather",
-  "requirements":
-  [
-   { "item": "minecraft:leather", "quantity": 64 },
-   { "building": "townhall", "level": 2 }
+  "requirements": [
+    {
+      "item": "minecraft:leather",
+      "quantity": 64
+    },
+    {
+      "building": "townhall",
+      "level": 2
+    }
   ],
-  "effects":
-  [
-   { "armordurabilitymultiplier": 2 }
+  "effects": [
+    {
+      "armordurabilitymultiplier": 2
+    }
   ]
 }

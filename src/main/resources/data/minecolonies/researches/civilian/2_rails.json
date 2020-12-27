@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecraft:detector_rail",
   "parentResearch": "keen",
-  "requirements":
-  [
-   { "item": "minecraft:rail", "quantity": 64 },
-   { "building": "deliveryman", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:rail",
+      "quantity": 64
+    },
+    {
+      "building": "deliveryman",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "railsunlock": 1 }
+  "effects": [
+    {
+      "railsunlock": 1
+    }
   ]
 }

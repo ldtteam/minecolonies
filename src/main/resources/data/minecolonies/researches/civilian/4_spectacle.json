@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecolonies:textures/icons/research/happy3.png",
   "parentResearch": "festival",
-  "requirements":
-  [
-   { "item": "minecraft:cake", "quantity": 18 },
-   { "building": "cook", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:cake",
+      "quantity": 18
+    },
+    {
+      "building": "cook",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "happinessmultiplier": 3 }
+  "effects": [
+    {
+      "happinessmultiplier": 3
+    }
   ]
 }

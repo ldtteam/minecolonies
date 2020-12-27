@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecolonies:textures/icons/research/hp3.png",
   "parentResearch": "firstaid2",
-  "requirements":
-  [
-   { "item": "minecraft:hay_block", "quantity": 32 },
-   { "building": "townhall", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:hay_block",
+      "quantity": 32
+    },
+    {
+      "building": "townhall",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "healthaddition": 3 }
+  "effects": [
+    {
+      "healthaddition": 3
+    }
   ]
 }

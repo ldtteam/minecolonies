@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecolonies:textures/icons/research/childgrowth4.png",
   "parentResearch": "puberty",
-  "requirements":
-  [
-   { "item": "minecraft:cooked_chicken", "quantity": 256 },
-   { "building": "library", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:cooked_chicken",
+      "quantity": 256
+    },
+    {
+      "building": "library",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "growthmultiplier": 4 }
+  "effects": [
+    {
+      "growthmultiplier": 4
+    }
   ]
 }

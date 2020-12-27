@@ -2,16 +2,23 @@
   "comment": "name: Improved Dodge * description : Archer Armor",
   "id": "improveddodge",
   "branch": "combat",
+  "subtitle": "com.minecolonies.research.improveddodge.subtitle",
   "requiredUniversityLevel": 3,
   "icon": "minecolonies:pirate_shoes",
   "parentResearch": "dodge",
-  "requirements":
-  [
-   { "item": "minecraft:leather", "quantity": 32 },
-   { "building": "archery", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:leather",
+      "quantity": 32
+    },
+    {
+      "building": "archery",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "archerarmormultiplier": 2 }
+  "effects": [
+    {
+      "archerarmormultiplier": 2
+    }
   ]
 }

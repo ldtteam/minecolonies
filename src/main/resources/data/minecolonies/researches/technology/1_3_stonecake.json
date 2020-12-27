@@ -4,13 +4,19 @@
   "branch": "technology",
   "requiredUniversityLevel": 1,
   "icon": "minecolonies:blockhutstonemason",
-  "requirements":
-  [
-   { "item": "minecraft:chiseled_stone_bricks", "quantity": 64 },
-   { "building": "miner", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:chiseled_stone_bricks",
+      "quantity": 64
+    },
+    {
+      "building": "miner",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "blockhutstonemason": 1 }
+  "effects": [
+    {
+      "blockhutstonemason": 1
+    }
   ]
 }

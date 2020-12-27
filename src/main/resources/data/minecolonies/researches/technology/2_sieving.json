@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecolonies:blockhutsifter",
   "parentResearch": "woodwork",
-  "requirements":
-  [
-   { "item": "minecraft:string", "quantity": 64 },
-   { "building": "fisherman", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:string",
+      "quantity": 64
+    },
+    {
+      "building": "fisherman",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "blockhutsifter": 1 }
+  "effects": [
+    {
+      "blockhutsifter": 1
+    }
   ]
 }

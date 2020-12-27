@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecolonies:blockhutstonesmeltery",
   "parentResearch": "hot",
-  "requirements":
-  [
-   { "item": "minecraft:stone_bricks", "quantity": 64 },
-   { "building": "smeltery", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:stone_bricks",
+      "quantity": 64
+    },
+    {
+      "building": "smeltery",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "blockhutstonesmeltery": 1 }
+  "effects": [
+    {
+      "blockhutstonesmeltery": 1
+    }
   ]
 }

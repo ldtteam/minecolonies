@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecraft:leather_chestplate",
   "parentResearch": "avoidance",
-  "requirements":
-  [
-   { "item": "minecraft:iron_ingot", "quantity": 16 },
-   { "building": "smeltery", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 16
+    },
+    {
+      "building": "smeltery",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "meleearmormultiplier": 1 }
+  "effects": [
+    {
+      "meleearmormultiplier": 1
+    }
   ]
 }

@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:crossbow",
   "parentResearch": "penetratingshot",
-  "requirements":
-  [
-   { "item": "minecraft:flint", "quantity": 64 },
-   { "building": "guardtower", "level": 10 }
+  "requirements": [
+    {
+      "item": "minecraft:flint",
+      "quantity": 64
+    },
+    {
+      "building": "guardtower",
+      "level": 10
+    }
   ],
-  "effects":
-  [
-   { "archerdamageaddition": 3 }
+  "effects": [
+    {
+      "archerdamageaddition": 3
+    }
   ]
 }

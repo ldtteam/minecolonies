@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecraft:glowstone_dust",
   "parentResearch": "hittingiron",
-  "requirements":
-  [
-   { "item": "minecraft:iron_ingot", "quantity": 64 },
-   { "building": "miner", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 64
+    },
+    {
+      "building": "miner",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "blockplacespeedmultiplier": 1 }
+  "effects": [
+    {
+      "blockplacespeedmultiplier": 1
+    }
   ]
 }

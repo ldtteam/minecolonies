@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:repeater",
   "parentResearch": "whatisthisspeed",
-  "requirements":
-  [
-   { "item": "minecraft:redstone", "quantity": 2048 }
+  "requirements": [
+    {
+      "item": "minecraft:redstone",
+      "quantity": 2048
+    }
   ],
-  "effects":
-  [
-   { "blockbreakspeedmultiplier": 5 }
+  "effects": [
+    {
+      "blockbreakspeedmultiplier": 5
+    }
   ]
 }

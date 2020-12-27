@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:diamond_helmet",
   "parentResearch": "steelarmor",
-  "requirements":
-  [
-   { "item": "minecraft:diamond", "quantity": 64 }
+  "requirements": [
+    {
+      "item": "minecraft:diamond",
+      "quantity": 64
+    }
   ],
-  "effects":
-  [
-   { "armordurabilitymultiplier": 6 }
+  "effects": [
+    {
+      "armordurabilitymultiplier": 6
+    }
   ]
 }

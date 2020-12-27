@@ -4,7 +4,6 @@ import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Gradient;
 import com.ldtteam.blockout.views.View;
-import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.util.constant.Constants;
@@ -54,7 +53,8 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
             {
                 final ButtonImage button = new ButtonImage();
                 button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-                button.setLabel(branch);
+                button.setLabel(IGlobalResearchTree.getInstance().getBranchName(branch));
+                button.setID(branch);
                 button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
                 button.setTextColor(SLIGHTLY_BLUE);
                 button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
@@ -73,7 +73,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
                 view.addChild(gradient);
                 final ButtonImage button = new ButtonImage();
                 button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-                button.setLabel("-----------");
+                button.setLabel(new TranslationTextComponent("-----------"));
                 button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
                 button.setTextColor(SLIGHTLY_BLUE);
                 button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
@@ -149,11 +149,10 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
     public void onButtonClicked(@NotNull final Button button)
     {
         super.onButtonClicked(button);
-        final String label = button.getLabel();
 
-        if (branches.contains(label))
+        if (branches.contains(button.getID()))
         {
-            new WindowResearchTree(label, building, this).open();
+            new WindowResearchTree(button.getID(), building, this).open();
         }
     }
 

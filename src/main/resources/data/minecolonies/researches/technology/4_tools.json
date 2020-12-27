@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:redstone_lamp",
   "parentResearch": "skills",
-  "requirements":
-  [
-   { "item": "minecraft:iron_ingot", "quantity": 256 },
-   { "building": "blacksmith", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 256
+    },
+    {
+      "building": "blacksmith",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "blockplacespeedmultiplier": 3 }
+  "effects": [
+    {
+      "blockplacespeedmultiplier": 3
+    }
   ]
 }

@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecolonies:textures/icons/research/happy5.png",
   "parentResearch": "opera",
-  "requirements":
-  [
-   { "item": "minecraft:enchanted_golden_apple", "quantity": 16 }
+  "requirements": [
+    {
+      "item": "minecraft:enchanted_golden_apple",
+      "quantity": 16
+    }
   ],
-  "effects":
-  [
-   { "happinessmultiplier": 5 }
+  "effects": [
+    {
+      "happinessmultiplier": 5
+    }
   ]
 }

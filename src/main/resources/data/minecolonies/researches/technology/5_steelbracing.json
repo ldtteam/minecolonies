@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:golden_pickaxe",
   "parentResearch": "reinforced",
-  "requirements":
-  [
-   { "item": "minecraft:diamond", "quantity": 64 },
-   { "building": "blacksmith", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:diamond",
+      "quantity": 64
+    },
+    {
+      "building": "blacksmith",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "tooldurabilitymultiplier": 4 }
+  "effects": [
+    {
+      "tooldurabilitymultiplier": 4
+    }
   ]
 }

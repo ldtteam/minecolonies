@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:diamond_block",
   "parentResearch": "amazingveins",
-  "requirements":
-  [
-   { "item": "minecraft:diamond_ore", "quantity": 64 }
+  "requirements": [
+    {
+      "item": "minecraft:diamond_ore",
+      "quantity": 64
+    }
   ],
-  "effects":
-  [
-   { "moreoresmultiplier": 5 }
+  "effects": [
+    {
+      "moreoresmultiplier": 5
+    }
   ]
 }

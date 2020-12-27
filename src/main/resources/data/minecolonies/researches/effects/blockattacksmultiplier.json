@@ -2,11 +2,10 @@
   "comment": "name: Block Attacks * description : Knight Block Chance +%d",
   "id": "blockattacksmultiplier",
   "effect": true,
-  "levels": 
-  [
-   0.05,
-   0.1,
-   0.25,
+  "levels": [
+    0.05,
+    0.1,
+    0.25,
     0.5
   ]
 }

@@ -2,16 +2,23 @@
   "comment": "name: Improved Evasion * description : Archer Armor",
   "id": "improvedevasion",
   "branch": "combat",
+  "subtitle": "com.minecolonies.research.improvedevasion.subtitle",
   "requiredUniversityLevel": 5,
   "icon": "minecraft:golden_boots",
   "parentResearch": "evasion",
-  "requirements":
-  [
-   { "item": "minecraft:diamond", "quantity": 16 },
-   { "building": "archery", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:diamond",
+      "quantity": 16
+    },
+    {
+      "building": "archery",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "archerarmormultiplier": 4 }
+  "effects": [
+    {
+      "archerarmormultiplier": 4
+    }
   ]
 }

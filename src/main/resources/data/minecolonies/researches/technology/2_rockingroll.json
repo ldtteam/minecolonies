@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecolonies:blockhutcrusher",
   "parentResearch": "stonecake",
-  "requirements":
-  [
-   { "item": "minecraft:stone", "quantity": 64 },
-   { "building": "stonemason", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:stone",
+      "quantity": 64
+    },
+    {
+      "building": "stonemason",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "blockhutcrusher": 1 }
+  "effects": [
+    {
+      "blockhutcrusher": 1
+    }
   ]
 }

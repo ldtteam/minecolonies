@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:pink_shulker_box",
   "parentResearch": "cheatsheet",
-  "requirements":
-  [
-   { "item": "minecraft:emerald", "quantity": 64 },
-   { "building": "library", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:emerald",
+      "quantity": 64
+    },
+    {
+      "building": "library",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "citizeninvslotsaddition": 1 }
+  "effects": [
+    {
+      "citizeninvslotsaddition": 1
+    }
   ]
 }

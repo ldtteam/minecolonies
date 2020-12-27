@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:bone",
   "parentResearch": "dung",
-  "requirements":
-  [
-   { "item": "minecraft:wheat_seeds", "quantity": 256 },
-   { "building": "miner", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:wheat_seeds",
+      "quantity": 256
+    },
+    {
+      "building": "miner",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "farmingmultiplier": 3 }
+  "effects": [
+    {
+      "farmingmultiplier": 3
+    }
   ]
 }

@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:iron_block",
   "parentResearch": "captaintraining",
-  "requirements":
-  [
-   { "item": "minecraft:shield", "quantity": 27 }
+  "requirements": [
+    {
+      "item": "minecraft:shield",
+      "quantity": 27
+    }
   ],
-  "effects":
-  [
-   { "blockattacksmultiplier": 4 }
+  "effects": [
+    {
+      "blockattacksmultiplier": 4
+    }
   ]
 }

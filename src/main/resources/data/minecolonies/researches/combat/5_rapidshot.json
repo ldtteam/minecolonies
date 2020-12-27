@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecolonies:firearrow",
   "parentResearch": "multishot",
-  "requirements":
-  [
-   { "item": "minecraft:bow", "quantity": 18 },
-   { "building": "archery", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:bow",
+      "quantity": 18
+    },
+    {
+      "building": "archery",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "doublearrowsmultiplier": 3 }
+  "effects": [
+    {
+      "doublearrowsmultiplier": 3
+    }
   ]
 }

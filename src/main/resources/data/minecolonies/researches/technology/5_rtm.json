@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:bookshelf",
   "parentResearch": "recipebook",
-  "requirements":
-  [
-   { "item": "minecraft:paper", "quantity": 256 },
-   { "building": "sawmill", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:paper",
+      "quantity": 256
+    },
+    {
+      "building": "sawmill",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "recipesmultiplier": 4 }
+  "effects": [
+    {
+      "recipesmultiplier": 4
+    }
   ]
 }

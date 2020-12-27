@@ -3,9 +3,9 @@ package com.minecolonies.coremod.research;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.research.IResearchRequirement;
+import com.minecolonies.api.util.Log;
 import net.minecraft.util.text.TranslationTextComponent;
 
 /**
@@ -13,6 +13,10 @@ import net.minecraft.util.text.TranslationTextComponent;
  */
 public class BuildingResearchRequirement implements IResearchRequirement
 {
+    /**
+     * The identifier tag for this type of requirement.
+     */
+    public static final String type = "building";
     /**
      * The building level.
      */
@@ -32,6 +36,26 @@ public class BuildingResearchRequirement implements IResearchRequirement
     {
         this.buildingLevel = buildingLevel;
         this.building = building;
+    }
+
+    /**
+     * Creates an building requirement from an attributes string array.
+     * See getAttributes for the format.
+     * @param attributes        An attributes array describing the research requirement.
+     */
+    public BuildingResearchRequirement(String[] attributes)
+    {
+        if(!attributes[0].equals(type) || attributes.length < 3)
+        {
+            Log.getLogger().error("Error parsing received BuildingResearchRequirement.");
+            building = "";
+            buildingLevel = 0;
+        }
+        else
+        {
+             building = attributes[1];
+             buildingLevel = Integer.parseInt(attributes[2]);
+        }
     }
 
     /**
@@ -85,6 +109,12 @@ public class BuildingResearchRequirement implements IResearchRequirement
             }
         }
         return false;
+    }
+
+    @Override
+    public String getAttributes()
+    {
+        return type + ":" + building + ":" + buildingLevel;
     }
 
     @Override

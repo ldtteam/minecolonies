@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecolonies:textures/icons/research/speed3.png",
   "parentResearch": "agile",
-  "requirements":
-  [
-   { "item": "minecraft:rabbit_foot", "quantity": 32 },
-   { "building": "townhall", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:rabbit_foot",
+      "quantity": 32
+    },
+    {
+      "building": "townhall",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "walkingmultiplier": 3 }
+  "effects": [
+    {
+      "walkingmultiplier": 3
+    }
   ]
 }

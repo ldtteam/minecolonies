@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:shulker_box",
   "parentResearch": "space",
-  "requirements":
-  [
-   { "item": "minecolonies:blockminecoloniesrack", "quantity": 32 },
-   { "building": "miner", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecolonies:blockminecoloniesrack",
+      "quantity": 32
+    },
+    {
+      "building": "miner",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "minimumstockmultiplier": 2 }
+  "effects": [
+    {
+      "minimumstockmultiplier": 2
+    }
   ]
 }

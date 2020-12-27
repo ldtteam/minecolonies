@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.research;
 
-import com.minecolonies.api.util.constant.TranslationConstants;
-import net.minecraft.util.text.TranslationTextComponent;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,31 +24,51 @@ public class ResearchEffectCategory
     private final String effectId;
 
     /**
-     * The optional effect category name, uses for display purposes if present.  Overrides translation lookups.
+     * The optional effect category name, uses for display purposes if present.  Overrides default translation lookups.
      */
     private final String effectName;
 
     /**
+     * The optional subtitle, uses for display purposes if present.
+     */
+    private final String subtitle;
+
+    /**
      * The absolute value of each level of an effect.
      */
-    private final List<Float> levelsAbsolute = new ArrayList<>();
+    private final List<Double> levelsAbsolute = new ArrayList<>();
 
     /**
      * The relative change of each level of an effect, as compared to the previous level.
      */
-    private final List<Float> levelsRelative = new ArrayList<>();
+    private final List<Double> levelsRelative = new ArrayList<>();
 
     /**
      *  Constructor for the Research Effect Category, including Id, display name, effect type.
      * @param effectId              The unique identifier of the effect category.
      * @param effectName            The display name of the effect category.
+     * @param subtitle              The optional subtitle.
+     */
+    public ResearchEffectCategory(final String effectId, final String effectName, final String subtitle)
+    {
+        this.effectId = effectId;
+        this.effectName = effectName;
+        this.subtitle = subtitle;
+        levelsAbsolute.add(0d);
+        levelsRelative.add(0d);
+    }
+
+    /**
+     *  Constructor for the Research Effect Category, including Id, display name, effect type.
+     * @param effectId              The unique identifier of the effect category.
      */
     public ResearchEffectCategory(final String effectId, final String effectName)
     {
         this.effectId = effectId;
         this.effectName = effectName;
-        levelsAbsolute.add(0f);
-        levelsRelative.add(0f);
+        this.subtitle = "";
+        levelsAbsolute.add(0d);
+        levelsRelative.add(0d);
     }
 
     /**
@@ -62,15 +79,16 @@ public class ResearchEffectCategory
     {
         this.effectId = effectId;
         this.effectName = "";
-        levelsAbsolute.add(0f);
-        levelsRelative.add(0f);
+        this.subtitle = "";
+        levelsAbsolute.add(0d);
+        levelsRelative.add(0d);
     }
 
     /**
      * Adds an additional level of strength to the effect.
      * @param newVal        The value of the newest level of effect.
      */
-    public void add(final float newVal)
+    public void add(final double newVal)
     {
         levelsRelative.add(newVal - levelsAbsolute.get(levelsAbsolute.size() - 1));
         levelsAbsolute.add(newVal);
@@ -82,7 +100,7 @@ public class ResearchEffectCategory
      * @param level        The level of effect.
      * @return             The relative strength of the effect at that level.
      */
-    public float getDisplay(final int level)
+    public double getDisplay(final int level)
     {
         return this.levelsRelative.get(level);
     }
@@ -92,7 +110,7 @@ public class ResearchEffectCategory
      * @param level        The level of effect.
      * @return             The absolute strength of the effect at that level.
      */
-    public float get(final int level)
+    public double get(final int level)
     {
         return this.levelsAbsolute.get(level);
     }
@@ -113,5 +131,23 @@ public class ResearchEffectCategory
     public String getId()
     {
         return this.effectId;
+    }
+
+    /**
+     * Gets the name identifier of the effect.
+     * @return             The effect's display name, as a string.
+     */
+    public String getName()
+    {
+        return this.effectName;
+    }
+
+    /**
+     * Gets the subtitle of the effect.
+     * @return             The effect's display name, as a string.
+     */
+    public String getSubtitle()
+    {
+        return this.subtitle;
     }
 }

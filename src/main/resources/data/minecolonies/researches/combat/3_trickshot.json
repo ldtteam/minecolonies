@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:arrow",
   "parentResearch": "improvedbows",
-  "requirements":
-  [
-   { "item": "minecraft:bow", "quantity": 5 },
-   { "building": "archery", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:bow",
+      "quantity": 5
+    },
+    {
+      "building": "archery",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "doublearrowsmultiplier": 1 }
+  "effects": [
+    {
+      "doublearrowsmultiplier": 1
+    }
   ]
 }

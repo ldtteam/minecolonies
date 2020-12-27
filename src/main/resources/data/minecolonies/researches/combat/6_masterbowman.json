@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:blaze_rod",
   "parentResearch": "rapidshot",
-  "requirements":
-  [
-   { "item": "minecraft:bow", "quantity": 27 }
+  "requirements": [
+    {
+      "item": "minecraft:bow",
+      "quantity": 27
+    }
   ],
-  "effects":
-  [
-   { "doublearrowsmultiplier": 4 }
+  "effects": [
+    {
+      "doublearrowsmultiplier": 4
+    }
   ]
 }

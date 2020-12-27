@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecolonies:textures/icons/research/regeneration2.png",
   "parentResearch": "bandaid",
-  "requirements":
-  [
-   { "item": "minecraft:golden_carrot", "quantity": 8 },
-   { "building": "library", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:golden_carrot",
+      "quantity": 8
+    },
+    {
+      "building": "library",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "regenerationmultiplier": 2 }
+  "effects": [
+    {
+      "regenerationmultiplier": 2
+    }
   ]
 }

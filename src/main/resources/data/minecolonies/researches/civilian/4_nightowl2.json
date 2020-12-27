@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:clock:2",
   "parentResearch": "festival",
-  "requirements":
-  [
-   { "item": "minecraft:golden_carrot", "quantity": 75 },
-   { "building": "townhall", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:golden_carrot",
+      "quantity": 75
+    },
+    {
+      "building": "townhall",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "workingdayhaddition": 2 }
+  "effects": [
+    {
+      "workingdayhaddition": 2
+    }
   ]
 }

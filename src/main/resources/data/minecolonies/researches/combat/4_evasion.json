@@ -2,16 +2,23 @@
   "comment": "name: Evasion * description : Archer Armor",
   "id": "evasion",
   "branch": "combat",
+  "subtitle": "com.minecolonies.research.evasion.subtitle",
   "requiredUniversityLevel": 4,
   "icon": "minecraft:iron_boots",
   "parentResearch": "improveddodge",
-  "requirements":
-  [
-   { "item": "minecraft:leather", "quantity": 64 },
-   { "building": "smeltery", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:leather",
+      "quantity": 64
+    },
+    {
+      "building": "smeltery",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "archerarmormultiplier": 3 }
+  "effects": [
+    {
+      "archerarmormultiplier": 3
+    }
   ]
 }

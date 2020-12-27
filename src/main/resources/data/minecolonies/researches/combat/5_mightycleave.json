@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:golden_sword",
   "parentResearch": "cleave",
-  "requirements":
-  [
-   { "item": "minecraft:iron_block", "quantity": 16 },
-   { "building": "barracks", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 16
+    },
+    {
+      "building": "barracks",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "meleedamageaddition": 4 }
+  "effects": [
+    {
+      "meleedamageaddition": 4
+    }
   ]
 }

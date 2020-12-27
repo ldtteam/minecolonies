@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:red_shulker_box",
   "parentResearch": "deeppockets",
-  "requirements":
-  [
-   { "item": "minecraft:emerald", "quantity": 128 },
-   { "building": "library", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:emerald",
+      "quantity": 128
+    },
+    {
+      "building": "library",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "citizeninvslotsaddition": 2 }
+  "effects": [
+    {
+      "citizeninvslotsaddition": 2
+    }
   ]
 }

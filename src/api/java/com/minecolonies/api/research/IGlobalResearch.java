@@ -3,7 +3,6 @@ package com.minecolonies.api.research;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.effects.IResearchEffect;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -60,6 +59,12 @@ public interface IGlobalResearch
     String getDesc();
 
     /**
+     * Subtitle description of research.
+     * @return the optional subtitle name.
+     */
+    String getSubtitle();
+
+    /**
      * Getter of the id of the research.
      * @return the String id.
      */
@@ -100,6 +105,13 @@ public interface IGlobalResearch
      * @return the depth.
      */
     int getDepth();
+
+    /**
+     * Check if this research is an instant research.  If so, it will attempt to start when its requirements are complete, and prompt the player.
+     *
+     * @return true if so.
+     */
+    boolean isInstant();
 
     /**
      * Check if this research should automatically start when requirements are complete.
@@ -152,6 +164,12 @@ public interface IGlobalResearch
     void addChild(IGlobalResearch child);
 
     /**
+     * Add a child to a research, without setting parentage.
+     * @param child the child to add
+     */
+    void addChild(final String child);
+
+    /**
      * Get the list of children of the research.
      *
      * @return a copy of the list of child identifiers.
@@ -173,6 +191,20 @@ public interface IGlobalResearch
     void setRequirement(final List<IResearchRequirement> requirements);
 
     /**
+     * Set the research effects.
+     *
+     * @param effects      the effects of research completion.
+     */
+    void setEffects(final List<IResearchEffect<?>> effects);
+
+    /**
+     * Set the research costs.
+     *
+     * @param costs the items consumed to begin research.
+     */
+    void setCosts(final List<ItemStorage> costs);
+
+    /**
      * Getter for the research requirement.
      *
      * @return the requirement.
@@ -184,5 +216,5 @@ public interface IGlobalResearch
      *
      * @return the effect.
      */
-    List<IResearchEffect> getEffects();
+    List<IResearchEffect<?>> getEffects();
 }

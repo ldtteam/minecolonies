@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:tipped_arrow",
   "parentResearch": "woundingshot",
-  "requirements":
-  [
-   { "item": "minecraft:flint", "quantity": 256 }
+  "requirements": [
+    {
+      "item": "minecraft:flint",
+      "quantity": 256
+    }
   ],
-  "effects":
-  [
-   { "archerdamageaddition": 5 }
+  "effects": [
+    {
+      "archerdamageaddition": 5
+    }
   ]
 }

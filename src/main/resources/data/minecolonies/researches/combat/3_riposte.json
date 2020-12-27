@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:iron_chestplate",
   "parentResearch": "parry",
-  "requirements":
-  [
-   { "item": "minecraft:iron_ingot", "quantity": 32 },
-   { "building": "combatacademy", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 32
+    },
+    {
+      "building": "combatacademy",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "meleearmormultiplier": 2 }
+  "effects": [
+    {
+      "meleearmormultiplier": 2
+    }
   ]
 }

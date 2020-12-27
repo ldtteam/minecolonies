@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:enchanted_book",
   "parentResearch": "cheatsheet",
-  "requirements":
-  [
-   { "item": "minecraft:paper", "quantity": 128 },
-   { "building": "sawmill", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:paper",
+      "quantity": 128
+    },
+    {
+      "building": "sawmill",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "recipesmultiplier": 3 }
+  "effects": [
+    {
+      "recipesmultiplier": 3
+    }
   ]
 }

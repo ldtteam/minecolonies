@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecraft:wheat_seeds",
   "parentResearch": "biodegradable",
-  "requirements":
-  [
-   { "item": "minecraft:wheat_seeds", "quantity": 64 },
-   { "building": "miner", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:wheat_seeds",
+      "quantity": 64
+    },
+    {
+      "building": "miner",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "farmingmultiplier": 1 }
+  "effects": [
+    {
+      "farmingmultiplier": 1
+    }
   ]
 }

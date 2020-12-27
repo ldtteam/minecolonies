@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecolonies:textures/icons/research/xpgain4.png",
   "parentResearch": "bachelor",
-  "requirements":
-  [
-   { "item": "minecraft:bookshelf", "quantity": 32 },
-   { "building": "library", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:bookshelf",
+      "quantity": 32
+    },
+    {
+      "building": "library",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "teachingmultiplier": 4 }
+  "effects": [
+    {
+      "teachingmultiplier": 4
+    }
   ]
 }

@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:diamond_chestplate",
   "parentResearch": "provost",
-  "requirements":
-  [
-   { "item": "minecraft:diamond", "quantity": 64 }
+  "requirements": [
+    {
+      "item": "minecraft:diamond",
+      "quantity": 64
+    }
   ],
-  "effects":
-  [
-   { "meleearmormultiplier": 5 }
+  "effects": [
+    {
+      "meleearmormultiplier": 5
+    }
   ]
 }

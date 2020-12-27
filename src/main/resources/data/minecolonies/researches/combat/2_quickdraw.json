@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecraft:wooden_sword",
   "parentResearch": "accuracy",
-  "requirements":
-  [
-   { "item": "minecraft:iron_block", "quantity": 2 },
-   { "building": "barracks", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 2
+    },
+    {
+      "building": "barracks",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "meleedamageaddition": 1 }
+  "effects": [
+    {
+      "meleedamageaddition": 1
+    }
   ]
 }

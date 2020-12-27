@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:golden_boots",
   "parentResearch": "fear",
-  "requirements":
-  [
-   { "item": "minecraft:emerald", "quantity": 32 },
-   { "building": "guardtower", "level": 12 }
+  "requirements": [
+    {
+      "item": "minecraft:emerald",
+      "quantity": 32
+    },
+    {
+      "building": "guardtower",
+      "level": 12
+    }
   ],
-  "effects":
-  [
-   { "fleeingdamagemultiplier": 3 }
+  "effects": [
+    {
+      "fleeingdamagemultiplier": 3
+    }
   ]
 }

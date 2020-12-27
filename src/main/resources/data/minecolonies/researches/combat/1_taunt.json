@@ -2,17 +2,30 @@
   "comment": "name: Taunt * description : Knight Taunt Mobs",
   "id": "taunt",
   "branch": "combat",
+  "subtitle": "com.minecolonies.research.taunt.subtitle",
   "requiredUniversityLevel": 1,
   "icon": "minecraft:chain",
-  "requirements":
-  [
-   { "item": "minecraft:rotten_flesh", "quantity": 8 },
-   { "item": "minecraft:bone", "quantity": 8 },
-   { "item": "minecraft:spider_eye", "quantity": 8 },
-   { "building": "guardtower", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:rotten_flesh",
+      "quantity": 8
+    },
+    {
+      "item": "minecraft:bone",
+      "quantity": 8
+    },
+    {
+      "item": "minecraft:spider_eye",
+      "quantity": 8
+    },
+    {
+      "building": "guardtower",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "knighttauntmobsunlock": 1 }
+  "effects": [
+    {
+      "knighttauntmobsunlock": 1
+    }
   ]
 }

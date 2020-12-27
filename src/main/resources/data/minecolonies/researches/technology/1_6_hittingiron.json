@@ -4,13 +4,19 @@
   "branch": "technology",
   "requiredUniversityLevel": 1,
   "icon": "minecolonies:blockhutblacksmith",
-  "requirements":
-  [
-   { "item": "minecraft:anvil", "quantity": 1 },
-   { "building": "miner", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:anvil",
+      "quantity": 1
+    },
+    {
+      "building": "miner",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "blockhutblacksmith": 1 }
+  "effects": [
+    {
+      "blockhutblacksmith": 1
+    }
   ]
 }

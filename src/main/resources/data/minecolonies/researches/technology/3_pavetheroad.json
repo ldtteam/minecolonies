@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecolonies:blockhutconcretemixer",
   "parentResearch": "rockingroll",
-  "requirements":
-  [
-   { "item": "minecraft:white_concrete", "quantity": 32 },
-   { "building": "crusher", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:white_concrete",
+      "quantity": 32
+    },
+    {
+      "building": "crusher",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "blockhutconcretemixer": 1 }
+  "effects": [
+    {
+      "blockhutconcretemixer": 1
+    }
   ]
 }

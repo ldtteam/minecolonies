@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecolonies:textures/icons/research/childgrowth5.png",
   "parentResearch": "growth",
-  "requirements":
-  [
-   { "item": "minecraft:cooked_chicken", "quantity": 512 }
+  "requirements": [
+    {
+      "item": "minecraft:cooked_chicken",
+      "quantity": 512
+    }
   ],
-  "effects":
-  [
-   { "growthmultiplier": 5 }
+  "effects": [
+    {
+      "growthmultiplier": 5
+    }
   ]
 }

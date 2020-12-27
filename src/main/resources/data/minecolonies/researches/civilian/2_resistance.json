@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecraft:glass_bottle",
   "parentResearch": "stamina",
-  "requirements":
-  [
-   { "item": "minecraft:golden_apple", "quantity": 1 },
-   { "building": "cook", "level": 2 }
+  "requirements": [
+    {
+      "item": "minecraft:golden_apple",
+      "quantity": 1
+    },
+    {
+      "building": "cook",
+      "level": 2
+    }
   ],
-  "effects":
-  [
-   { "healingsaturationlimitaddition": 1 }
+  "effects": [
+    {
+      "healingsaturationlimitaddition": 1
+    }
   ]
 }

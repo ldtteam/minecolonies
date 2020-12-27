@@ -39,9 +39,9 @@ public interface IResearchManager
     IResearchEffectManager getResearchEffects();
 
     /**
-     * Tick the research manager on colony tick.
-     *
-     * @param colony the event.
+     * Checks if any autostart research has its prerequisites filled,
+     * and if so, prompts the player for resources or begins research if no resources required.
+     * @param colony       The colony where the research is being checked.
      */
-    void onColonyTick(final IColony colony);
+    void checkAutoStartResearch(IColony colony);
 }

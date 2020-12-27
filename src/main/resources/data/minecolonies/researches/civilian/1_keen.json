@@ -4,13 +4,19 @@
   "branch": "civilian",
   "requiredUniversityLevel": 1,
   "icon": "minecolonies:blockhutlibrary",
-  "requirements":
-  [
-   { "item": "minecraft:book", "quantity": 3 },
-   { "building": "citizen", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:book",
+      "quantity": 3
+    },
+    {
+      "building": "citizen",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "blockhutlibrary": 1 }
+  "effects": [
+    {
+      "blockhutlibrary": 1
+    }
   ]
 }

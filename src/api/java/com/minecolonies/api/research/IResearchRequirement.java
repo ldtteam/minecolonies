@@ -22,4 +22,11 @@ public interface IResearchRequirement
      * @return translation text component.
      */
     TranslationTextComponent getDesc();
+
+    /**
+     * Get a string description of the requirement, to simplify serialization.
+     * @return string description of the research requirement.
+     */
+    String getAttributes();
+
 }

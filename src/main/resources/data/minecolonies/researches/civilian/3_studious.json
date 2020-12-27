@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:experience_bottle:2",
   "parentResearch": "diligent",
-  "requirements":
-  [
-   { "item": "minecraft:book", "quantity": 12 },
-   { "building": "library", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:book",
+      "quantity": 12
+    },
+    {
+      "building": "library",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "levelingmultiplier": 2 }
+  "effects": [
+    {
+      "levelingmultiplier": 2
+    }
   ]
 }

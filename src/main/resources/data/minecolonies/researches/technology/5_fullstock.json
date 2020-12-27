@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:ender_chest",
   "parentResearch": "capacity",
-  "requirements":
-  [
-   { "item": "minecolonies:blockminecoloniesrack", "quantity": 64 },
-   { "building": "miner", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecolonies:blockminecoloniesrack",
+      "quantity": 64
+    },
+    {
+      "building": "miner",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "minimumstockmultiplier": 3 }
+  "effects": [
+    {
+      "minimumstockmultiplier": 3
+    }
   ]
 }

@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecolonies:textures/icons/research/childgrowth3.png",
   "parentResearch": "hormones",
-  "requirements":
-  [
-   { "item": "minecraft:cooked_chicken", "quantity": 128 },
-   { "building": "library", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:cooked_chicken",
+      "quantity": 128
+    },
+    {
+      "building": "library",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "growthmultiplier": 3 }
+  "effects": [
+    {
+      "growthmultiplier": 3
+    }
   ]
 }

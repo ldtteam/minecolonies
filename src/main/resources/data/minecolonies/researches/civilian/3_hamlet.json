@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecolonies:blockhutcitizen:75",
   "parentResearch": "outpost",
-  "requirements":
-  [
-   { "item": "minecraft:cooked_beef", "quantity": 128 },
-   { "building": "citizen", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:cooked_beef",
+      "quantity": 128
+    },
+    {
+      "building": "citizen",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "citizencapaddition": 2 }
+  "effects": [
+    {
+      "citizencapaddition": 2
+    }
   ]
 }

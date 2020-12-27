@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:barrel",
   "parentResearch": "squiretraining",
-  "requirements":
-  [
-   { "item": "minecraft:shield", "quantity": 8 },
-   { "building": "combatacademy", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:shield",
+      "quantity": 8
+    },
+    {
+      "building": "combatacademy",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "blockattacksmultiplier": 2 }
+  "effects": [
+    {
+      "blockattacksmultiplier": 2
+    }
   ]
 }

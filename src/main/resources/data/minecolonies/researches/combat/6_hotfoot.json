@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:chicken",
   "parentResearch": "flee",
-  "requirements":
-  [
-   { "item": "minecraft:emerald", "quantity": 64 }
+  "requirements": [
+    {
+      "item": "minecraft:emerald",
+      "quantity": 64
+    }
   ],
-  "effects":
-  [
-   { "fleeingspeedaddition": 4 }
+  "effects": [
+    {
+      "fleeingspeedaddition": 4
+    }
   ]
 }

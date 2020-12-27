@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecolonies:blockhutcitizen:200",
   "parentResearch": "village",
-  "requirements":
-  [
-   { "item": "minecraft:cooked_beef", "quantity": 512 },
-   { "building": "townhall", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:cooked_beef",
+      "quantity": 512
+    },
+    {
+      "building": "townhall",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "citizencapaddition": 4 }
+  "effects": [
+    {
+      "citizencapaddition": 4
+    }
   ]
 }

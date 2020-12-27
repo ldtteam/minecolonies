@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecolonies:textures/icons/research/saturation4.png",
   "parentResearch": "stuffer",
-  "requirements":
-  [
-   { "item": "minecraft:cookie", "quantity": 256 },
-   { "building": "cook", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:cookie",
+      "quantity": 256
+    },
+    {
+      "building": "cook",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "saturationmultiplier": 4 }
+  "effects": [
+    {
+      "saturationmultiplier": 4
+    }
   ]
 }

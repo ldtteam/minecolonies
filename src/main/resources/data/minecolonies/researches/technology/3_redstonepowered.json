@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:redstone_torch",
   "parentResearch": "isthisredstone",
-  "requirements":
-  [
-   { "item": "minecraft:redstone", "quantity": 256 }
+  "requirements": [
+    {
+      "item": "minecraft:redstone",
+      "quantity": 256
+    }
   ],
-  "effects":
-  [
-   { "blockbreakspeedmultiplier": 2 }
+  "effects": [
+    {
+      "blockbreakspeedmultiplier": 2
+    }
   ]
 }

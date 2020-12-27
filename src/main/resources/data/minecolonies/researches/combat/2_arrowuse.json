@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecraft:arrow",
   "parentResearch": "taunt",
-  "requirements":
-  [
-   { "item": "minecraft:arrow", "quantity": 64 },
-   { "building": "guardtower", "level": 2 }
+  "requirements": [
+    {
+      "item": "minecraft:arrow",
+      "quantity": 64
+    },
+    {
+      "building": "guardtower",
+      "level": 2
+    }
   ],
-  "effects":
-  [
-   { "consumearrowsunlock": 1 }
+  "effects": [
+    {
+      "consumearrowsunlock": 1
+    }
   ]
 }

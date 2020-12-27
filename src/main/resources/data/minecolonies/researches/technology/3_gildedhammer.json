@@ -5,15 +5,27 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:gold_block",
   "parentResearch": "rockingroll",
-  "requirements":
-  [
-   { "item": "minecraft:gravel", "quantity": 64 },
-   { "item": "minecraft:sand", "quantity": 64 },
-   { "item": "minecraft:clay", "quantity": 64 },
-   { "building": "crusher", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:gravel",
+      "quantity": 64
+    },
+    {
+      "item": "minecraft:sand",
+      "quantity": 64
+    },
+    {
+      "item": "minecraft:clay",
+      "quantity": 64
+    },
+    {
+      "building": "crusher",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "crushing11unlock": 1 }
+  "effects": [
+    {
+      "crushing11unlock": 1
+    }
   ]
 }

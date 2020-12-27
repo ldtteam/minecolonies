@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecolonies:textures/icons/research/hp5.png",
   "parentResearch": "lifesaver2",
-  "requirements":
-  [
-   { "item": "minecraft:hay_block", "quantity": 128 },
-   { "building": "townhall", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:hay_block",
+      "quantity": 128
+    },
+    {
+      "building": "townhall",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "healthaddition": 5 }
+  "effects": [
+    {
+      "healthaddition": 5
+    }
   ]
 }

@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecolonies:textures/icons/research/regeneration1.png",
   "parentResearch": "stamina",
-  "requirements":
-  [
-   { "item": "minecraft:golden_carrot", "quantity": 1 },
-   { "building": "library", "level": 2 }
+  "requirements": [
+    {
+      "item": "minecraft:golden_carrot",
+      "quantity": 1
+    },
+    {
+      "building": "library",
+      "level": 2
+    }
   ],
-  "effects":
-  [
-   { "regenerationmultiplier": 1 }
+  "effects": [
+    {
+      "regenerationmultiplier": 1
+    }
   ]
 }

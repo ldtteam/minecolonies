@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:book",
   "parentResearch": "memoryaid",
-  "requirements":
-  [
-   { "item": "minecraft:paper", "quantity": 64 },
-   { "building": "sawmill", "level": 2 }
+  "requirements": [
+    {
+      "item": "minecraft:paper",
+      "quantity": 64
+    },
+    {
+      "building": "sawmill",
+      "level": 2
+    }
   ],
-  "effects":
-  [
-   { "recipesmultiplier": 2 }
+  "effects": [
+    {
+      "recipesmultiplier": 2
+    }
   ]
 }

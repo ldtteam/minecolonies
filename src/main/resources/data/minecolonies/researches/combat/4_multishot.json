@@ -2,16 +2,23 @@
   "comment": "name: Multi Shot * description : Double Arrows",
   "id": "multishot",
   "branch": "combat",
+  "subtitle": "com.minecolonies.research.multishot.subtitle",
   "requiredUniversityLevel": 4,
   "icon": "minecraft:tipped_arrow",
   "parentResearch": "trickshot",
-  "requirements":
-  [
-   { "item": "minecraft:bow", "quantity": 9 },
-   { "building": "archery", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:bow",
+      "quantity": 9
+    },
+    {
+      "building": "archery",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "doublearrowsmultiplier": 2 }
+  "effects": [
+    {
+      "doublearrowsmultiplier": 2
+    }
   ]
 }

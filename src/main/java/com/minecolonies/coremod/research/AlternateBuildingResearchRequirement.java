@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.research.IResearchRequirement;
+import com.minecolonies.api.util.Log;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.HashMap;
@@ -17,13 +18,19 @@ import java.util.Map;
 public class AlternateBuildingResearchRequirement implements IResearchRequirement
 {
     /**
+     * The identifier tag for this type of requirement.
+     */
+    public static final String type = "alt-buildings";
+
+    /**
      * The list of buildings, by level.
      */
     final private Map<String, Integer> buildings = new HashMap<>();
 
     /**
      * Create a building-based research requirement, that requires one of multiple buildings be constructed.
-     *
+     * @param building    the name of the building
+     * @param level       the level requirement of the building
      */
     public AlternateBuildingResearchRequirement add(String building, int level)
     {
@@ -36,6 +43,34 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
             buildings.put(building, level);
         }
         return this;
+    }
+
+    /**
+     * Creates and return an empty alternate building requirement.
+     */
+    public AlternateBuildingResearchRequirement()
+    {
+        // Intentionally empty.
+    }
+
+    /**
+     * Creates an Alternate building requirement from an attributes string array.
+     * See getAttributes for the format.
+     * @param attributes        An attributes array describing the research requirement.
+     */
+    public AlternateBuildingResearchRequirement(String[] attributes)
+    {
+        if(!attributes[0].equals(type) || attributes.length < 3 || (attributes.length % 2) == 0)
+        {
+            Log.getLogger().error("Error parsing received AlternateBuildingResearch.");
+        }
+        else
+        {
+            for(int i = 1; i < attributes.length; i+=2)
+            {
+                buildings.put(attributes[i], Integer.parseInt(attributes[i + 1]));
+            }
+        }
     }
 
 
@@ -68,7 +103,7 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
                     }
                 }
             }
-            else if(colony instanceof IColony)
+            else if(colony != null)
             {
                 for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
                 {
@@ -86,6 +121,17 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
             return false;
         }
         return false;
+    }
+
+    @Override
+    public String getAttributes()
+    {
+        StringBuilder s = new StringBuilder(type);
+        for(Map.Entry<String, Integer> building : buildings.entrySet())
+        {
+            s.append(":").append(building.getKey()).append(":").append(building.getValue());
+        }
+        return s.toString();
     }
 
     @Override

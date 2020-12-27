@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -38,7 +39,7 @@ public interface IGlobalResearchTree
      * @param id    the id of the research.
      * @return the effect id
      */
-    List<IResearchEffect> getEffectsForResearch(final @NotNull String id);
+    List<IResearchEffect<?>> getEffectsForResearch(final @NotNull String id);
 
    /** Get a research's resource location.
      *
@@ -81,9 +82,37 @@ public interface IGlobalResearchTree
     List<String> getBranches();
 
     /**
-     * Resets all dynamically assigned research.  Run on world unload.
+     * Resets all dynamically assigned research.
      */
     void reset();
+
+    /**
+     * Set name on an individual branch.
+     * @param branchId      Machine identifier of the branch
+     * @param branchName    Human-readable or translation key name for the branch.
+     */
+    void setBranchName(final String branchId, final String branchName);
+
+    /**
+     * Gets the name on an individual branch.
+     * @param branchId      Machine identifier of the branch
+     * @return    Human-readable or translation key name for the branch.
+     */
+    TranslationTextComponent getBranchName(final String branchId);
+
+    /**
+     * Set base time on an individual branch.
+     * @param branchId      Machine identifier of the branch
+     * @param baseTime      Base duration of the research.
+     */
+    void setBranchTime(final String branchId, final double baseTime);
+
+    /**
+     * Set base time on an individual branch.
+     * @param branchId      Machine identifier of the branch
+     * @return              Base duration of the research.
+     */
+    double getBranchTime(final String branchId);
 
     /**
      * Get the primary research of a certain branch.
@@ -98,7 +127,7 @@ public interface IGlobalResearchTree
      * once their requirements are met.
      * @return the list of research.
      */
-    List<IGlobalResearch> getAutostartResearches();
+    HashSet<IGlobalResearch> getAutostartResearches();
 
     /**
      * Validates and gets the list of research reset costs, if any are set, from their configuration values.
@@ -131,7 +160,22 @@ public interface IGlobalResearchTree
     /**
      * Read the research tree from NBT.
      *
-     * @param compound the compound to read it from. +
+     * @param compound the compound to read it from.
      */
     void readFromNBT(final CompoundNBT compound);
+
+    /**
+     * Handle messages in the client from the server describing the Global Research Tree.
+     * Only used for remote clients.
+     * @param buf       the buffer of received network data.
+     */
+    IMessage handleGlobalResearchTreeMessage(final PacketBuffer buf);
+
+    /**
+     * Sends messages to the client from the server describing the Global Research Tree.
+     * Only used for dedicated servers.
+     * @param player        the player to send the message
+     *                      all players should be updated on a datapack reload.
+     */
+    void sendGlobalResearchTreePackets(final ServerPlayerEntity player);
 }

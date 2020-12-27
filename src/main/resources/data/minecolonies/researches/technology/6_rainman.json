@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:splash_potion",
   "parentResearch": "rtm",
-  "requirements":
-  [
-   { "item": "minecraft:salmon_bucket", "quantity": 27 }
+  "requirements": [
+    {
+      "item": "minecraft:salmon_bucket",
+      "quantity": 27
+    }
   ],
-  "effects":
-  [
-   { "workinginrainunlock": 1 }
+  "effects": [
+    {
+      "workinginrainunlock": 1
+    }
   ]
 }

@@ -5,14 +5,23 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:campfire",
   "parentResearch": "stringwork",
-  "requirements":
-  [
-   { "item": "minecraft:leather", "quantity": 32 },
-   { "item": "minecraft:iron_ingot", "quantity": 16 },
-   { "building": "fletcher", "level": 1 }
+  "requirements": [
+    {
+      "item": "minecraft:leather",
+      "quantity": 32
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 16
+    },
+    {
+      "building": "fletcher",
+      "level": 1
+    }
   ],
-  "effects":
-  [
-   { "minerfireresunlock": 1 }
+  "effects": [
+    {
+      "minerfireresunlock": 1
+    }
   ]
 }

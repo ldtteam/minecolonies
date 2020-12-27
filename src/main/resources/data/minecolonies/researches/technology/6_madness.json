@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:spectral_arrow",
   "parentResearch": "seemsautomatic",
-  "requirements":
-  [
-   { "item": "minecraft:iron_ingot", "quantity": 1024 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 1024
+    }
   ],
-  "effects":
-  [
-   { "blockplacespeedmultiplier": 5 }
+  "effects": [
+    {
+      "blockplacespeedmultiplier": 5
+    }
   ]
 }

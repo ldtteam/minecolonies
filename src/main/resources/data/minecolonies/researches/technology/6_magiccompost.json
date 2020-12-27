@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecolonies:barrel_block",
   "parentResearch": "fertilizer",
-  "requirements":
-  [
-   { "item": "minecraft:wheat_seeds", "quantity": 2048 }
+  "requirements": [
+    {
+      "item": "minecraft:wheat_seeds",
+      "quantity": 2048
+    }
   ],
-  "effects":
-  [
-   { "farmingmultiplier": 5 }
+  "effects": [
+    {
+      "farmingmultiplier": 5
+    }
   ]
 }

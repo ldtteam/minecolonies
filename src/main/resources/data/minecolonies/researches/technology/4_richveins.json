@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:gold_block",
   "parentResearch": "goodveins",
-  "requirements":
-  [
-   { "item": "minecraft:gold_ore", "quantity": 32 },
-   { "building": "blacksmith", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:gold_ore",
+      "quantity": 32
+    },
+    {
+      "building": "blacksmith",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "moreoresmultiplier": 3 }
+  "effects": [
+    {
+      "moreoresmultiplier": 3
+    }
   ]
 }

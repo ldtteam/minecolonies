@@ -17,13 +17,12 @@ import com.minecolonies.coremod.colony.jobs.JobResearch;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -32,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BOOKCASES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
@@ -243,8 +243,14 @@ public class BuildingUniversity extends AbstractBuildingWorker
             citizen.applyResearchEffects();
         }
 
-        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-          RESEARCH_CONCLUDED + random.nextInt(3), I18n.format(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc()));
+        final TranslationTextComponent message = new TranslationTextComponent(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
+          new TranslationTextComponent(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc()));
+
+        for(PlayerEntity player : colony.getMessagePlayerEntities())
+        {
+            player.sendMessage(message, player.getUniqueID());
+        }
+        colony.getResearchManager().checkAutoStartResearch(colony);
         this.markDirty();
     }
 

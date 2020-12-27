@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:chainmail_helmet",
   "parentResearch": "boiledleather",
-  "requirements":
-  [
-   { "item": "minecraft:iron_ingot", "quantity": 16 },
-   { "building": "townhall", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 16
+    },
+    {
+      "building": "townhall",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "armordurabilitymultiplier": 3 }
+  "effects": [
+    {
+      "armordurabilitymultiplier": 3
+    }
   ]
 }

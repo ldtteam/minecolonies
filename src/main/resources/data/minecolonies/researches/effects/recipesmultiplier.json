@@ -2,11 +2,10 @@
   "comment": "name: Recipes * description : Workers Learn +%d%% More Recipes",
   "id": "recipesmultiplier",
   "effect": true,
-  "levels": 
-  [
-   0.25,
-   0.5,
-   1,
+  "levels": [
+    0.25,
+    0.5,
+    1,
     2
   ]
 }

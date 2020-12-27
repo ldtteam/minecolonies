@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 5,
   "icon": "minecraft:iron_bars",
   "parentResearch": "knighttraining",
-  "requirements":
-  [
-   { "item": "minecraft:shield", "quantity": 16 },
-   { "building": "combatacademy", "level": 5 }
+  "requirements": [
+    {
+      "item": "minecraft:shield",
+      "quantity": 16
+    },
+    {
+      "building": "combatacademy",
+      "level": 5
+    }
   ],
-  "effects":
-  [
-   { "blockattacksmultiplier": 3 }
+  "effects": [
+    {
+      "blockattacksmultiplier": 3
+    }
   ]
 }

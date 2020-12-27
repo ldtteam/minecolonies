@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecraft:arrow",
   "parentResearch": "accuracy",
-  "requirements":
-  [
-   { "item": "minecraft:flint", "quantity": 16 },
-   { "building": "barracks", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:flint",
+      "quantity": 16
+    },
+    {
+      "building": "barracks",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "archerdamageaddition": 1 }
+  "effects": [
+    {
+      "archerdamageaddition": 1
+    }
   ]
 }

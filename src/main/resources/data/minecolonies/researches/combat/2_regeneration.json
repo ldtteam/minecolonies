@@ -6,13 +6,19 @@
   "icon": "minecraft:glistering_melon_slice",
   "parentResearch": "improvedleather",
   "exclusiveChildResearch": true,
-  "requirements":
-  [
-   { "item": "minecraft:emerald", "quantity": 1 },
-   { "building": "guardtower", "level": 2 }
+  "requirements": [
+    {
+      "item": "minecraft:emerald",
+      "quantity": 1
+    },
+    {
+      "building": "guardtower",
+      "level": 2
+    }
   ],
-  "effects":
-  [
-   { "retreatunlock": 1 }
+  "effects": [
+    {
+      "retreatunlock": 1
+    }
   ]
 }

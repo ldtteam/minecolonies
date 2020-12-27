@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:bone_meal",
   "parentResearch": "bonemeal",
-  "requirements":
-  [
-   { "item": "minecraft:wheat_seeds", "quantity": 128 },
-   { "building": "miner", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:wheat_seeds",
+      "quantity": 128
+    },
+    {
+      "building": "miner",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "farmingmultiplier": 2 }
+  "effects": [
+    {
+      "farmingmultiplier": 2
+    }
   ]
 }

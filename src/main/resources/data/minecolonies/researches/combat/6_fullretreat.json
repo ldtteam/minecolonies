@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecraft:diamond_boots",
   "parentResearch": "retreat",
-  "requirements":
-  [
-   { "item": "minecraft:emerald", "quantity": 64 }
+  "requirements": [
+    {
+      "item": "minecraft:emerald",
+      "quantity": 64
+    }
   ],
-  "effects":
-  [
-   { "fleeingdamagemultiplier": 4 }
+  "effects": [
+    {
+      "fleeingdamagemultiplier": 4
+    }
   ]
 }

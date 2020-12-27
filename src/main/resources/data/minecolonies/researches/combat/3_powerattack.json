@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 3,
   "icon": "minecraft:stone_sword",
   "parentResearch": "quickdraw",
-  "requirements":
-  [
-   { "item": "minecraft:iron_block", "quantity": 4 },
-   { "building": "combatacademy", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 4
+    },
+    {
+      "building": "combatacademy",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "meleedamageaddition": 2 }
+  "effects": [
+    {
+      "meleedamageaddition": 2
+    }
   ]
 }

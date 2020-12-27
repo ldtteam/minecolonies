@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -12,12 +11,11 @@ import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
-import com.minecolonies.api.research.util.ResearchState;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.research.LocalResearch;
 import com.minecolonies.coremod.research.LocalResearchTree;
 import com.minecolonies.coremod.research.ResearchEffectManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -82,18 +80,7 @@ public class ResearchManager implements IResearchManager
     }
 
     @Override
-    public void onColonyTick(final IColony colony)
-    {
-        checkAutoStartResearch(colony);
-        checkInprogressResearch(colony);
-    }
-
-    /**
-     * Checks if any autostart research has its prerequisites filled,
-     * and if so, prompts the player for resources or begins research if no resources required.
-     * @param colony       The colony where the research is being checked.
-     */
-    private void checkAutoStartResearch(final IColony colony)
+    public void checkAutoStartResearch(final IColony colony)
     {
         final List<IGlobalResearch> removes = new ArrayList<>();
         for(IGlobalResearch research : autoStartResearch)
@@ -141,27 +128,13 @@ public class ResearchManager implements IResearchManager
                 for (PlayerEntity player : colony.getMessagePlayerEntities())
                 {
                     player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getDesc()), player.getUniqueID());
+                    SoundUtils.playSuccessSound(player, player.getPosition());
                 }
             }
             // Otherwise, we can start the research without user intervention.
             else
             {
-                boolean creativePlayer = false;
-                tree.addResearch(research.getBranch(), new LocalResearch(research.getId(), research.getBranch(), research.getDepth()));
-                for (PlayerEntity player : colony.getMessagePlayerEntities())
-                {
-                    player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getDesc()).
-                                      append(new TranslationTextComponent("com.minecolonies.coremod.research.started", new TranslationTextComponent(research.getDesc()))),
-                      player.getUniqueID());
-                    if (player.isCreative())
-                    {
-                        creativePlayer = true;
-                    }
-                }
-                if (creativePlayer && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get())
-                {
-                    tree.getResearch(research.getBranch(), research.getId()).setProgress((int)(BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1)));
-                }
+                startCostlessResearch(colony, research);
             }
             //  If we've successfully done all those things, now we can remove the object from the list.
             //  This will reannounce on world reload, but that's probably ideal, in case someone missed the message once.
@@ -171,31 +144,51 @@ public class ResearchManager implements IResearchManager
     }
 
     /**
-     * Checks if any started research has progress greater than or equal to the amount required for completion, and if so, pushes it into
-     * finished status.
-     * @param colony        The colony being checked for completed research, and to which research effects will be applied.
+     * Start researches that have no item consumption cost.
+     * @param colony        The colony to begin the researches in.
+     * @param research      The global research to start.
      */
-    private void checkInprogressResearch(final IColony colony)
+    private void startCostlessResearch(IColony colony, IGlobalResearch research)
     {
-        // Research will sometimes 'stick' in ResearchState.IN_PROGRESS despite being full
-        // if no university workers are available, or if RNG applies a number of research ticks to other researches.
-        for(ILocalResearch research : this.tree.getResearchInProgress())
+        boolean creativePlayer = false;
+        for (PlayerEntity player : colony.getMessagePlayerEntities())
         {
-            if (research.getProgress() >= BASE_RESEARCH_TIME * Math.pow(2, research.getDepth() - 1))
+            if (player.isCreative())
             {
-                research.setState(ResearchState.FINISHED);
-                for (IResearchEffect effect : IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getEffects())
-                {
-                    effects.applyEffect(effect);
-                }
-                tree.finishResearch(research.getId());
-
-                for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
-                {
-                    citizen.applyResearchEffects();
-                }
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                  RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3), I18n.format(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc()));
+                creativePlayer = true;
+            }
+        }
+        tree.addResearch(research.getBranch(), new LocalResearch(research.getId(), research.getBranch(), research.getDepth()));
+        if(research.isInstant() || (creativePlayer && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get()))
+        {
+            tree.getResearch(research.getBranch(), research.getId())
+              .setProgress((int) (BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(research.getBranch()) * Math.pow(2, research.getDepth() - 1)));
+            tree.finishResearch(research.getId());
+            for (IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getEffects())
+            {
+                effects.applyEffect(effect);
+            }
+            for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
+            {
+                citizen.applyResearchEffects();
+            }
+            final TranslationTextComponent message = new TranslationTextComponent(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
+              new TranslationTextComponent(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc()));
+            for (PlayerEntity player : colony.getMessagePlayerEntities())
+            {
+                player.sendMessage(message, player.getUniqueID());
+                SoundUtils.playSuccessSound(player, player.getPosition());
+            }
+        }
+        else
+        {
+            for (PlayerEntity player : colony.getMessagePlayerEntities())
+            {
+                player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getDesc())
+                                     .append(new TranslationTextComponent("com.minecolonies.coremod.research.started",
+                                       new TranslationTextComponent(research.getDesc()))),
+                  player.getUniqueID());
+                SoundUtils.playSuccessSound(player, player.getPosition());
             }
         }
     }

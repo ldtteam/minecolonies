@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecolonies:blockhutcitizen:50",
   "parentResearch": "keen",
-  "requirements":
-  [
-   { "item": "minecraft:cooked_beef", "quantity": 64 },
-   { "building": "citizen", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:cooked_beef",
+      "quantity": 64
+    },
+    {
+      "building": "citizen",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "citizencapaddition": 1 }
+  "effects": [
+    {
+      "citizencapaddition": 1
+    }
   ]
 }

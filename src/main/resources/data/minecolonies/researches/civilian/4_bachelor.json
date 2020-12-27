@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecolonies:textures/icons/research/xpgain3.png",
   "parentResearch": "bookworm",
-  "requirements":
-  [
-   { "item": "minecraft:bookshelf", "quantity": 12 },
-   { "building": "library", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecraft:bookshelf",
+      "quantity": 12
+    },
+    {
+      "building": "library",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "teachingmultiplier": 3 }
+  "effects": [
+    {
+      "teachingmultiplier": 3
+    }
   ]
 }

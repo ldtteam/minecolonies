@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 2,
   "icon": "minecolonies:blockhutflorist",
   "parentResearch": "biodegradable",
-  "requirements":
-  [
-   { "item": "minecolonies:compost", "quantity": 64 },
-   { "building": "composter", "level": 3 }
+  "requirements": [
+    {
+      "item": "minecolonies:compost",
+      "quantity": 64
+    },
+    {
+      "building": "composter",
+      "level": 3
+    }
   ],
-  "effects":
-  [
-   { "blockhutflorist": 1 }
+  "effects": [
+    {
+      "blockhutflorist": 1
+    }
   ]
 }

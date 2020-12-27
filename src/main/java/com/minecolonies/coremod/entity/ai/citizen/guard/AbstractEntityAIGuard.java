@@ -360,7 +360,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     {
         if (!worker.isPotionActive(Effects.SPEED))
         {
-            final float effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(FLEEING_SPEED);
+            final double effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(FLEEING_SPEED);
             if (effect > 0)
             {
                 worker.addPotionEffect(new EffectInstance(Effects.SPEED, 200, (int) (0 + effect)));

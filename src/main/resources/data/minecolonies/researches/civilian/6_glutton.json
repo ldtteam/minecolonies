@@ -5,12 +5,15 @@
   "requiredUniversityLevel": 6,
   "icon": "minecolonies:textures/icons/research/saturation5.png",
   "parentResearch": "epicure",
-  "requirements":
-  [
-   { "item": "minecraft:cookie", "quantity": 512 }
+  "requirements": [
+    {
+      "item": "minecraft:cookie",
+      "quantity": 512
+    }
   ],
-  "effects":
-  [
-   { "saturationmultiplier": 5 }
+  "effects": [
+    {
+      "saturationmultiplier": 5
+    }
   ]
 }

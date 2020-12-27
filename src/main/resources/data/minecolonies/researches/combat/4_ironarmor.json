@@ -5,13 +5,19 @@
   "requiredUniversityLevel": 4,
   "icon": "minecraft:iron_helmet",
   "parentResearch": "ironskin",
-  "requirements":
-  [
-   { "item": "minecraft:iron_ingot", "quantity": 32 },
-   { "building": "townhall", "level": 4 }
+  "requirements": [
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 32
+    },
+    {
+      "building": "townhall",
+      "level": 4
+    }
   ],
-  "effects":
-  [
-   { "armordurabilitymultiplier": 4 }
+  "effects": [
+    {
+      "armordurabilitymultiplier": 4
+    }
   ]
 }
