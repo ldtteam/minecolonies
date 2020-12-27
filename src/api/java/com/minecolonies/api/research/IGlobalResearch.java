@@ -76,7 +76,6 @@ public interface IGlobalResearch
      */
     String getIcon();
 
-
     /**
      * Getter of the resource location of the research, if loaded by datapack.
      *
@@ -168,6 +167,24 @@ public interface IGlobalResearch
      * @param child the child to add
      */
     void addChild(final String child);
+
+    /**
+     * Add an individual cost.
+     * @param cost the individual itemstack to add to the cost list, as a string.
+     */
+    void addCost(final String cost);
+
+    /**
+     * Add an individual effect.
+     * @param effect the individual effect to add to the research, as a string.
+     */
+    void addEffect(final String effect);
+
+    /**
+     * Add an individual requirement
+     * @param requirement the individual requirement to add to the research, as a string.
+     */
+    void addRequirement(final String requirement);
 
     /**
      * Get the list of children of the research.

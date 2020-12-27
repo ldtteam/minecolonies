@@ -500,6 +500,50 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
+    public void addCost(final String cost)
+    {
+        final String[] costParts = cost.split(":");
+        if(costParts.length > 1)
+        {
+            final ItemStack is = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1])));
+            if(costParts.length > 2)
+            {
+                is.setCount(Integer.parseInt(costParts[2]));
+            }
+            costList.add(new ItemStorage(is));
+        }
+    }
+
+    @Override
+    public void addEffect(final String effect)
+    {
+        final String[] effectParts = effect.split(":");
+        effects.add(new GlobalResearchEffect(effectParts));
+    }
+
+    @Override
+    public void addRequirement(final String requirement)
+    {
+        String[] reqParts = requirement.split(":");
+        if(reqParts.length < 2)
+        {
+            return;
+        }
+        switch(reqParts[0])
+        {
+            case ResearchResearchRequirement.type:
+                this.requirements.add(new ResearchResearchRequirement(reqParts));
+                break;
+            case BuildingResearchRequirement.type:
+                this.requirements.add(new BuildingResearchRequirement(reqParts));
+                break;
+            case AlternateBuildingResearchRequirement.type:
+                this.requirements.add(new AlternateBuildingResearchRequirement(reqParts));
+                break;
+        }
+    }
+
+    @Override
     public void setRequirement(final List<IResearchRequirement> requirements)
     {
         this.requirements.addAll(requirements);

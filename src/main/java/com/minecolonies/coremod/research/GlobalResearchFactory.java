@@ -69,22 +69,29 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         compound.putBoolean(TAG_AUTOSTART, research.isAutostart());
         compound.putBoolean(TAG_IMMUTABLE, research.isImmutable());
         compound.putBoolean(TAG_HIDDEN, research.isHidden());
-        compound.putInt(TAG_COSTS_COUNT, research.getCostList().size());
-        for(final ItemStorage is : research.getCostList())
+        @NotNull final ListNBT costTagList = research.getCostList().stream().map(is ->
         {
-            final String itemString = Objects.requireNonNull(is.getItem().getRegistryName()).toString() + ":" + is.getItemStack().getCount();
-            compound.putString(TAG_COST_ITEM, itemString);
-        }
-        compound.putInt(TAG_REQ_COUNT, research.getResearchRequirement().size());
-        for(final IResearchRequirement req : research.getResearchRequirement())
+            final CompoundNBT costCompound = new CompoundNBT();
+            costCompound.putString(TAG_COST_ITEM, Objects.requireNonNull(is.getItem().getRegistryName()).toString() + ":" + is.getItemStack().getCount());
+            return costCompound;
+        }).collect(NBTUtils.toListNBT());
+        compound.put(TAG_COSTS, costTagList);
+
+        @NotNull final ListNBT reqTagList = research.getResearchRequirement().stream().map(req ->
         {
-            compound.putString(TAG_REQ_STRING, req.getAttributes());
-        }
-        compound.putInt(TAG_EFFECT_COUNT, research.getEffects().size());
-        for(final IResearchEffect<?> effect : research.getEffects())
+            final CompoundNBT reqCompound = new CompoundNBT();
+            reqCompound.putString(TAG_REQ_ITEM, req.getAttributes());
+            return reqCompound;
+        }).collect(NBTUtils.toListNBT());
+        compound.put(TAG_REQS, reqTagList);
+
+        @NotNull final ListNBT effectTagList = research.getEffects().stream().map(eff ->
         {
-            compound.putString(TAG_EFFECT_STRING, effect.getAttributes());
-        }
+            final CompoundNBT effectCompound = new CompoundNBT();
+            effectCompound.putString(TAG_EFFECT_ITEM, eff.getAttributes());
+            return effectCompound;
+        }).collect(NBTUtils.toListNBT());
+        compound.put(TAG_EFFECTS, effectTagList);
 
         @NotNull final ListNBT childTagList = research.getChildren().stream().map(child ->
         {
@@ -113,47 +120,12 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final boolean autostart = nbt.getBoolean(TAG_AUTOSTART);
         final boolean immutable = nbt.getBoolean(TAG_IMMUTABLE);
         final boolean hidden = nbt.getBoolean(TAG_HIDDEN);
-        final int costCount = nbt.getInt(TAG_COSTS_COUNT);
-        final List<ItemStorage> costs = new ArrayList<>();
-        for(int i = 0; i < costCount; i++)
-        {
-            final String[] costParts = nbt.getString(TAG_COST_ITEM).split(":");
-            final ItemStack is = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1])));
-            is.setCount(Integer.parseInt(costParts[2]));
-            costs.add(new ItemStorage(is));
-        }
-        final int reqCount = nbt.getInt(TAG_REQ_COUNT);
-        final List<IResearchRequirement> reqs = new ArrayList<>();
-        for(int i = 0; i < reqCount; i++)
-        {
-            String[] reqParts = nbt.getString(TAG_REQ_STRING).split(":");
-            switch(reqParts[0])
-            {
-                case ResearchResearchRequirement.type:
-                    reqs.add(new ResearchResearchRequirement(reqParts));
-                    break;
-                case BuildingResearchRequirement.type:
-                    reqs.add(new BuildingResearchRequirement(reqParts));
-                    break;
-                case AlternateBuildingResearchRequirement.type:
-                    reqs.add(new AlternateBuildingResearchRequirement(reqParts));
-                    break;
-            }
-        }
-
-        final int effectCount = nbt.getInt(TAG_EFFECT_COUNT);
-        final List<IResearchEffect<?>> effects = new ArrayList<>();
-        for(int i = 0; i < effectCount; i++)
-        {
-            final String[] effectParts = nbt.getString(TAG_EFFECT_STRING).split(":");
-            effects.add(new GlobalResearchEffect(effectParts));
-        }
 
         final IGlobalResearch research = getNewInstance(id, branch, parent, desc, depth, icon, subtitle, onlyChild, hidden, autostart, instant, immutable);
-        research.setCosts(costs);
-        research.setRequirement(reqs);
-        research.setEffects(effects);
 
+        NBTUtils.streamCompound(nbt.getList(TAG_COSTS, Constants.NBT.TAG_COMPOUND)).forEach(comp -> research.addCost(comp.getString(TAG_COST_ITEM)));
+        NBTUtils.streamCompound(nbt.getList(TAG_EFFECTS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> research.addEffect(compound.getString(TAG_EFFECT_ITEM)));
+        NBTUtils.streamCompound(nbt.getList(TAG_REQS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> research.addRequirement(compound.getString(TAG_REQ_ITEM)));
         NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> research.addChild(compound.getString(TAG_RESEARCH_CHILD)));
         return research;
     }
