@@ -269,6 +269,15 @@ public class WorldUtil
         }
     }
 
+    /**
+     * Get all entities within a building.
+     * @param world the world to check this for.
+     * @param clazz the entity class.
+     * @param building the building to check the range for.
+     * @param predicate the predicate to check
+     * @param <T> the type of the predicate.
+     * @return a list of all within those borders.
+     */
     public static <T extends Entity> List<T> getEntitiesWithinBuilding(
       final @NotNull World world,
       final @NotNull Class<? extends T> clazz,
