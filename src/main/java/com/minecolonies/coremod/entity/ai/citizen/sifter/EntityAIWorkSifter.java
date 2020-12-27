@@ -22,12 +22,12 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootParameter;
-import net.minecraft.world.storage.loot.LootParameterSet;
-import net.minecraft.world.storage.loot.LootParameterSets;
-import net.minecraft.world.storage.loot.LootParameters;
-import net.minecraft.world.storage.loot.conditions.LootConditionManager;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameter;
+import net.minecraft.loot.LootParameterSet;
+import net.minecraft.loot.LootParameterSets;
+import net.minecraft.loot.LootParameters;
+import net.minecraft.loot.conditions.LootConditionManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -152,7 +152,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         currentRecipeStorage = sifterBuilding.getFirstFullFillableRecipe(item -> item.isEmpty(), 1, false);
 
         final LootContext.Builder builder = (new LootContext.Builder((ServerWorld) this.world))
-            .withParameter(LootParameters.POSITION, worker.getPosition())
+            .withParameter(LootParameters.field_237457_g_, worker.getPositionVec())
             .withParameter(LootParameters.THIS_ENTITY, worker)
             .withParameter(LootParameters.TOOL, worker.getHeldItemMainhand());
             //.withRandom(this.rand);
@@ -193,30 +193,31 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
                 worker.decreaseSaturationForContinuousAction();
                 worker.getCitizenExperienceHandler().addExperience(0.2);
 
-            /*
-            final ItemStack result =
-                IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock(), 1 +  (int) Math.round(getPrimarySkillLevel()/10.0));
-            if (!result.isEmpty())
-            {
-                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), result);
-            }
-            InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), sifterBuilding.getSievableBlock().getItemStack());
+                /*
+                final ItemStack result =
+                    IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock(), 1 +  (int) Math.round(getPrimarySkillLevel()/10.0));
+                if (!result.isEmpty())
+                {
+                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), result);
+                }
+                InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), sifterBuilding.getSievableBlock().getItemStack());
 
-            if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
-            {
-                sifterBuilding.resetMesh();
-                worker.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.meshbroke"));
-            }
-            */
-            currentRecipeStorage.fullfillRecipe(builder.build(LootParameterSets.SELECTOR), getOwnBuilding().getHandlers());
+                if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
+                {
+                    sifterBuilding.resetMesh();
+                    worker.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.meshbroke"));
+                }
+                */
+                currentRecipeStorage.fullfillRecipe(builder.build(LootParameterSets.SELECTOR), getOwnBuilding().getHandlers());
 
-            worker.decreaseSaturationForContinuousAction();
-            worker.getCitizenExperienceHandler().addExperience(0.2);
+                worker.decreaseSaturationForContinuousAction();
+                worker.getCitizenExperienceHandler().addExperience(0.2);
+            }
+            Network.getNetwork()
+                .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getA().getItemStack().copy(), sifterBuilding.getID()), worker);
+            Network.getNetwork()
+                .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), worker);
         }
-        Network.getNetwork()
-            .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getA().getItemStack().copy(), sifterBuilding.getID()), worker);
-        Network.getNetwork()
-            .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), worker);
 
         worker.swingArm(Hand.MAIN_HAND);
         SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.ENTITY_LEASH_KNOT_BREAK);
