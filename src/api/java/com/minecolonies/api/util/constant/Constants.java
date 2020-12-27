@@ -45,8 +45,9 @@ public final class Constants
     public static final double WHOLE_CIRCLE                     = 360.0;
     public static final double HALF_A_CIRCLE                    = 180;
     public static final int    UPDATE_FLAG                      = 0x03;
-    public static final int    TICKS_HOUR                       = TICKS_SECOND * SECONDS_A_MINUTE * SECONDS_A_MINUTE;
-    public static final int    TICKS_FOURTY_MIN                 = 48000;
+    public static final int    TICKS_HOUR                       = TICKS_SECOND * SECONDS_A_MINUTE * 60;
+    public static final int    TICKS_FOURTY_MIN                 = TICKS_SECOND * SECONDS_A_MINUTE * 40;
+    public static final int    TICKS_FIVE_MIN                   = TICKS_SECOND * SECONDS_A_MINUTE * 5;
     public static final int    MAX_PARAMS_IRECIPESTORAGE        = 9;
     public static final int    MIN_PARAMS_IRECIPESTORAGE        = 3;
     public static final int    PARAMS_ITEMSTORAGE               = 2;

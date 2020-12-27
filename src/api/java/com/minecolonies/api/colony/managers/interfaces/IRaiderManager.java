@@ -47,6 +47,16 @@ public interface IRaiderManager
     void setRaidNextNight(final boolean willRaid);
 
     /**
+     * Set if a specific type of raiders will raid tonight.
+     *
+     * @param willRaid true or false.
+     * @param raidType string containing the name of the raider group.
+     *               Accepted names include "pirate", "egyptian", "norsemen", "barbarian", and "amazon".
+     *               Defaults to "barbarian" if unsupported type is attempted.
+     */
+    void setRaidNextNight(final boolean willRaid, final String raidType);
+
+    /**
      * Returns whether spies are enabled
      *
      * @return true if enabled.
@@ -64,6 +74,11 @@ public interface IRaiderManager
      * Triggers a raid on the colony
      */
     void raiderEvent();
+
+    /**
+     * Trigger a specific type of raid on a colony.
+     */
+    void raiderEvent(String raidType);
 
     /**
      * Calculates the spawn position for raids
