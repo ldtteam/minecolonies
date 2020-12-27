@@ -255,7 +255,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
             if (building != null)
             {
-                world.getEntitiesWithinAABB(MonsterEntity.class, building.getTargetableArea(world)).forEach(Entity::remove);
+                WorldUtil.getEntitiesWithinBuilding(world, MonsterEntity.class, building, null).forEach(Entity::remove);
             }
         }
     }

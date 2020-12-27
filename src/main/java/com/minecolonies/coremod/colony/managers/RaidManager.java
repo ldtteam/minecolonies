@@ -530,7 +530,7 @@ public class RaidManager implements IRaiderManager
     {
         for (final IColonyEvent event : colony.getEventManager().getEvents().values())
         {
-            if (event instanceof IColonyRaidEvent && event.getStatus() == EventStatus.PROGRESSING)
+            if (event instanceof IColonyRaidEvent && (event.getStatus() == EventStatus.PROGRESSING || event.getStatus() == EventStatus.PREPARING))
             {
                 return true;
             }

@@ -228,16 +228,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     }
 
     @Override
-    public AxisAlignedBB getTargetableArea(final World world)
-    {
-        if (buildingArea == null)
-        {
-            buildingArea = BuildingUtils.getTargetAbleArea(this);
-        }
-        return buildingArea;
-    }
-
-    @Override
     public int getRotation()
     {
         if (cachedRotation != -1)
