@@ -246,7 +246,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
           citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TOOL_DURABILITY, MultiplierModifierResearchEffect.class);
         if (effect != null)
         {
-            if (citizen.getRandom().nextDouble() < citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(TOOL_DURABILITY))
+            if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(TOOL_DURABILITY))))
             {
                 return;
             }
@@ -334,8 +334,13 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 continue;
             }
 
-            final MultiplierModifierResearchEffect
-              effect = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARMOR_DURABILITY, MultiplierModifierResearchEffect.class);
+            if(citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(ARMOR_DURABILITY))
+            {
+                if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(ARMOR_DURABILITY))))
+                {
+                    return;
+                }
+            }
 
             if(effect != null)
             {
