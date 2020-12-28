@@ -5,6 +5,8 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent.NorsemenShipRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.PirateGroundRaidEvent;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -12,6 +14,9 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.*;
 
@@ -77,12 +82,14 @@ public class CommandRaidAll implements IMCOPCommand
     @Override
     public LiteralArgumentBuilder<CommandSource> build()
     {
-        String[] raidTypes = new String[IMinecoloniesAPI.getInstance().getColonyEventRegistry().getKeys().size()];
-        int i = 0;
+        final List<String> raidTypes = new ArrayList<>();
         for(final ColonyEventTypeRegistryEntry type : IMinecoloniesAPI.getInstance().getColonyEventRegistry().getValues())
         {
-            raidTypes[i] = type.getRegistryName().getPath();
-            i++;
+            if(!type.getRegistryName().getPath().equals(PirateGroundRaidEvent.PIRATE_GROUND_RAID_EVENT_TYPE_ID.getPath())
+                 && !type.getRegistryName().getPath().equals(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
+            {
+                raidTypes.add(type.getRegistryName().getPath());
+            }
         }
 
         String[] opt = new String[2];

@@ -280,7 +280,7 @@ public class RaidManager implements IRaiderManager
             final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getCategory().getName();
             final int rand = colony.getWorld().rand.nextInt(100);
             if ((raidType.isEmpty() && (homeBiomePath.contains(TAIGA_BIOME_ID) || rand < IGNORE_BIOME_CHANCE)
-                  || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()) || raidType.equals(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
+                  || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
                   && ShipBasedRaiderUtils.canSpawnShipAt(colony,
               targetSpawnPoint,
               amount,
@@ -317,8 +317,7 @@ public class RaidManager implements IRaiderManager
                     event = new AmazonRaidEvent(colony);
                 }
                 else if (((biomePath.contains(TAIGA_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
-                           && raidType.isEmpty()) || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath())
-                           || raidType.equals(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
+                           && raidType.isEmpty()) || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new NorsemenRaidEvent(colony);
                 }

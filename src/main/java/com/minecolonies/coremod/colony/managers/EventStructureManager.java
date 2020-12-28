@@ -25,6 +25,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -121,7 +122,7 @@ public class EventStructureManager implements IEventStructureManager
 
         final BlockPos anchor = new BlockPos(zeroPos.getX() + structure.getSizeX() / 2, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ() / 2);
 
-        final String backupPath = Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER + colony.getID() + colony.getDimension().getLocation().getNamespace() + colony.getDimension().getLocation().getPath() + anchor;
+        final String backupPath = Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER + "/" + colony.getID() + "/" + colony.getDimension().getLocation().getNamespace() + colony.getDimension().getLocation().getPath() + "/" + anchor;
 
         if (!ItemScanTool.saveStructureOnServer(world,
           zeroPos,
@@ -156,8 +157,16 @@ public class EventStructureManager implements IEventStructureManager
 
             if (entry.getValue() == eventID)
             {
-                final String backupPath = String.valueOf(colony.getID()) + colony.getDimension().getLocation().getNamespace() + colony.getDimension().getLocation().getPath() + entry.getKey();
-                final String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + backupPath;
+                //TODO: remove compat for colony.getDimension()-based file names after sufficient time has passed from PR#6305
+                final String oldBackupPath = String.valueOf(colony.getID()) + colony.getDimension() + entry.getKey();
+                String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + oldBackupPath;
+
+                File blueprintFile = new File(fileName);
+                if(!blueprintFile.exists())
+                {
+                    fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER).toString() + "/" +
+                                 String.valueOf(colony.getID()) + "/" + colony.getDimension().getLocation().getNamespace() + colony.getDimension().getLocation().getPath() + "/" + entry.getKey();
+                }
 
                 CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
                   fileName,
