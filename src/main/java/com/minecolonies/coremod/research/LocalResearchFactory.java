@@ -48,7 +48,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
         compound.putString(TAG_ID, research.getId());
         compound.putString(TAG_BRANCH, research.getBranch());
         compound.putInt(TAG_PROGRESS, research.getProgress());
-        compound.putInt(TAG_DEPTH, research.getDepth());
+        compound.putInt(TAG_RESEARCH_LVL, research.getDepth());
 
         return compound;
     }
@@ -60,7 +60,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
         final int state = nbt.getInt(TAG_STATE);
         final String id = nbt.getString(TAG_ID);
         final String branch = nbt.getString(TAG_BRANCH);
-        final int depth = nbt.getInt(TAG_DEPTH);
+        final int depth = nbt.getInt(TAG_RESEARCH_LVL);
         final int progress = nbt.getInt(TAG_PROGRESS);
 
         final ILocalResearch research = getNewInstance(id, branch, depth);
