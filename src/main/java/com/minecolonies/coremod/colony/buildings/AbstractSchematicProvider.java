@@ -328,7 +328,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     {
         final Tuple<BlockPos, BlockPos> corners = getCorners();
         return positionVec.getX() >= corners.getA().getX() - 1 && positionVec.getX() <= corners.getB().getX() + 1
-                 && positionVec.getY() >= corners.getA().getY() - 1 && positionVec.getX() <= corners.getB().getY() + 1
+                 && positionVec.getY() >= corners.getA().getY() - 1 && positionVec.getY() <= corners.getB().getY() + 1
                  && positionVec.getZ() >= corners.getA().getZ() - 1 && positionVec.getZ() <= corners.getB().getZ() + 1;
     }
 }
