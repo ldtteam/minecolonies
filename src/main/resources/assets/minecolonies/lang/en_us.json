@@ -1473,7 +1473,7 @@
   "com.minecolonies.coremod.research.requirement.building.or": "or ",
   "com.minecolonies.coremod.research.requirement.research": "Requires %s!",
   "com.minecolonies.coremod.research.requirement.university.level": "Requires University Level %d",
-  "com.minecolonies.coremod.research.limit.onemaxperbranch": "Only one max-level Research can be unlocked per Branch",
+  "com.minecolonies.coremod.research.limit.onemaxperbranch": "Only one max-level research can be unlocked per branch.",
   "com.minecolonies.coremod.research.limit.immutable": "This research cannot be undone.",
   "com.minecolonies.coremod.research.effect.modifier.multiplication": "%s by %d percent",
   "com.minecolonies.coremod.research.effect.modifier.addition": "%s + %d",
