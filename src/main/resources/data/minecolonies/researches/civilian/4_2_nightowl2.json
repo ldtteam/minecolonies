@@ -2,6 +2,7 @@
   "comment": "name: Nightowl II * description : Working Day H",
   "id": "nightowl2",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.nightowl2.subtitle",
   "researchLevel": 4,
   "icon": "minecraft:clock:2",
   "parentResearch": "festival",

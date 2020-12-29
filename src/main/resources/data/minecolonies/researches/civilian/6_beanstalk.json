@@ -2,6 +2,7 @@
   "comment": "name: Beanstalk * description : Growth",
   "id": "beanstalk",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.beanstalk.subtitle",
   "researchLevel": 6,
   "icon": "minecolonies:textures/icons/research/childgrowth5.png",
   "parentResearch": "growth",

@@ -2,6 +2,7 @@
   "comment": "name: Know the End? * description : Knowledge of The End",
   "id": "knowtheend",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.knowtheend.subtitle",
   "researchLevel": 3,
   "icon": "minecolonies:chorus_bread",
   "parentResearch": "theflintstones",

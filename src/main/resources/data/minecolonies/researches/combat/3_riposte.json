@@ -2,6 +2,7 @@
   "comment": "name: Riposte * description : Melee Armor",
   "id": "riposte",
   "branch": "combat",
+  "subtitle": "com.minecolonies.research.riposte.subtitle",
   "researchLevel": 3,
   "icon": "minecraft:iron_chestplate",
   "parentResearch": "parry",

@@ -2,6 +2,7 @@
   "comment": "name: Rainman * description : Working In Rain",
   "id": "rainman",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.rainman.subtitle",
   "researchLevel": 6,
   "icon": "minecraft:splash_potion",
   "parentResearch": "rtm",

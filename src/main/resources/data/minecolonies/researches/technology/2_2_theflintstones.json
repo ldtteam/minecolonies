@@ -2,6 +2,7 @@
   "comment": "name: The Flintstones * description : Stonesmeltery",
   "id": "theflintstones",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.theflintstones.subtitle",
   "researchLevel": 2,
   "icon": "minecolonies:blockhutstonesmeltery",
   "parentResearch": "hot",
