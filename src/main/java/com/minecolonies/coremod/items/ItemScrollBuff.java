@@ -43,7 +43,7 @@ public class ItemScrollBuff extends AbstractItemScroll
         itemStack.shrink(1);
         if (world.rand.nextInt(8) > 0)
         {
-            for (final LivingEntity entity : world.getEntitiesWithinAABB(EntityCitizen.class, player.getBoundingBox().grow(15, 2, 15)))
+            for (final LivingEntity entity : world.getLoadedEntitiesWithinAABB(EntityCitizen.class, player.getBoundingBox().grow(15, 2, 15)))
             {
                 addRegenerationWithParticles(entity);
             }

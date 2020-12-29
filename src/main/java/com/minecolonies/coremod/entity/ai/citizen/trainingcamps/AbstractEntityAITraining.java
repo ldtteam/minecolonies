@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.NotNull;
@@ -27,11 +26,6 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
      * 100% chance to compare it with smaller percentages.
      */
     protected static final int ONE_HUNDRED_PERCENT = 100;
-
-    /**
-     * The building range.
-     */
-    private AxisAlignedBB range;
 
     /**
      * The current pathing target to walk to.
@@ -142,12 +136,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
             return null;
         }
 
-        if (range == null)
-        {
-            range = getOwnBuilding().getTargetableArea(world);
-        }
-
-        if (range.contains(new Vector3d(pos.getX(), pos.getY(), pos.getZ())))
+        if (getOwnBuilding().isInBuilding(new Vector3d(pos.getX(), pos.getY(), pos.getZ())))
         {
             return pos;
         }

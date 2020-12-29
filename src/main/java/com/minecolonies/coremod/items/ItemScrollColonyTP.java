@@ -123,7 +123,7 @@ public class ItemScrollColonyTP extends AbstractItemScroll
 
         String colonyDesc = new TranslationTextComponent("item.minecolonies.scroll.colony.none").getString();
 
-        final IColony colony = getColony(stack);
+        final IColony colony = getColonyView(stack);
         if (colony != null)
         {
             colonyDesc = colony.getName();

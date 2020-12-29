@@ -33,7 +33,6 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.minecolonies.api.items.ModTags;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -962,15 +961,7 @@ public class Tree
 
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            final Tuple<BlockPos, BlockPos> corners = building.getCorners();
-            final int x1 = corners.getA().getX();
-            final int x2 = corners.getB().getX();
-            final int z1 = corners.getA().getZ();
-            final int z2 = corners.getB().getZ();
-
-            final int x = pos.getX();
-            final int z = pos.getZ();
-            if (x > x1 && x < x2 && z > z1 && z < z2)
+            if (building.isInBuilding(new Vector3d(pos.getX(), pos.getY(), pos.getZ())))
             {
                 return false;
             }

@@ -283,7 +283,7 @@ public final class EntityUtils
     {
         final List<ItemStorage> existingReq = ItemStackUtils.getListOfStackForEntity(entity, placer);
         final BlockPos pos = new BlockPos(entity.getPosX(), entity.getPosY(), entity.getPosZ());
-        return world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.add(1, 1, 1), pos.add(-1, -1, -1)))
+        return world.getLoadedEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.add(1, 1, 1), pos.add(-1, -1, -1)))
                  .stream()
                  .anyMatch(ent -> ent.getPosX() == entity.getPosX() && ent.getPosY() == entity.getPosY() && ent.getPosZ() == entity.getPosZ() && ItemStackUtils.getListOfStackForEntity(entity, placer)
                                                                                                                      .equals(existingReq));
