@@ -138,6 +138,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         // May eventually want a sound handler here, but SoundUtils.playErrorSound is a bit much.
         if(button.getID().isEmpty())
         {
+            // intentionally empty.
         }
         // Undo just the selected research.
         else if (button.getID().contains("undo."))
@@ -232,6 +233,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
       final List<String> researchList,
       final boolean abandoned)
     {
+        // researchLists are loaded non-deterministically, as even with one built-in data pack
+        // there's no guarantee what order the files will be loaded.  To avoid a research tree
+        // that moves between world reloads, we'll sort by resource location path instead.
+        researchList.sort(Comparator.comparing(unsortedResearch -> IGlobalResearchTree.getInstance().getResearch(branch, unsortedResearch).getResourceLocation().getPath()));
+
         int nextHeight = height;
         for (int i = 0; i < researchList.size(); i++)
         {
@@ -239,9 +245,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             {
                 nextHeight++;
             }
-            final String researchLabel = researchList.get(i);
 
-            final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchLabel);
+            final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchList.get(i));
             if (research.isHidden() && !IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirement(), this.building.getColony()))
             {
                 continue;
@@ -254,7 +259,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
             if (!research.getParent().isEmpty())
             {
-                drawArrows(view, offsetX + INITIAL_X_OFFSET - X_SPACING, offsetY, researchList, research.getParent(), i, nextHeight, height);
+                drawArrows(view, offsetX + INITIAL_X_OFFSET - X_SPACING, offsetY, researchList.size(), research.getParent(), i, nextHeight, height);
             }
             if (!research.getChildren().isEmpty())
             {
@@ -284,9 +289,10 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             if (building.getBuildingLevel() < i && (building.getBuildingLevel() != building.getBuildingMaxLevel() || hasMax))
             {
                 final Gradient gradient = new Gradient();
-                gradient.setGradientStart(80, 80, 80, 70);
-                gradient.setGradientEnd(60, 60, 60, 70);
-                gradient.setSize(1200, 1200);
+                gradient.setGradientStart(80, 80, 80, 100);
+                gradient.setGradientEnd(60, 60, 60, 110);
+                // Draw the last gradient beyond the edge of the displayed area, to avoid blank spot on the right.
+                gradient.setSize(i == MAX_DEPTH ? 1200 :GRADIENT_WIDTH + X_SPACING, 1200);
                 gradient.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING), 0);
                 view.addChild(gradient);
                 timeLabel.setColor(COLOR_TEXT_NEGATIVE, COLOR_TEXT_NEGATIVE);
@@ -328,7 +334,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             drawResearchProgress(view, offsetX, offsetY, research, tree.getResearch(branch, research.getId()).getDepth());
         }
 
-        drawResearchLabels(view, offsetX, offsetY, research, parentResearched);
+        drawResearchLabels(view, offsetX, offsetY, research);
         drawResearchButton(view, offsetX, offsetY, research, state, parentResearched, abandoned);
         drawResearchIcons(view, offsetX, offsetY, research, state != ResearchState.NOT_STARTED, abandoned);
 
@@ -498,22 +504,14 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param offsetX          the horizontal offset of the left side of the research block.
      * @param offsetY          the vertical offset of the top side of the research block.
      * @param research         the global research characteristics to draw.
-     * @param parentResearched if the parent research has been completed.
      */
-    private void drawResearchLabels(final ZoomDragView view, final int offsetX, final int offsetY, final IGlobalResearch research, final boolean parentResearched)
+    private void drawResearchLabels(final ZoomDragView view, final int offsetX, final int offsetY, final IGlobalResearch research)
     {
         final Label nameLabel = new Label();
         nameLabel.setSize(BUTTON_LENGTH, INITIAL_Y_OFFSET);
         nameLabel.setLabelText(new TranslationTextComponent(research.getDesc()));
         nameLabel.setPosition(offsetX + INITIAL_X_OFFSET + NAME_OFFSET, offsetY + (NAME_OFFSET / 2));
-        if (parentResearched)
-        {
-            nameLabel.setColor(COLOR_TEXT_LABEL, COLOR_TEXT_LABEL);
-        }
-        else
-        {
-            nameLabel.setColor(COLOR_TEXT_LIGHT, COLOR_TEXT_LIGHT);
-        }
+        nameLabel.setColor(COLOR_TEXT_DARK, COLOR_TEXT_DARK);
         view.addChild(nameLabel);
 
         if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get() && !research.getEffects().isEmpty())
@@ -689,9 +687,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         undoButton.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
         undoButton.setPosition(parent.getX() + (GRADIENT_WIDTH - BUTTON_LENGTH) / 2, parent.getY() + (GRADIENT_HEIGHT - BUTTON_HEIGHT) / 2);
         final List<IFormattableTextComponent> hoverTexts = new ArrayList<>();
-        hoverTexts.add(new TranslationTextComponent("com.minecolonies.coremod.research.undo.remove.tooltip.1").setStyle(Style.EMPTY.setFormatting(TextFormatting.BOLD)
-                                                                                                                          .setFormatting(TextFormatting.RED)));
-        hoverTexts.add(new TranslationTextComponent("com.minecolonies.coremod.research.undo.remove.tooltip.2").setStyle(Style.EMPTY.setFormatting(TextFormatting.BOLD)
+        hoverTexts.add(new TranslationTextComponent("com.minecolonies.coremod.research.undo.remove.tooltip").setStyle(Style.EMPTY.setFormatting(TextFormatting.BOLD)
                                                                                                                           .setFormatting(TextFormatting.RED)));
         if (missingItems)
         {
@@ -869,21 +865,21 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     /**
      * Draws arrows connecting sibling researches to their parent.
      *
-     * @param view           the view to append it to.
-     * @param offsetX        the horizontal offset of the left side of the research block.
-     * @param offsetY        the vertical offset of the top side of the research block.
-     * @param researchList   the list of sibling researches to connect by arrows.
-     * @param parentResearch the parent research to connect by arrow.
-     * @param currentCounter count of the current target.
-     * @param nextHeight     height of the next arrow target.
-     * @param parentHeight	 height of the parent arrow target.
+     * @param view             the view to append it to.
+     * @param offsetX          the horizontal offset of the left side of the research block.
+     * @param offsetY          the vertical offset of the top side of the research block.
+     * @param researchListSize the number of sibling researches.
+     * @param parentResearch   the parent research to connect by arrow.
+     * @param currentCounter   count of the current target.
+     * @param nextHeight       height of the next arrow target.
+     * @param parentHeight	    height of the parent arrow target.
      */
-    public void drawArrows(final ZoomDragView view, final int offsetX, final int offsetY, final List<String> researchList, final String parentResearch, final int currentCounter, final int nextHeight, final int parentHeight)
+    public void drawArrows(final ZoomDragView view, final int offsetX, final int offsetY, final int researchListSize, final String parentResearch, final int currentCounter, final int nextHeight, final int parentHeight)
     {
         final boolean firstSibling = currentCounter == 0;
         final boolean secondSibling = currentCounter >= 1;
 
-        final boolean lastSibling = currentCounter + 1 >= researchList.size();
+        final boolean lastSibling = currentCounter + 1 >= researchListSize;
 
         if (firstSibling && lastSibling)
         {
@@ -945,22 +941,19 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 }
                 else
                 {
+                    final Image corner = new Image();
                     if (lastSibling)
                     {
-                        final Image corner = new Image();
                         corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_right_and.png"));
                         corner.setSize(X_SPACING, GRADIENT_HEIGHT);
-                        corner.setPosition(offsetX, offsetY);
-                        view.addChild(corner);
                     }
                     else
                     {
-                        final Image corner = new Image();
                         corner.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/arrow_right_and_more.png"));
                         corner.setSize(X_SPACING, GRADIENT_HEIGHT + Y_SPACING);
-                        corner.setPosition(offsetX, offsetY);
-                        view.addChild(corner);
                     }
+                    corner.setPosition(offsetX, offsetY);
+                    view.addChild(corner);
                 }
             }
         }

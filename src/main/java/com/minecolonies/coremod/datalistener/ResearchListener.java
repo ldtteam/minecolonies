@@ -47,7 +47,7 @@ public class ResearchListener extends JsonReloadListener
         Log.getLogger().info("Beginning load of research for University.");
 
         // First, index and map out all research effects.  We need to be able to map them before creating Researches themselves.
-        // Because datapacks, can't assume effects are in one specific location.
+        // Because data packs, can't assume effects are in one specific location.
         // For now, we'll populate relative levels when doing so, but we probably want to do that dynamically.
         final Map<String, ResearchEffectCategory> effectCategories = parseResearchEffects(object);
 
@@ -58,7 +58,7 @@ public class ResearchListener extends JsonReloadListener
         final Map<String, GlobalResearch> researchMap = parseResearches(object, effectCategories, !(server instanceof DedicatedServer));
 
         // We /shouldn't/ get any removes before the Research they're trying to remove exists,
-        // but it can happen if multiple datapacks affect each other.
+        // but it can happen if multiple data packs affect each other.
         // So now that we've loaded everything, then we can start removes.
         parseRemoveResearches(object, researchMap);
 
@@ -72,7 +72,7 @@ public class ResearchListener extends JsonReloadListener
         Log.getLogger().info("Loaded " + researchMap.values().size() + " recipes for " + researchTree.getBranches().size() + " research branches");
 
         // For dedicated servers, send to any connected players.  On startup, this will be no-one.
-        // But it is possible to reload datapacks live, and while not supported it's something to handle.
+        // But it is possible to reload data packs live, and while not supported it's something to handle.
 
         if(server instanceof DedicatedServer)
         {
@@ -154,7 +154,7 @@ public class ResearchListener extends JsonReloadListener
         final Map<String, GlobalResearch> researchMap = new HashMap<>();
         for(final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
         {
-            //Note that we don't actually use the resource folders or file names; those are only for organization purposes.
+            // Note that we don't actually use the resource folders or file names; those are only for organization purposes.
             final JsonObject researchJson = entry.getValue().getAsJsonObject();
 
             //Can ignore those effect jsons now:

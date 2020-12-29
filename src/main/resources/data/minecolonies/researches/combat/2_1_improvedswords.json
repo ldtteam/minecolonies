@@ -3,6 +3,7 @@
   "id": "improvedswords",
   "branch": "combat",
   "requiredUniversityLevel": 2,
+  "subtitle": "com.minecolonies.research.improvedswords.subtitle",
   "icon": "minecolonies:blockhutcombatacademy",
   "parentResearch": "tactictraining",
   "requirements": [

@@ -3,6 +3,7 @@
   "id": "phd",
   "branch": "civilian",
   "requiredUniversityLevel": 6,
+  "subtitle": "com.minecolonies.research.phd.subtitle",
   "icon": "minecolonies:textures/icons/research/xpgain5.png",
   "parentResearch": "master",
   "requirements": [

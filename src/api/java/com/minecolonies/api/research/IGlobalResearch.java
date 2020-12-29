@@ -80,7 +80,8 @@ public interface IGlobalResearch
      * Getter of the resource location of the research, if loaded by datapack.
      *
      * @return the resource location for a dynamically loaded research,
-     * or minecolonies/staticresearch if statically assigned.
+     * minecolonies:staticresearch/id if statically assigned,
+     * or minecolonies:clientlocal/id if received from a server in a remote environment.
      */
     ResourceLocation getResourceLocation();
 
@@ -191,7 +192,7 @@ public interface IGlobalResearch
      *
      * @return a copy of the list of child identifiers.
      */
-    ImmutableList<String> getChildren();
+    List<String> getChildren();
 
     /**
      * Set the parent of a research.

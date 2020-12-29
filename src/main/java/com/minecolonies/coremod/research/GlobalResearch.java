@@ -253,7 +253,7 @@ public class GlobalResearch implements IGlobalResearch
         this.subtitle = "";
         this.depth = universityLevel;
         this.branch = branch;
-        this.resourceLocation = new ResourceLocation("minecolonies","staticresearch");
+        this.resourceLocation = new ResourceLocation("minecolonies","staticresearch/" + id);
         this.hidden = false;
         this.instant = false;
         this.autostart = false;
@@ -283,7 +283,7 @@ public class GlobalResearch implements IGlobalResearch
         this.effects.addAll(effects);
         this.depth = universityLevel;
         this.branch = branch;
-        this.resourceLocation = new ResourceLocation("minecolonies","staticresearch");
+        this.resourceLocation = new ResourceLocation("minecolonies","staticresearch/" + id);
         this.hidden = false;
         this.autostart = false;
         this.instant = false;
@@ -320,7 +320,7 @@ public class GlobalResearch implements IGlobalResearch
         this.branch = branch;
         this.parent = parent;
         this.depth = universityLevel;
-        this.resourceLocation = new ResourceLocation("minecolonies","clientlocal");
+        this.resourceLocation = new ResourceLocation("minecolonies","clientlocal/" + id);
         this.onlyChild = onlyChild;
         this.hidden = hidden;
         this.autostart = autostart;
@@ -568,9 +568,9 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public ImmutableList<String> getChildren()
+    public List<String> getChildren()
     {
-        return ImmutableList.copyOf(this.children);
+        return this.children;
     }
 
     @Override
