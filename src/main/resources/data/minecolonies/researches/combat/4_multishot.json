@@ -3,7 +3,7 @@
   "id": "multishot",
   "branch": "combat",
   "subtitle": "com.minecolonies.research.multishot.subtitle",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecraft:tipped_arrow",
   "parentResearch": "trickshot",
   "requirements": [

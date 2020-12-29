@@ -2,7 +2,7 @@
   "comment": "name: City * description : CitizenCap",
   "id": "city",
   "branch": "civilian",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecolonies:blockhutcitizen:200",
   "parentResearch": "village",
   "requirements": [

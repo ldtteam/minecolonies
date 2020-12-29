@@ -2,7 +2,7 @@
   "comment": "name: Seems Automatic * description : Block Place Speed",
   "id": "seemsautomatic",
   "branch": "technology",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecraft:blaze_powder",
   "parentResearch": "tools",
   "requirements": [

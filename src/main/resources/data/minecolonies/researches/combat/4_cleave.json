@@ -2,7 +2,7 @@
   "comment": "name: Cleave * description : Melee Damage",
   "id": "cleave",
   "branch": "combat",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecraft:iron_sword",
   "parentResearch": "powerattack",
   "requirements": [

@@ -2,7 +2,7 @@
   "comment": "name: Let It Grow * description : Plantation",
   "id": "letitgrow",
   "branch": "technology",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecolonies:blockhutplantation",
   "parentResearch": "biodegradable",
   "requirements": [

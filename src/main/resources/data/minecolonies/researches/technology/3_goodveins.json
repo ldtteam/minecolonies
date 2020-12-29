@@ -2,7 +2,7 @@
   "comment": "name: Good Veins * description : More Ores",
   "id": "goodveins",
   "branch": "technology",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:coal_block",
   "parentResearch": "veinminer",
   "requirements": [

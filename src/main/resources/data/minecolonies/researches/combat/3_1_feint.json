@@ -2,7 +2,7 @@
   "comment": "name: Feint * description : Fleeing Damage",
   "id": "feint",
   "branch": "combat",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:leather_boots",
   "parentResearch": "regeneration",
   "requirements": [

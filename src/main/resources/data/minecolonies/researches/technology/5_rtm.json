@@ -2,7 +2,7 @@
   "comment": "name: RTM * description : Recipes",
   "id": "rtm",
   "branch": "technology",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecraft:bookshelf",
   "parentResearch": "recipebook",
   "requirements": [

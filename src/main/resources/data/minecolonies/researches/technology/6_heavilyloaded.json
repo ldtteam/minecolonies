@@ -2,7 +2,7 @@
   "comment": "name: Heavily Loaded * description : Citizen Inv Slots",
   "id": "heavilyloaded",
   "branch": "technology",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:blue_shulker_box",
   "parentResearch": "loaded",
   "no-reset": true,

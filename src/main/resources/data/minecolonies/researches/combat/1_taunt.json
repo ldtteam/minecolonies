@@ -3,7 +3,7 @@
   "id": "taunt",
   "branch": "combat",
   "subtitle": "com.minecolonies.research.taunt.subtitle",
-  "requiredUniversityLevel": 1,
+  "researchLevel": 1,
   "icon": "minecraft:chain",
   "requirements": [
     {

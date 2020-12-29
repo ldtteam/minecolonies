@@ -3,7 +3,7 @@
   "id": "dodge",
   "branch": "combat",
   "subtitle": "com.minecolonies.research.dodge.subtitle",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecolonies:pirate_boots",
   "parentResearch": "avoidance",
   "requirements": [

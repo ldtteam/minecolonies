@@ -2,7 +2,7 @@
   "comment": "name: Steel Bracing * description : Tool Durability",
   "id": "steelbracing",
   "branch": "technology",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecraft:golden_pickaxe",
   "parentResearch": "reinforced",
   "requirements": [

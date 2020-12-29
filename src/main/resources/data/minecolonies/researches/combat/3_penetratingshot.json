@@ -2,7 +2,7 @@
   "comment": "name: Penetrating Shot * description : Archer Damage",
   "id": "penetratingshot",
   "branch": "combat",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:bow",
   "parentResearch": "preciseshot",
   "requirements": [

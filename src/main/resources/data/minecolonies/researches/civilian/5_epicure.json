@@ -2,7 +2,7 @@
   "comment": "name: Epicure * description : Saturation",
   "id": "epicure",
   "branch": "civilian",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecolonies:textures/icons/research/saturation4.png",
   "parentResearch": "stuffer",
   "requirements": [

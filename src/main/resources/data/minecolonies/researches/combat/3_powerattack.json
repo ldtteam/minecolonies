@@ -2,7 +2,7 @@
   "comment": "name: Power Attack * description : Melee Damage",
   "id": "powerattack",
   "branch": "combat",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:stone_sword",
   "parentResearch": "quickdraw",
   "requirements": [

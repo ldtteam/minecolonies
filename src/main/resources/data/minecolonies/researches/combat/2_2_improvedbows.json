@@ -2,7 +2,7 @@
   "comment": "name: Improved Bows * description : Archery",
   "id": "improvedbows",
   "branch": "combat",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecolonies:blockhutarchery",
   "parentResearch": "tactictraining",
   "requirements": [

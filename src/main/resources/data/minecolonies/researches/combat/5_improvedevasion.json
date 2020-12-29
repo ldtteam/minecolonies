@@ -3,7 +3,7 @@
   "id": "improvedevasion",
   "branch": "combat",
   "subtitle": "com.minecolonies.research.improvedevasion.subtitle",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecraft:golden_boots",
   "parentResearch": "evasion",
   "requirements": [

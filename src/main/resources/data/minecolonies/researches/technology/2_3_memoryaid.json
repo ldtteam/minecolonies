@@ -2,7 +2,7 @@
   "comment": "name: Memory Aid * description : Recipes",
   "id": "memoryaid",
   "branch": "technology",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecraft:paper",
   "parentResearch": "woodwork",
   "requirements": [

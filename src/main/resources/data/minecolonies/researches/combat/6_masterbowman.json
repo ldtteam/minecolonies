@@ -2,7 +2,7 @@
   "comment": "name: Master Bowman * description : Double Arrows",
   "id": "masterbowman",
   "branch": "combat",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:blaze_rod",
   "parentResearch": "rapidshot",
   "requirements": [

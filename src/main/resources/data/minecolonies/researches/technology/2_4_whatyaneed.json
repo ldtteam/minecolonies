@@ -2,7 +2,7 @@
   "comment": "name: What ya Need? * description : Mechanic",
   "id": "whatyaneed",
   "branch": "technology",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecolonies:blockhutmechanic",
   "parentResearch": "hittingiron",
   "requirements": [

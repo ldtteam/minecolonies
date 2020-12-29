@@ -2,7 +2,7 @@
   "comment": "name: Reinforced * description : Tool Durability",
   "id": "reinforced",
   "branch": "technology",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecraft:iron_pickaxe",
   "parentResearch": "hardened",
   "requirements": [

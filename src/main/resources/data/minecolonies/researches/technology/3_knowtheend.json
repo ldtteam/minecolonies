@@ -2,7 +2,7 @@
   "comment": "name: Know the End? * description : Knowledge of The End",
   "id": "knowtheend",
   "branch": "technology",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecolonies:chorus_bread",
   "parentResearch": "theflintstones",
   "requirements": [

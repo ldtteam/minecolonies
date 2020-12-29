@@ -2,7 +2,7 @@
   "comment": "name: Studious * description : Leveling",
   "id": "studious",
   "branch": "civilian",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:experience_bottle:2",
   "parentResearch": "diligent",
   "requirements": [

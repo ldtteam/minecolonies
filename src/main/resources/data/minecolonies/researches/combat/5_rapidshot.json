@@ -2,7 +2,7 @@
   "comment": "name: Rapid Shot * description : Double Arrows",
   "id": "rapidshot",
   "branch": "combat",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecolonies:firearrow",
   "parentResearch": "multishot",
   "requirements": [

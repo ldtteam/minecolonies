@@ -2,7 +2,7 @@
   "comment": "name: Riposte * description : Melee Armor",
   "id": "riposte",
   "branch": "combat",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:iron_chestplate",
   "parentResearch": "parry",
   "requirements": [

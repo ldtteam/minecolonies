@@ -2,7 +2,7 @@
   "comment": "name: Compress * description : Regeneration",
   "id": "compress",
   "branch": "civilian",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecolonies:textures/icons/research/regeneration4.png",
   "parentResearch": "bandages",
   "requirements": [

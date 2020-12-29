@@ -2,7 +2,7 @@
   "comment": "name: Cheat Sheet * description : Recipes",
   "id": "cheatsheet",
   "branch": "technology",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:book",
   "parentResearch": "memoryaid",
   "requirements": [

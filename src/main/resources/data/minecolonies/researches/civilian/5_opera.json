@@ -2,7 +2,7 @@
   "comment": "name: Opera * description : Happiness",
   "id": "opera",
   "branch": "civilian",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecolonies:textures/icons/research/happy4.png",
   "parentResearch": "spectacle",
   "requirements": [

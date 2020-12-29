@@ -2,7 +2,7 @@
   "comment": "name: Diligent * description : Leveling",
   "id": "diligent",
   "branch": "civilian",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecraft:experience_bottle",
   "parentResearch": "keen",
   "requirements": [

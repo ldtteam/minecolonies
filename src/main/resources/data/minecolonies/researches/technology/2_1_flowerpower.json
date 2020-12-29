@@ -2,7 +2,7 @@
   "comment": "name: Flower Power * description : Florist",
   "id": "flowerpower",
   "branch": "technology",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecolonies:blockhutflorist",
   "parentResearch": "biodegradable",
   "requirements": [

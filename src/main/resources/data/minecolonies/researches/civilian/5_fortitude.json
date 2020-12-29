@@ -2,7 +2,7 @@
   "comment": "name: Fortitude * description : Healing Saturation Limit",
   "id": "fortitude",
   "branch": "civilian",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecraft:honey_bottle",
   "parentResearch": "vitality",
   "requirements": [

@@ -2,7 +2,7 @@
   "comment": "name: Those Lungs! * description : Glassblower",
   "id": "thoselungs",
   "branch": "technology",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecolonies:blockhutglassblower",
   "parentResearch": "hot",
   "requirements": [

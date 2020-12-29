@@ -2,7 +2,7 @@
   "comment": "name: Stone Cake * description : Stonemason",
   "id": "stonecake",
   "branch": "technology",
-  "requiredUniversityLevel": 1,
+  "researchLevel": 1,
   "icon": "minecolonies:blockhutstonemason",
   "requirements": [
     {

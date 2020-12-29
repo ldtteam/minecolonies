@@ -2,7 +2,7 @@
   "comment": "name: Deadly Aim * description : Archer Damage",
   "id": "deadlyaim",
   "branch": "combat",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:tipped_arrow",
   "parentResearch": "woundingshot",
   "requirements": [

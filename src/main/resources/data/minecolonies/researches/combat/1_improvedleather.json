@@ -2,7 +2,7 @@
   "comment": "name: Improved Leather * description : Armor Durability",
   "id": "improvedleather",
   "branch": "combat",
-  "requiredUniversityLevel": 1,
+  "researchLevel": 1,
   "icon": "minecraft:leather_helmet",
   "requirements": [
     {

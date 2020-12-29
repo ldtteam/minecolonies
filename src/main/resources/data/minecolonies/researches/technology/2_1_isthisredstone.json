@@ -2,7 +2,7 @@
   "comment": "name: Is This Redstone? * description : Block Break Speed",
   "id": "isthisredstone",
   "branch": "technology",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecraft:redstone",
   "parentResearch": "hot",
   "requirements": [

@@ -2,7 +2,7 @@
   "comment": "name: Full Retreat * description : Fleeing Damage",
   "id": "fullretreat",
   "branch": "combat",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:diamond_boots",
   "parentResearch": "retreat",
   "requirements": [

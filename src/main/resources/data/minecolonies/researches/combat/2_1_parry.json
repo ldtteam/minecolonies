@@ -2,7 +2,7 @@
   "comment": "name: Parry * description : Melee Armor",
   "id": "parry",
   "branch": "combat",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecraft:leather_chestplate",
   "parentResearch": "avoidance",
   "requirements": [

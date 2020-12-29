@@ -2,7 +2,7 @@
   "comment": "name: Avoid * description : Fleeing Speed",
   "id": "avoid",
   "branch": "combat",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:feather",
   "parentResearch": "regeneration",
   "requirements": [

@@ -2,7 +2,7 @@
   "comment": "name: Heavy Machinery * description : Block Break Speed",
   "id": "heavymachinery",
   "branch": "technology",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecraft:redstone_block",
   "parentResearch": "redstonepowered",
   "requirements": [

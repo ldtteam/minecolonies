@@ -2,7 +2,7 @@
   "comment": "name: Lifesaver II * description : Health",
   "id": "lifesaver2",
   "branch": "civilian",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecolonies:textures/icons/research/hp4.png",
   "parentResearch": "lifesaver",
   "requirements": [

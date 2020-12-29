@@ -62,7 +62,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         compound.putString(TAG_RESOURCE_PATH, research.getResourceLocation().getPath());
         compound.putString(TAG_BRANCH, research.getBranch());
         compound.putString(TAG_DESC, research.getDesc());
-        compound.putInt(TAG_DEPTH, research.getDepth());
+        compound.putInt(TAG_RESEARCH_LVL, research.getDepth());
         compound.putBoolean(TAG_ONLY_CHILD, research.hasOnlyChild());
         compound.putString(TAG_ICON, research.getIcon());
         compound.putString(TAG_SUBTITLE_NAME, research.getSubtitle());
@@ -114,7 +114,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final String resourcePath = nbt.getString(TAG_RESOURCE_PATH);
         final String branch = nbt.getString(TAG_BRANCH);
         final String desc = nbt.getString(TAG_DESC);
-        final int depth = nbt.getInt(TAG_DEPTH);
+        final int depth = nbt.getInt(TAG_RESEARCH_LVL);
         final boolean onlyChild = nbt.getBoolean(TAG_ONLY_CHILD);
         final String icon = nbt.getString(TAG_ICON);
         final String subtitle = nbt.getString(TAG_SUBTITLE_NAME);

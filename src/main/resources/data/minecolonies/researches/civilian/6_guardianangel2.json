@@ -2,7 +2,7 @@
   "comment": "name: Guardian Angel II * description : Health",
   "id": "guardianangel2",
   "branch": "civilian",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecolonies:textures/icons/research/hp6.png",
   "parentResearch": "guardianangel",
   "requirements": [

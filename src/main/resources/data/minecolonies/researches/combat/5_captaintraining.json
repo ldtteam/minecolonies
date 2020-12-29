@@ -2,7 +2,7 @@
   "comment": "name: Captain Training * description : Block Attacks",
   "id": "captaintraining",
   "branch": "combat",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecraft:iron_bars",
   "parentResearch": "knighttraining",
   "requirements": [

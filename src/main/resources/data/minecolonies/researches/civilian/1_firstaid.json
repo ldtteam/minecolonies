@@ -2,7 +2,7 @@
   "comment": "name: First Aid * description : Health",
   "id": "firstaid",
   "branch": "civilian",
-  "requiredUniversityLevel": 1,
+  "researchLevel": 1,
   "icon": "minecolonies:textures/icons/research/hp1.png",
   "requirements": [
     {

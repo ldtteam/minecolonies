@@ -2,7 +2,7 @@
   "comment": "name: Diamond Skin * description : Armor Durability",
   "id": "diamondskin",
   "branch": "combat",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:diamond_helmet",
   "parentResearch": "steelarmor",
   "requirements": [

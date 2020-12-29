@@ -2,7 +2,7 @@
   "comment": "name: Resilience * description : Healing Saturation Limit",
   "id": "resilience",
   "branch": "civilian",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:potion",
   "parentResearch": "resistance",
   "requirements": [

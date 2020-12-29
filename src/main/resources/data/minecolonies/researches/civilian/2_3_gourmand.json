@@ -2,7 +2,7 @@
   "comment": "name: Gourmand * description : Saturation",
   "id": "gourmand",
   "branch": "civilian",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecolonies:textures/icons/research/saturation1.png",
   "parentResearch": "firstaid",
   "requirements": [

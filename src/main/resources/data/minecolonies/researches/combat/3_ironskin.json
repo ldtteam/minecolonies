@@ -2,7 +2,7 @@
   "comment": "name: Iron Skin * description : Armor Durability",
   "id": "ironskin",
   "branch": "combat",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:chainmail_helmet",
   "parentResearch": "boiledleather",
   "requirements": [

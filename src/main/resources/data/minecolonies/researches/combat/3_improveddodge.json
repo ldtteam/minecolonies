@@ -3,7 +3,7 @@
   "id": "improveddodge",
   "branch": "combat",
   "subtitle": "com.minecolonies.research.improveddodge.subtitle",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecolonies:pirate_shoes",
   "parentResearch": "dodge",
   "requirements": [

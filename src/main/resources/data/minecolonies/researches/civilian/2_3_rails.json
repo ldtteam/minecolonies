@@ -2,7 +2,7 @@
   "comment": "name: Rails * description : Rails",
   "id": "rails",
   "branch": "civilian",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecraft:detector_rail",
   "parentResearch": "keen",
   "requirements": [

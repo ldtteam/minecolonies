@@ -2,7 +2,7 @@
   "comment": "name: Duelist * description : Melee Armor",
   "id": "duelist",
   "branch": "combat",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecraft:chainmail_chestplate",
   "parentResearch": "riposte",
   "requirements": [

@@ -2,7 +2,7 @@
   "comment": "name: Veinminer * description : More Ores",
   "id": "veinminer",
   "branch": "technology",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecraft:iron_block",
   "parentResearch": "hittingiron",
   "requirements": [

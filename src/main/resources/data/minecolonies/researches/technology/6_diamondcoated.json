@@ -2,7 +2,7 @@
   "comment": "name: Diamond Coated * description : Tool Durability",
   "id": "diamondcoated",
   "branch": "technology",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:diamond_pickaxe",
   "parentResearch": "steelbracing",
   "requirements": [

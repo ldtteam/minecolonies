@@ -2,7 +2,7 @@
   "comment": "name: Lightning * description : Block Break Speed",
   "id": "lightning",
   "branch": "technology",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:repeater",
   "parentResearch": "whatisthisspeed",
   "requirements": [

@@ -2,7 +2,7 @@
   "comment": "name: Loaded * description : Citizen Inv Slots",
   "id": "loaded",
   "branch": "technology",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecraft:red_shulker_box",
   "parentResearch": "deeppockets",
   "requirements": [

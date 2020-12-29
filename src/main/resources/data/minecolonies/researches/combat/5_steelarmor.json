@@ -2,7 +2,7 @@
   "comment": "name: Steel Armor * description : Armor Durability",
   "id": "steelarmor",
   "branch": "combat",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecraft:golden_helmet",
   "parentResearch": "ironarmor",
   "requirements": [

@@ -2,7 +2,7 @@
   "comment": "name: Theater * description : Happiness",
   "id": "theater",
   "branch": "civilian",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecolonies:textures/icons/research/happy5.png",
   "parentResearch": "opera",
   "requirements": [

@@ -2,7 +2,7 @@
   "comment": "name: Vitality * description : Healing Saturation Limit",
   "id": "vitality",
   "branch": "civilian",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecraft:splash_potion",
   "parentResearch": "resilience",
   "requirements": [

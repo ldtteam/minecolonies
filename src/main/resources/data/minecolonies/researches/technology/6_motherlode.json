@@ -2,7 +2,7 @@
   "comment": "name: Motherlode * description : More Ores",
   "id": "motherlode",
   "branch": "technology",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:diamond_block",
   "parentResearch": "amazingveins",
   "requirements": [

@@ -2,7 +2,7 @@
   "comment": "name: Hotfoot * description : Fleeing Speed",
   "id": "hotfoot",
   "branch": "combat",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:chicken",
   "parentResearch": "flee",
   "requirements": [

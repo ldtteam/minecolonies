@@ -2,7 +2,7 @@
   "comment": "name: Puberty * description : Growth",
   "id": "puberty",
   "branch": "civilian",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecolonies:textures/icons/research/childgrowth3.png",
   "parentResearch": "hormones",
   "requirements": [

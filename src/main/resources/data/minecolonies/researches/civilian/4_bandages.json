@@ -2,7 +2,7 @@
   "comment": "name: Bandages * description : Regeneration",
   "id": "bandages",
   "branch": "civilian",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecolonies:textures/icons/research/regeneration3.png",
   "parentResearch": "healingcream",
   "requirements": [

@@ -2,7 +2,7 @@
   "comment": "name: Stuffer * description : Saturation",
   "id": "stuffer",
   "branch": "civilian",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecolonies:textures/icons/research/saturation3.png",
   "parentResearch": "gorger",
   "requirements": [

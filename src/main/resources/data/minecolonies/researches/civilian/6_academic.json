@@ -2,7 +2,7 @@
   "comment": "name: Academic * description : Leveling",
   "id": "academic",
   "branch": "civilian",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:experience_bottle:5",
   "parentResearch": "reflective",
   "requirements": [

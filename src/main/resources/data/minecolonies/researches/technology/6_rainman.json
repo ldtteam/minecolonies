@@ -2,7 +2,7 @@
   "comment": "name: Rainman * description : Working In Rain",
   "id": "rainman",
   "branch": "technology",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:splash_potion",
   "parentResearch": "rtm",
   "requirements": [

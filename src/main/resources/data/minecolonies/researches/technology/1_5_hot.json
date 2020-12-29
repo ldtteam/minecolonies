@@ -2,7 +2,7 @@
   "comment": "name: Hot! * description : Smeltery",
   "id": "hot",
   "branch": "technology",
-  "requiredUniversityLevel": 1,
+  "researchLevel": 1,
   "icon": "minecolonies:blockhutsmeltery",
   "requirements": [
     {

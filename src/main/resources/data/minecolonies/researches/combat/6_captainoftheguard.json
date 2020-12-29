@@ -2,7 +2,7 @@
   "comment": "name: Captain of the Guard * description : Block Attacks",
   "id": "captainoftheguard",
   "branch": "combat",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:iron_block",
   "parentResearch": "captaintraining",
   "requirements": [

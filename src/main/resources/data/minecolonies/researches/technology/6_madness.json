@@ -2,7 +2,7 @@
   "comment": "name: Madness! * description : Block Place Speed",
   "id": "madness",
   "branch": "technology",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:spectral_arrow",
   "parentResearch": "seemsautomatic",
   "requirements": [

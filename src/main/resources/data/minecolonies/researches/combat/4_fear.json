@@ -2,7 +2,7 @@
   "comment": "name: Fear * description : Fleeing Damage",
   "id": "fear",
   "branch": "combat",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecraft:iron_boots",
   "parentResearch": "feint",
   "requirements": [

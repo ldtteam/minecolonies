@@ -2,7 +2,7 @@
   "comment": "name: Flee * description : Fleeing Speed",
   "id": "flee",
   "branch": "combat",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecraft:feather:3",
   "parentResearch": "evade",
   "requirements": [

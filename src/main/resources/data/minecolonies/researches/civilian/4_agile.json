@@ -2,7 +2,7 @@
   "comment": "name: Agile * description : Walking",
   "id": "agile",
   "branch": "civilian",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecolonies:textures/icons/research/speed2.png",
   "parentResearch": "nimble",
   "requirements": [

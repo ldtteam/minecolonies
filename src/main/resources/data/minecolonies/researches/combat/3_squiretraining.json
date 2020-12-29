@@ -2,7 +2,7 @@
   "comment": "name: Squire Training * description : Block Attacks",
   "id": "squiretraining",
   "branch": "combat",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:iron_ingot",
   "parentResearch": "improvedswords",
   "requirements": [

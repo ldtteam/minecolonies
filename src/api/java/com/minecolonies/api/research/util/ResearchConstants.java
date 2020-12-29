@@ -32,7 +32,7 @@ public final class ResearchConstants
     public static final String TAG_REQ_ITEM       = "requirement-item";
     public static final String TAG_EFFECTS        = "effects";
     public static final String TAG_EFFECT_ITEM    = "effect-item";
-    public static final String TAG_DEPTH          = "depth";
+    public static final String TAG_RESEARCH_LVL   = "research-lvl";
     public static final String TAG_PROGRESS       = "progress";
     public static final String TAG_CHILDS         = "hasResearchedChild";
     public static final String TAG_ONLY_CHILD     = "onlyChild";

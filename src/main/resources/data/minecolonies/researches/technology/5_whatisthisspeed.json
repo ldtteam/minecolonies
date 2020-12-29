@@ -2,7 +2,7 @@
   "comment": "name: What Is This Speed? * description : Block Break Speed",
   "id": "whatisthisspeed",
   "branch": "technology",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecraft:comparator",
   "parentResearch": "heavymachinery",
   "requirements": [

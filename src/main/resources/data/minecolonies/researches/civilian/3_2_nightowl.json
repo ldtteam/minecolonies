@@ -2,7 +2,7 @@
   "comment": "name: Nightowl * description : Working Day H",
   "id": "nightowl",
   "branch": "civilian",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:clock",
   "parentResearch": "circus",
   "requirements": [

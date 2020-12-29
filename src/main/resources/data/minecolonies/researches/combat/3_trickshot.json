@@ -2,7 +2,7 @@
   "comment": "name: Trick Shot * description : Double Arrows",
   "id": "trickshot",
   "branch": "combat",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:arrow",
   "parentResearch": "improvedbows",
   "requirements": [

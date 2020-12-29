@@ -2,7 +2,7 @@
   "comment": "name: More Books * description : Teaching",
   "id": "morebooks",
   "branch": "civilian",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecolonies:textures/icons/research/xpgain1.png",
   "parentResearch": "higherlearning",
   "requirements": [

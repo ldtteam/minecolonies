@@ -2,7 +2,7 @@
   "comment": "name: Wounding Shot * description : Archer Damage",
   "id": "woundingshot",
   "branch": "combat",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecolonies:firearrow",
   "parentResearch": "piercingshot",
   "requirements": [

@@ -2,7 +2,7 @@
   "comment": "name: Band Aid * description : Regeneration",
   "id": "bandaid",
   "branch": "civilian",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecolonies:textures/icons/research/regeneration1.png",
   "parentResearch": "stamina",
   "requirements": [

@@ -2,7 +2,7 @@
   "comment": "name: Cast * description : Regeneration",
   "id": "cast",
   "branch": "civilian",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecolonies:textures/icons/research/regeneration5.png",
   "parentResearch": "compress",
   "requirements": [

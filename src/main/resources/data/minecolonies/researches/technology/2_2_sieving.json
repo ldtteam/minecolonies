@@ -2,7 +2,7 @@
   "comment": "name: Sieving * description : Sifter",
   "id": "sieving",
   "branch": "technology",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecolonies:blockhutsifter",
   "parentResearch": "woodwork",
   "requirements": [

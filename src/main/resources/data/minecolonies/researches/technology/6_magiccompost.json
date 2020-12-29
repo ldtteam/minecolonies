@@ -2,7 +2,7 @@
   "comment": "name: Magic Compost * description : Farming",
   "id": "magiccompost",
   "branch": "technology",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecolonies:barrel_block",
   "parentResearch": "fertilizer",
   "requirements": [

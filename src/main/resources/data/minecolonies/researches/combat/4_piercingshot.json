@@ -2,7 +2,7 @@
   "comment": "name: Piercing Shot * description : Archer Damage",
   "id": "piercingshot",
   "branch": "combat",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecraft:crossbow",
   "parentResearch": "penetratingshot",
   "requirements": [

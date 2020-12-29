@@ -2,7 +2,7 @@
   "comment": "name: Strong * description : Tool Durability",
   "id": "strong",
   "branch": "technology",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecraft:wooden_pickaxe",
   "parentResearch": "hittingiron",
   "requirements": [

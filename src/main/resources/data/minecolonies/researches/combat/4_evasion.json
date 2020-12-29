@@ -3,7 +3,7 @@
   "id": "evasion",
   "branch": "combat",
   "subtitle": "com.minecolonies.research.evasion.subtitle",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecraft:iron_boots",
   "parentResearch": "improveddodge",
   "requirements": [

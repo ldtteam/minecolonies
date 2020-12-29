@@ -2,7 +2,7 @@
   "comment": "name: Regeneration * description : Retreat",
   "id": "regeneration",
   "branch": "combat",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecraft:glistering_melon_slice",
   "parentResearch": "improvedleather",
   "exclusiveChildResearch": true,

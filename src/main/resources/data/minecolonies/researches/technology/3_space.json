@@ -2,7 +2,7 @@
   "comment": "name: Space * description : Minimum Stock",
   "id": "space",
   "branch": "technology",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:chest",
   "parentResearch": "sieving",
   "requirements": [

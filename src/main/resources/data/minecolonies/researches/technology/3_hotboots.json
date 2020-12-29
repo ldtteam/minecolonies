@@ -2,7 +2,7 @@
   "comment": "name: Hot Boots * description : Miner Fire Res",
   "id": "hotboots",
   "branch": "technology",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:campfire",
   "parentResearch": "stringwork",
   "requirements": [

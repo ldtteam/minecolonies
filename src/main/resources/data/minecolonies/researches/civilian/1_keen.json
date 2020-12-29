@@ -2,7 +2,7 @@
   "comment": "name: Keen * description : Library",
   "id": "keen",
   "branch": "civilian",
-  "requiredUniversityLevel": 1,
+  "researchLevel": 1,
   "icon": "minecolonies:blockhutlibrary",
   "requirements": [
     {

@@ -2,7 +2,7 @@
   "comment": "name: Woodwork * description : Sawmill",
   "id": "woodwork",
   "branch": "technology",
-  "requiredUniversityLevel": 1,
+  "researchLevel": 1,
   "icon": "minecolonies:blockhutsawmill",
   "requirements": [
     {

@@ -2,7 +2,7 @@
   "comment": "name: Whirlwind * description : Melee Damage",
   "id": "whirlwind",
   "branch": "combat",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:diamond_sword",
   "parentResearch": "mightycleave",
   "requirements": [

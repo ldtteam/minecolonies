@@ -2,7 +2,7 @@
   "comment": "name: Consume Arrows * description : Consume Arrows",
   "id": "arrowuse",
   "branch": "combat",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "subtitle": "com.minecolonies.research.arrowuse.subtitle",
   "icon": "minecraft:arrow",
   "parentResearch": "taunt",

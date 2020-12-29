@@ -2,7 +2,7 @@
   "comment": "name: Swift * description : Walking",
   "id": "swift",
   "branch": "civilian",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecolonies:textures/icons/research/speed3.png",
   "parentResearch": "agile",
   "requirements": [

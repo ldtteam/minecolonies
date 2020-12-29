@@ -73,7 +73,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The property name for Required University Level.
      */
-    public static final String RESEARCH_UNIVERSITY_LEVEL_PROP = "requiredUniversityLevel";
+    public static final String RESEARCH_UNIVERSITY_LEVEL_PROP = "researchLevel";
 
     /**
      * The property name that indicates onlyChild status

@@ -2,7 +2,7 @@
   "comment": "name: Skills * description : Block Place Speed",
   "id": "skills",
   "branch": "technology",
-  "requiredUniversityLevel": 3,
+  "researchLevel": 3,
   "icon": "minecraft:glowstone",
   "parentResearch": "ability",
   "requirements": [

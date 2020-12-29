@@ -2,7 +2,7 @@
   "comment": "name: Scholarly * description : Leveling",
   "id": "scholarly",
   "branch": "civilian",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecraft:experience_bottle:3",
   "parentResearch": "studious",
   "requirements": [

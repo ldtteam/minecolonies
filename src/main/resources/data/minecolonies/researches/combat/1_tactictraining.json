@@ -2,7 +2,7 @@
   "comment": "name: Tactic Training * description : Barracks",
   "id": "tactictraining",
   "branch": "combat",
-  "requiredUniversityLevel": 1,
+  "researchLevel": 1,
   "icon": "minecolonies:blockhutbarrackstower",
   "requirements": [
     {

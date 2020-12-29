@@ -2,7 +2,7 @@
   "comment": "name: Outpost * description : CitizenCap",
   "id": "outpost",
   "branch": "civilian",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecolonies:blockhutcitizen:50",
   "parentResearch": "keen",
   "requirements": [

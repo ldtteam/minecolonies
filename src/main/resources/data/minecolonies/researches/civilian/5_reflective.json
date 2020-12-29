@@ -2,7 +2,7 @@
   "comment": "name: Reflective * description : Leveling",
   "id": "reflective",
   "branch": "civilian",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecraft:experience_bottle:4",
   "parentResearch": "scholarly",
   "requirements": [

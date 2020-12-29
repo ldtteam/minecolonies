@@ -2,7 +2,7 @@
   "comment": "name: Retreat * description : Fleeing Damage",
   "id": "retreat",
   "branch": "combat",
-  "requiredUniversityLevel": 5,
+  "researchLevel": 5,
   "icon": "minecraft:golden_boots",
   "parentResearch": "fear",
   "requirements": [

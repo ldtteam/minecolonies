@@ -2,7 +2,7 @@
   "comment": "name: Bonemeal * description : Farming",
   "id": "bonemeal",
   "branch": "technology",
-  "requiredUniversityLevel": 2,
+  "researchLevel": 2,
   "icon": "minecraft:wheat_seeds",
   "parentResearch": "biodegradable",
   "requirements": [

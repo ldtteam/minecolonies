@@ -3,7 +3,7 @@
   "id": "agilearcher",
   "branch": "combat",
   "subtitle": "com.minecolonies.research.agilearcher.subtitle",
-  "requiredUniversityLevel": 6,
+  "researchLevel": 6,
   "icon": "minecraft:diamond_boots",
   "parentResearch": "improvedevasion",
   "requirements": [

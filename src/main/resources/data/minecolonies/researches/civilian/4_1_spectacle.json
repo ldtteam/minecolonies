@@ -2,7 +2,7 @@
   "comment": "name: Spectacle * description : Happiness",
   "id": "spectacle",
   "branch": "civilian",
-  "requiredUniversityLevel": 4,
+  "researchLevel": 4,
   "icon": "minecolonies:textures/icons/research/happy3.png",
   "parentResearch": "festival",
   "requirements": [
