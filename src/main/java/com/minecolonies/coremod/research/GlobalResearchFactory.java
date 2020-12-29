@@ -46,10 +46,10 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
     @NotNull
     @Override
-    public IGlobalResearch getNewInstance(final String id, final String branch, final String parent, final String desc, final int universityLevel,
+    public IGlobalResearch getNewInstance(final String id, final String resourcePath, final String branch, final String parent, final String desc, final int universityLevel,
       final String icon, final String subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable)
     {
-        return new GlobalResearch(id, branch, parent, desc, universityLevel, icon, subtitle, onlyChild, hidden, autostart, instant, immutable);
+        return new GlobalResearch(id, resourcePath, branch, parent, desc, universityLevel, icon, subtitle, onlyChild, hidden, autostart, instant, immutable);
     }
 
     @NotNull
@@ -59,6 +59,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final CompoundNBT compound = new CompoundNBT();
         compound.putString(TAG_PARENT, research.getParent());
         compound.putString(TAG_ID, research.getId());
+        compound.putString(TAG_RESOURCE_PATH, research.getResourceLocation().getPath());
         compound.putString(TAG_BRANCH, research.getBranch());
         compound.putString(TAG_DESC, research.getDesc());
         compound.putInt(TAG_DEPTH, research.getDepth());
@@ -110,6 +111,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
     {
         final String parent = nbt.getString(TAG_PARENT);
         final String id = nbt.getString(TAG_ID);
+        final String resourcePath = nbt.getString(TAG_RESOURCE_PATH);
         final String branch = nbt.getString(TAG_BRANCH);
         final String desc = nbt.getString(TAG_DESC);
         final int depth = nbt.getInt(TAG_DEPTH);
@@ -121,7 +123,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final boolean immutable = nbt.getBoolean(TAG_IMMUTABLE);
         final boolean hidden = nbt.getBoolean(TAG_HIDDEN);
 
-        final IGlobalResearch research = getNewInstance(id, branch, parent, desc, depth, icon, subtitle, onlyChild, hidden, autostart, instant, immutable);
+        final IGlobalResearch research = getNewInstance(id, resourcePath, branch, parent, desc, depth, icon, subtitle, onlyChild, hidden, autostart, instant, immutable);
 
         NBTUtils.streamCompound(nbt.getList(TAG_COSTS, Constants.NBT.TAG_COMPOUND)).forEach(comp -> research.addCost(comp.getString(TAG_COST_ITEM)));
         NBTUtils.streamCompound(nbt.getList(TAG_EFFECTS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> research.addEffect(compound.getString(TAG_EFFECT_ITEM)));
@@ -135,6 +137,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
     {
         packetBuffer.writeString(input.getParent());
         packetBuffer.writeString(input.getId());
+        packetBuffer.writeString(input.getResourceLocation().getPath());
         packetBuffer.writeString(input.getBranch());
         packetBuffer.writeString(input.getDesc());
         packetBuffer.writeInt(input.getDepth());
@@ -174,6 +177,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
     {
         final String parent = buffer.readString(32767);
         final String id = buffer.readString(32767);
+        final String resourcePath = buffer.readString(32767);
         final String branch = buffer.readString(32767);
         final String desc = buffer.readString(32767);
         final int depth = buffer.readInt();
@@ -221,7 +225,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
             effects.add(controller.deserialize(buffer));
         }
 
-        final IGlobalResearch research = getNewInstance(id, branch, parent, desc, depth, icon, subtitle, hasOnlyChild, hidden, autostart, instant, immutable);
+        final IGlobalResearch research = getNewInstance(id, resourcePath, branch, parent, desc, depth, icon, subtitle, hasOnlyChild, hidden, autostart, instant, immutable);
         research.setCosts(costs);
         research.setRequirement(reqs);
         research.setEffects(effects);

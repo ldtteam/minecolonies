@@ -23,6 +23,7 @@ public final class ResearchConstants
     public static final String TAG_PARENT         = "parent";
     public static final String TAG_STATE          = "state";
     public static final String TAG_ID             = "id";
+    public static final String TAG_RESOURCE_PATH  = "resource-path";
     public static final String TAG_BRANCH         = "branch";
     public static final String TAG_DESC           = "desc";
     public static final String TAG_COSTS          = "cost";

@@ -299,6 +299,7 @@ public class GlobalResearch implements IGlobalResearch
      * Create the new research with multiple effects
      *
      * @param id              its id.
+     * @param resourcePath    the path attribute of the ResourceLocation for the Research.
      * @param branch          the branch it is on.
      * @param parent          the research's parent, if one is present, or an empty string if not.
      * @param desc            the optional name of the research.  If "", a key generated from the id will be used instead.
@@ -311,7 +312,7 @@ public class GlobalResearch implements IGlobalResearch
      * @param instant         if the research should be completed instantly (ish) from when begun.
      * @param immutable       if the research can not be reset once unlocked.
      */
-    public GlobalResearch(final String id, final String branch, final String parent, final String desc, final int universityLevel, final String icon,
+    public GlobalResearch(final String id, final String resourcePath, final String branch, final String parent, final String desc, final int universityLevel, final String icon,
       final String subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable)
     {
         this.id = id;
@@ -320,7 +321,7 @@ public class GlobalResearch implements IGlobalResearch
         this.branch = branch;
         this.parent = parent;
         this.depth = universityLevel;
-        this.resourceLocation = new ResourceLocation("minecolonies","clientlocal/" + id);
+        this.resourceLocation = new ResourceLocation("minecolonies", resourcePath);
         this.onlyChild = onlyChild;
         this.hidden = hidden;
         this.autostart = autostart;
@@ -329,7 +330,7 @@ public class GlobalResearch implements IGlobalResearch
         this.immutable = immutable;
         if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
         {
-            Log.getLogger().info("Client recieved recipe [" + branch + "/" + id + "]");
+            Log.getLogger().info("Client received recipe [" + branch + "/" + id + "]");
         }
     }
 

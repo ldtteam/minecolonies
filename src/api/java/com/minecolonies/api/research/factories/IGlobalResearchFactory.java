@@ -30,42 +30,48 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
 
         if (!(context[1] instanceof String))
         {
-            throw new IllegalArgumentException("Second parameter is supposed to be the branchID (String)!");
+            throw new IllegalArgumentException("Second parameter is supposed to be the ResourceLocation Path (String)!");
         }
 
         if (!(context[2] instanceof String))
         {
-            throw new IllegalArgumentException("Third parameter is supposed to be the parent (String)!");
+            throw new IllegalArgumentException("Third parameter is supposed to be the branchID (String)!");
         }
 
         if (!(context[3] instanceof String))
         {
-            throw new IllegalArgumentException("Fourth parameter is supposed to be the description (String)!");
+            throw new IllegalArgumentException("Fourth parameter is supposed to be the parent (String)!");
         }
 
-        if (!(context[4] instanceof Integer))
+        if (!(context[4] instanceof String))
         {
-            throw new IllegalArgumentException("Fifth parameter is supposed to be the Depth (int)!");
+            throw new IllegalArgumentException("Fifth parameter is supposed to be the description (String)!");
+        }
+
+        if (!(context[5] instanceof Integer))
+        {
+            throw new IllegalArgumentException("Sixth parameter is supposed to be the Depth (int)!");
         }
 
         final String id = (String) context[0];
-        final String branch = (String) context[1];
-        final String parent = (String) context[2];
-        final String desc = (String) context[3];
-        final int depth = (int) context[4];
+        final String resourcePath = (String) context[1];
+        final String branch = (String) context[2];
+        final String parent = (String) context[3];
+        final String desc = (String) context[4];
+        final int depth = (int) context[5];
         final String icon;
-        if(context.length > 5)
+        if(context.length > 6)
         {
-            icon = (String) context[5];
+            icon = (String) context[6];
         }
         else
         {
             icon = "";
         }
         final String subtitle;
-        if(context.length > 6)
+        if(context.length > 7)
         {
-            subtitle = (String) context[6];
+            subtitle = (String) context[7];
         }
         else
         {
@@ -76,13 +82,13 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
         final boolean autostart;
         final boolean instant;
         final boolean immutable;
-        if (context.length == 12)
+        if (context.length == 13)
         {
-            onlyChild = (boolean) context[7];
-            hidden = (boolean) context[8];
-            autostart = (boolean) context[9];
-            instant = (boolean) context[10];
-            immutable = (boolean) context[11];
+            onlyChild = (boolean) context[8];
+            hidden = (boolean) context[9];
+            autostart = (boolean) context[10];
+            instant = (boolean) context[11];
+            immutable = (boolean) context[12];
         }
         else
         {
@@ -92,13 +98,14 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
             instant = false;
             immutable = false;
         }
-        return getNewInstance(id, branch, parent, desc, depth, icon, subtitle, onlyChild, hidden, autostart, instant, immutable);
+        return getNewInstance(id, resourcePath, branch, parent, desc, depth, icon, subtitle, onlyChild, hidden, autostart, instant, immutable);
     }
 
     /**
      * Method to get a new Instance of a Research.
      *
      * @param id                the id.
+     * @param resourcePath      the path representation of the ResourceLocation for the research.
      * @param branch            the branch.
      * @param parent            the research's parent, or "" if no parent.
      * @param desc              the description of the research.
@@ -113,6 +120,6 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
      * @return a new Instance of Research.
      */
     @NotNull
-    IGlobalResearch getNewInstance(final String id, final String branch, final String parent, final String desc, final int universityLevel,
+    IGlobalResearch getNewInstance(final String id, final String resourcePath, final String branch, final String parent, final String desc, final int universityLevel,
       final String icon,final String subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable);
 }
