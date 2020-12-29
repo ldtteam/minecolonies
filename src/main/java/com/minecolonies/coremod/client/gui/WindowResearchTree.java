@@ -563,8 +563,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         button.setSize(GRADIENT_WIDTH, GRADIENT_HEIGHT);
         button.setPosition(offsetX + INITIAL_X_OFFSET, offsetY);
         if(!abandoned && parentResearched &&
-             (research.getDepth() <= building.getBuildingLevel() || state != ResearchState.NOT_STARTED)
-                ||  (!hasMax && research.getDepth() >= building.getBuildingMaxLevel() && building.getBuildingLevel() == building.getBuildingMaxLevel()))
+                ((research.getDepth() <= building.getBuildingLevel() || state != ResearchState.NOT_STARTED)
+                ||  (!hasMax && research.getDepth() >= building.getBuildingMaxLevel() && building.getBuildingLevel() == building.getBuildingMaxLevel())))
         {
             button.setID(research.getId());
         }
