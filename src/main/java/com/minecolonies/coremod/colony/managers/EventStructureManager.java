@@ -157,23 +157,26 @@ public class EventStructureManager implements IEventStructureManager
 
             if (entry.getValue() == eventID)
             {
-                //TODO: remove compat for colony.getDimension()-based file names after sufficient time has passed from PR#6305
                 final String oldBackupPath = String.valueOf(colony.getID()) + colony.getDimension() + entry.getKey();
-                String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + oldBackupPath;
+                String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER).toString() + "/" +
+                        String.valueOf(colony.getID()) + "/" + colony.getDimension().getLocation().getNamespace() + colony.getDimension().getLocation().getPath() + "/" + entry.getKey();
 
-                File blueprintFile = new File(fileName);
-                if(!blueprintFile.exists())
+                // TODO: remove compat for colony.getDimension()-based file names after sufficient time has passed from PR#6305
+                if(CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
+                    fileName,
+                    entry.getKey(),
+                    Rotation.NONE,
+                    Mirror.NONE,
+                    true, null) == null)
                 {
-                    fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER).toString() + "/" +
-                                 String.valueOf(colony.getID()) + "/" + colony.getDimension().getLocation().getNamespace() + colony.getDimension().getLocation().getPath() + "/" + entry.getKey();
+                    fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + oldBackupPath;
+                    CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
+                            fileName,
+                            entry.getKey(),
+                            Rotation.NONE,
+                            Mirror.NONE,
+                            true, null);
                 }
-
-                CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
-                  fileName,
-                  entry.getKey(),
-                  Rotation.NONE,
-                  Mirror.NONE,
-                  true, null);
 
                 try
                 {
