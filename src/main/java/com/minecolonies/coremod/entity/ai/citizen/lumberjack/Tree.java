@@ -545,6 +545,24 @@ public class Tree
             tree.isTree = false;
         }
 
+        if (compound.contains(TAG_NETHER_TREE))
+        {
+            tree.netherTree = compound.getBoolean(TAG_NETHER_TREE);
+        }
+        else
+        {
+            tree.netherTree = false;
+        }
+
+        if (compound.contains(TAG_LEAVES))
+        {
+            final ListNBT leavesBin = compound.getList(TAG_LEAVES, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < leavesBin.size(); i++)
+            {
+                tree.leaves.add(BlockPosUtil.readFromListNBT(leavesBin, i));
+            }
+        }
+
         return tree;
     }
 
@@ -902,6 +920,14 @@ public class Tree
         sapling.write(saplingNBT);
 
         compound.put(TAG_SAPLING, saplingNBT);
+        compound.putBoolean(TAG_NETHER_TREE, netherTree);
+
+        @NotNull final ListNBT leavesBin = new ListNBT();
+        for (@NotNull final BlockPos pos : leaves)
+        {
+            BlockPosUtil.writeToListNBT(leavesBin, pos);
+        }
+        compound.put(TAG_LEAVES, leavesBin);
     }
 
     /**

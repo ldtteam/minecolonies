@@ -415,8 +415,7 @@ public final class BlockPosUtil
         return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerWorld) world)
                                                       .withLuck(fortune)
                                                       .withParameter(LootParameters.field_237457_g_, entity.getPositionVec())
-                                                      .withParameter(LootParameters.TOOL, stack)
-                                                      .withNullableParameter(LootParameters.THIS_ENTITY, entity));
+                                                      .withParameter(LootParameters.TOOL, stack));
     }
 
     /**

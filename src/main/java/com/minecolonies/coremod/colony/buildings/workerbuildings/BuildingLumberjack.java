@@ -12,7 +12,9 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
@@ -28,18 +30,21 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -66,8 +71,6 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
      * Nbt tag for restriction setting.
      */
     private static final String TAG_RESTRICT = "restrict";
-
-    private static final String TAG_NETHER_TREE = "netherTree";
 
     /**
      * Whether or not the LJ should replant saplings
@@ -103,12 +106,10 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
      */
     private final HashSet<BlockPos> netherTrees = new HashSet<>();
 
-
     /**
      * Modifier for fungi growing time. Increase to speed up.
      */
-
-    private static final int FUNGI_MODIFIER = 2;
+    private static final int FUNGI_MODIFIER = 10;
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -247,18 +248,10 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
             endRestriction = null;
         }
 
-        int i = 0;
-        while (true)
+        final ListNBT netherTreeBinTagList = compound.getList(TAG_NETHER_TREE_LIST, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < netherTreeBinTagList.size(); i++)
         {
-            if (compound.keySet().contains(TAG_NETHER_TREE + i))
-            {
-                addNetherTree(NBTUtil.readBlockPos(compound.getCompound(TAG_NETHER_TREE + i)));
-                i++;
-            }
-            else
-            {
-                break;
-            }
+            netherTrees.add(BlockPosUtil.readFromListNBT(netherTreeBinTagList, i));
         }
     }
 
@@ -279,12 +272,12 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
             compound.put(TAG_RESTRICT_END, NBTUtil.writeBlockPos(endRestriction));
         }
 
-        int i = 0;
-        for (final BlockPos pos : getNetherTrees())
+        @NotNull final ListNBT netherTreeBinCompoundList = new ListNBT();
+        for (@NotNull final BlockPos pos : netherTrees)
         {
-            compound.put(TAG_NETHER_TREE + i, NBTUtil.writeBlockPos(pos));
-            i++;
+            BlockPosUtil.writeToListNBT(netherTreeBinCompoundList, pos);
         }
+        compound.put(TAG_NETHER_TREE_LIST, netherTreeBinCompoundList);
 
         compound.putBoolean(TAG_RESTRICT, restrict);
         return compound;
@@ -421,12 +414,21 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     }
 
     /**
-     * Bonemeal fungi in netherTrees
+     * Returns early if no worker is assigned
+     * Iterates over the nether tree position list
+     * If position is a fungus, grows it depending on worker's level
+     * If the block has changed, removes the position from the list and returns early
+     * If the position is not a fungus, removes the position from the list
+     *
      */
-
     private void bonemealFungi()
     {
-        for (final BlockPos pos : getNetherTrees())
+        if (getMainCitizen() == null)
+        {
+            return;
+        }
+        final int modifier = Math.max(0, Math.min(FUNGI_MODIFIER, 100));
+        for (final BlockPos pos : netherTrees)
         {
             final World world = colony.getWorld();
             if (WorldUtil.isBlockLoaded(world, pos))
@@ -435,14 +437,15 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
                 Block block = blockState.getBlock();
                 if (block == Blocks.CRIMSON_FUNGUS || block == Blocks.WARPED_FUNGUS)
                 {
-                    int threshold = getMainCitizen().getCitizenSkillHandler().getLevel(getPrimarySkill()) * FUNGI_MODIFIER;
+                    int threshold = modifier + (int) Math.ceil(getMainCitizen().getCitizenSkillHandler().getLevel(getPrimarySkill())*(1-((float) modifier/100)));
                     final int rand = world.getRandom().nextInt(100);
                     if (rand < threshold)
                     {
                         final IGrowable growable = (IGrowable) block;
                         if (growable.canGrow(world, pos, blockState, world.isRemote)) {
                             if (!world.isRemote) {
-                                if(growable.canUseBonemeal(world, world.rand, pos, blockState)) {
+                                if(growable.canUseBonemeal(world, world.rand, pos, blockState))
+                                {
                                     growable.grow((ServerWorld) world, world.rand, pos, blockState);
                                 }
                             }
@@ -450,6 +453,11 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
                     }
                     blockState = world.getBlockState(pos);
                     block = blockState.getBlock();
+                    if (!(block == Blocks.CRIMSON_FUNGUS || block == Blocks.WARPED_FUNGUS))
+                    {
+                        removeNetherTree(pos);
+                        return;
+                    }
 
                 }
                 else
@@ -461,10 +469,9 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     }
 
     /**
-     * Returns a list of the registered nether tree to grow.
+     * Returns a list of the registered nether trees to grow.
      * @return a copy of the list
      */
-
     public HashSet<BlockPos> getNetherTrees()
     {
         return new HashSet<>(netherTrees);
@@ -474,12 +481,15 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
      * Removes a position from the nether trees
      * @param pos the position
      */
-
     public void removeNetherTree(BlockPos pos)
     {
         netherTrees.remove(pos);
     }
 
+    /**
+     * Adds a position to the nether trees
+     * @param pos the position
+     */
     public void addNetherTree(BlockPos pos)
     {
         netherTrees.add(pos);

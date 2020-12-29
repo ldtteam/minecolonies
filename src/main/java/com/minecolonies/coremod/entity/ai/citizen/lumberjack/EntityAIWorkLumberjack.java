@@ -554,20 +554,17 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         final List<ItemStack> newDrops = new ArrayList<>();
         for (final ItemStack stack : drops)
         {
-            boolean modified = false;
             if (world.getRandom().nextInt(100) > 95) {
                 if (stack.getItem() == Items.NETHER_WART_BLOCK) {
                     newDrops.add(new ItemStack(Items.CRIMSON_FUNGUS, 1));
-                    modified = true;
                 } else if (stack.getItem() == Items.WARPED_WART_BLOCK) {
                     newDrops.add(new ItemStack(Items.WARPED_FUNGUS, 1));
-                    modified = true;
                 }
             }
-            if (!modified)
-            {
-                newDrops.add(stack.copy());
-            }
+        }
+        if (newDrops.isEmpty())
+        {
+            return drops;
         }
         return newDrops;
     }
@@ -775,11 +772,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             {
                 final Block block = ((BlockItem) stack.getItem()).getBlock();
                 placeSaplings(saplingSlot, stack, block);
-                if (stack.getItem().isIn(fungi))
-                {
-                    final BuildingLumberjack building = getOwnBuilding();
-                    building.addNetherTree(location);
-                }
+
                 final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, worker);
                 world.playSound(null,
                   this.worker.getPosition(),
@@ -858,6 +851,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                     new_block = Blocks.CRIMSON_NYLIUM;
                 }
                 world.setBlockState(pos.down(), new_block.getDefaultState());
+                getOwnBuilding().addNetherTree(pos);
             }
             if ((world.setBlockState(pos, block.getDefaultState()) && getInventory().getStackInSlot(saplingSlot) != null)
                   || Objects.equals(world.getBlockState(pos), block.getDefaultState()))
