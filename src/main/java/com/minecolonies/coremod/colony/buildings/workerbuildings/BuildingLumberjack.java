@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ibm.icu.impl.CollectionSet;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -104,7 +103,7 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
     /**
      * A list of all planted nether trees
      */
-    private final HashSet<BlockPos> netherTrees = new HashSet<>();
+    private final Set<BlockPos> netherTrees = new HashSet<>();
 
     /**
      * Modifier for fungi growing time. Increase to speed up.
@@ -433,8 +432,8 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
             final World world = colony.getWorld();
             if (WorldUtil.isBlockLoaded(world, pos))
             {
-                BlockState blockState = world.getBlockState(pos);
-                Block block = blockState.getBlock();
+                final BlockState blockState = world.getBlockState(pos);
+                final Block block = blockState.getBlock();
                 if (block == Blocks.CRIMSON_FUNGUS || block == Blocks.WARPED_FUNGUS)
                 {
                     int threshold = modifier + (int) Math.ceil(getMainCitizen().getCitizenSkillHandler().getLevel(getPrimarySkill())*(1-((float) modifier/100)));
@@ -442,21 +441,16 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
                     if (rand < threshold)
                     {
                         final IGrowable growable = (IGrowable) block;
-                        if (growable.canGrow(world, pos, blockState, world.isRemote)) {
+                        if (growable.canGrow(world, pos, blockState, world.isRemote))
+                        {
                             if (!world.isRemote) {
                                 if(growable.canUseBonemeal(world, world.rand, pos, blockState))
                                 {
                                     growable.grow((ServerWorld) world, world.rand, pos, blockState);
+                                    return;
                                 }
                             }
                         }
-                    }
-                    blockState = world.getBlockState(pos);
-                    block = blockState.getBlock();
-                    if (!(block == Blocks.CRIMSON_FUNGUS || block == Blocks.WARPED_FUNGUS))
-                    {
-                        removeNetherTree(pos);
-                        return;
                     }
 
                 }
@@ -472,7 +466,7 @@ public class BuildingLumberjack extends AbstractFilterableListCrafter
      * Returns a list of the registered nether trees to grow.
      * @return a copy of the list
      */
-    public HashSet<BlockPos> getNetherTrees()
+    public Set<BlockPos> getNetherTrees()
     {
         return new HashSet<>(netherTrees);
     }

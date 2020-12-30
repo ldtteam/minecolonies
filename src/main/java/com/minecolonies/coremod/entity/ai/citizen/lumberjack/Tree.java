@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -161,7 +162,7 @@ public class Tree
             woodBlocks.clear();
             slimeTree = Compatibility.isSlimeBlock(bottomBlock);
             sapling = calcSapling(world);
-            if (sapling.getItem().isIn(ModTags.fungi))
+            if (sapling.getItem().isIn(fungi))
             {
                 netherTree = true;
             }

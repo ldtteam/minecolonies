@@ -554,7 +554,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         final List<ItemStack> newDrops = new ArrayList<>();
         for (final ItemStack stack : drops)
         {
-            if (world.getRandom().nextInt(100) > 95) {
+            if (world.getRandom().nextInt(100) > 95)
+            {
                 if (stack.getItem() == Items.NETHER_WART_BLOCK) {
                     newDrops.add(new ItemStack(Items.CRIMSON_FUNGUS, 1));
                 } else if (stack.getItem() == Items.WARPED_WART_BLOCK) {
