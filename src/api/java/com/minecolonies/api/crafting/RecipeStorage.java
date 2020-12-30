@@ -227,7 +227,7 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public boolean canFullFillRecipe(final int qty, final Map<ItemStorage, Integer> existingRequirements, @NotNull final IItemHandler... inventories)
     {
-        final int neededMultiplier = CraftingUtils.calculateMaxCraftingCount(qty, this);
+        final int neededMultiplier = ItemStackUtils.isEmpty(this.primaryOutput) ? qty : CraftingUtils.calculateMaxCraftingCount(qty, this);
         final List<ItemStorage> items = getCleanedInput();
 
         for (final ItemStorage storage : items)
@@ -507,11 +507,14 @@ public class RecipeStorage implements IRecipeStorage
      */
     private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context)
     {
-        for (final IItemHandler handler : handlers)
+        if(!ItemStackUtils.isEmpty(outputStack))
         {
-            if (InventoryUtils.addItemStackToItemHandler(handler, outputStack.copy()))
+            for (final IItemHandler handler : handlers)
             {
-                break;
+                if (InventoryUtils.addItemStackToItemHandler(handler, outputStack.copy()))
+                {
+                    break;
+                }
             }
         }
 
