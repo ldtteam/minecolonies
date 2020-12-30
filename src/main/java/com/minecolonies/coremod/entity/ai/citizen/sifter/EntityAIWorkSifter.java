@@ -1,13 +1,10 @@
 package com.minecolonies.coremod.entity.ai.citizen.sifter;
 
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
@@ -18,19 +15,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameterSet;
-import net.minecraft.loot.LootParameters;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
-import java.util.function.Predicate;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
  * Sifter AI class.
@@ -58,16 +47,6 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
     protected int progress = 0;
 
     /**
-     * Random number generator to use for this instance of the sifter
-     */
-    private final Random rand; 
-
-    /**
-     * The loot parameter set definition
-     */
-    private static final LootParameterSet recipeLootParameters = (new LootParameterSet.Builder()).required(LootParameters.field_237457_g_).required(LootParameters.THIS_ENTITY).required(LootParameters.TOOL).build();
-
-    /**
      * Constructor for the sifter. Defines the tasks the cook executes.
      *
      * @param job a sifter job to use.
@@ -81,7 +60,6 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
           new AITarget(SIFT, this::sift, TICK_DELAY)
         );
         worker.setCanPickUpLoot(true);
-        rand = new Random();
     }
 
     @Override
@@ -129,13 +107,6 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             worker.setHeldItem(Hand.MAIN_HAND, meshItem);
         }
 
-        final LootContext.Builder builder = (new LootContext.Builder((ServerWorld) this.world))
-            .withParameter(LootParameters.field_237457_g_, worker.getPositionVec())
-            .withParameter(LootParameters.THIS_ENTITY, worker)
-            .withParameter(LootParameters.TOOL, worker.getHeldItemMainhand())
-            .withRandom(this.rand)
-            .withLuck((float) getEffectiveSkillLevel(getPrimarySkillLevel()));
-
         if (currentRecipeStorage == null)
         {
             progress = 0;
@@ -152,7 +123,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             {
                 incrementActionsDoneAndDecSaturation();
             } 
-            currentRecipeStorage.fullfillRecipe(builder.build(recipeLootParameters), sifterBuilding.getHandlers());
+            currentRecipeStorage.fullfillRecipe(getLootContext(), sifterBuilding.getHandlers());
 
             //Handle mesh breaking
             if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
