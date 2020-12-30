@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.sifter;
 
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -13,24 +12,20 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameter;
 import net.minecraft.loot.LootParameterSet;
-import net.minecraft.loot.LootParameterSets;
 import net.minecraft.loot.LootParameters;
-import net.minecraft.loot.conditions.LootConditionManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -63,6 +58,16 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
     protected int progress = 0;
 
     /**
+     * Random number generator to use for this instance of the sifter
+     */
+    private final Random rand; 
+
+    /**
+     * The loot parameter set definition
+     */
+    private static final LootParameterSet recipeLootParameters = (new LootParameterSet.Builder()).required(LootParameters.field_237457_g_).required(LootParameters.THIS_ENTITY).required(LootParameters.TOOL).build();
+
+    /**
      * Constructor for the sifter. Defines the tasks the cook executes.
      *
      * @param job a sifter job to use.
@@ -76,6 +81,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
           new AITarget(SIFT, this::sift, TICK_DELAY)
         );
         worker.setCanPickUpLoot(true);
+        rand = new Random();
     }
 
     @Override
@@ -84,42 +90,10 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         return BuildingSifter.class;
     }
 
-    /**
-     * Check if we have the block we should be sieving right now, else request.
-     *
-     * @param storage        the block to sieve.
-     * @param sifterBuilding the building of the sifter.
-     * @return the next state to go.
-     */
-    private IAIState checkForSievableBlock(final ItemStorage storage, final BuildingSifter sifterBuilding)
-    {
-        final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(storage.getItemStack());
-        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), predicate))
-        {
-            if (InventoryUtils.hasItemInProvider(sifterBuilding, predicate))
-            {
-                needsCurrently = new Tuple<>(predicate, STACKSIZE);
-                return GATHERING_REQUIRED_MATERIALS;
-            }
-
-            final int requestQty = Math.min((sifterBuilding.getDailyQuantity() - sifterBuilding.getCurrentDailyQuantity()) * 2, STACKSIZE);
-            if (requestQty <= 0)
-            {
-                return START_WORKING;
-            }
-            final ItemStack stack = storage.getItemStack();
-            stack.setCount(requestQty);
-
-            checkIfRequestForItemExistOrCreate(stack);
-            return NEEDS_ITEM;
-        }
-        return getState();
-    }
-
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return 10;
+        return 1; 
     }
 
     /**
@@ -135,8 +109,6 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         }
         WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
 
-        progress++;
-
         final BuildingSifter sifterBuilding = getOwnBuilding();
 
         if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
@@ -149,76 +121,56 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             return START_WORKING;
         }
 
-        currentRecipeStorage = sifterBuilding.getFirstFullFillableRecipe(item -> item.isEmpty(), 1, false);
+        currentRecipeStorage = sifterBuilding.getFirstFullFillableRecipe(item -> ItemStackUtils.isEmpty(item), 1, false);
+
+        ItemStack meshItem = sifterBuilding.getMesh().getA().getItemStack().copy();
+        if(ItemStackUtils.isEmpty(worker.getHeldItemMainhand()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getHeldItemMainhand(), meshItem))
+        {
+            worker.setHeldItem(Hand.MAIN_HAND, meshItem);
+        }
 
         final LootContext.Builder builder = (new LootContext.Builder((ServerWorld) this.world))
             .withParameter(LootParameters.field_237457_g_, worker.getPositionVec())
             .withParameter(LootParameters.THIS_ENTITY, worker)
-            .withParameter(LootParameters.TOOL, worker.getHeldItemMainhand());
-            //.withRandom(this.rand);
+            .withParameter(LootParameters.TOOL, worker.getHeldItemMainhand())
+            .withRandom(this.rand);
             //.withLuck((float) this.luck);
 
         if (currentRecipeStorage == null)
         {
+            progress = 0;
             return START_WORKING;
         }
-        
+
+        progress++;
+       
         //final IAIState check = checkForSievableBlock(currentRecipeStorage.getCleanedInput().get(0), sifterBuilding);
-        if (progress > MAX_LEVEL - Math.min((getSecondarySkillLevel() / 5) + 1, MAX_LEVEL))
+        if (progress > MAX_LEVEL - (getEffectiveSkillLevel(getSecondarySkillLevel()) / 2))
         {
             progress = 0;
             sifterBuilding.setCurrentDailyQuantity(sifterBuilding.getCurrentDailyQuantity() + 1);
             if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity() || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < CHANCE_TO_DUMP_INV)
             {
-                sifterBuilding.setCurrentDailyQuantity(sifterBuilding.getCurrentDailyQuantity() + 1);
-                if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity() || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < CHANCE_TO_DUMP_INV)
-                {
-                    incrementActionsDoneAndDecSaturation();
-                }
+                incrementActionsDoneAndDecSaturation();
+            } 
+            currentRecipeStorage.fullfillRecipe(builder.build(recipeLootParameters), sifterBuilding.getHandlers());
 
-                final ItemStack result =
-                  IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock(), 1 +  (int) Math.round(getPrimarySkillLevel()/10.0));
-                if (!result.isEmpty())
-                {
-                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), result);
-                }
-                InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), sifterBuilding.getSievableBlock().getItemStack());
-
-                if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
-                {
-                    sifterBuilding.resetMesh();
-                    worker.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers().forEach(player -> player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.meshbroke"), player.getUniqueID()));
-                }
-
-                worker.decreaseSaturationForContinuousAction();
-                worker.getCitizenExperienceHandler().addExperience(0.2);
-
-                /*
-                final ItemStack result =
-                    IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock(), 1 +  (int) Math.round(getPrimarySkillLevel()/10.0));
-                if (!result.isEmpty())
-                {
-                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), result);
-                }
-                InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), sifterBuilding.getSievableBlock().getItemStack());
-
-                if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
-                {
-                    sifterBuilding.resetMesh();
-                    worker.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.meshbroke"));
-                }
-                */
-                currentRecipeStorage.fullfillRecipe(builder.build(LootParameterSets.SELECTOR), getOwnBuilding().getHandlers());
-
-                worker.decreaseSaturationForContinuousAction();
-                worker.getCitizenExperienceHandler().addExperience(0.2);
+            //Handle mesh breaking
+            if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
+            {
+                sifterBuilding.resetMesh();
+                worker.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers().forEach(player -> player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.meshbroke"), player.getUniqueID()));
             }
-            Network.getNetwork()
-                .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getA().getItemStack().copy(), sifterBuilding.getID()), worker);
-            Network.getNetwork()
-                .sendToTrackingEntity(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), worker);
+
+            worker.decreaseSaturationForContinuousAction();
+            worker.getCitizenExperienceHandler().addExperience(0.2);
         }
 
+        Network.getNetwork()
+            .sendToTrackingEntity(new LocalizedParticleEffectMessage(meshItem, sifterBuilding.getID()), worker);
+        Network.getNetwork()
+            .sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getCleanedInput().get(0).getItemStack().copy(), sifterBuilding.getID().down()), worker);
+        
         worker.swingArm(Hand.MAIN_HAND);
         SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.ENTITY_LEASH_KNOT_BREAK);
         return getState();
