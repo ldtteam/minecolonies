@@ -3,7 +3,6 @@
     {
       "name": "minecolonies:recipes/gravel",
       "rolls": 1,
-      "bonus_rolls": 1,
       "entries": [
         {
           "type": "empty",
