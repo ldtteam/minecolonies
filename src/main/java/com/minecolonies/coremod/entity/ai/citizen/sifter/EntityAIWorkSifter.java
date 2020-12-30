@@ -133,8 +133,8 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             .withParameter(LootParameters.field_237457_g_, worker.getPositionVec())
             .withParameter(LootParameters.THIS_ENTITY, worker)
             .withParameter(LootParameters.TOOL, worker.getHeldItemMainhand())
-            .withRandom(this.rand);
-            //.withLuck((float) this.luck);
+            .withRandom(this.rand)
+            .withLuck((float) getEffectiveSkillLevel(getPrimarySkillLevel()));
 
         if (currentRecipeStorage == null)
         {
@@ -144,7 +144,6 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
 
         progress++;
        
-        //final IAIState check = checkForSievableBlock(currentRecipeStorage.getCleanedInput().get(0), sifterBuilding);
         if (progress > MAX_LEVEL - (getEffectiveSkillLevel(getSecondarySkillLevel()) / 2))
         {
             progress = 0;

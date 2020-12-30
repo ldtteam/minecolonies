@@ -11,7 +11,6 @@
             }
         ],
         "rolls": 1,
-        "bonus_rolls": 1,
         "entries": [
           {
             "type": "empty",
@@ -35,7 +34,6 @@
             {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecraft:flint"} } }}
         ],
         "rolls": 1,
-        "bonus_rolls": 1,
         "entries": [
           {
             "type": "empty",
@@ -64,7 +62,7 @@
             {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecraft:iron_ingot"} } }}
         ],
         "rolls": 1,
-        "bonus_rolls": 1,
+        "bonus_rolls": 0.025,
         "entries": [
           {
             "type": "empty",
@@ -98,7 +96,7 @@
             {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecraft:diamond"} } }}
         ],
         "rolls": 1,
-        "bonus_rolls": 1,
+        "bonus_rolls": 0.035,
         "entries": [
           {
             "type": "empty",
