@@ -612,12 +612,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
     /**
      * Apply a early bonus curve to a skill level
+     * note: This adjusts the range from 0-99 to be 1-100
      * @param rawSkillLevel to apply the curve to
      * @return effective skill level to use in linear bonus functions
      */
     protected int getEffectiveSkillLevel(int rawSkillLevel)
     {
-        return (int)((rawSkillLevel * 2) - Math.pow(rawSkillLevel / 10.0, 2));
+        return (int)(((rawSkillLevel + 1) * 2) - Math.pow((rawSkillLevel + 1 ) / 10.0, 2));
     }
 
     /**
