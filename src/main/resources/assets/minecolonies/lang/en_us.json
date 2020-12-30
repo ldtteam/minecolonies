@@ -1282,6 +1282,7 @@
   "com.minecolonies.coremod.general.canttakeequipped": "The only armor you have is what you're wearing. Put it in your inventory if you want to give it to me.",
 
   "com.minecolonies.coremod.gui.workerhuts.siftersettings": "Daily limit",
+  "com.minecolonies.coremod.gui.workerhuts.sifterinfo": "Max %d :",
   "block.minecolonies.blockhutsifter": "Sifter",
   "block.minecolonies.blockhutsifter.name": "Sifter",
 

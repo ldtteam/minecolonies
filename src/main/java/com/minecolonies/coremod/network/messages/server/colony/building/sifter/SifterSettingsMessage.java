@@ -126,6 +126,6 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
             }
         }
 
-        building.setup(new ItemStorage(block), new ItemStorage(mesh), qty);
+        building.setup(new ItemStorage(mesh), qty);
     }
 }
