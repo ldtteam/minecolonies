@@ -9,13 +9,11 @@
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 24" textalign="MIDDLE" color="black"
                    label="$(com.minecolonies.coremod.gui.workerhuts.sifterSettings):"/>
-            <label size="86 17" pos="25 40" textalign="MIDDLE" color="black" id="maxSifted"
+
+            <input id="qty" size="50 18" pos="30 40" maxlength="25"/>
+            <label size="86 17" pos="80 40" textalign="MIDDLE" color="black" id="maxSifted"
                    label="$(com.minecolonies.coremod.gui.workerhuts.sifterInfo)"/>
-<!--
-            <buttonimage id="block" size="86 17" pos="25 40" textcolor="black"
-                         source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
--->
-            <input id="qty" size="50 18" pos="115 40" maxlength="25"/>
+
             <buttonimage id="save" size="86 17" pos="52 60" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png" label="$(com.minecolonies.coremod.gui.workerhuts.save)"/>
 
