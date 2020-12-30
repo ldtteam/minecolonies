@@ -47,8 +47,10 @@ public class ItemBlockHut extends BlockItem
         super.addInformation(stack, worldIn, tooltip, flagIn);
         if (block.needsResearch())
         {
-            tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getName()));
-            tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getName()));
+            final TranslationTextComponent blockName = new TranslationTextComponent(block.getTranslationKey());
+            //TranslationTextComponent blockName = new TranslationTextComponent(block.getName());
+            tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, blockName));
+            tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, blockName));
         }
     }
 
