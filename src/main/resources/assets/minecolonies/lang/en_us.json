@@ -372,7 +372,7 @@
   "item.minecolonies.scroll_buff": "Regeneration Scroll",
   "item.minecolonies.scroll_buff.tip": "Applies regeneration to citizens around you, at least most of the time...",
   "item.minecolonies.scroll_guard_help": "Reinforcements Scroll",
-  "item.minecolonies.scroll_guard_help.tip": "Call your guards to help you out for a limited time.",
+  "item.minecolonies.scroll_guard_help.tip": "Call your guards to help you out for a limited time",
   "item.minecolonies.scroll_highlight": "Worker Locator Scroll",
   "item.minecolonies.scroll_highlight.tip": "Sneak + use on a hut block to highlight and speed up its worker(s)",
   "minecolonies.scroll.nopermission": "You do not have the required permissions for this colony.",
