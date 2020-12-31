@@ -71,11 +71,6 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
     /**
      * The current sifter mesh.
      */
-    private ItemStorage block;
-
-    /**
-     * The current sifter mesh.
-     */
     private ItemStorage mesh;
 
     /**
@@ -199,7 +194,7 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
         try
         {
             final int qty = Integer.parseInt(crushingSettingsInput.getText());
-            building.save(block, mesh, qty, true);
+            building.save(mesh, qty, true);
         }
         catch (final NumberFormatException ex)
         {
@@ -216,7 +211,7 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
         try
         {
             final int qty = Integer.parseInt(crushingSettingsInput.getText());
-            building.save(block, mesh, qty, false);
+            building.save(mesh, qty, false);
         }
         catch (final NumberFormatException ex)
         {

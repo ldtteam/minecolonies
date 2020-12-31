@@ -315,11 +315,6 @@ public class BuildingSifter extends AbstractBuildingWorker
         private int maxDailyQuantity = 0;
 
         /**
-         * The current block to be sifted.
-         */
-        private ItemStorage sifterBlock;
-
-        /**
          * The currently used mesh.
          */
         private ItemStorage mesh;
@@ -383,16 +378,6 @@ public class BuildingSifter extends AbstractBuildingWorker
         }
 
         /**
-         * Getter for the current sifter block.
-         *
-         * @return an ItemStorage.
-         */
-        public ItemStorage getSifterBlock()
-        {
-            return sifterBlock;
-        }
-
-        /**
          * Getter for the currently used mesh.
          *
          * @return an ItemStorage.
@@ -438,11 +423,10 @@ public class BuildingSifter extends AbstractBuildingWorker
          * @param dailyQuantity the daily quantity.
          * @param buy           if buying the mesh is involved.
          */
-        public void save(final ItemStorage sifterBlock, final ItemStorage mesh, final int dailyQuantity, final boolean buy)
+        public void save(final ItemStorage mesh, final int dailyQuantity, final boolean buy)
         {
-            this.sifterBlock = sifterBlock;
             this.mesh = mesh;
-            Network.getNetwork().sendToServer(new SifterSettingsMessage(this, sifterBlock, mesh, dailyQuantity, buy));
+            Network.getNetwork().sendToServer(new SifterSettingsMessage(this, mesh, dailyQuantity, buy));
         }
 
 
