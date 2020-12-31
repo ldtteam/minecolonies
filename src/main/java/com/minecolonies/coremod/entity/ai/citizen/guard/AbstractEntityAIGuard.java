@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
@@ -34,7 +33,6 @@ import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -300,13 +298,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         {
             // Sleep for 2500-3000 ticks
             sleepTimer = worker.getRandom().nextInt(500) + 2500;
-
-            final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(world);
-            entity.setPosition(worker.getPosX(), worker.getPosY() - 1f, worker.getPosZ());
-            entity.setMaxLifeTime(sleepTimer);
-            world.addEntity(entity);
-            worker.startRiding(entity);
-            worker.getNavigator().clearPath();
+            SittingEntity.sitDown(worker.getPosition(), worker, sleepTimer);
 
             return true;
         }
@@ -873,13 +865,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return true;
         }
 
-        if (entity instanceof IMob)
+        final MobEntryView entry = buildingGuards.getMobsToAttack().get(entity.getType().getRegistryName());
+        if (entry != null && entry.shouldAttack())
         {
-            final MobEntryView entry = buildingGuards.getMobsToAttack().get(entity.getType().getRegistryName());
-            if (entry != null && entry.shouldAttack())
-            {
-                return true;
-            }
+            return true;
         }
 
         final IColony colony = worker.getCitizenColonyHandler().getColony();
@@ -987,7 +976,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return null;
         }
 
-        final List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, getSearchArea());
+        final List<LivingEntity> entities = world.getLoadedEntitiesWithinAABB(LivingEntity.class, getSearchArea());
 
         int closest = Integer.MAX_VALUE;
         LivingEntity targetEntity = null;

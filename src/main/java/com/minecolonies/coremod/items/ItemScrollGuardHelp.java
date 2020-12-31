@@ -150,6 +150,12 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
     public ActionResultType onItemUse(ItemUseContext ctx)
     {
         final ActionResultType result = super.onItemUse(ctx);
+
+        if (ctx.getWorld().isRemote)
+        {
+            return result;
+        }
+
         final TileEntity te = ctx.getWorld().getTileEntity(ctx.getPos());
         if (te instanceof TileEntityColonyBuilding && ctx.getPlayer() != null)
         {
@@ -187,7 +193,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
 
         String colonyDesc = new TranslationTextComponent("item.minecolonies.scroll.colony.none").getString();
 
-        final IColony colony = getColony(stack);
+        final IColony colony = getColonyView(stack);
         if (colony != null)
         {
             colonyDesc = colony.getName();

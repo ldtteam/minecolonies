@@ -112,7 +112,7 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
      */
     private List<ServerPlayerEntity> getAffectedPlayers(final ServerPlayerEntity user)
     {
-        return user.world.getEntitiesWithinAABB(ServerPlayerEntity.class, user.getBoundingBox().grow(10, 2, 10));
+        return user.world.getLoadedEntitiesWithinAABB(ServerPlayerEntity.class, user.getBoundingBox().grow(10, 2, 10));
     }
 
     @Override
@@ -125,7 +125,7 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
 
         String colonyDesc = new TranslationTextComponent("item.minecolonies.scroll.colony.none").getString();
 
-        final IColony colony = getColony(stack);
+        final IColony colony = getColonyView(stack);
         if (colony != null)
         {
             colonyDesc = colony.getName();

@@ -6,7 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.Tuple;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Arrays;
@@ -37,18 +38,18 @@ public final class FireworkUtils
      * @param world          which world to spawn it in from
      * @param explosionLevel how many fireworks to spawn in each corner
      */
-    public static void spawnFireworksAtAABBCorners(final AxisAlignedBB realaabb, final World world, final int explosionLevel)
+    public static void spawnFireworksAtAABBCorners(final Tuple<BlockPos, BlockPos> realaabb, final World world, final int explosionLevel)
     {
-        final FireworkRocketEntity firework = new FireworkRocketEntity(world, realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(explosionLevel));
+        final FireworkRocketEntity firework = new FireworkRocketEntity(world, realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getB().getZ(), genFireworkItemStack(explosionLevel));
         world.addEntity(firework);
 
-        final FireworkRocketEntity fireworka = new FireworkRocketEntity(world, realaabb.maxX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(explosionLevel));
+        final FireworkRocketEntity fireworka = new FireworkRocketEntity(world, realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getA().getZ(), genFireworkItemStack(explosionLevel));
         world.addEntity(fireworka);
 
-        final FireworkRocketEntity fireworkb = new FireworkRocketEntity(world, realaabb.minX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(explosionLevel));
+        final FireworkRocketEntity fireworkb = new FireworkRocketEntity(world, realaabb.getA().getX(), realaabb.getB().getY(), realaabb.getB().getZ(), genFireworkItemStack(explosionLevel));
         world.addEntity(fireworkb);
 
-        final FireworkRocketEntity fireworkc = new FireworkRocketEntity(world, realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(explosionLevel));
+        final FireworkRocketEntity fireworkc = new FireworkRocketEntity(world, realaabb.getA().getX(), realaabb.getB().getY(), realaabb.getA().getZ(), genFireworkItemStack(explosionLevel));
         world.addEntity(fireworkc);
     }
 

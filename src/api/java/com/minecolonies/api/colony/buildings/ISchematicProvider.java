@@ -19,26 +19,17 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
     /**
      * Sets the corners of the building based on the schematic.
      *
-     * @param x1 the first x corner.
-     * @param x2 the second x corner.
-     * @param z1 the first z corner.
-     * @param z2 the second z corner.
+     * @param corner1 the first corner.
+     * @param corner2 the second corner.
      */
-    void setCorners(int x1, int x2, int z1, int z2);
-
-    /**
-     * Set the height of the building.
-     *
-     * @param height the height to set.
-     */
-    void setHeight(int height);
+    void setCorners(final BlockPos corner1, final BlockPos corner2);
 
     /**
      * Get all the corners of the building based on the schematic.
      *
      * @return the corners.
      */
-    Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> getCorners();
+    Tuple<BlockPos, BlockPos> getCorners();
 
     /**
      * Returns the {@code BlockPos} of the current object, also used as ID.
@@ -46,14 +37,6 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
      * @return {@code BlockPos} of the current object.
      */
     BlockPos getID();
-
-    /**
-     * Calculates the area of the building.
-     *
-     * @param world the world.
-     * @return the AxisAlignedBB.
-     */
-    AxisAlignedBB getTargetableArea(World world);
 
     /**
      * Returns the rotation of the current building.
@@ -75,13 +58,6 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
      * @param style String value of the style.
      */
     void setStyle(String style);
-
-    /**
-     * Get the height of the building.
-     *
-     * @return the height..
-     */
-    int getHeight();
 
     /**
      * Returns the level of the current object.

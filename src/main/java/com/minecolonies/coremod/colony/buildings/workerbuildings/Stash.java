@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +37,13 @@ public class Stash extends AbstractBuilding implements IRSComponent
     public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
         return ImmutableList.of();
+    }
+
+    @Override
+    public Tuple<BlockPos, BlockPos> getCorners()
+    {
+        this.setCorners(this.getPosition(), this.getPosition());
+        return super.getCorners();
     }
 
     @NotNull

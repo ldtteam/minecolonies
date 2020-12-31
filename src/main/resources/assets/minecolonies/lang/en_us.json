@@ -60,7 +60,7 @@
   "minecolonies.config.malefirstnames.comment": "Male first names to be used for colonists",
   "minecolonies.config.femalefirstnames": "Female First Names",
   "minecolonies.config.femalefirstnames.comment": "Female first names to be used for colonists",
-  "minecolonies.config.lastnames": "Last names",
+  "minecolonies.config.lastnames": "Last Names",
   "minecolonies.config.lastnames.comment": "Last names to be used for colonists",
 
   "minecolonies.config.initialcitizenamount": "Initital Citizen Count",
@@ -398,7 +398,7 @@
   "entity.builder.messagebuildcomplete_manual": " finished building %s. You can assign them another task now!",
   "entity.builder.messagebuildcomplete_generic": "%s finished building %s.",
   "entity.builder.messagebuildcomplete_generic_manual": "%s finished building %s. You can assign them another task now!",
-  "entity.builder.messageremovalcomplete": " finished deconstructing building %s.",
+  "entity.builder.messageremovalcomplete": " finished deconstructing building %s. §6 To move the building while retaining its current level, use the 'Pick Up' button on the building's 'Build Options' GUI.\",",
   "entity.builder.messagebuildtoohigh": "%s is too high! Please lower the building below Y 256.",
   "entity.builder.messagebuildtoolow": "%s is too low! Please raise the building above Y 0.",
   "entity.builder.messageneedmaterial": "I need %s (amount: %d).",
@@ -604,7 +604,11 @@
   "com.minecolonies.coremod.gui.townhall.togglespec": "Toggle Specialization",
   "com.minecolonies.coremod.gui.townhall.actions": "Actions",
   "com.minecolonies.coremod.gui.townhall.jobhiring": "Worker Hiring Mode:",
-  "com.minecolonies.coremod.gui.townhall.population.totalcitizens": "Number of Citizens: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.totalcitizens": "Number of Citizens: ",
+  "com.minecolonies.coremod.gui.townhall.population.totalcitizens.count": "%d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.totalcitizens.houselimited": "Needs Housing",
+  "com.minecolonies.coremod.gui.townhall.population.totalcitizens.researchlimited": "Research at University",
+  "com.minecolonies.coremod.gui.townhall.population.totalcitizens.configlimited": "Reached Configured Limit",
   "com.minecolonies.coremod.gui.townhall.population.each": "%s: %d/%d",
   "com.minecolonies.coremod.gui.townhall.population.unemployed": "Unemployed: %d",
   "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d",
@@ -725,7 +729,8 @@
   "entity.worker.specifictoolrequest": "I need a %s of a grade of %s.",
   "entity.worker.toolatleastrequest": "I need a %s of at least grade of %s.",
   "entity.worker.enchantedtoolrequest": "I need a %s with maximum enchantment level of %d.",
-  "com.minecolonies.coremod.warehouse.full": "The Warehouse is full, please upgrade it or use an emerald block to make more space in the racks!",
+  "com.minecolonies.coremod.warehouse.full": "The Warehouse is full, please upgrade it!",
+  "com.minecolonies.coremod.warehouse.full.max": "The Warehouse is full, please use an emerald block to make more space in the racks!",
   "block.minecolonies.blockhutwarehouse": "Warehouse",
   "block.minecolonies.blockhutwarehouse.name": "Warehouse",
   "block.minecolonies.blockhuttavern": "Tavern",
@@ -1157,6 +1162,7 @@
   "com.minecolonies.coremod.progress.manual_employment_on": "§6 Workers are complaining about a long walk to their work. You can manually assign them to the closest houses, if the option is turned on in the Town Hall settings.",
   "com.minecolonies.coremod.progress.ten_citizens_spawned": "§6 A growing colony increases the burdens on your settlers. You should consider upgrading your work huts.",
   "com.minecolonies.coremod.progress.twenty_building_levels": "§6 A barbarian spy had been caught next to your colony, and he seems to be from a bigger group! You should consider building Barracks to defend your colony.",
+  "com.minecolonies.coremod.progress.twenty_five_citizens_spawned": "§6 Your colony's population has grown to the limits of current management techniques. To accept more citizens, complete the research at the University.",
   "com.minecolonies.coremod.progress.not_enough_jobs": "§6 Building more Houses than available jobs has a bad influence on your citizens' happiness.",
   "com.minecolonies.coremod.progress.newchild": "§6 A new child is now happily living in your colony!",
   "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now.",
@@ -1174,6 +1180,10 @@
   "com.minecolonies.coremod.gui.townhall.buildinglevel": "Building level",
 
   "com.minecolonies.coremod.gui.warehouse.sort": "Sort",
+  "com.minecolonies.coremod.gui.warehouse.sort.disabled.1": "Sorting requires",
+  "com.minecolonies.coremod.gui.warehouse.sort.disabled.2": "Warehouse Level %s",
+  "com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1": "Rack upgrade requires",
+  "com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2": "Warehouse Level %s",
   "com.minecolonies.coremod.gui.auto.hire.warning": "Turn the hiring mode of this hut (and colony) to manual to fire this worker or hire another one.",
   "com.minecolonies.coremod.citizens.nospace": "Colonists can't arrive at your colony because there is not enough space at pos X:%d Y:%d Z:%d!",
 
@@ -1326,9 +1336,9 @@
   "com.minecolonies.gui.workerhuts.florist.toolow": "The Florist currently randomly grows the flowers in this list, upgrade the Flower Shop to level 3 or above to select them manually!",
   "com.minecolonies.gui.workerhuts.florist.toomany": "You can deactivate max 5 options. Upgrade to level 5 to restrict it further!",
   "com.minecolonies.gui.workerhuts.florist.toomanybelow": "You can deactivate max 1 option. Upgrade to level 4 to restrict it further!",
-  "com.minecolonies.coremod.gui.townHall.population.florists": "Florists: %d/%d",
-  "com.minecolonies.coremod.gui.townHall.population.bakerys": "Bakeries: %d/%d",
-  "com.minecolonies.coremod.gui.townHall.population.universitys": "Universities: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.florists": "Florists: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.bakerys": "Bakeries: %d/%d",
+  "com.minecolonies.coremod.gui.townhall.population.universitys": "Universities: %d/%d",
 
   "block.minecolonies.blockhutflorist": "Flower Shop",
 
@@ -1927,6 +1937,14 @@
   "com.minecolonies.coremod.gui.happiness.negative": "Negative",
   "com.minecolonies.coremod.gui.happiness.slightlynegative": "Slightly Negative",
   "com.minecolonies.coremod.gui.happiness.neutral": "Neutral",
-  "com.minecolonies.coremod.gui.happiness.positive": "Positive"
+  "com.minecolonies.coremod.gui.happiness.positive": "Positive",
+  
+  "com.minecolonies.coremod.gui.townhalltab.information": "Information",
+  "com.minecolonies.coremod.gui.townhalltab.actions": "Actions",
+  "com.minecolonies.coremod.gui.townhalltab.permissions": "Permissions",
+  "com.minecolonies.coremod.gui.townhalltab.citizens": "Citizens",
+  "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
+  "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
+  "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness"
 
 }

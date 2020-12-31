@@ -220,7 +220,7 @@ public final class RaiderMobUtils
      */
     public static List<AbstractEntityMinecoloniesMob> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity)
     {
-        return CompatibilityUtils.getWorldFromEntity(entity).getEntitiesWithinAABB(
+        return CompatibilityUtils.getWorldFromEntity(entity).getLoadedEntitiesWithinAABB(
           AbstractEntityMinecoloniesMob.class,
           entity.getBoundingBox().expand(
             distanceFromEntity,
