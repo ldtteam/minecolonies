@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityArcherMummy;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityMummy;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityPharao;
-import com.minecolonies.coremod.network.messages.client.PlayMusicMessage;
+import com.minecolonies.coremod.network.messages.client.PlayAudioMessage;
 import com.minecolonies.coremod.network.messages.client.StopMusicMessage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -56,11 +56,7 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     public void onStart()
     {
         super.onStart();
-        for (final PlayerEntity player : getColony().getImportantMessageEntityPlayers())
-        {
-            Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayerEntity) player);
-            Network.getNetwork().sendToPlayer(new PlayMusicMessage(RaidSounds.DESERT_RAID_WARNING), (ServerPlayerEntity) player);
-        }
+        PlayAudioMessage.sendToAll(getColony(), true, false, new PlayAudioMessage(RaidSounds.DESERT_RAID_WARNING));
     }
 
     @Override
@@ -77,23 +73,8 @@ public class EgyptianRaidEvent extends HordeRaidEvent
 
         if (--musicCooldown <= 0)
         {
-            for (final PlayerEntity player : getColony().getImportantMessageEntityPlayers())
-            {
-                Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayerEntity) player);
-                Network.getNetwork().sendToPlayer(new PlayMusicMessage(RaidSounds.DESERT_RAID), (ServerPlayerEntity) player);
-            }
+            PlayAudioMessage.sendToAll(getColony(), true, true, new PlayAudioMessage(RaidSounds.DESERT_RAID));
             musicCooldown = 12;
-        }
-    }
-
-    @Override
-    public void onFinish()
-    {
-        super.onFinish();
-        for (final PlayerEntity player : getColony().getImportantMessageEntityPlayers())
-        {
-            Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayerEntity) player);
-            Network.getNetwork().sendToPlayer(new PlayMusicMessage(RaidSounds.DESERT_RAID_VICTORY), (ServerPlayerEntity) player);
         }
     }
 

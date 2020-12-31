@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
-import com.minecolonies.coremod.network.messages.client.PlayMusicMessage;
+import com.minecolonies.coremod.network.messages.client.PlayAudioMessage;
 import com.minecolonies.coremod.network.messages.client.StopMusicMessage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -101,7 +101,7 @@ public class AmazonRaidEvent extends HordeRaidEvent
             for (final PlayerEntity player : getColony().getImportantMessageEntityPlayers())
             {
                 Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayerEntity) player);
-                Network.getNetwork().sendToPlayer(new PlayMusicMessage(RaidSounds.DESERT_RAID), (ServerPlayerEntity) player);
+                Network.getNetwork().sendToPlayer(new PlayAudioMessage(RaidSounds.DESERT_RAID), (ServerPlayerEntity) player);
             }
             musicCooldown = 20;
         }
