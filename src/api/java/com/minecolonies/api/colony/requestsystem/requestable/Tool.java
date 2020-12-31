@@ -199,8 +199,8 @@ public class Tool implements IDeliverable
             return (stack.getItem() instanceof ShieldItem && toolClass.equals(ToolType.SHIELD))
                      || (stack.getItem() instanceof FlintAndSteelItem && toolClass.equals(ToolType.FLINT_N_STEEL));
         }
-        
-    return toolTypeResult;    
+
+        return toolTypeResult;
     }
 
     private Set<String> getToolClasses(final ItemStack stack)
