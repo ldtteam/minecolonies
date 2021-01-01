@@ -30,18 +30,6 @@ public final class BuildingUtils
     }
 
     /**
-     * Calculate the Size of the building given a world and a building.
-     *
-     * @param building the building.
-     * @return the AxisAlignedBB box.
-     */
-    public static AxisAlignedBB getTargetAbleArea(final AbstractSchematicProvider building)
-    {
-        final Tuple<BlockPos, BlockPos> corners = building.getCorners();
-        return new AxisAlignedBB(corners.getA(), corners.getB());
-    }
-
-    /**
      * Get the hut from the inventory.
      *
      * @param inventory the inventory to search.

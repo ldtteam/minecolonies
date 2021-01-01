@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -399,4 +400,11 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * Calculate all building corners from the schematic data.
      */
     void calculateCorners();
+
+    /**
+     * Check if a certain vec is within this building.
+     * @param positionVec the vec to check.
+     * @return true if so.
+     */
+    boolean isInBuilding(Vector3d positionVec);
 }

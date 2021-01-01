@@ -9,7 +9,7 @@ import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.Horde;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
 import com.minecolonies.coremod.network.messages.client.PlayAudioMessage;

@@ -9,6 +9,11 @@
     "minecraft:purpur_block",
     "minecraft:purpur_slab",
     "minecraft:prismarine_shard",
-    "minecraft:prismarine_crystals"
+    "minecraft:prismarine_crystals",
+    "minecraft:blackstone",
+    "minecraft:polished_blackstone",
+    "minecraft:polished_blackstone_slab",
+    "minecraft:polished_blackstone_bricks",
+    "minecraft:basalt"
   ]
 }

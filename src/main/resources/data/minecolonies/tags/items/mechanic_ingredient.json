@@ -7,6 +7,7 @@
     "minecraft:blaze_rod",
     "minecraft:ender_pearl",
     "minecraft:ender_eye",
-    "minecraft:redstone_torch"
+    "minecraft:redstone_torch",
+    "minecraft:glowstone_dust"
   ]
 }

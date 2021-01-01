@@ -25,6 +25,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -121,7 +122,7 @@ public class EventStructureManager implements IEventStructureManager
 
         final BlockPos anchor = new BlockPos(zeroPos.getX() + structure.getSizeX() / 2, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ() / 2);
 
-        final String backupPath = Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER + colony.getID() + colony.getDimension() + anchor;
+        final String backupPath = Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER + "/" + colony.getID() + "/" + colony.getDimension().getLocation().getNamespace() + colony.getDimension().getLocation().getPath() + "/" + anchor;
 
         if (!ItemScanTool.saveStructureOnServer(world,
           zeroPos,
@@ -129,7 +130,7 @@ public class EventStructureManager implements IEventStructureManager
           backupPath,
           false))
         {
-            // No structure spawn if we didnt successfully save the surroundings before
+            // No structure spawn if we didn't successfully save the surroundings before
             Log.getLogger().info("Failed to save schematics for event");
             return false;
         }
@@ -156,15 +157,26 @@ public class EventStructureManager implements IEventStructureManager
 
             if (entry.getValue() == eventID)
             {
-                final String backupPath = String.valueOf(colony.getID()) + colony.getDimension() + entry.getKey();
-                final String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + backupPath;
+                final String oldBackupPath = String.valueOf(colony.getID()) + colony.getDimension() + entry.getKey();
+                String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER).toString() + "/" +
+                        String.valueOf(colony.getID()) + "/" + colony.getDimension().getLocation().getNamespace() + colony.getDimension().getLocation().getPath() + "/" + entry.getKey();
 
-                CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
-                  fileName,
-                  entry.getKey(),
-                  Rotation.NONE,
-                  Mirror.NONE,
-                  true, null);
+                // TODO: remove compat for colony.getDimension()-based file names after sufficient time has passed from PR#6305
+                if(CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
+                    fileName,
+                    entry.getKey(),
+                    Rotation.NONE,
+                    Mirror.NONE,
+                    true, null) == null)
+                {
+                    fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + oldBackupPath;
+                    CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
+                            fileName,
+                            entry.getKey(),
+                            Rotation.NONE,
+                            Mirror.NONE,
+                            true, null);
+                }
 
                 try
                 {
@@ -172,7 +184,7 @@ public class EventStructureManager implements IEventStructureManager
                 }
                 catch (Exception e)
                 {
-                    Log.getLogger().info("Minor issue: Failed at deleteing a backup schematic at " + fileName, e);
+                    Log.getLogger().info("Minor issue: Failed at deleting a backup schematic at " + fileName, e);
                 }
 
                 iterator.remove();
