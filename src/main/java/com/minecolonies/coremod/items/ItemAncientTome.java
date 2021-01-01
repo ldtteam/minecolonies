@@ -30,7 +30,7 @@ public class ItemAncientTome extends AbstractItemMinecolonies
     public void inventoryTick(final ItemStack stack, final World worldIn, final Entity entityIn, final int itemSlot, final boolean isSelected)
     {
         super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-        if (!worldIn.isRemote)
+        if (!worldIn.isRemote && (worldIn.getGameTime() % 20 == 0))
         {
             final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, entityIn.getPosition());
             final CompoundNBT tag = new CompoundNBT();

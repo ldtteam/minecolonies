@@ -42,13 +42,14 @@ import java.util.concurrent.ExecutionException;
  */
 public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNavigate
 {
-    private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
-    private static final double PIRATE_SWIM_BONUS        = 1.5;
-    private static final double BARBARIAN_SWIM_BONUS     = 1.2;
-    private static final double CITIZEN_SWIM_BONUS       = 1.1;
-    public static final  double MIN_Y_DISTANCE           = 0.001;
-    public static final  int    MAX_SPEED_ALLOWED        = 2;
-    public static final  double MIN_SPEED_ALLOWED        = 0.1;
+    private static final double ON_PATH_SPEED_MULTIPLIER  = 1.3D;
+    private static final double CLIMBING_SPEED_MULTIPLIER = 0.8D;
+    private static final double PIRATE_SWIM_BONUS         = 1.5;
+    private static final double BARBARIAN_SWIM_BONUS      = 1.2;
+    private static final double CITIZEN_SWIM_BONUS        = 1.1;
+    public static final  double MIN_Y_DISTANCE            = 0.001;
+    public static final  int    MAX_SPEED_ALLOWED         = 2;
+    public static final  double MIN_SPEED_ALLOWED         = 0.1;
 
     @Nullable
     private PathResult pathResult;
@@ -486,9 +487,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                                                                                                  .getCurrentPathIndex() + 1)
                                                 : null;
 
+            boolean isClimbing = false;
             for (int i = this.currentPath.getCurrentPathIndex(); i < Math.min(this.currentPath.getCurrentPathLength(), this.currentPath.getCurrentPathIndex() + 3); i++)
             {
                 final PathPointExtended nextPoints = (PathPointExtended) this.getPath().getPathPointFromIndex(i);
+
+                if (nextPoints.y != pEx.y)
+                {
+                    isClimbing = true;
+                }
+
                 if (nextPoints.isOnLadder())
                 {
                     Vec3d motion = this.entity.getMotion();
@@ -510,7 +518,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
             else if (world.rand.nextInt(10) == 0)
             {
-                if (WorkerUtil.isPathBlock(world.getBlockState(findBlockUnderEntity(ourEntity)).getBlock()))
+                if (isClimbing)
+                {
+                    speed = CLIMBING_SPEED_MULTIPLIER * getSpeedFactor();
+                }
+                else if (WorkerUtil.isPathBlock(world.getBlockState(findBlockUnderEntity(ourEntity)).getBlock()))
                 {
                     speed = ON_PATH_SPEED_MULTIPLIER * getSpeedFactor();
                 }
