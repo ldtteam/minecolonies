@@ -1090,9 +1090,9 @@
   "com.minecolonies.coremod.gui.workerhuts.barbpoints": "Last Barbarian Spawns",
   "com.minecolonies.coremod.gui.workerhuts.barbpoints.current": "Current Barbarian Position",
   "com.minecolonies.coremod.barbarians.left": "Only %d raiders left!",
-  "com.minecolonies.coremod.barbarians.killed": "You succesfully defended your colony against the intruders!",
+  "com.minecolonies.coremod.barbarians.killed": "§2Victory! You successfully defended against the intruders!",
   "com.minecolonies.coremod.pirates.spawners.destroyed": "You successfully destroyed all of the pirate spawners!",
-  "com.minecolonies.coremod.pirates.killed": "You succesfully defended your colony against the intruders!",
+  "com.minecolonies.coremod.pirates.killed": "§2Victory! You have rid the seas of the intruders!",
   "com.minecolonies.coremod.gui.workerhuts.deconstruct": "Deconstruct",
   "com.minecolonies.coremod.gui.workerhuts.pickup": "Pick Up",
 
