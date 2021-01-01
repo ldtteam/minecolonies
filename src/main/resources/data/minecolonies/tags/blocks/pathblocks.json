@@ -3,6 +3,7 @@
   "values": [
     "#minecolonies:concrete",
     "#minecraft:stone_bricks",
+    "minecraft:stone_brick_stairs",
     "minecraft:stone_brick_slab",
     "minecraft:mossy_stone_brick_slab",
     "minecraft:bricks",
@@ -33,6 +34,15 @@
     "minecraft:polished_blackstone",
     "minecraft:chiseled_polished_blackstone",
     "minecraft:end_stone_bricks",
+    "minecraft:mossy_stone_brick_stairs",
+    "minecraft:brick_stairs",
+    "minecraft:end_stone_brick_stairs",
+    "minecraft:nether_brick_stairs",
+    "minecraft:red_nether_brick_stairs",
+    "minecraft:smooth_sandstone_stairs",
+    "minecraft:smooth_red_sandstone_stairs",
+    "minecraft:polished_blackstone_stairs",
+    "minecraft:polished_blackstone_brick_stairs",
     "minecraft:chiseled_sandstone",
     "minecraft:chiseled_red_sandstone"
   ]
