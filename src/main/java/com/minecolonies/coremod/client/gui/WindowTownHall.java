@@ -612,18 +612,18 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         }
         else if(citizensSize < citizensCap)
         {
-            hoverText.add(new TranslationTextComponent("com.minecolonies.coremod.gui.townHall.population.totalcitizens.houselimited", this.building.getColony().getName()));
+            hoverText.add(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.population.totalcitizens.houselimited", this.building.getColony().getName()));
             findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setColor(ORANGE);
         }
         else
         {
             if(citizensCap < MineColonies.getConfig().getServer().maxCitizenPerColony.get())
             {
-                hoverText.add(new TranslationTextComponent("com.minecolonies.coremod.gui.townHall.population.totalcitizens.researchlimited", this.building.getColony().getName()));
+                hoverText.add(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.population.totalcitizens.researchlimited", this.building.getColony().getName()));
             }
             else
             {
-                hoverText.add(new TranslationTextComponent( "com.minecolonies.coremod.gui.townHall.population.totalcitizens.configlimited", this.building.getColony().getName()));
+                hoverText.add(new TranslationTextComponent( "com.minecolonies.coremod.gui.townhall.population.totalcitizens.configlimited", this.building.getColony().getName()));
             }
             findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText
                                                                     (LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
