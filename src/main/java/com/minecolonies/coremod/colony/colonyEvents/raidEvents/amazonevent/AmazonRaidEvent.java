@@ -98,11 +98,7 @@ public class AmazonRaidEvent extends HordeRaidEvent
         super.onUpdate();
         if (--musicCooldown <= 0)
         {
-            for (final PlayerEntity player : getColony().getImportantMessageEntityPlayers())
-            {
-                Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayerEntity) player);
-                Network.getNetwork().sendToPlayer(new PlayAudioMessage(RaidSounds.DESERT_RAID), (ServerPlayerEntity) player);
-            }
+            PlayAudioMessage.sendToAll(getColony(), true, true, new PlayAudioMessage(RaidSounds.AMAZON_RAID));
             musicCooldown = 20;
         }
     }
