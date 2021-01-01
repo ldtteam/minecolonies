@@ -445,7 +445,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         {
             LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), LanguageHandler.translateKey(ALL_BARBARIANS_KILLED_MESSAGE));
 
-            boolean early = getColony().getBuildingManager().getTownHall().getBuildingLevel() < 3 && horde.getMessageID() < 1;
+            boolean early = getColony().getBuildingManager().getTownHall().getBuildingLevel() < 3 && horde.getMessageID() < 2;
             PlayAudioMessage audio = new PlayAudioMessage(early ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundCategory.RECORDS);
             PlayAudioMessage.sendToAll(getColony(), true, true, audio);
 
