@@ -28,7 +28,7 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     /**
      * This raids event id, registry entries use res locations as ids.
      */
-    public static final ResourceLocation PIRATE_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "pirate_raid");
+    public static final ResourceLocation PIRATE_GROUND_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "pirate_ground_raid");
 
     public PirateGroundRaidEvent(IColony colony)
     {
@@ -38,7 +38,7 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     @Override
     public ResourceLocation getEventTypeID()
     {
-        return PIRATE_RAID_EVENT_TYPE_ID;
+        return PIRATE_GROUND_RAID_EVENT_TYPE_ID;
     }
 
     @Override

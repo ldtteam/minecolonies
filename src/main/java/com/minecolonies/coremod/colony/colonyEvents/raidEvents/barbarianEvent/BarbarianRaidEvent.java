@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent;
+package com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
@@ -28,7 +28,7 @@ public class BarbarianRaidEvent extends HordeRaidEvent
     /**
      * This raids event id, registry entries use res locations as ids.
      */
-    public static final ResourceLocation BABARIAN_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "babarian_raid");
+    public static final ResourceLocation BARBARIAN_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "barbarian_raid");
 
     public BarbarianRaidEvent(IColony colony)
     {
@@ -38,7 +38,7 @@ public class BarbarianRaidEvent extends HordeRaidEvent
     @Override
     public ResourceLocation getEventTypeID()
     {
-        return BABARIAN_RAID_EVENT_TYPE_ID;
+        return BARBARIAN_RAID_EVENT_TYPE_ID;
     }
 
     @Override
