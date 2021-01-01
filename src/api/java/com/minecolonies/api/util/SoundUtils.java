@@ -60,7 +60,7 @@ public final class SoundUtils
     private static final double PITCH_MULTIPLIER = 0.4D;
 
     /**
-     * A much less chaotic scale for random pitches
+     * A much less chaotic scale (D major pentatonic) for random pitches
      */
     public static final Note[] PENTATONIC = {
       // First Octave
@@ -241,6 +241,12 @@ public final class SoundUtils
         return PITCH_DIVIDER / (random.nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
     }
 
+    /**
+     * Generates a random tone from the D major pentatonic scale
+     *
+     * @param random the RNG instance
+     * @return a number representing the pitch to the sound engine
+     */
     public static double getRandomPentatonic(final Random random)
     {
         int index = random.nextInt(PENTATONIC.length);
