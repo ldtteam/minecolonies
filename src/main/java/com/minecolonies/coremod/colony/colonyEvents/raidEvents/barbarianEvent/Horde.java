@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent;
+package com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent;
 
 import net.minecraft.nbt.CompoundNBT;
 

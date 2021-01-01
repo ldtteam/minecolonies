@@ -1092,7 +1092,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         // Raining
-        if (CompatibilityUtils.getWorldFromCitizen(this).isRaining() && !shouldWorkWhileRaining())
+        if (CompatibilityUtils.getWorldFromCitizen(this).isRaining() && !shouldWorkWhileRaining() && !WorldUtil.isNetherType(world))
         {
             citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"),
               new TranslationTextComponent("com.minecolonies.coremod.status.rainStop"));
