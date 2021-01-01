@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
+package com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
@@ -6,9 +6,9 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
-import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
-import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
-import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -18,19 +18,19 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
 import static com.minecolonies.api.entity.ModEntities.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.RAID_PIRATE;
+import static com.minecolonies.api.util.constant.TranslationConstants.RAID_BARBARIAN;
 
 /**
- * The Pirate raid event, spawns the worst pirates you've ever heard of.
+ * Barbarian raid event for the colony, triggers a horde of barbarians which spawn and attack the colony.
  */
-public class PirateGroundRaidEvent extends HordeRaidEvent
+public class BarbarianRaidEvent extends HordeRaidEvent
 {
     /**
      * This raids event id, registry entries use res locations as ids.
      */
-    public static final ResourceLocation PIRATE_GROUND_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "pirate_ground_raid");
+    public static final ResourceLocation BARBARIAN_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "barbarian_raid");
 
-    public PirateGroundRaidEvent(IColony colony)
+    public BarbarianRaidEvent(IColony colony)
     {
         super(colony);
     }
@@ -38,32 +38,7 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     @Override
     public ResourceLocation getEventTypeID()
     {
-        return PIRATE_GROUND_RAID_EVENT_TYPE_ID;
-    }
-
-    @Override
-    public void onStart()
-    {
-        super.onStart();
-    }
-
-    @Override
-    protected void updateRaidBar()
-    {
-        super.updateRaidBar();
-        raidBar.setDarkenSky(true);
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-    }
-
-    @Override
-    public void onFinish()
-    {
-        super.onFinish();
+        return BARBARIAN_RAID_EVENT_TYPE_ID;
     }
 
     @Override
@@ -75,19 +50,19 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
             return;
         }
 
-        if (entity instanceof EntityCaptainPirate && boss.keySet().size() < horde.numberOfBosses)
+        if (entity instanceof EntityChiefBarbarian && boss.keySet().size() < horde.numberOfBosses)
         {
             boss.put(entity, entity.getUniqueID());
             return;
         }
 
-        if (entity instanceof EntityArcherPirate && archers.keySet().size() < horde.numberOfArchers)
+        if (entity instanceof EntityArcherBarbarian && archers.keySet().size() < horde.numberOfArchers)
         {
             archers.put(entity, entity.getUniqueID());
             return;
         }
 
-        if (entity instanceof EntityPirate && normal.keySet().size() < horde.numberOfRaiders)
+        if (entity instanceof EntityBarbarian && normal.keySet().size() < horde.numberOfRaiders)
         {
             normal.put(entity, entity.getUniqueID());
             return;
@@ -104,19 +79,19 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
             return;
         }
 
-        if (entity instanceof EntityCaptainPirate)
+        if (entity instanceof EntityChiefBarbarian)
         {
             boss.remove(entity);
             horde.numberOfBosses--;
         }
 
-        if (entity instanceof EntityArcherPirate)
+        if (entity instanceof EntityArcherBarbarian)
         {
             archers.remove(entity);
             horde.numberOfArchers--;
         }
 
-        if (entity instanceof EntityPirate)
+        if (entity instanceof EntityBarbarian)
         {
             normal.remove(entity);
             horde.numberOfRaiders--;
@@ -139,9 +114,9 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
      * @param compound NBTcompound with saved values
      * @return the raid event.
      */
-    public static PirateGroundRaidEvent loadFromNBT(final IColony colony, final CompoundNBT compound)
+    public static BarbarianRaidEvent loadFromNBT(final IColony colony, final CompoundNBT compound)
     {
-        PirateGroundRaidEvent event = new PirateGroundRaidEvent(colony);
+        BarbarianRaidEvent event = new BarbarianRaidEvent(colony);
         event.deserializeNBT(compound);
         return event;
     }
@@ -149,24 +124,24 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     @Override
     public EntityType<?> getNormalRaiderType()
     {
-        return PIRATE;
+        return BARBARIAN;
     }
 
     @Override
     public EntityType<?> getArcherRaiderType()
     {
-        return ARCHERPIRATE;
+        return ARCHERBARBARIAN;
     }
 
     @Override
     public EntityType<?> getBossRaiderType()
     {
-        return CHIEFPIRATE;
+        return CHIEFBARBARIAN;
     }
 
     @Override
     protected ITextComponent getDisplayName()
     {
-        return new StringTextComponent(LanguageHandler.format(RAID_PIRATE));
+        return new StringTextComponent(LanguageHandler.format(RAID_BARBARIAN));
     }
 }

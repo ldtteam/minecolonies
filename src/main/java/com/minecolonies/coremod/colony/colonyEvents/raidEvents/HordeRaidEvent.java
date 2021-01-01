@@ -12,7 +12,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -46,7 +46,7 @@ import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEven
 public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFireRaidEvent
 {
     /**
-     * The max distance a babarian is allowed to spawn from the original spawn position
+     * The max distance a barbarian is allowed to spawn from the original spawn position
      */
     public static int MAX_SPAWN_DEVIATION = 300;
 
