@@ -443,11 +443,13 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         if (total == 0)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),  TextFormatting.DARK_GREEN +ALL_BARBARIANS_KILLED_MESSAGE);
+            LanguageHandler.sendPlayersMessage(
+              colony.getImportantMessageEntityPlayers(),
+              TextFormatting.DARK_GREEN + LanguageHandler.translateKey(ALL_BARBARIANS_KILLED_MESSAGE));
 
             boolean early = getColony().getBuildingManager().getTownHall().getBuildingLevel() < 3 && horde.getMessageID() < 1;
             PlayAudioMessage audio = new PlayAudioMessage(early ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundCategory.RECORDS);
-            PlayAudioMessage.sendToAll(getColony(), true, false, audio);
+            PlayAudioMessage.sendToAll(getColony(), true, true, audio);
 
             if (colony.getRaiderManager().getLostCitizen() == 0)
             {
