@@ -243,7 +243,7 @@ public final class SoundUtils
 
     public static double getRandomPentatonic(final Random random)
     {
-        int index = (int) Math.floor(random.nextDouble() * PENTATONIC.length);
+        int index = random.nextInt(PENTATONIC.length);
         int tone = PENTATONIC[index].ordinal() + Math.floorDiv(index, 5) * 12;
         return Math.pow(2.0D, (double)(tone - 12) / 12.0D);
     }
