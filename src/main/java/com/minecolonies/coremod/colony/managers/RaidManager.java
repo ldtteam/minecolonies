@@ -19,8 +19,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGuardTo
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.amazonevent.AmazonRaidEvent;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.BarbarianRaidEvent;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.babarianEvent.Horde;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.BarbarianRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent.NorsemenRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent.NorsemenShipRaidEvent;
@@ -279,12 +279,13 @@ public class RaidManager implements IRaiderManager
             final int shipRotation = new Random().nextInt(3);
             final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getCategory().getName();
             final int rand = colony.getWorld().rand.nextInt(100);
-            if ((homeBiomePath.contains(TAIGA_BIOME_ID) || rand < IGNORE_BIOME_CHANCE) && ShipBasedRaiderUtils.canSpawnShipAt(colony,
+            if ((raidType.isEmpty() && (homeBiomePath.contains(TAIGA_BIOME_ID) || rand < IGNORE_BIOME_CHANCE)
+                  || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
+                  && ShipBasedRaiderUtils.canSpawnShipAt(colony,
               targetSpawnPoint,
               amount,
               shipRotation,
-              NorsemenShipRaidEvent.SHIP_NAME)
-              && (raidType.isEmpty() || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()) || raidType.equals(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath())))
+              NorsemenShipRaidEvent.SHIP_NAME))
             {
                 final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
@@ -316,8 +317,7 @@ public class RaidManager implements IRaiderManager
                     event = new AmazonRaidEvent(colony);
                 }
                 else if (((biomePath.contains(TAIGA_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
-                           && raidType.isEmpty()) || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath())
-                           || raidType.equals(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
+                           && raidType.isEmpty()) || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new NorsemenRaidEvent(colony);
                 }
@@ -541,7 +541,7 @@ public class RaidManager implements IRaiderManager
     }
 
     /**
-     * Returns the colonies babarian level
+     * Returns the colonies barbarian level
      *
      * @return the amount of barbarians.
      */
