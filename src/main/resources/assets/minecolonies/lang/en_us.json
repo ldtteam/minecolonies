@@ -1115,7 +1115,7 @@
   "com.minecolonies.coremod.gui.workerhuts.baker.recipes": "Recipes",
   "com.minecolonies.coremod.gui.workerhuts.gettool": "Get Guard Tool",
 
-  "com.minecolonies.coremod.progress.supplies_placed": "§6 Welcome to MineColonies. Now that you have your supplies, how about searching a nice location to place your Town Hall to create your colony.",
+  "com.minecolonies.coremod.progress.supplies_placed": "§6 Welcome to MineColonies. Now that you have your supplies, how about searching a nice location to place your Town Hall to create your colony?",
   "com.minecolonies.coremod.progress.colony_founded": "§6 Word is out about a newly founded colony. Soon the first settlers will join your colony, if there is enough space around the Town Hall. (Experienced governors can turn off these helpful messages in the Town Hall block.)",
   "com.minecolonies.coremod.progress.first_citizen_spawned": "§6 The first settler arrived at your colony! You should place a Builder's Hut to start your settlement.",
   "com.minecolonies.coremod.progress.builder_placed": "§6 Great job on the placement of the Builder's Hut! However, that's not enough. You need to access it and click the Build Building button! Soon your citizen will be creating new structures for the colony.",
