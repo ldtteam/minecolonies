@@ -2,6 +2,7 @@
   "comment": "name: Squire Training * description : Block Attacks",
   "id": "squiretraining",
   "branch": "combat",
+  "subtitle": "com.minecolonies.research.squiretraining.subtitle",
   "researchLevel": 3,
   "icon": "minecraft:iron_ingot",
   "parentResearch": "improvedswords",

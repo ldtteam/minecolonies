@@ -2,6 +2,7 @@
   "comment": "name: Improved Bows * description : Archery",
   "id": "improvedbows",
   "branch": "combat",
+  "subtitle": "com.minecolonies.research.improvedbows.subtitle",
   "researchLevel": 2,
   "icon": "minecolonies:blockhutarchery",
   "parentResearch": "tactictraining",

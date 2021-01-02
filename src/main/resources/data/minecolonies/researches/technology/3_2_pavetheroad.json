@@ -2,6 +2,7 @@
   "comment": "name: Pave the Road * description : Concrete Mixer",
   "id": "pavetheroad",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.pavetheroad.subtitle",
   "researchLevel": 3,
   "icon": "minecolonies:blockhutconcretemixer",
   "parentResearch": "rockingroll",

@@ -2,6 +2,7 @@
   "comment": "name: Opera * description : Happiness",
   "id": "opera",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.opera.subtitle",
   "researchLevel": 5,
   "icon": "minecolonies:textures/icons/research/happy4.png",
   "parentResearch": "spectacle",

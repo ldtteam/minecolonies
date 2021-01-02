@@ -2,6 +2,7 @@
   "comment": "name: Biodegradable * description : Composter",
   "id": "biodegradable",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.biodegradable.subtitle",
   "researchLevel": 1,
   "icon": "minecolonies:blockhutcomposter",
   "requirements": [

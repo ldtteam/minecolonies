@@ -2,6 +2,7 @@
   "comment": "name: Flee * description : Fleeing Speed",
   "id": "flee",
   "branch": "combat",
+  "subtitle": "com.minecolonies.research.flee.subtitle",
   "researchLevel": 5,
   "icon": "minecraft:feather:3",
   "parentResearch": "evade",

@@ -2,6 +2,7 @@
   "comment": "name: Let It Grow * description : Plantation",
   "id": "letitgrow",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.letitgrow.subtitle",
   "researchLevel": 2,
   "icon": "minecolonies:blockhutplantation",
   "parentResearch": "biodegradable",

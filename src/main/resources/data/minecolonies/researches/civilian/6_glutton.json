@@ -2,6 +2,7 @@
   "comment": "name: Glutton * description : Saturation",
   "id": "glutton",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.glutton.subtitle",
   "researchLevel": 6,
   "icon": "minecolonies:textures/icons/research/saturation5.png",
   "parentResearch": "epicure",

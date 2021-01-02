@@ -2,6 +2,7 @@
   "comment": "name: Tools * description : Block Place Speed",
   "id": "tools",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.tools.subtitle",
   "researchLevel": 4,
   "icon": "minecraft:redstone_lamp",
   "parentResearch": "skills",

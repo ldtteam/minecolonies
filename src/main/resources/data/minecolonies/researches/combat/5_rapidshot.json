@@ -2,6 +2,7 @@
   "comment": "name: Rapid Shot * description : Double Arrows",
   "id": "rapidshot",
   "branch": "combat",
+  "subtitle": "com.minecolonies.research.rapidshot.subtitle",
   "researchLevel": 5,
   "icon": "minecolonies:firearrow",
   "parentResearch": "multishot",

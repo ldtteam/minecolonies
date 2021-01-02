@@ -2,6 +2,7 @@
   "comment": "name: Full Stock! * description : Minimum Stock",
   "id": "fullstock",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.fullstock.subtitle",
   "researchLevel": 5,
   "icon": "minecraft:ender_chest",
   "parentResearch": "capacity",

@@ -2,6 +2,7 @@
   "comment": "name: Dung * description : Farming",
   "id": "dung",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.dung.subtitle",
   "researchLevel": 3,
   "icon": "minecraft:bone_meal",
   "parentResearch": "bonemeal",

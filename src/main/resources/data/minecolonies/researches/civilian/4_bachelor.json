@@ -2,6 +2,7 @@
   "comment": "name: Bachelor * description : Teaching",
   "id": "bachelor",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.bachelor.subtitle",
   "researchLevel": 4,
   "icon": "minecolonies:textures/icons/research/xpgain3.png",
   "parentResearch": "bookworm",

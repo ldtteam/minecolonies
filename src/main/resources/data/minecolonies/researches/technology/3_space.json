@@ -2,6 +2,7 @@
   "comment": "name: Space * description : Minimum Stock",
   "id": "space",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.space.subtitle",
   "researchLevel": 3,
   "icon": "minecraft:chest",
   "parentResearch": "sieving",

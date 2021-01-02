@@ -2,6 +2,7 @@
   "comment": "name: Fertilizer * description : Farming",
   "id": "fertilizer",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.fertilizer.subtitle",
   "researchLevel": 5,
   "icon": "minecraft:bone_block",
   "parentResearch": "compost",

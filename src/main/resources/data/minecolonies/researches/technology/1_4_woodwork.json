@@ -2,6 +2,7 @@
   "comment": "name: Woodwork * description : Sawmill",
   "id": "woodwork",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.woodwork.subtitle",
   "researchLevel": 1,
   "icon": "minecolonies:blockhutsawmill",
   "requirements": [

@@ -2,6 +2,7 @@
   "comment": "name: RTM * description : Recipes",
   "id": "rtm",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.rtm.subtitle",
   "researchLevel": 5,
   "icon": "minecraft:bookshelf",
   "parentResearch": "recipebook",

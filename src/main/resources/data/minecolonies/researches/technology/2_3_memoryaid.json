@@ -2,6 +2,7 @@
   "comment": "name: Memory Aid * description : Recipes",
   "id": "memoryaid",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.memoryaid.subtitle",
   "researchLevel": 2,
   "icon": "minecraft:paper",
   "parentResearch": "woodwork",

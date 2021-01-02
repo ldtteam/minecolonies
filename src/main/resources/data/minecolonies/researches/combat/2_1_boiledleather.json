@@ -2,6 +2,7 @@
   "comment": "name: Boiled Leather * description : Armor Durability",
   "id": "boiledleather",
   "branch": "combat",
+  "subtitle": "com.minecolonies.research.boiledleather.subtitle",
   "researchLevel": 2,
   "icon": "minecraft:turtle_helmet",
   "parentResearch": "improvedleather",

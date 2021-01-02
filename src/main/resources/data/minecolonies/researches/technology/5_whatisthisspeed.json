@@ -2,6 +2,7 @@
   "comment": "name: What Is This Speed? * description : Block Break Speed",
   "id": "whatisthisspeed",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.whatisthisspeed.subtitle",
   "researchLevel": 5,
   "icon": "minecraft:comparator",
   "parentResearch": "heavymachinery",

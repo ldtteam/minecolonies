@@ -2,6 +2,7 @@
   "comment": "name: Rails * description : Rails",
   "id": "rails",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.rails.subtitle",
   "researchLevel": 2,
   "icon": "minecraft:detector_rail",
   "parentResearch": "keen",

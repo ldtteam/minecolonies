@@ -2,6 +2,7 @@
   "comment": "name: Bonemeal * description : Farming",
   "id": "bonemeal",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.bonemeal.subtitle",
   "researchLevel": 2,
   "icon": "minecraft:wheat_seeds",
   "parentResearch": "biodegradable",

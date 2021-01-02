@@ -1,6 +1,7 @@
 {
   "comment": "name: Healing Cream * description : Regeneration",
   "id": "healingcream",
+  "subtitle": "com.minecolonies.research.healingcream.subtitle",
   "branch": "civilian",
   "researchLevel": 3,
   "icon": "minecolonies:textures/icons/research/regeneration2.png",

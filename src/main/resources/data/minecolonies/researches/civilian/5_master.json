@@ -2,6 +2,7 @@
   "comment": "name: Master * description : Teaching",
   "id": "master",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.master.subtitle",
   "researchLevel": 5,
   "icon": "minecolonies:textures/icons/research/xpgain4.png",
   "parentResearch": "bachelor",

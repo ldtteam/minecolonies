@@ -2,6 +2,7 @@
   "comment": "name: Seems Automatic * description : Block Place Speed",
   "id": "seemsautomatic",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.seemsautomatic.subtitle",
   "researchLevel": 5,
   "icon": "minecraft:blaze_powder",
   "parentResearch": "tools",

@@ -2,6 +2,7 @@
   "comment": "name: Agile * description : Walking",
   "id": "agile",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.agile.subtitle",
   "researchLevel": 4,
   "icon": "minecolonies:textures/icons/research/speed2.png",
   "parentResearch": "nimble",

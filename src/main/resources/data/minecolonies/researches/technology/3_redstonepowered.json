@@ -2,6 +2,7 @@
   "comment": "name: Redstone Powered * description : Block Break Speed",
   "id": "redstonepowered",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.redstonepowered.subtitle",
   "researchLevel": 3,
   "icon": "minecraft:redstone_torch",
   "parentResearch": "isthisredstone",

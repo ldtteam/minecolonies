@@ -2,6 +2,7 @@
   "comment": "name: Reflective * description : Leveling",
   "id": "reflective",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.reflective.subtitle",
   "researchLevel": 5,
   "icon": "minecraft:experience_bottle:4",
   "parentResearch": "scholarly",

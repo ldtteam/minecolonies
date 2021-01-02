@@ -2,6 +2,7 @@
   "comment": "name: Athlete * description : Walking",
   "id": "athlete",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.athlete.subtitle",
   "researchLevel": 6,
   "icon": "minecolonies:textures/icons/research/speed4.png",
   "parentResearch": "swift",

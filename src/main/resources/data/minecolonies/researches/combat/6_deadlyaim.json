@@ -2,6 +2,7 @@
   "comment": "name: Deadly Aim * description : Archer Damage",
   "id": "deadlyaim",
   "branch": "combat",
+  "subtitle": "com.minecolonies.research.deadlyaim.subtitle",
   "researchLevel": 6,
   "icon": "minecraft:tipped_arrow",
   "parentResearch": "woundingshot",

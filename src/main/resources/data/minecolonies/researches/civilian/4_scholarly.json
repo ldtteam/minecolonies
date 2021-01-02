@@ -2,6 +2,7 @@
   "comment": "name: Scholarly * description : Leveling",
   "id": "scholarly",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.scholarly.subtitle",
   "researchLevel": 4,
   "icon": "minecraft:experience_bottle:3",
   "parentResearch": "studious",

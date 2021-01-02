@@ -2,6 +2,7 @@
   "comment": "name: Capacity * description : Minimum Stock",
   "id": "capacity",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.capacity.subtitle",
   "researchLevel": 4,
   "icon": "minecraft:shulker_box",
   "parentResearch": "space",

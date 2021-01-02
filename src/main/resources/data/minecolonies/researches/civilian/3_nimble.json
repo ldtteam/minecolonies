@@ -2,6 +2,7 @@
   "comment": "name: Nimble * description : Walking",
   "id": "nimble",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.nimble.subtitle",
   "researchLevel": 3,
   "icon": "minecolonies:textures/icons/research/speed1.png",
   "parentResearch": "rails",

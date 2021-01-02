@@ -2,6 +2,7 @@
   "comment": "name: First Aid II * description : Health",
   "id": "firstaid2",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.firstaid2.subtitle",
   "researchLevel": 2,
   "icon": "minecolonies:textures/icons/research/hp2.png",
   "parentResearch": "firstaid",

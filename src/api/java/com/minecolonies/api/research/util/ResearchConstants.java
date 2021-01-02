@@ -32,7 +32,7 @@ public final class ResearchConstants
     public static final String TAG_REQ_ITEM       = "requirement-item";
     public static final String TAG_EFFECTS        = "effects";
     public static final String TAG_EFFECT_ITEM    = "effect-item";
-    public static final String TAG_RESEARCH_LVL   = "research-lvl";
+    public static final String TAG_RESEARCH_LVL   = "depth";
     public static final String TAG_PROGRESS       = "progress";
     public static final String TAG_CHILDS         = "hasResearchedChild";
     public static final String TAG_ONLY_CHILD     = "onlyChild";
@@ -48,9 +48,13 @@ public final class ResearchConstants
      * Research constants for window.
      */
     public static final String DRAG_VIEW_ID         = "dragView";
-    public static final int    GRADIENT_WIDTH       = 140;
+    public static final int    RESEARCH_WIDTH       = 175;
+    public static final int    GRADIENT_WIDTH       = 175;
     public static final int    X_SPACING            = 40;
-    public static final int    GRADIENT_HEIGHT      = 40;
+    public static final int    RESEARCH_HEIGHT      = 50;
+    public static final int    GRADIENT_HEIGHT      = 50;
+    public static final int    NAME_LABEL_WIDTH     = 175;
+    public static final int    NAME_LABEL_HEIGHT    = 18;
     public static final int    Y_SPACING            = 20;
     public static final int    COST_OFFSET          = 20;
     public static final int    TIMELABEL_Y_POSITION = 10;
@@ -59,20 +63,20 @@ public final class ResearchConstants
     public static final int    NAME_OFFSET          = 30;
     public static final int    INITIAL_Y_OFFSET     = 10;
     public static final int    TEXT_X_OFFSET        = 5;
-    public static final int    ICON_X_OFFSET        = 4;
+    public static final int    ICON_X_OFFSET        = 3;
     public static final int    ICON_Y_OFFSET        = 4;
-    public static final int    XPBAR_Y_OFFSET       = 30;
-    public static final int    XPBAR_LENGTH         = 90;
-    public static final int    TEXT_Y_OFFSET        = 10;
+    public static final int    ICON_WIDTH           = 15;
+    public static final int    ICON_HEIGHT          = 17;
+    public static final int    TEXT_Y_OFFSET        = 6;
     public static final int    DEFAULT_COST_SIZE    = 16;
-    public static final int    LOCK_WIDTH           = 15;
-    public static final int    LOCK_HEIGHT          = 17;
     public static final int    OR_X_OFFSET          = 14;
     public static final int    OR_Y_OFFSET          = 10;
     public static final int    OR_HEIGHT            = 16;
     public static final int    OR_WIDTH             = 16;
-    public static final int    TIME_HEIGHT          = 5;
+    public static final int    TIME_HEIGHT          = 12;
     public static final int    TIME_WIDTH           = 95;
+
+    public static final boolean DRAW_ICONS = false;
 
     public static final int    COLOR_TEXT_NEGATIVE  = Color.rgbaToInt(218, 10, 10, 255);
     public static final int    COLOR_TEXT_LABEL     = Color.rgbaToInt(218, 202, 171, 255);
@@ -83,7 +87,7 @@ public final class ResearchConstants
      */
     //Addition Multipliers
     public static final String ARCHER_DAMAGE                = "archerdamageaddition";
-    public static final String CITIZEN_INV_SLOTS                    = "citizeninvslotsaddition";
+    public static final String CITIZEN_INV_SLOTS            = "citizeninvslotsaddition";
     public static final String CITIZEN_CAP                  = "citizencapaddition";
     public static final String MECHANIC_ENHANCED_GATES      = "enhancesgatedurabilityaddition";
     public static final String FLEEING_SPEED                = "fleeingspeedaddition";

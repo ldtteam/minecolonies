@@ -2,6 +2,7 @@
   "comment": "name: Academic * description : Leveling",
   "id": "academic",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.academic.subtitle",
   "researchLevel": 6,
   "icon": "minecraft:experience_bottle:5",
   "parentResearch": "reflective",

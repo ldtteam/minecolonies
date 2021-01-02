@@ -2,6 +2,7 @@
   "comment": "name: Hot Boots * description : Miner Fire Res",
   "id": "hotboots",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.hotboots.subtitle",
   "researchLevel": 3,
   "icon": "minecraft:campfire",
   "parentResearch": "stringwork",

@@ -87,7 +87,8 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
         }
         else
         {
-            if(research.canResearch(building.getBuildingLevel() == building.getMaxBuildingLevel() ? Integer.MAX_VALUE : building.getBuildingLevel(), colony.getResearchManager().getResearchTree()))
+            if((research.canResearch(building.getBuildingLevel() == building.getMaxBuildingLevel() ? Integer.MAX_VALUE : building.getBuildingLevel(), colony.getResearchManager().getResearchTree()))
+                 || player.isCreative())
             {
                 colony.getResearchManager().getResearchTree().attemptBeginResearch(player, colony, research);
             }

@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Gradient;
+import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.View;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
@@ -82,6 +84,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
                 offset += button.getHeight() + BUTTON_PADDING;
             }
         }
+        updateResearchCount(0);
     }
 
     /**
@@ -153,6 +156,25 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
         if (branches.contains(button.getID()))
         {
             new WindowResearchTree(button.getID(), building, this).open();
+        }
+    }
+
+    /**
+     * Display the count of InProgress research, and the max number for this university, and change the color text to red if at max.
+     * @param offset        An amount to offset the count of inProgress research, normally zero, or -1 when cancelling a research
+     */
+    public void updateResearchCount(final int offset)
+    {
+        this.findPaneOfTypeByID("maxresearchwarn", Label.class)
+          .setLabelText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.countinprogress",
+            building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset, building.getBuildingLevel()));
+        if(building.getBuildingLevel() <= building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset)
+        {
+            this.findPaneOfTypeByID("maxresearchwarn", Label.class).setColor(Color.getByName("red", 0), Color.getByName("red", 0));
+        }
+        else
+        {
+            this.findPaneOfTypeByID("maxresearchwarn", Label.class).setColor(Color.getByName("black", 0), Color.getByName("black", 0));
         }
     }
 

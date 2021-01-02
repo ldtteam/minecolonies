@@ -2,6 +2,7 @@
   "comment": "name: Nurture * description : Growth",
   "id": "nurture",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.nurture.subtitle",
   "researchLevel": 2,
   "icon": "minecolonies:textures/icons/research/childgrowth1.png",
   "parentResearch": "higherlearning",

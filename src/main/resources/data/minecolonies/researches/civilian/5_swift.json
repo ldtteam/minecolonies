@@ -2,6 +2,7 @@
   "comment": "name: Swift * description : Walking",
   "id": "swift",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.swift.subtitle",
   "researchLevel": 5,
   "icon": "minecolonies:textures/icons/research/speed3.png",
   "parentResearch": "agile",

@@ -2,6 +2,7 @@
   "comment": "name: Cheat Sheet * description : Recipes",
   "id": "cheatsheet",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.cheatsheet.subtitle",
   "researchLevel": 3,
   "icon": "minecraft:book",
   "parentResearch": "memoryaid",

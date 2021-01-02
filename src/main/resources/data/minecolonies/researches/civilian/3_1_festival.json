@@ -2,6 +2,7 @@
   "comment": "name: Festival * description : Happiness",
   "id": "festival",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.festival.subtitle",
   "researchLevel": 3,
   "icon": "minecolonies:textures/icons/research/happy2.png",
   "parentResearch": "circus",

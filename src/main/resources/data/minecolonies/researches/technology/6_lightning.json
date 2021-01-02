@@ -2,6 +2,7 @@
   "comment": "name: Lightning * description : Block Break Speed",
   "id": "lightning",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.lightning.subtitle",
   "researchLevel": 6,
   "icon": "minecraft:repeater",
   "parentResearch": "whatisthisspeed",

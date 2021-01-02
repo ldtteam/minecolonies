@@ -2,6 +2,7 @@
   "comment": "name: What ya Need? * description : Mechanic",
   "id": "whatyaneed",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.whatyaneed.subtitle",
   "researchLevel": 2,
   "icon": "minecolonies:blockhutmechanic",
   "parentResearch": "hittingiron",

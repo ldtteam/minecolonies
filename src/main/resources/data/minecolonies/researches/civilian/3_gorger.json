@@ -2,6 +2,7 @@
   "comment": "name: Gorger * description : Saturation",
   "id": "gorger",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.gorger.subtitle",
   "researchLevel": 3,
   "icon": "minecolonies:textures/icons/research/saturation2.png",
   "parentResearch": "gourmand",

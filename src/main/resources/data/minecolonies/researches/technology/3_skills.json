@@ -2,6 +2,7 @@
   "comment": "name: Skills * description : Block Place Speed",
   "id": "skills",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.skills.subtitle",
   "researchLevel": 3,
   "icon": "minecraft:glowstone",
   "parentResearch": "ability",

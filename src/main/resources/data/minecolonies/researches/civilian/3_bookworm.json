@@ -2,6 +2,7 @@
   "comment": "name: Bookworm * description : Teaching",
   "id": "bookworm",
   "branch": "civilian",
+  "subtitle": "com.minecolonies.research.bookworm.subtitle",
   "researchLevel": 3,
   "icon": "minecolonies:textures/icons/research/xpgain2.png",
   "parentResearch": "morebooks",

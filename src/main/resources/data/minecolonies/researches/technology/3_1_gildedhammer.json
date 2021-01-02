@@ -2,6 +2,7 @@
   "comment": "name: Gilded Hammer * description : 1:1 Crushing",
   "id": "gildedhammer",
   "branch": "technology",
+  "subtitle": "com.minecolonies.research.gildedhammer.subtitle",
   "researchLevel": 3,
   "icon": "minecraft:gold_block",
   "parentResearch": "rockingroll",
