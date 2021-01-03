@@ -368,7 +368,7 @@
   "minecolonies.scroll.registered": "Registered scroll with colony %s.",
   "minecolonies.scroll.failed1": "The unstable magic of the scroll backfired!",
   "minecolonies.scroll.failed2": "Whoops, what happened?!",
-  "minecolonies.scroll.failed3": "This scroll needs to go back to the drawing board (ancient runic altar?)!",
+  "minecolonies.scroll.failed3": "This scroll needs to go back to the drawing board!",
   "minecolonies.scroll.failed4": "This scroll doesn't seem to be made by the best magician out there!",
   "minecolonies.scroll.failed5": "Well, this is embarrassing.",
   "minecolonies.scroll.failed6": "Looks like there's a typo in one of the ancient glyphs!",
@@ -390,7 +390,7 @@
   "entity.builder.messageneedmaterial": "I need %s (amount: %d).",
   "entity.builder.messagebuildernecessary": "This building requires a Builder's Hut of level %d or higher to be upgraded, repaired, or deconstructed!",
 
-  "entity.deliveryman.forcepickup": "will come along and do a pickup shortly!",
+  "entity.deliveryman.forcepickup": " will come along and do a pickup shortly!",
   "entity.deliveryman.forcepickupfailed": "Unable to comply, pickup already in progress!",
 
   "entity.miner.messageneedtools": "I need tool %s!",
