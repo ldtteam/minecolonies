@@ -28,7 +28,6 @@
   "minecolonies.config.configliststudyitems": "List of Study Items",
   "minecolonies.config.configliststudyitems.comment": "Items consumed by citizens in the Library.",
 
-
   "minecolonies.config.generatesupplyloot": "Supply loot",
   "minecolonies.config.generatesupplyloot.comment": "Whether to generate supply ship/camps in chests occasionally.",
 
@@ -142,7 +141,7 @@
   "minecolonies.config.canplayerusedeletecolonycommand": "Can Players Use the Delete Colony Command",
   "minecolonies.config.canplayerusedeletecolonycommand.comment": "Should players be allowed to use the /mc colony delete command?",
   "minecolonies.config.numberofattemptsforsafetp": "Number of Attempts for Safe TP",
-  "minecolonies.config.numberofattemptsforsafetp.comment": "Amount of attempts to find a safe random teleport (with /mc rtp)..",
+  "minecolonies.config.numberofattemptsforsafetp.comment": "Amount of attempts to find a safe random teleport (with /mc rtp).",
   "minecolonies.config.maxcolonysize": "Maximum Claim Range for Colonies",
   "minecolonies.config.maxcolonysize.comment": "Maximum claim range for a colony. This is the radius, measured in chunks.",
   "minecolonies.config.mincolonydistance": "Minimum Colony Distance",
