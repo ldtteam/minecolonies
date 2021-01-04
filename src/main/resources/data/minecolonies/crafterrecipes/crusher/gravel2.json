@@ -8,6 +8,7 @@
     }
   ],
   "result": "minecraft:gravel",
+  "loot-table": "minecolonies:recipes/gravel",
   "count": "1",
   "intermediate" : "minecraft:air",
   "research-id" : "gildedhammer"

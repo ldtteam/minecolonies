@@ -244,7 +244,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
                   worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(KNIGHT_WHIRLWIND, UnlockAbilityResearchEffect.class);
                 if (knockBackEnabled != null && knockBackEnabled.getEffect() && worker.getRandom().nextInt(KNOCKBACK_CHANCE) == 0)
                 {
-                    List<LivingEntity> entities = this.world.getEntitiesWithinAABB(LivingEntity.class, worker.getBoundingBox().grow(2.0D, 0.5D, 2.0D));
+                    List<LivingEntity> entities = this.world.getLoadedEntitiesWithinAABB(LivingEntity.class, worker.getBoundingBox().grow(2.0D, 0.5D, 2.0D));
                     for (LivingEntity livingentity : entities)
                     {
                         if (livingentity != worker && (!worker.isOnSameTeam(livingentity)) && (!(livingentity instanceof ArmorStandEntity)))

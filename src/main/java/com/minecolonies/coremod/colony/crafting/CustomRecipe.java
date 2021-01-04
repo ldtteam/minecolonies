@@ -10,9 +10,11 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.research.effects.IResearchEffect;
+import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.block.Block;
@@ -73,6 +75,11 @@ public class CustomRecipe
     public static final String RECIPE_INPUTS_PROP = "inputs";
 
     /**
+     * The property name for the inputs array
+     */
+    public static final String RECIPE_SECONDARY_PROP = "additional-output";
+
+    /**
      * The property name for the alternate output array
      */
     public static final String RECIPE_ALTERNATE_PROP = "alternate-output";
@@ -81,6 +88,11 @@ public class CustomRecipe
      * The property name for the result item
      */
     public static final String RECIPE_RESULT_PROP = "result";
+
+    /**
+     * The property namefor the result loottable
+     */
+    public static final String RECIPE_LOOTTABLE_PROP = "loot-table";
 
     /**
      * The property name for Count, used both in inputs array and for result
@@ -138,7 +150,7 @@ public class CustomRecipe
     private ArrayList<ItemStack> inputs = new ArrayList<>();
 
     /**
-     * The list of ItemStacks for input to the recipe
+     * The list of ItemStacks for alternate (multi-recipe) outputs from the recipe
      */
     private ArrayList<ItemStack> altOutputs = new ArrayList<>();
 
@@ -146,6 +158,11 @@ public class CustomRecipe
      * the result ItemStack
      */
     private ItemStack result = null;
+
+    /**
+     * The list of ItemStacks for additional outputs to the recipe
+     */
+    private ArrayList<ItemStack> secondary = new ArrayList<>();
 
     /**
      * The Intermediate Block
@@ -176,6 +193,16 @@ public class CustomRecipe
      * If true, the recipe inputs must match an already existing recipe's inputs
      */
     private boolean mustExist = false;
+
+    /**
+     * The loottable to use for possible additional outputs
+     */
+    private ResourceLocation lootTable;
+
+    /**
+     * Cache of the recipe storage for performance
+     */
+    private RecipeStorage cachedRecipeStorage;
 
     /**
      * This class can only be created by the parse static
@@ -263,10 +290,38 @@ public class CustomRecipe
                 }
             }
         }
+
         if (recipeJson.has(RECIPE_RESULT_PROP))
         {
             recipe.result = idToItemStack(recipeJson.get(RECIPE_RESULT_PROP).getAsString());
         }
+
+        if (recipeJson.has(RECIPE_LOOTTABLE_PROP))
+        {
+            recipe.lootTable = new ResourceLocation(recipeJson.get(RECIPE_LOOTTABLE_PROP).getAsString());
+        }
+
+        if (recipeJson.has(RECIPE_SECONDARY_PROP))
+        {
+            for (JsonElement e : recipeJson.get(RECIPE_SECONDARY_PROP).getAsJsonArray())
+            {
+                if (e.isJsonObject())
+                {
+                    JsonObject ingredient = e.getAsJsonObject();
+                    if (ingredient.has(ITEM_PROP))
+                    {
+                        final ItemStack stack = idToItemStack(ingredient.get(ITEM_PROP).getAsString());
+                        if(ingredient.has(COUNT_PROP))
+                        {
+                            stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
+                        }
+                        recipe.secondary.add(stack);
+                    }
+
+                }
+            }
+        }
+
 
         if (recipeJson.has(RECIPE_ALTERNATE_PROP))
         {
@@ -354,19 +409,20 @@ public class CustomRecipe
      */
     public boolean isValidForBuilding(IBuildingWorker building)
     {
-        IResearchEffect<?> requiredEffect = null;
-        IResearchEffect<?> excludedEffect = null;
+        AbstractResearchEffect<?> requiredEffect = null;
+        AbstractResearchEffect<?> excludedEffect = null;
         final IColony colony = building.getColony();
         final int bldgLevel = building.getBuildingLevel();
-        
+
+        IGlobalResearchTree gr = IGlobalResearchTree.getInstance();
         if (researchId != null)
         {
-            requiredEffect = colony.getResearchManager().getResearchEffects().getEffect(researchId, UnlockAbilityResearchEffect.class);
+            requiredEffect = colony.getResearchManager().getResearchEffects().getEffect(gr.getEffectIdForResearch(researchId), AbstractResearchEffect.class);
         }
 
         if (excludedResearchId != null)
         {
-            excludedEffect = colony.getResearchManager().getResearchEffects().getEffect(excludedResearchId, UnlockAbilityResearchEffect.class);
+            excludedEffect = colony.getResearchManager().getResearchEffects().getEffect(gr.getEffectIdForResearch(excludedResearchId), AbstractResearchEffect.class);
         }
 
         if(mustExist)
@@ -401,36 +457,42 @@ public class CustomRecipe
      */
     public IRecipeStorage getRecipeStorage()
     {
-        if(altOutputs.isEmpty())
+        if(cachedRecipeStorage == null)
         {
-            return StandardFactoryController.getInstance().getNewInstance(
-                TypeConstants.RECIPE,
-                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                inputs,
-                1,
-                result,
-                intermediate,
-                this.getRecipeId(),
-                ModRecipeTypes.CLASSIC_ID,
-                null, //alternate outputs
-                null //secondary output
-                );
+            if(altOutputs.isEmpty())
+            {
+                cachedRecipeStorage = StandardFactoryController.getInstance().getNewInstance(
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    inputs,
+                    1,
+                    result,
+                    intermediate,
+                    this.getRecipeId(),
+                    ModRecipeTypes.CLASSIC_ID,
+                    null, //alternate outputs
+                    secondary, //secondary output
+                    lootTable
+                    );
+            }
+            else
+            {
+                cachedRecipeStorage = StandardFactoryController.getInstance().getNewInstance(
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    inputs,
+                    1,
+                    result,
+                    intermediate,
+                    this.getRecipeId(),
+                    ModRecipeTypes.MULTI_OUTPUT_ID,
+                    altOutputs, //alternate outputs
+                    secondary, //secondary output
+                    lootTable
+                    );
+            }
         }
-        else
-        {
-            return StandardFactoryController.getInstance().getNewInstance(
-                TypeConstants.RECIPE,
-                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                inputs,
-                1,
-                result,
-                intermediate,
-                this.getRecipeId(),
-                ModRecipeTypes.MULTI_OUTPUT_ID,
-                altOutputs, //alternate outputs
-                null //secondary output
-                );
-        }
+        return cachedRecipeStorage;
     }
 
     @Override

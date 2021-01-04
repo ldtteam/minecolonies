@@ -83,7 +83,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
     @Override
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
-        final Map<ItemStorage, Tuple<Integer, Boolean>> recipeOutputs = new HashMap<>();
+        final Map<ItemStorage, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
         for (final ICitizenData citizen : getAssignedCitizen())
         {
             if (citizen.getJob() instanceof AbstractJobCrafter)
@@ -94,26 +94,32 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
                     if (request != null)
                     {
-                        final IRecipeStorage recipeStorage = getFirstFullFillableRecipe(request.getRequest().getStack(), false);
+                        final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
                         if (recipeStorage != null)
                         {
                             for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
                             {
                                 int amount = itemStorage.getAmount() * request.getRequest().getCount();
-                                if (recipeOutputs.containsKey(itemStorage))
+                                if (requiredItems.containsKey(itemStorage))
                                 {
-                                    amount += recipeOutputs.get(itemStorage).getA();
+                                    amount += requiredItems.get(itemStorage).getA();
                                 }
-                                recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
+                                requiredItems.put(itemStorage, new Tuple<>(amount, false));
                             }
+                            final ItemStorage output = new ItemStorage(recipeStorage.getPrimaryOutput());
+                            if (requiredItems.containsKey(output))
+                            {
+                                output.setAmount(requiredItems.get(output).getA() + output.getAmount());
+                            }
+                            requiredItems.put(output, new Tuple<>(output.getAmount(), false));
                         }
                     }
                 }
             }
         }
 
-        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(recipeOutputs.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
+        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
+        toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
         return toKeep;
     }
 

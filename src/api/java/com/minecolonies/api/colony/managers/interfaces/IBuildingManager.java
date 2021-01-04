@@ -207,11 +207,16 @@ public interface IBuildingManager
     /**
      * Finds whether there is a guard building close to the given building
      *
-     * @param building
+     * @param building the building to check for.
      * @return false if no guard tower close, true in other cases
      */
     boolean hasGuardBuildingNear(IBuilding building);
 
+    /**
+     * Event once a guard building changed at a certain level.
+     * @param guardBuilding the guard building.
+     * @param newLevel the level of it.
+     */
     void guardBuildingChangedAt(IBuilding guardBuilding, int newLevel);
 
     /**
@@ -244,4 +249,12 @@ public interface IBuildingManager
      * @return true if placement allowed
      */
     boolean canPlaceAt(Block block, BlockPos pos, PlayerEntity player);
+
+    /**
+     * Check if the chunk position it within of the building zone of the colony.
+     * @param chunkX the x chunk pos.
+     * @param chunkZ the z chunk pos.
+     * @return true if within.
+     */
+    boolean isWithinBuildingZone(int chunkX, int chunkZ);
 }

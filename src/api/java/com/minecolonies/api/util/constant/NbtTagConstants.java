@@ -491,6 +491,10 @@ public final class NbtTagConstants
     public static final String TAG_LOGS                  = "Logs";
     public static final String TAG_STUMPS                = "Stumps";
     public static final String TAG_TOP_LOG               = "topLog";
+    public static final String TAG_FUNGI                 = "fungi";
+    public static final String TAG_NETHER_TREE           = "netherTree";
+    public static final String TAG_LEAVES                = "leaves";
+    public static final String TAG_NETHER_TREE_LIST      = "netherTrees";
 
     /**
      * Archery building constants.

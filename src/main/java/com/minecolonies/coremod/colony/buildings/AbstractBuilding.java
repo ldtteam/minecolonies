@@ -67,7 +67,6 @@ import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -99,7 +98,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.NORMAL_REQ
  * blocks.
  */
 @SuppressWarnings({"squid:S2390", "PMD.ExcessiveClassLength"})
-public abstract class AbstractBuilding extends AbstractBuildingContainer implements IBuilding
+public abstract class AbstractBuilding extends AbstractBuildingContainer
 {
     public static final int MAX_BUILD_HEIGHT = 256;
     public static final int MIN_BUILD_HEIGHT = 1;
@@ -275,7 +274,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return;
         }
 
-        if (getTargetableArea(colony.getWorld()).contains(player.getPositionVec()))
+        if (isInBuilding(player.getPositionVec()))
         {
             onPlayerEnterBuilding(player);
         }
@@ -517,7 +516,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return;
         }
 
-        if (getPosition().getY() + getHeight() >= MAX_BUILD_HEIGHT)
+        if (getCorners().getA().getY() >= MAX_BUILD_HEIGHT || getCorners().getB().getY() >= MAX_BUILD_HEIGHT)
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
               "entity.builder.messagebuildtoohigh");
@@ -949,6 +948,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             if (InventoryUtils.addItemStackToProvider(player, stack))
             {
                 colony.getWorld().destroyBlock(this.getPosition(), false);
+                this.destroy();
             }
             else
             {
@@ -992,12 +992,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void deconstruct()
     {
-        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> tuple = getCorners();
-        for (int x = tuple.getA().getA(); x < tuple.getA().getB(); x++)
+        final Tuple<BlockPos, BlockPos> tuple = getCorners();
+        for (int x = tuple.getA().getX(); x < tuple.getB().getX(); x++)
         {
-            for (int z = tuple.getB().getA(); z < tuple.getB().getB(); z++)
+            for (int z = tuple.getA().getZ(); z < tuple.getB().getZ(); z++)
             {
-                for (int y = getPosition().getY() - 1; y < getPosition().getY() + this.getHeight(); y++)
+                for (int y = tuple.getA().getY(); y < tuple.getB().getY(); y++)
                 {
                     getColony().getWorld().destroyBlock(new BlockPos(x, y, z), false);
                 }
@@ -1059,21 +1059,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
           colony.getBuildingManager().getBuildings().values().stream()
             .filter(building -> building.hasModule(LivingBuildingModule.class)).mapToInt(ISchematicProvider::getBuildingLevel).sum()
         );
-        final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, newLevel);
-        final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
-        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-          = ColonyUtils.calculateCorners(this.getPosition(),
-          colony.getWorld(),
-          wrapper.getBluePrint(),
-          workOrder.getRotation(colony.getWorld()),
-          workOrder.isMirrored());
-        this.setHeight(wrapper.getBluePrint().getSizeY());
-        this.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
+        calculateCorners();
         this.isBuilt = true;
 
         if (newLevel > getBuildingLevel())
         {
-            FireworkUtils.spawnFireworksAtAABBCorners(getTargetableArea(colony.getWorld()), colony.getWorld(), newLevel);
+            FireworkUtils.spawnFireworksAtAABBCorners(getCorners(), colony.getWorld(), newLevel);
         }
 
         for (final IBuildingModule module : modules.values())
@@ -1083,6 +1074,20 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 ((IBuildingEventsModule) module).onUpgradeComplete(newLevel);
             }
         }
+    }
+
+    @Override
+    public void calculateCorners()
+    {
+        final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, Math.max(1, getBuildingLevel()));
+        final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
+        final Tuple<BlockPos, BlockPos> corners
+          = ColonyUtils.calculateCorners(this.getPosition(),
+          colony.getWorld(),
+          wrapper.getBluePrint(),
+          workOrder.getRotation(colony.getWorld()),
+          workOrder.isMirrored());
+        this.setCorners(corners.getA(), corners.getB());
     }
 
     @Override
@@ -1173,12 +1178,41 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             toKeep.put(ItemStackUtils.CAN_EAT, new Tuple<>(getBuildingLevel() * 2, true));
         }
-        final IRequestManager manager = colony.getRequestManager();
-        toKeep.put(stack -> this.getOpenRequestsByCitizen().values().stream()
-                              .anyMatch(list -> list.stream().filter(token -> manager.getRequestForToken(token) != null)
-                                                  .anyMatch(token -> manager.getRequestForToken(token).getRequest() instanceof IDeliverable
-                                                                       && ((IDeliverable) manager.getRequestForToken(token).getRequest()).matches(stack))),
-          new Tuple<>(Integer.MAX_VALUE, true));
+
+        final Map<ItemStorage, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
+        final Collection<IRequestResolver<?>> resolvers = getResolvers();
+        for (final IRequestResolver<?> resolver : resolvers)
+        {
+            final IStandardRequestManager requestManager = (IStandardRequestManager) getColony().getRequestManager();
+            final List<IRequest<? extends IDeliverable>> deliverableRequests =
+                requestManager.getRequestHandler().getRequestsMadeByRequester(resolver)
+                    .stream()
+                    .filter(iRequest -> iRequest.getRequest() instanceof IDeliverable)
+                    .map(iRequest -> (IRequest<? extends IDeliverable>) iRequest)
+                    .collect(Collectors.toList());
+            for(IRequest<? extends IDeliverable> request: deliverableRequests)
+            {
+                for(ItemStack item : request.getDeliveries())
+                {
+                    final ItemStorage output = new ItemStorage(item);
+                    int amount = output.getAmount();
+                    if (requiredItems.containsKey(output))
+                    {
+                        amount += requiredItems.get(output).getA();
+                    }
+                    requiredItems.put(output, new Tuple<>(amount, false));
+                }
+            }
+        }
+        toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
+
+        if(!minimumStock.isEmpty())
+        {
+            for(ItemStorage item:minimumStock.keySet())
+            {
+                toKeep.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, item.getItemStack(), false, true), new Tuple<>(minimumStock.get(item).intValue() * item.getItemStack().getMaxStackSize(), false));
+            }
+        }
 
         return toKeep;
     }

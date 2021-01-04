@@ -201,6 +201,6 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
           item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock()
                                                                                                                                   .getRegistryName()
                                                                                                                                   .getPath()
-                                                                                                                                  .contains(hut));
+                                                                                                                                  .equalsIgnoreCase("blockhut" + hut));
     }
 }

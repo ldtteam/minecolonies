@@ -12,7 +12,6 @@ import com.minecolonies.coremod.MineColonies;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.NetherWartBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -31,7 +30,6 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +38,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -123,6 +122,11 @@ public class Tree
     private boolean dynamicTree = false;
 
     /**
+     * If the tree is a Nether Tree
+     */
+    private boolean netherTree = false;
+
+    /**
      * Private constructor of the tree. Used by the equals and createFromNBt method.
      */
     private Tree()
@@ -158,6 +162,10 @@ public class Tree
             woodBlocks.clear();
             slimeTree = Compatibility.isSlimeBlock(bottomBlock);
             sapling = calcSapling(world);
+            if (sapling.getItem().isIn(fungi))
+            {
+                netherTree = true;
+            }
 
             // Calculate the Tree's variant Property, add mod compat for other property names later when needed
             variant = BlockStateUtils.getPropertyByNameFromState(world.getBlockState(location), "variant");
@@ -265,6 +273,14 @@ public class Tree
                     return stack;
                 }
             }
+        }
+        else if (block.isIn(BlockTags.WART_BLOCKS))
+        {
+            if (block == Blocks.WARPED_WART_BLOCK)
+            {
+                return new ItemStack(Items.WARPED_FUNGUS, 1);
+            }
+            return new ItemStack(Items.CRIMSON_FUNGUS, 1);
         }
         return null;
     }
@@ -529,6 +545,24 @@ public class Tree
             tree.isTree = false;
         }
 
+        if (compound.contains(TAG_NETHER_TREE))
+        {
+            tree.netherTree = compound.getBoolean(TAG_NETHER_TREE);
+        }
+        else
+        {
+            tree.netherTree = false;
+        }
+
+        if (compound.contains(TAG_LEAVES))
+        {
+            final ListNBT leavesBin = compound.getList(TAG_LEAVES, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < leavesBin.size(); i++)
+            {
+                tree.leaves.add(BlockPosUtil.readFromListNBT(leavesBin, i));
+            }
+        }
+
         return tree;
     }
 
@@ -682,7 +716,7 @@ public class Tree
                 for (int locZ = locZMin; locZ <= locZMax; locZ++)
                 {
                     final BlockPos leaf = new BlockPos(locX, locY, locZ);
-                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES)
+                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES || world.getBlockState(leaf).getBlock().isIn(BlockTags.WART_BLOCKS) || world.getBlockState(leaf).getBlock() == Blocks.SHROOMLIGHT)
                     {
                         leaves.add(leaf);
                     }
@@ -775,6 +809,14 @@ public class Tree
     public boolean isDynamicTree()
     {
         return dynamicTree;
+    }
+
+    /**
+     * @return if tree is nether tree
+     */
+    public boolean isNetherTree()
+    {
+        return netherTree;
     }
 
     /**
@@ -878,6 +920,14 @@ public class Tree
         sapling.write(saplingNBT);
 
         compound.put(TAG_SAPLING, saplingNBT);
+        compound.putBoolean(TAG_NETHER_TREE, netherTree);
+
+        @NotNull final ListNBT leavesBin = new ListNBT();
+        for (@NotNull final BlockPos pos : leaves)
+        {
+            BlockPosUtil.writeToListNBT(leavesBin, pos);
+        }
+        compound.put(TAG_LEAVES, leavesBin);
     }
 
     /**
@@ -912,15 +962,7 @@ public class Tree
 
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = building.getCorners();
-            final int x1 = corners.getA().getA();
-            final int x2 = corners.getA().getB();
-            final int z1 = corners.getB().getA();
-            final int z2 = corners.getB().getB();
-
-            final int x = pos.getX();
-            final int z = pos.getZ();
-            if (x > x1 && x < x2 && z > z1 && z < z2)
+            if (building.isInBuilding(new Vector3d(pos.getX(), pos.getY(), pos.getZ())))
             {
                 return false;
             }

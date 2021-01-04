@@ -156,10 +156,22 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         return new BlockPos(getPosX(), getPosY(), getPosZ());
     }
 
+    /**
+     * Disable vanilla's item picking stuff as we're doing it ourselves
+     */
     @Override
     public boolean canPickUpLoot()
     {
-        return true;
+        return false;
+    }
+
+    /**
+     * Disable vanilla steering logic for villagers
+     */
+    @Override
+    public boolean canPassengerSteer()
+    {
+        return false;
     }
 
     public float getPreviousRotationPitch()

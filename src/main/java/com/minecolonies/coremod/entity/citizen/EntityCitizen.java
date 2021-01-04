@@ -1093,7 +1093,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         // Raining
-        if (CompatibilityUtils.getWorldFromCitizen(this).isRaining() && !shouldWorkWhileRaining())
+        if (CompatibilityUtils.getWorldFromCitizen(this).isRaining() && !shouldWorkWhileRaining() && !WorldUtil.isNetherType(world))
         {
             citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"),
               new TranslationTextComponent("com.minecolonies.coremod.status.rainStop"));
@@ -1640,12 +1640,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return world.getScoreboard().getTeam(this.cachedTeamName);
         }
 
-        if (getCitizenColonyHandler().getColony() != null)
-        {
-            return getCitizenColonyHandler().getColony().getTeam();
-        }
-
-        return null;
+        return world.getScoreboard().getTeam(getScoreboardName());
     }
 
     @Override

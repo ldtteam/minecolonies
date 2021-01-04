@@ -171,7 +171,7 @@ public class EntityMercenaryAI extends Goal
                         entity.swingArm(Hand.OFF_HAND);
                         LanguageHandler.sendPlayersMessage(entity.getColony().getMessagePlayerEntities(),
                           "com.minecolonies.coremod.mercenary.stealBuilding",
-                          stack.getDisplayName());
+                          stack.getDisplayName().getString());
                     }
                 }
             }

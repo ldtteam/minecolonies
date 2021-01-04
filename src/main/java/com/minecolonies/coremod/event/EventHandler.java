@@ -39,6 +39,7 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.monster.IMob;
@@ -49,6 +50,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -65,6 +67,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -488,15 +491,15 @@ public class EventHandler
 
         if (event.getState().getBlock() instanceof SpawnerBlock)
         {
-            final MobSpawnerTileEntity spawner = (MobSpawnerTileEntity) event.getWorld().getTileEntity(event.getPos());
-            if (spawner != null)
+            final TileEntity spawner = event.getWorld().getTileEntity(event.getPos());
+            if (spawner instanceof MobSpawnerTileEntity)
             {
                 final IColony colony = IColonyManager.getInstance()
-                                         .getColonyByDimension(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_COLONY_ID),
+                                         .getColonyByDimension(((MobSpawnerTileEntity) spawner).getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_COLONY_ID),
                                            world.getDimensionKey());
                 if (colony != null)
                 {
-                    colony.getEventManager().onTileEntityBreak(spawner.getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_EVENT_ID), spawner);
+                    colony.getEventManager().onTileEntityBreak(((MobSpawnerTileEntity) spawner).getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_EVENT_ID), spawner);
                 }
             }
         }
@@ -589,7 +592,7 @@ public class EventHandler
             }
         }
 
-        if (!event.isCanceled() && event.getHand() == Hand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool)
+        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool)
         {
             if (event.getWorld().isRemote)
             {
@@ -607,10 +610,14 @@ public class EventHandler
         }
     }
 
+    /**
+     * Event when a player right-clicks with a build tool.
+     * @param event   {@link PlayerInteractEvent.RightClickItem}
+     */
     @SubscribeEvent
     public static void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
     {
-        if (event.getHand() == Hand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
+        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
         {
             final IColonyView view = IColonyManager.getInstance().getClosestColonyView(event.getWorld(), event.getPos());
             if (view != null && Settings.instance.getStyle().isEmpty())

@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
 import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
+import static com.minecolonies.api.items.ModTags.fungi;
 
 /**
  * Utility methods for the inventories.
@@ -849,7 +850,7 @@ public final class ItemStackUtils
             return false;
         }
 
-        return stack.getItem().isIn(ItemTags.SAPLINGS);
+        return stack.getItem().isIn(ItemTags.SAPLINGS) || stack.getItem().isIn(fungi);
     }
 
     /**

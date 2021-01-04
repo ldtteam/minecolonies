@@ -236,12 +236,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
                 AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, level));
         }
-        else if (this instanceof WorkOrderBuildRemoval)
-        {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-              COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE,
-              getStructureName());
-        }
         else
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->

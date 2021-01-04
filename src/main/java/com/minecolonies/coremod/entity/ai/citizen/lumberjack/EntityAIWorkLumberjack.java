@@ -1,9 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.PathResult;
@@ -13,16 +16,20 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToWithPassable;
 import com.minecolonies.coremod.util.WorkerUtil;
+import com.mojang.brigadier.Message;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tags.BlockTags;
@@ -34,7 +41,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,6 +52,8 @@ import java.util.*;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.items.ModTags.fungi;
+import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_FURNACES_MESSAGE;
 
 /**
  * The lumberjack AI class.
@@ -437,7 +449,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             }
         }
 
-        if (!job.getTree().hasLogs() && (!job.getTree().isSlimeTree() || !job.getTree().hasLeaves()))
+        if (!job.getTree().hasLogs() && (!job.getTree().isSlimeTree() || !job.getTree().hasLeaves()) && (!job.getTree().isNetherTree() || !(job.getTree().hasLeaves())))
         {
             if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
@@ -518,7 +530,44 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             }
             job.getTree().pollNextLeaf();
         }
+        else if (job.getTree().hasLeaves() && job.getTree().isNetherTree())
+        {
+            final BlockPos leaf = job.getTree().peekNextLeaf();
+            if (!mineBlock(leaf, workFrom))
+            {
+                return getState();
+            }
+            job.getTree().pollNextLeaf();
+        }
         return getState();
+    }
+
+    /**
+     * Drop fungus instead of wart block
+     *
+     * @param drops the drops.
+     * @return the list of additional drops.
+     */
+    @Override
+    protected List<ItemStack> increaseBlockDrops(final List<ItemStack> drops)
+    {
+        final List<ItemStack> newDrops = new ArrayList<>();
+        for (final ItemStack stack : drops)
+        {
+            if (world.getRandom().nextInt(100) > 95)
+            {
+                if (stack.getItem() == Items.NETHER_WART_BLOCK) {
+                    newDrops.add(new ItemStack(Items.CRIMSON_FUNGUS, 1));
+                } else if (stack.getItem() == Items.WARPED_WART_BLOCK) {
+                    newDrops.add(new ItemStack(Items.WARPED_FUNGUS, 1));
+                }
+            }
+        }
+        if (newDrops.isEmpty())
+        {
+            return drops;
+        }
+        return newDrops;
     }
 
     /**
@@ -724,6 +773,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             {
                 final Block block = ((BlockItem) stack.getItem()).getBlock();
                 placeSaplings(saplingSlot, stack, block);
+
                 final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, worker);
                 world.playSound(null,
                   this.worker.getPosition(),
@@ -789,6 +839,21 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         while (!job.getTree().getStumpLocations().isEmpty())
         {
             final BlockPos pos = job.getTree().getStumpLocations().get(0);
+            final Item sapling = getInventory().getStackInSlot(saplingSlot).getItem();
+            final Block new_block;
+            if (sapling.isIn(fungi))
+            {
+                if (sapling == Items.WARPED_FUNGUS)
+                {
+                    new_block = Blocks.WARPED_NYLIUM;
+                }
+                else
+                {
+                    new_block = Blocks.CRIMSON_NYLIUM;
+                }
+                world.setBlockState(pos.down(), new_block.getDefaultState());
+                getOwnBuilding().addNetherTree(pos);
+            }
             if ((world.setBlockState(pos, block.getDefaultState()) && getInventory().getStackInSlot(saplingSlot) != null)
                   || Objects.equals(world.getBlockState(pos), block.getDefaultState()))
             {
@@ -818,7 +883,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         if (ItemStackUtils.isEmpty(job.getTree().getSapling()))
         {
-            return true;
+            return false;
         }
         else
         {

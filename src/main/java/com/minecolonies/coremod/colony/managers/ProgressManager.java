@@ -11,6 +11,8 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -98,6 +100,10 @@ public class ProgressManager implements IProgressManager
         else if (total == 10)
         {
             trigger(TEN_CITIZENS_SPAWNED);
+        }
+        else if (total == 25)
+        {
+            trigger(TWENTY_FIVE_CITIZENS_SPAWNED);
         }
         else if (total >= 11 && employed >= 4)
         {

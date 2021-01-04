@@ -92,15 +92,11 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
     {
         if (transition instanceof IStateMachineEvent)
         {
-            final List<T> temp = new ArrayList<>(eventTransitionMap.get(((IStateMachineEvent<?>) transition).getEventType()));
-            temp.remove(transition);
-            eventTransitionMap.put(((IStateMachineEvent<?>) transition).getEventType(), temp);
+            eventTransitionMap.get(((IStateMachineEvent<?>) transition).getEventType()).removeIf(t -> t == transition);
         }
         else
         {
-            final List<T> temp = new ArrayList<>(transitionMap.get(transition.getState()));
-            temp.remove(transition);
-            transitionMap.put(transition.getState(), temp);
+            transitionMap.get(transition.getState()).removeIf(t -> t == transition);
         }
     }
 
@@ -187,7 +183,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
                 if (currentStateTransitions == null || currentStateTransitions.isEmpty())
                 {
                     // Reached Trap/Sink state we cannot leave.
-                    onException(new RuntimeException("Missing AI transition for state: " + getState()));
+                    onException(new RuntimeException("Missing AI transition for state: " + newState));
                     reset();
                     return false;
                 }

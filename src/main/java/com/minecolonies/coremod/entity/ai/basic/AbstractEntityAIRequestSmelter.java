@@ -555,7 +555,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
             if (entity instanceof FurnaceTileEntity)
             {
-                if (!((FurnaceTileEntity) entity).isBurning())
+                if (isEmpty(((FurnaceTileEntity) entity).getStackInSlot(SMELTABLE_SLOT)))
                 {
                     walkTo = pos;
                     return START_USING_FURNACE;

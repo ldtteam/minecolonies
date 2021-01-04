@@ -64,11 +64,4 @@ public interface ICitizenColonyHandler
      * Actions when the entity is removed.
      */
     void onCitizenRemoved();
-
-    /**
-     * Check if a citizen is at home.
-     *
-     * @return true if so.
-     */
-    boolean isAtHome();
 }

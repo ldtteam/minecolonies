@@ -1,5 +1,6 @@
 package com.minecolonies.api.blocks.decorative;
 
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
@@ -132,6 +133,11 @@ public abstract class AbstractBlockGate extends DoorBlock
     @Deprecated
     public float getBlockHardness(BlockState blockState, IBlockReader worldIn, BlockPos pos)
     {
+        if (worldIn == null)
+        {
+            return 10f;
+        }
+
         // Combined hardness
         final Direction facing = blockState.get(FACING).rotateY();
         final BlockPos start = findLowerLeftCorner(worldIn, facing, pos);
@@ -433,11 +439,11 @@ public abstract class AbstractBlockGate extends DoorBlock
                 // Set top blocks to spikes
                 if (world.getBlockState(worldPos.up()).getBlock() != this)
                 {
-                    world.setBlockState(worldPos, state.func_235896_a_(DoorBlock.HINGE), 2);
+                    WorldUtil.setBlockState(world, worldPos, state.func_235896_a_(DoorBlock.HINGE), 2);
                 }
                 else
                 {
-                    world.setBlockState(worldPos, state.func_235896_a_(BlockStateProperties.OPEN), 2);
+                    WorldUtil.setBlockState(world, worldPos, state.func_235896_a_(BlockStateProperties.OPEN), 2);
                 }
             }
         }

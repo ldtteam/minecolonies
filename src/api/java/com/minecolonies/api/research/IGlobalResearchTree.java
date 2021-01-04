@@ -1,6 +1,9 @@
 package com.minecolonies.api.research;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
+
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.nbt.CompoundNBT;
 
 import java.util.List;
@@ -28,6 +31,13 @@ public interface IGlobalResearchTree
      * @return the IResearch object.
      */
     IGlobalResearch getResearch(final String branch, final String id);
+
+    /**
+     * Get an effect id for a particular research
+     * @param id    the id of the research.
+     * @return the effect id
+     */
+    String getEffectIdForResearch(final @NotNull String id);
 
     /**
      * Add a research to the tree.

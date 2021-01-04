@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -55,6 +56,7 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 
 /**
@@ -88,7 +90,22 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
      * Failsafe for isCooking. Number of Colony Ticks before setting isCooking false. 
      */
     private int isCookingTimeout = 0;
-    
+
+    /**
+     * Whether we did init tags
+     */
+    private boolean initTags = false;
+
+    /**
+     * Sitting positions
+     */
+    private List<BlockPos> sitPositions;
+
+    /**
+     * Current sitting index
+     */
+    private int lastSitting = 0;
+
     /**
      * Instantiates a new cook building.
      *
@@ -103,6 +120,63 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getContainerItem()) && !stack.getContainerItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
     }
+
+    /**
+     * Reads the tag positions
+     */
+    public void initTagPositions()
+    {
+        if (initTags)
+        {
+            return;
+        }
+
+        final IBlueprintDataProvider te = getTileEntity();
+        if (te != null)
+        {
+            initTags = true;
+            sitPositions = new ArrayList<>();
+            for (final Map.Entry<BlockPos, List<String>> entry : te.getWorldTagPosMap().entrySet())
+            {
+                if (entry.getValue().contains(TAG_SITTING))
+                {
+                    sitPositions.add(entry.getKey());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+        initTags = false;
+    }
+
+    /**
+     * Gets the next sitting position to use for eating, just keeps iterating the aviable positions, so we do not have to keep track of who is where.
+     *
+     * @return eating position to sit at
+     */
+    public BlockPos getNextSittingPosition()
+    {
+        initTagPositions();
+
+        if (sitPositions.isEmpty())
+        {
+            return null;
+        }
+
+        lastSitting++;
+
+        if (lastSitting >= sitPositions.size())
+        {
+            lastSitting = 0;
+        }
+
+        return sitPositions.get(lastSitting);
+    }
+
 
     /**
      * Get the status of the assistant processing requests
@@ -169,12 +243,15 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     @Override
     public IJob<?> createJob(final ICitizenData citizen)
     {
-        for (final ICitizenData leadCitizen : getAssignedCitizen())
+        if (citizen != null)
         {
-            if (leadCitizen.getJob() instanceof JobCook)   
+            for (final ICitizenData leadCitizen : getAssignedCitizen())
             {
-                assistant = citizen;
-                return new JobCookAssistant(citizen);
+                if (leadCitizen.getJob() instanceof JobCook)
+                {
+                    assistant = citizen;
+                    return new JobCookAssistant(citizen);
+                }
             }
         }
         return new JobCook(citizen);
@@ -329,47 +406,6 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         return recipeOutputs;
     }
 
-    @Override
-    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
-    {
-        final Map<ItemStorage, Tuple<Integer, Boolean>> recipeOutputs = new HashMap<>();
-        for (final ICitizenData citizen : getAssignedCitizen())
-        {
-            if (citizen.getJob() instanceof AbstractJobCrafter)
-            {
-                final List<IToken<?>> assignedTasks = citizen.getJob(AbstractJobCrafter.class).getAssignedTasks();
-                for (final IToken<?> taskToken : assignedTasks)
-                {
-                    final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
-                    final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
-                    if (recipeStorage != null)
-                    {
-                        for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
-                        {
-                            int amount = itemStorage.getAmount();
-                            if (recipeOutputs.containsKey(itemStorage))
-                            {
-                                amount = recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount();
-                            }
-                            recipeOutputs.put(itemStorage, new Tuple<>(amount, false));
-                        }
-
-                        final ItemStorage output = new ItemStorage(recipeStorage.getPrimaryOutput());
-                        if (recipeOutputs.containsKey(output))
-                        {
-                            output.setAmount(recipeOutputs.get(output).getA() + output.getAmount());
-                        }
-                        recipeOutputs.put(output, new Tuple<>(output.getAmount(), false));
-                    }
-                }
-            }
-        }
-
-        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(recipeOutputs.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
-        return toKeep;
-    }
-   
     @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {

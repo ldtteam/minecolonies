@@ -177,7 +177,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (super.attackEntityFrom(damageSource, damage))
+        if ( !( damageSource.getTrueSource() instanceof EntityCitizen ) && super.attackEntityFrom(damageSource, damage))
         {
             if (damageSource.getTrueSource() instanceof LivingEntity && damage > 1.01f)
             {
@@ -698,6 +698,11 @@ public class VisitorCitizen extends AbstractEntityCitizen
     public void setRawPosition(double x, double y, double z)
     {
         super.setRawPosition(x, y, z);
+        if (world.isRemote)
+        {
+            return;
+        }
+
         if (citizenStatusHandler != null && x < 1 && x > -1 && z < 1 && z > -1)
         {
             Log.getLogger().error("Visitor entity set to zero pos, report to mod author:", new Exception());
