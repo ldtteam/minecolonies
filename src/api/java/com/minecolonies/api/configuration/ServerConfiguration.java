@@ -81,7 +81,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue restrictColonyPlacement;
     public final ForgeConfigSpec.IntValue     maxDistanceFromWorldSpawn;
     public final ForgeConfigSpec.IntValue     minDistanceFromWorldSpawn;
-    public final ForgeConfigSpec.BooleanValue protectVillages;
     public final ForgeConfigSpec.BooleanValue officersReceiveAdvancements;
 
     /*  ------------------------------------------------------------------------- *
@@ -431,7 +430,6 @@ public class ServerConfiguration extends AbstractConfiguration
         restrictColonyPlacement = defineBoolean(builder, "restrictcolonyplacement", false);
         maxDistanceFromWorldSpawn = defineInteger(builder, "maxdistancefromworldspawn", 8000, 1000, 100000);
         minDistanceFromWorldSpawn = defineInteger(builder, "mindistancefromworldspawn", 512, 1, 1000);
-        protectVillages = defineBoolean(builder, "protectvillages", false);
         officersReceiveAdvancements = defineBoolean(builder, "officersreceiveadvancements", true);
 
         swapToCategory(builder, "combat");
