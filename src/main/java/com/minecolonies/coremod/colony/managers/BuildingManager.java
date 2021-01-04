@@ -424,10 +424,10 @@ public class BuildingManager implements IBuildingManager
                     building.onPlacement();
                     building.calculateCorners();
 
-                    ConstructionTapeHelper.placeConstructionTape(building.getPosition(), building.getCorners(), world);
+                    ConstructionTapeHelper.placeConstructionTape(building.getCorners(), world);
                 }
 
-                ConstructionTapeHelper.placeConstructionTape(building.getPosition(), building.getCorners(), world);
+                ConstructionTapeHelper.placeConstructionTape(building.getCorners(), world);
                 colony.getRequestManager().onProviderAddedToColony(building);
 
                 setMaxChunk(building);
@@ -569,7 +569,7 @@ public class BuildingManager implements IBuildingManager
         final Chunk chunk = colony.getWorld().getChunk(building.getPosition().getX() >> 4, building.getPosition().getZ() >> 4);
         final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
 
-        if (closeCap == null)
+        if (closeCap == null || closeCap.getAllClaimingBuildings().isEmpty() || !closeCap.getAllClaimingBuildings().containsKey(colony.getID()))
         {
             return false;
         }

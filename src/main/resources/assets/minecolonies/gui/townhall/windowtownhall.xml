@@ -3,13 +3,13 @@
 
     <image source="minecolonies:textures/gui/townhall_book.png" pos="75 0" size="374 243"/>
 
-    <image id="infopage0" pos="56 73" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_01.png"/>
-    <image id="actions0" pos="56 97" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_02.png"/>
-    <image id="permissions0" pos="56 121" size="31 15" source="minecolonies:textures/gui/bookmark_short_ribbon_03.png"/>
-    <image id="citizens0" pos="56 145" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_04.png"/>
-    <image id="settings0" pos="56 169" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_05.png"/>
-    <image id="workOrder0" pos="56 193" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_06.png"/>
-    <image id="happiness0" pos="56 217" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_01.png"/>
+    <image id="infopage0" pos="56 73" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_01.png" tooltip="$(com.minecolonies.coremod.gui.townhalltab.information)"/>
+    <image id="actions0" pos="56 97" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_02.png" tooltip="$(com.minecolonies.coremod.gui.townhalltab.actions)"/>
+    <image id="permissions0" pos="56 121" size="31 15" source="minecolonies:textures/gui/bookmark_short_ribbon_03.png" tooltip="$(com.minecolonies.coremod.gui.townhalltab.permissions)"/>
+    <image id="citizens0" pos="56 145" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_04.png" tooltip="$(com.minecolonies.coremod.gui.townhalltab.citizens)"/>
+    <image id="settings0" pos="56 169" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_05.png" tooltip="$(com.minecolonies.coremod.gui.townhalltab.settings)"/>
+    <image id="workOrder0" pos="56 193" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_06.png" tooltip="$(com.minecolonies.coremod.gui.townhalltab.workorders)"/>
+    <image id="happiness0" pos="56 217" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_01.png" tooltip="$(com.minecolonies.coremod.gui.townhalltab.happiness)"/>
 
     <buttonimage id="infopage1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_01.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.workerhuts.information)"

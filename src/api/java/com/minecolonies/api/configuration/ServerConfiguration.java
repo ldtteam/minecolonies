@@ -36,7 +36,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue limitToOneWareHousePerColony;
     public final ForgeConfigSpec.IntValue     builderBuildBlockDelay;
     public final ForgeConfigSpec.IntValue     blockMiningDelayModifier;
-    public final ForgeConfigSpec.IntValue     maxBlocksCheckedByBuilder;
     public final ForgeConfigSpec.BooleanValue enableInDevelopmentFeatures;
     public final ForgeConfigSpec.BooleanValue alwaysRenderNameTag;
     public final ForgeConfigSpec.DoubleValue  growthModifier;
@@ -62,10 +61,6 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Command settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.IntValue     teleportBuffer;
-    public final ForgeConfigSpec.IntValue     opLevelForServer;
-    public final ForgeConfigSpec.IntValue     autoDeleteColoniesInHours;
-    public final ForgeConfigSpec.BooleanValue autoDestroyColonyBlocks;
     public final ForgeConfigSpec.BooleanValue canPlayerUseRTPCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseColonyTPCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseAllyTHTeleport;
@@ -86,7 +81,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue restrictColonyPlacement;
     public final ForgeConfigSpec.IntValue     maxDistanceFromWorldSpawn;
     public final ForgeConfigSpec.IntValue     minDistanceFromWorldSpawn;
-    public final ForgeConfigSpec.BooleanValue protectVillages;
     public final ForgeConfigSpec.BooleanValue officersReceiveAdvancements;
 
     /*  ------------------------------------------------------------------------- *
@@ -396,7 +390,6 @@ public class ServerConfiguration extends AbstractConfiguration
         limitToOneWareHousePerColony = defineBoolean(builder, "limittoonewarehousepercolony", true);
         builderBuildBlockDelay = defineInteger(builder, "builderbuildblockdelay", 15, 1, 500);
         blockMiningDelayModifier = defineInteger(builder, "blockminingdelaymodifier", 500, 1, 10000);
-        maxBlocksCheckedByBuilder = defineInteger(builder, "maxblockscheckedbybuilder", 1000, 1000, 100000);
         enableInDevelopmentFeatures = defineBoolean(builder, "enableindevelopmentfeatures", false);
         alwaysRenderNameTag = defineBoolean(builder, "alwaysrendernametag", true);
         growthModifier = defineDouble(builder, "growthmodifier", 1, 1, 100);
@@ -419,11 +412,7 @@ public class ServerConfiguration extends AbstractConfiguration
         badVisitorsChance = defineInteger(builder, "badvisitorchance", 2, 1, 100);
 
         swapToCategory(builder, "commands");
-
-        teleportBuffer = defineInteger(builder, "teleportbuffer", 120, 30, 99999);
-        opLevelForServer = defineInteger(builder, "oplevelforserver", 3, 0, 3);
-        autoDeleteColoniesInHours = defineInteger(builder, "autodeletecoloniesinhours", 0, 168, 10000);
-        autoDestroyColonyBlocks = defineBoolean(builder, "autodestroycolonyblocks", true);
+        
         canPlayerUseRTPCommand = defineBoolean(builder, "canplayerusertpcommand", true);
         canPlayerUseColonyTPCommand = defineBoolean(builder, "canplayerusecolonytpcommand", false);
         canPlayerUseAllyTHTeleport = defineBoolean(builder, "canplayeruseallytownhallteleport", true);
@@ -443,7 +432,6 @@ public class ServerConfiguration extends AbstractConfiguration
         restrictColonyPlacement = defineBoolean(builder, "restrictcolonyplacement", false);
         maxDistanceFromWorldSpawn = defineInteger(builder, "maxdistancefromworldspawn", 8000, 1000, 100000);
         minDistanceFromWorldSpawn = defineInteger(builder, "mindistancefromworldspawn", 512, 1, 1000);
-        protectVillages = defineBoolean(builder, "protectvillages", false);
         officersReceiveAdvancements = defineBoolean(builder, "officersreceiveadvancements", true);
 
         swapToCategory(builder, "combat");
@@ -453,7 +441,7 @@ public class ServerConfiguration extends AbstractConfiguration
         spawnBarbarianSize = defineInteger(builder, "spawnbarbariansize", 5, MIN_SPAWN_BARBARIAN_HORDE_SIZE, MAX_SPAWN_BARBARIAN_HORDE_SIZE);
         maxBarbarianSize = defineInteger(builder, "maxBarbarianSize", 80, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
         doBarbariansBreakThroughWalls = defineBoolean(builder, "dobarbariansbreakthroughwalls", true);
-        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 12, 1, 10);
+        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 12, 1, 50);
         minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 8, 1, 30);
         mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
         shouldRaidersBreakDoors = defineBoolean(builder, "shouldraiderbreakdoors", true);

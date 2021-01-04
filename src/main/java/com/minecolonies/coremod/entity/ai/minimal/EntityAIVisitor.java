@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
@@ -219,12 +218,7 @@ public class EntityAIVisitor extends Goal
         {
             if (citizen.getRidingEntity() == null)
             {
-                final SittingEntity entity = (SittingEntity) ModEntities.SITTINGENTITY.create(citizen.world);
-                entity.setPosition(moveTo.getX() + 0.5, moveTo.getY() - 0.4, moveTo.getZ() + 0.5);
-                entity.setMaxLifeTime(actionTimeoutCounter);
-                citizen.world.addEntity(entity);
-                citizen.startRiding(entity);
-                citizen.getNavigator().clearPath();
+                SittingEntity.sitDown(moveTo, citizen, actionTimeoutCounter);
             }
         }
         return false;

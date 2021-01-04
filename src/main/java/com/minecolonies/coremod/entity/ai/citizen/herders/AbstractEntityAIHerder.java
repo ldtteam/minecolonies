@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
@@ -17,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
@@ -85,11 +85,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * Xp per action, like breed feed butcher
      */
     protected static final double XP_PER_ACTION = 0.5;
-
-    /**
-     * Area the worker targets.
-     */
-    private AxisAlignedBB targetArea = null;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -425,14 +420,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     public List<T> searchForAnimals()
     {
-        if (this.getTargetableArea() != null)
-        {
-            return new ArrayList<>(world.getEntitiesWithinAABB(
-              getAnimalClass(),
-              this.getTargetableArea()
-            ));
-        }
-        return new ArrayList<>();
+        return WorldUtil.getEntitiesWithinBuilding(world, getAnimalClass(), getOwnBuilding(), null);
     }
 
     public int getMaxAnimalMultiplier()
@@ -447,15 +435,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     public List<ItemEntity> searchForItemsInArea()
     {
-        if (this.getTargetableArea() != null)
-        {
-            return new ArrayList<>(world.getEntitiesWithinAABB(
-
-              ItemEntity.class,
-              this.getTargetableArea()
-            ));
-        }
-        return new ArrayList<>();
+        return WorldUtil.getEntitiesWithinBuilding(world, ItemEntity.class, getOwnBuilding(), null);
     }
 
     /**
@@ -464,25 +444,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @return the class of the animal to work with.
      */
     public abstract Class<T> getAnimalClass();
-
-    /**
-     * Creates a simple area around the Herder's Hut used for AABB calculations for finding animals.
-     *
-     * @return The {@link AxisAlignedBB} of the Hut Area
-     */
-    private AxisAlignedBB getTargetableArea()
-    {
-        if (getOwnBuilding() == null)
-        {
-            return null;
-        }
-
-        if (targetArea == null)
-        {
-            targetArea = getOwnBuilding().getTargetableArea(world);
-        }
-        return targetArea;
-    }
 
     /**
      * Lets the herder walk to the animal.
