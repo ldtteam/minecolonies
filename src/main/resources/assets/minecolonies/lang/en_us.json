@@ -389,10 +389,6 @@
   "entity.deliveryman.forcepickup": " will come along and do a pickup shortly!",
   "entity.deliveryman.forcepickupfailed": "Unable to comply, pickup already in progress!",
 
-  "entity.miner.messageneedtools": "I need tool %s!",
-  "entity.miner.messageneedblockanditem": "I need %s!",
-  "entity.miner.messageneedbettertools": "I need better tools!",
-  "entity.miner.messagemoreblocks": "I need more %s!",
   "entity.miner.messagerequiresbetterhut": "Please upgrade my hut to dig deeper!",
   "entity.barbarian": "Barbarian",
   "entity.minecolonies.barbarian": "Barbarian",
