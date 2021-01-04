@@ -1,7 +1,7 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "minecolonies:items/moneygold"
+    "layer0": "minecolonies:items/cookie_dough"
   },
   "display": {
     "thirdperson_lefthand": {
