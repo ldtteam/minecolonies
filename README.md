@@ -4,22 +4,44 @@
 ![alt tag](resources/minecolonies.png)
 
 
-### About the mod ###
+# MineColonies
 
-**MineColonies** is an interactive Town building mod that allows you to create your own thriving Town within Minecraft. It depicts real-life scenarios by providing you with different craftable options to build your own Town and enhance your gaming experience. Featuring many NPC workers such as: Builders, Crafters, Farmers, Fishermen, Guards, Barracks, Miners, Smeltery, Baker, Cook/Restuarant, Deliveryman, Animal Herders and many more planned for development. As well as specialized buildings such as: Warehouse, Citizen Huts and a Townhall. Minecolonies gives you the ability to create a colony as rich and unique as every player.
+MineColonies is an interactive building mod that allows you to create your own thriving town within Minecraft. It lets your leadership skills soar by providing you with everything you need to build your kingdom. MineColonies gives you the flexibility to create a colony as unique as every player. With so many options, you’ll create a different colony every time, adapt it to any biome, build inside a mountain, on top of one, under the ocean, or in the sky.
 
-##### Website:
+The limit is your imagination!
+
+MineColonies features NPC workers such as Builders, Farmers, Fishers, Foresters, Guards, Miners, Smelters, Bakers, Cooks, Couriers, five types of animal herders, Composters, and many more, with even more being developed and added as the mod grows.
+
+It also includes specialized buildings such as the Warehouse, House, Town Hall, Barracks, Library, University, and even the School.
+
+#### Website:
 https://www.minecolonies.com/
 
-
-For Developers
+## For Users
 --
 
+All our versions can be found at Curse:
 
-Compiling MineColonies
-----
+https://minecraft.curseforge.com/projects/minecolonies
 
-IMPORTANT: Please report any issues you have, there might be some problems with the documentation! Also make sure you know EXACTLY what you're doing! It's not any of our faults if your OS crashes, becomes corrupted, etc.
+If you want to chat with the developers and join our amazing community:
+
+https://discord.minecolonies.com
+
+### Creating an Issue
+MineColonies crashes every time? Have a suggestion? Found a bug? Create an issue now!
+
+1. Make sure your issue hasn't already been answered or fixed.  Also think about whether your issue is a valid one before submitting it.
+2. Go to [the issues page](https://github.com/ldtteam/minecolonies/issues).
+3. Click `New Issue`
+4. Fill in the form. Don't leave anything out!
+5. Click `Submit New Issue` and wait for a response!
+
+## For Developers
+
+### Compiling MineColonies
+
+IMPORTANT: Please report any issues you have, there might be some problems with the documentation! Also make sure you know EXACTLY what you're doing! It's not our fault if your OS crashes, becomes corrupted, etc.
 
 #### Setup Java
 The Java JDK is used to compile MineColonies
@@ -149,9 +171,9 @@ In order to get the most up-to-date builds, you'll have to periodically update y
 - Sometimes, after a branch change if libraries can not be resolved, running another refresh in IntelliJ or the command line solves many issues.
 
 ### Contributing
-***
+
 #### Submitting a PR
-So you found a bug in our code?  Think you can make it more efficient?  Want to help in general?  Great!
+So you found a bug in our code? Think you can make it more efficient? Want to help in general? Great!
 
 1. If you haven't already, create a Github account.
 2. Click the `Fork` icon located at the top-right.
@@ -160,29 +182,3 @@ So you found a bug in our code?  Think you can make it more efficient?  Want to 
 4. Click `Pull Request` in the middle.
 5. Click `Click 'new pull request' to create a pull request for this comparison`, enter your PR's title, and create a detailed description telling us what you changed.
 6. Click `Create pull request`, and wait for feedback!
-
-#### Creating an Issue
-MineColonies crashes every time?  Have a suggestion?  Found a bug?  Create an issue now!
-
-1. Make sure your issue hasn't already been answered or fixed.  Also think about whether your issue is a valid one before submitting it.
-2. Go to [the issues page](https://github.com/Minecolonies/minecolonies/issues).
-3. Click `New Issue`
-4. Fill in the form:
-    * `Title`: Short summary of your issue
-    * `Description`: A description of what your problem is, with additional info. What have you tried to fix it etc.
-    * `Assignee`: (Optional) Assign someone to the issue.
-    * `Attachments`: Add the `latest.log` from `%appdata%/.minecraft/logs`
-
-5. Click `Submit New Issue`, and wait for feedback!
-
-
-For Users
---
-
-All our versions can be found downloadable at curse:
-
-https://minecraft.curseforge.com/projects/minecolonies
-
-If you want to chat with the developers and join our amazing community.
-
-https://discord.minecolonies.com
