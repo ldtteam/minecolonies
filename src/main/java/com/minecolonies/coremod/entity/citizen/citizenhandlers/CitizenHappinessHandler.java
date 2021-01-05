@@ -66,7 +66,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         add(new StaticHappinessModifier(SCHOOL, 1.0, () -> data.isChild() ? data.getJob() instanceof JobPupil ? 2 : 0 : 1));
         add(new StaticHappinessModifier(SECURITY, 4.0, () -> getGuardFactor(data.getColony())));
         add(new StaticHappinessModifier(SOCIAL, 2.0, () -> getSocialModifier(data.getColony())));
-        add(new StaticHappinessModifier(SATURATION, 2.0, () -> data.getSaturation() + 5.0 / 10.0));
+        add(new StaticHappinessModifier(SATURATION, 2.0, () -> (data.getSaturation() + 5.0) / 10.0));
 
         add(new ExpirationBasedHappinessModifier(DAMAGE, 2.0, () -> 0.0, 1));
         add(new ExpirationBasedHappinessModifier(DEATH, 3.0, () -> 0.0, 3));
