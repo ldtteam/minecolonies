@@ -204,8 +204,6 @@
   "minecolonies.config.pathfindingdebugdraw.comment": "Show pathfinding paths (might be laggy).",
   "minecolonies.config.minimumRailsToPath": "Minimum Rails",
   "minecolonies.config.minimumRailsToPath.comment": "Minimum number of consecutive rails for citizens to use them.",
-  "minecolonies.config.pathfindingdebugverbosity": "Pathfinding Debug Verbosity",
-  "minecolonies.config.pathfindingdebugverbosity.comment": "Verbosity of pathfinding debug messages.",
   "minecolonies.config.pathfindingmaxthreadcount": "Pathfinding Max Thread Count",
   "minecolonies.config.pathfindingmaxthreadcount.comment": "Amount of additional threads to be used for pathfinding.",
   "minecolonies.config.pathfindingmaxnodes": "Pathfinding Max Nodes",
@@ -365,13 +363,9 @@
   "entity.builder.messageneedmaterial": "I need %s (amount: %d).",
   "entity.builder.messagebuildernecessary": "This building requires a Builder's Hut of level %d or higher to be upgraded, repaired, or deconstructed!",
 
-  "entity.deliveryman.forcepickup": "will come along and do a pickup shortly!",
+  "entity.deliveryman.forcepickup": " will come along and do a pickup shortly!",
   "entity.deliveryman.forcepickupfailed": "Unable to comply, pickup already in progress!",
 
-  "entity.miner.messageneedtools": "I need tool %s!",
-  "entity.miner.messageneedblockanditem": "I need %s!",
-  "entity.miner.messageneedbettertools": "I need better tools!",
-  "entity.miner.messagemoreblocks": "I need more %s!",
   "entity.miner.messagerequiresbetterhut": "Please upgrade my hut to dig deeper!",
   "entity.barbarian": "Barbarian",
   "entity.minecolonies.barbarian": "Barbarian",
