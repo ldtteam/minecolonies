@@ -64,14 +64,14 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
           new Tuple[] {new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)}));
 
         add(new StaticHappinessModifier(SCHOOL, 1.0, () -> data.isChild() ? data.getJob() instanceof JobPupil ? 2 : 0 : 1));
-        add(new StaticHappinessModifier(SECURITY, 5.0, () -> getGuardFactor(data.getColony())));
+        add(new StaticHappinessModifier(SECURITY, 4.0, () -> getGuardFactor(data.getColony())));
         add(new StaticHappinessModifier(SOCIAL, 2.0, () -> getSocialModifier(data.getColony())));
-        add(new StaticHappinessModifier(SATURATION, 1.0, () -> data.getSaturation() / 10.0));
+        add(new StaticHappinessModifier(SATURATION, 2.0, () -> data.getSaturation() + 5.0 / 10.0));
 
-        add(new ExpirationBasedHappinessModifier(DAMAGE, 1.0, () -> 0.0, 1));
-        add(new ExpirationBasedHappinessModifier(DEATH, 2.0, () -> 0.0, 3));
+        add(new ExpirationBasedHappinessModifier(DAMAGE, 2.0, () -> 0.0, 1));
+        add(new ExpirationBasedHappinessModifier(DEATH, 3.0, () -> 0.0, 3));
         add(new ExpirationBasedHappinessModifier(RAIDWITHOUTDEATH, 1.0, () -> 2.0, 3));
-        add(new ExpirationBasedHappinessModifier(SLEPTTONIGHT, 2.0, () -> data.getJob() instanceof AbstractJobGuard ? 1 : 0.0, 3, true));
+        add(new ExpirationBasedHappinessModifier(SLEPTTONIGHT, 1.0, () -> data.getJob() instanceof AbstractJobGuard ? 1 : 0.0, 3, true));
     }
 
     /**
