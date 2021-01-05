@@ -230,6 +230,8 @@
   "minecolonies.config.pathfindingdebugdraw.comment": "Show pathfinding paths (might be laggy).",
   "minecolonies.config.minimumrailstopath": "Minimum Rails",
   "minecolonies.config.minimumrailstopath.comment": "Minimum number of consecutive rails for citizens to use them.",
+  "minecolonies.config.pathfindingdebugverbosity": "Pathfinding Debug Verbosity",
+  "minecolonies.config.pathfindingdebugverbosity.comment": "Verbosity of pathfinding debug messages.",
   "minecolonies.config.pathfindingmaxthreadcount": "Pathfinding Max Thread Count",
   "minecolonies.config.pathfindingmaxthreadcount.comment": "Amount of additional threads to be used for pathfinding.",
   "minecolonies.config.pathfindingmaxnodes": "Pathfinding Max Nodes",
