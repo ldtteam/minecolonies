@@ -1812,7 +1812,7 @@
   "com.minecolonies.coremod.gui.chat.showstats": "Show citizen stats",
   "com.minecolonies.coremod.gui.chat.recruit": "Recruit for ",
   "com.minecolonies.coremod.recruit.message": "%s has decided to stay in your colony as a citizen!",
-  "com.minecolonies.coremod.recruit.runaway": "%s took your resources and just ran off, what a thug. Doh!",
+  "com.minecolonies.coremod.recruit.runaway": "%s took your resources and just ran off, what a thug. D'oh!",
   "com.minecolonies.coremod.gui.chat.notnow": "Maybe later",
   "com.minecolonies.coremod.gui.chat.notenoughitems": "You do not have the fitting items in your inventory to offer this visitor!",
   "com.minecolonies.coremod.gui.chat.nospace": "Your colony does not have enough space to house another citizen.",
