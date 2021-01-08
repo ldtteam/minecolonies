@@ -30,35 +30,38 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
 
         if (!(context[1] instanceof String))
         {
-            throw new IllegalArgumentException("Second parameter is supposed to be the ResourceLocation Path (String)!");
+            throw new IllegalArgumentException("Second parameter is supposed to be the branchID (String)!");
         }
 
         if (!(context[2] instanceof String))
         {
-            throw new IllegalArgumentException("Third parameter is supposed to be the branchID (String)!");
+            throw new IllegalArgumentException("Third parameter is supposed to be the parent (String)!");
         }
 
         if (!(context[3] instanceof String))
         {
-            throw new IllegalArgumentException("Fourth parameter is supposed to be the parent (String)!");
+            throw new IllegalArgumentException("Fourth parameter is supposed to be the description (String)!");
         }
 
-        if (!(context[4] instanceof String))
+        if (!(context[4] instanceof Integer))
         {
-            throw new IllegalArgumentException("Fifth parameter is supposed to be the description (String)!");
-        }
-
-        if (!(context[5] instanceof Integer))
-        {
-            throw new IllegalArgumentException("Sixth parameter is supposed to be the Depth (int)!");
+            throw new IllegalArgumentException("Fifth parameter is supposed to be the Depth (int)!");
         }
 
         final String id = (String) context[0];
-        final String resourcePath = (String) context[1];
-        final String branch = (String) context[2];
-        final String parent = (String) context[3];
-        final String desc = (String) context[4];
-        final int depth = (int) context[5];
+        final String branch = (String) context[1];
+        final String parent = (String) context[2];
+        final String desc = (String) context[3];
+        final int depth = (int) context[4];
+        final int sortOrder;
+        if(context.length > 5)
+        {
+            sortOrder = (int) context[5];
+        }
+        else
+        {
+            sortOrder = 1;
+        }
         final String icon;
         if(context.length > 6)
         {
@@ -98,18 +101,18 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
             instant = false;
             immutable = false;
         }
-        return getNewInstance(id, resourcePath, branch, parent, desc, depth, icon, subtitle, onlyChild, hidden, autostart, instant, immutable);
+        return getNewInstance(id, branch, parent, desc, depth, sortOrder, icon, subtitle, onlyChild, hidden, autostart, instant, immutable);
     }
 
     /**
      * Method to get a new Instance of a Research.
      *
      * @param id                the id.
-     * @param resourcePath      the path representation of the ResourceLocation for the research.
      * @param branch            the branch.
      * @param parent            the research's parent, or "" if no parent.
      * @param desc              the description of the research.
      * @param universityLevel   the university tier of the research.
+     * @param sortOrder         the sorting order for display of the research in comparison to its siblings.
      * @param icon              the string of the icon's characteristics.
      * @param subtitle          the optional subtitle description of the research.
      * @param onlyChild         if the research's completion prohibits its siblings from being completed.
@@ -120,6 +123,6 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
      * @return a new Instance of Research.
      */
     @NotNull
-    IGlobalResearch getNewInstance(final String id, final String resourcePath, final String branch, final String parent, final String desc, final int universityLevel,
+    IGlobalResearch getNewInstance(final String id, final String branch, final String parent, final String desc, final int universityLevel, final int sortOrder,
       final String icon,final String subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable);
 }

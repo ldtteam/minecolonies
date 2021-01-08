@@ -1,0 +1,22 @@
+{
+  "comment": "name: Spectacle * subtitle: ",
+  "branch": "civilian",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:civilian/festival",
+  "icon": "minecolonies:textures/icons/research/happy3.png:1",
+  "requirements": [
+    {
+      "building": "cook",
+      "level": 4
+    },
+    {
+      "item": "minecraft:cake",
+      "quantity": 18
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/happinessmultiplier": 3
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "comment": "name: Band Aid * subtitle: ",
+  "branch": "civilian",
+  "researchLevel": 2,
+  "parentResearch": "minecolonies:civilian/stamina",
+  "icon": "minecolonies:textures/icons/research/regeneration1.png:1",
+  "requirements": [
+    {
+      "building": "library",
+      "level": 2
+    },
+    {
+      "item": "minecraft:golden_carrot",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/regenerationmultiplier": 1
+    }
+  ]
+}

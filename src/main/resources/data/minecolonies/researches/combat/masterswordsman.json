@@ -1,0 +1,18 @@
+{
+  "comment": "name: Master Swordsman * subtitle: ",
+  "branch": "combat",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:combat/provost",
+  "icon": "minecraft:diamond_chestplate:1",
+  "requirements": [
+    {
+      "item": "minecraft:diamond",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/meleearmormultiplier": 5
+    }
+  ]
+}

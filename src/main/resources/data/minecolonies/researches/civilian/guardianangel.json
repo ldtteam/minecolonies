@@ -1,0 +1,22 @@
+{
+  "comment": "name: Guardian Angel * subtitle: ",
+  "branch": "civilian",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:civilian/lifesaver2",
+  "icon": "minecolonies:textures/icons/research/hp5.png:1",
+  "requirements": [
+    {
+      "building": "townhall",
+      "level": 5
+    },
+    {
+      "item": "minecraft:hay_block",
+      "quantity": 128
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/healthaddition": 5
+    }
+  ]
+}

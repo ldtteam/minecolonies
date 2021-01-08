@@ -1,6 +1,5 @@
 {
   "comment": "name: Block Place Speed * description : Citizen Block Place Speed +%d%%",
-  "id": "blockplacespeedmultiplier",
   "effect": true,
   "levels": [
     0.1,

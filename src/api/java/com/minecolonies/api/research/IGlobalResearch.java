@@ -1,9 +1,7 @@
 package com.minecolonies.api.research;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.effects.IResearchEffect;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +54,7 @@ public interface IGlobalResearch
      * Human readable description of research.
      * @return the description.
      */
-    String getDesc();
+    String getName();
 
     /**
      * Subtitle description of research.
@@ -75,15 +73,6 @@ public interface IGlobalResearch
      * @return the string of the ResourceLocation of the icon, in the pattern namespace:directory:(optional count).
      */
     String getIcon();
-
-    /**
-     * Getter of the resource location of the research, if loaded by datapack.
-     *
-     * @return the resource location for a dynamically loaded research,
-     * minecolonies:staticresearch/id if statically assigned,
-     * or minecolonies:clientlocal/id if received from a server in a remote environment.
-     */
-    ResourceLocation getResourceLocation();
 
     /**
      * Get the id of the parent IResearch.
@@ -105,6 +94,13 @@ public interface IGlobalResearch
      * @return the depth.
      */
     int getDepth();
+
+    /**
+     * Get the sort order for relative display position.
+     *
+     * @return the depth.
+     */
+    int getSortOrder();
 
     /**
      * Check if this research is an instant research.  If so, it will attempt to start when its requirements are complete, and prompt the player.

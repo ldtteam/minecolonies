@@ -1,0 +1,23 @@
+{
+  "comment": "name: Capacity * subtitle: Don't ask how we fit it all.",
+  "branch": "technology",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:technology/space",
+  "subtitle": "com.minecolonies.research.technology.capacity.subtitle",
+  "icon": "minecraft:shulker_box:1",
+  "requirements": [
+    {
+      "building": "miner",
+      "level": 4
+    },
+    {
+      "item": "minecolonies:blockminecoloniesrack",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/minimumstockmultiplier": 2
+    }
+  ]
+}

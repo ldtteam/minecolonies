@@ -1,6 +1,5 @@
 {
   "comment": "name: Tool Durability * description : Tools Take %d%% Less Damage",
-  "id": "tooldurabilitymultiplier",
   "effect": true,
   "levels": [
     0.05,

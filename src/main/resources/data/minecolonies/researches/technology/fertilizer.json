@@ -1,0 +1,23 @@
+{
+  "comment": "name: Fertilizer * subtitle: Ah, that's the stuff!",
+  "branch": "technology",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:technology/compost",
+  "subtitle": "com.minecolonies.research.technology.fertilizer.subtitle",
+  "icon": "minecraft:bone_block:1",
+  "requirements": [
+    {
+      "building": "smeltery",
+      "level": 3
+    },
+    {
+      "item": "minecraft:wheat_seeds",
+      "quantity": 512
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/farmingmultiplier": 4
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "comment": "name: Squire Training * subtitle: First lesson: how to mop the floors.",
+  "branch": "combat",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:combat/improvedswords",
+  "subtitle": "com.minecolonies.research.combat.squiretraining.subtitle",
+  "icon": "minecraft:iron_ingot:1",
+  "requirements": [
+    {
+      "building": "combatacademy",
+      "level": 3
+    },
+    {
+      "item": "minecraft:shield",
+      "quantity": 4
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockattacksmultiplier": 1
+    }
+  ]
+}

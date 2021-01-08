@@ -1,0 +1,22 @@
+{
+  "comment": "name: Flower Power * subtitle: ",
+  "branch": "technology",
+  "researchLevel": 2,
+  "parentResearch": "minecolonies:technology/biodegradable",
+  "icon": "minecolonies:blockhutflorist:1",
+  "requirements": [
+    {
+      "building": "composter",
+      "level": 3
+    },
+    {
+      "item": "minecolonies:compost",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutflorist": 1
+    }
+  ]
+}

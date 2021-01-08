@@ -1,0 +1,23 @@
+{
+  "comment": "name: RTM * subtitle: I saw some information on this somewhere...",
+  "branch": "technology",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:technology/recipebook",
+  "subtitle": "com.minecolonies.research.technology.rtm.subtitle",
+  "icon": "minecraft:bookshelf:1",
+  "requirements": [
+    {
+      "building": "sawmill",
+      "level": 4
+    },
+    {
+      "item": "minecraft:paper",
+      "quantity": 256
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/recipesmultiplier": 4
+    }
+  ]
+}

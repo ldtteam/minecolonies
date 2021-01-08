@@ -74,7 +74,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     @Override
     public String getAttributes()
     {
-        return type + ":" + researchId + ":" + researchName;
+        return type + "`" + researchId + "`" + researchName;
     }
 
     @Override

@@ -1,0 +1,22 @@
+{
+  "comment": "name: Bandages * subtitle: ",
+  "branch": "civilian",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:civilian/healingcream",
+  "icon": "minecolonies:textures/icons/research/regeneration3.png:1",
+  "requirements": [
+    {
+      "building": "library",
+      "level": 4
+    },
+    {
+      "item": "minecraft:golden_carrot",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/regenerationmultiplier": 3
+    }
+  ]
+}

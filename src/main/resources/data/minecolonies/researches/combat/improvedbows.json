@@ -1,0 +1,24 @@
+{
+  "comment": "name: Improved Bows * subtitle: How far back can this bend before snapping?",
+  "branch": "combat",
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "parentResearch": "minecolonies:combat/tactictraining",
+  "subtitle": "com.minecolonies.research.combat.improvedbows.subtitle",
+  "icon": "minecolonies:blockhutarchery:1",
+  "requirements": [
+    {
+      "building": "barracks",
+      "level": 3
+    },
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 6
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutarchery": 1
+    }
+  ]
+}

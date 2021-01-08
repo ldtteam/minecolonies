@@ -62,8 +62,12 @@ public class ItemBlockHut extends BlockItem
     {
         for(AbstractBlockHut<?> hut : ModBlocks.getHuts())
         {
-            hut.checkResearch(colony, hut.getBlock().getRegistryName().getPath());
+            hut.checkResearch(colony, hut.getBlock().getRegistryName().getNamespace() + ":effects/" + hut.getBlock().getRegistryName().getPath());
         }
+        // The warehouse isn't included for ModBlocks.getHuts(), so check it separately.
+        // Not very likely for someone to lock it behind research, but plausible.
+        ModBlocks.blockHutWareHouse.checkResearch(colony, ModBlocks.blockHutWareHouse.getBlock().getRegistryName().getNamespace()
+                                                            + ":effects/" + ModBlocks.blockHutWareHouse.getBlock().getRegistryName().getPath());
     }
 
 }

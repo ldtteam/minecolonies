@@ -1,0 +1,22 @@
+{
+  "comment": "name: Fear * subtitle: ",
+  "branch": "combat",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:combat/feint",
+  "icon": "minecraft:iron_boots:1",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 8
+    },
+    {
+      "item": "minecraft:emerald",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/fleeingdamagemultiplier": 2
+    }
+  ]
+}

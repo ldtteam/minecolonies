@@ -1,0 +1,18 @@
+{
+  "comment": "name: Cast * subtitle: ",
+  "branch": "civilian",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:civilian/compress",
+  "icon": "minecolonies:textures/icons/research/regeneration5.png:1",
+  "requirements": [
+    {
+      "item": "minecraft:golden_carrot",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/regenerationmultiplier": 5
+    }
+  ]
+}

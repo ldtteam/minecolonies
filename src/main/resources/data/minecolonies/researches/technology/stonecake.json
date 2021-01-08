@@ -1,0 +1,23 @@
+{
+  "comment": "name: Stone Cake * subtitle: Don't break a tooth!",
+  "branch": "technology",
+  "researchLevel": 1,
+  "sortOrder": 3,
+  "subtitle": "com.minecolonies.research.technology.stonecake.subtitle",
+  "icon": "minecolonies:blockhutstonemason:1",
+  "requirements": [
+    {
+      "building": "miner",
+      "level": 3
+    },
+    {
+      "item": "minecraft:chiseled_stone_bricks",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutstonemason": 1
+    }
+  ]
+}

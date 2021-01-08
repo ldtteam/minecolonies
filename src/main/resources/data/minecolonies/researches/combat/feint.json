@@ -1,0 +1,22 @@
+{
+  "comment": "name: Feint * subtitle: ",
+  "branch": "combat",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:combat/regeneration",
+  "icon": "minecraft:leather_boots:1",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 4
+    },
+    {
+      "item": "minecraft:emerald",
+      "quantity": 8
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/fleeingdamagemultiplier": 1
+    }
+  ]
+}

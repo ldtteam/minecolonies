@@ -1,0 +1,22 @@
+{
+  "comment": "name: Stuffer * subtitle: ",
+  "branch": "civilian",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:civilian/gorger",
+  "icon": "minecolonies:textures/icons/research/saturation3.png:1",
+  "requirements": [
+    {
+      "building": "cook",
+      "level": 4
+    },
+    {
+      "item": "minecraft:cookie",
+      "quantity": 128
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/saturationmultiplier": 3
+    }
+  ]
+}

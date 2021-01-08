@@ -1,0 +1,23 @@
+{
+  "comment": "name: Riposte * subtitle: Oh yeah? Well, I, uh, um...",
+  "branch": "combat",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:combat/parry",
+  "subtitle": "com.minecolonies.research.combat.riposte.subtitle",
+  "icon": "minecraft:iron_chestplate:1",
+  "requirements": [
+    {
+      "building": "combatacademy",
+      "level": 1
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/meleearmormultiplier": 2
+    }
+  ]
+}

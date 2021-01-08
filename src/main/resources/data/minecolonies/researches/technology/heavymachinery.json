@@ -1,0 +1,18 @@
+{
+  "comment": "name: Heavy Machinery * subtitle: ",
+  "branch": "technology",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:technology/redstonepowered",
+  "icon": "minecraft:redstone_block:1",
+  "requirements": [
+    {
+      "item": "minecraft:redstone",
+      "quantity": 512
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockbreakspeedmultiplier": 3
+    }
+  ]
+}

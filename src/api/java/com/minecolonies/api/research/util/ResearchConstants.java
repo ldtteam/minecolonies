@@ -23,9 +23,8 @@ public final class ResearchConstants
     public static final String TAG_PARENT         = "parent";
     public static final String TAG_STATE          = "state";
     public static final String TAG_ID             = "id";
-    public static final String TAG_RESOURCE_PATH  = "resource-path";
     public static final String TAG_BRANCH         = "branch";
-    public static final String TAG_DESC           = "desc";
+    public static final String TAG_NAME           = "name";
     public static final String TAG_COSTS          = "cost";
     public static final String TAG_COST_ITEM      = "cost-item";
     public static final String TAG_REQS           = "requirements";
@@ -33,6 +32,7 @@ public final class ResearchConstants
     public static final String TAG_EFFECTS        = "effects";
     public static final String TAG_EFFECT_ITEM    = "effect-item";
     public static final String TAG_RESEARCH_LVL   = "depth";
+    public static final String TAG_RESEARCH_SORT  = "sort";
     public static final String TAG_PROGRESS       = "progress";
     public static final String TAG_CHILDS         = "hasResearchedChild";
     public static final String TAG_ONLY_CHILD     = "onlyChild";
@@ -69,6 +69,8 @@ public final class ResearchConstants
     public static final int    ICON_HEIGHT          = 17;
     public static final int    TEXT_Y_OFFSET        = 6;
     public static final int    DEFAULT_COST_SIZE    = 16;
+    public static final int    RESEARCH_ICON_WIDTH  = 30;
+    public static final int    RESEARCH_ICON_HEIGHT = 32;
     public static final int    OR_X_OFFSET          = 14;
     public static final int    OR_Y_OFFSET          = 10;
     public static final int    OR_HEIGHT            = 16;
@@ -86,51 +88,51 @@ public final class ResearchConstants
      * Research Effect Name strings, used for ResearchEffectManager and ResearchRegistry lookups.
      */
     //Addition Multipliers
-    public static final String ARCHER_DAMAGE                = "archerdamageaddition";
-    public static final String CITIZEN_INV_SLOTS            = "citizeninvslotsaddition";
-    public static final String CITIZEN_CAP                  = "citizencapaddition";
-    public static final String MECHANIC_ENHANCED_GATES      = "enhancesgatedurabilityaddition";
-    public static final String FLEEING_SPEED                = "fleeingspeedaddition";
-    public static final String SATLIMIT                     = "healingsaturationlimitaddition";
-    public static final String HEALTH_BOOST                 = "healthaddition";
-    public static final String MELEE_DAMAGE                 = "meleedamageaddition";
-    public static final String WORK_LONGER                  = "workingdayhaddition";
+    public static final String ARCHER_DAMAGE                = "minecolonies:effects/archerdamageaddition";
+    public static final String CITIZEN_INV_SLOTS            = "minecolonies:effects/citizeninvslotsaddition";
+    public static final String CITIZEN_CAP                  = "minecolonies:effects/citizencapaddition";
+    public static final String MECHANIC_ENHANCED_GATES      = "minecolonies:effects/enhancesgatedurabilityaddition";
+    public static final String FLEEING_SPEED                = "minecolonies:effects/fleeingspeedaddition";
+    public static final String SATLIMIT                     = "minecolonies:effects/healingsaturationlimitaddition";
+    public static final String HEALTH_BOOST                 = "minecolonies:effects/healthaddition";
+    public static final String MELEE_DAMAGE                 = "minecolonies:effects/meleedamageaddition";
+    public static final String WORK_LONGER                  = "minecolonies:effects/workingdayhaddition";
 
     //Multiplier Modifiers
-    public static final String ARCHER_ARMOR      = "archerarmormultiplier";
-    public static final String ARMOR_DURABILITY  = "armordurabilitymultiplier";
-    public static final String BLOCK_ATTACKS     = "blockattacksmultiplier";
-    public static final String BLOCK_BREAK_SPEED = "blockbreakspeedmultiplier";
-    public static final String BLOCK_PLACE_SPEED = "blockplacespeedmultiplier";
-    public static final String DOUBLE_ARROWS     = "doublearrowsmultiplier";
-    public static final String FARMING           = "farmingmultiplier";
-    public static final String FLEEING_DAMAGE    = "fleeingdamagemultiplier";
-    public static final String GROWTH            = "growthmultiplier";
-    public static final String HAPPINESS         = "happinessmultiplier";
-    public static final String LEVELING          = "levelingmultiplier";
-    public static final String MELEE_ARMOR       = "meleearmormultiplier";
-    public static final String MINIMUM_STOCK     = "minimumstockmultiplier";
-    public static final String MORE_ORES         = "moreoresmultiplier";
-    public static final String RECIPES           = "recipesmultiplier";
-    public static final String REGENERATION      = "regenerationmultiplier";
-    public static final String SATURATION        = "saturationmultiplier";
-    public static final String SLEEP_LESS        = "sleeplessmultiplier";
-    public static final String TEACHING          = "teachingmultiplier";
-    public static final String TOOL_DURABILITY   = "tooldurabilitymultiplier";
-    public static final String WALKING           = "walkingmultiplier";
+    public static final String ARCHER_ARMOR      = "minecolonies:effects/archerarmormultiplier";
+    public static final String ARMOR_DURABILITY  = "minecolonies:effects/armordurabilitymultiplier";
+    public static final String BLOCK_ATTACKS     = "minecolonies:effects/blockattacksmultiplier";
+    public static final String BLOCK_BREAK_SPEED = "minecolonies:effects/blockbreakspeedmultiplier";
+    public static final String BLOCK_PLACE_SPEED = "minecolonies:effects/blockplacespeedmultiplier";
+    public static final String DOUBLE_ARROWS     = "minecolonies:effects/doublearrowsmultiplier";
+    public static final String FARMING           = "minecolonies:effects/farmingmultiplier";
+    public static final String FLEEING_DAMAGE    = "minecolonies:effects/fleeingdamagemultiplier";
+    public static final String GROWTH            = "minecolonies:effects/growthmultiplier";
+    public static final String HAPPINESS         = "minecolonies:effects/happinessmultiplier";
+    public static final String LEVELING          = "minecolonies:effects/levelingmultiplier";
+    public static final String MELEE_ARMOR       = "minecolonies:effects/meleearmormultiplier";
+    public static final String MINIMUM_STOCK     = "minecolonies:effects/minimumstockmultiplier";
+    public static final String MORE_ORES         = "minecolonies:effects/moreoresmultiplier";
+    public static final String RECIPES           = "minecolonies:effects/recipesmultiplier";
+    public static final String REGENERATION      = "minecolonies:effects/regenerationmultiplier";
+    public static final String SATURATION        = "minecolonies:effects/saturationmultiplier";
+    public static final String SLEEP_LESS        = "minecolonies:effects/sleeplessmultiplier";
+    public static final String TEACHING          = "minecolonies:effects/teachingmultiplier";
+    public static final String TOOL_DURABILITY   = "minecolonies:effects/tooldurabilitymultiplier";
+    public static final String WALKING           = "minecolonies:effects/walkingmultiplier";
 
     //Unlock Ability modifiers.
-    public static final String CRUSHING_11       = "crushing11unlock";
-    public static final String ARCHER_USE_ARROWS = "consumearrowsunlock";
-    public static final String KNIGHT_TAUNT      = "knighttauntmobsunlock";
-    public static final String FIRE_RES          = "minerfireresunlock";
-    public static final String ARROW_PIERCE      = "piercingarrowsunlock";
-    public static final String PLANT_2           = "plant2unlock";
-    public static final String RAILS             = "railsunlock";
-    public static final String RETREAT           = "retreatunlock";
-    public static final String SHIELD_USAGE      = "shieldusageunlock";
-    public static final String KNIGHT_WHIRLWIND  = "whirlwindabilityunlock";
-    public static final String WORKING_IN_RAIN   = "workinginrainunlock";
+    public static final String CRUSHING_11       = "minecolonies:effects/crushing11unlock";
+    public static final String ARCHER_USE_ARROWS = "minecolonies:effects/consumearrowsunlock";
+    public static final String KNIGHT_TAUNT      = "minecolonies:effects/knighttauntmobsunlock";
+    public static final String FIRE_RES          = "minecolonies:effects/minerfireresunlock";
+    public static final String ARROW_PIERCE      = "minecolonies:effects/piercingarrowsunlock";
+    public static final String PLANT_2           = "minecolonies:effects/plant2unlock";
+    public static final String RAILS             = "minecolonies:effects/railsunlock";
+    public static final String RETREAT           = "minecolonies:effects/retreatunlock";
+    public static final String SHIELD_USAGE      = "minecolonies:effects/shieldusageunlock";
+    public static final String KNIGHT_WHIRLWIND  = "minecolonies:effects/whirlwindabilityunlock";
+    public static final String WORKING_IN_RAIN   = "minecolonies:effects/workinginrainunlock";
 
     /**
      * Private constructor to hide implicit public one.

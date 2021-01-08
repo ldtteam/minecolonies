@@ -1,0 +1,18 @@
+{
+  "comment": "name: Full Retreat * subtitle: ",
+  "branch": "combat",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:combat/retreat",
+  "icon": "minecraft:diamond_boots:1",
+  "requirements": [
+    {
+      "item": "minecraft:emerald",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/fleeingdamagemultiplier": 4
+    }
+  ]
+}

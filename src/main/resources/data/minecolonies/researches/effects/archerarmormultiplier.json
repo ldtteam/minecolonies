@@ -1,6 +1,5 @@
 {
   "comment": "name: Archer Armor * description : Archer Armor +%d%%",
-  "id": "archerarmormultiplier",
   "effect": true,
   "levels": [
     0.05,

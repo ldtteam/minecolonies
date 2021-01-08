@@ -1,6 +1,5 @@
 {
   "comment": "name: Melee Damage * description : Knight Melee Damage +%d",
-  "id": "meleedamageaddition",
   "effect": true,
   "levels": [
     0.5,

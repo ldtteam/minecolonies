@@ -1,6 +1,5 @@
 {
   "comment": "name: CitizenCap * description : Increase Max Citizens +%d",
-  "id": "citizencapaddition",
   "effect": true,
   "levels": [
     25,

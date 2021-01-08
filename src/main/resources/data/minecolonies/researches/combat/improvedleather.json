@@ -1,0 +1,23 @@
+{
+  "comment": "name: Improved Leather * subtitle: Becoming more like the real thing every day.",
+  "branch": "combat",
+  "researchLevel": 1,
+  "sortOrder": 4,
+  "subtitle": "com.minecolonies.research.combat.improvedleather.subtitle",
+  "icon": "minecraft:leather_helmet:1",
+  "requirements": [
+    {
+      "building": "townhall",
+      "level": 1
+    },
+    {
+      "item": "minecraft:leather",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/armordurabilitymultiplier": 1
+    }
+  ]
+}

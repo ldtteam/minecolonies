@@ -1,0 +1,23 @@
+{
+  "comment": "name: Gourmand * subtitle: ",
+  "branch": "civilian",
+  "researchLevel": 2,
+  "sortOrder": 3,
+  "parentResearch": "minecolonies:civilian/firstaid",
+  "icon": "minecolonies:textures/icons/research/saturation1.png:1",
+  "requirements": [
+    {
+      "building": "cook",
+      "level": 2
+    },
+    {
+      "item": "minecraft:cookie",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/saturationmultiplier": 1
+    }
+  ]
+}

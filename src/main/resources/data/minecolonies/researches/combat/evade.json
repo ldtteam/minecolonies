@@ -1,0 +1,22 @@
+{
+  "comment": "name: Evade * subtitle: ",
+  "branch": "combat",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:combat/avoid",
+  "icon": "minecraft:feather:2",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 8
+    },
+    {
+      "item": "minecraft:emerald",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/fleeingspeedaddition": 2
+    }
+  ]
+}

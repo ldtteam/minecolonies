@@ -1,0 +1,23 @@
+{
+  "comment": "name: Deep Pockets * subtitle: ",
+  "branch": "technology",
+  "researchLevel": 4,
+  "sortOrder": 2,
+  "parentResearch": "minecolonies:technology/cheatsheet",
+  "icon": "minecraft:pink_shulker_box:1",
+  "requirements": [
+    {
+      "building": "library",
+      "level": 4
+    },
+    {
+      "item": "minecraft:emerald",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/citizeninvslotsaddition": 1
+    }
+  ]
+}

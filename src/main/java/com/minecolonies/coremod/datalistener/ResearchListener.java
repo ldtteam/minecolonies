@@ -96,24 +96,23 @@ public class ResearchListener extends JsonReloadListener
         {
             final JsonObject effectJson = entry.getValue().getAsJsonObject();
 
-            if (effectJson.has(RESEARCH_EFFECT_PROP) && effectJson.has(RESEARCH_ID_PROP)
-                  && effectJson.get(RESEARCH_ID_PROP).isJsonPrimitive() && effectJson.get(RESEARCH_ID_PROP).getAsJsonPrimitive().isString())
+            if (effectJson.has(RESEARCH_EFFECT_PROP))
             {
                 final ResearchEffectCategory category;
                 if((effectJson.has(RESEARCH_NAME_PROP) && effectJson.get(RESEARCH_NAME_PROP).isJsonPrimitive() && effectJson.get(RESEARCH_NAME_PROP).getAsJsonPrimitive().isString()))
                 {
                     if(effectJson.has(RESEARCH_SUBTITLE_PROP) && effectJson.get(RESEARCH_SUBTITLE_PROP).isJsonPrimitive() && effectJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().isString())
                     {
-                        category = new ResearchEffectCategory(effectJson.get(RESEARCH_ID_PROP).getAsString(), effectJson.get(RESEARCH_NAME_PROP).getAsString(), effectJson.get(RESEARCH_SUBTITLE_PROP).getAsString());
+                        category = new ResearchEffectCategory(entry.getKey().toString(), effectJson.get(RESEARCH_NAME_PROP).getAsString(), effectJson.get(RESEARCH_SUBTITLE_PROP).getAsString());
                     }
                     else
                     {
-                        category = new ResearchEffectCategory(effectJson.get(RESEARCH_ID_PROP).getAsString(), effectJson.get(RESEARCH_NAME_PROP).getAsString());
+                        category = new ResearchEffectCategory(entry.getKey().toString(), effectJson.get(RESEARCH_NAME_PROP).getAsString());
                     }
                 }
                 else
                 {
-                    category = new ResearchEffectCategory(effectJson.get(RESEARCH_ID_PROP).getAsString());
+                    category = new ResearchEffectCategory(entry.getKey().toString());
                 }
                 if (effectJson.has(RESEARCH_EFFECT_LEVELS_PROP) && effectJson.get(RESEARCH_EFFECT_LEVELS_PROP).isJsonArray())
                 {
@@ -157,20 +156,19 @@ public class ResearchListener extends JsonReloadListener
             // Note that we don't actually use the resource folders or file names; those are only for organization purposes.
             final JsonObject researchJson = entry.getValue().getAsJsonObject();
 
-            //Can ignore those effect jsons now:
+            //Can ignore those effects json now:
             if (researchJson.has(RESEARCH_EFFECT_PROP))
             {
                 continue;
             }
 
             //Next, check for remove-type recipes.  We don't want to accidentally add them just because they have too much detail.
-            if ((researchJson.has(RESEARCH_REMOVE_PROP) && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().isBoolean())
-                  && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().getAsBoolean())
+            if (researchJson.has(RESEARCH_REMOVE_PROP) && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().isString())
             {
                 continue;
             }
 
-            //And for research-branch-specific settings, to avoid extraneous warnings.
+            //And same for research-branch-specific settings, to avoid extraneous warnings.
             if (researchJson.has(RESEARCH_BRANCH_ID_PROP))
             {
                 continue;
@@ -179,18 +177,16 @@ public class ResearchListener extends JsonReloadListener
 
             //Check for absolute minimum required types, and log as warning if malformed.
             if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get() &&
-                  !(researchJson.has(RESEARCH_ID_PROP) && researchJson.get(RESEARCH_ID_PROP).isJsonPrimitive()
-                    && researchJson.get(RESEARCH_ID_PROP).getAsJsonPrimitive().isString())
-                  || !(researchJson.has(RESEARCH_BRANCH_PROP) && researchJson.get(RESEARCH_BRANCH_PROP).isJsonPrimitive()
+                  !(researchJson.has(RESEARCH_BRANCH_PROP) && researchJson.get(RESEARCH_BRANCH_PROP).isJsonPrimitive()
                          && researchJson.get(RESEARCH_BRANCH_PROP).getAsJsonPrimitive().isString()))
             {
-                Log.getLogger().warn(entry.getKey() + " is a Research , but does not contain all required fields.  Researches must have id:string, and branch:string properties.");
+                Log.getLogger().warn(entry.getKey() + " is a Research , but does not contain all required fields.  Researches must have a branch:string properties.");
                 continue;
             }
 
             //Missing university level data may not necessarily be a show-stopper, but it is worth warning about.
             if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get() &&
-                 (researchJson.has(RESEARCH_UNIVERSITY_LEVEL_PROP) && researchJson.get(RESEARCH_ID_PROP).getAsJsonPrimitive().isNumber()))
+                 !(researchJson.has(RESEARCH_UNIVERSITY_LEVEL_PROP) && researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).getAsJsonPrimitive().isNumber()))
             {
                 Log.getLogger().warn(entry.getKey() + " is a Research, but has invalid or no university level requirements.");
             }
@@ -201,7 +197,7 @@ public class ResearchListener extends JsonReloadListener
             if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
             {
                 Log.getLogger().info("Parsed research recipe from " + entry.getKey() + " [" + research.getBranch() + "/" + research.getId() + "]");
-                Log.getLogger().info(research.getDesc() + " at " + research.getDepth() + "/" + research.getParent());
+                Log.getLogger().info(research.getName() + " at " + research.getDepth() + "/" + research.getParent());
                 for(IResearchRequirement requirement : research.getResearchRequirement())
                 {
                     Log.getLogger().info("Requirement: " + requirement.getDesc());
@@ -232,13 +228,13 @@ public class ResearchListener extends JsonReloadListener
         {
             final JsonObject researchJson = entry.getValue().getAsJsonObject();
 
-            //not allowing duplicate id across separate branches for now, so we just need removes and Id.
-            if ((researchJson.has(RESEARCH_REMOVE_PROP) && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().isBoolean())
-                  && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().getAsBoolean()
-                  && researchJson.has(RESEARCH_ID_PROP) && researchJson.get(RESEARCH_ID_PROP).getAsJsonPrimitive().isString()
-                /*&& (researchJson.has(RESEARCH_BRANCH_PROP) && researchJson.get(RESEARCH_BRANCH_PROP).getAsJsonPrimitive().isString())*/)
+            // Users could plausibly want to remove a research json without depending on the Minecraft override behavior.
+            // This would mostly be relevant for multiple overlapping data packs, which may have unpredictable load orders.
+            // The json for such a removal can have an arbitrary filename, and the remove property points to the specific json to remove.
+            if (researchJson.has(RESEARCH_REMOVE_PROP) && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().isString())
             {
-                researchMap.remove(researchJson.get(RESEARCH_ID_PROP).getAsString());
+                //hashmap, so don't have to check presence.
+                researchMap.remove(researchJson.get(RESEARCH_REMOVE_PROP).getAsString());
             }
             // Files which declare remove:, but lack ID or have the wrong types are malformed.
             else if (researchJson.has(RESEARCH_REMOVE_PROP))
@@ -263,7 +259,14 @@ public class ResearchListener extends JsonReloadListener
         // Next, set up child relationships, and handle cases where they're not logically consistent.
         for (final Map.Entry<String, GlobalResearch> entry : researchMap.entrySet())
         {
-            if (!entry.getValue().getParent().isEmpty())
+            if (entry.getValue().getParent().isEmpty() && entry.getValue().getDepth() > 1)
+            {
+                //For now, log and re-graft entries with no parent and depth to the root of their branch.
+                entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(), entry.getValue().getIcon(), entry.getValue().isImmutable()));
+                Log.getLogger()
+                  .error(entry.getValue().getBranch() + "/" + entry.getKey() + "could not be attached to tree: inconsistent depth for parentage.");
+            }
+            else if (!entry.getValue().getParent().isEmpty())
             {
                 if (researchMap.containsKey(entry.getValue().getParent()))
                 {
@@ -283,7 +286,7 @@ public class ResearchListener extends JsonReloadListener
                 else
                 {
                     //For now, log and re-graft entries with inconsistent parent-child relationships to a separate branch.
-                    Log.getLogger().error(entry.getValue().getBranch() + "/" + entry.getKey() + "could not find parent" + researchMap.containsKey(entry.getValue().getParent()));
+                    Log.getLogger().error(entry.getValue().getBranch() + "/" + entry.getKey() + " could not find parent " + entry.getValue().getParent());
                     entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(), entry.getValue().getIcon(), entry.getValue().isImmutable()));
                 }
             }

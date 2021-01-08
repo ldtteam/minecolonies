@@ -1,0 +1,22 @@
+{
+  "comment": "name: Compress * subtitle: ",
+  "branch": "civilian",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:civilian/bandages",
+  "icon": "minecolonies:textures/icons/research/regeneration4.png:1",
+  "requirements": [
+    {
+      "building": "library",
+      "level": 5
+    },
+    {
+      "item": "minecraft:golden_carrot",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/regenerationmultiplier": 4
+    }
+  ]
+}

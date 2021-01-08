@@ -1,0 +1,19 @@
+{
+  "comment": "name: Heavily Loaded * subtitle: ",
+  "branch": "technology",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:technology/loaded",
+  "no-reset": true,
+  "icon": "minecraft:blue_shulker_box:1",
+  "requirements": [
+    {
+      "item": "minecraft:emerald",
+      "quantity": 256
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/citizeninvslotsaddition": 3
+    }
+  ]
+}

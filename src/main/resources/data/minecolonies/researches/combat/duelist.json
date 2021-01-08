@@ -1,0 +1,22 @@
+{
+  "comment": "name: Duelist * subtitle: ",
+  "branch": "combat",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:combat/riposte",
+  "icon": "minecraft:chainmail_chestplate:1",
+  "requirements": [
+    {
+      "building": "smeltery",
+      "level": 3
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/meleearmormultiplier": 3
+    }
+  ]
+}

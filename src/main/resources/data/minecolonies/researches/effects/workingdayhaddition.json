@@ -1,6 +1,5 @@
 {
   "comment": "name: Working Day H * description : Citizen Work Day +%dH",
-  "id": "workingdayhaddition",
   "effect": true,
   "levels": [
     1,

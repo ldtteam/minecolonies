@@ -1,6 +1,5 @@
 {
   "comment": "name: Archer Damage * description : Archer Damage +%d",
-  "id": "archerdamageaddition",
   "effect": true,
   "levels": [
     0.5,

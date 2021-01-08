@@ -1,0 +1,22 @@
+{
+  "comment": "name: Trick Shot * subtitle: ",
+  "branch": "combat",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:combat/improvedbows",
+  "icon": "minecraft:arrow:1",
+  "requirements": [
+    {
+      "building": "archery",
+      "level": 3
+    },
+    {
+      "item": "minecraft:bow",
+      "quantity": 5
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/doublearrowsmultiplier": 1
+    }
+  ]
+}

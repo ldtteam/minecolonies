@@ -1,0 +1,18 @@
+{
+  "comment": "name: Indefatigability * subtitle: ",
+  "branch": "civilian",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:civilian/fortitude",
+  "icon": "minecraft:experience_bottle:1",
+  "requirements": [
+    {
+      "item": "minecraft:golden_apple",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/healingsaturationlimitaddition": 5
+    }
+  ]
+}

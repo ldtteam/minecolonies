@@ -1,0 +1,23 @@
+{
+  "comment": "name: Resistance * subtitle: ",
+  "branch": "civilian",
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "parentResearch": "minecolonies:civilian/stamina",
+  "icon": "minecraft:glass_bottle:1",
+  "requirements": [
+    {
+      "building": "cook",
+      "level": 2
+    },
+    {
+      "item": "minecraft:golden_apple",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/healingsaturationlimitaddition": 1
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "comment": "name: Rocking Roll * subtitle: ",
+  "branch": "technology",
+  "researchLevel": 2,
+  "parentResearch": "minecolonies:technology/stonecake",
+  "icon": "minecolonies:blockhutcrusher:1",
+  "requirements": [
+    {
+      "building": "stonemason",
+      "level": 1
+    },
+    {
+      "item": "minecraft:stone",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutcrusher": 1
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "comment": "name: Circus * subtitle: ",
+  "branch": "civilian",
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "parentResearch": "minecolonies:civilian/firstaid",
+  "icon": "minecolonies:textures/icons/research/happy1.png:1",
+  "requirements": [
+    {
+      "building": "cook",
+      "level": 2
+    },
+    {
+      "item": "minecraft:cake",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/happinessmultiplier": 1
+    }
+  ]
+}

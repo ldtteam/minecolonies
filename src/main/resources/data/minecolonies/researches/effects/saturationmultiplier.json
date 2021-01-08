@@ -1,6 +1,5 @@
 {
   "comment": "name: Saturation * description : Citizen Saturation Per Meal +%d%%",
-  "id": "saturationmultiplier",
   "effect": true,
   "levels": [
     0.1,

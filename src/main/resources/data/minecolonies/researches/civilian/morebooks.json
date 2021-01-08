@@ -1,0 +1,23 @@
+{
+  "comment": "name: More Books * subtitle: Of course I'm right, I read it in a book!",
+  "branch": "civilian",
+  "researchLevel": 2,
+  "parentResearch": "minecolonies:civilian/higherlearning",
+  "subtitle": "com.minecolonies.research.civilian.morebooks.subtitle",
+  "icon": "minecolonies:textures/icons/research/xpgain1.png:1",
+  "requirements": [
+    {
+      "building": "school",
+      "level": 1
+    },
+    {
+      "item": "minecraft:book",
+      "quantity": 6
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/teachingmultiplier": 1
+    }
+  ]
+}

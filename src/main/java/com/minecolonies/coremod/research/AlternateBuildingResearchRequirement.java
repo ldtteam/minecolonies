@@ -129,7 +129,7 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
         StringBuilder s = new StringBuilder(type);
         for(Map.Entry<String, Integer> building : buildings.entrySet())
         {
-            s.append(":").append(building.getKey()).append(":").append(building.getValue());
+            s.append("`").append(building.getKey()).append("`").append(building.getValue());
         }
         return s.toString();
     }

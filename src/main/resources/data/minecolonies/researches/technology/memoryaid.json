@@ -1,0 +1,24 @@
+{
+  "comment": "name: Memory Aid * subtitle: It's the thought that counts.",
+  "branch": "technology",
+  "researchLevel": 2,
+  "sortOrder": 3,
+  "parentResearch": "minecolonies:technology/woodwork",
+  "subtitle": "com.minecolonies.research.technology.memoryaid.subtitle",
+  "icon": "minecraft:paper:1",
+  "requirements": [
+    {
+      "building": "sawmill",
+      "level": 1
+    },
+    {
+      "item": "minecraft:paper",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/recipesmultiplier": 1
+    }
+  ]
+}

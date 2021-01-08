@@ -1,6 +1,5 @@
 {
   "comment": "name: Armor Durability * description : Citizen Armor Durability +%d%%",
-  "id": "armordurabilitymultiplier",
   "effect": true,
   "levels": [
     0.1,

@@ -1,6 +1,5 @@
 {
   "comment": "name: Sleep Less * description : Guards Need %d%% Less Sleep",
-  "id": "sleeplessmultiplier",
   "effect": true,
   "levels": [
     0.5

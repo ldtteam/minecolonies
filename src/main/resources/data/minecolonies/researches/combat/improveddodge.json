@@ -1,0 +1,23 @@
+{
+  "comment": "name: Improved Dodge * subtitle: Dip",
+  "branch": "combat",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:combat/dodge",
+  "subtitle": "com.minecolonies.research.combat.improveddodge.subtitle",
+  "icon": "minecolonies:pirate_shoes:1",
+  "requirements": [
+    {
+      "building": "archery",
+      "level": 1
+    },
+    {
+      "item": "minecraft:leather",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/archerarmormultiplier": 2
+    }
+  ]
+}

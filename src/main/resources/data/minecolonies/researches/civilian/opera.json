@@ -1,0 +1,23 @@
+{
+  "comment": "name: Opera * subtitle: Ear plugs not included.",
+  "branch": "civilian",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:civilian/spectacle",
+  "subtitle": "com.minecolonies.research.civilian.opera.subtitle",
+  "icon": "minecolonies:textures/icons/research/happy4.png:1",
+  "requirements": [
+    {
+      "building": "cook",
+      "level": 5
+    },
+    {
+      "item": "minecraft:cake",
+      "quantity": 27
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/happinessmultiplier": 4
+    }
+  ]
+}

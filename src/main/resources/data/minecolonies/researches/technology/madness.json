@@ -1,0 +1,18 @@
+{
+  "comment": "name: Madness! * subtitle: ",
+  "branch": "technology",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:technology/seemsautomatic",
+  "icon": "minecraft:spectral_arrow:1",
+  "requirements": [
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 1024
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockplacespeedmultiplier": 5
+    }
+  ]
+}

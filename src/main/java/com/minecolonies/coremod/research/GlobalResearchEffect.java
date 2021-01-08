@@ -2,7 +2,6 @@ package com.minecolonies.coremod.research;
 
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -127,7 +126,8 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
     {
         if(desc.isEmpty())
         {
-            return new TranslationTextComponent(TranslationConstants.RESEARCH_EFFECTS + this.getId() + ".description", displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
+            return new TranslationTextComponent("com." + this.id.split(":")[0] + ".research." + this.id.split(":")[1].replaceAll("[ /:]",".") + ".description",
+                   displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
         }
         else
         {
@@ -150,6 +150,6 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
     @Override
     public String getAttributes()
     {
-        return id + ":" + desc + ":" + subtitle + ":" + effect + ":" + displayEffect;
+        return id + "`" + desc + "`" + subtitle + "`" + effect + "`" + displayEffect;
     }
 }

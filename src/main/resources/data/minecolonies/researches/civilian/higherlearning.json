@@ -1,0 +1,24 @@
+{
+  "comment": "name: Higher Learning * subtitle: Well, we had to find something to occupy them.",
+  "branch": "civilian",
+  "researchLevel": 1,
+  "sortOrder": 4,
+  "exclusiveChildResearch": true,
+  "subtitle": "com.minecolonies.research.civilian.higherlearning.subtitle",
+  "icon": "minecolonies:blockhutschool:1",
+  "requirements": [
+    {
+      "building": "citizen",
+      "level": 3
+    },
+    {
+      "item": "minecraft:book",
+      "quantity": 3
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutschool": 1
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "comment": "name: Puberty * subtitle: My voice sounds weird...",
+  "branch": "civilian",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:civilian/hormones",
+  "subtitle": "com.minecolonies.research.civilian.puberty.subtitle",
+  "icon": "minecolonies:textures/icons/research/childgrowth3.png:1",
+  "requirements": [
+    {
+      "building": "library",
+      "level": 3
+    },
+    {
+      "item": "minecraft:cooked_chicken",
+      "quantity": 128
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/growthmultiplier": 3
+    }
+  ]
+}

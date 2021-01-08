@@ -5,7 +5,6 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.HashSet;
 import java.util.List;
@@ -40,13 +39,6 @@ public interface IGlobalResearchTree
      * @return the effect id
      */
     List<IResearchEffect<?>> getEffectsForResearch(final @NotNull String id);
-
-   /** Get a research's resource location.
-     *
-     * @param id     the id of the research.
-     * @return the IResearch object.
-     */
-    ResourceLocation getResearchResourceLocation(final String branch, final String id);
 
     /**
      * Check if a research exists, by id.

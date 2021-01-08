@@ -1,0 +1,23 @@
+{
+  "comment": "name: Bookworm * subtitle: We all know the early bird gets the book!",
+  "branch": "civilian",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:civilian/morebooks",
+  "subtitle": "com.minecolonies.research.civilian.bookworm.subtitle",
+  "icon": "minecolonies:textures/icons/research/xpgain2.png:1",
+  "requirements": [
+    {
+      "building": "school",
+      "level": 3
+    },
+    {
+      "item": "minecraft:bookshelf",
+      "quantity": 6
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/teachingmultiplier": 2
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "comment": "name: Healing Cream * subtitle: You missed a spot...",
+  "branch": "civilian",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:civilian/bandaid",
+  "subtitle": "com.minecolonies.research.civilian.healingcream.subtitle",
+  "icon": "minecolonies:textures/icons/research/regeneration2.png:1",
+  "requirements": [
+    {
+      "building": "library",
+      "level": 3
+    },
+    {
+      "item": "minecraft:golden_carrot",
+      "quantity": 8
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/regenerationmultiplier": 2
+    }
+  ]
+}

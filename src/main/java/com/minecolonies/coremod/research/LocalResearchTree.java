@@ -163,12 +163,12 @@ public class LocalResearchTree implements ILocalResearchTree
                 // Remove items from player
                 if (!InventoryUtils.tryRemoveStorageFromItemHandler(new InvWrapper(player.inventory), research.getCostList()))
                 {
-                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.costnotavailable", new TranslationTextComponent(research.getDesc())),
+                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.costnotavailable", new TranslationTextComponent(research.getName())),
                       player.getUniqueID());
                     SoundUtils.playErrorSound(player, player.getPosition());
                     return;
                 }
-                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started", new TranslationTextComponent(research.getDesc())),
+                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started", new TranslationTextComponent(research.getName())),
                   player.getUniqueID());
                 research.startResearch(colony.getResearchManager().getResearchTree());
                 SoundUtils.playSuccessSound(player, player.getPosition());
@@ -202,7 +202,7 @@ public class LocalResearchTree implements ILocalResearchTree
         if(research.getState() == ResearchState.IN_PROGRESS)
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.stopped",
-                new TranslationTextComponent(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc())), player.getUniqueID());
+                new TranslationTextComponent(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName())), player.getUniqueID());
             SoundUtils.playSuccessSound(player, player.getPosition());
             removeResearch(research.getBranch(), research.getId());
         }
@@ -236,13 +236,13 @@ public class LocalResearchTree implements ILocalResearchTree
                 if (!InventoryUtils.tryRemoveStorageFromItemHandler(new InvWrapper(player.inventory), costList))
                 {
                     player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.costnotavailable",
-                        new TranslationTextComponent(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc())), player.getUniqueID());
+                        new TranslationTextComponent(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName())), player.getUniqueID());
                     SoundUtils.playErrorSound(player, player.getPosition());
                     return;
                 }
             }
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.undo",
-              new TranslationTextComponent(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc())), player.getUniqueID());
+              new TranslationTextComponent(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName())), player.getUniqueID());
             SoundUtils.playSuccessSound(player, player.getPosition());
             removeResearch(research.getBranch(), research.getId());
             resetEffects(colony);
@@ -320,41 +320,26 @@ public class LocalResearchTree implements ILocalResearchTree
         NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Constants.NBT.TAG_COMPOUND))
           .map(researchCompound -> (ILocalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
           .forEach(research -> {
+              /// region Updated ID helper.
+              if (!MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearch(research.getBranch(), research.getId()))
+              {
+                  if(ResearchCompatMap.updateMap.containsKey(research.getId()))
+                  {
+                      final ResearchState currentState = research.getState();
+                      final int progress = research.getProgress();
+                      research = new LocalResearch(ResearchCompatMap.updateMap.get(research.getId()), research.getBranch(), research.getDepth());
+                      research.setState(currentState);
+                      research.setProgress(progress);
+                  }
+              }
+              /// endregion
+
               if (research.getState() == ResearchState.FINISHED)
               {
-                  /// region Updated ID helper.  TODO: Remove for 1.17+, or after sufficient update time.
-                  if (!MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearch(research.getBranch(), research.getId()))
-                  {
-                      switch (research.getId())
-                      {
-                          case "tickshot":
-                              research = new LocalResearch("trickshot", "combat", 3);
-                              break;
-                          case "whirldwind":
-                              research = new LocalResearch("whirlwind", "combat", 6);
-                              break;
-                          case "repost":
-                              research = new LocalResearch("riposte", "combat", 3);
-                              break;
-                          case "ironarmour":
-                              research = new LocalResearch("ironarmor", "combat", 4);
-                              break;
-                          case "steelarmour":
-                              research = new LocalResearch("steelarmor", "combat", 5);
-                              break;
-                          case "livesaver":
-                              research = new LocalResearch("lifesaver", "civilian", 3);
-                              break;
-                          case "livesaver2":
-                              research = new LocalResearch("lifesaver2", "civilian", 4);
-                              break;
-                      }
-                  }
-                  /// endregion
 
 
-                  // Even after correction, we do still need to check; it's possible for someone to have old save data and remove the research,
-                  // or to have a different research that was in a now-removed datapack.
+                  // Even after correction, we do still need to check for presence; it's possible for someone to have old save data and remove the research,
+                  // or to have a different research that was in a now-removed data pack.  But those will get just thrown away.
                   if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearch(research.getBranch(), research.getId()))
                   {
                       for (final IResearchEffect<?> effect : MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearch(research.getBranch(), research.getId()).getEffects())

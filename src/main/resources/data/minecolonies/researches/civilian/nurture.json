@@ -1,0 +1,24 @@
+{
+  "comment": "name: Nurture * subtitle: It's just part of our nature now.",
+  "branch": "civilian",
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "parentResearch": "minecolonies:civilian/higherlearning",
+  "subtitle": "com.minecolonies.research.civilian.nurture.subtitle",
+  "icon": "minecolonies:textures/icons/research/childgrowth1.png:1",
+  "requirements": [
+    {
+      "building": "school",
+      "level": 1
+    },
+    {
+      "item": "minecraft:cooked_chicken",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/growthmultiplier": 1
+    }
+  ]
+}

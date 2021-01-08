@@ -1,0 +1,18 @@
+{
+  "comment": "name: Diamond Coated * subtitle: ",
+  "branch": "technology",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:technology/steelbracing",
+  "icon": "minecraft:diamond_pickaxe:1",
+  "requirements": [
+    {
+      "item": "minecraft:diamond",
+      "quantity": 128
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/tooldurabilitymultiplier": 5
+    }
+  ]
+}

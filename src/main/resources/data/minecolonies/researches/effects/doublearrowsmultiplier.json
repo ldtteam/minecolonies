@@ -1,6 +1,5 @@
 {
   "comment": "name: Double Arrows * description : Archer Multishot +%d",
-  "id": "doublearrowsmultiplier",
   "effect": true,
   "levels": [
     0.05,

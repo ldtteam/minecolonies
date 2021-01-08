@@ -1,0 +1,23 @@
+{
+  "comment": "name: First Aid * subtitle: First aid, second hand.",
+  "branch": "civilian",
+  "researchLevel": 1,
+  "sortOrder": 3,
+  "subtitle": "com.minecolonies.research.civilian.firstaid.subtitle",
+  "icon": "minecolonies:textures/icons/research/hp1.png:1",
+  "requirements": [
+    {
+      "building": "townhall",
+      "level": 1
+    },
+    {
+      "item": "minecraft:hay_block",
+      "quantity": 8
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/healthaddition": 1
+    }
+  ]
+}

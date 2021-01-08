@@ -114,7 +114,7 @@ public class BuildingResearchRequirement implements IResearchRequirement
     @Override
     public String getAttributes()
     {
-        return type + ":" + building + ":" + buildingLevel;
+        return type + "`" + building + "`" + buildingLevel;
     }
 
     @Override

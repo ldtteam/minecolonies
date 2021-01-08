@@ -1,0 +1,22 @@
+{
+  "comment": "name: Provost * subtitle: ",
+  "branch": "combat",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:combat/duelist",
+  "icon": "minecraft:golden_chestplate:1",
+  "requirements": [
+    {
+      "building": "combatacademy",
+      "level": 5
+    },
+    {
+      "item": "minecraft:diamond",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/meleearmormultiplier": 4
+    }
+  ]
+}

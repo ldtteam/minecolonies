@@ -1,0 +1,23 @@
+{
+  "comment": "name: Bachelor * subtitle: They now look like they know a lot, whether they do or not.",
+  "branch": "civilian",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:civilian/bookworm",
+  "subtitle": "com.minecolonies.research.civilian.bachelor.subtitle",
+  "icon": "minecolonies:textures/icons/research/xpgain3.png:1",
+  "requirements": [
+    {
+      "building": "library",
+      "level": 3
+    },
+    {
+      "item": "minecraft:bookshelf",
+      "quantity": 12
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/teachingmultiplier": 3
+    }
+  ]
+}

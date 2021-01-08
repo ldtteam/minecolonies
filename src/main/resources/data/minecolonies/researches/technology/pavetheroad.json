@@ -1,0 +1,24 @@
+{
+  "comment": "name: Pave the Road * subtitle: Not something you want to get mixed up in.",
+  "branch": "technology",
+  "researchLevel": 3,
+  "sortOrder": 2,
+  "parentResearch": "minecolonies:technology/rockingroll",
+  "subtitle": "com.minecolonies.research.technology.pavetheroad.subtitle",
+  "icon": "minecolonies:blockhutconcretemixer:1",
+  "requirements": [
+    {
+      "building": "crusher",
+      "level": 1
+    },
+    {
+      "item": "minecraft:white_concrete",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutconcretemixer": 1
+    }
+  ]
+}

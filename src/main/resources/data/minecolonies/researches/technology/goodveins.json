@@ -1,0 +1,22 @@
+{
+  "comment": "name: Good Veins * subtitle: ",
+  "branch": "technology",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:technology/veinminer",
+  "icon": "minecraft:coal_block:1",
+  "requirements": [
+    {
+      "building": "miner",
+      "level": 2
+    },
+    {
+      "item": "minecraft:iron_ore",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/moreoresmultiplier": 2
+    }
+  ]
+}

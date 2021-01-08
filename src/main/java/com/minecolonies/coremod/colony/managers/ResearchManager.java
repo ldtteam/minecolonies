@@ -127,7 +127,7 @@ public class ResearchManager implements IResearchManager
             {
                 for (PlayerEntity player : colony.getMessagePlayerEntities())
                 {
-                    player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getDesc()), player.getUniqueID());
+                    player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getName()), player.getUniqueID());
                     SoundUtils.playSuccessSound(player, player.getPosition());
                 }
             }
@@ -173,7 +173,7 @@ public class ResearchManager implements IResearchManager
                 citizen.applyResearchEffects();
             }
             final TranslationTextComponent message = new TranslationTextComponent(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
-              new TranslationTextComponent(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc()));
+              new TranslationTextComponent(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()));
             for (PlayerEntity player : colony.getMessagePlayerEntities())
             {
                 player.sendMessage(message, player.getUniqueID());
@@ -184,9 +184,9 @@ public class ResearchManager implements IResearchManager
         {
             for (PlayerEntity player : colony.getMessagePlayerEntities())
             {
-                player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getDesc())
+                player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getName())
                                      .append(new TranslationTextComponent("com.minecolonies.coremod.research.started",
-                                       new TranslationTextComponent(research.getDesc()))),
+                                       new TranslationTextComponent(research.getName()))),
                   player.getUniqueID());
                 SoundUtils.playSuccessSound(player, player.getPosition());
             }

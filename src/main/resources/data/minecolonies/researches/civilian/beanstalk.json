@@ -1,0 +1,19 @@
+{
+  "comment": "name: Beanstalk * subtitle: That's one heck of a growth spurt!",
+  "branch": "civilian",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:civilian/growth",
+  "subtitle": "com.minecolonies.research.civilian.beanstalk.subtitle",
+  "icon": "minecolonies:textures/icons/research/childgrowth5.png:1",
+  "requirements": [
+    {
+      "item": "minecraft:cooked_chicken",
+      "quantity": 512
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/growthmultiplier": 5
+    }
+  ]
+}

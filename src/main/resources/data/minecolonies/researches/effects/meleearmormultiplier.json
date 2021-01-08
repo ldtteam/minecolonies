@@ -1,6 +1,5 @@
 {
   "comment": "name: Melee Armor * description : Knights Armor +%d%%",
-  "id": "meleearmormultiplier",
   "effect": true,
   "levels": [
     0.05,

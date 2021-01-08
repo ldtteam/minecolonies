@@ -1,0 +1,18 @@
+{
+  "comment": "name: Motherlode * subtitle: ",
+  "branch": "technology",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:technology/amazingveins",
+  "icon": "minecraft:diamond_block:1",
+  "requirements": [
+    {
+      "item": "minecraft:diamond_ore",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/moreoresmultiplier": 5
+    }
+  ]
+}

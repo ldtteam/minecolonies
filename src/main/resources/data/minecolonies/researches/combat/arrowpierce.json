@@ -1,0 +1,26 @@
+{
+  "comment": "name: Arrow Piercing * subtitle: ",
+  "branch": "combat",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:combat/arrowuse",
+  "icon": "minecraft:enchanted_book:1",
+  "requirements": [
+    {
+      "building": "archery",
+      "level": 1
+    },
+    {
+      "item": "minecraft:arrow",
+      "quantity": 64
+    },
+    {
+      "item": "minecraft:redstone",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/piercingarrowsunlock": 1
+    }
+  ]
+}

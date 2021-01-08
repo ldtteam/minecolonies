@@ -1,0 +1,22 @@
+{
+  "comment": "name: Hamlet * subtitle: ",
+  "branch": "civilian",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:civilian/outpost",
+  "icon": "minecolonies:blockhutcitizen:75",
+  "requirements": [
+    {
+      "building": "citizen",
+      "level": 5
+    },
+    {
+      "item": "minecraft:cooked_beef",
+      "quantity": 128
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/citizencapaddition": 2
+    }
+  ]
+}

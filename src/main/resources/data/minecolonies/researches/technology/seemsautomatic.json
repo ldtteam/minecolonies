@@ -1,0 +1,23 @@
+{
+  "comment": "name: Seems Automatic * subtitle: It all happened so fast...",
+  "branch": "technology",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:technology/tools",
+  "subtitle": "com.minecolonies.research.technology.seemsautomatic.subtitle",
+  "icon": "minecraft:blaze_powder:1",
+  "requirements": [
+    {
+      "building": "blacksmith",
+      "level": 5
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 512
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockplacespeedmultiplier": 4
+    }
+  ]
+}

@@ -1,6 +1,5 @@
 {
   "comment": "name: Happiness * description : Citizen Happiness +%d%%",
-  "id": "happinessmultiplier",
   "effect": true,
   "levels": [
     0.05,

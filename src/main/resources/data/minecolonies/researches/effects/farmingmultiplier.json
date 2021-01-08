@@ -1,6 +1,5 @@
 {
   "comment": "name: Farming * description : Farmers Harvest +%d%% Crops",
-  "id": "farmingmultiplier",
   "effect": true,
   "levels": [
     0.1,

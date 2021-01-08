@@ -1,0 +1,22 @@
+{
+  "comment": "name: Rich Veins * subtitle: ",
+  "branch": "technology",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:technology/goodveins",
+  "icon": "minecraft:gold_block:1",
+  "requirements": [
+    {
+      "building": "blacksmith",
+      "level": 4
+    },
+    {
+      "item": "minecraft:gold_ore",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/moreoresmultiplier": 3
+    }
+  ]
+}

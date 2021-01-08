@@ -244,7 +244,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
         }
 
         final TranslationTextComponent message = new TranslationTextComponent(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
-          new TranslationTextComponent(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getDesc()));
+          new TranslationTextComponent(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()));
 
         for(PlayerEntity player : colony.getMessagePlayerEntities())
         {

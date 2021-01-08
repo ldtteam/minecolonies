@@ -1,6 +1,5 @@
 {
   "comment": "name: Leveling * description : Citizen XP Growth +%d%%",
-  "id": "levelingmultiplier",
   "effect": true,
   "levels": [
     0.05,

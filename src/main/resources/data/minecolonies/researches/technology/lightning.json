@@ -1,0 +1,19 @@
+{
+  "comment": "name: Lightning * subtitle: BAM! And the block is gone!",
+  "branch": "technology",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:technology/whatisthisspeed",
+  "subtitle": "com.minecolonies.research.technology.lightning.subtitle",
+  "icon": "minecraft:repeater:1",
+  "requirements": [
+    {
+      "item": "minecraft:redstone",
+      "quantity": 2048
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockbreakspeedmultiplier": 5
+    }
+  ]
+}

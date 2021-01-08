@@ -1,0 +1,22 @@
+{
+  "comment": "name: Penetrating Shot * subtitle: ",
+  "branch": "combat",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:combat/preciseshot",
+  "icon": "minecraft:bow:1",
+  "requirements": [
+    {
+      "building": "archery",
+      "level": 3
+    },
+    {
+      "item": "minecraft:flint",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/archerdamageaddition": 2
+    }
+  ]
+}

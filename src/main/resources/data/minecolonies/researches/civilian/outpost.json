@@ -1,0 +1,22 @@
+{
+  "comment": "name: Outpost * subtitle: ",
+  "branch": "civilian",
+  "researchLevel": 2,
+  "parentResearch": "minecolonies:civilian/keen",
+  "icon": "minecolonies:blockhutcitizen:50",
+  "requirements": [
+    {
+      "building": "citizen",
+      "level": 4
+    },
+    {
+      "item": "minecraft:cooked_beef",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/citizencapaddition": 1
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "comment": "name: Rainman * subtitle: Raindrops are falling on my head...",
+  "branch": "technology",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:technology/rtm",
+  "subtitle": "com.minecolonies.research.technology.rainman.subtitle",
+  "icon": "minecraft:splash_potion:1",
+  "requirements": [
+    {
+      "item": "minecraft:salmon_bucket",
+      "quantity": 27
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/workinginrainunlock": 1
+    }
+  ]
+}

@@ -16,7 +16,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -47,14 +46,9 @@ public class GlobalResearchTree implements IGlobalResearchTree
     private final Map<String, Double> branchTimes = new HashMap<>();
 
     /**
-     * The map containing all researches by ResourceLocation and ResearchID.
-     */
-    private final Map<ResourceLocation, String> researchResourceLocations = new HashMap<>();
-
-    /**
      * The list containing all resettable researches by ResourceLocation.
      */
-    private final List<ResourceLocation> reloadableResearch = new ArrayList<>();
+    private final List<String> reloadableResearch = new ArrayList<>();
 
     /**
      * The list containing all autostart research.
@@ -68,9 +62,6 @@ public class GlobalResearchTree implements IGlobalResearchTree
 
     @Override
     public IGlobalResearch getResearch(final String branch, final String id) { return researchTree.get(branch).get(id); }
-
-    @Override
-    public ResourceLocation getResearchResourceLocation(final String branch, final String id) {  return researchTree.get(branch).get(id).getResourceLocation(); }
 
     @Override
     public boolean hasResearch(final String branch, final String id)
@@ -114,19 +105,17 @@ public class GlobalResearchTree implements IGlobalResearchTree
         branchMap.put(research.getId(), research);
         researchTree.put(branch, branchMap);
 
-        researchResourceLocations.put(research.getResourceLocation(), research.getId());
-
         if (isReloadedWithWorld)
         {
-            reloadableResearch.add(research.getResourceLocation());
-        }
-        if (research.isAutostart())
-        {
-           autostartResearch.add(research);
+            reloadableResearch.add(research.getId());
         }
         for (IResearchEffect<?> effect : research.getEffects())
         {
             researchEffectsIds.add(effect.getId());
+        }
+        if (research.isAutostart())
+        {
+           autostartResearch.add(research);
         }
     }
 
@@ -150,24 +139,19 @@ public class GlobalResearchTree implements IGlobalResearchTree
             return Collections.emptyList();
         }
         return researchTree.get(branch).values().stream().filter(research -> research.getParent().isEmpty())
-                 .sorted(Comparator.comparing(IGlobalResearch::getResourceLocation))
+                 .sorted(Comparator.comparing(IGlobalResearch::getId))
                  .map(IGlobalResearch::getId).collect(Collectors.toList());
     }
 
     @Override
     public void reset()
     {
-        for(ResourceLocation reset : reloadableResearch)
+        for(String reset : reloadableResearch)
         {
-            if(!researchResourceLocations.containsKey(reset))
-            {
-                continue;
-            }
             for(Map.Entry<String, Map<String, IGlobalResearch>> branch : researchTree.entrySet())
             {
-                branch.getValue().remove(researchResourceLocations.get(reset));
+                branch.getValue().remove(reset);
             }
-            researchResourceLocations.remove(reset);
         }
         reloadableResearch.clear();
         // Autostart is only accessible as a dynamically-assigned trait, so we can reset all of it.

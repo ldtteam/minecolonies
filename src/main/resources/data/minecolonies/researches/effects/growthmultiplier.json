@@ -1,6 +1,5 @@
 {
   "comment": "name: Growth * description : Child Growth Rate +%d%%",
-  "id": "growthmultiplier",
   "effect": true,
   "levels": [
     0.05,

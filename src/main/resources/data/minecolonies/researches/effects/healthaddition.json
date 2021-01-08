@@ -1,6 +1,5 @@
 {
   "comment": "name: Health * description : Citizen HP +%d",
-  "id": "healthaddition",
   "effect": true,
   "levels": [
     2,
