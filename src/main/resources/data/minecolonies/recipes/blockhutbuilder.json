@@ -10,7 +10,7 @@
       "tag": "minecraft:planks"
     },
     "D": {
-      "item": "minecraft:wooden_doors"
+      "tag": "minecraft:wooden_doors"
     },
     "T": {
       "item": "structurize:sceptergold"
