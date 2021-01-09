@@ -9,10 +9,10 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
-import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -295,6 +295,10 @@ public class CustomRecipe
         {
             recipe.result = idToItemStack(recipeJson.get(RECIPE_RESULT_PROP).getAsString());
         }
+        else
+        {
+            recipe.result = ItemStack.EMPTY;
+        }
 
         if (recipeJson.has(RECIPE_LOOTTABLE_PROP))
         {
@@ -344,7 +348,7 @@ public class CustomRecipe
             }
         }
 
-        if (recipeJson.has(COUNT_PROP) && recipe.result != null)
+        if (recipeJson.has(COUNT_PROP) && !ItemStackUtils.isEmpty(recipe.result))
         {
             recipe.result.setCount(recipeJson.get(COUNT_PROP).getAsInt());
         }
@@ -352,6 +356,10 @@ public class CustomRecipe
         {
             final String[] split = recipeJson.get(RECIPE_INTERMEDIATE_PROP).getAsString().split(":");
             recipe.intermediate = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0], split[1]));
+        }
+        else
+        {
+            recipe.intermediate = Blocks.AIR;
         }
         if (recipeJson.has(RECIPE_RESEARCHID_PROP))
         {

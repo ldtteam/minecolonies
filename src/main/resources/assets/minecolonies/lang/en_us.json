@@ -1264,6 +1264,7 @@
   "com.minecolonies.coremod.general.canttakeequipped": "The only armor you have is what you're wearing. Put it in your inventory if you want to give it to me.",
 
   "com.minecolonies.coremod.gui.workerhuts.siftersettings": "Daily limit",
+  "com.minecolonies.coremod.gui.workerhuts.sifterinfo": "of %d allowed",
   "block.minecolonies.blockhutsifter": "Sifter",
   "block.minecolonies.blockhutsifter.name": "Sifter",
 
@@ -1520,7 +1521,7 @@
   "com.minecolonies.coremod.research.requirementnotmet": "Minimum research requirement not met!",
   "com.minecolonies.coremod.research.started": "Researchers have begun to investigate '%s'.",
   "com.minecolonies.coremod.research.havetounlock": "Build a University and research this hut to unlock it!",
-  "com.minecolonies.coremod.research.item1": "§cThe %s requires research",
+  "com.minecolonies.coremod.research.item1": "§cThe %s§c requires research",
   "com.minecolonies.coremod.research.item2": "§cat the University to be built.",
 
   "com.minecolonies.coremod.info.builder.0.name": "Introduction",
