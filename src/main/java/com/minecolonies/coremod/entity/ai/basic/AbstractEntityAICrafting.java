@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -16,11 +17,13 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
-
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameterSet;
+import net.minecraft.loot.LootParameters;
 import net.minecraft.util.Hand;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -60,6 +63,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      * The current recipe that is being crafted.
      */
     protected IRecipeStorage currentRecipeStorage;
+
+    /**
+     * The loot parameter set definition
+     */
+    private static final LootParameterSet recipeLootParameters = (new LootParameterSet.Builder()).required(LootParameters.field_237457_g_).required(LootParameters.THIS_ENTITY).required(LootParameters.TOOL).build();
 
     /**
      * The number of actions a crafting "success" is worth. By default, that's 1 action for 1 crafting success. Override this in your subclass to make crafting recipes worth more
@@ -335,7 +343,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
-                if (!currentRecipeStorage.fullFillRecipe(worker.getEntityWorld(), worker.getItemHandlerCitizen()))
+                if (!currentRecipeStorage.fullfillRecipe(getLootContext(), ImmutableList.of(worker.getItemHandlerCitizen())))
                 {
                     currentRequest = null;
                     incrementActionsDone(getActionRewardForCraftingSuccess());
@@ -432,5 +440,19 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     public boolean isAfterDumpPickupAllowed()
     {
         return currentRequest == null;
+    }
+
+    /**
+     * get the LootContextBuilder for 
+     * @return the LootContext to use for crafting
+     */
+    protected LootContext getLootContext()
+    {
+        return (new LootContext.Builder((ServerWorld) this.world))
+        .withParameter(LootParameters.field_237457_g_, worker.getPositionVec())
+        .withParameter(LootParameters.THIS_ENTITY, worker)
+        .withParameter(LootParameters.TOOL, worker.getHeldItemMainhand())
+        .withRandom(worker.getRandom())
+        .withLuck((float) getEffectiveSkillLevel(getPrimarySkillLevel())).build(recipeLootParameters);
     }
 }

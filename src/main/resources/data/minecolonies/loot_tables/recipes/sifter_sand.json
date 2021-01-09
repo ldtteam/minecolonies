@@ -1,0 +1,129 @@
+{
+    "pools": [
+      {
+        "name": "Sand_String_Mesh",
+        "conditions": [
+            {"condition":"alternative",
+             "terms" : [
+                {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecraft:air"} } }},
+                {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecraft:string"} } }}
+             ]
+            }
+        ],
+        "rolls": 1,
+        "entries": [
+          {
+            "type": "empty",
+            "weight": 95
+          },
+          {
+            "type": "item",
+            "weight": 2.5,
+            "name": "minecraft:cactus"
+          },
+          {
+            "type": "item",
+            "weight": 2.5,
+            "name": "minecraft:sugar_cane"
+          }
+        ]
+      },
+      {
+        "name": "Sand_Flint_Mesh",
+        "conditions": [
+            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecraft:flint"} } }}
+        ],
+        "rolls": 1,
+        "entries": [
+          {
+            "type": "empty",
+            "weight": 85
+          },
+          {
+            "type": "item",
+            "weight": 5,
+            "name": "minecraft:cactus"
+          },
+          {
+            "type": "item",
+            "weight": 5,
+            "name": "minecraft:sugar_cane"
+          },
+          {
+            "type": "item",
+            "weight": 5,
+            "name": "minecraft:gold_nugget"
+          }
+        ]
+      },
+      {
+        "name": "Sand_Iron_Mesh",
+        "conditions": [
+            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecraft:iron_ingot"} } }}
+        ],
+        "rolls": 1,
+        "bonus_rolls": 0.025,
+        "entries": [
+          {
+            "type": "empty",
+            "weight": 60
+          },
+          {
+            "type": "item",
+            "weight": 10,
+            "name": "minecraft:cactus"
+          },
+          {
+            "type": "item",
+            "weight": 10,
+            "name": "minecraft:sugar_cane"
+          },
+          {
+            "type": "item",
+            "weight": 10,
+            "name": "minecraft:gold_nugget"
+          },
+          {
+            "type": "item",
+            "weight": 10,
+            "name": "minecraft:cocoa_beans"
+          }
+        ]
+      },
+      {
+        "name": "Sand_Diamond_Mesh",
+        "conditions": [
+            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecraft:diamond"} } }}
+        ],
+        "rolls": 1,
+        "bonus_rolls": 0.035,
+        "entries": [
+          {
+            "type": "empty",
+            "weight": 40
+          },
+          {
+            "type": "item",
+            "weight": 15,
+            "name": "minecraft:cactus"
+          },
+          {
+            "type": "item",
+            "weight": 15,
+            "name": "minecraft:sugar_cane"
+          },
+          {
+            "type": "item",
+            "weight": 15,
+            "name": "minecraft:gold_nugget"
+          },
+          {
+            "type": "item",
+            "weight": 15,
+            "name": "minecraft:cocoa_beans"
+          }
+        ]
+      }
+    ]
+  }
+  

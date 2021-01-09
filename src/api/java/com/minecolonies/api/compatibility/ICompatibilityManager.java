@@ -29,23 +29,6 @@ public interface ICompatibilityManager
     List<Tuple<ItemStorage, Double>> getMeshes();
 
     /**
-     * Getter for the blocks which can be sieved.
-     *
-     * @return a copy of the list of itemStorages.
-     */
-    ArrayList<ItemStorage> getSievableBlock();
-
-    /**
-     * Get a random item return for a certain mesh and certain block which is in the sieve.
-     *
-     * @param mesh  the used mesh.
-     * @param block the used block.
-     * @param attempts attempts until an item is returned that is not air.
-     * @return the ItemStack.
-     */
-    ItemStack getRandomSieveResultForMeshAndBlock(ItemStorage mesh, ItemStorage block, final int attempts);
-
-    /**
      * Method called to instantiate the requirements.
      *
      * @param serverSide if server side (true) or client side (false).
