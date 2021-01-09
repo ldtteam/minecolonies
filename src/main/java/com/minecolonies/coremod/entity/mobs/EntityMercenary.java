@@ -373,7 +373,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
             this.swingArm(Hand.OFF_HAND);
         }
 
-        if (slapTimer == 0 && entityIn instanceof EntityCitizen && colony != null)
+        if (slapTimer == 0 && entityIn instanceof EntityCitizen && colony != null && ((EntityCitizen) entityIn).isActive())
         {
             slapTimer = SLAP_INTERVAL;
             final IItemHandler handler = ((EntityCitizen) entityIn).getItemHandlerCitizen();
