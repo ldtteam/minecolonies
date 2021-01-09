@@ -365,13 +365,9 @@
   "entity.builder.messageneedmaterial": "I need %s (amount: %d).",
   "entity.builder.messagebuildernecessary": "This building requires a Builder's Hut of level %d or higher to be upgraded, repaired, or deconstructed!",
 
-  "entity.deliveryman.forcepickup": "will come along and do a pickup shortly!",
+  "entity.deliveryman.forcepickup": " will come along and do a pickup shortly!",
   "entity.deliveryman.forcepickupfailed": "Unable to comply, pickup already in progress!",
 
-  "entity.miner.messageneedtools": "I need tool %s!",
-  "entity.miner.messageneedblockanditem": "I need %s!",
-  "entity.miner.messageneedbettertools": "I need better tools!",
-  "entity.miner.messagemoreblocks": "I need more %s!",
   "entity.miner.messagerequiresbetterhut": "Please upgrade my hut to dig deeper!",
   "entity.barbarian": "Barbarian",
   "entity.minecolonies.barbarian": "Barbarian",
@@ -1818,7 +1814,7 @@
   "com.minecolonies.coremod.gui.chat.showstats": "Show citizen stats",
   "com.minecolonies.coremod.gui.chat.recruit": "Recruit for ",
   "com.minecolonies.coremod.recruit.message": "%s has decided to stay in your colony as a citizen!",
-  "com.minecolonies.coremod.recruit.runaway": "%s took your resources and just ran off, what a thug. Doh!",
+  "com.minecolonies.coremod.recruit.runaway": "%s took your resources and just ran off, what a thug. D'oh!",
   "com.minecolonies.coremod.gui.chat.notnow": "Maybe later",
   "com.minecolonies.coremod.gui.chat.notenoughitems": "You do not have the fitting items in your inventory to offer this visitor!",
   "com.minecolonies.coremod.gui.chat.nospace": "Your colony does not have enough space to house another citizen.",
