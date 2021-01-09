@@ -99,17 +99,6 @@ public class CreateColonyMessage implements IMessage
             style = ((AbstractTileEntityColonyBuilding) tileEntity).getStyle();
         }
 
-        if (MineColonies.getConfig().getCommon().protectVillages.get()
-              && ((ServerChunkProvider) world.getChunkProvider())
-                   .getChunkGenerator()
-                   .findNearestStructure(world, "Village", townHall, MineColonies.getConfig().getCommon().minColonyDistance.get() * BLOCKS_PER_CHUNK, false) != null)
-        {
-            Log.getLogger().warn("Village close by!");
-            LanguageHandler.sendPlayerMessage(sender,
-              "block.blockhuttownhall.messagetooclosetovillage");
-            return;
-        }
-
         if (MineColonies.getConfig().getCommon().restrictColonyPlacement.get())
         {
             final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, world.getSpawnPoint()));
