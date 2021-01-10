@@ -649,7 +649,10 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
                 if (building instanceof BuildingSchool.View)
                 {
-                    String teacherJobName = "com.minecolonies.coremod.job.teacher";
+                    // For schools, getJobDisplayName will always be the teacher's key, as it's derived from createJob(null),
+                    // while getJobName will always be the pupil, as it's derived from the hardcoded job name for the school.
+                    final String teacherJobName = jobName;
+                    final String pupilJobName = ((BuildingSchool.View) building).getJobName();
 
                     int maxTeachers = 1;
                     max = max - 1;
@@ -668,8 +671,8 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     }
                     final Tuple<Integer, Integer> teacherTuple = jobMaxCountMap.getOrDefault(teacherJobName, new Tuple<>(0, 0));
                     jobMaxCountMap.put(teacherJobName, new Tuple<>(teacherTuple.getA() + teachers, teacherTuple.getB() + maxTeachers));
-                    final Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new Tuple<>(0, 0));
-                    jobMaxCountMap.put(jobName, new Tuple<>(tuple.getA() + workers, tuple.getB() + max));
+                    final Tuple<Integer, Integer> pupilTuple = jobMaxCountMap.getOrDefault(pupilJobName, new Tuple<>(0, 0));
+                    jobMaxCountMap.put(pupilJobName, new Tuple<>(pupilTuple.getA() + workers, pupilTuple.getB() + max));
                 }
                 else
                 {
