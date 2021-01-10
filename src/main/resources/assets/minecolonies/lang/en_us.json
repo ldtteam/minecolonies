@@ -1077,9 +1077,9 @@
   "com.minecolonies.coremod.gui.workerhuts.barbpoints": "Last Barbarian Spawns",
   "com.minecolonies.coremod.gui.workerhuts.barbpoints.current": "Current Barbarian Position",
   "com.minecolonies.coremod.barbarians.left": "Only %d raiders left!",
-  "com.minecolonies.coremod.barbarians.killed": "You succesfully defended your colony against the intruders!",
+  "com.minecolonies.coremod.barbarians.killed": "§2Victory! You successfully defended against the intruders!",
   "com.minecolonies.coremod.pirates.spawners.destroyed": "You successfully destroyed all of the pirate spawners!",
-  "com.minecolonies.coremod.pirates.killed": "You succesfully defended your colony against the intruders!",
+  "com.minecolonies.coremod.pirates.killed": "§2Victory! You have rid the seas of the intruders!",
   "com.minecolonies.coremod.gui.workerhuts.deconstruct": "Deconstruct",
   "com.minecolonies.coremod.gui.workerhuts.pickup": "Pick Up",
 
@@ -1264,6 +1264,7 @@
   "com.minecolonies.coremod.general.canttakeequipped": "The only armor you have is what you're wearing. Put it in your inventory if you want to give it to me.",
 
   "com.minecolonies.coremod.gui.workerhuts.siftersettings": "Daily limit",
+  "com.minecolonies.coremod.gui.workerhuts.sifterinfo": "of %d allowed",
   "block.minecolonies.blockhutsifter": "Sifter",
   "block.minecolonies.blockhutsifter.name": "Sifter",
 
@@ -1520,7 +1521,7 @@
   "com.minecolonies.coremod.research.requirementnotmet": "Minimum research requirement not met!",
   "com.minecolonies.coremod.research.started": "Researchers have begun to investigate '%s'.",
   "com.minecolonies.coremod.research.havetounlock": "Build a University and research this hut to unlock it!",
-  "com.minecolonies.coremod.research.item1": "§cThe %s requires research",
+  "com.minecolonies.coremod.research.item1": "§cThe %s§c requires research",
   "com.minecolonies.coremod.research.item2": "§cat the University to be built.",
 
   "com.minecolonies.coremod.info.builder.0.name": "Introduction",

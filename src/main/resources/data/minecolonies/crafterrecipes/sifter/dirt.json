@@ -1,0 +1,11 @@
+{
+  "type" : "recipe",
+  "crafter": "sifter",
+  "inputs": [
+    {
+        "item" : "minecraft:dirt",
+        "count": "1"
+    }
+  ],
+  "loot-table": "minecolonies:recipes/dirt"
+}
