@@ -104,10 +104,14 @@ public final class ModSoundEvents
             RaiderSounds.raiderSounds.put(raiderType, sounds);
         }
 
+        registry.register(RaidSounds.WARNING);
+        registry.register(RaidSounds.WARNING_EARLY);
+        registry.register(RaidSounds.VICTORY);
+        registry.register(RaidSounds.VICTORY_EARLY);
+
         registry.register(RaidSounds.AMAZON_RAID);
 
         registry.register(RaidSounds.DESERT_RAID);
-        registry.register(RaidSounds.DESERT_RAID_VICTORY);
         registry.register(RaidSounds.DESERT_RAID_WARNING);
     }
 
