@@ -26,11 +26,6 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
     /**
      * The sifter mode.
      */
-    private ItemStack block;
-
-    /**
-     * The sifter mode.
-     */
     private ItemStack mesh;
 
     /**
@@ -55,11 +50,10 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
      * @param mesh          the mesh.
      * @param buy           if its a buy action.
      */
-    public SifterSettingsMessage(@NotNull final BuildingSifter.View building, final ItemStorage block, final ItemStorage mesh, final int dailyQuantity, final boolean buy)
+    public SifterSettingsMessage(@NotNull final BuildingSifter.View building, final ItemStorage mesh, final int dailyQuantity, final boolean buy)
     {
         super(building);
         this.quantity = dailyQuantity;
-        this.block = block.getItemStack();
         this.mesh = mesh.getItemStack();
         this.buy = buy;
     }
@@ -69,7 +63,6 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
     {
 
         quantity = buf.readInt();
-        block = buf.readItemStack();
         mesh = buf.readItemStack();
         buy = buf.readBoolean();
     }
@@ -79,7 +72,6 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
     {
 
         buf.writeInt(quantity);
-        buf.writeItemStack(block);
         buf.writeItemStack(mesh);
         buf.writeBoolean(buy);
     }
@@ -126,6 +118,6 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
             }
         }
 
-        building.setup(new ItemStorage(block), new ItemStorage(mesh), qty);
+        building.setup(new ItemStorage(mesh), qty);
     }
 }

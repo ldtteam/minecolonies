@@ -125,16 +125,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private final List<Tuple<ItemStorage, Double>> sifterMeshes = new ArrayList<>();
 
     /**
-     * The blocks which can be sifted.
-     */
-    private final List<ItemStorage> sievableBlocks = new ArrayList<>();
-
-    /**
-     * Map of mash -> block -> sieveResult
-     */
-    private final Map<ItemStorage, Map<ItemStorage, List<ItemStorage>>> sieveResult = new HashMap<>();
-
-    /**
      * Map of building level to the list of possible enchantments.
      */
     private final Map<Integer, List<Tuple<String, Integer>>> enchantments = new HashMap<>();
@@ -178,32 +168,6 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<Tuple<ItemStorage, Double>> getMeshes()
     {
         return new ArrayList<>(this.sifterMeshes);
-    }
-
-    @Override
-    public ArrayList<ItemStorage> getSievableBlock()
-    {
-        return new ArrayList<>(this.sievableBlocks);
-    }
-
-    @Override
-    public ItemStack getRandomSieveResultForMeshAndBlock(final ItemStorage mesh, final ItemStorage block, final int attempts)
-    {
-        if (this.sieveResult.containsKey(mesh) && this.sieveResult.get(mesh).containsKey(block))
-        {
-            final List<ItemStorage> drops = this.sieveResult.get(mesh).get(block);
-            Collections.shuffle(drops);
-
-            for (int i = 0; i < attempts && drops.size() > i; i++)
-            {
-                final ItemStack result = drops.get(i).getItemStack();
-                if (!result.isEmpty())
-                {
-                    return result.copy();
-                }
-            }
-        }
-        return ItemStack.EMPTY;
     }
 
     @Override
@@ -777,139 +741,6 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
 
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getServer().siftableBlocks.get())
-        {
-            try
-            {
-                final String[] item = string.split(":");
-                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
-
-                if (theItem == null)
-                {
-                    Log.getLogger().warn("Couldn't find item for siftable block: " + string);
-                    continue;
-                }
-
-                final ItemStack stack = new ItemStack(theItem, 1);
-                sievableBlocks.add(new ItemStorage(stack));
-            }
-            catch (final NumberFormatException ex)
-            {
-                Log.getLogger().warn("Couldn't retrieve the metadata for siftable block: " + string, ex);
-            }
-        }
-
-        final Map<ItemStorage, Map<ItemStorage, Map<ItemStorage, Double>>> tempDrops = new HashMap<>();
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getServer().sifterDrops.get())
-        {
-            final String[] drop = string.split(",");
-            if (drop.length != 4)
-            {
-                Log.getLogger().warn("Required Parameters: keyBlock, keyMesh, item, probability, not met in: " + string);
-                continue;
-            }
-
-            try
-            {
-                final int block = Integer.parseInt(drop[0]);
-
-                if (sievableBlocks.size() < block)
-                {
-                    Log.getLogger().warn("Trying to add siftresult for not configured block.");
-                    continue;
-                }
-
-                final ItemStorage blockStorage = sievableBlocks.get(block);
-
-                final int mesh = Integer.parseInt(drop[1]);
-
-                if (sifterMeshes.size() < mesh)
-                {
-                    Log.getLogger().warn("Trying to add siftresult for not configured mesh.");
-                    continue;
-                }
-
-                final ItemStorage meshStorage = sifterMeshes.get(mesh).getA();
-
-                final String[] item = drop[2].split(":");
-                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
-
-                if (theItem == null || theItem == Items.AIR)
-                {
-                    Log.getLogger().warn("Couldn't find item for siftable block: " + string);
-                    continue;
-                }
-
-                final ItemStack stack = new ItemStack(theItem, 1);
-                final double probability = Double.parseDouble(drop[3]);
-
-                final Map<ItemStorage, Map<ItemStorage, Double>> map;
-                if (tempDrops.containsKey(meshStorage))
-                {
-                    map = tempDrops.get(meshStorage);
-                }
-                else
-                {
-                    map = new HashMap<>();
-                }
-
-                final Map<ItemStorage, Double> drops;
-                if (map.containsKey(blockStorage))
-                {
-                    drops = map.get(blockStorage);
-                }
-                else
-                {
-                    drops = new HashMap<>();
-                }
-
-                drops.put(new ItemStorage(stack), probability);
-                map.put(blockStorage, drops);
-                tempDrops.put(meshStorage, map);
-            }
-            catch (final NumberFormatException ex)
-            {
-                Log.getLogger().warn("Couldn't retrieve block or mesh for drop: " + string, ex);
-            }
-        }
-
-        for (final Map.Entry<ItemStorage, Map<ItemStorage, Map<ItemStorage, Double>>> meshEntry : tempDrops.entrySet())
-        {
-            for (final Map.Entry<ItemStorage, Map<ItemStorage, Double>> blockEntry : meshEntry.getValue().entrySet())
-            {
-                final List<ItemStorage> theDrops = new ArrayList<>();
-                double probabilitySum = 0;
-                for (final Map.Entry<ItemStorage, Double> drops : blockEntry.getValue().entrySet())
-                {
-                    final ItemStorage storage = drops.getKey();
-                    final double probability = drops.getValue();
-                    probabilitySum += probability;
-                    for (int i = 0; i < probability; i++)
-                    {
-                        theDrops.add(storage);
-                    }
-                }
-
-                final ItemStorage airStorage = new ItemStorage(ItemStack.EMPTY);
-                for (int i = 0; i < 100 - probabilitySum; i++)
-                {
-                    theDrops.add(airStorage);
-                }
-
-                final Map<ItemStorage, List<ItemStorage>> map;
-                if (this.sieveResult.containsKey(meshEntry.getKey()))
-                {
-                    map = this.sieveResult.get(meshEntry.getKey());
-                }
-                else
-                {
-                    map = new HashMap<>();
-                }
-
-                map.put(blockEntry.getKey(), theDrops);
-                this.sieveResult.put(meshEntry.getKey(), map);
-            }
-        }
         Log.getLogger().info("Finished initiating sifter config");
     }
 

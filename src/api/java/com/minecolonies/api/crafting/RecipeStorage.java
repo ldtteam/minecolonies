@@ -13,11 +13,8 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameterSets;
 import net.minecraft.loot.LootTable;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -230,7 +227,7 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public boolean canFullFillRecipe(final int qty, final Map<ItemStorage, Integer> existingRequirements, @NotNull final IItemHandler... inventories)
     {
-        final int neededMultiplier = CraftingUtils.calculateMaxCraftingCount(qty, this);
+        final int neededMultiplier = ItemStackUtils.isEmpty(this.primaryOutput) ? qty : CraftingUtils.calculateMaxCraftingCount(qty, this);
         final List<ItemStorage> items = getCleanedInput();
 
         for (final ItemStorage storage : items)
@@ -437,7 +434,7 @@ public class RecipeStorage implements IRecipeStorage
      * @return true if succesful.
      */
     @Override
-    public boolean fullfillRecipe(final World world, final List<IItemHandler> handlers)
+    public boolean fullfillRecipe(final LootContext context, final List<IItemHandler> handlers)
     {
         if (!checkForFreeSpace(handlers) || !canFullFillRecipe(1, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
         {
@@ -493,7 +490,7 @@ public class RecipeStorage implements IRecipeStorage
             }
         }
 
-        insertCraftedItems(handlers, getPrimaryOutput(), world);
+        insertCraftedItems(handlers, getPrimaryOutput(), context);
         return true;
     }
 
@@ -508,26 +505,29 @@ public class RecipeStorage implements IRecipeStorage
      *
      * @param handlers the handlers.
      */
-    private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, World world)
+    private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context)
     {
-        for (final IItemHandler handler : handlers)
+        if(!ItemStackUtils.isEmpty(outputStack))
         {
-            if (InventoryUtils.addItemStackToItemHandler(handler, outputStack.copy()))
+            for (final IItemHandler handler : handlers)
             {
-                break;
+                if (InventoryUtils.addItemStackToItemHandler(handler, outputStack.copy()))
+                {
+                    break;
+                }
             }
         }
 
         if (loot == null && lootTable != null)
         {
-            loot = world.getServer().getLootTableManager().getLootTableFromLocation(lootTable);
+            loot = context.getWorld().getServer().getLootTableManager().getLootTableFromLocation(lootTable);
         }
         
         final List<ItemStack> secondaryStacks = new ArrayList<>();
 
-        if(loot != null)
+        if(loot != null && context != null)
         {
-            secondaryStacks.addAll(loot.generate((new LootContext.Builder((ServerWorld) world)).build(LootParameterSets.EMPTY)));
+            secondaryStacks.addAll(loot.generate(context));
         }
 
         if(!secondaryOutputs.isEmpty())
