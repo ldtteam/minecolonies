@@ -1771,4 +1771,14 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         setPose(pose);
     }
+
+    /**
+     * Whether this entity is active and loaded
+     *
+     * @return
+     */
+    public boolean isActive()
+    {
+        return world.isRemote ? entityStatemachine.getState() == EntityState.ACTIVE_CLIENT : entityStatemachine.getState() == EntityState.ACTIVE_SERVER;
+    }
 }
