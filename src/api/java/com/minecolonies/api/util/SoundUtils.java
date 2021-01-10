@@ -10,6 +10,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.event.world.NoteBlockEvent.Note;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,6 +58,16 @@ public final class SoundUtils
      * Random is multiplied by this to get a random sound.
      */
     private static final double PITCH_MULTIPLIER = 0.4D;
+
+    /**
+     * A much less chaotic scale (D major pentatonic) for random pitches
+     */
+    public static final Note[] PENTATONIC = {
+      // First Octave
+      Note.A, Note.B, Note.D, Note.E, Note.F_SHARP,
+      // Second Octave
+      Note.A, Note.B, Note.D
+    };
 
     /**
      * Private constructor to hide the implicit public one.
@@ -228,6 +239,19 @@ public final class SoundUtils
     public static double getRandomPitch(final Random random)
     {
         return PITCH_DIVIDER / (random.nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
+    }
+
+    /**
+     * Generates a random tone from the D major pentatonic scale
+     *
+     * @param random the RNG instance
+     * @return a number representing the pitch to the sound engine
+     */
+    public static double getRandomPentatonic(final Random random)
+    {
+        int index = random.nextInt(PENTATONIC.length);
+        int tone = PENTATONIC[index].ordinal() + Math.floorDiv(index, 5) * 12;
+        return Math.pow(2.0D, (double)(tone - 12) / 12.0D);
     }
 
     /**
