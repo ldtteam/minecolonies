@@ -22934,6 +22934,42 @@
       }
     ]
   },
+  "raid.raid_alert": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "minecolonies:raid/raid_alert",
+        "stream": false
+      }
+    ]
+  },
+  "raid.raid_alert_early": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "minecolonies:raid/raid_alert_early",
+        "stream": false
+      }
+    ]
+  },
+  "raid.raid_won": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "minecolonies:raid/raid_won",
+        "stream": false
+      }
+    ]
+  },
+  "raid.raid_won_early": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "minecolonies:raid/raid_won_early",
+        "stream": false
+      }
+    ]
+  },
   "raid.desert.desert_raid": {
     "category": "music",
     "sounds": [

@@ -8,12 +8,14 @@ import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
+import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
+import com.minecolonies.coremod.network.messages.client.PlayAudioMessage;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -25,9 +27,11 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.server.ServerBossInfo;
 import org.jetbrains.annotations.NotNull;
@@ -323,6 +327,10 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         LanguageHandler.sendPlayersMessage(
           colony.getImportantMessageEntityPlayers(),
           RAID_EVENT_MESSAGE + horde.getMessageID(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName());
+
+        boolean early = getColony().getBuildingManager().getTownHall().getBuildingLevel() < 3 && horde.getMessageID() < 2;
+        PlayAudioMessage audio = new PlayAudioMessage(early ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundCategory.RECORDS);
+        PlayAudioMessage.sendToAll(getColony(), true, false, audio);
     }
 
     /**
@@ -435,7 +443,12 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         if (total == 0)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE);
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), LanguageHandler.translateKey(ALL_BARBARIANS_KILLED_MESSAGE));
+
+            boolean early = getColony().getBuildingManager().getTownHall().getBuildingLevel() < 3 && horde.getMessageID() < 2;
+            PlayAudioMessage audio = new PlayAudioMessage(early ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundCategory.RECORDS);
+            PlayAudioMessage.sendToAll(getColony(), true, true, audio);
+
             if (colony.getRaiderManager().getLostCitizen() == 0)
             {
                 colony.getCitizenManager().updateModifier("raidwithoutdeath");
