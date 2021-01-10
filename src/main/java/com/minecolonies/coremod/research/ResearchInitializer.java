@@ -285,7 +285,7 @@ public class ResearchInitializer
         enhanced_gates1.addChild(enhanced_gates2);
 
         final GlobalResearch knowtheend = new GlobalResearch("knowtheend", "technology", "Know the End?", 3, new UnlockAbilityResearchEffect(END_KNOWLEGE, true));
-        knowtheend.setRequirement(new BuildingResearchRequirement(3, "bakery"));
+        knowtheend.setRequirement(new BuildingResearchRequirement(3, "baker"));
         theflintstones.addChild(knowtheend);
 
         final GlobalResearch morescrolls = new GlobalResearch("morescrolls", "technology", "More scrolls", 1, new UnlockAbilityResearchEffect(MORE_SCROLLS, true));
