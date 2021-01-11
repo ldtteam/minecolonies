@@ -1,7 +1,7 @@
 [![CLA assistant](https://cla-assistant.io/readme/badge/ldtteam/minecolonies)](https://cla-assistant.io/ldtteam/minecolonies)
 [![Build Status](https://buildsystem.ldtteam.com/app/rest/builds/buildType:LetSDevTogether_Minecolonies_Alpha_Release/statusIcon)](http://buildsystem.ldtteam.com/)
 
-![alt tag](resources/minecolonies.png)
+![mcol logo](minecolonies.png)
 
 
 # MineColonies
