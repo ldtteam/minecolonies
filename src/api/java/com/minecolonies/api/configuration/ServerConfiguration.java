@@ -819,7 +819,7 @@ public class ServerConfiguration extends AbstractConfiguration
         diseases = defineList(builder, "diseases",
           Arrays.asList("Influenza,100,minecraft:carrot,minecraft:potato",
             "Measles,10,minecraft:dandelion,minecraft:kelp,minecraft:poppy",
-            "Smallpox,1,minecraft:honeycomb,minecraft:golden_apple"),
+            "Smallpox,1,minecraft:honey_bottle,minecraft:golden_apple"),
           s -> s instanceof String);
 
         debugInventories = defineBoolean(builder, "debuginventories", false);
