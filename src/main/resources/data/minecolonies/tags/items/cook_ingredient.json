@@ -9,6 +9,7 @@
       "minecraft:rabbit",
       "minecraft:potato",
       "minecraft:kelp",
-      "minecraft:dried_kelp"
+      "minecraft:dried_kelp",
+      "minecraft:dried_kelp_block"
   ]
 }
