@@ -19,20 +19,20 @@ modId="minecolonies" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 version="${file.jarVersion}" #mandatory
  # A display name for the mod
-displayName="Minecolonies" #mandatory
+displayName="MineColonies" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 #updateJSONURL="http://myurl.me/" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
-# displayURL="http://example.com/" #optional
+displayURL="https://minecolonies.com" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-# logoFile="structurize.png" #optional
+logoFile="squarelogo.png" #optional
 # A text field displayed in the mod UI
-credits="Every coffee anyone has drank!" #optional
+credits="Every coffee anyone ever drank!" #optional
 # A text field displayed in the mod UI
 authors="LDT Team" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-MineColonies is a Colony/Town Simulator that adds many structures and NPC workers and guards that you control and put to work for you! Based around a townhall and village mechanic, there are numerous workers that can be added to your colony, building a busy and vibrant village/town/city within Minecraft. There is no coded limit to the number of NPC's at your disposal, so you can create a small efficient Village dedicated to a particular type of worker, or a sprawling metropolis with many workers. \n It's entirely up to you!",
+MineColonies is a colony simulator within Minecraft! There are numerous types of workers, and each worker has its own type of hut, letting you build a busy and vibrant village/town/city/colony. There is no coded limit to the number of NPC's at your disposal, so you can create a small, efficient village dedicated to a particular type of worker or a sprawling metropolis with hundreds of workers. \n It's entirely up to you!",
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.minecolonies]] #optional
