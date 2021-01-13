@@ -738,6 +738,8 @@
   "com.minecolonies.coremod.gui.workerhuts.forcepickup": "Request pickup now",
   "com.minecolonies.coremod.mercenary.mercenarystealcitizen": "%s is unhappy, a Mercenary took their %s!",
   "com.minecolonies.coremod.mercenary.stealbuilding": "A Mercenary just stole %s from a building!",
+  
+  "com.minecolonies.coremod.gui.happiness.happinessmodifier": "Happiness Modifiers",
 
   "com.minecolonies.coremod.permission.no": "You do not have permission to do this in this colony!",
   "com.minecolonies.coremod.gui.townhall.freeblocks": "Free for Interaction",
