@@ -64,7 +64,7 @@
 
   "minecolonies.config.initialcitizenamount": "Initital Citizen Count",
   "minecolonies.config.initialcitizenamount.comment": "Amount of initial citizens.",
-  "minecolonies.config.builderplaceconstructiontape": "Contruction Tape Placement",
+  "minecolonies.config.builderplaceconstructiontape": "Construction Tape Placement",
   "minecolonies.config.builderplaceconstructiontape.comment": "Should construction tape be placed around in-construction builds?",
   "minecolonies.config.allowinfinitesupplychests": "Infinite Supply Camps/Ships",
   "minecolonies.config.allowinfinitesupplychests.comment": "Should players be able to place an infinite amount of supply camps/ships?",
