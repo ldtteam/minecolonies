@@ -30,8 +30,8 @@ ___
 ### Project Leads
 * Raycoms – Lead Lead Dev, Programming, and Management
 * AshersLab – Programming and Management
-* OrionOnline - Programming, Management, and Build System Engineer
-* Someaddons - Programming and Management
+* OrionOnline - Programming, Build System Engineer, and Management
+* Someaddons - Programming, Pathfinding, Performance, and Management
 * Pmardle – Founder, Project Management (inactive)
 * Flaminyogurt – Programming and Management (inactive)
 * Kostronor – Programming and Management (inactive)
