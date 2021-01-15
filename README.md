@@ -71,7 +71,7 @@ Gradle is used to execute the various build tasks when compiling MineColonies.
 
 1. Download and install Gradle.
 	* [Windows/Mac download link](http://www.gradle.org/downloads). You only need the binaries, but choose whatever flavor you want.
-		* Unzip the package and put it wherever you want, e.g. `C:\Gradle`.
+		* Unzip the package and put it wherever you want, for example, `C:\Gradle`.
 	* Linux: Installation methods for certain popular flavors of Linux are listed below. If your distribution is not listed, follow the instructions specific to your package manager or install it manually [here](http://www.gradle.org/downloads).
 		* Gentoo: `emerge dev-java/gradle-bin`
 		* Archlinux: You'll have to install it from the [AUR](https://aur.archlinux.org/packages/gradle).
@@ -94,9 +94,9 @@ Git is used to clone MineColonies and update your local copy.
 This section assumes that you're using the command line version of Git.
 
 1. Open up your command line.
-2. Navigate to a place where you want to download MineColonies source (eg `C:\GitHub\MineColonies\`) by executing `cd [folder location]`. This location is known as `basefolder` from now on.
+2. Navigate to a place where you want to download the MineColonies source (e.g., `C:\GitHub\MineColonies\`) by executing `cd [folder location]`. This location is known as `basefolder` from now on.
 3. Execute `git clone https://github.com/Minecolonies/minecolonies.git`. This will download MineColonies' source into `basefolder`.
-4. Right now, you should have a directory that looks something like:
+4. Right now, you should have a directory that looks something like this:
 
 ***
     basefolder
@@ -127,44 +127,44 @@ If you decide to go with a GUI client like GitKraken:
 5. Alternatively, you can also run `./gradlew runClient` to start Minecraft with this jar.
 
 #### Compile MineColonies (Intellij)
-1. Right-click the `build.gradle` file, or the background of the folder it's in, and select `Open Folder as Intellij Project`.
-2. Select `Auto Import` and make sure a valid Gradle and JVM is selected.
+1. Right-click the `build.gradle` file (or the background of the folder it's in) and select `Open Folder as Intellij Project`.
+2. Select `Auto Import` and make sure a valid Gradle and JVM are selected.
 
 ![](https://i.imgur.com/ewccjDZ.png)
 
 3. This will prepare some of the libraries used by Forge.
 4. Click `View → Tool Windows → Gradle`
-5. In the Gradle View, expand the options to `Tasks → fg_runs`.
+5. In the Gradle view, expand the options to `Tasks → fg_runs`.
 
 ![](https://i.imgur.com/34H45Tb.png)
 
-6. Click the small refresh symbol in the upper left of the gradle view. This sets up Forge and downloads the necessary libraries to build MineColonies. 
+6. Click the small refresh symbol in the upper left of the Gradle view. This sets up Forge and downloads the necessary libraries to build MineColonies. 
 7. Execute `genIntellijRuns` and restart intellij.
 8. You will see a Minecraft Client and Server startup configuration in the top right, next to the green "start" button.
-9. Execute it with your username as a program argument to have always the same name ingame.
+9. Execute it with your username as a program argument to always have the same in-game username.
 
 ![](https://i.imgur.com/vDvyNN5.png)
 
-10. If it doesn't start and throw a lot of errors, try another refresh, this often does wonders.
+10. If it doesn't start and throws a lot of errors, try another refresh. This often does wonders.
 11. If you want to produce a running jar, execute the `build` task. This will result in a runnable jar file in `basefolder\MineColonies\build\libs`.
 
 ##### Troubleshooting
-If gradle synchronization fails, make sure:
+If Gradle synchronization fails, make sure:
 1. `File → Project structure → Project → Project SDK` is set to your installed JDK version.
 2. `File → Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JVM` is set to your installed JDK version.
 
 #### Updating Your Repository
-In order to get the most up-to-date builds, you'll have to periodically update your local repository.
+To get the most up-to-date builds, you'll have to update your local repository periodically.
 
 1. Open up your command line.
 2. Navigate to `basefolder` in the console.
-3. Make sure you have not made any changes to the local repository or there might be issues with Git.
-	* If you have, try reverting them to the status that they were when you last updated your repository.
-4. Execute `git pull version/1.16.3`. This pulls all commits from the official repository that do not yet exist on your local repository and updates it (with GitKraken just click the small pull arrow at the top).
+3. Ensure you have not made any changes to the local repository (if you did, there might be issues with Git).
+	* If you have, try reverting them to their status when you last updated your repository.
+4. Execute `git pull version/1.16.3`. This pulls all commits from the official repository that do not yet exist on your local repository and updates it (with GitKraken, click the small pull arrow at the top).
 
 #### Troubleshooting
-- Sometimes gradle tasks fail because of missing memory. For that, you can find system-wide settings in the `.gradle` folder of your `HOME` directory (`~/.gradle/gradle.properties` or on Windows in `C:\Users\username\.gradle\gradle.properties`).
-- Sometimes after a branch change libraries can not be resolved. Running another refresh in IntelliJ or the command line usually solves this issue.
+- Sometimes Gradle tasks fail because of missing memory. For that, you can find system-wide settings in the `.gradle` folder of your `HOME` directory (`~/.gradle/gradle.properties` or on Windows in `C:\Users\username\.gradle\gradle.properties`).
+- Sometimes after a branch change, libraries can not be resolved. Running another refresh in IntelliJ or the command line usually solves this issue.
 
 ### Contributing
 
@@ -174,7 +174,7 @@ Found a bug in our code? Think you can make it more efficient? Want to help in g
 1. If you haven't already, create a GitHub account.
 2. Click the `Fork` icon located at the top right.
 3. Make your changes and commit them.
-	* If you're making changes locally, you'll have to do `git commit -a` and `git push` in your command line (or with gitkraken stage the changes, commit them and then push them first).
+	* If you're making changes locally, you'll have to do `git commit -a` and `git push` in your command line (or with GitKraken stage the changes, commit them, and push them first).
 4. Click `Pull Request` in the middle.
 5. Click 'New pull request' to create a pull request for this comparison, enter your PR's title, and create a detailed description telling us what you changed.
 6. Click `Create pull request` and wait for feedback!
