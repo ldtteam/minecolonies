@@ -28,53 +28,64 @@ ___
 ## Our Team
 
 ### Project Leads
-* Raycoms – Programming and Management
-* Kostronor – Programming and Management (inactive)
+* Raycoms – Lead Lead Dev, Programming, and Management
+* AshersLab – Programming and Management
+* OrionOnline - Programming, Management, and Build System Engineer
 * Someaddons - Programming and Management
-* Asherslab – Programming and Management
-* OrionOnline - Programming and Management, Build System Engineer 
 * Pmardle – Founder, Project Management (inactive)
 * Flaminyogurt – Programming and Management (inactive)
+* Kostronor – Programming and Management (inactive)
 
-### Programming 
-* Xavier (inactive)
-* Nightenom
-* Mekle
-* Minecraftschurli
-* Gattsuru
-* PowerSchill
-* ToMe
-* JiaYow
-* ShadowProtocol
+### Programming
+* Gattsuru - Research System Developer
+* JiaYow - General Programming
+* Mekle - Recipe System Developer
+* Minecraftschurli - Beekeeper and Witch
+* Nightenom - Structurize
+* PowerSchill - General Programming
+* ShadowProtocol - UI and Resident Historical Linguist
+* ToMe - General Programming
 * Ravenbuilder934 (minor)
-
-### Visuals
-* Khranos – Animated/Static Modeling and Texturing 
-* D3miurge - Graphics Artist, Models, Textures and GUI 
-* Imrielle – Static Modeling and Texturing
-* Odd Alexander Della Robbia
-* Fan of porkchops
-
-### Wiki
-* LunaDragonStar (inactive)
-* Ravenbuilder934
-
-### Modpack Creator 
-* Wissi
+* Xavier (inactive)
 
 ### Web Developer
 * PoroUsedSnax (inactive)
 
+### Modpack Creator
+* Wissi - Pack Creator and Maintainer
+
+### Wiki
+* Ravenbuilder934 - Wiki Admin
+* LunaDragonStar - Wiki Admin (inactive)
+
+### Visuals
+* Carlansor - Texture Designer
+* Fan of porkchops - Textures and Models
+* Odd Alexander Della Robbia - Animated/Static Modeling and Texturing
+* D3miurge - Graphics Artist, Models, Textures, and GUI (inactive)
+* Imrielle – Static Modeling and Texturing (inactive)
+* Khranos – Animated/Static Modeling and Texturing (inactive)
+
+### Top Translators
+* Ampaex - Spanish
+* semper_idem - Chinese Simplified
+* xlCyanz - Spanish, Venezuela
+* FlashZange - German
+* Gomulsky - Polish
+* Domesticduck52 - Korean
+* Black_Conscript - Russian
+
 ### Schematic Builders
-* LunaDragonStar (inactive)
-* AravanFox
-* Carlansor
-* Cugo24
-* JohnReiher
-* Thaylar
-* Ravenbuilder934 (minor fixes only)
+* LunaDragonStar - Schematics Admin (inactive)
+* AravanFox - Fortress, Birch, and Wicked
+* Carlansor - Medieval Styles
+* Cugo24 - Dark Oak, Birch, and Warped
+* JohnReiher - Acacia, Jungle, and Space Wars
+* Thaylar - Asian
+* Ravenbuilder934 - Minor Fixes
 
 ### Voice Actors
+* Carlansor - Audio Management
 * Brianna Theresa
 * Drew Shulman 
 * Kaine Crooks 
