@@ -1,6 +1,6 @@
 
 # About MineColonies 
-MineColonies is an interactive building mod that allows you to create your own thriving town within Minecraft. It lets your leadership skills soar by providing you with everything you need to build your kingdom. MineColonies gives you the flexibility to create a colony as unique as every player. With so many options, you'll create a different colony every time, adapt it to any biome, build inside a mountain, on top of one, under the ocean, or in the sky.
+MineColonies is an interactive town-building mod that allows you to create your own thriving colony within Minecraft. With 50+ buildings in over 20 styles to construct and level up and NPC workers to employ and improve, MineColonies gives you the flexibility to create a unique colony every time. Adapt to any biome, whether on a mountain, under the ground, or in the Nether.
 
 The limit is your imagination!
 
@@ -9,7 +9,7 @@ MineColonies features NPC workers such as Builders, Farmers, Fishers, Foresters,
 It also includes specialized buildings such as the Warehouse, House, Town Hall, Barracks, Library, University, and even the School.
 
 ### Governance
-You have full control of how to build your town. You determine how many workers you want or need, what type of workers, where they will live, and hire or fire as you see fit, creating a colony at your own pace. It is your village to design and develop; you are the designer, administrator, and boss.
+You have full control of how to build your town. You determine how many workers you want or need, what type of workers, where they will live, and hire or fire as you see fit, expanding at your own pace. It is your colony to design and develop; you are the designer, administrator, and boss.
 
 ### Security
 Your colony deserves the best security you can have. Strategically add Guard Towers or Barracks Towers so Guards will protect your city from hostile mobs and new types of raiders that will attack on random nights.
@@ -28,24 +28,23 @@ ___
 ## Our Team
 
 ### Project Leads
-* Raycoms – Lead Lead Dev, Programming, and Management
-* AshersLab – Programming and Management
-* OrionOnline - Programming, Build System Engineer, and Management
-* Someaddons - Programming, Pathfinding, Performance, and Management
+* Raycoms – Lead Lead Dev, Programming, and Active Maintainer
+* AshersLab – Programming and Active Maintainer
+* OrionOnline - Programming, Build System Engineer, and Active Maintainer
+* Someaddons - Programming, Pathfinding, Performance, and Active Maintainer
 * Pmardle – Founder, Project Management (inactive)
 * Flaminyogurt – Programming and Management (inactive)
 * Kostronor – Programming and Management (inactive)
 
 ### Programming
-* Gattsuru - Research System Developer
+* Gattsuru - Research System Development
 * JiaYow - General Programming
-* Mekle - Recipe System Developer
-* Minecraftschurli - Beekeeper and Witch
-* Nightenom - Structurize
+* Mekle - Recipe System Development
+* Minecraftschurli - Worker Development
+* Nightenom - Structurize Development
 * PowerSchill - General Programming
-* ShadowProtocol - UI and Resident Historical Linguist
+* ShadowProtocol - UI/UX Development and Linguistics
 * ToMe25 - General Programming
-* Ravenbuilder934 (minor)
 * Xavier (inactive)
 
 ### Web Developer
