@@ -138,7 +138,7 @@ If you decide to go with a GUI client like GitKraken:
 5. In the Gradle view, expand the options to `Tasks → fg_runs`.
 6. Click the small refresh symbol in the upper left of the Gradle view. This sets up Forge and downloads the necessary libraries to build MineColonies. 
 7. Execute `genIntellijRuns` and restart intellij.
-8. You will see a Minecraft Client and Server startup configuration in the top right, next to the green "start" button.
+8. You will see a runClient and runServer startup configuration in the dropdown at the top right next to the green "run" button. Select one and press "run".
 9. If it doesn't start and throws a lot of errors, try another refresh. This often does wonders.
 10. If you want to produce a running jar, execute the `build` task. This will result in a runnable jar file in `basefolder\MineColonies\build\libs`.
 
