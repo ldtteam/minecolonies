@@ -55,6 +55,9 @@
   "minecolonies.config.usemiddleinitial": "Middle Initial",
   "minecolonies.config.usemiddleinitial.comment": "Should citizens have a middle initial?",
 
+  "minecolonies.config.useeasternnameorder": "Eastern Name Order",
+  "minecolonies.config.useeasternnameorder.comment": "Should new citizens use Eastern name order, with surname first?",
+
   "minecolonies.config.malefirstnames": "Male First Names",
   "minecolonies.config.malefirstnames.comment": "Male first names to be used for colonists",
   "minecolonies.config.femalefirstnames": "Female First Names",
@@ -1113,7 +1116,7 @@
   "com.minecolonies.coremod.status.harvestingbarrels": "Harvesting the barrels",
 
   "com.minecolonies.coremod.pvp.townhall.break.start": "Beware! %s started breaking your Town Hall!",
-  "com.minecolonies.coremod.pvp.townhall.broke": "Beware!!! %s broke your Town Hall by over %d%%! At 100% it will be lost!!!",
+  "com.minecolonies.coremod.pvp.townhall.broke": "Beware!!! %s broke your Town Hall by over %d%%! At 100%% it will be lost!!!",
   "com.minecolonies.coremod.gui.townhall.pickteamcolor": "Pick Team Color:",
   "block.minecolonies.blockhutlibrary": "Library",
   "block.minecolonies.blockhutlibrary.name": "Library",

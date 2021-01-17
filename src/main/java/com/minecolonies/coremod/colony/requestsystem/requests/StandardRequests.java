@@ -160,6 +160,8 @@ public final class StandardRequests
 
         private List<ItemStack> stacks;
 
+        private int itemStackCounter = 0;
+
         public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Tag requested)
         {
             super(requester, token, requested);
@@ -186,7 +188,9 @@ public final class StandardRequests
         {
             final IFormattableTextComponent combined = new NonSiblingFormattingTextComponent();
             combined.append(new StringTextComponent(getRequest().getCount() + " "));
-            combined.append(new StringTextComponent("#" + getRequest().getTag().toString()));
+            combined.append(stacks.get(itemStackCounter).getDisplayName());
+            itemStackCounter = itemStackCounter == stacks.size() ? 0 : itemStackCounter++;
+            //combined.append(new StringTextComponent("#" + getRequest().getTag().toString()));
             return combined;
         }
 

@@ -543,10 +543,22 @@ public class CitizenManager implements ICitizenManager
             {
                 respawnInterval = MineColonies.getConfig().getServer().citizenRespawnInterval.get() * TICKS_SECOND;
                 // Make sure the initial citizen contain both genders
+                int femaleCount = 0;
+                // 50-50 chance for first citizen to be male or female.
+                if(colony.getCitizenManager().getCitizens().isEmpty() && random.nextBoolean())
+                {
+                    femaleCount--;
+                }
+                for(ICitizenData citizens : colony.getCitizenManager().getCitizens())
+                {
+                    femaleCount += citizens.isFemale() ? 1 : 0;
+                }
+
                 final ICitizenData newCitizen = createAndRegisterCivilianData();
 
-                // 50 - 50 Female male ratio for initial citizens
-                if (citizens.size() % 2 == 0)
+                // Use double division to avoid getting two male colonists in a row for the first set.
+                // Have to subtract one from the citizen size, since trying to make comparison before including this colonist.
+                if (femaleCount < ((colony.getCitizenManager().getCitizens().size() - 1) / 2d))
                 {
                     newCitizen.setIsFemale(true);
                 }
