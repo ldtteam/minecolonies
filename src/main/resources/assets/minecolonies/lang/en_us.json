@@ -56,7 +56,7 @@
   "minecolonies.config.usemiddleinitial.comment": "Should citizens have a middle initial?",
 
   "minecolonies.config.useeasternnameorder": "Eastern Name Order",
-  "minecolonies.config.useeasternnameorder.comment": "Should new citizens use Eastern name order, with surname first?",
+  "minecolonies.config.useeasternnameorder.comment": "Should new citizens use the Eastern name order (with their surname first)?",
 
   "minecolonies.config.malefirstnames": "Male First Names",
   "minecolonies.config.malefirstnames.comment": "Male first names to be used for colonists",
