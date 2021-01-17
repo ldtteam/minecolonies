@@ -332,7 +332,18 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                     }
                 }
 
-                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(request.getShortDisplayString().getString().replace("§f", ""));
+                if(request instanceof StandardRequests.ItemTagRequest)
+                {
+                    if(!displayStacks.isEmpty())
+                    {
+                        rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(
+                          (IFormattableTextComponent) request.getDisplayStacks().get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()).getDisplayName());
+                    }
+                }
+                else
+                {
+                    rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(request.getShortDisplayString().getString().replace("§f", ""));
+                }
 
                 if (!cancellable(request))
                 {

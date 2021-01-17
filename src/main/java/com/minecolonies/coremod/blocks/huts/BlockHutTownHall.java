@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowTownHallColonyManage;
@@ -27,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_BREAKING_MESSAGE;
 
@@ -115,7 +113,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             validTownHallBreak = true;
         }
         final float def = super.getPlayerRelativeBlockHardness(state, player, player.world, pos);
-        return MineColonies.getConfig().getServer().pvp_mode.get() ? def / 10 : def / 5;
+        return MineColonies.getConfig().getServer().pvp_mode.get() ? def / 12 : def / 10;
     }
 
     /**

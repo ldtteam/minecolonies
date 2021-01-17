@@ -375,7 +375,7 @@ public class ServerConfiguration extends AbstractConfiguration
         useEasternNameOrder = defineBoolean(builder, "useeasternnameorder", false);
         maleFirstNames = defineList(builder, "malefirstnames", Arrays.asList(NameConstants.maleFirstNames), s -> s instanceof String);
         femaleFirstNames = defineList(builder, "femalefirstnames", Arrays.asList(NameConstants.femaleFirstNames), s -> s instanceof String);
-        lastNames =  defineList(builder, "lastnames", Arrays.asList(NameConstants.lastNames), s -> s instanceof String);
+        lastNames = defineList(builder, "lastnames", Arrays.asList(NameConstants.lastNames), s -> s instanceof String);
 
         swapToCategory(builder, "gameplay");
 
