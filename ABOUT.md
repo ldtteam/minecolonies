@@ -37,13 +37,13 @@ ___
 * Kostronor – Programming and Management (inactive)
 
 ### Programming
-* Gattsuru - Research System Development
+* Gattsuru - Research System Development and General Programming
 * JiaYow - General Programming
-* Mekle - Recipe System Development
-* Minecraftschurli - Worker Development
-* Nightenom - Structurize Development
+* Mekle - Recipe System Development and General Programming
+* Minecraftschurli - Worker Development and General Programming
+* Nightenom - Structurize Development and General Programming
 * PowerSchill - General Programming
-* ShadowProtocol - UI/UX Development and Linguistics
+* ShadowProtocol - UI/UX Development, Linguistics, and General Programming
 * ToMe25 - General Programming
 * Xavier (inactive)
 
