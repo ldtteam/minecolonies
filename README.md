@@ -134,10 +134,10 @@ If you decide to go with a GUI client like GitKraken:
 ![](https://i.imgur.com/ewccjDZ.png)
 
 3. This will prepare some of the libraries used by Forge.
-4. Click `View → Tool Windows → Gradle`
+4. Click `View → Tool Windows → Gradle`.
 5. In the Gradle view, expand the options to `Tasks → fg_runs`.
 6. Click the small refresh symbol in the upper left of the Gradle view. This sets up Forge and downloads the necessary libraries to build MineColonies. 
-7. Execute `genIntellijRuns` and restart intellij.
+7. Execute `genIntellijRuns` and restart Intellij.
 8. You will see a runClient and runServer startup configuration in the dropdown at the top right next to the green "run" button. Select one and press "run".
 9. If it doesn't start and throws a lot of errors, try another refresh. This often does wonders.
 10. If you want to produce a running jar, execute the `build` task. This will result in a runnable jar file in `basefolder\MineColonies\build\libs`.
