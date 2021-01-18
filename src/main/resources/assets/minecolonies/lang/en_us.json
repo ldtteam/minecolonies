@@ -469,6 +469,21 @@
   "com.minecolonies.command.resetsupply": "Successfully reset the Supply Camp and Ship placement.",
   "com.minecolonies.command.prune.next": "This command will delete large chunks of your world! Use with care! Make a backup first! If you want to continue, repeat this command with %d as the first parameter.",
 
+  "com.minecolonies.coremod.tag.minecolonies.compostables": "Compostables",
+  "com.minecolonies.coremod.tag.minecolonies.concrete_powder": "Concrete Powder",
+  "com.minecolonies.coremod.tag.minecolonies.fungi": "Fungi",
+
+  "com.minecolonies.coremod.tag.minecraft.doors": "Doors",
+  "com.minecolonies.coremod.tag.minecraft.fishes": "Fish",
+  "com.minecolonies.coremod.tag.minecraft.flowers": "Flowers",
+  "com.minecolonies.coremod.tag.minecraft.leaves": "Leaves",
+  "com.minecolonies.coremod.tag.minecraft.logs": "Logs",
+  "com.minecolonies.coremod.tag.minecraft.planks": "Planks",
+  "com.minecolonies.coremod.tag.minecraft.saplings": "Saplings",
+  "com.minecolonies.coremod.tag.minecraft.slabs": "Slabs",
+  "com.minecolonies.coremod.tag.minecraft.small_flowers": "Small Flowers",
+  "com.minecolonies.coremod.tag.minecraft.wool": "Wool",
+
   "com.minecolonies.coremod.status.worker.goingtohut": "Going to Hut",
   "com.minecolonies.coremod.status.herder.breeding": "Breeding",
   "com.minecolonies.coremod.status.herder.feeding": "Feeding",
@@ -477,6 +492,8 @@
   "com.minecolonies.coremod.status.herder.butchering": "Butchering",
   "com.minecolonies.coremod.status.cowboy.milking": "Milking",
   "com.minecolonies.coremod.status.shepherd.shearing": "Shearing",
+
+  "com.minecolonies.coremod.tag.minecraft.flowers": "Flowers",
 
   "com.minecolonies.coremod.gui.allinventory": "All Items",
   "com.minecolonies.coremod.gui.workerhuts.shepherdhut": "Shepherd's Hut",

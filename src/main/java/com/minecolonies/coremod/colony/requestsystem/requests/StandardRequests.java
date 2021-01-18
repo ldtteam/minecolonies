@@ -187,14 +187,23 @@ public final class StandardRequests
             final IFormattableTextComponent combined = new NonSiblingFormattingTextComponent();
             combined.append(new StringTextComponent(getRequest().getCount() + " "));
             // getRequest().getTag() is a long string that can't be easily be read by players or turned into a translation key.
-            // Instead, preferentially select the first item from the list.
-            if(!stacks.isEmpty())
+            // Instead, try to get a translated text first.
+            final String tagKey = "com.minecolonies.coremod.tag." + getRequest().getTag().toString().toLowerCase().replace
+                                                                                                                     ("namedtag[", "").replace(':', '.').replace("]", "");
+            final TranslationTextComponent tagText = new TranslationTextComponent(tagKey);
+            // test the translated text; if there's a difference, the client has a matching translation key.
+            if (!tagText.getUnformattedComponentText().equals(tagKey))
             {
-                combined.append(stacks.get(0).getDisplayName());
+                combined.append(new StringTextComponent("#").append(tagText));
+            }
+            // Otherwise, use the first item from request set if present, or the full tag identifier to assist debugging otherwise.
+            else if (!stacks.isEmpty())
+            {
+                combined.append(new StringTextComponent("#").append(stacks.get(0).getDisplayName()));
             }
             else
             {
-                combined.append(new StringTextComponent("#" + getRequest().getTag().toString()));
+                combined.append(new StringTextComponent("#").append(new StringTextComponent(getRequest().getTag().toString())));
             }
             return combined;
         }
