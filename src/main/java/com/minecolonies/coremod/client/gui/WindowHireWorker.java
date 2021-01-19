@@ -9,10 +9,12 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.util.constant.BuildingConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.coremod.network.messages.server.colony.building.HireFireMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
@@ -200,6 +202,9 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
                      .filter(citizen -> !citizen.isChild())
+                     .filter(citizen-> colony.getBuilding(citizen.getWorkBuilding()).getSchematicName()=="library")
+                     .filter(citizen-> colony.getBuilding(citizen.getWorkBuilding()).getSchematicName()=="archery")
+                     .filter(citizen-> colony.getBuilding(citizen.getWorkBuilding()).getSchematicName()=="combatacademy")
                      .filter(citizen -> (citizen.getWorkBuilding() == null)
                                           || building.getPosition().equals(citizen.getWorkBuilding())).sorted(Comparator.comparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());
