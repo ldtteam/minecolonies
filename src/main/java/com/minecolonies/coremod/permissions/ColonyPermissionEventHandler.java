@@ -14,6 +14,7 @@ import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.permissions.Permissions;
@@ -32,7 +33,6 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.*;
@@ -50,8 +50,6 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_BREAKING_MESSAGE;
-
 /**
  * This class handles all permission checks on events and cancels them if needed.
  */
@@ -61,21 +59,6 @@ public class ColonyPermissionEventHandler
      * The colony involved in this permission-check event
      */
     private final Colony colony;
-
-    /**
-     * Progress in % of breaking the townHall.
-     */
-    private int breakProgressOnTownHall = 0;
-
-    /**
-     * Ticks at which townhall breaking started.
-     */
-    private long lastTownHallBreakingTick = 0;
-
-    /**
-     * Detect if the town-hall break was valid.
-     */
-    private boolean validTownHallBreak = false;
 
     /**
      * The last time the player was notified about not having permission.
@@ -214,7 +197,7 @@ public class ColonyPermissionEventHandler
                 return;
             }
 
-            if (event.getState().getBlock() == ModBlocks.blockHutTownHall && !validTownHallBreak && !event.getPlayer().isCreative())
+            if (event.getState().getBlock() == ModBlocks.blockHutTownHall && !((BlockHutTownHall)event.getState().getBlock()).getValidBreak() && !event.getPlayer().isCreative())
             {
                 cancelEvent(event, event.getPlayer(), colony, Action.BREAK_HUTS, event.getPos());
                 return;
@@ -389,66 +372,6 @@ public class ColonyPermissionEventHandler
         }
 
         checkEventCancelation(Action.RIGHTCLICK_ENTITY, event.getPlayer(), event.getWorld(), event, event.getPos());
-    }
-
-    /**
-     * PlayerInteractEvent.EntityInteract handler.
-     * <p>
-     * Check, if a player right clicked an entity. Deny if: - If the entity is in colony - player has not permission
-     *
-     * @param event PlayerInteractEvent
-     */
-    @SubscribeEvent
-    public void on(final PlayerEvent.BreakSpeed event)
-    {
-        if (colony.isCoordInColony(event.getEntity().world, event.getPos()) && MineColonies.getConfig().getServer().pvp_mode.get()
-              && event.getState().getBlock() == ModBlocks.blockHutTownHall
-              && event.getPlayer().world instanceof ServerWorld)
-        {
-            final World world = event.getPlayer().world;
-            final double localProgress = breakProgressOnTownHall;
-            final double hardness = event.getState().getBlockHardness(world, event.getPos()) * 20.0 * 1.5 / event.getNewSpeed();
-
-            if (localProgress >= hardness / 10.0 * 9.0 && localProgress <= hardness / 10.0 * 9.0 + 1)
-            {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), TOWNHALL_BREAKING_MESSAGE, event.getPlayer().getName(), 90);
-            }
-            if (localProgress >= hardness / 4.0 * 3.0 && localProgress <= hardness / 4.0 * 3.0 + 1)
-            {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), TOWNHALL_BREAKING_MESSAGE, event.getPlayer().getName(), 75);
-            }
-            else if (localProgress >= hardness / 2.0 && localProgress <= hardness / 2.0 + 1)
-            {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), TOWNHALL_BREAKING_MESSAGE, event.getPlayer().getName(), 50);
-            }
-            else if (localProgress >= hardness / 4.0 && localProgress <= hardness / 4.0 + 1)
-            {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), TOWNHALL_BREAKING_MESSAGE, event.getPlayer().getName(), 25);
-            }
-
-            if (localProgress >= hardness - 1)
-            {
-                validTownHallBreak = true;
-            }
-
-            if (world.getGameTime() - lastTownHallBreakingTick == 1)
-            {
-                breakProgressOnTownHall++;
-            }
-            else
-            {
-                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
-                  "com.minecolonies.coremod.pvp.townhall.break.start",
-                  event.getPlayer().getName());
-                breakProgressOnTownHall = 0;
-                validTownHallBreak = false;
-            }
-            lastTownHallBreakingTick = world.getGameTime();
-        }
-        else if (!MineColonies.getConfig().getServer().pvp_mode.get())
-        {
-            validTownHallBreak = true;
-        }
     }
 
     /**

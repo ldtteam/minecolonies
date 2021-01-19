@@ -495,7 +495,7 @@ public final class ItemStackUtils
     {
         if (itemStack.getItem() == Items.FISHING_ROD)
         {
-            return (1 + getMaxEnchantmentLevel(itemStack));
+            return 1;
         }
         if (!itemStack.isDamageable())
         {
@@ -504,13 +504,13 @@ public final class ItemStackUtils
         final int rodDurability = itemStack.getMaxDamage();
         if (rodDurability <= (ItemTier.WOOD.getMaxUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT1.get()))
         {
-            return (1 + getMaxEnchantmentLevel(itemStack));
+            return 1;
         }
         else if (rodDurability <= (ItemTier.IRON.getMaxUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT2.get()))
         {
-            return (2 + getMaxEnchantmentLevel(itemStack));
+            return 2;
         }
-        return (3 + getMaxEnchantmentLevel(itemStack));
+        return 3;
     }
 
     /**

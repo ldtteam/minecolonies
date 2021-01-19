@@ -55,6 +55,9 @@
   "minecolonies.config.usemiddleinitial": "Middle Initial",
   "minecolonies.config.usemiddleinitial.comment": "Should citizens have a middle initial?",
 
+  "minecolonies.config.useeasternnameorder": "Eastern Name Order",
+  "minecolonies.config.useeasternnameorder.comment": "Should new citizens use the Eastern name order (with their surname first)?",
+
   "minecolonies.config.malefirstnames": "Male First Names",
   "minecolonies.config.malefirstnames.comment": "Male first names to be used for colonists",
   "minecolonies.config.femalefirstnames": "Female First Names",
@@ -465,6 +468,21 @@
   "com.minecolonies.command.notenabledinconfig": "This command is disabled in the config.",
   "com.minecolonies.command.resetsupply": "Successfully reset the Supply Camp and Ship placement.",
   "com.minecolonies.command.prune.next": "This command will delete large chunks of your world! Use with care! Make a backup first! If you want to continue, repeat this command with %d as the first parameter.",
+
+  "com.minecolonies.coremod.tag.minecolonies.compostables": "Compostables",
+  "com.minecolonies.coremod.tag.minecolonies.concrete_powder": "Concrete Powder",
+  "com.minecolonies.coremod.tag.minecolonies.fungi": "Fungi",
+
+  "com.minecolonies.coremod.tag.minecraft.doors": "Doors",
+  "com.minecolonies.coremod.tag.minecraft.fishes": "Fish",
+  "com.minecolonies.coremod.tag.minecraft.flowers": "Flowers",
+  "com.minecolonies.coremod.tag.minecraft.leaves": "Leaves",
+  "com.minecolonies.coremod.tag.minecraft.logs": "Logs",
+  "com.minecolonies.coremod.tag.minecraft.planks": "Planks",
+  "com.minecolonies.coremod.tag.minecraft.saplings": "Saplings",
+  "com.minecolonies.coremod.tag.minecraft.slabs": "Slabs",
+  "com.minecolonies.coremod.tag.minecraft.small_flowers": "Small Flowers",
+  "com.minecolonies.coremod.tag.minecraft.wool": "Wool",
 
   "com.minecolonies.coremod.status.worker.goingtohut": "Going to Hut",
   "com.minecolonies.coremod.status.herder.breeding": "Breeding",
@@ -1113,7 +1131,7 @@
   "com.minecolonies.coremod.status.harvestingbarrels": "Harvesting the barrels",
 
   "com.minecolonies.coremod.pvp.townhall.break.start": "Beware! %s started breaking your Town Hall!",
-  "com.minecolonies.coremod.pvp.townhall.broke": "Beware!!! %s broke your Town Hall by over %d%%! At 100% it will be lost!!!",
+  "com.minecolonies.coremod.pvp.townhall.broke": "Beware!!! %s broke your Town Hall by over %d%%! At 100%% it will be lost!!!",
   "com.minecolonies.coremod.gui.townhall.pickteamcolor": "Pick Team Color:",
   "block.minecolonies.blockhutlibrary": "Library",
   "block.minecolonies.blockhutlibrary.name": "Library",
