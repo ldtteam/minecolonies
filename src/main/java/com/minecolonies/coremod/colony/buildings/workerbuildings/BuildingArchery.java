@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingTraining;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.research.ResearchInitializer;
@@ -37,7 +38,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Building class for the Archery.
  */
-public class BuildingArchery extends AbstractBuildingWorker implements IBuildingBedProvider, IWorkerLivingBuilding, IBuildingCanBeHiredFrom
+public class BuildingArchery extends AbstractBuildingTraining implements IBuildingBedProvider, IWorkerLivingBuilding
 {
     /**
      * The Schematic name.

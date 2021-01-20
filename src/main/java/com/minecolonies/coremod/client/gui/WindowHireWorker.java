@@ -203,7 +203,8 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                      .filter(citizen -> !citizen.isChild())
                      .filter(citizen -> (citizen.getWorkBuilding() == null)
                              || building.getPosition().equals(citizen.getWorkBuilding())
-                             || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom).sorted(Comparator.comparing(ICitizenDataView::getName))
+                             || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom).
+                        sorted(Comparator.comparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());
     }
 
