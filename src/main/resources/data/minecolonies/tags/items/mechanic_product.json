@@ -19,6 +19,7 @@
     "minecraft:trapped_chest",
     "minecraft:ender_chest",
     "minecraft:lever",
-    "minecraft:daylight_detector"
+    "minecraft:daylight_detector",
+    "minecraft:dried_kelp_block"
   ]
 }
