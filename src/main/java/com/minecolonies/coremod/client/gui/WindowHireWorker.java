@@ -202,11 +202,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
                      .filter(citizen -> !citizen.isChild())
-                     .filter(citizen-> colony.getBuilding(citizen.getWorkBuilding()).getSchematicName()=="library")
-                     .filter(citizen-> colony.getBuilding(citizen.getWorkBuilding()).getSchematicName()=="archery")
-                     .filter(citizen-> colony.getBuilding(citizen.getWorkBuilding()).getSchematicName()=="combatacademy")
-                     .filter(citizen -> (citizen.getWorkBuilding() == null)
-                                          || building.getPosition().equals(citizen.getWorkBuilding())).sorted(Comparator.comparing(ICitizenDataView::getName))
+                     .filter(citizen -> (citizen.getWorkBuilding() == null) || building.getPosition().equals(citizen.getWorkBuilding())).sorted(Comparator.comparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());
     }
 
