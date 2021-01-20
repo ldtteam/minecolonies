@@ -20,7 +20,7 @@ import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCi
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import org.apache.logging.log4j.Logger;
+
 import org.jetbrains.annotations.NotNull;
 
 
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.api.util.Log.*;
+
 /**
  * Window for the hiring or firing of a worker.
  */
