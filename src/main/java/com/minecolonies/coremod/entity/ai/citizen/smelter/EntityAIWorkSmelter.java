@@ -269,7 +269,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     protected void extractFromFurnace(final FurnaceTileEntity furnace)
     {
         final ItemStack ingots = new InvWrapper(furnace).extractItem(RESULT_SLOT, STACKSIZE, false);
-        final int multiplier = getOwnBuilding().ingotMultiplier((int) (getSecondarySkillLevel()/2.0), worker.getRandom());
+        final int multiplier = getOwnBuilding().ingotMultiplier((int) (getSecondarySkillLevel()), worker.getRandom());
         int amount = ingots.getCount() * multiplier;
 
         while (amount > 0)
