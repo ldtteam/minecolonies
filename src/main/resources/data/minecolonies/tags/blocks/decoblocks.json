@@ -13,6 +13,7 @@
     "minecraft:horn_coral_block",
     "minecraft:lantern",
     "#minecraft:banners",
-    "#minecraft:signs"
+    "#minecraft:signs",
+    "#minecraft:campfires"
   ]
 }
