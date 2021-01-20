@@ -8,13 +8,12 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
+import com.minecolonies.api.colony.buildings.IBuildingCanBeHiredFrom;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.constant.BuildingConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.coremod.network.messages.server.colony.building.HireFireMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
@@ -202,13 +201,9 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
                      .filter(citizen -> !citizen.isChild())
-                     .filter(citizen -> {
-                         return (citizen.getWorkBuilding() == null)
-                                 || building.getPosition().equals(citizen.getWorkBuilding())
-                                 || colony.getBuilding(citizen.getWorkBuilding()).getSchematicName().contains("library")
-                                 || colony.getBuilding(citizen.getWorkBuilding()).getSchematicName().contains("archery")
-                                 || colony.getBuilding(citizen.getWorkBuilding()).getSchematicName().contains("combatacademy");
-                     }).sorted(Comparator.comparing(ICitizenDataView::getName))
+                     .filter(citizen -> (citizen.getWorkBuilding() == null)
+                             || building.getPosition().equals(citizen.getWorkBuilding())
+                             || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom).sorted(Comparator.comparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());
     }
 

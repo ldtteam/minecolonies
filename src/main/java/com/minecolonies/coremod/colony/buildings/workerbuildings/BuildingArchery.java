@@ -4,10 +4,7 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
-import com.minecolonies.api.colony.buildings.IWorkerLivingBuilding;
-import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.*;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -40,7 +37,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Building class for the Archery.
  */
-public class BuildingArchery extends AbstractBuildingWorker implements IBuildingBedProvider, IWorkerLivingBuilding
+public class BuildingArchery extends AbstractBuildingWorker implements IBuildingBedProvider, IWorkerLivingBuilding, IBuildingCanBeHiredFrom
 {
     /**
      * The Schematic name.
