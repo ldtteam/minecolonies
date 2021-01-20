@@ -1446,7 +1446,7 @@
   "advancements.minecolonies.build.smeltery_3.title": "Double Trouble!",
   "advancements.minecolonies.build.smeltery_3.description": "A level 3 Smeltery has a 100% chance of doubling ore output, nice!",
   "advancements.minecolonies.build.smeltery_5.title": "That's Oresome!",
-  "advancements.minecolonies.build.smeltery_5.description": "A level 5 Smeltery has a chance of tripling every ore output, the chance is equal to the worker's level!",
+  "advancements.minecolonies.build.smeltery_5.description": "A level 5 Smeltery has a chance of tripling every ore output, the chance is equal to the worker's Strength level!",
   "advancements.minecolonies.complete_build_request_5_town_hall.title": "The Masterpiece Centerpiece",
   "advancements.minecolonies.complete_build_request_5_town_hall.description": "While there's little benefit to having a level 5 Town Hall, it sure does look pretty!",
   "advancements.minecolonies.build.archery.title": "Bullseye",
