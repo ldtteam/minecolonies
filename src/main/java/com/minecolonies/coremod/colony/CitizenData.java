@@ -446,13 +446,21 @@ public class CitizenData implements ICitizenData
         middleInitial = String.valueOf(getRandomLetter(rand));
         lastName = getRandomElement(rand, MineColonies.getConfig().getServer().lastNames.get().toArray(new String[0]));
 
-        if (MineColonies.getConfig().getServer().useMiddleInitial.get())
+        if(MineColonies.getConfig().getServer().useEasternNameOrder.get())
         {
-            citizenName = String.format("%s %s. %s", firstName, middleInitial, lastName);
+            //For now, don't include middle names, as their rules (and presence) vary heavily by region.
+            citizenName = String.format("%s%s", lastName, firstName);
         }
         else
         {
-            citizenName = String.format("%s %s", firstName, lastName);
+            if (MineColonies.getConfig().getServer().useMiddleInitial.get())
+            {
+                citizenName = String.format("%s %s. %s", firstName, middleInitial, lastName);
+            }
+            else
+            {
+                citizenName = String.format("%s %s", firstName, lastName);
+            }
         }
 
         // Check whether there's already a citizen with this name
