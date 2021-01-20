@@ -4,6 +4,7 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuildingCanBeHiredFrom;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -12,7 +13,6 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingTraining;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.research.ResearchInitializer;
@@ -43,7 +43,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * Creates a new building for the Library.
  */
-public class BuildingLibrary extends AbstractBuildingTraining
+public class BuildingLibrary extends AbstractBuildingWorker
 {
     /**
      * Description of the job executed in the hut.
@@ -267,7 +267,7 @@ public class BuildingLibrary extends AbstractBuildingTraining
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingWorker.View implements IBuildingCanBeHiredFrom
     {
         /**
          * Instantiates the view of the building.

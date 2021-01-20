@@ -20,7 +20,9 @@ import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCi
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-
+import static com.minecolonies.api.util.Log.*;
 /**
  * Window for the hiring or firing of a worker.
  */
@@ -201,10 +203,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
                      .filter(citizen -> !citizen.isChild())
-                     .filter(citizen -> (citizen.getWorkBuilding() == null)
-                             || building.getPosition().equals(citizen.getWorkBuilding())
-                             || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom).
-                        sorted(Comparator.comparing(ICitizenDataView::getName))
+                     .filter(citizen ->  citizen.getWorkBuilding() == null || building.getPosition().equals(citizen.getWorkBuilding()) || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom).sorted(Comparator.comparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());
     }
 
@@ -336,5 +335,13 @@ public class WindowHireWorker extends AbstractWindowSkeleton
             return TextFormatting.YELLOW.toString() + TextFormatting.ITALIC.toString();
         }
         return "";
+    }
+
+    private boolean studentHiring(ICitizenDataView citizen) {
+        if (citizen.getWorkBuilding() == null) return true;
+        if (building.getPosition().equals(citizen.getWorkBuilding())) return true;
+        Logger logger = getLogger();
+        logger.info(colony.getBuilding(citizen.getWorkBuilding()).toString());
+        return colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom;
     }
 }
