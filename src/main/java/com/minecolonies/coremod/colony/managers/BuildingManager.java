@@ -427,7 +427,6 @@ public class BuildingManager implements IBuildingManager
                     ConstructionTapeHelper.placeConstructionTape(building.getCorners(), world);
                 }
 
-                ConstructionTapeHelper.placeConstructionTape(building.getCorners(), world);
                 colony.getRequestManager().onProviderAddedToColony(building);
 
                 setMaxChunk(building);

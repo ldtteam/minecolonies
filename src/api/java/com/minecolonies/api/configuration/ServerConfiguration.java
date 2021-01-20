@@ -17,6 +17,7 @@ public class ServerConfiguration extends AbstractConfiguration
      *  --------------------------------------------------------------------------- */
 
     public final ForgeConfigSpec.BooleanValue                        useMiddleInitial;
+    public final ForgeConfigSpec.BooleanValue                        useEasternNameOrder;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> maleFirstNames;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> femaleFirstNames;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> lastNames;
@@ -371,6 +372,7 @@ public class ServerConfiguration extends AbstractConfiguration
         createCategory(builder, "names");
 
         useMiddleInitial = defineBoolean(builder, "usemiddleinitial", true);
+        useEasternNameOrder = defineBoolean(builder, "useeasternnameorder", false);
         maleFirstNames = defineList(builder, "malefirstnames", Arrays.asList(NameConstants.maleFirstNames), s -> s instanceof String);
         femaleFirstNames = defineList(builder, "femalefirstnames", Arrays.asList(NameConstants.femaleFirstNames), s -> s instanceof String);
         lastNames = defineList(builder, "lastnames", Arrays.asList(NameConstants.lastNames), s -> s instanceof String);
@@ -819,7 +821,7 @@ public class ServerConfiguration extends AbstractConfiguration
         diseases = defineList(builder, "diseases",
           Arrays.asList("Influenza,100,minecraft:carrot,minecraft:potato",
             "Measles,10,minecraft:dandelion,minecraft:kelp,minecraft:poppy",
-            "Smallpox,1,minecraft:honeycomb,minecraft:golden_apple"),
+            "Smallpox,1,minecraft:honey_bottle,minecraft:golden_apple"),
           s -> s instanceof String);
 
         debugInventories = defineBoolean(builder, "debuginventories", false);
