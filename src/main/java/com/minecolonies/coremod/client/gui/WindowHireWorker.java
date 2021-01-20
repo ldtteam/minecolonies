@@ -336,12 +336,4 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         }
         return "";
     }
-
-    private boolean studentHiring(ICitizenDataView citizen) {
-        if (citizen.getWorkBuilding() == null) return true;
-        if (building.getPosition().equals(citizen.getWorkBuilding())) return true;
-        Logger logger = getLogger();
-        logger.info(colony.getBuilding(citizen.getWorkBuilding()).toString());
-        return colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom;
-    }
 }
