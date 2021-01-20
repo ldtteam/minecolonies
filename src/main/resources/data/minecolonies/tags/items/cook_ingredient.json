@@ -7,6 +7,9 @@
       "minecraft:chicken",
       "minecraft:porkchop",
       "minecraft:rabbit",
-      "minecraft:potato"
+      "minecraft:potato",
+      "minecraft:kelp",
+      "minecraft:dried_kelp",
+      "minecraft:dried_kelp_block"
   ]
 }
