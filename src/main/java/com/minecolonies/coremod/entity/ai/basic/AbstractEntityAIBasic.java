@@ -1501,6 +1501,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         return checkIfRequestForItemExistOrCreateAsynch(stack, stack.getCount(), stack.getCount());
     }
 
+    /**
+     * Check if a stack has been requested already or is in the inventory. If not in the inventory and not requested already, create request
+     *
+     * @param stack the requested stack.
+     * @param count the count.
+     * @param minCount the min count.
+     * @return true if in the inventory, else false.
+     */
     public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack stack, final int count, final int minCount)
     {
         return checkIfRequestForItemExistOrCreateAsynch(stack, count, minCount, true);
@@ -1512,6 +1520,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param stack    the requested stack.
      * @param count    the total count.
      * @param minCount the minimum count.
+     * @param matchNBT if nbt has to be matched.
      * @return true if in the inventory, else false.
      */
     public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT)

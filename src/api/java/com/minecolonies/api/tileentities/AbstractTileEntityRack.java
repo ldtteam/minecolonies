@@ -170,9 +170,10 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      *
      * @param stack             the stack to check.
      * @param ignoreDamageValue ignore the damage value.
+     * @param ignoreNBT           if nbt should be ignored.
      * @return the quantity or 0.
      */
-    public abstract int getCount(ItemStack stack, boolean ignoreDamageValue);
+    public abstract int getCount(ItemStack stack, boolean ignoreDamageValue, final boolean ignoreNBT);
 
     /**
      * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.
