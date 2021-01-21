@@ -33,7 +33,7 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
         if(deliverable instanceof IConcreteDeliverable)
         {
             boolean ignoreNBT = false;
-            if (requestToCheck.getRequest() instanceof Stack && ((Stack) requestToCheck.getRequest()).matchNBT())
+            if (deliverable instanceof Stack && !((Stack) requestToCheck.getRequest()).matchNBT())
             {
                 ignoreNBT = true;
             }

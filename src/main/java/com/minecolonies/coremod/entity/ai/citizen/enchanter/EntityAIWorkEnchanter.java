@@ -58,7 +58,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     /**
      * Min distance to drain from citizen.
      */
-    private static final long MIN_DISTANCE_TO_DRAIN = 5;
+    private static final long MIN_DISTANCE_TO_DRAIN = 10;
 
     /**
      * Max progress ticks until drainage is complete (per Level).
