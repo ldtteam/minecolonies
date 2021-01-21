@@ -88,7 +88,12 @@ public class Stack implements IConcreteDeliverable
      */
     public Stack(@NotNull final ItemStack stack, final int count, final int minCount)
     {
-        this(stack, true, true, false, ItemStackUtils.EMPTY, count, minCount);
+        this(stack, count, minCount, true);
+    }
+
+    public Stack(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT)
+    {
+        this(stack, true, matchNBT, false, ItemStackUtils.EMPTY, count, minCount);
     }
 
     /**
