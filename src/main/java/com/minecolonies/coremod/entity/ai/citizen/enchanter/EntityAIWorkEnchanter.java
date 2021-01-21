@@ -171,7 +171,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                 needsCurrently = new Tuple<>(IS_ANCIENT_TOME, 1);
                 return GATHERING_REQUIRED_MATERIALS;
             }
-            checkIfRequestForItemExistOrCreateAsynch(new ItemStack(ModItems.ancientTome, 1));
+            checkIfRequestForItemExistOrCreateAsynch(new ItemStack(ModItems.ancientTome, 1), 1, 1, false);
             return IDLE;
         }
 
