@@ -28,10 +28,10 @@ ___
 ## Our Team
 
 ### Project Leads
-* Raycoms – Lead Lead Dev, Programming, and Active Maintainer
-* OrionOnline - Programming, Build System Engineer, and Active Maintainer
-* Someaddons - Programming, Pathfinding, Performance, and Active Maintainer
-* AshersLab – Programming and Active Maintainer
+* Raycoms – Project Management and Programming (Active Maintainer)
+* OrionOnline - Programming and Infrastructure Management (Active Maintainer)
+* SomeAddons - Programming and Performance Tuning (Active Maintainer)
+* AshersLab – Programming (Active Maintainer)
 * Pmardle – Founder, Project Management (inactive)
 * Flaminyogurt – Programming and Management (inactive)
 * Kostronor – Programming and Management (inactive)
