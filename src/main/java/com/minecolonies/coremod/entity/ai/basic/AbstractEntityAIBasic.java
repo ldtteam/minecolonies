@@ -1504,12 +1504,26 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * Check if a stack has been requested already or is in the inventory. If not in the inventory and not requested already, create request
      *
-     * @param stack    the requested stack.
-     * @param count    the total count.
-     * @param minCount the minimum count.
+     * @param stack the requested stack.
+     * @param count the count.
+     * @param minCount the min count.
      * @return true if in the inventory, else false.
      */
     public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack stack, final int count, final int minCount)
+    {
+        return checkIfRequestForItemExistOrCreateAsynch(stack, count, minCount, true);
+    }
+
+    /**
+     * Check if a stack has been requested already or is in the inventory. If not in the inventory and not requested already, create request
+     *
+     * @param stack    the requested stack.
+     * @param count    the total count.
+     * @param minCount the minimum count.
+     * @param matchNBT if nbt has to be matched.
+     * @return true if in the inventory, else false.
+     */
+    public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT)
     {
         if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
           s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
@@ -1518,9 +1532,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
 
         if (InventoryUtils.getCountFromBuilding(getOwnBuilding(),
-          itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= minCount &&
+          itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT)) >= minCount &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                getOwnBuilding(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true),
+                getOwnBuilding(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT),
                 stack.getCount(),
                 worker.getInventoryCitizen()))
         {
@@ -1532,7 +1546,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             && getOwnBuilding().getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
-            final Stack stackRequest = new Stack(stack, count, minCount);
+            final Stack stackRequest = new Stack(stack, count, minCount, matchNBT);
             worker.getCitizenData().createRequestAsync(stackRequest);
         }
 

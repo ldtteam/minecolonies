@@ -88,7 +88,7 @@ public class Stack implements IConcreteDeliverable
      */
     public Stack(@NotNull final ItemStack stack, final int count, final int minCount)
     {
-        this(stack, true, true, false, ItemStackUtils.EMPTY, count, minCount);
+        this(stack, count, minCount, true);
     }
 
     /**
@@ -99,6 +99,18 @@ public class Stack implements IConcreteDeliverable
     public Stack(@NotNull final ItemStorage itemStorage)
     {
         this(itemStorage.getItemStack(), !itemStorage.ignoreDamageValue(), !itemStorage.ignoreNBT(), false, ItemStackUtils.EMPTY, itemStorage.getAmount(), itemStorage.getAmount());
+    }
+
+    /**
+     * Create a Stack deliverable with variable nbt.
+     * @param stack the stack to deliver.
+     * @param count the count.
+     * @param minCount the min count.
+     * @param matchNBT if nbt has to match.
+     */
+    public Stack(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT)
+    {
+        this(stack, true, matchNBT, false, ItemStackUtils.EMPTY, count, minCount);
     }
 
     /**
@@ -266,6 +278,15 @@ public class Stack implements IConcreteDeliverable
     public void setResult(@NotNull final ItemStack result)
     {
         this.result = result;
+    }
+
+    /**
+     * Check if nbt should be matched.
+     * @return true if so.
+     */
+    public boolean matchNBT()
+    {
+        return matchNBT;
     }
 
     @Override

@@ -330,6 +330,7 @@ curseforge {
             id = '245506'
             addGameVersion '1.16.3'
             addGameVersion '1.16.4'
+            addGameVersion '1.16.5'
             changelog = file('build/changelog.md')
             changelogType = 'markdown'
             releaseType = System.getenv().CURSERELEASETYPE

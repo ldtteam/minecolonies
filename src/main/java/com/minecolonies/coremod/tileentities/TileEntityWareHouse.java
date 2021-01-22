@@ -49,7 +49,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     }
 
     @Override
-    public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count)
+    public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count, final boolean ignoreNBT)
     {
         int totalCountFound = 0;
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
@@ -59,7 +59,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                 final TileEntity entity = getWorld().getTileEntity(pos);
                 if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty())
                 {
-                    totalCountFound += ((AbstractTileEntityRack) entity).getCount(itemStack, true);
+                    totalCountFound += ((AbstractTileEntityRack) entity).getCount(itemStack, true, ignoreNBT);
                     if (totalCountFound >= count)
                     {
                         return true;
