@@ -378,22 +378,6 @@ public final class TranslationConstants
     @NonNls
     public static final String OFF_STRING                                                           = "com.minecolonies.coremod.gui.townHall.off";
     @NonNls
-    public static final String CMCG_HAPPINESS_HAPPINESSMODIFIER                                     = "com.minecolonies.coremod.gui.happiness.happinessmodifier";
-    @NonNls
-    public static final String CMCG_HAPPINESS_FOOD                                                  = "com.minecolonies.coremod.gui.happiness.food";
-    @NonNls
-    public static final String CMCG_HAPPINESS_HEALTH                                                = "com.minecolonies.coremod.gui.happiness.health";
-    @NonNls
-    public static final String CMCG_HAPPINESS_DAMAGE                                                = "com.minecolonies.coremod.gui.happiness.damage";
-    @NonNls
-    public static final String CMCG_HAPPINESS_HOUSE                                                 = "com.minecolonies.coremod.gui.happiness.house";
-    @NonNls
-    public static final String CMCG_HAPPINESS_JOB                                                   = "com.minecolonies.coremod.gui.happiness.job";
-    @NonNls
-    public static final String CMCG_HAPPINESS_FARMS                                                 = "com.minecolonies.coremod.gui.happiness.farms";
-    @NonNls
-    public static final String CMCG_HAPPINESS_TOOLS                                                 = "com.minecolonies.coremod.gui.happiness.tools";
-    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_MOURN                                       = "com.minecolonies.coremod.mourning";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE                              = "com.minecolonies.coremod.gui.hiring.buttonpaused";
