@@ -55,21 +55,24 @@ public class FurnaceRecipes implements IFurnaceRecipes
             final NonNullList<Ingredient> list = recipe.getIngredients();
             if (list.size() == 1)
             {
-                for(ItemStack smeltable: list.get(0).getMatchingStacks())
+                for(final ItemStack smeltable: list.get(0).getMatchingStacks())
                 {
-                    final RecipeStorage storage =StandardFactoryController.getInstance().getNewInstance(
-                        TypeConstants.RECIPE,
-                        StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN), 
-                        ImmutableList.of(smeltable), 
-                        1, 
-                        recipe.getRecipeOutput(), 
-                        Blocks.FURNACE);
+                    if (!smeltable.isEmpty())
+                    {
+                        final RecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
+                          TypeConstants.RECIPE,
+                          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                          ImmutableList.of(smeltable),
+                          1,
+                          recipe.getRecipeOutput(),
+                          Blocks.FURNACE);
 
-                    recipes.put(storage.getCleanedInput().get(0), storage);
+                        recipes.put(storage.getCleanedInput().get(0), storage);
 
-                    final ItemStack output = recipe.getRecipeOutput().copy();
-                    output.setCount(1);
-                    reverseRecipes.put(new ItemStorage(output), storage);
+                        final ItemStack output = recipe.getRecipeOutput().copy();
+                        output.setCount(1);
+                        reverseRecipes.put(new ItemStorage(output), storage);
+                    }
                 }
             }
         });
