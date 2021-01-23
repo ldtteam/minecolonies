@@ -1936,5 +1936,5 @@
   "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
   "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
   "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness",
-  "com.minecolonies.coremod.buildtool.indestructible": "Failed to place hut block, block at pos is indestructible!"
+  "com.minecolonies.coremod.buildtool.indestructible": "Failed to place the hut block! The block at its intended position is indestructible!"
 }
