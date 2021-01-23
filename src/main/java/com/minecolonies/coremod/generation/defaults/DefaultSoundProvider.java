@@ -24,6 +24,7 @@ import static com.ldtteam.datagenerators.sounds.SoundsJson.createSoundJson;
 public class DefaultSoundProvider implements IDataProvider
 {
     private final DataGenerator generator;
+    private JsonObject sounds;
 
     public DefaultSoundProvider(final DataGenerator generator)
     {
@@ -33,7 +34,7 @@ public class DefaultSoundProvider implements IDataProvider
     @Override
     public void act(@NotNull final DirectoryCache cache) throws IOException
     {
-        JsonObject sounds = new JsonObject();
+        sounds = new JsonObject();
 
         final List<String> defaultMaleSounds = new ArrayList<>();
         defaultMaleSounds.add("minecolonies:mob/citizen/male/say1");
@@ -94,21 +95,17 @@ public class DefaultSoundProvider implements IDataProvider
         tavernProperties.addProperty("comment", "Credits to Darren Curtis - Fireside Tales");
         sounds.add("tile.tavern.tavern_theme", createSoundJson("music", tavernProperties, ImmutableList.of("minecolonies:tile/tavern/tavern_theme")));
 
-        JsonObject desertRaidProperties = getDefaultProperties();
-        desertRaidProperties.addProperty("stream", true);
-        sounds.add("raid.desert.desert_raid", createSoundJson("music", desertRaidProperties, ImmutableList.of("minecolonies:raid/desert/desert_raid")));
+        add("record", false,
+          "raid.raid_alert",
+          "raid.raid_alert_early",
+          "raid.raid_won",
+          "raid.raid_won_early");
 
-        JsonObject desertRaidStartProperties = getDefaultProperties();
-        desertRaidStartProperties.addProperty("stream", true);
-        sounds.add("raid.desert.desert_raid_warning", createSoundJson("music", desertRaidStartProperties, ImmutableList.of("minecolonies:raid/desert/desert_raid_warning")));
-
-        JsonObject desertRaidEndProperties = getDefaultProperties();
-        desertRaidEndProperties.addProperty("stream", true);
-        sounds.add("raid.desert.desert_raid_victory", createSoundJson("music", desertRaidEndProperties, ImmutableList.of("minecolonies:raid/desert/desert_raid_victory")));
-
-        JsonObject amazonRaidProperties = getDefaultProperties();
-        amazonRaidProperties.addProperty("stream", true);
-        sounds.add("raid.amazon.amazon_raid", createSoundJson("music", amazonRaidProperties, ImmutableList.of("minecolonies:raid/amazon/amazon_raid")));
+        add("music", true,
+          "raid.desert.desert_raid",
+          "raid.desert.desert_raid_warning",
+          "raid.desert.desert_raid_victory",
+          "raid.amazon.amazon_raid");
 
         final Path savePath = generator.getOutputFolder().resolve(DataGeneratorConstants.ASSETS_DIR).resolve("sounds.json");
         IDataProvider.save(DataGeneratorConstants.GSON, cache, sounds, savePath);
@@ -126,5 +123,15 @@ public class DefaultSoundProvider implements IDataProvider
         JsonObject properties = new JsonObject();
         properties.addProperty("stream", false);
         return properties;
+    }
+
+    private void add(String category, boolean stream, String... ids)
+    {
+        for (String id : ids)
+        {
+            JsonObject obj = new JsonObject();
+            obj.addProperty("stream", stream);
+            sounds.add(id, createSoundJson(category, obj, ImmutableList.of(Constants.MOD_ID+":"+id.replace(".", "/"))));
+        }
     }
 }

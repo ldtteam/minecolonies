@@ -7,18 +7,14 @@ import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.Horde;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
-import com.minecolonies.coremod.network.messages.client.PlayMusicMessage;
-import com.minecolonies.coremod.network.messages.client.StopMusicMessage;
+import com.minecolonies.coremod.network.messages.client.PlayAudioMessage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -98,11 +94,7 @@ public class AmazonRaidEvent extends HordeRaidEvent
         super.onUpdate();
         if (--musicCooldown <= 0)
         {
-            for (final PlayerEntity player : getColony().getImportantMessageEntityPlayers())
-            {
-                Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayerEntity) player);
-                Network.getNetwork().sendToPlayer(new PlayMusicMessage(RaidSounds.DESERT_RAID), (ServerPlayerEntity) player);
-            }
+            PlayAudioMessage.sendToAll(getColony(), true, true, new PlayAudioMessage(RaidSounds.AMAZON_RAID));
             musicCooldown = 20;
         }
     }

@@ -297,7 +297,7 @@ public class EntityAISickTask extends Goal
 
 
         citizen.swingArm(Hand.MAIN_HAND);
-        citizen.playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
+        citizen.playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPentatonic(citizen.getRandom()));
         Network.getNetwork().sendToTrackingEntity(
           new CircleParticleEffectMessage(
             citizen.getPositionVec().add(0, 2, 0),
