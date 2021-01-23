@@ -21,6 +21,8 @@ import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuil
 import com.minecolonies.coremod.network.messages.server.colony.building.TransferItemsRequestMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.builder.BuilderSelectWorkOrderMessage;
 
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -141,11 +143,15 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     @Override
     public void onOpened()
     {
-        if (needGuide && Minecraft.getInstance().player.connection.getAdvancementManager().getAdvancementList().getAdvancement(GUIDE_ADVANCEMENT) == null)
+        if (needGuide)
         {
-            close();
-            new WindowHutGuide(building).open();
-            return;
+            final Advancement ad = Minecraft.getInstance().player.connection.getAdvancementManager().getAdvancementList().getAdvancement(GUIDE_ADVANCEMENT);
+            if (ad == null || !Minecraft.getInstance().player.connection.getAdvancementManager().advancementToProgress.getOrDefault(ad, new AdvancementProgress()).isDone())
+            {
+                close();
+                new WindowHutGuide(building).open();
+                return;
+            }
         }
         super.onOpened();
 
