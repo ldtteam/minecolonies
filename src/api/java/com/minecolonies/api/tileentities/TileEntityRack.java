@@ -101,10 +101,9 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public int getCount(final ItemStack stack, final boolean ignoreDamageValue)
+    public int getCount(final ItemStack stack, final boolean ignoreDamageValue, final boolean ignoreNBT)
     {
-        final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
-
+        final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue, ignoreNBT);
         return content.getOrDefault(checkItem, 0);
     }
 

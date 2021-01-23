@@ -58,7 +58,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     /**
      * Min distance to drain from citizen.
      */
-    private static final long MIN_DISTANCE_TO_DRAIN = 5;
+    private static final long MIN_DISTANCE_TO_DRAIN = 10;
 
     /**
      * Max progress ticks until drainage is complete (per Level).
@@ -171,7 +171,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                 needsCurrently = new Tuple<>(IS_ANCIENT_TOME, 1);
                 return GATHERING_REQUIRED_MATERIALS;
             }
-            checkIfRequestForItemExistOrCreateAsynch(new ItemStack(ModItems.ancientTome, 1));
+            checkIfRequestForItemExistOrCreateAsynch(new ItemStack(ModItems.ancientTome, 1), 1, 1, false);
             return IDLE;
         }
 

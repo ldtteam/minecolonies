@@ -4,16 +4,14 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IConcreteDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractWarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * ----------------------- Not Documented Object ---------------------
@@ -34,11 +32,16 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
 
         if(deliverable instanceof IConcreteDeliverable)
         {
+            boolean ignoreNBT = false;
+            if (deliverable instanceof Stack && !((Stack) requestToCheck.getRequest()).matchNBT())
+            {
+                ignoreNBT = true;
+            }
             for(final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
             {
                 for (final TileEntityWareHouse wareHouse : wareHouses)
                 {
-                    if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount()))
+                    if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT))
                     {
                         return true;
                     }
