@@ -398,8 +398,9 @@ public class PathingStuckHandler implements IStuckHandler
         final Block blockAtPos = world.getBlockState(pos).getBlock();
         if (blockAtPos instanceof IBuilderUndestroyable || ModTags.indestructible.contains(blockAtPos))
         {
-            world.setBlockState(pos, Blocks.AIR.getDefaultState());
+            return;
         }
+        world.setBlockState(pos, Blocks.AIR.getDefaultState());
     }
 
     /**

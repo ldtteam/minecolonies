@@ -52,8 +52,8 @@ public class BuildToolPlaceMessage implements IMessage
      * Language key for missing hut
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
-    private static final String WRONG_COLONY        = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
-    private static final String IMMUTABLE_BLOCK_AT_POS = "com.minecolonies.coremod.buildtool.indestructible";
+    private static final String WRONG_COLONY                = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
+    private static final String INDESTRUCTIBLE_BLOCK_AT_POS = "com.minecolonies.coremod.buildtool.indestructible";
 
     /**
      * The state at the offset position.
@@ -206,7 +206,7 @@ public class BuildToolPlaceMessage implements IMessage
         final Block blockAtPos = world.getBlockState(buildPos).getBlock();
         if (blockAtPos instanceof IBuilderUndestroyable || ModTags.indestructible.contains(blockAtPos))
         {
-            LanguageHandler.sendPlayerMessage(player, IMMUTABLE_BLOCK_AT_POS);
+            LanguageHandler.sendPlayerMessage(player, INDESTRUCTIBLE_BLOCK_AT_POS);
             SoundUtils.playErrorSound(player, buildPos);
             return;
         }
