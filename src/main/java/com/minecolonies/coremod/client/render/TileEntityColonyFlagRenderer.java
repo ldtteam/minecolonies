@@ -72,7 +72,7 @@ public class TileEntityColonyFlagRenderer extends TileEntityRenderer<TileEntityC
                 transform.rotate(Vector3f.YP.rotationDegrees(f1));
                 this.standPost.showModel = true;
             }
-            else
+            else if (blockstate.getBlock() instanceof BlockColonyFlagWallBanner)
             {
                 transform.translate(0.5D, (double)-0.16666667F, 0.5D);
                 float f3 = -blockstate.get(BlockColonyFlagWallBanner.HORIZONTAL_FACING).getHorizontalAngle();
