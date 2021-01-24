@@ -209,7 +209,7 @@ public final class ChunkDataHelper
                 final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
                 if (colonyCap == null)
                 {
-                    return false;
+                    return true;
                 }
                 final ChunkLoadStorage storage = worldCapability.getChunkStorage(chunk.getPos().x, chunk.getPos().z);
                 if (storage != null)
