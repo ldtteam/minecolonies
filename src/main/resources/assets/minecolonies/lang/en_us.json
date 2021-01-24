@@ -1870,6 +1870,6 @@
   "com.minecolonies.coremod.gui.townhalltab.citizens": "Citizens",
   "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
   "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
-  "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness"
-
+  "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness",
+  "com.minecolonies.coremod.buildtool.indestructible": "Failed to place the hut block! The block at its intended position is indestructible!"
 }

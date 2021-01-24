@@ -1,6 +1,9 @@
 package com.minecolonies.api.entity.pathfinding;
 
+import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.LadderBlock;
@@ -356,25 +359,48 @@ public class PathingStuckHandler implements IStuckHandler
         stuckLevel = 0;
     }
 
+    /**
+     * Attempt to break blocks that are blocking the entity to reach its destination.
+     * @param world the world it is in.
+     * @param start the position the entity is at.
+     * @param facing the direction the goal is in.
+     */
     private void breakBlocksAhead(final World world, final BlockPos start, final Direction facing)
     {
         // Above entity
         if (!world.isAirBlock(start.up(3)))
         {
-            world.setBlockState(start.up(3), Blocks.AIR.getDefaultState());
+            setAirIfPossible(world, start.up(3));
+            return;
         }
 
         // In goal direction
         if (!world.isAirBlock(start.offset(facing)))
         {
-            world.setBlockState(start.offset(facing), Blocks.AIR.getDefaultState());
+            setAirIfPossible(world, start.offset(facing));
+            return;
         }
 
         // Goal direction up
         if (!world.isAirBlock(start.up().offset(facing)))
         {
-            world.setBlockState(start.up().offset(facing), Blocks.AIR.getDefaultState());
+            setAirIfPossible(world, start.up().offset(facing));
         }
+    }
+
+    /**
+     * Check if the block at the position is indestructible, if not, attempt to break it.
+     * @param world the world the block is in.
+     * @param pos the pos the block is at.
+     */
+    private void setAirIfPossible(final World world, final BlockPos pos)
+    {
+        final Block blockAtPos = world.getBlockState(pos).getBlock();
+        if (blockAtPos instanceof IBuilderUndestroyable || ModTags.indestructible.contains(blockAtPos))
+        {
+            return;
+        }
+        world.setBlockState(pos, Blocks.AIR.getDefaultState());
     }
 
     /**
