@@ -165,7 +165,7 @@ public class ResearchInitializer
         final GlobalResearch cheatsheet = new GlobalResearch("cheatsheet", "technology", "Cheat Sheet", 3, new MultiplierModifierResearchEffect(RECIPES, 0.5));
         cheatsheet.setRequirement(new BuildingResearchRequirement(2, "sawmill"));
 
-        final GlobalResearch recipebook = new GlobalResearch("recipebook", "technology", "Recipe book", 4, new MultiplierModifierResearchEffect(RECIPES, 1.0));
+        final GlobalResearch recipebook = new GlobalResearch("recipebook", "technology", "Recipe Book", 4, new MultiplierModifierResearchEffect(RECIPES, 1.0));
         recipebook.setRequirement(new BuildingResearchRequirement(3, "sawmill"));
 
         final GlobalResearch rtm = new GlobalResearch("rtm", "technology", "RTM", 5, new MultiplierModifierResearchEffect(RECIPES, 2.0));
@@ -288,7 +288,7 @@ public class ResearchInitializer
         knowtheend.setRequirement(new BuildingResearchRequirement(3, "baker"));
         theflintstones.addChild(knowtheend);
 
-        final GlobalResearch morescrolls = new GlobalResearch("morescrolls", "technology", "More scrolls", 1, new UnlockAbilityResearchEffect(MORE_SCROLLS, true));
+        final GlobalResearch morescrolls = new GlobalResearch("morescrolls", "technology", "More Scrolls", 1, new UnlockAbilityResearchEffect(MORE_SCROLLS, true));
         morescrolls.setRequirement(new BuildingResearchRequirement(3, "enchanter"));
 
         researchTree.addResearch(pavetheroad.getBranch(), pavetheroad);

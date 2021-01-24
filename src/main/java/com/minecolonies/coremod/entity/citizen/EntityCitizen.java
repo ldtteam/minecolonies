@@ -623,7 +623,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
 
             double healAmount = 1;
-            if (citizenData.getSaturation() >= FULL_SATURATION - limitDecrease)
+            if (citizenData.getSaturation() >= FULL_SATURATION + limitDecrease)
             {
                 healAmount += 1;
             }

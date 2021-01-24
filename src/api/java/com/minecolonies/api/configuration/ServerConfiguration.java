@@ -1335,13 +1335,13 @@ public class ServerConfiguration extends AbstractConfiguration
           s -> s instanceof String);
 
         this.loaded = defineList(builder, "loaded",
-          Collections.singletonList("minecraft:emerald*64"),
-          s -> s instanceof String);
-        this.heavilyloaded = defineList(builder, "heavilyloaded",
           Collections.singletonList("minecraft:emerald*128"),
           s -> s instanceof String);
-        this.deeppockets = defineList(builder, "deeppockets",
+        this.heavilyloaded = defineList(builder, "heavilyloaded",
           Collections.singletonList("minecraft:emerald*256"),
+          s -> s instanceof String);
+        this.deeppockets = defineList(builder, "deeppockets",
+          Collections.singletonList("minecraft:emerald*64"),
           s -> s instanceof String);
 
         taunt = defineList(builder, "taunt",

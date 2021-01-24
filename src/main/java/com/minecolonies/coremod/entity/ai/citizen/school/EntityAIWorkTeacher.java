@@ -164,8 +164,8 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
         if (effect != null)
         {
             xp *= (1 + effect.getEffect());
-            xp *= (1 + (getPrimarySkillLevel() / 10.0));
         }
+        xp *= (1 + (getPrimarySkillLevel() / 10.0));
 
         pupilToTeach.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, xp, pupilToTeach.getCitizenData());
 

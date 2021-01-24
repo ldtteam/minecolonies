@@ -67,14 +67,14 @@ public final class ResearchConstants
     public static final String RETREAT          = "Retreat";
     public static final String NONE             = "None";
     public static final String SHIELD_USAGE     = "Shield Usage";
-    public static final String KNIGHT_TAUNT     = "Knight taunt mobs";
+    public static final String KNIGHT_TAUNT     = "Knights Taunt Mobs";
     public static final String DOUBLE_ARROWS    = "Double Arrows";
     public static final String ARROW_ITEMS      = "Consume Arrows";
     public static final String ARROW_PIERCE     = "Piercing Arrows";
-    public static final String KNIGHT_WHIRLWIND = "Whirldwind ability";
+    public static final String KNIGHT_WHIRLWIND = "Whirlwind Ability";
     public static final String BLOCK_ATTACKS    = "Block Attacks";
     public static final String SLEEP_LESS       = "Sleep Less";
-    public static final String WORK_LONGER      = "Working day h";
+    public static final String WORK_LONGER      = "Working Day h";
 
     public static final String TEACHING = "Teaching";
     public static final String GROWTH   = "Growth";
@@ -104,7 +104,7 @@ public final class ResearchConstants
     public static final String FIRE_RES    = "Miner Fire Res";
 
     public static final String END_KNOWLEGE = "Knowledge of The End";
-    public static final String MORE_SCROLLS = "more scroll recipes";
+    public static final String MORE_SCROLLS = "More Scroll Recipes";
 
     /**
      * Private constructor to hide implicit public one.
