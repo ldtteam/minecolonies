@@ -242,17 +242,14 @@ public class CitizenItemHandler implements ICitizenItemHandler
             return;
         }
 
-        double chance = 0;
         final MultiplierModifierResearchEffect effect =
           citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TOOL_DURABILITY, MultiplierModifierResearchEffect.class);
         if (effect != null)
         {
-            chance = effect.getEffect();
-        }
-
-        if (citizen.getRandom().nextDouble() < chance)
-        {
-            return;
+            if (citizen.getRandom().nextDouble() > (1 / (1 + effect.getEffect())))
+            {
+                return;
+            }
         }
 
         //check if tool breaks
@@ -333,15 +330,18 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 continue;
             }
 
-            double armorDamage = damage;
             final MultiplierModifierResearchEffect
               effect = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARMOR_DURABILITY, MultiplierModifierResearchEffect.class);
-            if (effect != null)
+
+            if(effect != null)
             {
-                armorDamage *= 1 - effect.getEffect();
+                if (citizen.getRandom().nextDouble() > (1 / (1 + effect.getEffect())))
+                {
+                    return;
+                }
             }
 
-            stack.damageItem(Math.max(1, (int) (armorDamage / 4)), citizen, (i) -> {
+            stack.damageItem(Math.max(1, (int) (damage / 4)), citizen, (i) -> {
                 i.sendBreakAnimation(Hand.MAIN_HAND);
             });
         }
