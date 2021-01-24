@@ -490,7 +490,7 @@ public class ColonyPermissionEventHandler
     /**
      * ArrowLooseEvent handler.
      * <p>
-     * Check, if a player tries to shoot an arrow. Deny if: - If the shooting happens in the colony - player is neutral or hostile to colony
+     * Check if a player tries to shoot an arrow. Deny if: - If the shooting happens in the colony - player is neutral or hostile to colony
      *
      * @param event ItemEntityPickupEvent
      */
@@ -500,6 +500,14 @@ public class ColonyPermissionEventHandler
         checkEventCancelation(Action.SHOOT_ARROW, event.getPlayer(), event.getPlayer().getEntityWorld(), event, new BlockPos(event.getPlayer().getPositionVec()));
     }
 
+    /**
+     * LivingHurtEvent handler.
+     * <p>
+     * Check if the entity that is getting hurt is a player,
+     * players that get hurt by other players are handled elsewhere,
+     * this here is handling players getting hurt by citizens.
+     * @param event
+     */
     @SubscribeEvent
     public void on(final LivingHurtEvent event)
     {
@@ -507,7 +515,8 @@ public class ColonyPermissionEventHandler
               && event.getSource() instanceof EntityDamageSource
               && event.getSource().getTrueSource() instanceof EntityCitizen
               && ((EntityCitizen) event.getSource().getTrueSource()).getCitizenColonyHandler().getColonyId() == colony.getID()
-              && colony.getRaiderManager().isRaided())
+              && colony.getRaiderManager().isRaided()
+              && !colony.getPermissions().hasPermission((PlayerEntity) event.getEntity(), Action.GUARDS_ATTACK))
         {
             event.setCanceled(true);
         }
