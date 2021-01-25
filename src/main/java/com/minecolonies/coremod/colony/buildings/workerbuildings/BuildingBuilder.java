@@ -140,12 +140,12 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     }
 
     @Override
-    public void serializeToView(PacketBuffer buf)
+    public void serializeToView(@NotNull PacketBuffer buf)
     {
         super.serializeToView(buf);
         buf.writeBoolean(manualMode);
 
-        if (manualMode && !getMainCitizen().getJob(JobBuilder.class).hasWorkOrder())
+        if (manualMode && getMainCitizen() != null && !getMainCitizen().getJob(JobBuilder.class).hasWorkOrder())
         {
             final List<WorkOrderBuildDecoration> list = new ArrayList<>();
             list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildRemoval.class, getPosition()));
