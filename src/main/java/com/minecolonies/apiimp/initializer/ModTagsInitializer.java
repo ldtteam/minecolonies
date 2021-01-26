@@ -46,6 +46,7 @@ public class ModTagsInitializer
     private static final ResourceLocation ORECHANCEBLOCKS = new ResourceLocation(MOD_ID, "orechanceblocks");
     private static final ResourceLocation COLONYPROTECTIONEXCEPTION = new ResourceLocation(MOD_ID, "protectionexception");
     private static final ResourceLocation FUNGI = new ResourceLocation(MOD_ID, "fungi");
+    private static final ResourceLocation INDESTRUCTIBLE = new ResourceLocation(MOD_ID, "indestructible");
 
     private static boolean loaded = false;
 
@@ -65,6 +66,7 @@ public class ModTagsInitializer
         ModTags.fungi = getItemTags(FUNGI);
         ModTags.oreChanceBlocks = getBlockTags(ORECHANCEBLOCKS);
         ModTags.colonyProtectionException = getBlockTags(COLONYPROTECTIONEXCEPTION);
+        ModTags.indestructible = getBlockTags(INDESTRUCTIBLE);
 
         initCrafterRules("baker");
         initCrafterRules("blacksmith");

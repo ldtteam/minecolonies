@@ -11,6 +11,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
@@ -50,7 +52,8 @@ public class BuildToolPlaceMessage implements IMessage
      * Language key for missing hut
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
-    private static final String WRONG_COLONY        = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
+    private static final String WRONG_COLONY                = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
+    private static final String INDESTRUCTIBLE_BLOCK_AT_POS = "com.minecolonies.coremod.buildtool.indestructible";
 
     /**
      * The state at the offset position.
@@ -200,6 +203,14 @@ public class BuildToolPlaceMessage implements IMessage
       final boolean mirror,
       final BlockState state)
     {
+        final Block blockAtPos = world.getBlockState(buildPos).getBlock();
+        if (blockAtPos instanceof IBuilderUndestroyable || ModTags.indestructible.contains(blockAtPos))
+        {
+            LanguageHandler.sendPlayerMessage(player, INDESTRUCTIBLE_BLOCK_AT_POS);
+            SoundUtils.playErrorSound(player, buildPos);
+            return;
+        }
+
         final String hut = sn.getSection();
         final ItemStack stack = BuildingUtils.getItemStackForHutFromInventory(player.inventory, hut);
         final Block block = stack.getItem() instanceof BlockItem ? ((BlockItem) stack.getItem()).getBlock() : null;

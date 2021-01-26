@@ -623,7 +623,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
 
             double healAmount = 1;
-            if (citizenData.getSaturation() >= FULL_SATURATION - limitDecrease)
+            if (citizenData.getSaturation() >= FULL_SATURATION + limitDecrease)
             {
                 healAmount += 1;
             }
@@ -1770,5 +1770,15 @@ public class EntityCitizen extends AbstractEntityCitizen
     public void updatePose(final Pose pose)
     {
         setPose(pose);
+    }
+
+    /**
+     * Whether this entity is active and loaded
+     *
+     * @return
+     */
+    public boolean isActive()
+    {
+        return world.isRemote ? entityStatemachine.getState() == EntityState.ACTIVE_CLIENT : entityStatemachine.getState() == EntityState.ACTIVE_SERVER;
     }
 }

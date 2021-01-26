@@ -16,18 +16,20 @@ public class ModTags
 
     public static ITag<Block> decorationItems;
     public static ITag<Item>  concretePowder;
-    public static ITag<Block>    concreteBlock;
-    public static ITag<Block>    pathingBlocks;
+    public static ITag<Block> concreteBlock;
+    public static ITag<Block> pathingBlocks;
 
-    public static ITag<Block>    colonyProtectionException;
+    public static ITag<Block> colonyProtectionException;
+    public static ITag<Block> indestructible;
 
-    public static ITag<Block>    oreChanceBlocks;
-    public static ITag<Item>     compostables;
+    public static ITag<Block> oreChanceBlocks;
+    public static ITag<Item>  compostables;
 
     public static ITag<Item> fungi;
 
-    public static final Map<String, ITag<Item>> crafterProduct = new HashMap<>();
-    public static final Map<String, ITag<Item>> crafterProductExclusions = new HashMap<>();
-    public static final Map<String, ITag<Item>> crafterIngredient = new HashMap<>();
+
+    public static final Map<String, ITag<Item>> crafterProduct              = new HashMap<>();
+    public static final Map<String, ITag<Item>> crafterProductExclusions    = new HashMap<>();
+    public static final Map<String, ITag<Item>> crafterIngredient           = new HashMap<>();
     public static final Map<String, ITag<Item>> crafterIngredientExclusions = new HashMap<>();
 }
