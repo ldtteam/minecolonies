@@ -1809,6 +1809,8 @@
   "block.minecolonies.blockhutmechanic": "Mechanic's Hut",
 
   "com.minecolonies.coremod.gui.workerhuts.plantation": "Plantation",
+  "com.minecolonies.coremod.gui.workerhuts.plantation.to_plant": "To plant:",
+  "com.minecolonies.coremod.gui.workerhuts.plantation.not_plant": "To NOT plant:",
   "com.minecolonies.coremod.job.planter": "Planter",
   "block.minecolonies.blockhutplantation.name": "Plantation",
   "block.minecolonies.blockhutplantation": "Plantation",
