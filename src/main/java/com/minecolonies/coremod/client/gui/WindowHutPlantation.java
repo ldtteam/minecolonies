@@ -5,7 +5,6 @@ import com.ldtteam.blockout.controls.Label;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
