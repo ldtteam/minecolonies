@@ -75,24 +75,24 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     public void setAngler(final EntityCitizen citizen, final int luck, final int lureSpeed)
     {
         this.angler = citizen;
-        final float f = this.angler.rotationPitch;
-        final float f1 = this.angler.rotationYaw;
-        final float f2 = MathHelper.cos(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
-        final float f3 = MathHelper.sin(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
-        final float f4 = -MathHelper.cos(-f * ((float) Math.PI / 180F));
-        final float f5 = MathHelper.sin(-f * ((float) Math.PI / 180F));
-        final double d0 = this.angler.getPosX() - (double) f3 * 0.3D;
-        final double d1 = this.angler.getPosYEye();
-        final double d2 = this.angler.getPosZ() - (double) f2 * 0.3D;
-        this.setLocationAndAngles(d0, d1, d2, f1, f);
-        Vector3d Vector3d = new Vector3d((double) (-f3), (double) MathHelper.clamp(-(f5 / f4), -5.0F, 5.0F), (double) (-f2));
-        final double d3 = Vector3d.length();
-        Vector3d = Vector3d.mul(0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D,
+        final float pitch = (float) (Math.random()*40.0-10.0);
+        final float yaw = this.angler.rotationYaw;
+        final float cowYaw = MathHelper.cos(-yaw * ((float) Math.PI / 180F) - (float) Math.PI);
+        final float sinYaw = MathHelper.sin(-yaw * ((float) Math.PI / 180F) - (float) Math.PI);
+        final float cosPitch = -MathHelper.cos(-pitch * ((float) Math.PI / 180F));
+        final float sinPitch = MathHelper.sin(-pitch * ((float) Math.PI / 180F));
+        final double xYaw = this.angler.getPosX() - (double) sinYaw * 0.3D;
+        final double eyePos = this.angler.getPosYEye();
+        final double zYaw = this.angler.getPosZ() - (double) cowYaw * 0.3D;
+        this.setLocationAndAngles(xYaw, eyePos, zYaw, yaw, pitch);
+        Vector3d vec = new Vector3d( (-sinYaw),  MathHelper.clamp(-(sinPitch / cosPitch), -5.0F, 5.0F), (-cowYaw));
+        final double d3 = vec.length();
+        vec = vec.mul(0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D,
           0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D,
           0.6D / d3 + 0.5D + this.rand.nextGaussian() * 0.0045D);
-        this.setMotion(Vector3d);
-        this.rotationYaw = (float) (MathHelper.atan2(Vector3d.x, Vector3d.z) * (double) (180F / (float) Math.PI));
-        this.rotationPitch = (float) (MathHelper.atan2(Vector3d.y, (double) MathHelper.sqrt(horizontalMag(Vector3d))) * (double) (180F / (float) Math.PI));
+        this.setMotion(vec);
+        this.rotationYaw = (float) (MathHelper.atan2(vec.x, vec.z) * (double) (180F / (float) Math.PI));
+        this.rotationPitch = (float) (MathHelper.atan2(vec.y, (double) MathHelper.sqrt(horizontalMag(vec))) * (double) (180F / (float) Math.PI));
         this.prevRotationYaw = this.rotationYaw;
         this.prevRotationPitch = this.rotationPitch;
         this.luck = Math.max(0, luck);
