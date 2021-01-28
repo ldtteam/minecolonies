@@ -1669,6 +1669,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
 
         final Collection<IRequestResolver<?>> resolvers = getResolvers();
+        final List<IToken<?>> playerRequests = colony.getRequestManager().getPlayerResolver().getAllAssignedRequests();
+        final List<IToken<?>> retryingRequests = colony.getRequestManager().getRetryingRequestResolver().getAllAssignedRequests();
+
 
         for (final IRequestResolver<?> resolver : resolvers)
         {
@@ -1683,9 +1686,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
             final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(deliverableRequests, stack);
 
-            if (target == null
-                  || (!colony.getRequestManager().getPlayerResolver().getAllAssignedRequests().contains(target.getId())
-                        && !colony.getRequestManager().getRetryingRequestResolver().getAllAssignedRequests().contains(target.getId())))
+            if (target == null || !isRequestStuck(target, playerRequests, retryingRequests))
             {
                 continue;
             }
@@ -1706,8 +1707,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
             final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(data, TypeConstants.DELIVERABLE), stack);
 
-            if (target == null || (!colony.getRequestManager().getPlayerResolver().getAllAssignedRequests().contains(target.getId())
-                                     && !colony.getRequestManager().getRetryingRequestResolver().getAllAssignedRequests().contains(target.getId())))
+            if (target == null || !isRequestStuck(target, playerRequests, retryingRequests) )
             {
                 continue;
             }
@@ -1715,6 +1715,30 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
             return;
         }
+    }
+
+    /**
+     * Check if the request or one of the child requests is stuck in the retrying resolver.
+     * @param target the request to check.
+     * @return true if stuck.
+     */
+    private boolean isRequestStuck(final IRequest<?> target, final List<IToken<?>> playerResolverRequests, final List<IToken<?>> retryingRequests)
+    {
+        if (playerResolverRequests.contains(target.getId())
+              || retryingRequests.contains(target.getId()))
+        {
+            return true;
+        }
+
+        for (final IToken<?> child : target.getChildren())
+        {
+            if (isRequestStuck(colony.getRequestManager().getRequestForToken(child), playerResolverRequests, retryingRequests))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
