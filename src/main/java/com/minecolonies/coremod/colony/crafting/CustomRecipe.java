@@ -2,20 +2,18 @@ package com.minecolonies.coremod.colony.crafting;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
-import com.minecolonies.api.research.effects.IResearchEffect;
+import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.research.GlobalResearchEffect;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.block.Block;
@@ -397,7 +395,7 @@ public class CustomRecipe
 
     /**
      * Get the ID for this recipe
-     * @return
+     * @return Recipe Resource Location
      */
     public ResourceLocation getRecipeId()
     {
@@ -512,7 +510,7 @@ public class CustomRecipe
 
     /**
      * Get a the recipe storage represented by this recipe
-     * @return
+     * @return Recipe Storage
      */
     public IRecipeStorage getRecipeStorage()
     {

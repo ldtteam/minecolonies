@@ -2,6 +2,12 @@ package com.minecolonies.api.research;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.research.effects.IResearchEffect;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.nbt.CompoundNBT;

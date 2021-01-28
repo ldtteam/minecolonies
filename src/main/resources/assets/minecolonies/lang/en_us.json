@@ -1489,7 +1489,6 @@
   "com.minecolonies.coremod.research.undo": "Researchers have torn up their notes about '%s'.",
   "com.minecolonies.coremod.research.undo.haschilds": "You can't reset a research with completed offshoots.",
   "com.minecolonies.coremod.research.havetounlock": "Build a University and research this hut to unlock it!",
-  "com.minecolonies.coremod.research.item1": "§cThe %s§c requires research",
   "com.minecolonies.coremod.research.unlocktougprade": "Upgrading to level %s requires you to complete a research at the University!",
   "com.minecolonies.coremod.research.item1": "§cThe %s §crequires research",
   "com.minecolonies.coremod.research.item2": "§cat the University to be built.",
@@ -2205,7 +2204,7 @@
   "com.minecolonies.research.effects.blockhutstonesmeltery.description": "Unlocks Stonesmeltery",
   "com.minecolonies.research.effects.blockhutglassblower.description": "Unlocks Glassblower",
   "com.minecolonies.research.effects.blockhutmechanic.description": "Unlocks Mechanic",
-  "com.minecolonies.research.effects.blockhutsawmill.description": "Unlocks Sawmill"
+  "com.minecolonies.research.effects.blockhutsawmill.description": "Unlocks Sawmill",
   
   "com.minecolonies.coremod.gui.townhalltab.information": "Information",
   "com.minecolonies.coremod.gui.townhalltab.actions": "Actions",
