@@ -923,15 +923,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final String hutBlockName = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
-          new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, this.getSchematicName())).getBuildingBlock().getName();
+        final String hutResearch = colony.getResearchManager().getResearchEffectIdFrom(getBuildingRegistryEntry().getBuildingBlock());
 
-        if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutBlockName) && !colony.getResearchManager().getResearchEffects().getEffectBoolean(hutBlockName))
+        if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) && !colony.getResearchManager().getResearchEffects().getEffectBoolean(hutResearch))
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
             return;
         }
-        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutBlockName) && (colony.getResearchManager().getResearchEffects().getEffectValue(hutBlockName) <= getBuildingLevel()))
+        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) && (colony.getResearchManager().getResearchEffects().getEffectValue(hutResearch) <= getBuildingLevel()))
         {
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.unlocktoupgrade"), player.getUniqueID());
             return;

@@ -2,6 +2,7 @@ package com.minecolonies.api.research;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
+import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +38,14 @@ public interface IResearchManager
      * @return the ResearchEffects object.
      */
     IResearchEffectManager getResearchEffects();
+
+    /**
+     * Gets the Research Effect Identifier for a given Block
+     * Format is namespace:effects/path
+     * @param block       The block to get a research identifier for.
+     * @return            The string format of that research identifier.
+     */
+    String getResearchEffectIdFrom(Block block);
 
     /**
      * Checks if any autostart research has its prerequisites filled,

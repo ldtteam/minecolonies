@@ -297,19 +297,19 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     /**
-     * Checks whether the research with the given id is already researched in the given colony.
+     * Checks whether the research for this hut block is already researched in the given colony.
      *
      * @param colony     the colony to check.
-     * @param effectId   the id of the research to look for.
      */
     @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony, final String effectId)
+    public void checkResearch(final IColonyView colony)
     {
         if (colony == null)
         {
             needsResearch = false;
             return;
         }
+        final String effectId = colony.getResearchManager().getResearchEffectIdFrom(this);
         if(colony.getResearchManager().getResearchEffects().getEffectBoolean(effectId))
         {
             needsResearch = false;

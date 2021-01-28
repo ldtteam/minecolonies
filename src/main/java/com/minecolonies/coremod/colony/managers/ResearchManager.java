@@ -16,6 +16,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.research.LocalResearch;
 import com.minecolonies.coremod.research.LocalResearchTree;
 import com.minecolonies.coremod.research.ResearchEffectManager;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -77,6 +78,12 @@ public class ResearchManager implements IResearchManager
     public IResearchEffectManager getResearchEffects()
     {
         return this.effects;
+    }
+
+    @Override
+    public String getResearchEffectIdFrom(Block block)
+    {
+        return block.getRegistryName().getNamespace() + ":effects/" + block.getRegistryName().getPath();
     }
 
     @Override

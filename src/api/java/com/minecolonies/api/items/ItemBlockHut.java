@@ -53,7 +53,8 @@ public class ItemBlockHut extends BlockItem
     }
 
     /**
-     * Checks whether this hut is needs to be researched in this colony.
+     * Checks which huts need to be researched in this colony.
+     * This is a static function, and updates all hut block types as colonyView packets are received.
      * 
      * @param colony the colony to check.
      */
@@ -62,12 +63,11 @@ public class ItemBlockHut extends BlockItem
     {
         for(AbstractBlockHut<?> hut : ModBlocks.getHuts())
         {
-            hut.checkResearch(colony, hut.getBlock().getRegistryName().getNamespace() + ":effects/" + hut.getBlock().getRegistryName().getPath());
+            hut.checkResearch(colony);
         }
         // The warehouse isn't included for ModBlocks.getHuts(), so check it separately.
         // Not very likely for someone to lock it behind research, but plausible.
-        ModBlocks.blockHutWareHouse.checkResearch(colony, ModBlocks.blockHutWareHouse.getBlock().getRegistryName().getNamespace()
-                                                            + ":effects/" + ModBlocks.blockHutWareHouse.getBlock().getRegistryName().getPath());
+        ModBlocks.blockHutWareHouse.checkResearch(colony);
     }
 
 }
