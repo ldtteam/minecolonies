@@ -164,7 +164,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     }
 
     /**
-     * Getter for the colonz id.
+     * Getter for the colony id.
      *
      * @return the colony id.
      */
