@@ -130,15 +130,14 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
             return;
         }
 
-        final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
-
         if (remove)
         {
-            building.removeRecipe(token);
+            building.removeRecipe(storage.getToken());
             SoundUtils.playSuccessSound(player, player.getPosition());
         }
         else
         {
+            final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
             if (!building.addRecipe(token))
             {
                 SoundUtils.playErrorSound(player, player.getPosition());

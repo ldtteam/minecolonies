@@ -98,7 +98,7 @@ public class ClientEventHandler
      *
      * @param event the catched event.
      */
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
         if (MineColonies.getConfig().getClient().pathfindingDebugDraw.get())
