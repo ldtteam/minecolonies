@@ -197,7 +197,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
     }
 
     @Override
-    public void serialize(IFactoryController controller, RecipeStorage input, PacketBuffer packetBuffer)
+    public void serialize(@NotNull final IFactoryController controller, final RecipeStorage input, final PacketBuffer packetBuffer)
     {
         packetBuffer.writeInt(input.getInput().size());
         input.getInput().forEach(stack -> packetBuffer.writeItemStack(stack));
@@ -225,11 +225,18 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             packetBuffer.writeResourceLocation(input.getLootTable());
         }
 
+        packetBuffer.writeBoolean(input.getRecipeSource() != null);
+        if (input.getRecipeSource() != null)
+        {
+            packetBuffer.writeResourceLocation(input.getRecipeSource());
+        }
+
         controller.serialize(packetBuffer, input.getToken());
     }
 
+    @NotNull
     @Override
-    public RecipeStorage deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    public RecipeStorage deserialize(@NotNull final IFactoryController controller, final PacketBuffer buffer) throws Throwable
     {
         final List<ItemStack> input = new ArrayList<>();
         final int inputSize = buffer.readInt();
@@ -263,8 +270,14 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             lootTable = buffer.readResourceLocation();
         }
 
+        ResourceLocation source = null;
+        if(buffer.readBoolean())
+        {
+            source = buffer.readResourceLocation();
+        }
+
         final IToken<?> token = controller.deserialize(buffer);
-        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, null, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable);
+        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable);
     }
 
     @Override

@@ -21,13 +21,10 @@ import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.Map;
 
 /**
  * Class used to represent a recipe in minecolonies.
@@ -64,13 +61,13 @@ public class RecipeStorage implements IRecipeStorage
     /**
      * Alternate output generated for the recipe.
      */
-    @Nullable
+    @NotNull
     private final List<ItemStack> alternateOutputs;
 
     /**
      * Alternate output generated for the recipe.
      */
-    @Nullable
+    @NotNull
     private final List<ItemStack> secondaryOutputs;
 
     /**
@@ -190,7 +187,7 @@ public class RecipeStorage implements IRecipeStorage
      */
     private List<ItemStack> calculateSecondaryOutputs()
     {
-        List<ItemStack> secondaryStacks = new ArrayList<>();
+        final List<ItemStack> secondaryStacks = new ArrayList<>();
         for (final ItemStack stack : input)
         {
             if (stack.getItem() == ModItems.buildTool)
@@ -289,11 +286,12 @@ public class RecipeStorage implements IRecipeStorage
         final RecipeStorage that = (RecipeStorage) o;
 
         if (gridSize != that.gridSize
-              || input.size() != that.input.size()
               || cleanedInput.size() != that.cleanedInput.size()
-              || (alternateOutputs.size() != that.alternateOutputs.size())
-              || ((secondaryOutputs == null) != (that.secondaryOutputs == null))
-              || (secondaryOutputs != null && secondaryOutputs.size() != that.secondaryOutputs.size())
+              || alternateOutputs.size() != that.alternateOutputs.size()
+              || secondaryOutputs.size() != that.secondaryOutputs.size()
+              || !Objects.equals(this.recipeSource, that.recipeSource)
+              || !Objects.equals(this.lootTable, that.lootTable)
+              || !this.recipeType.getId().equals(that.recipeType.getId())
               || !ItemStackUtils.compareItemStacksIgnoreStackSize(primaryOutput, that.primaryOutput, false, true))
         {
             return false;
@@ -307,66 +305,33 @@ public class RecipeStorage implements IRecipeStorage
             }
         }
 
-        
-        if(this.recipeSource != null && !this.recipeSource.equals(that.recipeSource))
-        {
-            return false;
-        }
-
-        if(this.recipeSource == null && that.recipeSource != null)
-        {
-            return false; 
-        }
-
-        if(this.lootTable != null && !this.lootTable.equals(that.lootTable))
-        {
-            return false;
-        }
-
-        if(this.lootTable == null && that.lootTable != null)
-        {
-            return false; 
-        }
-
-        if(!this.recipeType.getId().equals(that.recipeType.getId()))
-        {
-            return false;
-        }
-        
-
-
         for(int i = 0; i< alternateOutputs.size(); i++)
         {
-            ItemStack left = alternateOutputs.get(i);
-            ItemStack right = that.alternateOutputs.get(i);
+            final ItemStack left = alternateOutputs.get(i);
+            final ItemStack right = that.alternateOutputs.get(i);
             if(!ItemStackUtils.compareItemStacksIgnoreStackSize(left, right, false, true) || left.getCount() != right.getCount())
             {
                 return false;
             }
         }
 
-        if(secondaryOutputs != null)
+        for (int i = 0; i < secondaryOutputs.size(); i++)
         {
-            if(that.secondaryOutputs == null)
+            final ItemStack left = secondaryOutputs.get(i);
+            final ItemStack right = that.secondaryOutputs.get(i);
+            if (!ItemStackUtils.compareItemStacksIgnoreStackSize(left, right, false, true) || left.getCount() != right.getCount())
             {
                 return false;
             }
-            for(int i = 0; i< secondaryOutputs.size(); i++)
-            {
-                if(!ItemStackUtils.compareItemStacksIgnoreStackSize(secondaryOutputs.get(i),that.secondaryOutputs.get(i), false, true))
-                {
-                    return false;
-                }
-            }
         }
 
-        return intermediate == null ? (that.intermediate == null) : intermediate.equals(that.intermediate);
+        return Objects.equals(intermediate, that.intermediate);
     }
 
     @Override
     public int hashCode()
     {
-        int result = input.hashCode();
+        int result = cleanedInput.hashCode();
         result = 31 * result + primaryOutput.hashCode();
         result = 31 * result + (intermediate != null ? intermediate.hashCode() : 0);
         result = 31 * result + gridSize;
@@ -378,14 +343,9 @@ public class RecipeStorage implements IRecipeStorage
         {
             result = 31 * result + recipeType.hashCode();
         }
-        if(alternateOutputs != null && !alternateOutputs.isEmpty())
-        {
-            result = 31 * result + alternateOutputs.hashCode();
-        }
-        if(secondaryOutputs != null && !secondaryOutputs.isEmpty())
-        {
-            result = 31 * result + secondaryOutputs.hashCode();
-        }
+
+        result = 31 * result + alternateOutputs.hashCode();
+        result = 31 * result + secondaryOutputs.hashCode();
         return result;
     }
 
@@ -530,27 +490,7 @@ public class RecipeStorage implements IRecipeStorage
             secondaryStacks.addAll(loot.generate((new LootContext.Builder((ServerWorld) world)).build(LootParameterSets.EMPTY)));
         }
 
-        if(!secondaryOutputs.isEmpty())
-        {
-            secondaryStacks.addAll(secondaryOutputs);
-        }
-        else
-        {
-            for (final ItemStack stack : input)
-            {
-                if (stack.getItem() == ModItems.buildTool)
-                {
-                    continue;
-                }
-
-                final ItemStack container = stack.getItem().getContainerItem(stack);
-                if (!ItemStackUtils.isEmpty(container))
-                {
-                    container.setCount(stack.getCount());
-                    secondaryStacks.add(container);
-                }
-            }
-        }
+        secondaryStacks.addAll(secondaryOutputs);
         for (final ItemStack stack : secondaryStacks)
         {
             for (final IItemHandler handler : handlers)
@@ -589,7 +529,7 @@ public class RecipeStorage implements IRecipeStorage
             return getClassicForMultiOutput(getPrimaryOutput());
         }
 
-        for(ItemStack item : getAlternateOutputs())
+        for(final ItemStack item : alternateOutputs)
         {
             if(stackPredicate.test(item))
             {
@@ -612,12 +552,14 @@ public class RecipeStorage implements IRecipeStorage
         return recipeSource; 
     }
 
+    @NotNull
     @Override
     public List<ItemStack> getAlternateOutputs()
     {
         return alternateOutputs;
     }
 
+    @NotNull
     @Override
     public List<ItemStack> getSecondaryOutputs()
     {
