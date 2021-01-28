@@ -26,8 +26,10 @@ import net.minecraft.block.ContainerBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PotionItem;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
@@ -35,6 +37,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
@@ -487,7 +490,7 @@ public class ColonyPermissionEventHandler
     /**
      * ArrowLooseEvent handler.
      * <p>
-     * Check, if a player tries to shoot an arrow. Deny if: - If the shooting happens in the colony - player is neutral or hostile to colony
+     * Check if a player tries to shoot an arrow. Deny if: - If the shooting happens in the colony - player is neutral or hostile to colony
      *
      * @param event ItemEntityPickupEvent
      */
@@ -495,6 +498,28 @@ public class ColonyPermissionEventHandler
     public void on(final ArrowLooseEvent event)
     {
         checkEventCancelation(Action.SHOOT_ARROW, event.getPlayer(), event.getPlayer().getEntityWorld(), event, new BlockPos(event.getPlayer().getPositionVec()));
+    }
+
+    /**
+     * LivingHurtEvent handler.
+     * <p>
+     * Check if the entity that is getting hurt is a player,
+     * players that get hurt by other players are handled elsewhere,
+     * this here is handling players getting hurt by citizens.
+     * @param event
+     */
+    @SubscribeEvent
+    public void on(final LivingHurtEvent event)
+    {
+        if (event.getEntity() instanceof ServerPlayerEntity
+              && event.getSource() instanceof EntityDamageSource
+              && event.getSource().getTrueSource() instanceof EntityCitizen
+              && ((EntityCitizen) event.getSource().getTrueSource()).getCitizenColonyHandler().getColonyId() == colony.getID()
+              && colony.getRaiderManager().isRaided()
+              && !colony.getPermissions().hasPermission((PlayerEntity) event.getEntity(), Action.GUARDS_ATTACK))
+        {
+            event.setCanceled(true);
+        }
     }
 
     /**
