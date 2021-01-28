@@ -172,7 +172,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
      */
     public Set<BlockPos> getHives()
     {
-        return Collections.unmodifiableSet(hives);
+        return Collections.unmodifiableSet(new HashSet<>(hives));
     }
 
     /**
