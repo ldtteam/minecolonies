@@ -143,6 +143,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     private NewBobberEntity entityFishHook;
 
     /**
+     * Hook stuck counter. Don't immediately retrieve until a bit of time passed.
+     */
+    private int stuckCounter = 3;
+
+    /**
      * Constructor for the Fisherman. Defines the tasks the fisherman executes.
      *
      * @param job a fisherman job to use.
@@ -489,8 +494,17 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             //Check if hook landed on ground or in water, in some cases the hook bugs -> remove it after 2 minutes.
             if (isFishHookStuck())
             {
-                retrieveRod();
-                return FISHERMAN_WALKING_TO_WATER;
+                if (stuckCounter > 3)
+                {
+                    stuckCounter = 0;
+                    retrieveRod();
+                    return FISHERMAN_WALKING_TO_WATER;
+                }
+                stuckCounter++;
+            }
+            else
+            {
+                stuckCounter = 0;
             }
             this.entityFishHook.setInUse();
         }
@@ -528,7 +542,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean isFishHookStuck()
     {
-        return (!entityFishHook.isInWater() && (entityFishHook.onGround || entityFishHook.shouldStopFishing()) || !entityFishHook.addedToChunk) || !entityFishHook.isAlive();
+        return (!entityFishHook.isInWater() && (entityFishHook.onGround || entityFishHook.shouldStopFishing()) || !entityFishHook.addedToChunk) || !entityFishHook.isAlive() || entityFishHook.caughtEntity != null;
     }
 
     /**
