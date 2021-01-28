@@ -55,7 +55,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     /**
      * List of sand blocks to grow onto.
      */
-    private List<BlockPos> sand = new ArrayList<>();
+    private final List<BlockPos> sand = new ArrayList<>();
 
     /**
      * The current phase (default sugarcane).
@@ -296,41 +296,29 @@ public class BuildingPlantation extends AbstractBuildingCrafter
      */
     public Item getCurrentPhase()
     {
-        if (getColony().getResearchManager().getResearchEffects().getEffectBoolean(PLANT_2))
-        {
-            if (currentPhase == setting)
-            {
-                nextPhase();
-            }
-        }
-        else
-        {
-            currentPhase = setting;
-        }
-
         return currentPhase;
     }
 
     /**
-     * Switch the current phase.
+     * Iterates over available plants
+     * @return the item of the new or unchanged plant phase
      */
-    public void nextPhase()
+    public Item nextPlantPhase()
     {
-        int nextIndex = settings.indexOf(currentPhase) + 1;
-        if (nextIndex >= settings.size())
+        if (getColony().getResearchManager().getResearchEffects().getEffectBoolean(PLANT_2))
         {
-            nextIndex = 0;
+            int next = settings.indexOf(currentPhase);
+
+            do
+            {
+                next = (next + 1) % settings.size();
+            }
+            while (settings.get(next) == setting);
+
+            currentPhase = settings.get(next);
         }
 
-        if (settings.get(nextIndex) == setting)
-        {
-            nextIndex++;
-            if (nextIndex >= settings.size())
-            {
-                nextIndex = 0;
-            }
-        }
-        currentPhase = settings.get(nextIndex);
+        return currentPhase;
     }
 
     /**

@@ -18,12 +18,12 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.BannerTileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.item.BannerItem;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.GameType;
 
@@ -72,25 +72,27 @@ public class TileEntityColonyFlagRenderer extends TileEntityRenderer<TileEntityC
                 transform.rotate(Vector3f.YP.rotationDegrees(f1));
                 this.standPost.showModel = true;
             }
-            else
+            else if (blockstate.getBlock() instanceof BlockColonyFlagWallBanner)
             {
-                transform.translate(0.5D, (double)-0.16666667F, 0.5D);
+                transform.translate(0.5D, -0.16666667F, 0.5D);
                 float f3 = -blockstate.get(BlockColonyFlagWallBanner.HORIZONTAL_FACING).getHorizontalAngle();
                 transform.rotate(Vector3f.YP.rotationDegrees(f3));
                 transform.translate(0.0D, -0.3125D, -0.4375D);
                 this.standPost.showModel = false;
             }
-        }
 
-        if (Minecraft.getInstance().playerController.getCurrentGameType() == GameType.CREATIVE)
-        {
-            transform.push();
-            ItemStack placeholder = new ItemStack(ModBlocks.blockSubstitution);
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.player.getHeldItemMainhand().getItem() instanceof BannerItem
+             && mc.playerController.getCurrentGameType() == GameType.CREATIVE)
+            {
+                transform.push();
+                ItemStack placeholder = new ItemStack(ModBlocks.blockSubstitution);
 
-            transform.translate(0.0D, 0.5D, 0.0D);
-            transform.scale(0.75F, 0.75F, 0.75F);
-            Minecraft.getInstance().getItemRenderer().renderItem(placeholder, ItemCameraTransforms.TransformType.FIXED, combinedLightIn, OverlayTexture.NO_OVERLAY, transform, bufferIn);
-            transform.pop();
+                transform.translate(0.0D, 0.5D, 0.0D);
+                transform.scale(0.75F, 0.75F, 0.75F);
+                Minecraft.getInstance().getItemRenderer().renderItem(placeholder, ItemCameraTransforms.TransformType.FIXED, combinedLightIn, OverlayTexture.NO_OVERLAY, transform, bufferIn);
+                transform.pop();
+            }
         }
 
         transform.push();

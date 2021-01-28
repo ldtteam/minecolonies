@@ -80,7 +80,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return getState();
         }
 
-        final ItemStack currentStack = new ItemStack(getOwnBuilding().getCurrentPhase());
+        final ItemStack currentStack = new ItemStack(getOwnBuilding().nextPlantPhase());
         final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(currentStack));
         if (plantInInv <= 0)
         {
@@ -175,7 +175,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             }
         }
 
-        final Item current = plantation.getCurrentPhase();
+        final Item current = plantation.nextPlantPhase();
 
         final int plantInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
         final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
@@ -200,12 +200,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
                 return PLANTATION_PLANT;
             }
         }
-
-        if (plantation.getColony().getResearchManager().getResearchEffects().getEffectBoolean(PLANT_2))
-        {
-            plantation.nextPhase();
-        }
-
+        
         return START_WORKING;
     }
 

@@ -10,6 +10,8 @@
             <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
                    label="$(com.minecolonies.coremod.gui.workerhuts.crusherSettings):"/>
 
+            <label id="hint" size="86 17" pos="50 40" textalign="MIDDLE" color="black"
+                   label="$(com.minecolonies.coremod.gui.workerhuts.plantation.to_plant)" />
             <buttonimage id="block" size="86 17" pos="50 60" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
         </view>

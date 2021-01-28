@@ -18,6 +18,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST             = "com.minecolonies.coremod.gui.workerhuts.farmerhut.West";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_PLANTATION_NOT_PLANT        = "com.minecolonies.coremod.gui.workerhuts.plantation.not_plant";
+    @NonNls
     public static final String TILE_MINECOLONIES_BLOCK_HUT_FARMER_NAME                              = "block.minecolonies.blockhutfarmer.name";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER                          = "com.minecolonies.coremod.gui.scarecrow.user";
