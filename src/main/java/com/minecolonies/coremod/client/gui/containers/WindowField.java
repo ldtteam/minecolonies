@@ -194,14 +194,24 @@ public class WindowField extends ContainerScreen<ContainerField>
         }
 
         @Override
-        public void onPress ()
+        public boolean mouseClicked(final double mouseX, final double mouseY, final int button)
         {
-            int index = this.direction.getHorizontalIndex();
+            if (this.clicked(mouseX, mouseY))
+            {
+                int index = this.direction.getHorizontalIndex();
+                int delta = this.isValidClickButton(button) ? 1 : -1;
 
-            // increment or reset the radius based on max range
-            radii[index] = (radii[index] + 1) % (ScarecrowTileEntity.getMaxRange() + 1);
-            this.setMessage(String.valueOf(radii[index]));
-            Network.getNetwork().sendToServer(new FieldPlotResizeMessage(radii[index], this.direction, tileEntity.getPos()));
+                // Perform the cycle
+                radii[index] = (radii[index] + delta) % (ScarecrowTileEntity.getMaxRange() + 1);
+                if (radii[index] < 0) radii[index] = ScarecrowTileEntity.getMaxRange();
+
+                this.setMessage(String.valueOf(radii[index]));
+                Network.getNetwork().sendToServer(new FieldPlotResizeMessage(radii[index], this.direction, tileEntity.getPos()));
+
+                return true;
+            }
+
+            return false;
         }
 
         /**
@@ -253,11 +263,11 @@ public class WindowField extends ContainerScreen<ContainerField>
             this.blit(this.x, this.y, getTextureXOffset(), getTextureYOffset() + i * 24, this.width, this.height);
             this.renderBg(minecraft, p_renderButton_1_, p_renderButton_2_);
             int j = getFGColor();
-            this.drawCenteredString(
-                    fontrenderer, this.getMessage(),
-                    this.x + this.width / 2 + getTextOffset(Direction.Axis.X),
-                    this.y + (this.height - 8) / 2 + getTextOffset(Direction.Axis.Y),
-                    j | MathHelper.ceil(this.alpha * 255.0F) << 24
+            drawCenteredString(
+              fontrenderer, this.getMessage(),
+              this.x + this.width / 2 + getTextOffset(Direction.Axis.X),
+              this.y + (this.height - 8) / 2 + getTextOffset(Direction.Axis.Y),
+              j | MathHelper.ceil(this.alpha * 255.0F) << 24
             );
         }
 
