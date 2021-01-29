@@ -9,7 +9,6 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import net.minecraft.block.AirBlock;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
@@ -81,7 +80,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return getState();
         }
 
-        final ItemStack currentStack = new ItemStack(getOwnBuilding().getCurrentPhase());
+        final ItemStack currentStack = new ItemStack(getOwnBuilding().nextPlantPhase());
         final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(currentStack));
         if (plantInInv <= 0)
         {
@@ -176,7 +175,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             }
         }
 
-        final Item current = plantation.getCurrentPhase();
+        final Item current = plantation.nextPlantPhase();
 
         final int plantInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
         final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
@@ -200,12 +199,6 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
                 this.workPos = pos;
                 return PLANTATION_PLANT;
             }
-        }
-
-        final UnlockAbilityResearchEffect researchEffect = plantation.getColony().getResearchManager().getResearchEffects().getEffect(PLANT_2, UnlockAbilityResearchEffect.class);
-        if (researchEffect != null && researchEffect.getEffect())
-        {
-            plantation.nextPhase();
         }
 
         return START_WORKING;
