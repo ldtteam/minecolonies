@@ -4,14 +4,13 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Mirror;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -65,12 +64,13 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
         building.setStyle(style);
-        if (building.getTileEntity() != null)
+        if (building.getTileEntity() != null && !building.getStyle().equals(style))
         {
             building.getTileEntity().setStyle(style);
 
             final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, building.getBuildingLevel() + 1);
             final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
+            structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(workOrder.getRotation(colony.getWorld())), workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, colony.getWorld());
 
             CompoundNBT teData = structure.getBluePrint().getTileEntityData(building.getTileEntity().getPos(), structure.getBluePrint().getPrimaryBlockOffset());
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
