@@ -169,10 +169,6 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     private boolean          mourning            = false;
     /**
-     * Indicates if the citizen is hiding from the rain or not.
-     */
-    private boolean          hidingFromRain      = false;
-    /**
      * IsChild flag
      */
     private boolean          child               = false;
@@ -1208,7 +1204,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         final Entity sourceEntity = damageSource.getTrueSource();
-        if (handleSourceEntityForDamage(sourceEntity))
+        if (!checkIfValidDamageSource(sourceEntity))
         {
             return false;
         }
@@ -1236,13 +1232,18 @@ public class EntityCitizen extends AbstractEntityCitizen
                  || Compatibility.isDynTreePresent() && damageSource.damageType.equals(Compatibility.getDynamicTreeDamage()) || this.isInvulnerable();
     }
 
-    private boolean handleSourceEntityForDamage(final Entity sourceEntity)
+    /**
+     * Check if the damage source is valid.
+     * @param sourceEntity the entity.
+     * @return true if valid.
+     */
+    private boolean checkIfValidDamageSource(final Entity sourceEntity)
     {
         if (sourceEntity instanceof EntityCitizen)
         {
             if (((EntityCitizen) sourceEntity).citizenColonyHandler.getColonyId() == citizenColonyHandler.getColonyId())
             {
-                return true;
+                return false;
             }
 
             final IColony attackerColony = ((EntityCitizen) sourceEntity).citizenColonyHandler.getColony();
@@ -1259,12 +1260,13 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 return false;
             }
+
             if (getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
             {
-                return !IGuardBuilding.checkIfGuardShouldTakeDamage(this, (PlayerEntity) sourceEntity);
+                return IGuardBuilding.checkIfGuardShouldTakeDamage(this, (PlayerEntity) sourceEntity);
             }
         }
-        return false;
+        return true;
     }
 
     @Override
