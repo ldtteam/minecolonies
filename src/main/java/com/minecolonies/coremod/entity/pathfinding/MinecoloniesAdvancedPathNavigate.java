@@ -786,13 +786,43 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     final BlockPos pos = new BlockPos(point.x, point.y, point.z);
                     for (final Node node : AbstractPathJob.lastDebugNodesPath)
                     {
-                        if (node.pos.equals(pos))
+                        if (!node.isReachedByWorker() && node.pos.equals(pos))
                         {
-                            node.setReachedByWorker();
+                            node.setReachedByWorker(true);
                             break;
                         }
                     }
                 }
+            }
+        }
+
+        // Check some past nodes case we fell behind.
+        Vector3d curr = this.currentPath.getVectorFromIndex(this.entity, curNode);
+        if (entity.getPositionVec().distanceTo(curr) > 2.0)
+        {
+            int currentIndex = curNode - 1;
+            while (currentIndex > 0)
+            {
+                final Vector3d tempoPos = this.currentPath.getVectorFromIndex(this.entity, currentIndex);
+                if (entity.getPositionVec().distanceTo(tempoPos) <= 1.0)
+                {
+                    this.currentPath.setCurrentPathIndex(currentIndex);
+                    return;
+                }
+                // Mark nodes as unreached for debug path drawing
+                if (AbstractPathJob.lastDebugNodesPath != null)
+                {
+                    final BlockPos pos = new BlockPos(tempoPos.x, tempoPos.y, tempoPos.z);
+                    for (final Node node : AbstractPathJob.lastDebugNodesPath)
+                    {
+                        if (node.isReachedByWorker() && node.pos.equals(pos))
+                        {
+                            node.setReachedByWorker(false);
+                            break;
+                        }
+                    }
+                }
+                currentIndex--;
             }
         }
     }
