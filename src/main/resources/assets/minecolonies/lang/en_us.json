@@ -504,18 +504,10 @@
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",
   "com.minecolonies.coremod.gui.workerhuts.buildtype": "Building Style:",
   "com.minecolonies.coremod.gui.workerhuts.workerlevel": "Worker Level: %s",
-  "com.minecolonies.coremod.gui.warehouse.tohuards": "Deliver to Guards:",
 
-  "com.minecolonies.coremod.gui.buildtool.nodecoration": "No Decorations",
-  "com.minecolonies.coremod.gui.buildtool.wrongcolony": "Building was picked up in colony %d, you can only place it in that colony now!",
-  "com.minecolonies.coremod.gui.buildtool.hut": "Huts",
-  "com.minecolonies.coremod.gui.buildtool.decoration": "Decorations",
-  "com.minecolonies.coremod.gui.buildtool.nohut": "No Huts",
-  "com.minecolonies.coremod.gui.buildtool.nullhut": "No hut available.",
-  "com.minecolonies.coremod.gui.buildtool.nohutininventory": "The hut was not found in your inventory.",
-  "com.minecolonies.coremod.gui.buildtool.hut.level": "Level %s",
-  "com.minecolonies.coremod.gui.buildtool.decorations": "Decorations",
-  "com.minecolonies.coremod.gui.buildtool.scans": "My Schematics",
+  "com.minecolonies.coremod.gui.buildtool.wrongcolony": "The building was picked up in colony %d. You can only place it in that colony now!",
+  "com.minecolonies.coremod.gui.buildtool.nohutininventory": "The hut block was not found in your inventory.",
+    "com.minecolonies.coremod.buildtool.indestructible": "Failed to place the hut block! The block at its intended position is indestructible!",
 
   "com.minecolonies.coremod.job.lumberjack": "Forester",
   "com.minecolonies.coremod.job.swineherder": "Swineherd",
@@ -550,7 +542,7 @@
   "com.minecolonies.coremod.job.combattraining": "Knight in Training",
 
   "com.minecolonies.coremod.error.supplychestalreadyplaced": "You have already placed a Supply Ship or Camp in this world!",
-  "com.minecolonies.coremod.supplyneed": "Start off MineColonies by crafting a Supply Camp or Ship and placing it via right clicking the item on the ground!!",
+  "com.minecolonies.coremod.supplyneed": "Start off MineColonies by crafting a Supply Camp or Ship and placing it by right clicking the item on the ground!",
 
   "com.minecolonies.coremod.gui.citizen.skills": "Skills",
   "com.minecolonies.coremod.gui.citizen.skills.intelligence": "Intelligence: %d",
@@ -580,11 +572,6 @@
   "com.minecolonies.coremod.gui.townhall.mercenary.title": "Mercenary Help",
   "com.minecolonies.coremod.gui.townhall.mercenaryhire": "Hire",
   "com.minecolonies.coremod.gui.townhall.mercenarystory": "You've encountered some Mercenaries near your colony, and they offer to help with defending your colony. A price they did not name, but you get the feeling that they will not leave bare-handed. Hire at your own risk!",
-  "com.minecolonies.coremod.gui.townhall.hire": "Citizen Recruitment",
-  "com.minecolonies.coremod.gui.townhall.hirecitizen1": "Choose which recruitment package you want to send.",
-  "com.minecolonies.coremod.gui.townhall.hirecitizen2": "Citizen's stats increase with each package: Hay - Books - Emeralds - Diamonds.",
-  "com.minecolonies.coremod.gui.townhall.hirecitizen3": "Using one package increases the price of all with each purchase.",
-  "com.minecolonies.coremod.gui.townhall.hirecitizen4": "(Only possible if there is an open bed in the colony.)",
 
   "com.minecolonies.coremod.gui.townhall.recall": "Recall Citizens",
   "com.minecolonies.coremod.gui.townhall.recallone": "Recall Citizen",
@@ -1872,6 +1859,5 @@
   "com.minecolonies.coremod.gui.townhalltab.citizens": "Citizens",
   "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
   "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
-  "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness",
-  "com.minecolonies.coremod.buildtool.indestructible": "Failed to place the hut block! The block at its intended position is indestructible!"
+  "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness"
 }
