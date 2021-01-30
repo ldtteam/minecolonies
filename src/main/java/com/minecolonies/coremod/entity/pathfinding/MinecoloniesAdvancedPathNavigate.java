@@ -769,6 +769,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         this.maxDistanceToWaypoint = 0.75F;
+        boolean wentAhead = false;
 
         // Look at multiple points, incase we're too fast
         for (int i = this.currentPath.getCurrentPathIndex(); i < Math.min(this.currentPath.getCurrentPathLength(), this.currentPath.getCurrentPathIndex() + 4); i++)
@@ -779,6 +780,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                   Math.abs(this.entity.getPosY() - (vec3d2.y - 0.5f)) < 1.0D)
             {
                 this.currentPath.incrementPathIndex();
+                wentAhead = true;
                 // Mark reached nodes for debug path drawing
                 if (AbstractPathJob.lastDebugNodesPath != null)
                 {
@@ -794,6 +796,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     }
                 }
             }
+        }
+
+        if (wentAhead)
+        {
+            return;
         }
 
         // Check some past nodes case we fell behind.
