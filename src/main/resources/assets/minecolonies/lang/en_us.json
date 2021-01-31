@@ -681,6 +681,7 @@
   "com.minecolonies.coremod.gui.debugscreen.nextcolony": "Next colony is %d blocks away (too close to found a new one)!",
   "com.minecolonies.coremod.gui.debugscreen.blocksfromcenter": "%d blocks from the center.",
   "com.minecolonies.coremod.gui.workerhuts.guardtower": "Guard Tower",
+  "com.minecolonies.coremod.gui.workerhuts.barrackstower": "Barracks Tower",
 
   "com.minecolonies.coremod.gui.workerhuts.university": "University",
   "com.minecolonies.coremod.gui.workerhuts.bakery": "Bakery",
