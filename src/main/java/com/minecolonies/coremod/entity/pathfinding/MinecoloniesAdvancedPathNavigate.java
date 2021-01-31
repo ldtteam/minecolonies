@@ -805,27 +805,33 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         // Check some past nodes case we fell behind.
         Vector3d curr = this.currentPath.getVectorFromIndex(this.entity, curNode);
-        if (entity.getPositionVec().distanceTo(curr) > 1.5)
+        if (entity.getPositionVec().distanceTo(curr) >= 2.0)
         {
             int currentIndex = curNode - 1;
-            if (currentIndex > 0)
+            while (currentIndex > 0)
             {
                 final Vector3d tempoPos = this.currentPath.getVectorFromIndex(this.entity, currentIndex);
-                this.currentPath.setCurrentPathIndex(currentIndex);
-
-                // Mark nodes as unreached for debug path drawing
-                if (AbstractPathJob.lastDebugNodesPath != null)
+                if (entity.getPositionVec().distanceTo(tempoPos) <= 1.0)
                 {
-                    final BlockPos pos = new BlockPos(tempoPos.x, tempoPos.y, tempoPos.z);
-                    for (final Node node : AbstractPathJob.lastDebugNodesPath)
+                    this.currentPath.setCurrentPathIndex(currentIndex);
+                }
+                else
+                {
+                    // Mark nodes as unreached for debug path drawing
+                    if (AbstractPathJob.lastDebugNodesPath != null)
                     {
-                        if (node.isReachedByWorker() && node.pos.equals(pos))
+                        final BlockPos pos = new BlockPos(tempoPos.x, tempoPos.y, tempoPos.z);
+                        for (final Node node : AbstractPathJob.lastDebugNodesPath)
                         {
-                            node.setReachedByWorker(false);
-                            break;
+                            if (node.isReachedByWorker() && node.pos.equals(pos))
+                            {
+                                node.setReachedByWorker(false);
+                                break;
+                            }
                         }
                     }
                 }
+                currentIndex--;
             }
         }
     }
