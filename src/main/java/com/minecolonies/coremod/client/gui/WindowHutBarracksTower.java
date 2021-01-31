@@ -3,6 +3,11 @@ package com.minecolonies.coremod.client.gui;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Our building hut view
+ *
+ * @author Vroni
+ */
 public class WindowHutBarracksTower extends WindowHutGuardTower {
     /**
      * Constructor for the window of the worker building.
