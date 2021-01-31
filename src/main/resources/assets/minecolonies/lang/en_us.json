@@ -609,7 +609,6 @@
   "com.minecolonies.coremod.gui.townhall.feuds": "Feuds:",
   "com.minecolonies.coremod.gui.townhall.tp": "Do you really want to teleport to %s? [YES]",
 
-  "com.minecolonies.coremod.gui.warehouse.tostonemason": "Deliver to Stonemason:",
   "com.minecolonies.coremod.workorderadded": "Build request created!",
   "com.minecolonies.coremod.decoorderadded": "Decoration request created!",
 
@@ -646,7 +645,6 @@
 
   "com.minecolonies.coremod.gui.workerhuts.minernodelist": "Levels",
   "com.minecolonies.coremod.gui.workerhuts.resourcelist": "Required Resources",
-  "com.minecolonies.coremod.gui.warehouse.toblacksmith": "Deliver to Blacksmith:",
   "com.minecolonies.coremod.gui.workerhuts.fisherman": "Fisher's Hut",
   "com.minecolonies.coremod.gui.workerhuts.workorderadded": "Build Order added to queue.",
   "com.minecolonies.coremod.gui.workerhuts.recall": "Recall Worker",
