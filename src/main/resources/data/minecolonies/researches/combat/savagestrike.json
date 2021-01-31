@@ -1,0 +1,18 @@
+{
+  "comment": "name: Savage Strike * subtitle: ",
+  "branch": "combat",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:combat/mightycleave",
+  "icon": "minecraft:diamond_sword:1",
+  "requirements": [
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/meleedamageaddition": 5
+    }
+  ]
+}
