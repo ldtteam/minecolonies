@@ -171,12 +171,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
      */
     public Tuple<Item, Integer> calculateVisitorCost(@NotNull final IVisitorData newCitizen, final int recruitLevel)
     {
-        if (newCitizen.getName().contains("Ray"))
-        {
-            newCitizen.setRecruitCosts(new ItemStack(Items.BAKED_POTATO, 64));
-        }
-
-        List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
+        final List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
 
         Tuple<Item, Integer> cost = recruitCosts.get(building.getColony().getWorld().rand.nextInt(recruitCosts.size()));
         if (newCitizen.getEntity().isPresent())
@@ -243,6 +238,14 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
         building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
         building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
+
+        if (newCitizen.getName().contains("Ray"))
+        {
+            newCitizen.setRecruitCosts(new ItemStack(Items.BAKED_POTATO, 64));
+            newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
+              "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().rand.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+            return;
+        }
 
         Tuple<Item, Integer> cost = calculateVisitorCost(newCitizen, recruitLevel);
         int quantity = (int)(recruitLevel * 3.0 / cost.getB());
