@@ -11,7 +11,7 @@ loaderVersion="[31,)" #mandatory (27 is current forge version)
 # Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.
 license="GPL 3.0"
 # A URL to refer people to when problems occur with this mod
-issueTrackerURL="https://github.com/ldtteam/minecolonies/issues/new" #optional
+issueTrackerURL="https://github.com/ldtteam/minecolonies/issues/new/choose" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
 # The modid of the mod
@@ -57,7 +57,7 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
 [[dependencies.minecolonies]]
     modId="structurize"
     mandatory=true
-    versionRange="[0.13.113-ALPHA]"
+    versionRange="[0.13.126-ALPHA]"
     ordering="AFTER"
     side="BOTH"
 
