@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutTavern;
@@ -163,37 +164,21 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     }
 
     /**
-     * Spawns a recruitable visitor citizen.
+     * Calculate the visitor cost.
+     * @param newCitizen the visitor data.
+     * @param recruitLevel the recruitment level.
+     * @return the calculated cost.
      */
-    private void spawnVisitor()
+    public Tuple<Item, Integer> calculateVisitorCost(@NotNull final IVisitorData newCitizen, final int recruitLevel)
     {
-        IVisitorData newCitizen = (IVisitorData) building.getColony().getVisitorManager().createAndRegisterCivilianData();
-        externalCitizens.add(newCitizen.getId());
-
-        newCitizen.setBedPos(building.getPosition());
-        newCitizen.setHomeBuilding(building);
-
-        int recruitLevel = building.getColony().getWorld().rand.nextInt(10 * building.getBuildingLevel()) + 15;
-        List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
-
         if (newCitizen.getName().contains("Ray"))
         {
             newCitizen.setRecruitCosts(new ItemStack(Items.BAKED_POTATO, 64));
         }
 
-        newCitizen.getCitizenSkillHandler().init(recruitLevel);
+        List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
 
-        BlockPos spawnPos = BlockPosUtil.findAround(building.getColony().getWorld(), building.getPosition(), 1, 1, bs -> bs.getMaterial() == Material.AIR);
-        if (spawnPos == null)
-        {
-            spawnPos = building.getPosition();
-        }
-
-        building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
         Tuple<Item, Integer> cost = recruitCosts.get(building.getColony().getWorld().rand.nextInt(recruitCosts.size()));
-
-        building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
-
         if (newCitizen.getEntity().isPresent())
         {
             final AbstractEntityCitizen citizenEntity = newCitizen.getEntity().get();
@@ -203,11 +188,13 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
                 // Leather
                 citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.LEATHER_BOOTS));
             }
+
             if (recruitLevel > GOLD_SKILL_LEVEL)
             {
                 // Gold
                 citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.GOLDEN_BOOTS));
             }
+
             if (recruitLevel > IRON_SKILL_LEVEL)
             {
                 if (cost.getB() <= 2)
@@ -217,6 +204,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
                 // Iron
                 citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.IRON_BOOTS));
             }
+
             if (recruitLevel > DIAMOND_SKILL_LEVEL)
             {
                 if (cost.getB() <= 3)
@@ -228,7 +216,66 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
             }
         }
 
-        newCitizen.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));
+        return cost;
+    }
+
+
+    /**
+     * Spawns a recruitable visitor citizen.
+     */
+    private void spawnVisitor()
+    {
+        //make calc price method, call method, if item air report and retry.
+        IVisitorData newCitizen = (IVisitorData) building.getColony().getVisitorManager().createAndRegisterCivilianData();
+        externalCitizens.add(newCitizen.getId());
+
+        newCitizen.setBedPos(building.getPosition());
+        newCitizen.setHomeBuilding(building);
+
+        int recruitLevel = building.getColony().getWorld().rand.nextInt(10 * building.getBuildingLevel()) + 15;
+        newCitizen.getCitizenSkillHandler().init(recruitLevel);
+
+        BlockPos spawnPos = BlockPosUtil.findAround(building.getColony().getWorld(), building.getPosition(), 1, 1, bs -> bs.getMaterial() == Material.AIR);
+        if (spawnPos == null)
+        {
+            spawnPos = building.getPosition();
+        }
+
+        building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
+        building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
+
+        Tuple<Item, Integer> cost = calculateVisitorCost(newCitizen, recruitLevel);
+        int quantity = (int)(recruitLevel * 3.0 / cost.getB());
+        boolean airReturned = false;
+
+        //todo after we found out what is causing those air costs, we can remove this.
+        int attempts = 0;
+        while ((cost.getA() == Items.AIR || quantity == 0) && attempts <= 10)
+        {
+            Log.getLogger().warn("Detected Empty Recruitment cost. Item is Air: " + (cost.getA() == Items.AIR) + " Quantity is 0: " + (quantity == 0));
+
+            airReturned = true;
+            cost = calculateVisitorCost(newCitizen, recruitLevel);
+            quantity = (int)(recruitLevel * 3.0 / cost.getB());
+            attempts++;
+        }
+
+        if (airReturned)
+        {
+            for (Tuple<Item, Integer> pair: IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights())
+            {
+                if (pair.getA() == Items.AIR)
+                {
+                    Log.getLogger().warn("There is air in the recruitmentcost items!");
+                }
+                else
+                {
+                    Log.getLogger().warn("There is 0 in the recruitmentcost weights!");
+                }
+            }
+        }
+
+        newCitizen.setRecruitCosts(new ItemStack(cost.getA(), quantity));
         newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
           "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().rand.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]), ChatPriority.IMPORTANT));
     }
