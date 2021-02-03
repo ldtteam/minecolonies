@@ -1707,5 +1707,16 @@
   "com.minecolonies.coremod.gui.townhalltab.citizens": "Citizens",
   "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
   "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
-  "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness"
+  "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness",
+
+  "com.minecolonies.coremod.gui.workerhuts.archery": "Archery",
+  "com.minecolonies.coremod.gui.workerhuts.combatacademy": "Combat Academy",
+  "com.minecolonies.coremod.gui.workerhuts.sawmill": "Sawmill",
+  "com.minecolonies.coremod.gui.workerhuts.blacksmith": "Blacksmith's Hut",
+  "com.minecolonies.coremod.gui.workerhuts.stonemason": "Stonemason",
+  "com.minecolonies.coremod.gui.workerhuts.hospital": "Hospital",
+  "com.minecolonies.coremod.gui.workerhuts.healer": "Hospital",
+  "com.minecolonies.coremod.gui.workerhuts.school": "School",
+  "com.minecolonies.coremod.gui.workerhuts.teacher": "Teacher",
+  "com.minecolonies.coremod.gui.workerhuts.pupil": "Pupil"
 }
