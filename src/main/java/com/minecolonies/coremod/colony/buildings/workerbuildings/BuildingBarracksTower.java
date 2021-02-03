@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -8,6 +9,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.client.gui.WindowHutBarracksTower;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -209,6 +211,17 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         public boolean hasEnoughWorkers()
         {
             return getWorkerId().size() >= getBuildingLevel();
+        }
+
+        /**
+         * Creates a new window for the building
+         * @return a BlockOut window
+         */
+        @NotNull
+        @Override
+        public Window getWindow()
+        {
+            return new WindowHutBarracksTower(this);
         }
     }
 }
