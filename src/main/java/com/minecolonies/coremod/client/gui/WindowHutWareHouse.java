@@ -4,7 +4,7 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -83,7 +83,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         if (building.hasReachedLimit())
         {
             final ButtonImage button = findPaneOfTypeByID(STOCK_ADD, ButtonImage.class);
-            button.setLabel(LanguageHandler.format(LABEL_LIMIT_REACHED));
+            button.setText(LanguageHandler.format(LABEL_LIMIT_REACHED));
             button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_dark.png"));
         }
 
@@ -156,9 +156,9 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         }
         resource.setPlayerAmount(amountToSet);
 
-        final Label resourceLabel = findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-        final Label resourceMissingLabel = findPaneOfTypeByID(RESOURCE_MISSING, Label.class);
-        final Label neededLabel = findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Label.class);
+        final Text resourceLabel = findPaneOfTypeByID(RESOURCE_NAME, Text.class);
+        final Text resourceMissingLabel = findPaneOfTypeByID(RESOURCE_MISSING, Text.class);
+        final Text neededLabel = findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Text.class);
         final Button addButton = findPaneOfTypeByID(RESOURCE_ADD, Button.class);
 
         BuildingBuilderResource.RessourceAvailability availability = resource.getAvailabilityStatus();
@@ -168,7 +168,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
             availability = BuildingBuilderResource.RessourceAvailability.NOT_NEEDED;
         }
 
-        findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.xofz",
+        findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.xofz",
           building.getStorageUpgradeLevel(),
           BuildingWareHouse.MAX_STORAGE_UPGRADE));
 
@@ -176,28 +176,28 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         {
             case DONT_HAVE:
                 addButton.disable();
-                resourceLabel.setColor(RED, RED);
-                resourceMissingLabel.setColor(RED, RED);
-                neededLabel.setColor(RED, RED);
+                resourceLabel.setColors(RED);
+                resourceMissingLabel.setColors(RED);
+                neededLabel.setColors(RED);
                 break;
             case NEED_MORE:
                 addButton.enable();
-                resourceLabel.setColor(RED, RED);
-                resourceMissingLabel.setColor(RED, RED);
-                neededLabel.setColor(RED, RED);
+                resourceLabel.setColors(RED);
+                resourceMissingLabel.setColors(RED);
+                neededLabel.setColors(RED);
                 break;
             case HAVE_ENOUGH:
                 addButton.enable();
-                resourceLabel.setColor(DARKGREEN, DARKGREEN);
-                resourceMissingLabel.setColor(DARKGREEN, DARKGREEN);
-                neededLabel.setColor(DARKGREEN, DARKGREEN);
+                resourceLabel.setColors(DARKGREEN);
+                resourceMissingLabel.setColors(DARKGREEN);
+                neededLabel.setColors(DARKGREEN);
                 break;
             case NOT_NEEDED:
             default:
                 addButton.disable();
-                resourceLabel.setColor(BLACK, BLACK);
-                resourceMissingLabel.setColor(BLACK, BLACK);
-                neededLabel.setColor(BLACK, BLACK);
+                resourceLabel.setColors(BLACK);
+                resourceMissingLabel.setColors(BLACK);
+                neededLabel.setColors(BLACK);
                 if(building.getBuildingLevel() < building.getBuildingMaxLevel())
                 {
                     final List<IFormattableTextComponent> hoverTexts = new ArrayList<>();
@@ -207,24 +207,24 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
                     resourceMissingLabel.hide();
                     neededLabel.hide();
                     addButton.setHoverToolTip(hoverTexts);
-                    addButton.setLabel(new StringTextComponent("X").setStyle(Style.EMPTY.setFormatting(TextFormatting.DARK_RED)));
+                    addButton.setText(new StringTextComponent("X").setStyle(Style.EMPTY.setFormatting(TextFormatting.DARK_RED)));
                 }
                 break;
         }
 
-        resourceLabel.setLabelText(resource.getName());
+        resourceLabel.setText(resource.getName());
         final int missing = resource.getMissingFromPlayer();
         if (missing < 0)
         {
-            resourceMissingLabel.setLabelText(Integer.toString(missing));
+            resourceMissingLabel.setText(Integer.toString(missing));
         }
         else
         {
-            resourceMissingLabel.setLabelText("");
+            resourceMissingLabel.clearText();
         }
 
-        neededLabel.setLabelText(resource.getAvailable() + " / " + resource.getAmount());
-        findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
+        neededLabel.setText(resource.getAvailable() + " / " + resource.getAmount());
+        findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
         if(building.getBuildingLevel() >= building.getBuildingMaxLevel())
         {
@@ -267,12 +267,8 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
                 final ItemStack resource = tempRes.get(index).getA().getItemStack().copy();
                 resource.setCount(resource.getMaxStackSize());
 
-                final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-                resourceLabel.setLabelText(resource.getDisplayName().getString());
-
-                final Label quantityLabel = rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Label.class);
-                quantityLabel.setLabelText(String.valueOf(tempRes.get(index).getB()));
-
+                rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(resource.getDisplayName());
+                rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(String.valueOf(tempRes.get(index).getB()));
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }
         });

@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyManager;
@@ -117,14 +117,14 @@ public class WindowPostBox extends AbstractWindowRequestTree
     private void deliverPartialClicked(@NotNull final Button button)
     {
 
-        if (button.getLabel().equals(RED_X))
+        if (button.getTextAsString().equals(RED_X))
         {
-            button.setLabel(APPROVE);
+            button.setText(APPROVE);
             this.deliverAvailable = true;
         }
         else
         {
-            button.setLabel(RED_X);
+            button.setText(RED_X);
             this.deliverAvailable = false;
         }
     }
@@ -133,7 +133,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
     public void onOpened()
     {
         super.onOpened();
-        findPaneOfTypeByID(TAG_BUTTON_DELIVER_AVAILABLE, Button.class).setLabel(RED_X);
+        findPaneOfTypeByID(TAG_BUTTON_DELIVER_AVAILABLE, Button.class).setText(RED_X);
 
         updateResources();
     }
@@ -198,8 +198,8 @@ public class WindowPostBox extends AbstractWindowRequestTree
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final ItemStack resource = tempRes.get(index);
-                final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-                resourceLabel.setLabelText(resource.getDisplayName().getString());
+                final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
+                resourceLabel.setText(resource.getDisplayName());
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }
         });

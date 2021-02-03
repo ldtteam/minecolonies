@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -98,8 +98,9 @@ public class WindowHutTavern extends AbstractWindowBuilding<TavernBuildingModule
                 final ICitizenDataView citizenDataView = home.getColony().getCitizen((home.getResidents().get(index)));
                 if (citizenDataView != null)
                 {
-                    rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(citizenDataView.getName());
+                    rowPane.findPaneOfTypeByID("name", Text.class).setText(citizenDataView.getName());
                     rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class).setEnabled(isManualHousing);
+                    // TODO: bug?
                 }
             }
         });
@@ -115,7 +116,7 @@ public class WindowHutTavern extends AbstractWindowBuilding<TavernBuildingModule
         final Button buttonAssign = findPaneOfTypeByID(BUTTON_ASSIGN, Button.class);
 
         final int sparePlaces = 4 - building.getResidents().size();
-        buttonAssign.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
+        buttonAssign.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
         buttonAssign.setEnabled(sparePlaces > 0 && building.getColony().isManualHousing());
 
         citizen.refreshElementPanes();

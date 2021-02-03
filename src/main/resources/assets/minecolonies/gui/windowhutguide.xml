@@ -4,7 +4,7 @@
 
     <image source="minecolonies:textures/gui/guide/background.png" size="100% 100%" id="guide1"/>
     <button id="confirm" pos="100 210" label="$(com.minecolonies.coremod.gui.workerhuts.guide.confirm)"/>
-    <text id="questionmark" size="100 30" color="black" pos="37 163" textscale="0.8"/>
-    <text id="arrow" size="90 30" color="black" pos="280 10" textscale="0.8"/>
-    <text id="chest" size="100 40" color="black" pos="285 160" textscale="0.8"/>
+    <text id="questionmark" size="100 30" color="black" pos="37 163" textscale="0.8" text="$(com.minecolonies.coremod.gui.workerhuts.guide.questionmark)"/>
+    <text id="arrow" size="90 30" color="black" pos="280 10" textscale="0.8" text="$(com.minecolonies.coremod.gui.workerhuts.guide.arrow)"/>
+    <text id="chest" size="100 40" color="black" pos="285 160" textscale="0.8" text="$(com.minecolonies.coremod.gui.workerhuts.guide.chest)"/>
 </window>

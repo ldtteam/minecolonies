@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
@@ -10,6 +10,7 @@ import net.minecraft.client.resources.I18n;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_INFO_PREFIX;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
+// TODO: rework this to use switch element (fill it in constructor) and default page handle
 public class WindowInfo extends AbstractWindowSkeleton
 {
     /**
@@ -27,8 +28,8 @@ public class WindowInfo extends AbstractWindowSkeleton
      */
     private int infoIndex;
 
-    private final Label  name;
-    private final Label  info;
+    private final Text   name;
+    private final Text   info;
     private final Button infoNextPage;
     private final Button infoPrevPage;
 
@@ -52,8 +53,8 @@ public class WindowInfo extends AbstractWindowSkeleton
 
         this.infoNextPage = findPaneOfTypeByID(BUTTON_INFO_NEXT_PAGE, Button.class);
         this.infoPrevPage = findPaneOfTypeByID(BUTTON_INFO_PREV_PAGE, Button.class);
-        this.name = findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class);
-        this.info = findPaneOfTypeByID(LABEL_INFO, Label.class);
+        this.name = findPaneOfTypeByID(LABEL_BUILDING_NAME, Text.class);
+        this.info = findPaneOfTypeByID(LABEL_INFO, Text.class);
 
         this.infoIndex = 0;
         refreshPage();
@@ -84,11 +85,11 @@ public class WindowInfo extends AbstractWindowSkeleton
             this.infoPrevPage.disable();
         }
 
-        pageNum.setLabelText(Integer.toString(this.infoIndex));
-        this.name.setLabelText(LanguageHandler.format(this.translationPrefix + this.infoIndex + ".name"));
+        pageNum.setText(Integer.toString(this.infoIndex));
+        this.name.setText(LanguageHandler.format(this.translationPrefix + this.infoIndex + ".name"));
 
         //We replace escaped newlines to real ones because we want them to be usable and I18n escapes all newlines sadly.
-        this.info.setLabelText(LanguageHandler.format(this.translationPrefix + this.infoIndex).replace("\\n", "\n"));
+        this.info.setText(LanguageHandler.format(this.translationPrefix + this.infoIndex).replace("\\n", "\n"));
     }
 
     private void nextPage()

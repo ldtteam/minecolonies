@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.Network;
@@ -27,7 +27,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
     /**
      * Panes used by the generic page handler
      */
-    protected final Label      pageNum;
+    protected final Text       pageNum;
     protected final Button     buttonPrevPage;
     protected final Button     buttonNextPage;
     protected       SwitchView switchView;
@@ -68,7 +68,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
 
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
-        pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Label.class);
+        pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Text.class);
         switchView = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class);
 
         Network.getNetwork().sendToServer(new OpenGuiWindowTriggerMessage(this.resource));
@@ -143,7 +143,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
     public void setPage(@NotNull final String button)
     {
         final int switchPagesSize = switchView.getChildrenSize();
-        int curPage = pageNum.getLabelText().isEmpty() ? 1 : Integer.parseInt(pageNum.getLabelText().substring(0, pageNum.getLabelText().indexOf("/")));
+        int curPage = pageNum.isTextEmpty() == null ? 1 : Integer.parseInt(pageNum.getTextAsString().substring(0, pageNum.getTextAsString().indexOf("/")));
 
         switch (button)
         {
@@ -176,7 +176,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
         {
             buttonNextPage.off();
         }
-        pageNum.setLabelText(curPage + "/" + switchPagesSize);
+        pageNum.setText(curPage + "/" + switchPagesSize);
     }
 
     @Override

@@ -148,6 +148,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         int y = Y_OFFSET_EACH_TEXTFIELD;
         final int availableLabelWidth = box.getInteriorWidth() - 1 - box.getX();
 
+        errore(); // rework with text builder
         for (final String s : labels)
         {
             final String labelText = "§r§0" + s;
@@ -155,9 +156,9 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             final List<ITextProperties> multilineLabelStrings = mc.fontRenderer.getCharacterManager().func_238362_b_(new StringTextComponent(labelText), availableLabelWidth, Style.EMPTY);
             for (final ITextProperties splitLabelText : multilineLabelStrings)
             {
-                final Label descriptionLabel = new Label();
-                descriptionLabel.setColor(BLACK, BLACK);
-                descriptionLabel.setLabelText(new StringTextComponent(splitLabelText.getString()));
+                final Text descriptionLabel = new Text();
+                descriptionLabel.setColors(BLACK);
+                descriptionLabel.setText(new StringTextComponent(splitLabelText.getString()));
                 box.addChild(descriptionLabel);
                 descriptionLabel.setPosition(1, y);
                 y += Y_OFFSET_EACH_TEXTFIELD;
@@ -181,11 +182,8 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             logo.setHoverToolTip(request.getResolverToolTip(colony));
         }
 
-        final String requester = request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getString();
-
-        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(requester);
-        final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
-        targetLabel.setLabelText(request.getRequester().getLocation().toString());
+        findPaneOfTypeByID(REQUESTER, Text.class).setText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request));
+        findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Text.class).setText(request.getRequester().getLocation().toString());
 
         if (colony == null)
         {
@@ -202,7 +200,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
                 return;
             }
 
-            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getRequesterDisplayName(colony.getRequestManager(), request).getString());
+            findPaneOfTypeByID(RESOLVER, Text.class).setText("Resolver: " + resolver.getRequesterDisplayName(colony.getRequestManager(), request).getString());
         }
         catch (@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {

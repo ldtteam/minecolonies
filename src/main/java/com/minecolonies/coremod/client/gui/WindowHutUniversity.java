@@ -40,7 +40,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
         {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-            button.setLabel(branch);
+            button.setText(branch);
             button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
             button.setTextColor(SLIGHTLY_BLUE);
             button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
@@ -55,7 +55,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
     public void onButtonClicked(@NotNull final Button button)
     {
         super.onButtonClicked(button);
-        final String label = button.getLabel();
+        final String label = button.getTextAsString();
 
         if (branches.contains(label))
         {

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -157,7 +157,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
                 public void updateElement(final int index, @NotNull final Pane rowPane)
                 {
                     final BlockPos pos = patrolTargets.get(index);
-                    rowPane.findPaneOfTypeByID("position", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
+                    rowPane.findPaneOfTypeByID("position", Text.class).setText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
                 }
             });
         }
@@ -175,7 +175,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
                 public void updateElement(final int index, @NotNull final Pane rowPane)
                 {
                     final BlockPos pos = building.getGuardPos();
-                    rowPane.findPaneOfTypeByID("position", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
+                    rowPane.findPaneOfTypeByID("position", Text.class).setText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
                 }
             });
         }
@@ -194,17 +194,17 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             {
                 final String name = mobsToAttack.get(index).getName();
 
-                rowPane.findPaneOfTypeByID(GUI_LIST_ELEMENT_NAME, Label.class).setLabelText(name);
+                rowPane.findPaneOfTypeByID(GUI_LIST_ELEMENT_NAME, Text.class).setText(name);
 
                 final Button switchButton = rowPane.findPaneOfTypeByID(GUI_LIST_BUTTON_SWITCH, Button.class);
 
                 if (mobsToAttack.get(index).shouldAttack())
                 {
-                    switchButton.setLabel(GUI_SWITCH_ON);
+                    switchButton.setText(GUI_SWITCH_ON);
                 }
                 else
                 {
-                    switchButton.setLabel(GUI_SWITCH_OFF);
+                    switchButton.setText(GUI_SWITCH_OFF);
                 }
             }
         });
@@ -270,14 +270,14 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
 
         if (job != null)
         {
-            buttonJob.setLabel(LanguageHandler.format(job.getButtonTranslationKey()));
+            buttonJob.setText(LanguageHandler.format(job.getButtonTranslationKey()));
         }
 
         buttonJob.setEnabled(assignManually);
 
-        this.findPaneOfTypeByID(GUI_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(assignManually ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
-        this.findPaneOfTypeByID(GUI_BUTTON_PATROL_MODE, Button.class).setLabel(patrolManually ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
-        this.findPaneOfTypeByID(GUI_BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
+        this.findPaneOfTypeByID(GUI_BUTTON_ASSIGNMENT_MODE, Button.class).setText(assignManually ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
+        this.findPaneOfTypeByID(GUI_BUTTON_PATROL_MODE, Button.class).setText(patrolManually ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
+        this.findPaneOfTypeByID(GUI_BUTTON_RETRIEVAL_MODE, Button.class).setText(retrieveOnLowHealth ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
 
         if (task.equals(GuardTask.PATROL))
         {
@@ -285,11 +285,11 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
 
             if (patrolManually)
             {
-                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetPatrol"));
+                buttonSetTarget.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetPatrol"));
             }
             else
             {
-                buttonSetTarget.setLabel("");
+                buttonSetTarget.clearText();
             }
             buttonTaskPatrol.setEnabled(false);
         }
@@ -298,16 +298,16 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskFollow.setEnabled(false);
             if (tightGrouping)
             {
-                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.followTight"));
+                buttonSetTarget.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.followTight"));
             }
             else
             {
-                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.followLoose"));
+                buttonSetTarget.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.followLoose"));
             }
         }
         else if (task.equals(GuardTask.GUARD))
         {
-            buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetGuard"));
+            buttonSetTarget.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetGuard"));
             buttonTaskGuard.setEnabled(false);
         }
     }
@@ -342,13 +342,15 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      */
     private void switchAttackMode(@NotNull final Button button)
     {
-        final Label idLabel = (Label) button.getParent().getChildren().get(GUI_LIST_ELEMENT_NAME_POS);
+        // final Label idLabel = (Label) button.getParent().getChildren().get(GUI_LIST_ELEMENT_NAME_POS);
+        final Text idLabel = button.getParent().findPaneOfTypeByID("name", Text.class);
+        // TODO: wtf? this needs rework, it's button in list of boxes, xml line 65
 
         if (idLabel != null)
         {
             for (final MobEntryView entry : mobsToAttack)
             {
-                if (entry.getName().equals(idLabel.getLabelText()))
+                if (entry.getName().equals(idLabel.getTextAsString()))
                 {
                     entry.setShouldAttack(!entry.shouldAttack());
                 }
@@ -365,12 +367,14 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      */
     private void updatePriority(@NotNull final Button button)
     {
-        @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(GUI_LIST_ELEMENT_NAME_POS);
+        //@NotNull final Label idLabel = (Label) button.getParent().getChildren().get(GUI_LIST_ELEMENT_NAME_POS);
+        final Text idLabel = button.getParent().findPaneOfTypeByID("name", Text.class);
+        // TODO: see above
         final String buttonLabel = button.getID();
 
         for (final MobEntryView mobEntry : this.mobsToAttack)
         {
-            if (mobEntry.getName().equals(idLabel.getLabelText()))
+            if (mobEntry.getName().equals(idLabel.getTextAsString()))
             {
                 if (buttonLabel.equals(GUI_LIST_BUTTON_UP) && mobEntry.getPriority() < mobsToAttack.size())
                 {
@@ -527,7 +531,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         building.setRetrieveOnLowHealth(!building.isRetrieveOnLowHealth());
         pullInfoFromHut();
         sendChangesToServer();
-        this.findPaneOfTypeByID(GUI_BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
+        this.findPaneOfTypeByID(GUI_BUTTON_RETRIEVAL_MODE, Button.class).setText(retrieveOnLowHealth ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
     }
 
     /**
@@ -538,7 +542,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         building.setHireTrainees(!building.isHireTrainees());
         pullInfoFromHut();
         sendChangesToServer();
-        this.findPaneOfTypeByID(GUI_BUTTON_TRAINEE_MODE, Button.class).setLabel(hireTrainees ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
+        this.findPaneOfTypeByID(GUI_BUTTON_TRAINEE_MODE, Button.class).setText(hireTrainees ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
     }
 
     /**

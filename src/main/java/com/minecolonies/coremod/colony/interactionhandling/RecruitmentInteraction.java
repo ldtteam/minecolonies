@@ -93,13 +93,15 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
         {
             final ItemStack recruitCost = ((IVisitorViewData) dataView).getRecruitCost();
             final IColonyView colony = ((IVisitorViewData) dataView).getColonyView();
-            String message =
-              colony.getCitizens().size() < colony.getCitizenCountLimit() ? "com.minecolonies.coremod.gui.chat.recruitcost" : "com.minecolonies.coremod.gui.chat.nospacerecruit";
-            window.findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setTextContent(dataView.getName() + ": " + this.getInquiry().getString()
-                                                                                  + "\n\n" + new TranslationTextComponent(message,
-              dataView.getName().split(" ")[0],
-              recruitCost.getCount()
-                + " " + recruitCost.getDisplayName().getString()).getString());
+
+            // TODO: text builder
+            window.findPaneOfTypeByID(CHAT_LABEL_ID, Text.class)
+                .setText(dataView.getName() + ": " + this.getInquiry().getString() + "\n\n"
+                    + new TranslationTextComponent(
+                        colony.getCitizens().size() < colony.getCitizenCountLimit() ? "com.minecolonies.coremod.gui.chat.recruitcost"
+                            : "com.minecolonies.coremod.gui.chat.nospacerecruit",
+                        dataView.getName().split(" ")[0],
+                        recruitCost.getCount() + " " + recruitCost.getDisplayName().getString()).getString());
 
             int iconPosX = recruitButton.getX() + recruitButton.getWidth() - 28;
             int iconPosY = recruitButton.getY() + recruitButton.getHeight() - 18;

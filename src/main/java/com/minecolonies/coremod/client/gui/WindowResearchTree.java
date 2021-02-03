@@ -78,10 +78,10 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
         for (int i = 1; i <= MAX_DEPTH; i++)
         {
-            final Label timeLabel = new Label();
-            timeLabel.setLabelText(Math.pow(2, i - 1) + "h");
+            final Text timeLabel = new Text();
+            timeLabel.setText(Math.pow(2, i - 1) + "h");
             timeLabel.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING) + GRADIENT_WIDTH / 2, TIMELABEL_Y_POSITION);
-            timeLabel.setColor(Color.rgbaToInt(218, 202, 171, 255));
+            timeLabel.setColors(Color.rgbaToInt(218, 202, 171, 255));
             view.addChild(timeLabel);
         }
     }
@@ -208,10 +208,10 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             box.setPosition(gradient.getX(), gradient.getY());
             view.addChild(box);
 
-            final Label nameLabel = new Label();
-            nameLabel.setLabelText(research.getDesc());
+            final Text nameLabel = new Text();
+            nameLabel.setText(research.getDesc());
             nameLabel.setPosition(offsetX + INITIAL_X_OFFSET + NAME_OFFSET, (nextHeight + Math.min(i, 1)) * (GRADIENT_HEIGHT + Y_SPACING) + Y_SPACING + INITIAL_Y_OFFSET);
-            nameLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
+            nameLabel.setColors(Color.rgbaToInt(160, 160, 160, 255));
             view.addChild(nameLabel);
 
             if (state == ResearchState.IN_PROGRESS)
@@ -245,18 +245,18 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
             else if (research.getResearchRequirement() != null && state != ResearchState.FINISHED)
             {
-                final Label requirementLabel = new Label();
-                requirementLabel.setLabelText(research.getResearchRequirement().getDesc().getString());
+                final Text requirementLabel = new Text();
+                requirementLabel.setText(research.getResearchRequirement().getDesc());
                 requirementLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() + INITIAL_Y_OFFSET);
-                requirementLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
+                requirementLabel.setColors(Color.rgbaToInt(160, 160, 160, 255));
 
                 view.addChild(requirementLabel);
             }
 
-            final Label effectLabel = new Label();
-            effectLabel.setLabelText(research.getEffect().getDesc().getString());
+            final Text effectLabel = new Text();
+            effectLabel.setText(research.getEffect().getDesc());
             effectLabel.setPosition(offsetX + INITIAL_X_OFFSET + TEXT_X_OFFSET, nameLabel.getY() + nameLabel.getHeight() * 2 + INITIAL_Y_OFFSET + INITIAL_Y_OFFSET);
-            effectLabel.setColor(Color.rgbaToInt(160, 160, 160, 255));
+            effectLabel.setColors(Color.rgbaToInt(160, 160, 160, 255));
 
             view.addChild(effectLabel);
 
@@ -264,7 +264,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             {
                 final ButtonImage buttonImage = new ButtonImage();
                 buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-                buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research"));
+                buttonImage.setText(LanguageHandler.format("com.minecolonies.coremod.research.research"));
                 buttonImage.setTextColor(Color.getByName("black", 0));
                 buttonImage.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
                 buttonImage.setPosition(effectLabel.getX(), effectLabel.getY() + effectLabel.getHeight() + TEXT_Y_OFFSET);
@@ -276,35 +276,35 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                           && hasMax)
                     {
                         buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
-                        buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.maxunlocked"));
+                        buttonImage.setText(LanguageHandler.format("com.minecolonies.coremod.research.research.maxunlocked"));
                     }
                 }
                 else if (building.getBuildingLevel() <= building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size())
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
-                    buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.toomanyinprogress"));
+                    buttonImage.setText(LanguageHandler.format("com.minecolonies.coremod.research.research.toomanyinprogress"));
                 }
                 else if (!isResearchFulfilled((BuildingResearchRequirement) research.getResearchRequirement()))
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
-                    buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.missingrequirements"));
+                    buttonImage.setText(LanguageHandler.format("com.minecolonies.coremod.research.research.missingrequirements"));
                 }
                 else if (!research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
-                    buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.notenoughresources"));
+                    buttonImage.setText(LanguageHandler.format("com.minecolonies.coremod.research.research.notenoughresources"));
                 }
                 else if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel())
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
-                    buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.buildingleveltoolow"));
+                    buttonImage.setText(LanguageHandler.format("com.minecolonies.coremod.research.research.buildingleveltoolow"));
                 }
                 else if (research.getDepth() == 6
                            && building.getBuildingLevel() == building.getBuildingMaxLevel()
                            && hasMax)
                 {
                     buttonImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_large_disabled.png"));
-                    buttonImage.setLabel(LanguageHandler.format("com.minecolonies.coremod.research.research.maxunlocked"));
+                    buttonImage.setText(LanguageHandler.format("com.minecolonies.coremod.research.research.maxunlocked"));
                 }
 
                 view.addChild(buttonImage);
@@ -373,9 +373,9 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     {
                         if (IGlobalResearchTree.getInstance().getResearch(branch, research.getParent()).hasOnlyChild())
                         {
-                            final Label orLabel = new Label();
-                            orLabel.setColor(Color.getByName("black", 0));
-                            orLabel.setLabelText("or");
+                            final Text orLabel = new Text();
+                            orLabel.setColors(Color.getByName("black", 0));
+                            orLabel.setText("or");
                             orLabel.setPosition(gradient.getX() - X_SPACING + OR_X_OFFSET, gradient.getY() + OR_Y_OFFSET);
                             view.addChild(orLabel);
 

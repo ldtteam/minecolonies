@@ -319,7 +319,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                     logo.setVisible(false);
                     exampleStackDisplay.setVisible(true);
                     exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
-                    rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getString());
+                    rowPane.findPaneOfTypeByID(REQUESTER, Text.class).setText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request));
                 }
                 else
                 {
@@ -336,13 +336,13 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 {
                     if(!displayStacks.isEmpty())
                     {
-                        rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(
+                        rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(
                           (IFormattableTextComponent) request.getDisplayStacks().get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()).getDisplayName());
                     }
                 }
                 else
                 {
-                    rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(request.getShortDisplayString().getString().replace("§f", ""));
+                    rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(request.getShortDisplayString().getString().replace("§f", ""));
                 }
 
                 if (!cancellable(request))

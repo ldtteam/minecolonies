@@ -63,11 +63,11 @@ public class WindowHutShepherd extends AbstractWindowHerderBuilding<BuildingShep
     {
         if (building.isDyeSheeps())
         {
-            findPaneOfTypeByID(BUTTON_DYE_SHEEPS, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GENERAL_ONBIG));
+            findPaneOfTypeByID(BUTTON_DYE_SHEEPS, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GENERAL_ONBIG));
         }
         else
         {
-            findPaneOfTypeByID(BUTTON_DYE_SHEEPS, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG));
+            findPaneOfTypeByID(BUTTON_DYE_SHEEPS, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG));
         }
     }
 }
