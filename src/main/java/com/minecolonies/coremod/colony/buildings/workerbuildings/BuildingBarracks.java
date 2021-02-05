@@ -191,21 +191,20 @@ public class BuildingBarracks extends AbstractBuilding
     @Override
     public int getClaimRadius(final int newLevel)
     {
-        if (newLevel <= 0)
-        {
-            return 0;
-        }
-
-        int sum = newLevel;
+        // tower levels must all be 4+ to get increased radius of 3 
+        int barracksClaimRadius = 3;
         for (final BlockPos pos : towers)
         {
             final IBuilding building = colony.getBuildingManager().getBuilding(pos);
             if (building != null)
             {
-                sum += building.getBuildingLevel();
+              // tower levels must all be 4+ to get increased radius of 3 
+                if (building.getBuildingLevel() < 4) { 
+                  barracksClaimRadius = 2;
+                }
             }
         }
-        return Math.max(1, sum / getMaxBuildingLevel());
+        return barracksClaimRadius;
     }
 
     @Override
