@@ -799,7 +799,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        return true;
+        if (stack.getItem().getFood().getHealing() >= getBuildingLevel())
+        {
+            return true;
+        }
+        return false;
     }
 
     /**

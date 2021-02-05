@@ -1294,6 +1294,7 @@
   "entity.fisherman.messagewatertoofar": "My hut seems to be too far away from water, and I can't find any water to fish in! It should be an area of at least 7x7 blocks, and the same height as my hut.",
   "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel I should use in my furnace!",
   "com.minecolonies.coremod.furnaceuser.noore": "Please tell me what kind of ore I should smelt in my furnace!",
+  "com.minecolonies.coremod.furnaceuser.nofood": "Please tell me what kinf of food to hand out!",
   "com.minecolonies.coremod.florist.noplantground": "I don't have any composted dirt to plant on! Please repair my Flower Shop!",
   "com.minecolonies.coremod.florist.nocompost": "I need compost to plant my flowers!",
   "com.minecolonies.coremod.florist.noflowers": "I can't work, all my flowers are disabled!",
