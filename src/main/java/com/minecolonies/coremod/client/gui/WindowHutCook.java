@@ -54,7 +54,7 @@ public class WindowHutCook extends AbstractHutFilterableLists
     /**
      * View containing the food list.
      */
-    private static final String PAGE_EATABLES_VIEW = "food";
+    private static final String PAGE_FOOD_VIEW = "food";
 
     /**
      * Resource scrolling list.
@@ -76,13 +76,13 @@ public class WindowHutCook extends AbstractHutFilterableLists
           PAGE_ITEMS_VIEW,
           false);
         views.put(PAGE_ITEMS_VIEW, win);
-        final ViewFilterableList wel = new ViewFilterableList(findPaneOfTypeByID(PAGE_EATABLES_VIEW, View.class),
+        final ViewFilterableList wel = new ViewFilterableList(findPaneOfTypeByID(PAGE_FOOD_VIEW, View.class),
                 this,
                 building,
                 LanguageHandler.format(COM_MINECOLONIES_REQUESTS_FOOD),
-                PAGE_EATABLES_VIEW,
+                PAGE_FOOD_VIEW,
                 true);
-        views.put(PAGE_EATABLES_VIEW, wel);
+        views.put(PAGE_FOOD_VIEW, wel);
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 
         registerButton(STOCK_ADD, this::addStock);
@@ -105,7 +105,7 @@ public class WindowHutCook extends AbstractHutFilterableLists
      */
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        if (id.equals(PAGE_EATABLES_VIEW))
+        if (id.equals(PAGE_FOOD_VIEW))
         {
             return ImmutableList.copyOf(IColonyManager.getInstance()
                     .getCompatibilityManager()
