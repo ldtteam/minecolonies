@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
@@ -121,10 +122,11 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         if (building.getBuildingLevel() < BUILDING_LEVEL_FOR_SORTING)
         {
             final ButtonImage sortButton = findPaneOfTypeByID(SORT_WAREHOUSE_BUTTON, ButtonImage.class);
-            final List<IFormattableTextComponent> hoverText = new ArrayList<>();
-            hoverText.add(new TranslationTextComponent("com.minecolonies.coremod.gui.warehouse.sort.disabled.1", BUILDING_LEVEL_FOR_SORTING));
-            hoverText.add(new TranslationTextComponent("com.minecolonies.coremod.gui.warehouse.sort.disabled.2", BUILDING_LEVEL_FOR_SORTING));
-            sortButton.setHoverToolTip(hoverText);
+            PaneBuilders.tooltipBuilder()
+                .append(new TranslationTextComponent("com.minecolonies.coremod.gui.warehouse.sort.disabled.1", BUILDING_LEVEL_FOR_SORTING))
+                .appendNL(new TranslationTextComponent("com.minecolonies.coremod.gui.warehouse.sort.disabled.2", BUILDING_LEVEL_FOR_SORTING))
+                .hoverPane(sortButton)
+                .build();
             sortButton.disable();
         }
 
@@ -198,16 +200,17 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
                 resourceLabel.setColors(BLACK);
                 resourceMissingLabel.setColors(BLACK);
                 neededLabel.setColors(BLACK);
-                if(building.getBuildingLevel() < building.getBuildingMaxLevel())
+                if (building.getBuildingLevel() < building.getBuildingMaxLevel())
                 {
-                    final List<IFormattableTextComponent> hoverTexts = new ArrayList<>();
-                    hoverTexts.add(new TranslationTextComponent("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1", building.getBuildingMaxLevel()));
-                    hoverTexts.add(new TranslationTextComponent("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2", building.getBuildingMaxLevel()));
                     resourceLabel.hide();
                     resourceMissingLabel.hide();
                     neededLabel.hide();
-                    addButton.setHoverToolTip(hoverTexts);
                     addButton.setText(new StringTextComponent("X").setStyle(Style.EMPTY.setFormatting(TextFormatting.DARK_RED)));
+                    PaneBuilders.tooltipBuilder()
+                        .append(new TranslationTextComponent("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1", building.getBuildingMaxLevel()))
+                        .appendNL(new TranslationTextComponent("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2", building.getBuildingMaxLevel()))
+                        .hoverPane(addButton)
+                        .build();
                 }
                 break;
         }

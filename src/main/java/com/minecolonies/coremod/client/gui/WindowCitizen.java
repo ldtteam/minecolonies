@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Alignment;
+import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
@@ -122,14 +123,18 @@ public class WindowCitizen extends AbstractWindowRequestTree
           IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimensionKey()));
         this.citizen = citizen;
 
+        final Image statusIcon = findPaneOfTypeByID(STATUS_ICON, Image.class);
         if (citizen.getVisibleStatus() == null)
         {
-            findPaneOfTypeByID(STATUS_ICON, Image.class).setVisible(false);
+            statusIcon.setVisible(false);
         }
         else
         {
-            findPaneOfTypeByID(STATUS_ICON, Image.class).setImage(citizen.getVisibleStatus().getIcon());
-            findPaneOfTypeByID(STATUS_ICON, Image.class).setHoverToolTip(Collections.singletonList(new StringTextComponent(citizen.getVisibleStatus().getTranslatedText())));
+            statusIcon.setImage(citizen.getVisibleStatus().getIcon());
+            PaneBuilders.tooltipBuilder()
+                .append(new StringTextComponent(citizen.getVisibleStatus().getTranslatedText()))
+                .hoverPane(statusIcon)
+                .build();
         }
 
         updateJobPage(citizen, this, colony);
@@ -509,35 +514,47 @@ public class WindowCitizen extends AbstractWindowRequestTree
             final Image image = new Image();
             image.setSize(11, 11);
             image.setPosition(25, yPos);
+            pane.addChild(image);
 
             final Text label = new Text();
             label.setSize(136, 11);
             label.setPosition(50, yPos);
             label.setColors(BLACK);
             label.setText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + name));
+            pane.addChild(label);
 
             if (value > 1.0)
             {
                 image.setImage(GREEN_ICON);
-                image.setHoverToolTip(ImmutableList.of(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.positive")));
+                PaneBuilders.tooltipBuilder()
+                    .append(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.positive"))
+                    .hoverPane(image)
+                    .build();
             }
             else if (value == 1)
             {
                 image.setImage(BLUE_ICON);
-                image.setHoverToolTip(ImmutableList.of(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.neutral")));
+                PaneBuilders.tooltipBuilder()
+                    .append(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.neutral"))
+                    .hoverPane(image)
+                    .build();
             }
             else if (value > 0.75)
             {
                 image.setImage(YELLOW_ICON);
-                image.setHoverToolTip(ImmutableList.of(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.slightlynegative")));
+                PaneBuilders.tooltipBuilder()
+                    .append(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.slightlynegative"))
+                    .hoverPane(image)
+                    .build();
             }
             else
             {
                 image.setImage(RED_ICON);
-                image.setHoverToolTip(ImmutableList.of(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.negative")));
+                PaneBuilders.tooltipBuilder()
+                    .append(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.negative"))
+                    .hoverPane(image)
+                    .build();
             }
-            pane.addChild(image);
-            pane.addChild(label);
 
             yPos += 12;
         }

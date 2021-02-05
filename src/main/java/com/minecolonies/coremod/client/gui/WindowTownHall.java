@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
@@ -481,13 +482,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void trigger(@NotNull final Button button)
     {
-        @NotNull final Pane pane = button.getParent().getChildren().get(2);
-        // TODO: you can't be serious with this being three time already, it's fucking not funny
-        int index = 0;
-        if (pane instanceof Text)
-        {
-            index = Integer.valueOf(((Text) pane).getTextAsString());
-        }
+        final int index = Integer.valueOf(button.getParent().findPaneOfTypeByID("index", Text.class).getTextAsString());
         final boolean trigger = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON).equals(button.getTextAsString());
         final Action action = Action.values()[index];
         final Rank rank = Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH));
@@ -630,7 +625,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT, citizensSize, citizensCap));
             totalCitizenLabel.setColors(RED);
         }
-        totalCitizenLabel.setHoverToolTip(hoverText);
+        PaneBuilders.tooltipBuilder().hoverPane(totalCitizenLabel).build().setText(hoverText);
 
         int children = 0;
         final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();
@@ -949,9 +944,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void updatePriority(@NotNull final Button button)
     {
-        @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(HIDDEN_ID_POSITION);
-        // TODO: fourth time someone trying to get children using index...
-        final int id = Integer.parseInt(idLabel.getLabelText());
+        final int id = Integer.parseInt(button.getParent().findPaneOfTypeByID("hiddenId", Text.class).getTextAsString());
         final String buttonLabel = button.getID();
 
         for (int i = 0; i < workOrders.size(); i++)
@@ -984,9 +977,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void deleteWorkOrder(@NotNull final Button button)
     {
-        @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(HIDDEN_ID_POSITION);
-        // TODO: fifth, this is getting cringe
-        final int id = Integer.parseInt(idLabel.getLabelText());
+        final int id = Integer.parseInt(button.getParent().findPaneOfTypeByID("hiddenId", Text.class).getTextAsString());
         for (int i = 0; i < workOrders.size(); i++)
         {
             if (workOrders.get(i).getId() == id)

@@ -342,9 +342,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      */
     private void switchAttackMode(@NotNull final Button button)
     {
-        // final Label idLabel = (Label) button.getParent().getChildren().get(GUI_LIST_ELEMENT_NAME_POS);
         final Text idLabel = button.getParent().findPaneOfTypeByID("name", Text.class);
-        // TODO: wtf? this needs rework, it's button in list of boxes, xml line 65
 
         if (idLabel != null)
         {
@@ -367,9 +365,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      */
     private void updatePriority(@NotNull final Button button)
     {
-        //@NotNull final Label idLabel = (Label) button.getParent().getChildren().get(GUI_LIST_ELEMENT_NAME_POS);
         final Text idLabel = button.getParent().findPaneOfTypeByID("name", Text.class);
-        // TODO: see above
         final String buttonLabel = button.getID();
 
         for (final MobEntryView mobEntry : this.mobsToAttack)
