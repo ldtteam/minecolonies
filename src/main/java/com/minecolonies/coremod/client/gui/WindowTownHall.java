@@ -1228,7 +1228,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         lastTabButton.on();
         button.off();
         lastTabButton = button;
-        setPage("");
+        setPage(false, 0);
     }
 
     /**
@@ -1355,12 +1355,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      * For switches inside of tabs
      */
     @Override
-    public void setPage(@NotNull final String button)
+    public void setPage(final boolean relative, final int page)
     {
         final String curSwitch = (lastTabButton == null) ? findPaneOfTypeByID(BUTTON_ACTIONS, Button.class).getID() : lastTabButton.getID();
         super.switchView = findPaneOfTypeByID(GUI_LIST_BUTTON_SWITCH + tabsToPages.get(curSwitch), SwitchView.class);
         super.pageNum.on();
-        super.setPage(button);
+        super.setPage(relative, page);
 
         // Additional handlers
         if (switchView.getCurrentView().getID().equals(PERMISSION_VIEW))

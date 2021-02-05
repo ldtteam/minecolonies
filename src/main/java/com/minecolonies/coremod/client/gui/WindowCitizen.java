@@ -180,7 +180,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
             findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(FEMALE_SOURCE);
         }
 
-        setPage("");
+        setPage(false, 0);
     }
 
     /**
@@ -412,7 +412,8 @@ public class WindowCitizen extends AbstractWindowRequestTree
                 break;
             case BUTTON_BACK:
                 findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).previousView();
-                setPage("");
+                pageNum.on();
+                setPage(true, 0);
                 break;
             case INVENTORY_BUTTON_ID:
                 Network.getNetwork().sendToServer(new OpenInventoryMessage(colony, citizen.getName(), citizen.getEntityId()));

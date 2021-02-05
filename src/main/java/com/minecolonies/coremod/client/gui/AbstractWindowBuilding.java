@@ -193,6 +193,6 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
     public void onOpened()
     {
         super.onOpened();
-        setPage("");
+        setPage(false, 0);
     }
 }
