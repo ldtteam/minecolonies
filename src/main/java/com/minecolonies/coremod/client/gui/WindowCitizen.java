@@ -260,11 +260,23 @@ public class WindowCitizen extends AbstractWindowRequestTree
         healthBarView.addChild(heartImage);
     }
 
+    /**
+     * Get vertical offset for the saturation icon based on the iteration
+     * If i >= 10, move the icons down another line
+     * @param i the current iteration
+     * @return the y offset
+     */
     private static int getYOffset(final int i)
     {
         return (i >= 10 ? SATURATION_ICON_POS_Y : 0);
     }
 
+    /**
+     * Get horizontal offset modifier for the saturation icon based on the iteration
+     * if i >= 10, decrease i by 10 to start the line from the beginning
+     * @param i the current iteration
+     * @return the x offset modifier
+     */
     private static int getXOffsetModifier(final int i)
     {
         return (i >= 10 ? i - 10 : i);
