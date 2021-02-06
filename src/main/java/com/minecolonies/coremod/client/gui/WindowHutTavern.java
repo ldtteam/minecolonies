@@ -100,7 +100,6 @@ public class WindowHutTavern extends AbstractWindowBuilding<TavernBuildingModule
                 {
                     rowPane.findPaneOfTypeByID("name", Text.class).setText(citizenDataView.getName());
                     rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class).setEnabled(isManualHousing);
-                    // TODO: bug?
                 }
             }
         });
