@@ -88,11 +88,13 @@ public class WindowInteraction extends AbstractWindowSkeleton
         {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-            button.setText(component);
             button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
-            button.setTextColor(SLIGHTLY_BLUE);
+            button.setColors(SLIGHTLY_BLUE);
             button.setPosition(x, y);
             button.setID(BUTTON_RESPONSE_ID + responseIndex);
+            button.setTextRenderBox(BUTTON_LENGTH, BUTTON_HEIGHT);
+            button.setTextAlignment(Alignment.MIDDLE);
+            button.setText(component);
             group.addChild(button);
 
             y += button.getHeight();

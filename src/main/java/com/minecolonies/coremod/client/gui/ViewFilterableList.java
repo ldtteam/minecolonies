@@ -11,7 +11,6 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.IFormattableTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

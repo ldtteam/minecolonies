@@ -353,19 +353,12 @@ public class WindowCitizen extends AbstractWindowRequestTree
         final boolean isCreative = Minecraft.getInstance().player.isCreative();
         for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
         {
-            final Text label = window.findPaneOfTypeByID(entry.getKey().name().toLowerCase(Locale.US), Text.class);
-            label.setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US), entry.getValue().getA()));
-            label.setTextScale(0.8f);
+            final String id = entry.getKey().name().toLowerCase(Locale.US);
+            window.findPaneOfTypeByID(id, Text.class).setText(new StringTextComponent(Integer.toString(entry.getValue().getA())));
 
             if (isCreative)
             {
-                final Button buttonPlus = window.findPaneOfTypeByID(PLUS_PREFIX + entry.getKey().name().toLowerCase(Locale.US), Button.class);
-                final Button buttonMinus = window.findPaneOfTypeByID(MINUS_PREFIX + entry.getKey().name().toLowerCase(Locale.US), Button.class);
-                if (buttonPlus != null && buttonMinus != null)
-                {
-                    buttonPlus.setVisible(true);
-                    buttonMinus.setVisible(true);
-                }
+                window.findPaneByID(id + "_bts").enable();
             }
         }
     }
