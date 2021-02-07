@@ -427,7 +427,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.chopping"));
 
-        if (job.getTree().hasLogs() || checkedInHut)
+        if (job.getTree().hasLogs() || (job.getTree().hasLeaves() && job.getTree().isNetherTree()) || checkedInHut)
         {
             if (!walkToTree(job.getTree().getStumpLocations().get(0)))
             {
