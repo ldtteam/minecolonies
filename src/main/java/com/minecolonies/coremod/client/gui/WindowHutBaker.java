@@ -131,7 +131,7 @@ public class WindowHutBaker extends AbstractHutFilterableLists
         if (!((BuildingBaker.View) building).hasReachedLimit())
         {
             new WindowSelectRes(this, building,
-              itemStack -> ItemStackUtils.CAN_EAT.test(itemStack) || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance().getSmeltingResult(itemStack))).open();
+              itemStack -> ItemStackUtils.CAN_EAT.test(itemStack) || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance().getSmeltingResult(itemStack)) || building.getRecipes().stream().anyMatch(r -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, r.getPrimaryOutput()))).open();
         }
     }
 
