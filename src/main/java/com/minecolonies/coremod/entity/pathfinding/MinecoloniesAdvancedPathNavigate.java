@@ -782,6 +782,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         Vec3d vec3d = this.getEntityPosition();
         this.maxDistanceToWaypoint = 0.75F;
+        boolean wentAhead = false;
 
         // Look at multiple points, incase we're too fast
         for (int i = this.currentPath.getCurrentPathIndex(); i < Math.min(this.currentPath.getCurrentPathLength(), this.currentPath.getCurrentPathIndex() + 4); i++)
@@ -792,6 +793,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                   Math.abs(this.entity.getPosY() - (vec3d2.y - 0.5f)) < 1.0D)
             {
                 this.currentPath.incrementPathIndex();
+                wentAhead = true;
                 // Mark reached nodes for debug path drawing
                 if (AbstractPathJob.lastDebugNodesPath != null)
                 {
@@ -799,13 +801,50 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     final BlockPos pos = new BlockPos(point.x, point.y, point.z);
                     for (final Node node : AbstractPathJob.lastDebugNodesPath)
                     {
-                        if (node.pos.equals(pos))
+                        if (!node.isReachedByWorker() && node.pos.equals(pos))
                         {
-                            node.setReachedByWorker();
+                            node.setReachedByWorker(true);
                             break;
                         }
                     }
                 }
+            }
+        }
+
+        if (wentAhead)
+        {
+            return;
+        }
+
+        // Check some past nodes case we fell behind.
+        Vector3d curr = this.currentPath.getVectorFromIndex(this.entity, curNode);
+        if (entity.getPositionVec().distanceTo(curr) >= 2.0)
+        {
+            int currentIndex = curNode - 1;
+            while (currentIndex > 0)
+            {
+                final Vector3d tempoPos = this.currentPath.getVectorFromIndex(this.entity, currentIndex);
+                if (entity.getPositionVec().distanceTo(tempoPos) <= 1.0)
+                {
+                    this.currentPath.setCurrentPathIndex(currentIndex);
+                }
+                else
+                {
+                    // Mark nodes as unreached for debug path drawing
+                    if (AbstractPathJob.lastDebugNodesPath != null)
+                    {
+                        final BlockPos pos = new BlockPos(tempoPos.x, tempoPos.y, tempoPos.z);
+                        for (final Node node : AbstractPathJob.lastDebugNodesPath)
+                        {
+                            if (node.isReachedByWorker() && node.pos.equals(pos))
+                            {
+                                node.setReachedByWorker(false);
+                                break;
+                            }
+                        }
+                    }
+                }
+                currentIndex--;
             }
         }
     }
