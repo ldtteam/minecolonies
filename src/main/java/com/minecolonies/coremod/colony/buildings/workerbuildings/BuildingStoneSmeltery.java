@@ -18,8 +18,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;

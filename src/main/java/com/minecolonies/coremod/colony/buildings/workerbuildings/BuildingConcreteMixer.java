@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.google.common.collect.Lists;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
