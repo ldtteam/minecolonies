@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingRabbitHutch;
 import com.minecolonies.coremod.colony.jobs.JobRabbitHerder;

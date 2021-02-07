@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.google.common.collect.Lists;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -15,7 +14,6 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.TagUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutCrafter;
@@ -33,8 +31,6 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;

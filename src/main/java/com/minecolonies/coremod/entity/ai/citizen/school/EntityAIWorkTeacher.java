@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.school;
 
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -16,12 +15,10 @@ import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.colony.jobs.JobTeacher;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
