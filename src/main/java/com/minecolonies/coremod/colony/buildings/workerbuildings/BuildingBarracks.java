@@ -205,8 +205,8 @@ public class BuildingBarracks extends AbstractBuilding
             {
                 if (building.getBuildingLevel() < 4) 
                 { 
-                  barracksClaimRadius = 2;
-                  break;
+                    barracksClaimRadius = 2;
+                    break;
                 }
             }
         }
