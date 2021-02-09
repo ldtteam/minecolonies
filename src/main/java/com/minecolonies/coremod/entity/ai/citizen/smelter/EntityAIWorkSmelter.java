@@ -331,8 +331,12 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
      */
     protected boolean isSmeltable(final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && ItemStackUtils.IS_SMELTABLE.and(
-          itemStack -> IColonyManager.getInstance().getCompatibilityManager().isOre(stack)).test(stack);
+        if (ItemStackUtils.isEmpty(stack) || !ItemStackUtils.IS_SMELTABLE.and(itemStack -> IColonyManager.getInstance().getCompatibilityManager().isOre(stack)).test(stack))
+        {
+            return false;
+        }
+        final Map<String, List<ItemStorage>> allowedItems = getOwnBuilding().getCopyOfAllowedItems();
+        return !allowedItems.containsKey(ORE_LIST) || !allowedItems.get(ORE_LIST).contains(new ItemStorage(stack));
     }
 
     @Override
