@@ -390,6 +390,8 @@ public final class TranslationConstants
     @NonNls
     public static final String BETTER_FOOD                                                          = "com.minecolonies.coremod.ai.betterfood";
     @NonNls
+    public static final String BETTER_FOOD_CHILDREN                                                 = "com.minecolonies.coremod.ai.betterfood.children";
+    @NonNls
     public static final String NO_RESTAURANT                                                        = "com.minecolonies.coremod.ai.norestaurant";
     @NonNls
     public static final String NO_HOSPITAL                                                          = "com.minecolonies.coremod.ai.nohospital";

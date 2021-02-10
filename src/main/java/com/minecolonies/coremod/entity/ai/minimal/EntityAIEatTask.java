@@ -463,7 +463,14 @@ public class EntityAIEatTask extends Goal
         }
         else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), stack -> CAN_EAT.test(stack) && !canEat(citizenData, stack)))
         {
-            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(BETTER_FOOD), ChatPriority.BLOCKING));
+            if (citizenData.isChild())
+            {
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(BETTER_FOOD_CHILDREN), ChatPriority.BLOCKING));
+            }
+            else
+            {
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(BETTER_FOOD), ChatPriority.BLOCKING));
+            }
         }
 
         final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
