@@ -29,7 +29,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue     initialCitizenAmount;
     public final ForgeConfigSpec.BooleanValue builderPlaceConstructionTape;
     public final ForgeConfigSpec.BooleanValue allowInfiniteSupplyChests;
-    public final ForgeConfigSpec.BooleanValue allowInfiniteColonies;
     public final ForgeConfigSpec.BooleanValue allowOtherDimColonies;
     public final ForgeConfigSpec.IntValue     citizenRespawnInterval;
     public final ForgeConfigSpec.IntValue     maxCitizenPerColony;
@@ -382,7 +381,6 @@ public class ServerConfiguration extends AbstractConfiguration
         initialCitizenAmount = defineInteger(builder, "initialcitizenamount", 4, 1, 10);
         builderPlaceConstructionTape = defineBoolean(builder, "builderplaceconstructiontape", true);
         allowInfiniteSupplyChests = defineBoolean(builder, "allowinfinitesupplychests", false);
-        allowInfiniteColonies = defineBoolean(builder, "allowinfinitecolonies", false);
         allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", false);
         citizenRespawnInterval = defineInteger(builder, "citizenrespawninterval", 60, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX);
         maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 150, 4, 500);

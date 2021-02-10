@@ -19,7 +19,6 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.server.ServerWorld;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN;
@@ -80,15 +79,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         {
             findPaneOfTypeByID(BUTTON_DELETE, ButtonImage.class).enable();
             findPaneOfTypeByID(TEXT_OWN, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.own", ownerColony.getCenter()));
-
-            if (MineColonies.getConfig().getServer().allowInfiniteColonies.get())
-            {
                 findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.denied.existingandabandon"));
-            }
-            else
-            {
-                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.denied.existing"));
-            }
         }
         else
         {

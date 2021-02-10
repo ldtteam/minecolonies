@@ -71,8 +71,6 @@
   "minecolonies.config.builderplaceconstructiontape.comment": "Should construction tape be placed around in-construction builds?",
   "minecolonies.config.allowinfinitesupplychests": "Infinite Supply Camps/Ships",
   "minecolonies.config.allowinfinitesupplychests.comment": "Should players be able to place an infinite amount of supply camps/ships?",
-  "minecolonies.config.allowinfinitecolonies": "Infinite Colonies",
-  "minecolonies.config.allowinfinitecolonies.comment": "Should players be allowed to abandon their colony to create a new one easily? Note: This is buggy!",
   "minecolonies.config.allowotherdimcolonies": "Other Dim Colonies",
   "minecolonies.config.allowotherdimcolonies.comment": "Should colonies in other dimensions be allowed?",
   "minecolonies.config.citizenrespawninterval": "Inital Citizen Respawn Interval",
