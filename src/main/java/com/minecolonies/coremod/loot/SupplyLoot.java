@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.loot;
 
-import com.minecolonies.coremod.MineColonies;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTables;
 import net.minecraft.loot.TableLootEntry;

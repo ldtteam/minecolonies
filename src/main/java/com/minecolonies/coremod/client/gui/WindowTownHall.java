@@ -8,7 +8,6 @@ import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.CompactColonyReference;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;

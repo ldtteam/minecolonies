@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDelive
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import org.jetbrains.annotations.NotNull;
 
