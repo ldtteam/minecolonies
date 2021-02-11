@@ -18,6 +18,9 @@
   "minecolonies.config.requestsystem.comment": "All configurations related to the request system",
   "minecolonies.config.commands": "Command Settings",
   "minecolonies.config.commands.comment": "All configurations related to the MineColonies commands",
+  "minecolonies.config.research": "Research Settings",
+  "minecolonies.config.research.comment": "All configurations related to the research system",
+
   "minecolonies.config.disablecitizenvoices": "Citizen Sounds",
   "minecolonies.config.disablecitizenvoices.comment": "Disable citizen voices.",
 
@@ -35,7 +38,7 @@
   "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, the entire colony should be kept loaded.",
 
   "minecolonies.config.badvisitorchance": "Bad Recruitment Chance",
-  "minecolonies.config.badvisitorchance.comment": "Chance to get an evil Tavern visitor that will run off with the resources you give them. This is a %. [Default: 2]",
+  "minecolonies.config.badvisitorchance.comment": "Chance to get an evil Tavern visitor that will run off with the resources you give them. This is a %.",
 
   "minecolonies.config.listofplantables": "Florist Flowers",
   "minecolonies.config.listofplantables.comment": "The items and item-tags that the Florist can plant.",
@@ -224,7 +227,7 @@
   "minecolonies.config.debuginventories": "Debug Inventories",
   "minecolonies.config.debuginventories.comment": "Enable inventory debugging.",
   "minecolonies.config.luckyores": "List of Lucky Ores",
-  "minecolonies.config.luckyores.comment": "List of ore blocks rarely found magically by miners (see \"Ore Chance\").",
+  "minecolonies.config.luckyores.comment": "List of ore blocks rarely found magically by Miners (see \"Ore Chance\"). Includes the block and its chance, separated by exclamation marks.",
   "minecolonies.config.configlistrecruitmentitems": "List of Recruitment Items",
   "minecolonies.config.configlistrecruitmentitems.comment": "Items requested by Tavern visitors.",
   "minecolonies.config.pathfindingdebugdraw": "Pathfinding Debug Draw",
@@ -1131,7 +1134,7 @@
   "com.minecolonies.coremod.enchanter.nodrainingsset": "Please configure some workers I can drain experience from so I can work!",
 
   "minecolonies.config.enchanterexperiencemultiplier": "Enchanter Experience Multiplier",
-  "minecolonies.config.enchanterexperiencemultiplier.comment": "Experience multiplier of the enchanter (how much more experience do they get from a citizen than they drain). [Default: 2.0]",
+  "minecolonies.config.enchanterexperiencemultiplier.comment": "Experience multiplier of the enchanter (how much more experience do they get from a citizen than they drain).",
 
   "minecolonies.config.enchantments": "Enchantments",
   "minecolonies.config.enchantments.comment": "The possible enchantments for the enchanter.",
