@@ -68,7 +68,6 @@
                  source="minecolonies:textures/gui/red_wax_settings.png"/>
     <buttonimage id="workOrder" size="17 17" pos="62 191"
                  source="minecolonies:textures/gui/red_wax_work_orders.png"/>
-    <!-- todo Create the texture -->
     <buttonimage id="happiness" size="17 17" pos="62 215"
                  source="minecolonies:textures/gui/red_wax_information.png"/>
 

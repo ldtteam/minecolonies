@@ -889,8 +889,8 @@
   "com.minecolonies.coremod.gui.workerhuts.listrecipes": "List of Recipes",
   "com.minecolonies.coremod.gui.workerhuts.recipestatus": "%s of %s",
   "com.minecolonies.coremod.resolvers.crafter.private": "Crafting",
-  "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingson": "Replant on",
-  "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingsoff": "Replant off",
+  "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingson": "Replant On",
+  "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingsoff": "Replant Off",
 
   "com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe": "You have not learned this recipe yet!",
 
@@ -915,13 +915,6 @@
   "com.minecolonies.coremod.tooclose": "Too close to world spawn, needs to be at least %d blocks away!",
   "com.minecolonies.coremod.toofar": "Too far away from the world spawn, needs to be max %d blocks away!",
 
-  "com.minecolonies.coremod.gui.scantool.showres": "Show Resources",
-  "com.minecolonies.coremod.gui.scantool.to": "To:",
-  "com.minecolonies.coremod.gui.scantool.from": "From:",
-  "com.minecolonies.coremod.gui.scantool": "Scan Name:",
-  "com.minecolonies.coremod.gui.scantool.remove": "Remove",
-  "com.minecolonies.coremod.gui.scantool.replace": "Replace",
-  "com.minecolonies.coremod.gui.scan.replace.title": "Block Replacement GUI",
   "com.minecolonies.coremod.gui.scantool.select": "Select",
 
   "com.minecolonies.coremod.gui.workerhuts.happiness": "Happiness",
@@ -946,8 +939,8 @@
 
   "item.minecolonies.resourcescroll": "Resource Scroll",
 
-  "com.minecolonies.coremod.gui.workerhuts.baker.recipes": "Recipes",
-  "com.minecolonies.coremod.gui.workerhuts.gettool": "Get Guard Tool",
+  "com.minecolonies.coremod.gui.guardtower.gettool": "Get Guard Tool",
+  "com.minecolonies.coremod.gui.lumberjack.gettool": "Restriction Tool",
 
   "com.minecolonies.coremod.progress.supplies_placed": "§6 Welcome to MineColonies. Now that you have your supplies, how about searching a nice location to place your Town Hall to create your colony?",
   "com.minecolonies.coremod.progress.colony_founded": "§6 Word is out about a newly founded colony. Soon the first settlers will join your colony, if there is enough space around the Town Hall. (Experienced governors can turn off these helpful messages in the Town Hall block.)",
