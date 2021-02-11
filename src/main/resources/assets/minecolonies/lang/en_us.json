@@ -5,7 +5,7 @@
   "minecolonies.config.gameplay": "Gameplay Settings",
   "minecolonies.config.gameplay.comment": "All configuration items related to the core gameplay",
   "minecolonies.config.claims": "Claim Settings",
-  "minecolonies.config.claims.comment": "All configuration related to mod compatibility",
+  "minecolonies.config.claims.comment": "All configuration related to colony claims",
   "minecolonies.config.combat": "Combat Settings",
   "minecolonies.config.combat.comment": "All configuration items related to the combat elements of MineColonies",
   "minecolonies.config.permissions": "Permission Settings",
