@@ -43,7 +43,7 @@ public final class BackUpHelper
      */
     private BackUpHelper()
     {
-        /*
+        /**
          * Intentionally left empty.
          */
     }
@@ -51,7 +51,7 @@ public final class BackUpHelper
     /**
      * Backup the colony
      *
-     * @return true if succesful.
+     * @return true if successful.
      */
     public static boolean backupColonyData()
     {
@@ -92,7 +92,7 @@ public final class BackUpHelper
         }
         catch (final Exception e)
         {
-            /*
+            /**
              * Intentionally not being thrown.
              */
             Log.getLogger().warn("Unable to backup colony data, please contact an administrator", e);
@@ -163,7 +163,7 @@ public final class BackUpHelper
         }
         catch (final Exception e)
         {
-            /*
+            /**
              * Intentionally not being thrown.
              */
             Log.getLogger().warn("Error packing " + fileName + " into the zip.", e);
