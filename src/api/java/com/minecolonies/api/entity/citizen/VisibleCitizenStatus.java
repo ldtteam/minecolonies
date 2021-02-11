@@ -23,7 +23,7 @@ public class VisibleCitizenStatus
      * General public Icons
      */
     public final static VisibleCitizenStatus EAT         =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/hungry_2.png"), "com.minecolonies.gui.visiblestatus.eat");
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/hungry.png"), "com.minecolonies.gui.visiblestatus.eat");
     public final static VisibleCitizenStatus HOUSE       =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/house_big.png"), "com.minecolonies.gui.visiblestatus.idle");
     public final static VisibleCitizenStatus RAIDED      =
