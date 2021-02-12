@@ -467,8 +467,6 @@ public class RecipeStorage implements IRecipeStorage
      */
     private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context)
     {
-        final List<ItemStack> secondaryStacks = new ArrayList<>();
-
         if(!ItemStackUtils.isEmpty(outputStack))
         {
             for (final IItemHandler handler : handlers)
@@ -478,28 +476,6 @@ public class RecipeStorage implements IRecipeStorage
                     break;
                 }
             }
-
-            if(!secondaryOutputs.isEmpty())
-            {
-                secondaryStacks.addAll(secondaryOutputs);
-            }
-            else
-            {
-                for (final ItemStack stack : input)
-                {
-                    if (stack.getItem() == ModItems.buildTool)
-                    {
-                        continue;
-                    }
-    
-                    final ItemStack container = stack.getItem().getContainerItem(stack);
-                    if (!ItemStackUtils.isEmpty(container))
-                    {
-                        container.setCount(stack.getCount());
-                        secondaryStacks.add(container);
-                    }
-                }
-            }
         }
 
         if (loot == null && lootTable != null)
@@ -507,11 +483,14 @@ public class RecipeStorage implements IRecipeStorage
             loot = context.getWorld().getServer().getLootTableManager().getLootTableFromLocation(lootTable);
         }
         
+        final List<ItemStack> secondaryStacks = new ArrayList<>();
+
         if(loot != null && context != null)
         {
             secondaryStacks.addAll(loot.generate(context));
         }
 
+        secondaryStacks.addAll(secondaryOutputs);
         for (final ItemStack stack : secondaryStacks)
         {
             for (final IItemHandler handler : handlers)
