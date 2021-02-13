@@ -1,6 +1,6 @@
 {
   "comment": "name: Agile Archer * subtitle: Dodge... Again!",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 6,
   "parentResearch": "minecolonies:combat/improvedevasion",
   "subtitle": "com.minecolonies.research.combat.agilearcher.subtitle",

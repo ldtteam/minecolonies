@@ -1,7 +1,6 @@
 package com.minecolonies.api.inventory;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -430,11 +429,10 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     {
         if (citizen != null && citizen.getColony() != null)
         {
-            final AbstractResearchEffect<Double> researchEffect =
-              citizen.getColony().getResearchManager().getResearchEffects().getEffect(CITIZEN_INV_SLOTS, AbstractResearchEffect.class);
-            if (researchEffect != null && this.mainInventory.size() < DEFAULT_INV_SIZE + researchEffect.getEffect())
+            final double researchEffect = citizen.getColony().getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_INV_SLOTS);
+            if (researchEffect > 0 && this.mainInventory.size() < DEFAULT_INV_SIZE + researchEffect)
             {
-                resizeInventory(this.mainInventory.size(), (int) (DEFAULT_INV_SIZE + researchEffect.getEffect()));
+                resizeInventory(this.mainInventory.size(), (int) (DEFAULT_INV_SIZE + researchEffect));
             }
         }
 

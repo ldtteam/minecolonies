@@ -1,6 +1,6 @@
 {
   "comment": "name: Resilience * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 3,
   "parentResearch": "minecolonies:civilian/resistance",
   "icon": "minecraft:potion:1",

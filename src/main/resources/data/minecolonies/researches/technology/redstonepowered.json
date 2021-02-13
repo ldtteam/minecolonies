@@ -1,6 +1,6 @@
 {
   "comment": "name: Redstone Powered * subtitle: Like magic, but SCIENCE!",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 3,
   "parentResearch": "minecolonies:technology/isthisredstone",
   "subtitle": "com.minecolonies.research.technology.redstonepowered.subtitle",

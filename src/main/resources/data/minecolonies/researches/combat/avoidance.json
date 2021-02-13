@@ -1,6 +1,6 @@
 {
   "comment": "name: Avoidance * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 1,
   "sortOrder": 3,
   "exclusiveChildResearch": true,

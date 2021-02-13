@@ -1,6 +1,6 @@
 {
   "comment": "name: Rocking Roll * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 2,
   "parentResearch": "minecolonies:technology/stonecake",
   "icon": "minecolonies:blockhutcrusher:1",

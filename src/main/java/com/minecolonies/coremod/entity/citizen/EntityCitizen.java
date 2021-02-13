@@ -571,11 +571,11 @@ public class EntityCitizen extends AbstractEntityCitizen
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimensionKey());
             if (colonyView != null)
             {
-                 return colonyView.getResearchManager().getResearchEffects().getEffectBoolean(RAILS);
+                 return colonyView.getResearchManager().getResearchEffects().getEffectStrength(RAILS) > 0;
             }
             return false;
         }
-        return getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(RAILS);
+        return getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RAILS) > 0;
     }
 
     /**
@@ -597,12 +597,12 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (getHealth() < getMaxHealth())
         {
-            final double limitDecrease = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(SATLIMIT);
+            final double limitDecrease = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
 
             final double healAmount;
             if (citizenData.getSaturation() >= FULL_SATURATION + limitDecrease)
             {
-                healAmount = 2 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(REGENERATION));
+                healAmount = 2 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
             }
             else if (citizenData.getSaturation() < LOW_SATURATION)
             {
@@ -610,7 +610,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             else
             {
-                healAmount = 1 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(REGENERATION));;
+                healAmount = 1 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));;
             }
 
             heal((float) healAmount);
@@ -1121,7 +1121,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
 
         return MineColonies.getConfig().getServer().workersAlwaysWorkInRain.get() ||
-                 getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(WORKING_IN_RAIN) ||
+                 getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORKING_IN_RAIN) > 0 ||
                  (citizenColonyHandler.getWorkBuilding() != null && citizenColonyHandler.getWorkBuilding().canWorkDuringTheRain());
     }
 
@@ -1305,9 +1305,9 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 if (citizenJobHandler.getColonyJob() instanceof JobKnight)
                 {
-                    if(citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectBoolean(BLOCK_ATTACKS))
+                    if(citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_ATTACKS) > 0)
                     {
-                        if (getRandom().nextDouble() < citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectValue(BLOCK_ATTACKS))
+                        if (getRandom().nextDouble() < citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_ATTACKS))
                         {
                             return false;
                         }
@@ -1317,7 +1317,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 if (citizenData.getWorkBuilding() instanceof AbstractBuildingGuards && ((AbstractBuildingGuards) citizenData.getWorkBuilding()).shallRetrieveOnLowHealth()
                       && getHealth() < ((int) getMaxHealth() * 0.2D))
                 {
-                    damageInc *= 1 - citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectValue(FLEEING_DAMAGE);
+                    damageInc *= 1 - citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(FLEEING_DAMAGE);
                 }
             }
         }
@@ -1503,11 +1503,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (citizenJobHandler.getColonyJob() instanceof JobKnight)
         {
-            return (int) (super.getTotalArmorValue() * (1 + citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectValue(MELEE_ARMOR)));
+            return (int) (super.getTotalArmorValue() * (1 + citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(MELEE_ARMOR)));
         }
         else if (citizenJobHandler.getColonyJob() instanceof JobRanger)
         {
-            return (int) (super.getTotalArmorValue() * (1 + citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectValue(ARCHER_ARMOR)));
+            return (int) (super.getTotalArmorValue() * (1 + citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_ARMOR)));
         }
         return super.getTotalArmorValue();
     }

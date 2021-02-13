@@ -2253,7 +2253,6 @@ public class InventoryUtils
             }
             tries++;
         }
-        return;
     }
 
     /**

@@ -1,6 +1,6 @@
 {
   "comment": "name: Savage Strike * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 6,
   "parentResearch": "minecolonies:combat/mightycleave",
   "icon": "minecraft:diamond_sword:1",

@@ -68,7 +68,7 @@ public class JobMiner extends AbstractJobStructure<EntityAIStructureMiner, JobMi
     {
         if (damageSource == DamageSource.LAVA || damageSource == DamageSource.IN_FIRE || damageSource == DamageSource.ON_FIRE)
         {
-            return getColony().getResearchManager().getResearchEffects().getEffectBoolean(FIRE_RES);
+            return getColony().getResearchManager().getResearchEffects().getEffectStrength(FIRE_RES) > 0;
         }
 
         return super.ignoresDamage(damageSource);

@@ -1,10 +1,10 @@
 {
   "comment": "name: Master * subtitle: At least they get a fancy title this time.",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 5,
   "parentResearch": "minecolonies:civilian/bachelor",
   "subtitle": "com.minecolonies.research.civilian.master.subtitle",
-  "icon": "minecolonies:textures/icons/research/xpgain4.png:1",
+  "icon": "minecolonies:textures/icons/research/xpgain4.png",
   "requirements": [
     {
       "building": "library",

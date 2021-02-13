@@ -1,6 +1,6 @@
 {
   "comment": "name: Stringwork * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 2,
   "parentResearch": "minecolonies:technology/woodwork",
   "icon": "minecolonies:blockhutfletcher:1",

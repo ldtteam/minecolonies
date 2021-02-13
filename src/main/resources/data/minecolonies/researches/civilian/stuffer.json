@@ -1,9 +1,9 @@
 {
   "comment": "name: Stuffer * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 4,
   "parentResearch": "minecolonies:civilian/gorger",
-  "icon": "minecolonies:textures/icons/research/saturation3.png:1",
+  "icon": "minecolonies:textures/icons/research/saturation3.png",
   "requirements": [
     {
       "building": "cook",

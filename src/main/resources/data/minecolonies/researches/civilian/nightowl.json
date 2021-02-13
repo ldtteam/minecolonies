@@ -1,6 +1,6 @@
 {
   "comment": "name: Night Owl * subtitle: Overtime penalty rates need not apply.",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 3,
   "sortOrder": 2,
   "parentResearch": "minecolonies:civilian/circus",

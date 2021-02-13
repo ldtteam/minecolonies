@@ -1,6 +1,6 @@
 {
   "comment": "name: Improved Evasion * subtitle: Dive",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 5,
   "parentResearch": "minecolonies:combat/evasion",
   "subtitle": "com.minecolonies.research.combat.improvedevasion.subtitle",

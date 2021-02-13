@@ -1,6 +1,6 @@
 {
   "comment": "name: Tools * subtitle: Like breaking stuff, but in reverse!",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 4,
   "parentResearch": "minecolonies:technology/skills",
   "subtitle": "com.minecolonies.research.technology.tools.subtitle",

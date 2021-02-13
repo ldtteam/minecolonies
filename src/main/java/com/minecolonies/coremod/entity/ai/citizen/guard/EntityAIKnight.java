@@ -159,7 +159,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
 
         if (target != null && target.isAlive())
         {
-            if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(SHIELD_USAGE) && shieldSlot != -1)
+            if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0 && shieldSlot != -1)
             {
                 worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
                 worker.setActiveHand(Hand.OFF_HAND);
@@ -236,7 +236,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
 
             if (knockbackAoeCooldown <= 0)
             {
-                if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(KNIGHT_WHIRLWIND)
+                if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_WHIRLWIND) > 0
                       && worker.getRandom().nextInt(KNOCKBACK_CHANCE) == 0)
                 {
                     List<LivingEntity> entities = this.world.getLoadedEntitiesWithinAABB(LivingEntity.class, worker.getBoundingBox().grow(2.0D, 0.5D, 2.0D));
@@ -285,7 +285,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
             target.setRevengeTarget(worker);
             if (target instanceof MobEntity)
             {
-                if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(KNIGHT_TAUNT))
+                if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
                 {
                     ((MobEntity) target).setAttackTarget(worker);
                 }
@@ -319,7 +319,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
                 addDmg += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute()) / 2.5;
             }
 
-            addDmg += worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(MELEE_DAMAGE);
+            addDmg += worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MELEE_DAMAGE);
 
             return (int) ((addDmg) * MineColonies.getConfig().getServer().knightDamageMult.get());
         }

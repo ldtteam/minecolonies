@@ -1,6 +1,6 @@
 {
   "comment": "name: What Is This Speed? * subtitle: We stopped trying to calculate it after a while.",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 5,
   "parentResearch": "minecolonies:technology/heavymachinery",
   "subtitle": "com.minecolonies.research.technology.whatisthisspeed.subtitle",

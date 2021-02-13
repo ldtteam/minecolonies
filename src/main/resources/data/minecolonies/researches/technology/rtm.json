@@ -1,6 +1,6 @@
 {
   "comment": "name: RTM * subtitle: I saw some information on this somewhere...",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 5,
   "parentResearch": "minecolonies:technology/recipebook",
   "subtitle": "com.minecolonies.research.technology.rtm.subtitle",

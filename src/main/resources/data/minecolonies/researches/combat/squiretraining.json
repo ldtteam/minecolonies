@@ -1,6 +1,6 @@
 {
   "comment": "name: Squire Training * subtitle: First lesson: how to mop the floors.",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 3,
   "parentResearch": "minecolonies:combat/improvedswords",
   "subtitle": "com.minecolonies.research.combat.squiretraining.subtitle",

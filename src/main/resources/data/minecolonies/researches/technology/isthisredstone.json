@@ -1,6 +1,6 @@
 {
   "comment": "name: Is This Redstone? * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 2,
   "parentResearch": "minecolonies:technology/hot",
   "icon": "minecraft:redstone:1",

@@ -1,10 +1,10 @@
 {
   "comment": "name: Hormones * subtitle: These are safe, right?",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 3,
   "parentResearch": "minecolonies:civilian/nurture",
   "subtitle": "com.minecolonies.research.civilian.hormones.subtitle",
-  "icon": "minecolonies:textures/icons/research/childgrowth2.png:1",
+  "icon": "minecolonies:textures/icons/research/childgrowth2.png",
   "requirements": [
     {
       "building": "school",

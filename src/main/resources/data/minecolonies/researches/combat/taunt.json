@@ -1,6 +1,6 @@
 {
   "comment": "name: Taunt * subtitle: Your mother was a hamster and your father smelt of elderberries!",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 1,
   "sortOrder": 5,
   "subtitle": "com.minecolonies.research.combat.taunt.subtitle",

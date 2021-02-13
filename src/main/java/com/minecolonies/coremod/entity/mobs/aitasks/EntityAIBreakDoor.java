@@ -95,7 +95,7 @@ public class EntityAIBreakDoor extends BreakDoorGoal
             {
                 final IColony colony = ((AbstractEntityMinecoloniesMob) entity).getColony();
 
-                fasterBreakPerXNearby += colony.getResearchManager().getResearchEffects().getEffectValue(MECHANIC_ENHANCED_GATES);
+                fasterBreakPerXNearby += colony.getResearchManager().getResearchEffects().getEffectStrength(MECHANIC_ENHANCED_GATES);
             }
             breakChance = Math.max(1,
               hardness / (1 + (entity.world.getLoadedEntitiesWithinAABB(AbstractEntityMinecoloniesMob.class, entity.getBoundingBox().grow(5)).size() / fasterBreakPerXNearby)));

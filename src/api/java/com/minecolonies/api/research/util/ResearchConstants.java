@@ -1,6 +1,8 @@
 package com.minecolonies.api.research.util;
 
 import com.ldtteam.blockout.Color;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * Class for research constants.
@@ -28,15 +30,18 @@ public final class ResearchConstants
     public static final String TAG_COSTS          = "cost";
     public static final String TAG_COST_ITEM      = "cost-item";
     public static final String TAG_REQS           = "requirements";
+    public static final String TAG_REQ_TYPE       = "requirement-type";
     public static final String TAG_REQ_ITEM       = "requirement-item";
     public static final String TAG_EFFECTS        = "effects";
+    public static final String TAG_EFFECT_TYPE    = "effect-type";
     public static final String TAG_EFFECT_ITEM    = "effect-item";
     public static final String TAG_RESEARCH_LVL   = "depth";
     public static final String TAG_RESEARCH_SORT  = "sort";
     public static final String TAG_PROGRESS       = "progress";
     public static final String TAG_CHILDS         = "hasResearchedChild";
     public static final String TAG_ONLY_CHILD     = "onlyChild";
-    public static final String TAG_ICON           = "icon";
+    public static final String TAG_ICON_TEXTURE   = "icon_tex";
+    public static final String TAG_ICON_ITEM_STACK= "icon_is";
     public static final String TAG_SUBTITLE_NAME  = "subtitle";
     public static final String TAG_INSTANT        = "instant";
     public static final String TAG_AUTOSTART      = "autostart";
@@ -78,7 +83,7 @@ public final class ResearchConstants
     public static final int    TIME_HEIGHT          = 12;
     public static final int    TIME_WIDTH           = 95;
 
-    public static final boolean DRAW_ICONS = false;
+    public static final boolean DRAW_ICONS = true;
 
     public static final int    COLOR_TEXT_NEGATIVE  = Color.rgbaToInt(218, 10, 10, 255);
     public static final int    COLOR_TEXT_LABEL     = Color.rgbaToInt(218, 202, 171, 255);
@@ -88,51 +93,51 @@ public final class ResearchConstants
      * Research Effect Name strings, used for ResearchEffectManager and ResearchRegistry lookups.
      */
     //Addition Multipliers
-    public static final String ARCHER_DAMAGE                = "minecolonies:effects/archerdamageaddition";
-    public static final String CITIZEN_INV_SLOTS            = "minecolonies:effects/citizeninvslotsaddition";
-    public static final String CITIZEN_CAP                  = "minecolonies:effects/citizencapaddition";
-    public static final String MECHANIC_ENHANCED_GATES      = "minecolonies:effects/enhancesgatedurabilityaddition";
-    public static final String FLEEING_SPEED                = "minecolonies:effects/fleeingspeedaddition";
-    public static final String SATLIMIT                     = "minecolonies:effects/healingsaturationlimitaddition";
-    public static final String HEALTH_BOOST                 = "minecolonies:effects/healthaddition";
-    public static final String MELEE_DAMAGE                 = "minecolonies:effects/meleedamageaddition";
-    public static final String WORK_LONGER                  = "minecolonies:effects/workingdayhaddition";
+    public static final ResourceLocation ARCHER_DAMAGE                = new ResourceLocation(Constants.MOD_ID, "effects/archerdamageaddition");
+    public static final ResourceLocation CITIZEN_INV_SLOTS            = new ResourceLocation(Constants.MOD_ID, "effects/citizeninvslotsaddition");
+    public static final ResourceLocation CITIZEN_CAP                  = new ResourceLocation(Constants.MOD_ID, "effects/citizencapaddition");
+    public static final ResourceLocation MECHANIC_ENHANCED_GATES      = new ResourceLocation(Constants.MOD_ID, "effects/enhancesgatedurabilityaddition");
+    public static final ResourceLocation FLEEING_SPEED                = new ResourceLocation(Constants.MOD_ID, "effects/fleeingspeedaddition");
+    public static final ResourceLocation SATLIMIT                     = new ResourceLocation(Constants.MOD_ID, "effects/healingsaturationlimitaddition");
+    public static final ResourceLocation HEALTH_BOOST                 = new ResourceLocation(Constants.MOD_ID, "effects/healthaddition");
+    public static final ResourceLocation MELEE_DAMAGE                 = new ResourceLocation(Constants.MOD_ID, "effects/meleedamageaddition");
+    public static final ResourceLocation WORK_LONGER                  = new ResourceLocation(Constants.MOD_ID, "effects/workingdayhaddition");
 
     //Multiplier Modifiers
-    public static final String ARCHER_ARMOR      = "minecolonies:effects/archerarmormultiplier";
-    public static final String ARMOR_DURABILITY  = "minecolonies:effects/armordurabilitymultiplier";
-    public static final String BLOCK_ATTACKS     = "minecolonies:effects/blockattacksmultiplier";
-    public static final String BLOCK_BREAK_SPEED = "minecolonies:effects/blockbreakspeedmultiplier";
-    public static final String BLOCK_PLACE_SPEED = "minecolonies:effects/blockplacespeedmultiplier";
-    public static final String DOUBLE_ARROWS     = "minecolonies:effects/doublearrowsmultiplier";
-    public static final String FARMING           = "minecolonies:effects/farmingmultiplier";
-    public static final String FLEEING_DAMAGE    = "minecolonies:effects/fleeingdamagemultiplier";
-    public static final String GROWTH            = "minecolonies:effects/growthmultiplier";
-    public static final String HAPPINESS         = "minecolonies:effects/happinessmultiplier";
-    public static final String LEVELING          = "minecolonies:effects/levelingmultiplier";
-    public static final String MELEE_ARMOR       = "minecolonies:effects/meleearmormultiplier";
-    public static final String MINIMUM_STOCK     = "minecolonies:effects/minimumstockmultiplier";
-    public static final String MORE_ORES         = "minecolonies:effects/moreoresmultiplier";
-    public static final String RECIPES           = "minecolonies:effects/recipesmultiplier";
-    public static final String REGENERATION      = "minecolonies:effects/regenerationmultiplier";
-    public static final String SATURATION        = "minecolonies:effects/saturationmultiplier";
-    public static final String SLEEP_LESS        = "minecolonies:effects/sleeplessmultiplier";
-    public static final String TEACHING          = "minecolonies:effects/teachingmultiplier";
-    public static final String TOOL_DURABILITY   = "minecolonies:effects/tooldurabilitymultiplier";
-    public static final String WALKING           = "minecolonies:effects/walkingmultiplier";
+    public static final ResourceLocation ARCHER_ARMOR      = new ResourceLocation(Constants.MOD_ID, "effects/archerarmormultiplier");
+    public static final ResourceLocation ARMOR_DURABILITY  = new ResourceLocation(Constants.MOD_ID, "effects/armordurabilitymultiplier");
+    public static final ResourceLocation BLOCK_ATTACKS     = new ResourceLocation(Constants.MOD_ID, "effects/blockattacksmultiplier");
+    public static final ResourceLocation BLOCK_BREAK_SPEED = new ResourceLocation(Constants.MOD_ID, "effects/blockbreakspeedmultiplier");
+    public static final ResourceLocation BLOCK_PLACE_SPEED = new ResourceLocation(Constants.MOD_ID, "effects/blockplacespeedmultiplier");
+    public static final ResourceLocation DOUBLE_ARROWS     = new ResourceLocation(Constants.MOD_ID, "effects/doublearrowsmultiplier");
+    public static final ResourceLocation FARMING           = new ResourceLocation(Constants.MOD_ID, "effects/farmingmultiplier");
+    public static final ResourceLocation FLEEING_DAMAGE    = new ResourceLocation(Constants.MOD_ID, "effects/fleeingdamagemultiplier");
+    public static final ResourceLocation GROWTH            = new ResourceLocation(Constants.MOD_ID, "effects/growthmultiplier");
+    public static final ResourceLocation HAPPINESS         = new ResourceLocation(Constants.MOD_ID, "effects/happinessmultiplier");
+    public static final ResourceLocation LEVELING          = new ResourceLocation(Constants.MOD_ID, "effects/levelingmultiplier");
+    public static final ResourceLocation MELEE_ARMOR       = new ResourceLocation(Constants.MOD_ID, "effects/meleearmormultiplier");
+    public static final ResourceLocation MINIMUM_STOCK     = new ResourceLocation(Constants.MOD_ID, "effects/minimumstockmultiplier");
+    public static final ResourceLocation MORE_ORES         = new ResourceLocation(Constants.MOD_ID, "effects/moreoresmultiplier");
+    public static final ResourceLocation RECIPES           = new ResourceLocation(Constants.MOD_ID, "effects/recipesmultiplier");
+    public static final ResourceLocation REGENERATION      = new ResourceLocation(Constants.MOD_ID, "effects/regenerationmultiplier");
+    public static final ResourceLocation SATURATION        = new ResourceLocation(Constants.MOD_ID, "effects/saturationmultiplier");
+    public static final ResourceLocation SLEEP_LESS        = new ResourceLocation(Constants.MOD_ID, "effects/sleeplessmultiplier");
+    public static final ResourceLocation TEACHING          = new ResourceLocation(Constants.MOD_ID, "effects/teachingmultiplier");
+    public static final ResourceLocation TOOL_DURABILITY   = new ResourceLocation(Constants.MOD_ID, "effects/tooldurabilitymultiplier");
+    public static final ResourceLocation WALKING           = new ResourceLocation(Constants.MOD_ID, "effects/walkingmultiplier");
 
     //Unlock Ability modifiers.
-    public static final String CRUSHING_11       = "minecolonies:effects/crushing11unlock";
-    public static final String ARCHER_USE_ARROWS = "minecolonies:effects/consumearrowsunlock";
-    public static final String KNIGHT_TAUNT      = "minecolonies:effects/knighttauntmobsunlock";
-    public static final String FIRE_RES          = "minecolonies:effects/minerfireresunlock";
-    public static final String ARROW_PIERCE      = "minecolonies:effects/piercingarrowsunlock";
-    public static final String PLANT_2           = "minecolonies:effects/plant2unlock";
-    public static final String RAILS             = "minecolonies:effects/railsunlock";
-    public static final String RETREAT           = "minecolonies:effects/retreatunlock";
-    public static final String SHIELD_USAGE      = "minecolonies:effects/shieldusageunlock";
-    public static final String KNIGHT_WHIRLWIND  = "minecolonies:effects/whirlwindabilityunlock";
-    public static final String WORKING_IN_RAIN   = "minecolonies:effects/workinginrainunlock";
+    public static final ResourceLocation CRUSHING_11       = new ResourceLocation(Constants.MOD_ID, "effects/crushing11unlock");
+    public static final ResourceLocation ARCHER_USE_ARROWS = new ResourceLocation(Constants.MOD_ID, "effects/consumearrowsunlock");
+    public static final ResourceLocation KNIGHT_TAUNT      = new ResourceLocation(Constants.MOD_ID, "effects/knighttauntmobsunlock");
+    public static final ResourceLocation FIRE_RES          = new ResourceLocation(Constants.MOD_ID, "effects/minerfireresunlock");
+    public static final ResourceLocation ARROW_PIERCE      = new ResourceLocation(Constants.MOD_ID, "effects/piercingarrowsunlock");
+    public static final ResourceLocation PLANT_2           = new ResourceLocation(Constants.MOD_ID, "effects/plant2unlock");
+    public static final ResourceLocation RAILS             = new ResourceLocation(Constants.MOD_ID, "effects/railsunlock");
+    public static final ResourceLocation RETREAT           = new ResourceLocation(Constants.MOD_ID, "effects/retreatunlock");
+    public static final ResourceLocation SHIELD_USAGE      = new ResourceLocation(Constants.MOD_ID, "effects/shieldusageunlock");
+    public static final ResourceLocation KNIGHT_WHIRLWIND  = new ResourceLocation(Constants.MOD_ID, "effects/whirlwindabilityunlock");
+    public static final ResourceLocation WORKING_IN_RAIN   = new ResourceLocation(Constants.MOD_ID, "effects/workinginrainunlock");
 
     /**
      * Private constructor to hide implicit public one.

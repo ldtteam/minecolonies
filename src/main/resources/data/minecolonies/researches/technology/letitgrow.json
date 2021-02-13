@@ -1,6 +1,6 @@
 {
   "comment": "name: Let It Grow * subtitle: Just one tiny seed is all we really need.",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 2,
   "sortOrder": 2,
   "parentResearch": "minecolonies:technology/biodegradable",

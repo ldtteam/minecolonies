@@ -13,7 +13,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.items.ItemBlockHut;
-import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
@@ -30,10 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -309,8 +305,8 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             needsResearch = false;
             return;
         }
-        final String effectId = colony.getResearchManager().getResearchEffectIdFrom(this);
-        if(colony.getResearchManager().getResearchEffects().getEffectBoolean(effectId))
+        final ResourceLocation effectId = colony.getResearchManager().getResearchEffectIdFrom(this);
+        if(colony.getResearchManager().getResearchEffects().getEffectStrength(effectId) > 0)
         {
             needsResearch = false;
             return;

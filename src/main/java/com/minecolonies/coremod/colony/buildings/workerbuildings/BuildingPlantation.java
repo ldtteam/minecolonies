@@ -20,7 +20,6 @@ import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.network.messages.server.colony.building.plantation.PlantationSetPhaseMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -30,7 +29,6 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -305,7 +303,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
      */
     public Item nextPlantPhase()
     {
-        if (getColony().getResearchManager().getResearchEffects().getEffectBoolean(PLANT_2))
+        if (getColony().getResearchManager().getResearchEffects().getEffectStrength(PLANT_2) > 0)
         {
             int next = settings.indexOf(currentPhase);
 

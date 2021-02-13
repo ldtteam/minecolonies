@@ -1,6 +1,6 @@
 {
   "comment": "name: Penetrating Shot * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 3,
   "parentResearch": "minecolonies:combat/preciseshot",
   "icon": "minecraft:bow:1",

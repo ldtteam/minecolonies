@@ -1,6 +1,6 @@
 {
   "comment": "name: Cleave * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 4,
   "parentResearch": "minecolonies:combat/powerattack",
   "icon": "minecraft:iron_sword:1",

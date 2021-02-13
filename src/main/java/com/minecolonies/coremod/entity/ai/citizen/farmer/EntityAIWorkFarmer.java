@@ -740,7 +740,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     @Override
     protected List<ItemStack> increaseBlockDrops(final List<ItemStack> drops)
     {
-        if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(FARMING))
+        if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FARMING) > 0)
         {
             return drops;
         }
@@ -749,7 +749,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         for (final ItemStack stack : drops)
         {
             final ItemStack drop = stack.copy();
-            if (worker.getRandom().nextDouble() < worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(FARMING))
+            if (worker.getRandom().nextDouble() < worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FARMING))
             {
                 drop.setCount(drop.getCount() * 2);
             }
@@ -771,7 +771,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         final int fortune = ItemStackUtils.getFortuneOf(tool);
         final BlockState state = world.getBlockState(pos);
 
-        final double chance = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(FARMING);
+        final double chance = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FARMING);
 
         final NonNullList<ItemStack> drops = NonNullList.create();
         state.getDrops(new LootContext.Builder((ServerWorld) world).withLuck(fortune)

@@ -1,6 +1,6 @@
 {
   "comment": "name: The Flintstones * subtitle: Yabba Dabba Doo!",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 2,
   "parentResearch": "minecolonies:technology/hot",
   "subtitle": "com.minecolonies.research.technology.theflintstones.subtitle",

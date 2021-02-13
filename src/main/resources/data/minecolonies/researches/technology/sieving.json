@@ -1,6 +1,6 @@
 {
   "comment": "name: Sieving * subtitle: How did that get in there?",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 2,
   "sortOrder": 2,
   "parentResearch": "minecolonies:technology/woodwork",

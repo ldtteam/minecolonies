@@ -3,6 +3,7 @@ package com.minecolonies.coremod.research;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
@@ -13,11 +14,15 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.Network;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -33,22 +38,22 @@ public class GlobalResearchTree implements IGlobalResearchTree
     /**
      * The map containing all researches by ID and branch.
      */
-    private final Map<String, Map<String, IGlobalResearch>> researchTree = new HashMap<>();
+    private final Map<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> researchTree = new HashMap<>();
 
     /**
      * The map matching branch IDs to their UI-presented names, or IDs otherwise.
      */
-    private final Map<String, String> branchNames = new HashMap<>();
+    private final Map<ResourceLocation, TranslationTextComponent> branchNames = new HashMap<>();
 
     /**
      * The map matching branch IDs the base times, defaulting to 1.
      */
-    private final Map<String, Double> branchTimes = new HashMap<>();
+    private final Map<ResourceLocation, Double> branchTimes = new HashMap<>();
 
     /**
      * The list containing all resettable researches by ResourceLocation.
      */
-    private final List<String> reloadableResearch = new ArrayList<>();
+    private final List<ResourceLocation> reloadableResearch = new ArrayList<>();
 
     /**
      * The list containing all autostart research.
@@ -58,21 +63,21 @@ public class GlobalResearchTree implements IGlobalResearchTree
     /**
      * The map containing loaded Research Effect IDs.
      */
-    private final HashSet<String> researchEffectsIds = new HashSet<>();
+    private final HashSet<ResourceLocation> researchEffectsIds = new HashSet<>();
 
     @Override
-    public IGlobalResearch getResearch(final String branch, final String id) { return researchTree.get(branch).get(id); }
+    public IGlobalResearch getResearch(final ResourceLocation branch, final ResourceLocation id) { return researchTree.get(branch).get(id); }
 
     @Override
-    public boolean hasResearch(final String branch, final String id)
+    public boolean hasResearch(final ResourceLocation branch, final ResourceLocation id)
     {
         return (researchTree.containsKey(branch) && researchTree.get(branch).containsKey(id));
     }
 
     @Override
-    public boolean hasResearch(final String id)
+    public boolean hasResearch(final ResourceLocation id)
     {
-        for(final Map.Entry<String, Map<String, IGlobalResearch>> branch: researchTree.entrySet())
+        for(final Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch: researchTree.entrySet())
         {
             if(branch.getValue().containsKey(id))
             {
@@ -83,9 +88,9 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public void addResearch(final String branch, final IGlobalResearch research, final boolean isReloadedWithWorld)
+    public void addResearch(final ResourceLocation branch, final IGlobalResearch research, final boolean isReloadedWithWorld)
     {
-        final Map<String, IGlobalResearch> branchMap;
+        final Map<ResourceLocation, IGlobalResearch> branchMap;
         if (researchTree.containsKey(branch))
         {
             branchMap = researchTree.get(branch);
@@ -93,7 +98,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         else
         {
             branchMap = new HashMap<>();
-            branchNames.put(branch, branch);
+            branchNames.put(branch, new TranslationTextComponent(branch.getPath()));
             branchTimes.put(branch, 1.0);
         }
 
@@ -120,25 +125,25 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public boolean hasResearchEffect(final String id)
+    public boolean hasResearchEffect(final ResourceLocation id)
     {
         return researchEffectsIds.contains(id);
     }
 
     @Override
-    public List<String> getBranches()
+    public List<ResourceLocation> getBranches()
     {
         return new ArrayList<>(researchTree.keySet());
     }
 
     @Override
-    public List<String> getPrimaryResearch(final String branch)
+    public List<ResourceLocation> getPrimaryResearch(final ResourceLocation branch)
     {
         if (!researchTree.containsKey(branch))
         {
             return Collections.emptyList();
         }
-        return researchTree.get(branch).values().stream().filter(research -> research.getParent().isEmpty())
+        return researchTree.get(branch).values().stream().filter(research -> research.getParent().getPath().isEmpty())
                  .sorted(Comparator.comparing(IGlobalResearch::getId))
                  .map(IGlobalResearch::getId).collect(Collectors.toList());
     }
@@ -146,9 +151,9 @@ public class GlobalResearchTree implements IGlobalResearchTree
     @Override
     public void reset()
     {
-        for(String reset : reloadableResearch)
+        for(ResourceLocation reset : reloadableResearch)
         {
-            for(Map.Entry<String, Map<String, IGlobalResearch>> branch : researchTree.entrySet())
+            for(Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch : researchTree.entrySet())
             {
                 branch.getValue().remove(reset);
             }
@@ -156,7 +161,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         reloadableResearch.clear();
         // Autostart is only accessible as a dynamically-assigned trait, so we can reset all of it.
         autostartResearch.clear();
-        final Iterator<Map.Entry<String, Map<String, IGlobalResearch>>> iterator = researchTree.entrySet().iterator();
+        final Iterator<Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>>> iterator = researchTree.entrySet().iterator();
         while (researchTree.entrySet().size() > 0 && iterator.hasNext())
         {
             if(iterator.next().getValue().size() == 0)
@@ -167,25 +172,25 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public void setBranchName(final String branchId, final String branchName)
+    public void setBranchName(final ResourceLocation branchId, final TranslationTextComponent branchName)
     {
         branchNames.put(branchId, branchName);
     }
 
     @Override
-    public TranslationTextComponent getBranchName(final String branchId)
+    public TranslationTextComponent getBranchName(final ResourceLocation branchId)
     {
-        return new TranslationTextComponent(branchNames.get(branchId));
+        return branchNames.get(branchId);
     }
 
     @Override
-    public void setBranchTime(final String branchId, final double baseTime)
+    public void setBranchTime(final ResourceLocation branchId, final double baseTime)
     {
         branchTimes.put(branchId, baseTime);
     }
 
     @Override
-    public double getBranchTime(final String branchId)
+    public double getBranchTime(final ResourceLocation branchId)
     {
         return branchTimes.get(branchId);
     }
@@ -245,10 +250,10 @@ public class GlobalResearchTree implements IGlobalResearchTree
         buf.writeCompoundTag(treeNBT);
 
         // Lastly, we'll send the branch identifiers.
-        for(Map.Entry<String, Map<String, IGlobalResearch>> branch : researchTree.entrySet())
+        for(Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch : researchTree.entrySet())
         {
-            buf.writeString(branch.getKey());
-            buf.writeString(branchNames.get(branch.getKey()));
+            buf.writeResourceLocation(branch.getKey());
+            buf.writeString(branchNames.get(branch.getKey()).getKey());
             buf.writeDouble(branchTimes.get(branch.getKey()));
         }
     }
@@ -261,8 +266,8 @@ public class GlobalResearchTree implements IGlobalResearchTree
             readFromNBT(buf.readCompoundTag());
             for(int i = 0; i < researchTree.entrySet().size(); i++)
             {
-                final String branchId = buf.readString();
-                branchNames.put(branchId, buf.readString());
+                ResourceLocation branchId = buf.readResourceLocation();
+                branchNames.put(branchId, new TranslationTextComponent(buf.readString()));
                 branchTimes.put(branchId, buf.readDouble());
             }
         }
@@ -274,9 +279,9 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public List<IResearchEffect<?>> getEffectsForResearch(@NotNull final String id)
+    public List<IResearchEffect<?>> getEffectsForResearch(@NotNull final ResourceLocation id)
     {
-        for(final String branch: this.getBranches())
+        for(final ResourceLocation branch: this.getBranches())
         {
             final IGlobalResearch r = this.getResearch(branch, id);
             if (r != null)
@@ -294,44 +299,56 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public List<String> getResearchResetCosts()
+    public List<ItemStorage> getResearchResetCosts()
     {
-        List<String> outputList = new ArrayList<>();
+        List<ItemStorage> outputList = new ArrayList<>();
         for (final String cost : MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchResetCost.get())
         {
             final String[] costParts = cost.split(":");
-            if (costParts.length == 1)
-            {
-                outputList.add("minecraft:" + costParts[0] + ":1");
-            }
-            if (costParts.length == 2)
-            {
-                try
-                {
-                    final int count = Integer.parseInt(costParts[1]);
-                    outputList.add("minecraft:" + costParts[0] + ":" + count);
-                }
-                catch (final NumberFormatException err)
-                {
-                    outputList.add(costParts[0] + ":" + costParts[1] + ":1");
-                }
-            }
+            ItemStorage item;
             if (costParts.length == 3)
             {
+                item = new ItemStorage(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1]))));
                 try
                 {
                     final int count = Integer.parseInt(costParts[2]);
-                    outputList.add(costParts[0] + ":" + costParts[1] + ":" + count);
+                    item.setAmount(count);
                 }
                 catch (final NumberFormatException err)
                 {
                     Log.getLogger().error("Malformed count value in Research Reset Cost for" + costParts[0] + ":" + costParts[1] + " where " + costParts[2] + "is not a number.");
-                    outputList.add(costParts[0] + ":" + costParts[1] + ":1");
                 }
             }
-            if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+            else if (costParts.length == 2)
             {
-                Log.getLogger().info("Validated research reset cost : " + outputList.get(outputList.size() - 1));
+                try
+                {
+                    final int count = Integer.parseInt(costParts[1]);
+                    item = new ItemStorage(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", costParts[0]))));
+                    item.setAmount(count);
+                }
+                catch (final NumberFormatException err)
+                {
+                    item = new ItemStorage(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1]))));
+                }
+            }
+            else if (costParts.length == 1)
+            {
+                item = new ItemStorage(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", costParts[0]))));
+            }
+            else
+            {
+                continue;
+            }
+            if(!item.getItem().equals(Items.AIR))
+            {
+                item.ignoreDamageValue();
+                item.ignoreNBT();
+                outputList.add(item);
+                if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+                {
+                    Log.getLogger().info("Validated research reset cost : " + outputList.get(outputList.size() - 1));
+                }
             }
         }
         return outputList;

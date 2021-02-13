@@ -141,7 +141,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
                 totalWeight += happinessModifier.getWeight();
             }
 
-            final double happinessResult = (total / totalWeight) * (1 + colony.getResearchManager().getResearchEffects().getEffectValue(HAPPINESS));
+            final double happinessResult = (total / totalWeight) * (1 + colony.getResearchManager().getResearchEffects().getEffectStrength(HAPPINESS));
 
             cachedHappiness = Math.min(10.0 * happinessResult, 10);
         }

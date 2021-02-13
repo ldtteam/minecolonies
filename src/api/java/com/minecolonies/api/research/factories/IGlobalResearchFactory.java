@@ -4,6 +4,9 @@ import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.research.IGlobalResearch;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -23,24 +26,24 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
             throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only " + PARAMS_GLOBAL_RESEARCH + " are allowed!");
         }
 
-        if (!(context[0] instanceof String))
+        if (!(context[0] instanceof ResourceLocation))
         {
-            throw new IllegalArgumentException("First parameter is supposed to be the ID (String)!");
+            throw new IllegalArgumentException("First parameter is supposed to be the ID (ResourceLocation)!");
         }
 
-        if (!(context[1] instanceof String))
+        if (!(context[1] instanceof ResourceLocation))
         {
-            throw new IllegalArgumentException("Second parameter is supposed to be the branchID (String)!");
+            throw new IllegalArgumentException("Second parameter is supposed to be the branchID (ResourceLocation)!");
         }
 
-        if (!(context[2] instanceof String))
+        if (!(context[2] instanceof ResourceLocation))
         {
-            throw new IllegalArgumentException("Third parameter is supposed to be the parent (String)!");
+            throw new IllegalArgumentException("Third parameter is supposed to be the parent (ResourceLocation)!");
         }
 
-        if (!(context[3] instanceof String))
+        if (!(context[3] instanceof TranslationTextComponent))
         {
-            throw new IllegalArgumentException("Fourth parameter is supposed to be the description (String)!");
+            throw new IllegalArgumentException("Fourth parameter is supposed to be the description (Translation Text Component)!");
         }
 
         if (!(context[4] instanceof Integer))
@@ -48,10 +51,10 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
             throw new IllegalArgumentException("Fifth parameter is supposed to be the Depth (int)!");
         }
 
-        final String id = (String) context[0];
-        final String branch = (String) context[1];
-        final String parent = (String) context[2];
-        final String desc = (String) context[3];
+        final ResourceLocation id = (ResourceLocation) context[0];
+        final ResourceLocation branch = (ResourceLocation) context[1];
+        final ResourceLocation parent = (ResourceLocation) context[2];
+        final TranslationTextComponent desc = (TranslationTextComponent) context[3];
         final int depth = (int) context[4];
         final int sortOrder;
         if(context.length > 5)
@@ -62,36 +65,45 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
         {
             sortOrder = 1;
         }
-        final String icon;
+        final ResourceLocation iconTexture;
         if(context.length > 6)
         {
-            icon = (String) context[6];
+            iconTexture = (ResourceLocation) context[6];
         }
         else
         {
-            icon = "";
+            iconTexture = new ResourceLocation("");
         }
-        final String subtitle;
+        final ItemStack iconStack;
         if(context.length > 7)
         {
-            subtitle = (String) context[7];
+            iconStack = (ItemStack) context[7];
         }
         else
         {
-            subtitle = "";
+            iconStack = ItemStack.EMPTY;
+        }
+        final TranslationTextComponent subtitle;
+        if(context.length > 8)
+        {
+            subtitle = (TranslationTextComponent) context[8];
+        }
+        else
+        {
+            subtitle = new TranslationTextComponent("");
         }
         final boolean onlyChild;
         final boolean hidden;
         final boolean autostart;
         final boolean instant;
         final boolean immutable;
-        if (context.length == 13)
+        if (context.length == 14)
         {
-            onlyChild = (boolean) context[8];
-            hidden = (boolean) context[9];
-            autostart = (boolean) context[10];
-            instant = (boolean) context[11];
-            immutable = (boolean) context[12];
+            onlyChild = (boolean) context[9];
+            hidden = (boolean) context[10];
+            autostart = (boolean) context[11];
+            instant = (boolean) context[12];
+            immutable = (boolean) context[13];
         }
         else
         {
@@ -101,7 +113,7 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
             instant = false;
             immutable = false;
         }
-        return getNewInstance(id, branch, parent, desc, depth, sortOrder, icon, subtitle, onlyChild, hidden, autostart, instant, immutable);
+        return getNewInstance(id, branch, parent, desc, depth, sortOrder, iconTexture, iconStack, subtitle, onlyChild, hidden, autostart, instant, immutable);
     }
 
     /**
@@ -113,7 +125,8 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
      * @param desc              the description of the research.
      * @param universityLevel   the university tier of the research.
      * @param sortOrder         the sorting order for display of the research in comparison to its siblings.
-     * @param icon              the string of the icon's characteristics.
+     * @param iconTexture       the resource location of the icon's texture, if one is present.
+     * @param iconStack         the ItemStack for an icon, if one is used.
      * @param subtitle          the optional subtitle description of the research.
      * @param onlyChild         if the research's completion prohibits its siblings from being completed.
      * @param hidden            if the research is visible only when it is eligible for research.
@@ -123,6 +136,7 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
      * @return a new Instance of Research.
      */
     @NotNull
-    IGlobalResearch getNewInstance(final String id, final String branch, final String parent, final String desc, final int universityLevel, final int sortOrder,
-      final String icon,final String subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable);
+    IGlobalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final TranslationTextComponent desc, final int universityLevel, final int sortOrder,
+      final ResourceLocation iconTexture, final ItemStack iconStack, final TranslationTextComponent subtitle, final boolean onlyChild,
+      final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable);
 }

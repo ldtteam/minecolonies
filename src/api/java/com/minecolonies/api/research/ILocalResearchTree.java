@@ -5,6 +5,7 @@ import com.minecolonies.api.research.effects.IResearchEffectManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface ILocalResearchTree
      * @param branch the branch of the research.
      * @return the IResearch object.
      */
-    ILocalResearch getResearch(final String branch, final String id);
+    ILocalResearch getResearch(final ResourceLocation branch, final ResourceLocation id);
 
     /**
      * Add a research to the tree.
@@ -28,7 +29,7 @@ public interface ILocalResearchTree
      * @param research the research to add.
      * @param branch   the branch of the research.
      */
-    void addResearch(final String branch, final ILocalResearch research);
+    void addResearch(final ResourceLocation branch, final ILocalResearch research);
 
     /**
      * Check if a branch already researched a level 6 research. This is important since only 1 of these can be researched for each branch.
@@ -36,7 +37,7 @@ public interface ILocalResearchTree
      * @param branch the branch to check.
      * @return true if so.
      */
-    boolean branchFinishedHighestLevel(final String branch);
+    boolean branchFinishedHighestLevel(final ResourceLocation branch);
 
     /**
      * Get a list of all research in progress.
@@ -50,14 +51,14 @@ public interface ILocalResearchTree
      *
      * @return true if complete or if no such research is loaded, false if not completed.
      */
-     boolean hasCompletedResearch(final String researchId);
+     boolean hasCompletedResearch(final ResourceLocation researchId);
 
     /**
      * Finish a research and remove it from the inProgress list.
      *
      * @param id the id of the research to finish.
      */
-    void finishResearch(final String id);
+    void finishResearch(final ResourceLocation id);
 
     /**
      * Attempt to begin a research.

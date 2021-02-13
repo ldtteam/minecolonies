@@ -1,6 +1,6 @@
 {
   "comment": "name: Dung * subtitle: Fresh or not, here it comes!",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 3,
   "parentResearch": "minecolonies:technology/bonemeal",
   "subtitle": "com.minecolonies.research.technology.dung.subtitle",

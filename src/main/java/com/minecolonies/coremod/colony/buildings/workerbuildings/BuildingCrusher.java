@@ -96,7 +96,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     {
         this.crusherRecipes.clear();
 
-        oneByOne = getColony().getResearchManager().getResearchEffects().getEffectBoolean(CRUSHING_11);
+        oneByOne = getColony().getResearchManager().getResearchEffects().getEffectStrength(CRUSHING_11) > 0;
         for (final Map.Entry<ItemStorage, ItemStorage> mode : IColonyManager.getInstance().getCompatibilityManager().getCrusherModes().entrySet())
         {
             if (this.crusherMode == null)
@@ -249,7 +249,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             this.crusherMode = new ItemStorage(ItemStack.read(compound.getCompound(TAG_CRUSHER_MODE)));
         }
 
-        this.oneByOne = compound.getBoolean(CRUSHING_11);
+        this.oneByOne = compound.getBoolean(TAG_CRUSHER_RATIO);
     }
 
     @Override
@@ -265,7 +265,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             compound.put(TAG_CRUSHER_MODE, crusherModeNBT);
         }
 
-        compound.putBoolean(CRUSHING_11, oneByOne);
+        compound.putBoolean(TAG_CRUSHER_RATIO, oneByOne);
         return compound;
     }
 
@@ -274,7 +274,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     {
         super.serializeToView(buf);
 
-        if (crusherRecipes.isEmpty() || !oneByOne && getColony().getResearchManager().getResearchEffects().getEffectBoolean(CRUSHING_11))
+        if (crusherRecipes.isEmpty() || !oneByOne && getColony().getResearchManager().getResearchEffects().getEffectStrength(CRUSHING_11) > 0)
         {
             loadCrusherMode();
         }

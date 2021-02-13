@@ -331,9 +331,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                 worker.swingArm(Hand.MAIN_HAND);
 
                 int amountOfArrows = 1;
-                if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(DOUBLE_ARROWS))
+                if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DOUBLE_ARROWS) > 0)
                 {
-                    if (worker.getRandom().nextDouble() < worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(DOUBLE_ARROWS))
+                    if (worker.getRandom().nextDouble() < worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DOUBLE_ARROWS))
                     {
                         amountOfArrows++;
                     }
@@ -344,7 +344,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                     final ArrowEntity arrow = ModEntities.MC_NORMAL_ARROW.create(world);
                     arrow.setShooter(worker);
 
-                    if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(ARROW_PIERCE))
+                    if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARROW_PIERCE) > 0)
                     {
                         arrow.setPierceLevel((byte) 2);
                     }
@@ -355,9 +355,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                     final double zVector = target.getPosZ() - worker.getPosZ();
 
                     final double distance = MathHelper.sqrt(xVector * xVector + zVector * zVector);
-                    double damage = getRangedAttackDamage() + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(ARCHER_DAMAGE);
+                    double damage = getRangedAttackDamage() + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_DAMAGE);
 
-                    if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(ARCHER_USE_ARROWS))
+                    if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0)
                     {
                         // Research allows archers to consume arrows from inventory for extra damage.
                         int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem);
@@ -444,7 +444,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
         super.atBuildingActions();
 
 
-        if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(ARCHER_USE_ARROWS))
+        if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0)
         {
             // Pickup arrows and request arrows
             InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(),

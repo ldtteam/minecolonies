@@ -1,6 +1,6 @@
 {
   "comment": "name: Madness! * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 6,
   "parentResearch": "minecolonies:technology/seemsautomatic",
   "icon": "minecraft:spectral_arrow:1",

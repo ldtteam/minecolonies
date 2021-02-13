@@ -1,6 +1,6 @@
 {
   "comment": "name: Seems Automatic * subtitle: It all happened so fast...",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 5,
   "parentResearch": "minecolonies:technology/tools",
   "subtitle": "com.minecolonies.research.technology.seemsautomatic.subtitle",

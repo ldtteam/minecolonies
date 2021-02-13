@@ -2,6 +2,7 @@ package com.minecolonies.coremod.research;
 
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -15,10 +16,10 @@ public class ResearchEffectManager implements IResearchEffectManager
     /**
      * The map of the research effects, from a string identifier to the effect.
      */
-    private final Map<String, IResearchEffect<?>> effectMap = new HashMap<>();
+    private final Map<ResourceLocation, IResearchEffect<?>> effectMap = new HashMap<>();
 
     @Override
-    public <W extends IResearchEffect<?>> W getEffect(final String id, @NotNull final Class<W> type)
+    public <W extends IResearchEffect<?>> W getEffect(final ResourceLocation id, @NotNull final Class<W> type)
     {
         final IResearchEffect<?> effect = effectMap.get(id);
         if (type.isInstance(effect))
@@ -29,7 +30,7 @@ public class ResearchEffectManager implements IResearchEffectManager
     }
 
     @Override
-    public double getEffectValue(final String id)
+    public double getEffectStrength(final ResourceLocation id)
     {
         if(effectMap.containsKey(id))
         {
@@ -39,19 +40,6 @@ public class ResearchEffectManager implements IResearchEffectManager
             }
         }
         return 0;
-    }
-
-    @Override
-    public boolean getEffectBoolean(final String id)
-    {
-        if(effectMap.containsKey(id))
-        {
-            if(effectMap.get(id) instanceof GlobalResearchEffect)
-            {
-                return ((GlobalResearchEffect)effectMap.get(id)).getEffect() > 0;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -72,7 +60,7 @@ public class ResearchEffectManager implements IResearchEffectManager
     }
 
     @Override
-    public void clear()
+    public void removeAllEffects()
     {
         effectMap.clear();
     }

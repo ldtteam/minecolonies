@@ -1,6 +1,6 @@
 {
   "comment": "name: Fear * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 4,
   "parentResearch": "minecolonies:combat/feint",
   "icon": "minecraft:iron_boots:1",

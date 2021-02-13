@@ -1,10 +1,10 @@
 {
   "comment": "name: Athlete * subtitle: Try thinking as fast as your feet now!",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 6,
   "parentResearch": "minecolonies:civilian/swift",
   "subtitle": "com.minecolonies.research.civilian.athlete.subtitle",
-  "icon": "minecolonies:textures/icons/research/speed4.png:1",
+  "icon": "minecolonies:textures/icons/research/speed4.png",
   "requirements": [
     {
       "item": "minecraft:rabbit_foot",

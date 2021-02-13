@@ -42,7 +42,7 @@ public class WindowHutPlantation extends AbstractWindowWorkerBuilding<BuildingPl
         final Button plantSettingsButton = findPaneOfTypeByID(BLOCK_BUTTON, Button.class);
         final Label plantHintLabel = findPaneOfTypeByID(HINT_LABEL, Label.class);
 
-        if (building.getColony().getResearchManager().getResearchEffects().getEffectBoolean(PLANT_2))
+        if (building.getColony().getResearchManager().getResearchEffects().getEffectStrength(PLANT_2) > 0)
         {
             plantHintLabel.setLabelText(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_PLANTATION_NOT_PLANT));
         }

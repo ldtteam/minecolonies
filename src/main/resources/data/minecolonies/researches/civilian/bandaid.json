@@ -1,9 +1,9 @@
 {
   "comment": "name: Band Aid * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 2,
   "parentResearch": "minecolonies:civilian/stamina",
-  "icon": "minecolonies:textures/icons/research/regeneration1.png:1",
+  "icon": "minecolonies:textures/icons/research/regeneration1.png",
   "requirements": [
     {
       "building": "library",

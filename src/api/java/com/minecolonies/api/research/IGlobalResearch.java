@@ -2,6 +2,9 @@ package com.minecolonies.api.research;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.effects.IResearchEffect;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,42 +54,49 @@ public interface IGlobalResearch
     void startResearch(@NotNull final ILocalResearchTree localResearchTree);
 
     /**
-     * Human readable description of research.
+     * Human readable description of research, in human-readable text or as a translation key.
      * @return the description.
      */
-    String getName();
+    TranslationTextComponent getName();
 
     /**
-     * Subtitle description of research.
+     * Subtitle description of research, in human-readable text or as a translation key.
      * @return the optional subtitle name.
      */
-    String getSubtitle();
+    TranslationTextComponent getSubtitle();
 
     /**
      * Getter of the id of the research.
-     * @return the String id.
+     * @return the research id, as a ResourceLocation
      */
-    String getId();
+    ResourceLocation getId();
 
     /**
      * Getter of the research icon's resource location.
-     * @return the string of the ResourceLocation of the icon, in the pattern namespace:directory:(optional count).
+     * On the client, this texture file's presence has already been validated.
+     * @return the ResourceLocation of the icon.
      */
-    String getIcon();
+    ResourceLocation getIconTextureResourceLocation();
+
+    /**
+     * Getter of the research icon's item stack.
+     * @return the ItemStack for the icon.
+     */
+    ItemStack getIconItemStack();
 
     /**
      * Get the id of the parent IResearch.
      *
-     * @return the string id.
+     * @return the parent id, as a ResourceLocation
      */
-    String getParent();
+    ResourceLocation getParent();
 
     /**
-     * Get the string name of the branch.
+     * Get the id of the branch.
      *
-     * @return the branch name.
+     * @return the branch id, as a ResourceLocation
      */
-    String getBranch();
+    ResourceLocation getBranch();
 
     /**
      * Get the depth in the research tree.
@@ -163,60 +173,39 @@ public interface IGlobalResearch
      * Add a child to a research, without setting parentage.
      * @param child the child to add
      */
-    void addChild(final String child);
+    void addChild(final ResourceLocation child);
 
     /**
      * Add an individual cost.
-     * @param cost the individual itemstack to add to the cost list, as a string.
+     * @param cost the individual item to add to the cost list, as an ItemStorage.
      */
-    void addCost(final String cost);
+    void addCost(final ItemStorage cost);
 
     /**
      * Add an individual effect.
-     * @param effect the individual effect to add to the research, as a string.
+     * @param effect the individual effect to add to the research, as a IResearchEffect.
      */
-    void addEffect(final String effect);
+    void addEffect(final IResearchEffect<?> effect);
 
     /**
      * Add an individual requirement
-     * @param requirement the individual requirement to add to the research, as a string.
+     * @param requirement the individual requirement to add to the research, as an IResearchRequirement.
      */
-    void addRequirement(final String requirement);
+    void addRequirement(final IResearchRequirement requirement);
 
     /**
      * Get the list of children of the research.
      *
      * @return a copy of the list of child identifiers.
      */
-    List<String> getChildren();
+    List<ResourceLocation> getChildren();
 
     /**
      * Set the parent of a research.
      *
      * @param id the id of the parent.
      */
-    void setParent(String id);
-
-    /**
-     * Set the research requirement.
-     *
-     * @param requirements the requirements.
-     */
-    void setRequirement(final List<IResearchRequirement> requirements);
-
-    /**
-     * Set the research effects.
-     *
-     * @param effects      the effects of research completion.
-     */
-    void setEffects(final List<IResearchEffect<?>> effects);
-
-    /**
-     * Set the research costs.
-     *
-     * @param costs the items consumed to begin research.
-     */
-    void setCosts(final List<ItemStorage> costs);
+    void setParent(ResourceLocation id);
 
     /**
      * Getter for the research requirement.

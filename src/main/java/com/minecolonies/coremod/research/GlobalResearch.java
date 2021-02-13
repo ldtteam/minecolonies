@@ -15,7 +15,9 @@ import com.minecolonies.coremod.MineColonies;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +42,7 @@ public class GlobalResearch implements IGlobalResearch
     public static final String RESEARCH_NAME_PROP = "name";
 
     /**
-     * The property name that indicates research subtitlee, as presented to users, or a translation key.
+     * The property name that indicates research subtitle, as presented to users, or a translation key.
      * This will not always be visible.
      */
     public static final String RESEARCH_SUBTITLE_PROP = "subtitle";
@@ -142,9 +144,9 @@ public class GlobalResearch implements IGlobalResearch
     private static final String RESEARCH_EFFECTS_PROP = "effects";
 
     /**
-     * The property name that indicates research branch-id, used to distinguish branch-setting files. Required for branch settings.
+     * The property name for parent research id.  Only applies at the level of branch settings.
      */
-    public static final String RESEARCH_BRANCH_ID_PROP = "branch-id";
+    public static final String RESEARCH_BRANCH_NAME_PROP = "branch-name";
 
     /**
      * The property name for parent research id.  Only applies at the level of branch settings.
@@ -158,34 +160,41 @@ public class GlobalResearch implements IGlobalResearch
     private final List<ItemStorage> costList = new ArrayList<>();
 
     /**
-     * The parent research which has to be completed first.
+     * The id of the parent research which has to be completed first.
      */
-    private String parent;
+    private ResourceLocation parent;
 
     /**
-     * The string id of the research.
+     * The id of the research.
      */
-    private final String id;
+    private final ResourceLocation id;
 
     /**
-     * The research branch.
+     * The research branch id.
      */
-    private final String branch;
+    private final ResourceLocation branch;
 
     /**
-     * The research icon's resource location.
+     * The research icon's texture, as a resource location.
+     * Optional, and will prevent an itemIcon from being drawn.
      */
-    private final String icon;
+    private final ResourceLocation textureIcon;
 
     /**
-     * The pre-localized name for the research.  Used only if name tag is in json.
+     * The research icon's as an item.
+     * Optional, and will not be drawn if a valid textureIcon is present.
      */
-    private final String name;
+    private final ItemStack itemIcon;
+
+    /**
+     * The pre-localized name for the research.
+     */
+    private final TranslationTextComponent name;
 
     /**
      * Subtitle names for the research.  Optional, and only shows up rarely.
      */
-    private final String subtitle;
+    private final TranslationTextComponent subtitle;
 
     /**
      * The research effects of this research.
@@ -230,7 +239,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * List of children of a research.
      */
-    private final List<String> children = new ArrayList<>();
+    private final List<ResourceLocation> children = new ArrayList<>();
 
     /**
      * The requirement for this research.
@@ -247,18 +256,19 @@ public class GlobalResearch implements IGlobalResearch
      */
     public GlobalResearch(final String id, final String branch, final String name, final int universityLevel, final IResearchEffect<?> effect)
     {
-        this.id = id;
+        this.id = new ResourceLocation(id);
         this.effects.add(effect);
-        this.name = name;
-        this.subtitle = "";
+        this.name = new TranslationTextComponent(name);
+        this.subtitle = new TranslationTextComponent("");
         this.depth = universityLevel;
         this.sortOrder = 1;
-        this.branch = branch;
+        this.branch = new ResourceLocation(branch);
         this.hidden = false;
         this.instant = false;
         this.autostart = false;
         this.immutable = false;
-        this.icon = "";
+        this.itemIcon = ItemStack.EMPTY;
+        this.textureIcon = new ResourceLocation("");
         if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
         {
             Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
@@ -269,17 +279,19 @@ public class GlobalResearch implements IGlobalResearch
      * Create the new research with multiple effects
      *
      * @param id              its id.
-     * @param effects          its effects.
+     * @param effects         its effects.
      * @param universityLevel the depth in the tree.
      * @param branch          the branch it is on.
-     * @param icon            a string of format namespace:item:count pointing to an item or block, or namespace:texture, to be used as an icon.
+     * @param iconTexture     a resource location for a valid texture file for the research's icon.
+     * @param iconItemStack   an itemStack used as an alternative icon.
      * @param immutable       if the research can not be reset once unlocked.
      */
-    public GlobalResearch(final String id, final String branch, final int universityLevel, final List<IResearchEffect<?>> effects, final String icon, final boolean immutable)
+    public GlobalResearch(final ResourceLocation id, final ResourceLocation branch, final int universityLevel, final List<IResearchEffect<?>> effects, final ResourceLocation iconTexture, final ItemStack iconItemStack, final boolean immutable)
     {
         this.id = id;
-        this.name = id;
-        this.subtitle = "";
+        final String autogenKey = "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /]",".");
+        this.name = new TranslationTextComponent(autogenKey);
+        this.subtitle = new TranslationTextComponent("");
         this.effects.addAll(effects);
         this.depth = universityLevel;
         this.sortOrder = 1;
@@ -287,8 +299,16 @@ public class GlobalResearch implements IGlobalResearch
         this.hidden = false;
         this.autostart = false;
         this.instant = false;
-        this.icon = icon;
         this.immutable = immutable;
+        if (MineColonies.proxy.isClient())
+        {
+            this.textureIcon = validateIconTextures(iconTexture);
+        }
+        else
+        {
+            this.textureIcon = iconTexture;
+        }
+        this.itemIcon = iconItemStack;
         if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
         {
             Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
@@ -304,7 +324,8 @@ public class GlobalResearch implements IGlobalResearch
      * @param desc            the optional name of the research.  If "", a key generated from the id will be used instead.
      * @param universityLevel the depth in the tree.
      * @param sortOrder       the relative vertical order of the research's display, in relation to its siblings.
-     * @param icon            a string of format namespace:item:count pointing to an item or block, or namespace:texture, to be used as an icon.
+     * @param iconTexture     a resource location for the optional research's icon texture.
+     * @param iconStack       an iconStack used as an optional research icon.
      * @param subtitle        An optional short description of the research, in plaintext or as a translation key.  This will only show rarely.
      * @param onlyChild       if the research allows only one child research to be completed.
      * @param hidden          if the research is only visible when eligible to be researched.
@@ -312,8 +333,8 @@ public class GlobalResearch implements IGlobalResearch
      * @param instant         if the research should be completed instantly (ish) from when begun.
      * @param immutable       if the research can not be reset once unlocked.
      */
-    public GlobalResearch(final String id, final String branch, final String parent, final String desc, final int universityLevel, final int sortOrder, final String icon,
-      final String subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable)
+    public GlobalResearch(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final TranslationTextComponent desc, final int universityLevel, final int sortOrder,
+      final ResourceLocation iconTexture, final ItemStack iconStack, final TranslationTextComponent subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable)
     {
         this.id = id;
         this.name = desc;
@@ -326,8 +347,9 @@ public class GlobalResearch implements IGlobalResearch
         this.hidden = hidden;
         this.autostart = autostart;
         this.instant = instant;
-        this.icon = validateIcons(icon);
         this.immutable = immutable;
+        this.itemIcon = iconStack;
+        this.textureIcon = iconTexture;
         if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
         {
             Log.getLogger().info("Client received recipe [" + branch + "/" + id + "]");
@@ -337,8 +359,8 @@ public class GlobalResearch implements IGlobalResearch
     @Override
     public boolean canResearch(final int uni_level, @NotNull final ILocalResearchTree localTree)
     {
-        final IGlobalResearch parentResearch = parent.isEmpty() ? null : IGlobalResearchTree.getInstance().getResearch(branch, parent);
-        final ILocalResearch localParentResearch = parent.isEmpty() ? null : localTree.getResearch(branch, parentResearch.getId());
+        final IGlobalResearch parentResearch = parent.getPath().isEmpty() ? null : IGlobalResearchTree.getInstance().getResearch(branch, parent);
+        final ILocalResearch localParentResearch = parent.getPath().isEmpty() ? null : localTree.getResearch(branch, parentResearch.getId());
         final ILocalResearch localResearch = localTree.getResearch(this.getBranch(), this.getId());
 
         return (localResearch == null)
@@ -391,35 +413,28 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public String getId()
+    public ResourceLocation getId()
     {
         return this.id;
     }
 
     @Override
-    public String getName()
-    {
-        if(this.name.isEmpty())
-        {
-           return "com." + this.id.split(":")[0] + ".research." + this.id.split(":")[1].replaceAll("[ /:]",".") + ".name";
-        }
-        return this.name;
-    }
+    public TranslationTextComponent getName() { return this.name; }
 
     @Override
-    public String getSubtitle()
+    public TranslationTextComponent getSubtitle()
     {
         return this.subtitle;
     }
 
     @Override
-    public String getParent()
+    public ResourceLocation getParent()
     {
         return this.parent;
     }
 
     @Override
-    public String getBranch()
+    public ResourceLocation getBranch()
     {
         return this.branch;
     }
@@ -475,7 +490,7 @@ public class GlobalResearch implements IGlobalResearch
     @Override
     public boolean hasResearchedChild(@NotNull final ILocalResearchTree localTree)
     {
-        for (final String child : this.children)
+        for (final ResourceLocation child : this.children)
         {
             final IGlobalResearch childResearch = IGlobalResearchTree.getInstance().getResearch(branch, child);
             final ILocalResearch localResearch = localTree.getResearch(childResearch.getBranch(), childResearch.getId());
@@ -495,66 +510,26 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public void addChild(final String child)
+    public void addChild(final ResourceLocation child)
     {
         this.children.add(child);
     }
 
     @Override
-    public void addCost(final String cost)
+    public void addCost(final ItemStorage cost)
     {
-        final String[] costParts = cost.split(":");
-        if(costParts.length > 1)
-        {
-            final ItemStack is = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1])));
-            if(costParts.length > 2)
-            {
-                is.setCount(Integer.parseInt(costParts[2]));
-            }
-            costList.add(new ItemStorage(is));
-        }
+        costList.add(cost);
     }
 
-    @Override
-    public void addEffect(final String effect)
+    public void addEffect(final IResearchEffect<?> effect)
     {
-        final String[] effectParts = effect.split("`");
-        effects.add(new GlobalResearchEffect(effectParts));
+        effects.add(effect);
     }
 
-    @Override
-    public void addRequirement(final String requirement)
+    public void addRequirement(final IResearchRequirement requirement)
     {
-        String[] reqParts = requirement.split("`");
-        if(reqParts.length < 2)
-        {
-            return;
-        }
-        switch(reqParts[0])
-        {
-            case ResearchResearchRequirement.type:
-                this.requirements.add(new ResearchResearchRequirement(reqParts));
-                break;
-            case BuildingResearchRequirement.type:
-                this.requirements.add(new BuildingResearchRequirement(reqParts));
-                break;
-            case AlternateBuildingResearchRequirement.type:
-                this.requirements.add(new AlternateBuildingResearchRequirement(reqParts));
-                break;
-        }
+        this.requirements.add(requirement);
     }
-
-    @Override
-    public void setRequirement(final List<IResearchRequirement> requirements)
-    {
-        this.requirements.addAll(requirements);
-    }
-
-    @Override
-    public void setEffects(final List<IResearchEffect<?>> effects) { this.effects.addAll(effects); }
-
-    @Override
-    public void setCosts(final List<ItemStorage> costs) { this.costList.addAll(costs); }
 
     @Override
     public List<IResearchRequirement> getResearchRequirement()
@@ -563,13 +538,13 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public void setParent(final String id)
+    public void setParent(final ResourceLocation id)
     {
         this.parent = id;
     }
 
     @Override
-    public List<String> getChildren()
+    public List<ResourceLocation> getChildren()
     {
         return this.children;
     }
@@ -581,46 +556,61 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public String getIcon() {return this.icon;}
+    public ResourceLocation getIconTextureResourceLocation() {return this.textureIcon;}
+
+    @Override
+    public ItemStack getIconItemStack() {return this.itemIcon;}
 
     /**
      * Parse a Json object into a new GlobalResearch.
      *
      * @param researchJson      the json representing the recipe
-     * @param resourceLocation  the json's location.
+     * @param resourceLocation  the json location.
      * @param effectCategories  a map of effect categories, by id.
-     * @param validateIcons     if icons need to be validated.  This can only be performed on the client, and should only need to be done once.
+     * @param checkIcons     if icons need to be validated.  This can only be performed on the client, and should only need to be done once.
      */
-    public GlobalResearch(@NotNull final JsonObject researchJson, final ResourceLocation resourceLocation, final Map<String, ResearchEffectCategory> effectCategories, final boolean validateIcons)
+    public GlobalResearch(@NotNull final JsonObject researchJson, final ResourceLocation resourceLocation, final Map<ResourceLocation, ResearchEffectCategory> effectCategories, final boolean checkIcons)
     {
-        this.id = resourceLocation.toString();
-        final String autogenKey = "com." + this.id.split(":")[0] + ".research." + this.id.split(":")[1].replaceAll("[ /:]",".");
-        this.name = getStringSafe(researchJson, RESEARCH_NAME_PROP, autogenKey + ".name");
-        this.subtitle = getStringSafe(researchJson, RESEARCH_SUBTITLE_PROP, autogenKey + ".subtitle");
-        this.branch = getBranch(researchJson, resourceLocation);
-        if (validateIcons && MineColonies.proxy.isClient())
-        {
-            this.icon = validateIcons(getStringSafe(researchJson, RESEARCH_ICON_PROP,""));
-        }
-        else
-        {
-            this.icon = getStringSafe(researchJson, RESEARCH_ICON_PROP, "");
-        }
+        this.id = resourceLocation;
+        final String autogenKey = "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /]",".");
+        this.name = new TranslationTextComponent(getStringSafe(researchJson, RESEARCH_NAME_PROP, autogenKey + ".name"));
+        this.subtitle = new TranslationTextComponent(getStringSafe(researchJson, RESEARCH_SUBTITLE_PROP, ""));
+        this.branch = new ResourceLocation(getBranch(researchJson, resourceLocation));
         this.depth = getUniversityLevel(researchJson);
         this.sortOrder = getSortOrder(researchJson);
-        this.parent = getStringSafe(researchJson, RESEARCH_PARENT_PROP, "");
+        this.parent = new ResourceLocation(getStringSafe(researchJson, RESEARCH_PARENT_PROP, ""));
         this.onlyChild = getBooleanSafe(researchJson, RESEARCH_EXCLUSIVE_CHILD_PROP);
         this.instant = getBooleanSafe(researchJson, RESEARCH_INSTANT_PROP);
         this.autostart = getBooleanSafe(researchJson, RESEARCH_AUTOSTART_PROP);
         this.hidden = getBooleanSafe(researchJson, RESEARCH_HIDDEN_PROP);
         this.immutable = getBooleanSafe(researchJson, RESEARCH_NO_RESET_PROP);
+        final String iconString = getStringSafe(researchJson, RESEARCH_ICON_PROP,"");
+        // Assume icon values with a '.' are texture files.
+        if(iconString.contains("."))
+        {
+            final ResourceLocation unsafeIconTexture = new ResourceLocation(iconString);
+            if (checkIcons && MineColonies.proxy.isClient())
+            {
+                this.textureIcon = validateIconTextures(unsafeIconTexture);
+            }
+            else
+            {
+                this.textureIcon = unsafeIconTexture;
+            }
+            this.itemIcon = ItemStack.EMPTY;
+        }
+        else
+        {
+            this.textureIcon = new ResourceLocation("");
+            this.itemIcon = parseIconItemStacks(iconString);
+        }
 
         parseRequirements(researchJson);
         parseEffects(researchJson, effectCategories);
     }
 
     /**
-     * Gets the branch for a research from a JSON object, if it exists and is valid, or "parseerrors" otherwise.
+     * Gets the branch for a research from a JSON object, if it exists and is valid, or "parse errors" otherwise.
      *
      * @param researchJson        A json object to retrieve the ID from.
      * @param resourceLocation    The {@link ResourceLocation} of the json being parsed.
@@ -635,7 +625,7 @@ public class GlobalResearch implements IGlobalResearch
         else
         {
             Log.getLogger().error("Error in Research Branch for" + resourceLocation);
-            return "parseerrors";
+            return "parse errors";
         }
     }
 
@@ -677,37 +667,58 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     /**
-     * Gets the optional icon location from a research json, if present.  If not available, or if requests a file or block that does not exist, returns an empty string.
-     * @param icon                The unvalidated string representing an icon's resource location or texture file location.
-     * @return                    The string, or an empty string if the texture does not exist.
+     * Validates the Icon Texture is a valid file.  This should only be called on client.
+     * This should be run when the client first receives the data, to avoid exceptions in the GUI thread.
+     * @param icon                The unvalidated ResourceLocation representing a texture file location.
+     * @return                    The validated ResourceLocation, or minecraft:"" if not valid.
      */
-    private String validateIcons(final String icon)
+    private ResourceLocation validateIconTextures(final ResourceLocation icon)
+    {
+        try
+        {
+            Minecraft.getInstance().getResourceManager().getResource(icon);
+            return icon;
+        }
+        catch (IOException notFoundError)
+        {
+            Log.getLogger()
+              .info("Resource file for Minecraft:" + icon.toString() + " not found for " + this.branch + "/" + this.id + " : " + notFoundError.getLocalizedMessage());
+        }
+        return new ResourceLocation("");
+    }
+
+    /**
+     * Parse the Icon.  Returns an empty item stack if the string is invalid.
+     * @param icon                The unvalidated string representing an icon's resource location or texture file location.
+     * @return                    The ItemStack for a given string representation, if a valid item is registered, or ItemStack.Empty if invalid.
+     */
+    private ItemStack parseIconItemStacks(final String icon)
     {
         final String[] iconParts = icon.split(":");
-        final String[] outputString = new String[3];
+        final String[] outputString = new String[2];
+        int count;
         // Do preliminary validation here, as later uses will always be in UI space.
         if (iconParts.length > 3)
         {
             Log.getLogger().info("Malformed icon property for " + this.branch + "/" + this.id + ".  Icons may contain at most namespace:identifier:count.");
-            return "";
+            return ItemStack.EMPTY;
         }
 
         if (iconParts.length == 3)
         {
             try
             {
-                Integer.parseInt(iconParts[2]);
-                outputString[2] = iconParts[2];
+                count = Integer.parseInt(iconParts[2]);
             }
             catch (NumberFormatException parseError)
             {
                 Log.getLogger().info("Non-integer count assigned to icon of " + this.branch + "/" + this.id + " : " + parseError.getLocalizedMessage());
-                outputString[2] = "1";
+                count = 1;
             }
         }
         else
         {
-            outputString[2] = "1";
+            count = 1;
         }
 
         if (iconParts.length == 1)
@@ -720,28 +731,19 @@ public class GlobalResearch implements IGlobalResearch
             outputString[0] = iconParts[0];
             outputString[1] = iconParts[1];
         }
-
-        // If looking for a texture file, check if the file exists here, both to better assist debugging, and to avoid exceptions in GUI thread.
-        // For non-texture-file missing values, Forge will automatically replace with minecraft:air.
-        if (outputString[1].contains("."))
+        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(outputString[0], outputString[1]));
+        if(item.equals(Items.AIR))
         {
-            try
-            {
-                Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(outputString[0], outputString[1]));
-            }
-            catch (IOException notFoundError)
-            {
-                Log.getLogger()
-                  .info("Resource file for Minecraft:" + iconParts[1] + " not found for " + this.branch + "/" + this.id + " : " + notFoundError.getLocalizedMessage());
-                outputString[0] = "minecraft";
-                outputString[1] = "air";
-            }
+            return ItemStack.EMPTY;
         }
-        return outputString[0] + ":" + outputString[1] + ":" + outputString[2];
+        final ItemStack is = new ItemStack(item);
+        is.setCount(count);
+
+        return is;
     }
 
     /**
-     * Gets a string from a json safely, if present, a default string if present but malformed or empty, and returns an empty string otherwise.
+     * Gets a string from a json safely, if present, a default string if not present, and an empty string if malformed or empty.
      *
      * @param researchJson        A json object to retrieve the Name from.
      * @param propertyName        The name of the property to retrieve.
@@ -758,12 +760,12 @@ public class GlobalResearch implements IGlobalResearch
             }
             else
             {
-                return defaultRet;
+                return "";
             }
         }
         else
         {
-            return "";
+            return defaultRet;
         }
     }
 
@@ -846,7 +848,7 @@ public class GlobalResearch implements IGlobalResearch
                 else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_RESEARCH_PROP) &&
                           reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsJsonPrimitive().isString())
                 {
-                    this.requirements.add(new ResearchResearchRequirement(reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsString(), this.name));
+                    this.requirements.add(new ResearchResearchRequirement(new ResourceLocation(reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsString()), this.name));
                 }
 
                 // Alternate Building Requirements.  Requires at least one building type at a specific level out of all Alternate Buildings.
@@ -902,7 +904,7 @@ public class GlobalResearch implements IGlobalResearch
      * @param researchJson        A json object to retrieve the ID from.
      * @param effectCategories    The Map of {@link ResearchEffectCategory} used to convert ResearchEffectIds into absolute effects and descriptions.
      */
-    private void parseEffects(final JsonObject researchJson, final Map<String, ResearchEffectCategory> effectCategories)
+    private void parseEffects(final JsonObject researchJson, final Map<ResourceLocation, ResearchEffectCategory> effectCategories)
     {
         if (researchJson.has(RESEARCH_EFFECTS_PROP) && researchJson.get(RESEARCH_EFFECTS_PROP).isJsonArray())
         {
@@ -912,13 +914,14 @@ public class GlobalResearch implements IGlobalResearch
                 {
                     for(final Map.Entry<String, JsonElement> entry : itemArrayElement.getAsJsonObject().entrySet() )
                     {
-                        if(effectCategories.containsKey(entry.getKey()))
+                        final ResourceLocation effect = new ResourceLocation(entry.getKey());
+                        if(effectCategories.containsKey(effect))
                         {
                             final int strength;
-                            if (entry.getValue().isJsonPrimitive() && entry.getValue().getAsJsonPrimitive().isNumber() && effectCategories.containsKey(entry.getKey()))
+                            if (entry.getValue().isJsonPrimitive() && entry.getValue().getAsJsonPrimitive().isNumber() && effectCategories.containsKey(effect))
                             {
                                 final int requested = entry.getValue().getAsNumber().intValue();
-                                final int max = effectCategories.get(entry.getKey()).getMaxLevel();
+                                final int max = effectCategories.get(effect).getMaxLevel();
                                 if(requested <= max)
                                 {
                                     strength = entry.getValue().getAsNumber().intValue();
@@ -926,7 +929,7 @@ public class GlobalResearch implements IGlobalResearch
                                 else
                                 {
                                     //if trying to go above max strength, give to max strength, but warn.
-                                    strength = effectCategories.get(entry.getKey()).getMaxLevel();
+                                    strength = effectCategories.get(effect).getMaxLevel();
                                     Log.getLogger().warn("Research " + this.id + " requested higher effect strength than exists.");
                                 }
                             }
@@ -936,8 +939,8 @@ public class GlobalResearch implements IGlobalResearch
                                 Log.getLogger().warn("Research " + this.id + " did not have a valid effect strength.");
                                 strength = MAX_DEPTH;
                             }
-                            this.effects.add(new GlobalResearchEffect(entry.getKey(),
-                              effectCategories.get(entry.getKey()).get(strength), effectCategories.get(entry.getKey()).getDisplay(strength)));
+                            this.effects.add(new GlobalResearchEffect(effect,
+                              effectCategories.get(effect).get(strength), effectCategories.get(effect).getDisplay(strength)));
                         }
                         else
                         {
@@ -947,8 +950,8 @@ public class GlobalResearch implements IGlobalResearch
                             }
                             // if no research effect available, assume it's intended as a binary unlock, and set to the current building max level.
                             // Official research should use an effect properly to allow subtitles, but this will
-                            // work, and properly assign an autogeneration-based translation key.
-                            this.effects.add(new GlobalResearchEffect(entry.getKey(),MAX_DEPTH, MAX_DEPTH));
+                            // work, and properly assign an auto-generation-based translation key.
+                            this.effects.add(new GlobalResearchEffect(effect,MAX_DEPTH, MAX_DEPTH));
                         }
                     }
                 }

@@ -432,11 +432,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         final double increase;
         if(canCraftComplexRecipes())
         {
-            increase = (1 + colony.getResearchManager().getResearchEffects().getEffectValue(RECIPES)) * EXTRA_RECIPE_MULTIPLIER;
+            increase = (1 + colony.getResearchManager().getResearchEffects().getEffectStrength(RECIPES)) * EXTRA_RECIPE_MULTIPLIER;
         }
         else
         {
-            increase = 1 + colony.getResearchManager().getResearchEffects().getEffectValue(RECIPES);
+            increase = 1 + colony.getResearchManager().getResearchEffects().getEffectStrength(RECIPES);
         }
         return (int) (Math.pow(2, getBuildingLevel()) * increase);
     }

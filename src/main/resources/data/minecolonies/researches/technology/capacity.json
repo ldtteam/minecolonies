@@ -1,6 +1,6 @@
 {
   "comment": "name: Capacity * subtitle: Don't ask how we fit it all.",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 4,
   "parentResearch": "minecolonies:technology/space",
   "subtitle": "com.minecolonies.research.technology.capacity.subtitle",

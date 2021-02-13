@@ -1,6 +1,6 @@
 {
   "comment": "name: Outpost * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 2,
   "parentResearch": "minecolonies:civilian/keen",
   "icon": "minecolonies:blockhutcitizen:50",

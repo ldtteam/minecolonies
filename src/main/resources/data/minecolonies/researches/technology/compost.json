@@ -1,6 +1,6 @@
 {
   "comment": "name: Compost * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 4,
   "parentResearch": "minecolonies:technology/dung",
   "icon": "minecraft:bone:1",

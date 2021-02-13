@@ -171,12 +171,12 @@ public class CustomRecipe
     /**
      * ID of the required research. Null if none required
      */
-    private String researchId = null;
+    private ResourceLocation researchId = null;
 
     /**
      * ID of the exclusionary research. Null if nothing excludes this recipe
      */
-    private String excludedResearchId = null;
+    private ResourceLocation excludedResearchId = null;
 
     /**
      * The Minimum Level the building has to be for this recipe to be valid
@@ -362,11 +362,11 @@ public class CustomRecipe
         }
         if (recipeJson.has(RECIPE_RESEARCHID_PROP))
         {
-            recipe.researchId = recipeJson.get(RECIPE_RESEARCHID_PROP).getAsString();
+            recipe.researchId = new ResourceLocation(recipeJson.get(RECIPE_RESEARCHID_PROP).getAsString());
         }
         if (recipeJson.has(RECIPE_EXCLUDED_RESEARCHID_PROP))
         {
-            recipe.excludedResearchId = recipeJson.get(RECIPE_EXCLUDED_RESEARCHID_PROP).getAsString();
+            recipe.excludedResearchId = new ResourceLocation(recipeJson.get(RECIPE_EXCLUDED_RESEARCHID_PROP).getAsString());
         }
         if(recipeJson.has(RECIPE_BUILDING_MIN_LEVEL_PROP))
         {
@@ -454,7 +454,7 @@ public class CustomRecipe
      * @param researchId    The id of the research to check for.
      * @param colony        The colony being checked against.
      */
-    private boolean isUnlockEffectResearched(String researchId, IColony colony)
+    private boolean isUnlockEffectResearched(ResourceLocation researchId, IColony colony)
     {
         //Check first if the research effect exists.
         if (!IGlobalResearchTree.getInstance().hasResearchEffect(researchId) && !IGlobalResearchTree.getInstance().hasResearch(researchId))
@@ -464,7 +464,7 @@ public class CustomRecipe
         }
         else
         {
-            if (colony.getResearchManager().getResearchEffects().getEffectBoolean(researchId))
+            if (colony.getResearchManager().getResearchEffects().getEffectStrength(researchId) > 0)
             {
                 // Research effect queried, present, and set to true.
                 return true;

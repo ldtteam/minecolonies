@@ -1,6 +1,6 @@
 {
   "comment": "name: Deep Pockets * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 4,
   "sortOrder": 2,
   "parentResearch": "minecolonies:technology/cheatsheet",

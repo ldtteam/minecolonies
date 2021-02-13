@@ -1,9 +1,9 @@
 {
   "comment": "name: Spectacle * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 4,
   "parentResearch": "minecolonies:civilian/festival",
-  "icon": "minecolonies:textures/icons/research/happy3.png:1",
+  "icon": "minecolonies:textures/icons/research/happy3.png",
   "requirements": [
     {
       "building": "cook",

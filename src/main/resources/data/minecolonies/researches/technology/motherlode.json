@@ -1,6 +1,6 @@
 {
   "comment": "name: Motherlode * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 6,
   "parentResearch": "minecolonies:technology/amazingveins",
   "icon": "minecraft:diamond_block:1",

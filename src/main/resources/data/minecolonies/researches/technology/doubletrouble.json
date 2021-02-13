@@ -1,6 +1,6 @@
 {
   "comment": "name: Double Trouble * subtitle: Double Trouble",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 3,
   "parentResearch": "minecolonies:technology/letitgrow",
   "subtitle": "com.minecolonies.research.technology.doubletrouble.subtitle",

@@ -1,6 +1,6 @@
 {
   "comment": "name: Fertilizer * subtitle: Ah, that's the stuff!",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 5,
   "parentResearch": "minecolonies:technology/compost",
   "subtitle": "com.minecolonies.research.technology.fertilizer.subtitle",

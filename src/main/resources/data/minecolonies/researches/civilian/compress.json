@@ -1,9 +1,9 @@
 {
   "comment": "name: Compress * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 5,
   "parentResearch": "minecolonies:civilian/bandages",
-  "icon": "minecolonies:textures/icons/research/regeneration4.png:1",
+  "icon": "minecolonies:textures/icons/research/regeneration4.png",
   "requirements": [
     {
       "building": "library",

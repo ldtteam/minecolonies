@@ -1,6 +1,6 @@
 {
   "comment": "name: Stamina * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 1,
   "exclusiveChildResearch": true,
   "icon": "minecolonies:blockhuthospital:1",

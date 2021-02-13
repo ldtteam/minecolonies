@@ -1,6 +1,6 @@
 {
   "comment": "name: Strong * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 2,
   "parentResearch": "minecolonies:technology/hittingiron",
   "icon": "minecraft:wooden_pickaxe:1",

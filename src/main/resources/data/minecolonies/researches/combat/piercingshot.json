@@ -1,6 +1,6 @@
 {
   "comment": "name: Piercing Shot * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 4,
   "parentResearch": "minecolonies:combat/penetratingshot",
   "icon": "minecraft:crossbow:1",

@@ -1,6 +1,6 @@
 {
   "comment": "name: Improved Dodge * subtitle: Dip",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 3,
   "parentResearch": "minecolonies:combat/dodge",
   "subtitle": "com.minecolonies.research.combat.improveddodge.subtitle",

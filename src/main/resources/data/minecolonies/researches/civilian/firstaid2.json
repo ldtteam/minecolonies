@@ -1,10 +1,10 @@
 {
   "comment": "name: First Aid II * subtitle: Second Aid?",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 2,
   "parentResearch": "minecolonies:civilian/firstaid",
   "subtitle": "com.minecolonies.research.civilian.firstaid2.subtitle",
-  "icon": "minecolonies:textures/icons/research/hp2.png:1",
+  "icon": "minecolonies:textures/icons/research/hp2.png",
   "requirements": [
     {
       "building": "townhall",

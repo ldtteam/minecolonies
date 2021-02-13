@@ -1,5 +1,4 @@
 {
-  "branch-id": "civilian",
-  "name": "com.minecolonies.research.civilian.name",
+  "branch-name": "com.minecolonies.research.civilian.name",
   "base-time": 1.0
 }

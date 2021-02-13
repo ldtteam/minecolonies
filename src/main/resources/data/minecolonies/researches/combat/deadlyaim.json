@@ -1,6 +1,6 @@
 {
   "comment": "name: Deadly Aim * subtitle: Just don't aim at me!",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 6,
   "parentResearch": "minecolonies:combat/woundingshot",
   "subtitle": "com.minecolonies.research.combat.deadlyaim.subtitle",

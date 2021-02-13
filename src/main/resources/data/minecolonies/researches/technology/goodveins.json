@@ -1,6 +1,6 @@
 {
   "comment": "name: Good Veins * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 3,
   "parentResearch": "minecolonies:technology/veinminer",
   "icon": "minecraft:coal_block:1",

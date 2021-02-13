@@ -1,9 +1,9 @@
 {
   "comment": "name: Lifesaver * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 3,
   "parentResearch": "minecolonies:civilian/firstaid2",
-  "icon": "minecolonies:textures/icons/research/hp3.png:1",
+  "icon": "minecolonies:textures/icons/research/hp3.png",
   "requirements": [
     {
       "building": "townhall",

@@ -1,6 +1,6 @@
 {
   "comment": "name: Flee * subtitle: Sometimes it's better just to run.",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 5,
   "parentResearch": "minecolonies:combat/evade",
   "subtitle": "com.minecolonies.research.combat.flee.subtitle",

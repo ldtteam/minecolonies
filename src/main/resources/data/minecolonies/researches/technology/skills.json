@@ -1,6 +1,6 @@
 {
   "comment": "name: Skills * subtitle: Everything in its place.",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 3,
   "parentResearch": "minecolonies:technology/ability",
   "subtitle": "com.minecolonies.research.technology.skills.subtitle",

@@ -1,6 +1,6 @@
 {
   "comment": "name: City * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 5,
   "parentResearch": "minecolonies:civilian/village",
   "icon": "minecolonies:blockhutcitizen:200",

@@ -1,6 +1,6 @@
 {
   "comment": "name: Evasion",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 4,
   "parentResearch": "minecolonies:combat/improveddodge",
   "subtitle": "com.minecolonies.research.combat.evasion.subtitle",

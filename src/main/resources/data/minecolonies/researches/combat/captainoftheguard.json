@@ -1,6 +1,6 @@
 {
   "comment": "name: Captain of the Guard * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 6,
   "parentResearch": "minecolonies:combat/captaintraining",
   "icon": "minecraft:iron_block:1",

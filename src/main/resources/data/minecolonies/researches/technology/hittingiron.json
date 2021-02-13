@@ -1,6 +1,6 @@
 {
   "comment": "name: Hitting Iron! * subtitle: We're still ironing out the details.",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 1,
   "subtitle": "com.minecolonies.research.technology.hittingiron.subtitle",
   "icon": "minecolonies:blockhutblacksmith:1",

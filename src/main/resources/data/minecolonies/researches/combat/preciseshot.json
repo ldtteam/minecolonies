@@ -1,6 +1,6 @@
 {
   "comment": "name: Precise Shot * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 2,
   "sortOrder": 2,
   "parentResearch": "minecolonies:combat/accuracy",

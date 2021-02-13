@@ -1,6 +1,6 @@
 {
   "comment": "name: Whirlwind * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 4,
   "parentResearch": "minecolonies:combat/arrowpierce",
   "icon": "minecolonies:iron_scimitar:1",

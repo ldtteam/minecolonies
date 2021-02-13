@@ -1,6 +1,6 @@
 {
   "comment": "name: Evade * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 4,
   "parentResearch": "minecolonies:combat/avoid",
   "icon": "minecraft:feather:2",

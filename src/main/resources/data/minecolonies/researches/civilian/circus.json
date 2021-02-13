@@ -1,10 +1,10 @@
 {
   "comment": "name: Circus * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 2,
   "sortOrder": 2,
   "parentResearch": "minecolonies:civilian/firstaid",
-  "icon": "minecolonies:textures/icons/research/happy1.png:1",
+  "icon": "minecolonies:textures/icons/research/happy1.png",
   "requirements": [
     {
       "building": "cook",

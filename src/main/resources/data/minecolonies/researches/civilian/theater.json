@@ -1,10 +1,10 @@
 {
   "comment": "name: Theater * subtitle: Oh don't be so dramatic!",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 6,
   "parentResearch": "minecolonies:civilian/opera",
   "subtitle": "com.minecolonies.research.civilian.theater.subtitle",
-  "icon": "minecolonies:textures/icons/research/happy5.png:1",
+  "icon": "minecolonies:textures/icons/research/happy5.png",
   "requirements": [
     {
       "item": "minecraft:enchanted_golden_apple",

@@ -1,6 +1,6 @@
 {
   "comment": "name: Lightning * subtitle: BAM! And the block is gone!",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 6,
   "parentResearch": "minecolonies:technology/whatisthisspeed",
   "subtitle": "com.minecolonies.research.technology.lightning.subtitle",

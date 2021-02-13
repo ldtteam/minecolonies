@@ -1,6 +1,6 @@
 {
   "comment": "name: Memory Aid * subtitle: It's the thought that counts.",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 2,
   "sortOrder": 3,
   "parentResearch": "minecolonies:technology/woodwork",

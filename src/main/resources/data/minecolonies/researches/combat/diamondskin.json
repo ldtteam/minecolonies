@@ -1,6 +1,6 @@
 {
   "comment": "name: Diamond Skin * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 6,
   "parentResearch": "minecolonies:combat/steelarmor",
   "icon": "minecraft:diamond_helmet:1",

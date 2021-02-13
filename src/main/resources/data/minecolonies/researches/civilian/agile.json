@@ -1,10 +1,10 @@
 {
   "comment": "name: Agile * subtitle: So this is how it feels to be young again...",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 4,
   "parentResearch": "minecolonies:civilian/nimble",
   "subtitle": "com.minecolonies.research.civilian.agile.subtitle",
-  "icon": "minecolonies:textures/icons/research/speed2.png:1",
+  "icon": "minecolonies:textures/icons/research/speed2.png",
   "requirements": [
     {
       "building": "townhall",

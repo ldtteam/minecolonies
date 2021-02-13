@@ -1,6 +1,6 @@
 {
   "comment": "name: What ya Need? * subtitle: It's not a rhetorical question...",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 2,
   "parentResearch": "minecolonies:technology/hittingiron",
   "subtitle": "com.minecolonies.research.technology.whatyaneed.subtitle",

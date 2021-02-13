@@ -1,6 +1,6 @@
 {
   "comment": "name: Night Owl II * subtitle: Got any coffee?",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 4,
   "sortOrder": 2,
   "parentResearch": "minecolonies:civilian/festival",

@@ -1,6 +1,6 @@
 {
   "comment": "name: Steel Bracing * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 5,
   "parentResearch": "minecolonies:technology/reinforced",
   "icon": "minecraft:golden_pickaxe:1",

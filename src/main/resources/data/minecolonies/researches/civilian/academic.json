@@ -1,6 +1,6 @@
 {
   "comment": "name: Academic * subtitle: Think about what you thought when you thought of what you will think now.",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 6,
   "parentResearch": "minecolonies:civilian/reflective",
   "subtitle": "com.minecolonies.research.civilian.academic.subtitle",

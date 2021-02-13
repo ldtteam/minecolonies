@@ -1,6 +1,6 @@
 {
   "comment": "name: Rainbow Heaven * subtitle: Now in color! And 3D!",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 3,
   "parentResearch": "minecolonies:technology/flowerpower",
   "subtitle": "com.minecolonies.research.technology.rainbowheaven.subtitle",

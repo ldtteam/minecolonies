@@ -1,9 +1,9 @@
 {
   "comment": "name: Growth * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 5,
   "parentResearch": "minecolonies:civilian/puberty",
-  "icon": "minecolonies:textures/icons/research/childgrowth4.png:1",
+  "icon": "minecolonies:textures/icons/research/childgrowth4.png",
   "requirements": [
     {
       "building": "library",

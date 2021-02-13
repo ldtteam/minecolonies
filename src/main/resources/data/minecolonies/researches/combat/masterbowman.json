@@ -1,6 +1,6 @@
 {
   "comment": "name: Master Bowman * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 6,
   "parentResearch": "minecolonies:combat/rapidshot",
   "icon": "minecraft:blaze_rod:1",

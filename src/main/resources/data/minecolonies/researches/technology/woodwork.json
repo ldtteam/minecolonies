@@ -1,6 +1,6 @@
 {
   "comment": "name: Woodwork * subtitle: Where oh where would a wood worker work if a wood worker would work wood?",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 1,
   "sortOrder": 4,
   "subtitle": "com.minecolonies.research.technology.woodwork.subtitle",

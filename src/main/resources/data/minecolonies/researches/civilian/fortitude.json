@@ -1,6 +1,6 @@
 {
   "comment": "name: Fortitude * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 5,
   "parentResearch": "minecolonies:civilian/vitality",
   "icon": "minecraft:honey_bottle:1",

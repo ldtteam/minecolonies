@@ -1,6 +1,6 @@
 {
   "comment": "name: Indefatigability * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 6,
   "parentResearch": "minecolonies:civilian/fortitude",
   "icon": "minecraft:experience_bottle:1",

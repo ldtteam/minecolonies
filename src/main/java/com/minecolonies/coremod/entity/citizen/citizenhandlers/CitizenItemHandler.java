@@ -241,9 +241,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
             return;
         }
 
-        if(citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(TOOL_DURABILITY))
+        //Check if the effect exists first, to avoid unnecessary calls to random number generator.
+        if(citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY) > 0)
         {
-            if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(TOOL_DURABILITY))))
+            if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY))))
             {
                 return;
             }
@@ -327,9 +328,9 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 continue;
             }
 
-            if(citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectBoolean(ARMOR_DURABILITY))
+            if(citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0)
             {
-                if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectValue(ARMOR_DURABILITY))))
+                if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY))))
                 {
                     return;
                 }

@@ -1,6 +1,6 @@
 {
   "comment": "name: Vitality * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 4,
   "parentResearch": "minecolonies:civilian/resilience",
   "icon": "minecraft:splash_potion:1",

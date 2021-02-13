@@ -1,6 +1,6 @@
 {
   "comment": "name: Improved Swords * subtitle: Pointy end goes into the zombie.",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 2,
   "parentResearch": "minecolonies:combat/tactictraining",
   "subtitle": "com.minecolonies.research.combat.improvedswords.subtitle",

@@ -17,7 +17,9 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +35,7 @@ public class ResearchListener extends JsonReloadListener
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     /**
-     * Set up the core loading, with the directory in the datapack that contains this data
+     * Set up the core loading, with the directory in the data pack that contains this data
      * Directory is: <namespace>/researches/<path>
      */
     public ResearchListener()
@@ -42,20 +44,20 @@ public class ResearchListener extends JsonReloadListener
     }
 
     @Override
-    protected void apply(final Map<ResourceLocation, JsonElement> object, final IResourceManager resourceManagerIn, final IProfiler profilerIn)
+    protected void apply(@NotNull final Map<ResourceLocation, JsonElement> object, @NotNull final IResourceManager resourceManagerIn, @NotNull final IProfiler profilerIn)
     {
         Log.getLogger().info("Beginning load of research for University.");
 
         // First, index and map out all research effects.  We need to be able to map them before creating Researches themselves.
         // Because data packs, can't assume effects are in one specific location.
         // For now, we'll populate relative levels when doing so, but we probably want to do that dynamically.
-        final Map<String, ResearchEffectCategory> effectCategories = parseResearchEffects(object);
+        final Map<ResourceLocation, ResearchEffectCategory> effectCategories = parseResearchEffects(object);
 
         // Next, populate a new map of IGlobalResearches, identified by researchID.
         // This allows us to figure out root/branch relationships more sanely.
         // We need the effectCategories and levels to do this.
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        final Map<String, GlobalResearch> researchMap = parseResearches(object, effectCategories, !(server instanceof DedicatedServer));
+        final Map<ResourceLocation, GlobalResearch> researchMap = parseResearches(object, effectCategories, !(server instanceof DedicatedServer));
 
         // We /shouldn't/ get any removes before the Research they're trying to remove exists,
         // but it can happen if multiple data packs affect each other.
@@ -89,9 +91,9 @@ public class ResearchListener extends JsonReloadListener
      * @param object    A Map containing the resource location of each json file, and the element within that json file.
      * @return          A Map containing the ResearchEffectIds and ResearchEffectCategories each ID corresponds to.
      */
-    private Map<String, ResearchEffectCategory> parseResearchEffects(final Map<ResourceLocation, JsonElement> object)
+    private Map<ResourceLocation, ResearchEffectCategory> parseResearchEffects(final Map<ResourceLocation, JsonElement> object)
     {
-        final Map<String, ResearchEffectCategory> effectCategories = new HashMap<>();
+        final Map<ResourceLocation, ResearchEffectCategory> effectCategories = new HashMap<>();
         for(final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
         {
             final JsonObject effectJson = entry.getValue().getAsJsonObject();
@@ -148,9 +150,9 @@ public class ResearchListener extends JsonReloadListener
      * @param checkResourceLoc   If the client should check resource locations at the time.  This can not be run on the server.
      * @return                   A Map containing the ResearchIds and the GlobalResearches each ID corresponds to.
      */
-    private Map<String, GlobalResearch> parseResearches(final Map<ResourceLocation, JsonElement> object, final Map<String, ResearchEffectCategory> effectCategories, boolean checkResourceLoc)
+    private Map<ResourceLocation, GlobalResearch> parseResearches(final Map<ResourceLocation, JsonElement> object, final Map<ResourceLocation, ResearchEffectCategory> effectCategories, boolean checkResourceLoc)
     {
-        final Map<String, GlobalResearch> researchMap = new HashMap<>();
+        final Map<ResourceLocation, GlobalResearch> researchMap = new HashMap<>();
         for(final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
         {
             // Note that we don't actually use the resource folders or file names; those are only for organization purposes.
@@ -169,7 +171,7 @@ public class ResearchListener extends JsonReloadListener
             }
 
             //And same for research-branch-specific settings, to avoid extraneous warnings.
-            if (researchJson.has(RESEARCH_BRANCH_ID_PROP))
+            if (researchJson.has(RESEARCH_BRANCH_NAME_PROP) || researchJson.has(RESEARCH_BASE_TIME_PROP))
             {
                 continue;
             }
@@ -206,7 +208,7 @@ public class ResearchListener extends JsonReloadListener
                 {
                     Log.getLogger().info("Cost: " + itemS.toString());
                 }
-                for(IResearchEffect researchEffect : research.getEffects())
+                for(IResearchEffect<?> researchEffect : research.getEffects())
                 {
                     Log.getLogger().info("Effect: " + researchEffect.getId() + " " + researchEffect.getDesc());
                 }
@@ -222,7 +224,7 @@ public class ResearchListener extends JsonReloadListener
      * @param object        A Map containing the resource location of each json file, and the element within that json file.
      * @param researchMap   A Map to apply those Research Removes against.
      */
-    private void parseRemoveResearches(final Map<ResourceLocation, JsonElement> object, final Map<String, GlobalResearch> researchMap)
+    private void parseRemoveResearches(final Map<ResourceLocation, JsonElement> object, final Map<ResourceLocation, GlobalResearch> researchMap)
     {
         for(final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
         {
@@ -234,7 +236,7 @@ public class ResearchListener extends JsonReloadListener
             if (researchJson.has(RESEARCH_REMOVE_PROP) && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().isString())
             {
                 //hashmap, so don't have to check presence.
-                researchMap.remove(researchJson.get(RESEARCH_REMOVE_PROP).getAsString());
+                researchMap.remove(new ResourceLocation(researchJson.get(RESEARCH_REMOVE_PROP).getAsString()));
             }
             // Files which declare remove:, but lack ID or have the wrong types are malformed.
             else if (researchJson.has(RESEARCH_REMOVE_PROP))
@@ -250,23 +252,24 @@ public class ResearchListener extends JsonReloadListener
      * @param researchMap   A Map of ResearchIDs to GlobalResearches to turn into a GlobalResearchTree.
      * @return              An IGlobalResearchTree containing the validated researches.
      */
-    private IGlobalResearchTree calcResearchTree(final Map<String, GlobalResearch> researchMap)
+    private IGlobalResearchTree calcResearchTree(final Map<ResourceLocation, GlobalResearch> researchMap)
     {
         final IGlobalResearchTree researchTree =  MinecoloniesAPIProxy.getInstance().getGlobalResearchTree();
         // The research tree should be reset on world unload, but certain events and disconnects break that.  Do it here, too.
         researchTree.reset();
 
         // Next, set up child relationships, and handle cases where they're not logically consistent.
-        for (final Map.Entry<String, GlobalResearch> entry : researchMap.entrySet())
+        for (final Map.Entry<ResourceLocation, GlobalResearch> entry : researchMap.entrySet())
         {
-            if (entry.getValue().getParent().isEmpty() && entry.getValue().getDepth() > 1)
+            if (entry.getValue().getParent().getPath().isEmpty() && entry.getValue().getDepth() > 1)
             {
                 //For now, log and re-graft entries with no parent and depth to the root of their branch.
-                entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(), entry.getValue().getIcon(), entry.getValue().isImmutable()));
+                entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(),
+                  entry.getValue().getIconTextureResourceLocation(), entry.getValue().getIconItemStack(), entry.getValue().isImmutable()));
                 Log.getLogger()
                   .error(entry.getValue().getBranch() + "/" + entry.getKey() + "could not be attached to tree: inconsistent depth for parentage.");
             }
-            else if (!entry.getValue().getParent().isEmpty())
+            else if (!entry.getValue().getParent().getPath().isEmpty())
             {
                 if (researchMap.containsKey(entry.getValue().getParent()))
                 {
@@ -277,17 +280,19 @@ public class ResearchListener extends JsonReloadListener
                     else
                     {
                         //For now, log and re-graft entries with inconsistent parent-child relationships to a separate branch.
+                        entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(),
+                          entry.getValue().getIconTextureResourceLocation(), entry.getValue().getIconItemStack(), entry.getValue().isImmutable()));
                         Log.getLogger()
                           .error(entry.getValue().getBranch() + "/" + entry.getKey() + "could not be attached to " + entry.getValue().getParent() + " on "
                                    + researchMap.get(entry.getValue().getParent()).getBranch());
-                        entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(), entry.getValue().getIcon(), entry.getValue().isImmutable()));
                     }
                 }
                 else
                 {
                     //For now, log and re-graft entries with inconsistent parent-child relationships to a separate branch.
+                    entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(),
+                      entry.getValue().getIconTextureResourceLocation(), entry.getValue().getIconItemStack(), entry.getValue().isImmutable()));
                     Log.getLogger().error(entry.getValue().getBranch() + "/" + entry.getKey() + " could not find parent " + entry.getValue().getParent());
-                    entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(), entry.getValue().getIcon(), entry.getValue().isImmutable()));
                 }
             }
             researchTree.addResearch(entry.getValue().getBranch(), entry.getValue(), true);
@@ -303,27 +308,22 @@ public class ResearchListener extends JsonReloadListener
      */
     private void parseResearchBranches(final Map<ResourceLocation, JsonElement> object, IGlobalResearchTree researchTree)
     {
-        for(final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
+        for (final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
         {
             final JsonObject researchJson = entry.getValue().getAsJsonObject();
 
-            // The "branch-id" tag is the unique property for branch-specific setting files.  It must have a string.
-            // We don't need to validate that it's an existing branch; if not, it simply won't have an effect.
-            if (researchJson.has(RESEARCH_BRANCH_ID_PROP) && researchJson.get(RESEARCH_BRANCH_ID_PROP).isJsonPrimitive()
-                  && researchJson.get(RESEARCH_BRANCH_ID_PROP).getAsJsonPrimitive().isString())
+            // Research branches can have the "branch-name" or "base-time" id, or both, or neither.
+            // We don't need to validate that these apply to an existing branch; if not, it simply won't have an effect.
+            if (researchJson.has(RESEARCH_BRANCH_NAME_PROP) && researchJson.get(RESEARCH_BRANCH_NAME_PROP).isJsonPrimitive()
+                  && researchJson.get(RESEARCH_BRANCH_NAME_PROP).getAsJsonPrimitive().isString())
             {
-                if(researchJson.has(RESEARCH_NAME_PROP) && researchJson.get(RESEARCH_NAME_PROP).isJsonPrimitive()
-                && researchJson.get(RESEARCH_NAME_PROP).getAsJsonPrimitive().isString())
-                {
-                    researchTree.setBranchName(researchJson.get(RESEARCH_BRANCH_ID_PROP).getAsJsonPrimitive().getAsString(),
-                                researchJson.get(RESEARCH_NAME_PROP).getAsJsonPrimitive().getAsString());
-                }
-                if(researchJson.has(RESEARCH_BASE_TIME_PROP) && researchJson.get(RESEARCH_BASE_TIME_PROP).isJsonPrimitive()
-                     && researchJson.get(RESEARCH_BASE_TIME_PROP).getAsJsonPrimitive().isNumber())
-                {
-                    researchTree.setBranchTime(researchJson.get(RESEARCH_BRANCH_ID_PROP).getAsJsonPrimitive().getAsString(),
-                      researchJson.get(RESEARCH_BASE_TIME_PROP).getAsJsonPrimitive().getAsDouble());
-                }
+                researchTree.setBranchName(entry.getKey(),
+                  new TranslationTextComponent(researchJson.get(RESEARCH_BRANCH_NAME_PROP).getAsJsonPrimitive().getAsString()));
+            }
+            if (researchJson.has(RESEARCH_BASE_TIME_PROP) && researchJson.get(RESEARCH_BASE_TIME_PROP).isJsonPrimitive()
+                  && researchJson.get(RESEARCH_BASE_TIME_PROP).getAsJsonPrimitive().isNumber())
+            {
+                researchTree.setBranchTime(entry.getKey(), researchJson.get(RESEARCH_BASE_TIME_PROP).getAsJsonPrimitive().getAsDouble());
             }
         }
     }

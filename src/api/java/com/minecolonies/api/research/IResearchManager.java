@@ -1,9 +1,9 @@
 package com.minecolonies.api.research;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -45,12 +45,11 @@ public interface IResearchManager
      * @param block       The block to get a research identifier for.
      * @return            The string format of that research identifier.
      */
-    String getResearchEffectIdFrom(Block block);
+    ResourceLocation getResearchEffectIdFrom(Block block);
 
     /**
      * Checks if any autostart research has its prerequisites filled,
      * and if so, prompts the player for resources or begins research if no resources required.
-     * @param colony       The colony where the research is being checked.
      */
-    void checkAutoStartResearch(IColony colony);
+    void checkAutoStartResearch();
 }

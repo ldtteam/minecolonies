@@ -1,6 +1,6 @@
 {
   "comment": "name: Captain Training * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 5,
   "parentResearch": "minecolonies:combat/knighttraining",
   "icon": "minecraft:iron_bars:1",

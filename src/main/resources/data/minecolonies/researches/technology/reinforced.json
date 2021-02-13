@@ -1,6 +1,6 @@
 {
   "comment": "name: Reinforced * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 4,
   "parentResearch": "minecolonies:technology/hardened",
   "icon": "minecraft:iron_pickaxe:1",

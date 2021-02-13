@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.research;
 
 import com.minecolonies.api.research.effects.IResearchEffect;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.research.effects.ModResearchEffects;
+import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +14,31 @@ import org.jetbrains.annotations.NotNull;
 public class GlobalResearchEffect implements IResearchEffect<Double>
 {
     /**
+     * The NBT tag for an individual effect's identifier, as a ResourceLocation.
+     */
+    public static final String TAG_ID = "id";
+
+    /**
+     * The NBT tag for an individual effect's description, as a human-readable string or TranslationText key.
+     */
+    public static final String TAG_DESC = "desc";
+
+    /**
+     * The NBT tag for an individual effect's subtitle, as a human-readable string or TranslationText key.
+     */
+    public static final String TAG_SUBTITLE = "subtitle";
+
+    /**
+     * The NBT tag for an individual effect's strength, in magnitude.
+     */
+    public static final String TAG_EFFECT = "effect";
+
+    /**
+     * The NBT tag for an individual effect's display value, usually the difference between it's strength and the previous level.
+     */
+    public static final String TAG_DISPLAY_EFFECT = "display";
+
+    /**
      * The absolute effect strength to apply.
      */
     private double effect;
@@ -18,89 +46,78 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
     /**
      * The relative strength of effect to display
      */
-    private double displayEffect;
+    private final double displayEffect;
 
     /**
      * The unique effect Id.
      */
-    private final String id;
+    private final ResourceLocation id;
 
     /**
-     * The optional text description of the effect.
-     * If empty, a translation key will be derived from id.
+     * The optional text description of the effect. If empty, a translation key will be derived from id.
      */
-    private final String desc;
+    private final TranslationTextComponent desc;
 
     /**
-     * The optional subtitle text description of the effect.
-     * If empty, a translation key will be derived from id.
+     * The optional subtitle text description of the effect. If empty, a translation key will be derived from id.
      */
-    private final String subtitle;
+    private final TranslationTextComponent subtitle;
 
     /**
      * The constructor to create a new global research effect.
      *
-     * @param id                   the id to unlock.
-     * @param effect               the effect's absolute strength.
-     * @param displayEffect        the effect's relative strength, for display purposes.
+     * @param id            the id to unlock.
+     * @param effect        the effect's absolute strength.
+     * @param displayEffect the effect's relative strength, for display purposes.
      */
-    public GlobalResearchEffect(final String id, final double effect, final double displayEffect)
+    public GlobalResearchEffect(final ResourceLocation id, final double effect, final double displayEffect)
     {
         this.id = id;
         this.effect = effect;
         this.displayEffect = displayEffect;
-        this.desc = "";
-        this.subtitle = "";
+        this.desc = new TranslationTextComponent("com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /:]", ".") + ".description",
+          displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
+        this.subtitle = new TranslationTextComponent("");
     }
 
     /**
      * The constructor to create a new global research effect, with a statically assigned description.
      *
-     * @param id                   the id to unlock.
-     * @param effect               the effect's absolute strength.
-     * @param displayEffect        the effect's relative strength, for display purposes.
-     * @param desc                 the effect's description, for display.
-     * @param subtitle             the effect's subtitle description.
+     * @param id            the id to unlock.
+     * @param effect        the effect's absolute strength.
+     * @param displayEffect the effect's relative strength, for display purposes.
+     * @param desc          the effect's description, for display.
+     * @param subtitle      the effect's subtitle description.
      */
-    public GlobalResearchEffect(final String id, final double effect, final double displayEffect, final String desc, final String subtitle)
+    public GlobalResearchEffect(final ResourceLocation id, final double effect, final double displayEffect, final String desc, final String subtitle)
     {
         this.id = id;
         this.effect = effect;
         this.displayEffect = displayEffect;
-        this.desc = desc;
-        this.subtitle = subtitle;
+        if (desc.isEmpty())
+        {
+            this.desc = new TranslationTextComponent("com." + this.id.getPath() + ".research." + this.id.getNamespace().replaceAll("[ /:]", ".") + ".description",
+              displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
+        }
+        else
+        {
+            this.desc = new TranslationTextComponent(desc, displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
+        }
+        this.subtitle = new TranslationTextComponent(subtitle);
     }
 
     /**
-     * The constructor to build a new global research from an array of its attributes.
-     * See getAttributes for the format.
+     * The constructor to build a new global research effect from an NBT.
      *
-     * @param effectParts              the effectParts describing the research effect.
+     * @param nbt the nbt containing the traits for the global research.
      */
-    public GlobalResearchEffect(final String[] effectParts)
+    public GlobalResearchEffect(final CompoundNBT nbt)
     {
-        if(effectParts.length < 5)
-        {
-            Log.getLogger().warn("Received malformed effect description from server.");
-            this.id ="";
-            this.effect = 0;
-            this.displayEffect = 0;
-            this.desc = "";
-            this.subtitle = "";
-            return;
-        }
-        this.id = effectParts[0];
-        this.desc = effectParts[1];
-        this.subtitle = effectParts[2];
-        try
-        {
-            this.effect = Double.parseDouble(effectParts[3]);
-            this.displayEffect = Double.parseDouble(effectParts[4]);
-        }
-        catch (NumberFormatException nfe)
-        {
-            Log.getLogger().warn("Error in received GlobalResearchEffect:" + this.id);
-        }
+        this.id = new ResourceLocation(nbt.getString(TAG_ID));
+        this.effect = nbt.getDouble(TAG_EFFECT);
+        this.displayEffect = nbt.getDouble(TAG_DISPLAY_EFFECT);
+        this.desc = new TranslationTextComponent(nbt.getString(TAG_DESC), displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
+        this.subtitle = new TranslationTextComponent(nbt.getString(TAG_SUBTITLE));
     }
 
     @Override
@@ -110,46 +127,38 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
     }
 
     @Override
-    public Double getDisplay() { return this.displayEffect; }
-
-    @Override
     public void setEffect(Double effect)
     {
         this.effect = effect;
     }
 
     @Override
-    public String getId() { return this.id; }
+    public ResourceLocation getId() { return this.id; }
 
     @Override
-    public TranslationTextComponent getDesc()
-    {
-        if(desc.isEmpty())
-        {
-            return new TranslationTextComponent("com." + this.id.split(":")[0] + ".research." + this.id.split(":")[1].replaceAll("[ /:]",".") + ".description",
-                   displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
-        }
-        else
-        {
-           return new TranslationTextComponent(this.desc, displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
-        }
-    }
+    public TranslationTextComponent getDesc() { return this.desc; }
 
     @Override
-    public String getSubtitle()
-    {
-            return this.subtitle;
-    }
+    public TranslationTextComponent getSubtitle() { return this.subtitle; }
 
     @Override
     public boolean overrides(@NotNull final IResearchEffect<?> other)
     {
-        return Math.abs(effect) > Math.abs(((GlobalResearchEffect)other).effect);
+        return Math.abs(effect) > Math.abs(((GlobalResearchEffect) other).effect);
     }
 
     @Override
-    public String getAttributes()
+    public ResearchEffectEntry getRegistryEntry() { return ModResearchEffects.globalResearchEffect; }
+
+    @Override
+    public CompoundNBT writeToNBT()
     {
-        return id + "`" + desc + "`" + subtitle + "`" + effect + "`" + displayEffect;
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putString(TAG_ID, id.toString());
+        nbt.putString(TAG_DESC, desc.getKey());
+        nbt.putString(TAG_SUBTITLE, subtitle.getKey());
+        nbt.putDouble(TAG_EFFECT, effect);
+        nbt.putDouble(TAG_DISPLAY_EFFECT, displayEffect);
+        return nbt;
     }
 }

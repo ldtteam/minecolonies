@@ -1,6 +1,6 @@
 {
   "comment": "name: Flower Power * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 2,
   "parentResearch": "minecolonies:technology/biodegradable",
   "icon": "minecolonies:blockhutflorist:1",

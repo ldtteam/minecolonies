@@ -1,6 +1,6 @@
 {
   "comment": "name: Higher Learning * subtitle: Well, we had to find something to occupy them.",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 1,
   "sortOrder": 4,
   "exclusiveChildResearch": true,

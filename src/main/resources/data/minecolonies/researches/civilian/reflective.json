@@ -1,6 +1,6 @@
 {
   "comment": "name: Reflective * subtitle: Let me think about that for a moment.",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 5,
   "parentResearch": "minecolonies:civilian/scholarly",
   "subtitle": "com.minecolonies.research.civilian.reflective.subtitle",

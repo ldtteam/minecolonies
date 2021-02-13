@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.ICivilianData;
@@ -462,12 +463,15 @@ public class CitizenManager implements ICitizenManager
      */
     private double maxCitizensFromResearch()
     {
-        final double max = 25 + colony.getResearchManager().getResearchEffects().getEffectValue(CITIZEN_CAP);
-        if (max >= MineColonies.getConfig().getServer().maxCitizenPerColony.get())
+        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
+        {
+            final double max = 25 + colony.getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_CAP);
+            return Math.min(max, MineColonies.getConfig().getServer().maxCitizenPerColony.get());
+        }
+        else
         {
             return MineColonies.getConfig().getServer().maxCitizenPerColony.get();
         }
-        return max;
     }
 
     /**

@@ -1,10 +1,10 @@
 {
   "comment": "name: Swift * subtitle: They'll never see me coming.",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 5,
   "parentResearch": "minecolonies:civilian/agile",
   "subtitle": "com.minecolonies.research.civilian.swift.subtitle",
-  "icon": "minecolonies:textures/icons/research/speed3.png:1",
+  "icon": "minecolonies:textures/icons/research/speed3.png",
   "requirements": [
     {
       "building": "townhall",

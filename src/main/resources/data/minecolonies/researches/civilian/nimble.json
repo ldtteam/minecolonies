@@ -1,10 +1,10 @@
 {
   "comment": "name: Nimble * subtitle: Not that we get time to exercise. It must be the morning commute.",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 3,
   "parentResearch": "minecolonies:civilian/rails",
   "subtitle": "com.minecolonies.research.civilian.nimble.subtitle",
-  "icon": "minecolonies:textures/icons/research/speed1.png:1",
+  "icon": "minecolonies:textures/icons/research/speed1.png",
   "requirements": [
     {
       "building": "townhall",

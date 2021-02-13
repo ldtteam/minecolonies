@@ -1,6 +1,6 @@
 {
   "comment": "name: Magic Compost * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 6,
   "parentResearch": "minecolonies:technology/fertilizer",
   "icon": "minecolonies:barrel_block:1",

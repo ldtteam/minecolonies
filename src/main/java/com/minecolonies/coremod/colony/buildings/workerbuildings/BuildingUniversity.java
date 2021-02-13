@@ -244,13 +244,13 @@ public class BuildingUniversity extends AbstractBuildingWorker
         }
 
         final TranslationTextComponent message = new TranslationTextComponent(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
-          new TranslationTextComponent(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()));
+         IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName());
 
         for(PlayerEntity player : colony.getMessagePlayerEntities())
         {
             player.sendMessage(message, player.getUniqueID());
         }
-        colony.getResearchManager().checkAutoStartResearch(colony);
+        colony.getResearchManager().checkAutoStartResearch();
         this.markDirty();
     }
 

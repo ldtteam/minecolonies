@@ -1,6 +1,6 @@
 {
   "comment": "name: Cheat Sheet * subtitle: So THAT's what I should be making!",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 3,
   "parentResearch": "minecolonies:technology/memoryaid",
   "subtitle": "com.minecolonies.research.technology.cheatsheet.subtitle",

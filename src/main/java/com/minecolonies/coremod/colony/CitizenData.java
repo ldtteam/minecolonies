@@ -1195,12 +1195,12 @@ public class CitizenData implements ICitizenData
             citizen.getNavigator().getPathingOptions().setCanUseRails(((EntityCitizen) citizen).canPathOnRails());
 
             final AttributeModifier speedModifier = new AttributeModifier(RESEARCH_BONUS_MULTIPLIER,
-              colony.getResearchManager().getResearchEffects().getEffectValue(WALKING),
+              colony.getResearchManager().getResearchEffects().getEffectStrength(WALKING),
               AttributeModifier.Operation.MULTIPLY_TOTAL);
             AttributeModifierUtils.addModifier(citizen, speedModifier, Attributes.MOVEMENT_SPEED);
 
             final AttributeModifier healthModLevel =
-              new AttributeModifier(HEALTH_BOOST, colony.getResearchManager().getResearchEffects().getEffectValue(HEALTH_BOOST), AttributeModifier.Operation.ADDITION);
+              new AttributeModifier(HEALTH_BOOST.toString(), colony.getResearchManager().getResearchEffects().getEffectStrength(HEALTH_BOOST), AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
     }

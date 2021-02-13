@@ -1,6 +1,6 @@
 {
   "comment": "name: Space * subtitle: Antidisinterdimensionalitarianism!",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 3,
   "parentResearch": "minecolonies:technology/sieving",
   "subtitle": "com.minecolonies.research.technology.space.subtitle",

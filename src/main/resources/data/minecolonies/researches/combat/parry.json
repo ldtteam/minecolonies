@@ -1,6 +1,6 @@
 {
   "comment": "name: Parry * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 2,
   "parentResearch": "minecolonies:combat/avoidance",
   "icon": "minecraft:leather_chestplate:1",

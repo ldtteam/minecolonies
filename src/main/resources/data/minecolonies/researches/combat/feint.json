@@ -1,6 +1,6 @@
 {
   "comment": "name: Feint * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 3,
   "parentResearch": "minecolonies:combat/regeneration",
   "icon": "minecraft:leather_boots:1",

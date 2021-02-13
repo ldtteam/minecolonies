@@ -1,6 +1,6 @@
 {
   "comment": "name: Biodegradable * subtitle: Where science meets dirt.",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 1,
   "subtitle": "com.minecolonies.research.technology.biodegradable.subtitle",
   "icon": "minecolonies:blockhutcomposter:1",

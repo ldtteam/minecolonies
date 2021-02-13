@@ -1,6 +1,6 @@
 {
   "comment": "name: Arrow Piercing * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 3,
   "parentResearch": "minecolonies:combat/arrowuse",
   "icon": "minecraft:enchanted_book:1",

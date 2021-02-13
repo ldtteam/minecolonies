@@ -1,6 +1,6 @@
 {
   "comment": "name: Duelist * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 4,
   "parentResearch": "minecolonies:combat/riposte",
   "icon": "minecraft:chainmail_chestplate:1",

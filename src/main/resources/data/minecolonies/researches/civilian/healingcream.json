@@ -1,10 +1,10 @@
 {
   "comment": "name: Healing Cream * subtitle: You missed a spot...",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 3,
   "parentResearch": "minecolonies:civilian/bandaid",
   "subtitle": "com.minecolonies.research.civilian.healingcream.subtitle",
-  "icon": "minecolonies:textures/icons/research/regeneration2.png:1",
+  "icon": "minecolonies:textures/icons/research/regeneration2.png",
   "requirements": [
     {
       "building": "library",

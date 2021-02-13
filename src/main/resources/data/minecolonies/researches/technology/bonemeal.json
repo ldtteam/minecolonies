@@ -1,6 +1,6 @@
 {
   "comment": "name: Bonemeal * subtitle: And to think this stuff feeds our plants...",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 2,
   "sortOrder": 3,
   "parentResearch": "minecolonies:technology/biodegradable",

@@ -1,9 +1,9 @@
 {
   "comment": "name: Bandages * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 4,
   "parentResearch": "minecolonies:civilian/healingcream",
-  "icon": "minecolonies:textures/icons/research/regeneration3.png:1",
+  "icon": "minecolonies:textures/icons/research/regeneration3.png",
   "requirements": [
     {
       "building": "library",

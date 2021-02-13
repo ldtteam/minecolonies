@@ -1,6 +1,6 @@
 {
   "comment": "name: Improved Bows * subtitle: How far back can this bend before snapping?",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 2,
   "sortOrder": 2,
   "parentResearch": "minecolonies:combat/tactictraining",

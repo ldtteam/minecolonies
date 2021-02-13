@@ -1,6 +1,6 @@
 {
   "comment": "name: Avoid * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 3,
   "sortOrder": 2,
   "parentResearch": "minecolonies:combat/regeneration",

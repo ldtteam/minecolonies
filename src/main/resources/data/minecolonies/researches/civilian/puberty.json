@@ -1,10 +1,10 @@
 {
   "comment": "name: Puberty * subtitle: My voice sounds weird...",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 4,
   "parentResearch": "minecolonies:civilian/hormones",
   "subtitle": "com.minecolonies.research.civilian.puberty.subtitle",
-  "icon": "minecolonies:textures/icons/research/childgrowth3.png:1",
+  "icon": "minecolonies:textures/icons/research/childgrowth3.png",
   "requirements": [
     {
       "building": "library",

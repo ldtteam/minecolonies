@@ -1,6 +1,6 @@
 {
   "comment": "name: Hot Boots * subtitle: Warmer on the outside.",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 3,
   "parentResearch": "minecolonies:technology/stringwork",
   "subtitle": "com.minecolonies.research.technology.hotboots.subtitle",

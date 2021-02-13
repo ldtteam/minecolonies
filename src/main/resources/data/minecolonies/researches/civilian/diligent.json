@@ -1,6 +1,6 @@
 {
   "comment": "name: Diligent * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 2,
   "sortOrder": 2,
   "parentResearch": "minecolonies:civilian/keen",

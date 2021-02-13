@@ -32,7 +32,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
     /**
      * The list of branches of the tree.
      */
-    private final List<String> branches = new ArrayList<>();
+    private final List<ResourceLocation> branches = new ArrayList<>();
 
     /**
      * Constructor for the window of the lumberjack.
@@ -47,8 +47,8 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
         int offset = 0;
         // For now, sort research branches by name, as they may be loaded in any order.
         branches.addAll(IGlobalResearchTree.getInstance().getBranches());
-        branches.sort(Comparator.comparing(String::toString, String.CASE_INSENSITIVE_ORDER));
-        for (final String branch : branches)
+        branches.sort(Comparator.comparing(ResourceLocation::getPath, String.CASE_INSENSITIVE_ORDER));
+        for (final ResourceLocation branch : branches)
         {
             List<IFormattableTextComponent> requirements = getHidingRequirementDesc(branch);
             if(requirements.isEmpty())
@@ -56,7 +56,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
                 final ButtonImage button = new ButtonImage();
                 button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
                 button.setLabel(IGlobalResearchTree.getInstance().getBranchName(branch));
-                button.setID(branch);
+                button.setID(branch.toString());
                 button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
                 button.setTextColor(SLIGHTLY_BLUE);
                 button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
@@ -93,10 +93,10 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
      * @param branch  The identifier for a branch.
      * @return An empty list if at least one primary research is visible, or a list of IFormattableTextComponents describing the dependencies for each hidden primary research.
      */
-    public List<IFormattableTextComponent> getHidingRequirementDesc(final String branch)
+    public List<IFormattableTextComponent> getHidingRequirementDesc(final ResourceLocation branch)
     {
         final List<IFormattableTextComponent> requirements = new ArrayList<>();
-        for(final String primary : IGlobalResearchTree.getInstance().getPrimaryResearch(branch))
+        for(final ResourceLocation primary : IGlobalResearchTree.getInstance().getPrimaryResearch(branch))
         {
             if(!IGlobalResearchTree.getInstance().getResearch(branch, primary).isHidden()
                  || IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement(), building.getColony()))
@@ -133,7 +133,8 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
                     // We'll include even completed buildings in the requirement list, since buildings can get undone/removed.
                     else if (req instanceof BuildingResearchRequirement)
                     {
-                        if(!building.getColony().getBuildings().contains(((BuildingResearchRequirement) req).getBuilding()))
+
+                        if(!req.isFulfilled(building.getColony()))
                         {
                             requirements.add(req.getDesc().setStyle((Style.EMPTY).setFormatting(TextFormatting.RED)));
                         }
@@ -153,9 +154,9 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
     {
         super.onButtonClicked(button);
 
-        if (branches.contains(button.getID()))
+        if (ResourceLocation.isResouceNameValid(button.getID()) && branches.contains(new ResourceLocation(button.getID())))
         {
-            new WindowResearchTree(button.getID(), building, this).open();
+            new WindowResearchTree(new ResourceLocation(button.getID()), building, this).open();
         }
     }
 

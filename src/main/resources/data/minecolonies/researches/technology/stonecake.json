@@ -1,6 +1,6 @@
 {
   "comment": "name: Stone Cake * subtitle: Don't break a tooth!",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 1,
   "sortOrder": 3,
   "subtitle": "com.minecolonies.research.technology.stonecake.subtitle",

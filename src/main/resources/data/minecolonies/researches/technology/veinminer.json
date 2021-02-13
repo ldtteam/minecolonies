@@ -1,6 +1,6 @@
 {
   "comment": "name: Veinminer * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 2,
   "parentResearch": "minecolonies:technology/hittingiron",
   "icon": "minecraft:iron_block:1",

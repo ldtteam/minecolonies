@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUnivers
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,12 +20,12 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
     /**
      * Id of research to try research.
      */
-    private String researchId;
+    private ResourceLocation researchId;
 
     /**
      * Id of research to try research.
      */
-    private String branch;
+    private ResourceLocation branch;
 
     /**
      * If the request is a reset.
@@ -43,7 +44,7 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
      * @param branch     the research branch.
      * @param building   the building we're executing on.
      */
-    public TryResearchMessage(final IBuildingView building, @NotNull final String researchId, final String branch, final boolean reset)
+    public TryResearchMessage(final IBuildingView building, @NotNull final ResourceLocation researchId, final ResourceLocation branch, final boolean reset)
     {
         super(building);
         this.researchId = researchId;
@@ -54,16 +55,16 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-        researchId = buf.readString(32767);
-        branch = buf.readString(32767);
+        researchId = buf.readResourceLocation();
+        branch = buf.readResourceLocation();
         reset = buf.readBoolean();
     }
 
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-        buf.writeString(researchId);
-        buf.writeString(branch);
+        buf.writeResourceLocation(researchId);
+        buf.writeResourceLocation(branch);
         buf.writeBoolean(reset);
     }
 

@@ -1,6 +1,6 @@
 {
   "comment": "name: Enhanced Gates II * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 4,
   "parentResearch": "minecolonies:technology/enhanced_gates1",
   "icon": "structurize:down_gated_dark_oak_brick_timber_frame:1",

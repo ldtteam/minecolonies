@@ -1,6 +1,6 @@
 {
   "comment": "name: Provost * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 5,
   "parentResearch": "minecolonies:combat/duelist",
   "icon": "minecraft:golden_chestplate:1",

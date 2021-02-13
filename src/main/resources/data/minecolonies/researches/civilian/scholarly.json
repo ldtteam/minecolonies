@@ -1,6 +1,6 @@
 {
   "comment": "name: Scholarly * subtitle: Homework for the next decade... check!",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 4,
   "parentResearch": "minecolonies:civilian/studious",
   "subtitle": "com.minecolonies.research.civilian.scholarly.subtitle",

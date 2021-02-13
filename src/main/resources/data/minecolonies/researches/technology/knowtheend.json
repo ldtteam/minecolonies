@@ -1,6 +1,6 @@
 {
   "comment": "name: Know the End * subtitle: Unlock the secrets of the most mysterious dimension.",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 3,
   "parentResearch": "minecolonies:technology/theflintstones",
   "subtitle": "com.minecolonies.research.technology.knowtheend.subtitle",

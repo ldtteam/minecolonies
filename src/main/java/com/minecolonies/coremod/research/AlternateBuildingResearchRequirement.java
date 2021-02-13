@@ -5,7 +5,11 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.research.IResearchRequirement;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.research.ModResearchRequirements;
+import com.minecolonies.api.research.registry.ResearchRequirementEntry;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.HashMap;
@@ -18,9 +22,19 @@ import java.util.Map;
 public class AlternateBuildingResearchRequirement implements IResearchRequirement
 {
     /**
-     * The identifier tag for this type of requirement.
+     * The NBT tag for the list of alternate buildings.
      */
-    public static final String type = "alt-buildings";
+    private static final String TAG_BUILDINGS_LIST = "building-list";
+
+    /**
+     * The NBT tag for an individual building's name.
+     */
+    private static final String TAG_BUILDING_NAME = "building-name";
+
+    /**
+     * The NBT tag for an individual building's required level.
+     */
+    private static final String TAG_BUILDING_LVL = "building-lvl";
 
     /**
      * The list of buildings, by level.
@@ -29,12 +43,13 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
 
     /**
      * Create a building-based research requirement, that requires one of multiple buildings be constructed.
-     * @param building    the name of the building
-     * @param level       the level requirement of the building
+     *
+     * @param building the name of the building
+     * @param level    the level requirement of the building
      */
     public AlternateBuildingResearchRequirement add(String building, int level)
     {
-        if(buildings.containsKey(building))
+        if (buildings.containsKey(building))
         {
             buildings.put(building, buildings.get(building) + level);
         }
@@ -54,27 +69,21 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
     }
 
     /**
-     * Creates an Alternate building requirement from an attributes string array.
-     * See getAttributes for the format.
-     * @param attributes        An attributes array describing the research requirement.
+     * Creates and returns an Alternate Building Requirement, reassembled from a compoundNBT
+     * @param nbt the NBT containing the Building Names and Levels data
      */
-    public AlternateBuildingResearchRequirement(String[] attributes)
+    public AlternateBuildingResearchRequirement(CompoundNBT nbt)
     {
-        if(!attributes[0].equals(type) || attributes.length < 3 || (attributes.length % 2) == 0)
+        ListNBT buildingsNBT = nbt.getList(TAG_BUILDINGS_LIST, Constants.TAG_COMPOUND);
+        for(int i = 0; i < buildingsNBT.size(); i++)
         {
-            Log.getLogger().error("Error parsing received AlternateBuildingResearch.");
-        }
-        else
-        {
-            for(int i = 1; i < attributes.length; i+=2)
-            {
-                buildings.put(attributes[i], Integer.parseInt(attributes[i + 1]));
-            }
+            CompoundNBT indNBT = buildingsNBT.getCompound(i);
+            buildings.put(indNBT.getString(TAG_BUILDING_NAME), indNBT.getInt(TAG_BUILDING_LVL));
         }
     }
 
-
     /**
+     * Get the Map of required building types and their levels.  Only one must be met to unlock the research.
      * @return the building description
      */
     public Map<String, Integer> getBuildings()
@@ -85,10 +94,10 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
     @Override
     public boolean isFulfilled(final IColony colony)
     {
-        for(Map.Entry<String, Integer> requirement : buildings.entrySet())
+        for (Map.Entry<String, Integer> requirement : buildings.entrySet())
         {
             int sum = 0;
-            if(colony instanceof IColonyView)
+            if (colony instanceof IColonyView)
             {
                 for (final IBuildingView building : ((IColonyView) colony).getBuildings())
                 {
@@ -96,14 +105,14 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
                     {
                         sum += building.getBuildingLevel();
 
-                        if(sum >= requirement.getValue())
+                        if (sum >= requirement.getValue())
                         {
                             return true;
                         }
                     }
                 }
             }
-            else if(colony != null)
+            else if (colony != null)
             {
                 for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
                 {
@@ -124,30 +133,40 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
     }
 
     @Override
-    public String getAttributes()
-    {
-        StringBuilder s = new StringBuilder(type);
-        for(Map.Entry<String, Integer> building : buildings.entrySet())
-        {
-            s.append("`").append(building.getKey()).append("`").append(building.getValue());
-        }
-        return s.toString();
-    }
-
-    @Override
     public TranslationTextComponent getDesc()
     {
         final TranslationTextComponent requirementList = new TranslationTextComponent("");
         final Iterator<Map.Entry<String, Integer>> iterator = buildings.entrySet().iterator();
-        while(iterator.hasNext())
+        while (iterator.hasNext())
         {
             final Map.Entry<String, Integer> kvp = iterator.next();
-            requirementList.append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.level", new TranslationTextComponent("block.minecolonies.blockhut" + kvp.getKey()), kvp.getValue()));
-            if(iterator.hasNext())
+            requirementList.append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.level",
+              new TranslationTextComponent("block.minecolonies.blockhut" + kvp.getKey()),
+              kvp.getValue()));
+            if (iterator.hasNext())
             {
                 requirementList.append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.or"));
             }
         }
         return requirementList;
+    }
+
+    @Override
+    public ResearchRequirementEntry getRegistryEntry() { return ModResearchRequirements.alternateBuildingResearchRequirement;}
+
+    @Override
+    public CompoundNBT writeToNBT()
+    {
+        CompoundNBT nbt = new CompoundNBT();
+        ListNBT buildingsNBT = new ListNBT();
+        for(Map.Entry<String, Integer> build : buildings.entrySet())
+        {
+            CompoundNBT indNBT = new CompoundNBT();
+            indNBT.putString(TAG_BUILDING_NAME, build.getKey());
+            indNBT.putInt(TAG_BUILDING_LVL, build.getValue());
+            buildingsNBT.add(indNBT);
+        }
+        nbt.put(TAG_BUILDINGS_LIST, buildingsNBT);
+        return nbt;
     }
 }

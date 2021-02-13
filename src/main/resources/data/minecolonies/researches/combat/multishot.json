@@ -1,6 +1,6 @@
 {
   "comment": "name: Multishot * subtitle: Known side effects include double vision double vision.",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 4,
   "parentResearch": "minecolonies:combat/trickshot",
   "subtitle": "com.minecolonies.research.combat.multishot.subtitle",

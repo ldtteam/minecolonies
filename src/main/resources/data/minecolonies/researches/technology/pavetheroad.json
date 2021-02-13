@@ -1,6 +1,6 @@
 {
   "comment": "name: Pave the Road * subtitle: Not something you want to get mixed up in.",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 3,
   "sortOrder": 2,
   "parentResearch": "minecolonies:technology/rockingroll",

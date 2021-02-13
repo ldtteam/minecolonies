@@ -8,6 +8,7 @@ import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.CompactColonyReference;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -598,16 +599,15 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final int citizensSize = townHall.getColony().getCitizens().size();
         final int citizensCap;
 
-        // For the default data pack, this boolean check is unnecessary.
-        // Checking it here allows better support for cases where someone has removed the citizen cap line of research entirely.
-          if(this.building.getColony().getResearchManager().getResearchEffects().getEffectBoolean(CITIZEN_CAP))
-          {
-              citizensCap = (int)(Math.min(MineColonies.getConfig().getServer().maxCitizenPerColony.get(), 25 + this.building.getColony().getResearchManager().getResearchEffects().getEffectValue(CITIZEN_CAP)));
-          }
-          else
-          {
-              citizensCap = 25;
-          }
+        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
+        {
+            citizensCap = (int) (Math.min(MineColonies.getConfig().getServer().maxCitizenPerColony.get(),
+              25 + this.building.getColony().getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_CAP)));
+        }
+        else
+        {
+              citizensCap = MineColonies.getConfig().getServer().maxCitizenPerColony.get();
+        }
 
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText
                                                                 (LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,

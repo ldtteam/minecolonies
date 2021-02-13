@@ -226,7 +226,7 @@ public class Colony implements IColony
     /**
      * The request manager assigned to the colony.
      */
-    private IResearchManager researchManager = new ResearchManager();
+    private IResearchManager researchManager;
 
     /**
      * The NBTTag compound of the colony itself.
@@ -310,6 +310,7 @@ public class Colony implements IColony
         center = c;
         this.permissions = new Permissions(this);
         requestManager = new StandardRequestManager(this);
+        researchManager = new ResearchManager(this);
     }
 
     /**
@@ -328,6 +329,7 @@ public class Colony implements IColony
             checkOrCreateTeam();
         }
         this.permissions = new Permissions(this);
+        researchManager = new ResearchManager(this);
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e -> {});
 
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));

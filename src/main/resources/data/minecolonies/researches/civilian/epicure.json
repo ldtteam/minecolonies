@@ -1,9 +1,9 @@
 {
   "comment": "name: Epicure * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 5,
   "parentResearch": "minecolonies:civilian/stuffer",
-  "icon": "minecolonies:textures/icons/research/saturation4.png:1",
+  "icon": "minecolonies:textures/icons/research/saturation4.png",
   "requirements": [
     {
       "building": "cook",

@@ -1,6 +1,6 @@
 {
   "comment": "name: Quick Draw * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 2,
   "parentResearch": "minecolonies:combat/accuracy",
   "icon": "minecraft:wooden_sword:1",

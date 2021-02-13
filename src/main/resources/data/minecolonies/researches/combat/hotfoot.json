@@ -1,6 +1,6 @@
 {
   "comment": "name: Hotfoot * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 6,
   "parentResearch": "minecolonies:combat/flee",
   "icon": "minecraft:chicken:1",

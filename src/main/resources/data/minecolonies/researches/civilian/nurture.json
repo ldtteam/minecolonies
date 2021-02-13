@@ -1,11 +1,11 @@
 {
   "comment": "name: Nurture * subtitle: It's just part of our nature now.",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 2,
   "sortOrder": 2,
   "parentResearch": "minecolonies:civilian/higherlearning",
   "subtitle": "com.minecolonies.research.civilian.nurture.subtitle",
-  "icon": "minecolonies:textures/icons/research/childgrowth1.png:1",
+  "icon": "minecolonies:textures/icons/research/childgrowth1.png",
   "requirements": [
     {
       "building": "school",

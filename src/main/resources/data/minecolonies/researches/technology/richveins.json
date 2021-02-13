@@ -1,6 +1,6 @@
 {
   "comment": "name: Rich Veins * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 4,
   "parentResearch": "minecolonies:technology/goodveins",
   "icon": "minecraft:gold_block:1",

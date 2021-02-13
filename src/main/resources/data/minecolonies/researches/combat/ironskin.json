@@ -1,6 +1,6 @@
 {
   "comment": "name: Iron Skin * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 3,
   "parentResearch": "minecolonies:combat/boiledleather",
   "icon": "minecraft:chainmail_helmet:1",

@@ -1,6 +1,6 @@
 {
   "comment": "name: Consume Arrows * subtitle: They work better with ammo.",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 2,
   "parentResearch": "minecolonies:combat/taunt",
   "subtitle": "com.minecolonies.research.combat.arrowuse.subtitle",

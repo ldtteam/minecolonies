@@ -1,9 +1,9 @@
 {
   "comment": "name: Guardian Angel * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 5,
   "parentResearch": "minecolonies:civilian/lifesaver2",
-  "icon": "minecolonies:textures/icons/research/hp5.png:1",
+  "icon": "minecolonies:textures/icons/research/hp5.png",
   "requirements": [
     {
       "building": "townhall",

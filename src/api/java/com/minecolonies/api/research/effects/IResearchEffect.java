@@ -1,5 +1,8 @@
 package com.minecolonies.api.research.effects;
 
+import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,42 +30,42 @@ public interface IResearchEffect<T>
     /**
      * Getter for the ID of the effect.
      *
-     * @return the String id.
+     * @return the effect id as a ResourceLocation.
      */
-    String getId();
+    ResourceLocation getId();
 
     /**
-     * Effect description.
+     * Human-readable effect description, or a translation key.
      *
      * @return the desc.
      */
     TranslationTextComponent getDesc();
 
     /**
-     * Effect subtitle description.
+     * Human-readable effect subtitle description, or a translation key.
      *
      * @return the Subtitle desc.
      */
-    String getSubtitle();
-
-    /**
-     * Returns the effect's display value
-     *
-     * @return the display value.
-     */
-    Double getDisplay();
+    TranslationTextComponent getSubtitle();
 
     /**
      * Does this effect override another effect with the same id?
      *
      * @param other the effect to check.
-     * @return true if so.
+     * @return true if so, generally meaning a higher magnitude effect.
      */
     boolean overrides(@NotNull final IResearchEffect<?> other);
 
     /**
-     * Get the attributes of the research effect, for easier serialization.
-     * @return the string representation of the effect and its magnitudes.
+     * Get the {@link ResearchEffectEntry} for this Research Effect.
+     *
+     * @return a registry entry.
      */
-    String getAttributes();
+    ResearchEffectEntry getRegistryEntry();
+
+    /**
+     * Write the ResearchEffect's traits to NBT, to simplify serialization for client-viewable data.
+     * @return an NBT file containing at least the necessary traits to reassemble user-visible traits of the effect.
+     */
+    CompoundNBT writeToNBT();
 }

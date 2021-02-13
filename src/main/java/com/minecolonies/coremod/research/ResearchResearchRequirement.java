@@ -2,8 +2,11 @@ package com.minecolonies.coremod.research;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.IResearchRequirement;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.research.ModResearchRequirements;
+import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
 /**
@@ -12,55 +15,46 @@ import net.minecraft.util.text.TranslationTextComponent;
 public class ResearchResearchRequirement implements IResearchRequirement
 {
     /**
-     * The identifier tag for this type of requirement.
+     * The nbtProperty identifying the research resource location which must be unlocked.
      */
-    public static final String type = "research";
+    public static final String TAG_ID = "id";
+
+    /**
+     * The nbtProperty identifying the human-readable description or translation key for the research.
+     */
+    public static final String TAG_NAME = "name";
 
     /**
      * The research id.
      */
-    private final String researchId;
+    private final ResourceLocation researchId;
 
     /**
      * The research name.
      */
-    private final String researchName;
+    private final TranslationTextComponent researchName;
 
     /**
      * Create a building based research requirement.
      *
      * @param researchId the required precursor research.
      */
-    public ResearchResearchRequirement(final String researchId, final String researchName)
+    public ResearchResearchRequirement(final ResourceLocation researchId, final TranslationTextComponent researchName)
     {
         this.researchId = researchId;
         this.researchName = researchName;
     }
 
-    /**
-     * Creates an building requirement from an attributes string array.
-     * See getAttributes for the format.
-     * @param attributes        An attributes array describing the research requirement.
-     */
-    public ResearchResearchRequirement(String[] attributes)
+    public ResearchResearchRequirement(final CompoundNBT nbt)
     {
-        if(!attributes[0].equals(type) || attributes.length < 3)
-        {
-            Log.getLogger().error("Error parsing received ResearchResearchRequirement.");
-            researchId = "";
-            researchName = "";
-        }
-        else
-        {
-            researchId = attributes[1];
-            researchName = attributes[2];
-        }
+        this.researchId = new ResourceLocation(nbt.getString(TAG_ID));
+        this.researchName = new TranslationTextComponent(nbt.getString(TAG_NAME));
     }
 
     /**
-     * @return the building description
+     * @return the research identifier
      */
-    public String getResearchId()
+    public ResourceLocation getResearchId()
     {
         return researchId;
     }
@@ -72,14 +66,20 @@ public class ResearchResearchRequirement implements IResearchRequirement
     }
 
     @Override
-    public String getAttributes()
-    {
-        return type + "`" + researchId + "`" + researchName;
-    }
-
-    @Override
     public TranslationTextComponent getDesc()
     {
         return new TranslationTextComponent(TranslationConstants.RESEARCH_REQUIRES, researchName);
+    }
+
+    @Override
+    public ResearchRequirementEntry getRegistryEntry() {return ModResearchRequirements.researchResearchRequirement;}
+
+    @Override
+    public CompoundNBT writeToNBT()
+    {
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putString(TAG_ID, this.researchId.toString());
+        nbt.putString(TAG_NAME, this.researchName.getKey());
+        return nbt;
     }
 }

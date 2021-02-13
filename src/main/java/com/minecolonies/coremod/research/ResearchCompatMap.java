@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.research;
 
+import net.minecraft.util.ResourceLocation;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -10,7 +12,7 @@ import java.util.stream.Stream;
  */
 public class ResearchCompatMap
 {
-    public static final Map<String, String> updateMap = Stream.of(new String[][] {
+    public static final Map<String, ResourceLocation> updateMap = Stream.of(new String[][] {
       {"healingcream", "minecolonies:civilian/healingcream"},
       {"ironskin", "minecolonies:combat/ironskin"},
       {"duelist", "minecolonies:combat/duelist"},
@@ -182,5 +184,5 @@ public class ResearchCompatMap
       {"penetratingshot", "minecolonies:combat/penetratingshot"},
       {"bandages", "minecolonies:civilian/bandages"},
       {"tactictraining", "minecolonies:combat/tactictraining"}
-    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+    }).collect(Collectors.toMap(data -> data[0], data -> new ResourceLocation(data[1])));
 }

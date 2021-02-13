@@ -1,6 +1,6 @@
 {
   "comment": "name: Trick Shot * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 3,
   "parentResearch": "minecolonies:combat/improvedbows",
   "icon": "minecraft:arrow:1",

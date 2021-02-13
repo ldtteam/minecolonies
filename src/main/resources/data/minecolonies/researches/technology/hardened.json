@@ -1,6 +1,6 @@
 {
   "comment": "name: Hardened * subtitle: ",
-  "branch": "technology",
+  "branch": "minecolonies:technology",
   "researchLevel": 3,
   "parentResearch": "minecolonies:technology/strong",
   "icon": "minecraft:stone_pickaxe:1",

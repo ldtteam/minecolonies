@@ -1,6 +1,6 @@
 {
   "comment": "name: Tactic Training * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 1,
   "sortOrder": 2,
   "icon": "minecolonies:blockhutbarrackstower:1",

@@ -1,6 +1,6 @@
 {
   "comment": "name: Mighty Cleave * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 5,
   "parentResearch": "minecolonies:combat/cleave",
   "icon": "minecraft:golden_sword:1",

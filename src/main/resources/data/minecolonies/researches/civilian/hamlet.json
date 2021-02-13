@@ -1,6 +1,6 @@
 {
   "comment": "name: Hamlet * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 3,
   "parentResearch": "minecolonies:civilian/outpost",
   "icon": "minecolonies:blockhutcitizen:75",

@@ -1,6 +1,6 @@
 {
   "comment": "name: Accuracy * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 1,
   "exclusiveChildResearch": true,
   "icon": "minecraft:lime_bed:1",

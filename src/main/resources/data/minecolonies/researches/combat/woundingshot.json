@@ -1,6 +1,6 @@
 {
   "comment": "name: Wounding Shot * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 5,
   "parentResearch": "minecolonies:combat/piercingshot",
   "icon": "minecolonies:firearrow:1",

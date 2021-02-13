@@ -1,6 +1,6 @@
 {
   "comment": "name: Studious * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 3,
   "parentResearch": "minecolonies:civilian/diligent",
   "icon": "minecraft:experience_bottle:2",

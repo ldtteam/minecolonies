@@ -1,6 +1,6 @@
 {
   "comment": "name: Village * subtitle: ",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 4,
   "parentResearch": "minecolonies:civilian/hamlet",
   "icon": "minecolonies:blockhutcitizen:100",

@@ -1,6 +1,6 @@
 {
   "comment": "name: Steel Armor * subtitle: ",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 5,
   "parentResearch": "minecolonies:combat/ironarmor",
   "icon": "minecraft:golden_helmet:1",

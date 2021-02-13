@@ -1,10 +1,10 @@
 {
   "comment": "name: PhD * subtitle: Not that sort of doctor.",
-  "branch": "civilian",
+  "branch": "minecolonies:civilian",
   "researchLevel": 6,
   "parentResearch": "minecolonies:civilian/master",
   "subtitle": "com.minecolonies.research.civilian.phd.subtitle",
-  "icon": "minecolonies:textures/icons/research/xpgain5.png:1",
+  "icon": "minecolonies:textures/icons/research/xpgain5.png",
   "requirements": [
     {
       "item": "minecraft:bookshelf",

@@ -1,6 +1,6 @@
 {
   "comment": "name: Boiled Leather * subtitle: Extra leathery!",
-  "branch": "combat",
+  "branch": "minecolonies:combat",
   "researchLevel": 2,
   "parentResearch": "minecolonies:combat/improvedleather",
   "subtitle": "com.minecolonies.research.combat.boiledleather.subtitle",

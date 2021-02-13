@@ -214,7 +214,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 return false;
             }
 
-            return getColony().getResearchManager().getResearchEffects().getEffectBoolean(ARCHER_USE_ARROWS)
+            return getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0
                      && getGuardType() == ModGuardTypes.ranger;
         }, new Tuple<>(128, true));
 
