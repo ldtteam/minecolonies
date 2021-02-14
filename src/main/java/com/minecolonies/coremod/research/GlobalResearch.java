@@ -37,13 +37,13 @@ public class GlobalResearch implements IGlobalResearch
 {
     /// region JSON Prop Management
     /**
-     * The property name that indicates research name, as presented to users, or a translation key to be transformed.
+     * The optional property name that indicates research name, as presented to users, or a translation key to be transformed.
+     * If not present, a translation key will be auto-generated from the ResourceLocation.
      */
     public static final String RESEARCH_NAME_PROP = "name";
 
     /**
-     * The property name that indicates research subtitle, as presented to users, or a translation key.
-     * This will not always be visible.
+     * The optional property name that indicates research subtitle, as presented to users, or a translation key.
      */
     public static final String RESEARCH_SUBTITLE_PROP = "subtitle";
 
@@ -55,12 +55,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The property name that indicates research icon.
      */
-    public static final String RESEARCH_ICON_PROP = "icon";
-
-    /**
-     * The property name that indicates this recipe removes a research.
-     */
-    public static final String RESEARCH_REMOVE_PROP = "remove";
+    private static final String RESEARCH_ICON_PROP = "icon";
 
     /**
      * The property name for Required University Level.
@@ -75,7 +70,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The property name that indicates onlyChild status
      */
-    public static final String RESEARCH_EXCLUSIVE_CHILD_PROP = "exclusiveChildResearch";
+    private static final String RESEARCH_EXCLUSIVE_CHILD_PROP = "exclusiveChildResearch";
 
     /**
      * The property name for parent research id.
@@ -108,7 +103,8 @@ public class GlobalResearch implements IGlobalResearch
     private static final String RESEARCH_REQUIRED_BUILDING_PROP = "building";
 
     /**
-     * The property name for a non-university building requirement.
+     * The property name for alternate non-university building requirement.
+     * Alternate buildings require only one of the alternate-building requirements to be completed for the entire requirement to be fulfilled.
      */
     private static final String RESEARCH_ALTERNATE_BUILDING_PROP = "alternate-building";
 
@@ -123,18 +119,18 @@ public class GlobalResearch implements IGlobalResearch
     private static final String RESEARCH_LEVEL_PROP = "level";
 
     /**
-     * The property name for the research which is only visible, when its requirements are completed.
+     * The property name for the research which is only visible when its requirements are completed.
      */
     private static final String RESEARCH_HIDDEN_PROP = "hidden";
 
     /**
-     * The property name for automatic start of research, when its requirements are completed.
+     * The property name for automatic start of research, when its requirements are fulfilled.
      * This can temporarily exceed the maximum number of concurrent researches.
      */
     private static final String RESEARCH_AUTOSTART_PROP = "autostart";
 
     /**
-     * The property name for instant completion of research, when its requirements are completed.
+     * The property name for instant(ish) completion of research.
      */
     private static final String RESEARCH_INSTANT_PROP = "instant";
 
@@ -142,16 +138,6 @@ public class GlobalResearch implements IGlobalResearch
      * The property name for the list of research completion effects
      */
     private static final String RESEARCH_EFFECTS_PROP = "effects";
-
-    /**
-     * The property name for parent research id.  Only applies at the level of branch settings.
-     */
-    public static final String RESEARCH_BRANCH_NAME_PROP = "branch-name";
-
-    /**
-     * The property name for parent research id.  Only applies at the level of branch settings.
-     */
-    public static final String RESEARCH_BASE_TIME_PROP = "base-time";
     /// endregion
 
     /**

@@ -83,7 +83,7 @@ public final class ResearchConstants
     public static final int    TIME_HEIGHT          = 12;
     public static final int    TIME_WIDTH           = 95;
 
-    public static final boolean DRAW_ICONS = true;
+    public static final boolean DRAW_ICONS = false;
 
     public static final int    COLOR_TEXT_NEGATIVE  = Color.rgbaToInt(218, 10, 10, 255);
     public static final int    COLOR_TEXT_LABEL     = Color.rgbaToInt(218, 202, 171, 255);

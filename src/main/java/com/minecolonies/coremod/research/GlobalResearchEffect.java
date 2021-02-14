@@ -16,27 +16,27 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
     /**
      * The NBT tag for an individual effect's identifier, as a ResourceLocation.
      */
-    public static final String TAG_ID = "id";
+    private static final String TAG_ID = "id";
 
     /**
      * The NBT tag for an individual effect's description, as a human-readable string or TranslationText key.
      */
-    public static final String TAG_DESC = "desc";
+    private static final String TAG_DESC = "desc";
 
     /**
      * The NBT tag for an individual effect's subtitle, as a human-readable string or TranslationText key.
      */
-    public static final String TAG_SUBTITLE = "subtitle";
+    private static final String TAG_SUBTITLE = "subtitle";
 
     /**
      * The NBT tag for an individual effect's strength, in magnitude.
      */
-    public static final String TAG_EFFECT = "effect";
+    private static final String TAG_EFFECT = "effect";
 
     /**
-     * The NBT tag for an individual effect's display value, usually the difference between it's strength and the previous level.
+     * The NBT tag for an individual effect's display value, usually the difference between its strength and the previous level.
      */
-    public static final String TAG_DISPLAY_EFFECT = "display";
+    private static final String TAG_DISPLAY_EFFECT = "display";
 
     /**
      * The absolute effect strength to apply.

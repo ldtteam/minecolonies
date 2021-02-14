@@ -17,12 +17,12 @@ public class ResearchResearchRequirement implements IResearchRequirement
     /**
      * The nbtProperty identifying the research resource location which must be unlocked.
      */
-    public static final String TAG_ID = "id";
+    private static final String TAG_ID = "id";
 
     /**
      * The nbtProperty identifying the human-readable description or translation key for the research.
      */
-    public static final String TAG_NAME = "name";
+    private static final String TAG_NAME = "name";
 
     /**
      * The research id.

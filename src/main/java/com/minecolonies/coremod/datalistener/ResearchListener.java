@@ -35,6 +35,22 @@ public class ResearchListener extends JsonReloadListener
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     /**
+     * The property name that indicates this recipe removes a research.
+     */
+    public static final String RESEARCH_REMOVE_PROP = "remove";
+
+    /**
+     * The property name for research branch name keys.  Only applies at the level of branch settings.
+     * May be a human-readable text, or a translation key.
+     */
+    private static final String RESEARCH_BRANCH_NAME_PROP = "branch-name";
+
+    /**
+     * The property name for branch's research time modifier.  Only applies at the level of branch settings.
+     */
+    private static final String RESEARCH_BASE_TIME_PROP = "base-time";
+
+    /**
      * Set up the core loading, with the directory in the data pack that contains this data
      * Directory is: <namespace>/researches/<path>
      */
