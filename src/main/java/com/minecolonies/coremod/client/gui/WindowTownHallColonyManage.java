@@ -79,7 +79,15 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         {
             findPaneOfTypeByID(BUTTON_DELETE, ButtonImage.class).enable();
             findPaneOfTypeByID(TEXT_OWN, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.own", ownerColony.getCenter()));
+
+            if (MineColonies.getConfig().getServer().allowInfiniteColonies.get())
+            {
                 findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.denied.existingandabandon"));
+            }
+            else
+            {
+                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.denied.existing"));
+            }
         }
         else
         {
