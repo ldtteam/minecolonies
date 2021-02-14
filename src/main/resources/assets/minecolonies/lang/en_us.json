@@ -423,6 +423,7 @@
   "com.minecolonies.command.prune.next": "This command will delete large chunks of your world! Use with care! Make a backup first! If you want to continue, repeat this command with %d as the first parameter.",
 
   "com.minecolonies.coremod.tag.minecolonies.compostables": "Compostables",
+  "com.minecolonies.coremod.tag.minecolonies.florist_flowers_excluded": "Flowers Excluded from the Florist",
   "com.minecolonies.coremod.tag.minecolonies.concrete_powder": "Concrete Powder",
   "com.minecolonies.coremod.tag.minecolonies.fungi": "Fungi",
 
