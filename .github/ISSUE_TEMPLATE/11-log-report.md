@@ -23,7 +23,6 @@ assignees: ''
 <!-- Add your latest.log and crashlog (if you have one) to https://gist.github.com/ and put the link below. These are often important in figuring out where issues are. -->
 
 - latest.log: <!-- USE GIST DON'T DIRECT UPLOAD PLEASE -->
-- crashlog: <!-- USE GIST DON'T DIRECT UPLOAD PLEASE -->
 
 ## Steps to reproduce the issue / Details around
 
