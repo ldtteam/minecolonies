@@ -145,7 +145,7 @@ minecraft {
             // find and download/compile latest OptiFineDevTweaker, classifier "all"
             // put this and (unpacked) optifine into mods in runClient folder
             // alternate or comment out (if you have default gradle cache location) next property to target "caches/forge_gradle/minecraft_repo/versions/{mcVersion}/client.jar"
-            // property 'ofdev.mcjar', 'P:\\apps\\common\\gradle-cache\\caches\\forge_gradle\\minecraft_repo\\versions\\1.15.2\\client.jar'
+            // property 'ofdev.mcjar', 'P:\\apps\\common\\gradle-cache\\caches\\forge_gradle\\minecraft_repo\\versions\\1.16.3\\client.jar'
 
             mods {
                 minecolonies {
@@ -346,7 +346,7 @@ curseforge {
     }
     else
     {
-        logger.lifecycle("Cannot run the CurseUpload sequence. No API-Key or release type has been provided.")
+        logger.lifecycle("Cannot run the CurseUpload sequence. No API key or release type has been provided.")
     }
 }
 
@@ -362,7 +362,7 @@ task("createChangelog") {
         def changes = changesXML.change
         println("createChangelog: Identified " + changes.size() + " changes to be written into the changelog.")
 
-        out << "# Minecolonies Changelog \n"
+        out << "# MineColonies Changelog \n"
         out << "## Version: _" + version + "_ \n"
         out << "## Structurize Version: _" + config.structurize_version + "_ \n"
 
@@ -375,7 +375,7 @@ task("createChangelog") {
                 out << "* " + changeComment + "\n"
             }
         } else {
-            out << "No Changes detected!"
+            out << "No changes detected!"
         }
 
         out.close()
