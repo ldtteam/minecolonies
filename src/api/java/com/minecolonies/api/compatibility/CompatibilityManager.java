@@ -240,7 +240,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isPlantable(final ItemStack itemStack)
     {
-        if (itemStack.isEmpty() || itemStack.getItem() == Items.WITHER_ROSE || !(itemStack.getItem() instanceof BlockItem) || itemStack.getItem() == ModTags.floristFlowersExcluded)
+        if (itemStack.isEmpty() || !(itemStack.getItem() instanceof BlockItem) || itemStack.getItem() == ModTags.floristFlowersExcluded)
         {
             return false;
         }
