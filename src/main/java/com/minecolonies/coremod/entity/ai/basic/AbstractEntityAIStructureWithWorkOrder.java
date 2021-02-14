@@ -102,6 +102,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   String.format("Worker (%d:%d) ERROR - Starting and missing work order(%d)",
                     worker.getCitizenColonyHandler().getColony().getID(),
                     worker.getCitizenData().getId(), job.getWorkOrderId()), new Exception());
+                job.setWorkOrder(null);
                 return IDLE;
             }
 
