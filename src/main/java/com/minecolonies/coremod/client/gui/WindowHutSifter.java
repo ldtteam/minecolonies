@@ -95,7 +95,14 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
         mesh = building.getMesh();
 
         final Label label = findPaneOfTypeByID("maxSifted", Label.class);
-        label.setLabelText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.sifterinfo", building.getMaxDailyQuantity()));
+        if (building.getMaxDailyQuantity() == Integer.MAX_VALUE)
+        {
+            label.setLabelText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.sifterinfo.unlimited"));
+        }
+        else
+        {
+            label.setLabelText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.sifterinfo", building.getMaxDailyQuantity()));
+        }
 
         sifterSettingsInput.setText(String.valueOf(building.getDailyQuantity()));
 
