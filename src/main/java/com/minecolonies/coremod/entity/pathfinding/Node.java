@@ -368,10 +368,11 @@ public class Node implements Comparable<Node>
 
     /**
      * Marks the node as reached by the worker
+     * @param reached if reached or reset.
      */
-    public void setReachedByWorker()
+    public void setReachedByWorker(final boolean reached)
     {
-        isReachedByWorker = true;
+        isReachedByWorker = reached;
     }
 
     /**

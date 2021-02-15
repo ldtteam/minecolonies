@@ -27,6 +27,8 @@ public class ModTags
 
     public static ITag<Item> fungi;
 
+    public static ITag<Item>  floristFlowersExcluded;
+
 
     public static final Map<String, ITag<Item>> crafterProduct              = new HashMap<>();
     public static final Map<String, ITag<Item>> crafterProductExclusions    = new HashMap<>();
