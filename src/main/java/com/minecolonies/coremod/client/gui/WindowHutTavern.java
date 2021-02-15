@@ -82,7 +82,6 @@ public class WindowHutTavern extends AbstractWindowBuilding<TavernBuildingModule
     public void onOpened()
     {
         super.onOpened();
-        final boolean isManualHousing = true;
         citizen = findPaneOfTypeByID(LIST_CITIZEN, ScrollingList.class);
         citizen.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -95,11 +94,11 @@ public class WindowHutTavern extends AbstractWindowBuilding<TavernBuildingModule
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ICitizenDataView citizenDataView = home.getColony().getCitizen((home.getResidents().get(index)));
+                final ICitizenDataView citizenDataView = home.getColony().getCitizen(home.getResidents().get(index));
                 if (citizenDataView != null)
                 {
                     rowPane.findPaneOfTypeByID("name", Text.class).setText(citizenDataView.getName());
-                    rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class).setEnabled(isManualHousing);
+                    rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class).setEnabled(building.getColony().isManualHousing());
                 }
             }
         });
