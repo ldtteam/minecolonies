@@ -569,12 +569,6 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     public boolean canPathOnRails()
     {
-        if (true)
-        {
-            getNavigator().getPathingOptions().setCanUseRails(true);
-            return true;
-        }
-
         if (world.isRemote)
         {
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimensionKey());
