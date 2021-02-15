@@ -3,9 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.Image;
-import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.Window;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -41,7 +39,6 @@ public class WindowTownHallMercenary extends Window implements ButtonHandler
     {
         super(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX);
         this.colony = c;
-        findPaneOfTypeByID("text", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.townHall.mercenaryStory"));
 
         int amountOfMercenaries = colony.getCitizenCount();
         amountOfMercenaries = amountOfMercenaries / 10;

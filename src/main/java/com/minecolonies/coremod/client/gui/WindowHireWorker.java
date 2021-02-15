@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -127,7 +127,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      */
     private void setupSettings(final Button settingsButton)
     {
-        settingsButton.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.hiringmode." + building.getHiringMode().name().toLowerCase(Locale.ENGLISH)));
+        settingsButton.setText(LanguageHandler.format("com.minecolonies.coremod.gui.hiringmode." + building.getHiringMode().name().toLowerCase(Locale.ENGLISH)));
     }
 
     /**
@@ -214,7 +214,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     public void onOpened()
     {
         updateCitizens();
-        findPaneOfTypeByID(AUTO_HIRE_WARN, Label.class).off();
+        findPaneOfTypeByID(AUTO_HIRE_WARN, Text.class).off();
 
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -264,11 +264,11 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     if ((!building.getColony().isManualHiring() && building.getHiringMode() == HiringMode.DEFAULT) || (building.getHiringMode() == HiringMode.AUTO))
                     {
                         rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).disable();
-                        findPaneOfTypeByID(AUTO_HIRE_WARN, Label.class).on();
+                        findPaneOfTypeByID(AUTO_HIRE_WARN, Text.class).on();
                     }
 
                     isPaused.on();
-                    isPaused.setLabel(LanguageHandler.format(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
+                    isPaused.setText(LanguageHandler.format(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
                 }
 
                 if (citizen.isPaused())
@@ -280,33 +280,22 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
 
-                StringBuilder attributes = new StringBuilder();
+                final StringBuilder attributes = new StringBuilder();
                 final String intermString = " | ";
 
                 final List<Map.Entry<Skill, Tuple<Integer, Double>>> list = new ArrayList<>(citizen.getCitizenSkillHandler().getSkills().entrySet());
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < list.size(); i++)
                 {
                     final Map.Entry<Skill, Tuple<Integer, Double>> entry = list.get(i);
                     @NotNull final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
-                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US), entry.getValue().getA()));
+                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US)) + ": " +  entry.getValue().getA());
                     attributes.append(text).append(intermString);
                 }
                 attributes.delete(attributes.length() - intermString.length(), attributes.length());
 
-                StringBuilder attributes2 = new StringBuilder();
-                for (int i = 5; i < list.size(); i++)
-                {
-                    final Map.Entry<Skill, Tuple<Integer, Double>> entry = list.get(i);
-                    @NotNull final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
-                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US), entry.getValue().getA()));
-                    attributes2.append(text).append(intermString);
-                }
-                attributes2.delete(attributes2.length() - intermString.length(), attributes2.length());
-
-                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class)
-                  .setLabelText((citizen.getJob().isEmpty() ? "" : LanguageHandler.format(citizen.getJob()) + ": ") + citizen.getName());
-                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes.toString());
-                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL2, Label.class).setLabelText(attributes2.toString());
+                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class)
+                  .setText((citizen.getJob().isEmpty() ? "" : LanguageHandler.format(citizen.getJob()) + ": ") + citizen.getName());
+                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class).setText(attributes.toString());
             }
         });
     }

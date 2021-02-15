@@ -1,10 +1,9 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="false" size="240 320"
-        lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd"
+        lightbox="false" pause="false" size="960 540" type="FULLSCREEN_VANILLA">
 
-    <image source="minecolonies:textures/gui/guide/background.png" size="100% 100%" id="guide1"/>
-    <button id="confirm" pos="100 210" label="$(com.minecolonies.coremod.gui.workerhuts.guide.confirm)"/>
-    <text id="questionmark" size="100 30" color="black" pos="37 163" textscale="0.8"/>
-    <text id="arrow" size="90 30" color="black" pos="280 10" textscale="0.8"/>
-    <text id="chest" size="100 40" color="black" pos="285 160" textscale="0.8"/>
+    <image source="minecolonies:textures/gui/guide/background.png" size="960 540" id="guide1"/>
+    <button id="confirm" pos="360 455" label="$(com.minecolonies.coremod.gui.workerhuts.guide.confirm)"/>
+    <text id="questionmark" size="210 75" color="black" pos="80 363" textalign="MIDDLE" text="$(com.minecolonies.coremod.gui.workerhuts.guide.questionmark)"/>
+    <text id="arrow" size="210 75" color="black" pos="637 22" textalign="MIDDLE" text="$(com.minecolonies.coremod.gui.workerhuts.guide.arrow)"/>
+    <text id="chest" size="210 75" color="black" pos="646 363" textalign="MIDDLE" text="$(com.minecolonies.coremod.gui.workerhuts.guide.chest)"/>
 </window>
