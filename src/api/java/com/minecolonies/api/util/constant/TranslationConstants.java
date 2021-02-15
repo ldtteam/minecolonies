@@ -28,11 +28,11 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL         = "entity.builder.messagebuildcomplete_manual";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC        = "entity.builder.messagebuildcomplete_generic";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC_MANUAL = "entity.builder.messagebuildcomplete_generic_manual";
-    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE      = "entity.builder.messageremovalcomplete";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE                 = "entity.builder.messagedecocomplete";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL          = "entity.builder.messagedecocomplete_manual";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP              = "entity.deliveryman.forcepickup";
     @NonNls
