@@ -123,9 +123,14 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
         return buildingBlock;
     }
 
-    public BiFunction<IColony, BlockPos, IBuilding> getBuildingProducer()
+    public IBuilding produceBuilding(final BlockPos position, final IColony colony)
     {
-        return buildingProducer;
+        final IBuilding building = buildingProducer.apply(colony, position);
+        for (final Supplier<IBuildingModule> module : buildingModules)
+        {
+            building.registerModule(module.get().setBuilding(building));
+        }
+        return building;
     }
 
     public List<Supplier<IBuildingModule>> getModuleProducers() { return buildingModules; }

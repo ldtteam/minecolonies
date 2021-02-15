@@ -61,13 +61,7 @@ public class BuildingDataManager implements IBuildingDataManager
             Log.getLogger().error(String.format("Unknown building type '%s'.", buildingName), new Exception());
             return null;
         }
-
-        final IBuilding building = entry.getBuildingProducer().apply(colony, position);
-        for (final Supplier<IBuildingModule> module : entry.getModuleProducers())
-        {
-            building.registerModule(module.get().setBuilding(building));
-        }
-        return building;
+        return entry.produceBuilding(position, colony);
     }
 
     @Override
