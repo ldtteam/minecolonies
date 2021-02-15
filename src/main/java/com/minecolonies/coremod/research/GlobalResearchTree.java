@@ -12,11 +12,14 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.Network;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -302,53 +305,47 @@ public class GlobalResearchTree implements IGlobalResearchTree
     public List<ItemStorage> getResearchResetCosts()
     {
         List<ItemStorage> outputList = new ArrayList<>();
-        for (final String cost : MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchResetCost.get())
+        for (String itemId : MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchResetCost.get())
         {
-            final String[] costParts = cost.split(":");
-            ItemStorage item;
-            if (costParts.length == 3)
+            final int tagIndex = itemId.indexOf("{");
+            final String tag = tagIndex > 0 ? itemId.substring(tagIndex) : null;
+            itemId = tagIndex > 0 ? itemId.substring(0, tagIndex) : itemId;
+            String[] split = itemId.split(":");
+            if(split.length != 2)
             {
-                item = new ItemStorage(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1]))));
-                try
+                if(split.length == 1)
                 {
-                    final int count = Integer.parseInt(costParts[2]);
-                    item.setAmount(count);
+                    final String[] tempArray ={"minecraft", split[0]};
+                    split = tempArray;
                 }
-                catch (final NumberFormatException err)
+                else
                 {
-                    Log.getLogger().error("Malformed count value in Research Reset Cost for" + costParts[0] + ":" + costParts[1] + " where " + costParts[2] + "is not a number.");
+                    Log.getLogger().error("Unable to parse Research Reset Cost definition: " + itemId);
                 }
             }
-            else if (costParts.length == 2)
+            final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
+            final ItemStack stack = new ItemStack(item);
+            if (stack.isEmpty())
+            {
+                Log.getLogger().warn("Unable to parse Research Reset Cost definition: " + itemId);
+                continue;
+            }
+            if (tag != null)
             {
                 try
                 {
-                    final int count = Integer.parseInt(costParts[1]);
-                    item = new ItemStorage(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", costParts[0]))));
-                    item.setAmount(count);
+                    stack.setTag(JsonToNBT.getTagFromJson(tag));
+                    outputList.add(new ItemStorage(stack, false, false));
                 }
-                catch (final NumberFormatException err)
+                catch (CommandSyntaxException parseException)
                 {
-                    item = new ItemStorage(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1]))));
+                    //Unable to parse tags, drop them.
+                    Log.getLogger().error("Unable to parse Research Reset Cost definition: " + itemId);
                 }
-            }
-            else if (costParts.length == 1)
-            {
-                item = new ItemStorage(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", costParts[0]))));
             }
             else
             {
-                continue;
-            }
-            if(!item.getItem().equals(Items.AIR))
-            {
-                item.ignoreDamageValue();
-                item.ignoreNBT();
-                outputList.add(item);
-                if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
-                {
-                    Log.getLogger().info("Validated research reset cost : " + outputList.get(outputList.size() - 1));
-                }
+                outputList.add(new ItemStorage(stack, false, true));
             }
         }
         return outputList;

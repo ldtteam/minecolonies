@@ -1,0 +1,593 @@
+package com.minecolonies.api.research;
+
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DirectoryCache;
+import net.minecraft.data.IDataProvider;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collection;
+
+/**
+ * A class for creating the Research-related JSONs, including Research, ResearchEffects, and (optional) Branches.
+ * Note that this does not validate that the resulting research tree is coherent:
+ * programmers should make sure that research parents and effects exist, that depth is 1 or one level greater than the parent depth,
+ * and that cost and requirement identifiers match real items.
+ *
+ * Avoid changing research identifiers here unless necessary. If required, see ResearchCompatMap.
+ */
+public abstract class AbstractResearchProvider  implements IDataProvider
+{
+    public static final String ASSETS_DIR = "assets/" + Constants.MOD_ID + "/researches";
+    private final DataGenerator generator;
+
+    /**
+     * The abstract variant of a ResearchProvider, to register to fires during runData.
+     * @param generator  The DataGenerator to store the files.
+     */
+    public AbstractResearchProvider(final DataGenerator generator)
+    {
+        this.generator = generator;
+    }
+
+    /**
+     * Creates a collection of Research Branches, holding the human-readable name and time multiplier.
+     * Research Branches are optional: if no matching json is present, or no values set,
+     * the branch will default to its ResourceLocation.path, at 1.0 research time.
+     * @return  A collection of Research Branches, or Collection.EMPTY_LIST.
+     */
+    protected abstract Collection<ResearchBranch> getResearchBranchCollection();
+
+    /**
+     * Creates a collection of ResearchEffects, holding effect levels and (optionally) name and subtitles.
+     * ResearchEffects are not strictly mandatory: if no matching effect or effect level is present,
+     * the Research will default to a strength of 10 or true when complete.  For non-boolean-like effects, they're strongly encouraged.
+     * @return  A collection of ResearchEffects, or Collection.EMPTY_LIST.
+     */
+    protected abstract Collection<ResearchEffect> getResearchEffectCollection();
+
+    /**
+     * Create a collection of Researches, holding the majority of relevant data for the individual research targets.
+     * Researches must consist of at least an identifier and a branch.  If the research has no parent, it must be research level 1;
+     * if it does have a parent, it must be exactly one level higher than its parent.
+     * @return  A collection of Researches.
+     */
+    protected abstract Collection<Research> getResearchCollection();
+
+    @Override
+    public void act(@NotNull final DirectoryCache cache) throws IOException
+    {
+        for(ResearchBranch branch : getResearchBranchCollection())
+        {
+            final Path savePath = generator.getOutputFolder().resolve("assets").resolve(branch.id.getNamespace()).resolve("researches").resolve(branch.id.getPath());
+            IDataProvider.save(new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create(), cache, branch.json, savePath);
+        }
+        for(ResearchEffect effect : getResearchEffectCollection())
+        {
+            final Path savePath = generator.getOutputFolder().resolve("assets").resolve(effect.id.getNamespace()).resolve("researches").resolve(effect.id.getPath());
+            IDataProvider.save(new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create(), cache, effect.json, savePath);
+        }
+        for(Research research : getResearchCollection())
+        {
+            final Path savePath = generator.getOutputFolder().resolve("assets").resolve(research.id.getNamespace()).resolve("researches").resolve(research.id.getPath());
+            IDataProvider.save(new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create(), cache, research.json, savePath);
+        }
+    }
+
+    @NotNull
+    @Override
+    public String getName()
+    {
+        return "Research Data Provider";
+    }
+
+    /**
+     * A Builder-like class for producing Researches.
+     */
+    protected static class Research
+    {
+        final public JsonObject       json = new JsonObject();
+        final public ResourceLocation id;
+        /**
+         * The university level of the research.
+         */
+        public Integer researchLevel;
+        /**
+         *  A Translated Name to add to the output language file.
+         */
+        public String translatedName;
+        /**
+         *  A Translated Subtitle to add to the output language file.
+         */
+        public String translatedSubtitle;
+
+        /**
+         * Creates a Research for later assembly into a JSON file.
+         * @param id            A unique identifier.  Suggested path format is branch/name.json.
+         * @param branch        A branch unique identifier.  This will determine the location of a branch JSON, if present.
+         */
+        public Research(final ResourceLocation id, final ResourceLocation branch)
+        {
+            this.id = id;
+            this.json.addProperty("branch", branch.toString());
+            this.json.addProperty("researchLevel", 1);
+        }
+
+        /**
+         * Set the Parent Research.  Parent Research must be unlocked and complete before this research is available.
+         * For now, all research above level 1 must have one parent.
+         * If not set, assumes level 1.
+         * @param parent              The unique identifier of the parent research.
+         * @param parentResearchLevel The researchLevel of the parent research.
+         * @return this
+         */
+        public Research setParentResearch(final ResourceLocation parent, final int parentResearchLevel)
+        {
+            this.json.addProperty("parent", parent.toString());
+            this.json.remove("researchLevel");
+            this.researchLevel = parentResearchLevel + 1;
+            this.json.addProperty("researchLevel", this.researchLevel);
+            return this;
+        }
+
+        /**
+         * Set the research's name.  This may be a human-readable name.
+         * If using a translation key, use setTranslatedName instead.
+         * @param name              The research's displayed name, as a human-readable string or translation key.
+         * @return this
+         */
+        public Research setName(final String name)
+        {
+            this.json.addProperty("name", name);
+            return this;
+        }
+
+        /**
+         * Set the Translated Name.  This will use the autogeneration key, add a matching translation text to the language output file.
+         * @param translatedName    The research's human-readable name.
+         * @return this
+         */
+        public Research setTranslatedName(final String translatedName)
+        {
+            this.translatedName = translatedName;
+            return this;
+        }
+
+        /**
+         * Set the subtitle, as a human-readable name.
+         * If using a translation key, use setTranslatedSubtitle.
+         * @param subtitle    The research's human-readable subtitle.
+         * @return this
+         */
+        public Research setSubtitle(final String subtitle)
+        {
+            this.json.addProperty("subtitle", subtitle);
+            return this;
+        }
+
+        /**
+         * Sets a subtitle translation key.  This will use an auto-generated key, and add a matching translation text to the language output file.
+         * @param translatedSubtitle    The research's human-readable subtitle.
+         * @return this
+         */
+        public Research setTranslatedSubtitle(final String translatedSubtitle)
+        {
+            this.translatedSubtitle = translatedSubtitle;
+            this.json.addProperty("subtitle", "com." + id.getNamespace() + ".research." + id.getPath().replaceAll("[ /]",".") + ".subtitle");
+            return this;
+        }
+
+        /**
+         * Sets the sort order for the research.  Sibling research with a greater number will be placed lower on the University Window.
+         * Only applies for research with siblings.
+         * @param sortNum               The numeric value for vertical sorting priority.
+         * @return this
+         */
+        public Research setSortOrder(final int sortNum)
+        {
+            this.json.addProperty("sortOrder", sortNum);
+            return this;
+        }
+
+        /**
+         * Sets only child status.  OnlyChild research will allow only one descendant
+         * to be completed at a time, and makes any descendant research resettable.
+         * Only applies to research with multiple immediate descendants.
+         * @return this
+         */
+        public Research setOnlyChild()
+        {
+            this.json.addProperty("exclusiveChildResearch", true);
+            return this;
+        }
+
+        /**
+         * Sets NoReset status.  NoReset research can not be undone once complete.
+         * This is most relevant for researches that may cause inconsistent or incoherent behavior if reset.
+         * Only required when a Research is level 6, or where it or an ancestor research is onlyChild.
+         * @return this
+         */
+        public Research setNoReset()
+        {
+            this.json.addProperty("no-reset", true);
+            return this;
+        }
+
+        /**
+         * Sets autoStart status.  Once all requirements are met, autostart Research will either begin (if no item costs are set)
+         * or notify colony players of its existence (if the research has item costs).
+         * @return this
+         */
+        public Research setAutostart()
+        {
+            this.json.addProperty("autostart", true);
+            return this;
+        }
+
+        /**
+         * Sets instant status.  Once begun, this research will complete Soon(tm), regardless of branch time multipliers.
+         * @return this
+         */
+        public Research setInstant()
+        {
+            this.json.addProperty("instant", true);
+            return this;
+        }
+
+        /**
+         * Sets hidden status.  Hidden research will not be visible in the University Window until all requirements are met.
+         * Research branches were all research is hidden or a descendant of a hidden research will be locked until at least one research is available.
+         * Locked branches will notify what requirements will unlock the branch.
+         * @return this
+         */
+        public Research setHidden()
+        {
+            this.json.addProperty("hidden", true);
+            return this;
+        }
+
+        /**
+         * Sets an Item research icon.  This icon will only be displayed after research is completed.
+         * @param item  The itemStack, including count, to use as an icon.
+         * @return this
+         */
+        public Research setIcon(final ItemStack item)
+        {
+            if(json.has("icon"))
+            {
+                json.remove("icon");
+            }
+            this.json.addProperty("icon", item.getItem().getRegistryName().toString() + ":" + item.getCount());
+            return this;
+        }
+
+        /**
+         * Sets a texture research icon.  This icon will only be displayed after research is completed.
+         * Overrides ItemStack icons.
+         * @param texture  The location of the texture file to use as an icon.
+         * @return this
+         */
+        public Research setIcon(final ResourceLocation texture)
+        {
+            this.json.addProperty("icon", texture.toString());
+            return this;
+        }
+
+        /**
+         * Adds a building research requirement.  The colony must have at least as many levels of this building to begin the research
+         * cumulative across all buildings of that type.  (ie, guardtower 8 is fulfilled by eight level-1 guard towers, four level-2 guard towers, three level-3 guard towers, etc)
+         * Multiple different buildings can be added as different BuildingRequirements.
+         * @param buildingName  The name of the building to require.  Derived from SchematicName.
+         * @param level         The required sum of levels across the colony.
+         * @return this
+         */
+        public Research addBuildingRequirement(final String buildingName, final int level)
+        {
+            final JsonArray reqArray;
+            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
+            {
+                reqArray = this.json.getAsJsonArray("requirements");
+                this.json.remove("requirements");
+            }
+            else
+            {
+                reqArray = new JsonArray();
+            }
+            JsonObject req = new JsonObject();
+            req.addProperty("building", buildingName);
+            req.addProperty("level", level);
+            reqArray.add(req);
+            this.json.add("requirements", req);
+            return this;
+        }
+
+        /**
+         * Sets an alternate building research requirement.
+         * The colony must have at least as many levels of at least one alternate building to begin the research,
+         * cumulative across all buildings of that type.  Ie, AlternateBuildingRequirement of Tavern 3 / CitizenHouse 2 / University 2
+         * would be fulfilled by any one of those buildings level 3, or by two citizen houses.
+         * Only one of all added Alternate Buildings is required.  AlternateBuildingRequirements do not bypass normal BuildingRequirements.
+         * @param buildingName          The required building.
+         * @param level                 The required sum of levels across the colony.
+         * @return this
+         */
+        public Research addAlternateBuildingRequirement(final String buildingName, final int level)
+        {
+            final JsonArray reqArray;
+            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
+            {
+                reqArray = this.json.getAsJsonArray("requirements");
+                this.json.remove("requirements");
+            }
+            else
+            {
+                reqArray = new JsonArray();
+            }
+            JsonObject req = new JsonObject();
+            req.addProperty("alternate-building", buildingName);
+            req.addProperty("level", level);
+            reqArray.add(req);
+            this.json.add("requirements", req);
+            return this;
+        }
+
+        /**
+         * The non-parent required research, which will prevent starting this research until it is completed.
+         * This uses an auto-generated language key.  To override, add an additional string parameter.
+         * Multiple ResearchRequirements are supported.  ResearchRequirements can apply from other branches.
+         * If the research requirement does not exist, it is fulfilled automatically.
+         * @param researchReq       The required research.
+         * @return this
+         */
+        public Research addResearchRequirement(final ResourceLocation researchReq)
+        {
+            final JsonArray reqArray;
+            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
+            {
+                reqArray = this.json.getAsJsonArray("requirements");
+                this.json.remove("requirements");
+            }
+            else
+            {
+                reqArray = new JsonArray();
+            }
+            JsonObject req = new JsonObject();
+            req.addProperty("research", researchReq.toString());
+            reqArray.add(req);
+            this.json.add("requirements", req);
+            return this;
+        }
+
+        /**
+         * The non-parent required research, which will prevent starting this research until it is completed.
+         * This manually sets a requirement description.  To use the auto-generated key from the research itself, remove the String param.
+         * Multiple ResearchRequirements are supported.  ResearchRequirements can apply from other branches.
+         * If the research requirement does not exist, it is fulfilled automatically.
+         * @param researchReq  The id of the required research.
+         * @param name         The human-readable name of the required research.
+         * @return this
+         */
+        public Research addResearchRequirement(final ResourceLocation researchReq, final String name)
+        {
+            final JsonArray reqArray;
+            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
+            {
+                reqArray = this.json.getAsJsonArray("requirements");
+                this.json.remove("requirements");
+            }
+            else
+            {
+                reqArray = new JsonArray();
+            }
+            JsonObject req = new JsonObject();
+            req.addProperty("research", researchReq.toString());
+            req.addProperty("name", name);
+            reqArray.add(req);
+            this.json.add("requirements", req);
+            return this;
+        }
+
+        /**
+         * Adds an item cost to the research.  This will be consumed when beginning the research, and will not be refunded.
+         * Multiple ItemCosts are supported, but for UI reasons it's encouraged to keep to 5 or less.
+         * @param item   The item stack to require, including count.
+         * @return this.
+         */
+        public Research addItemCost(final ItemStack item)
+        {
+            final JsonArray reqArray;
+            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
+            {
+                reqArray = this.json.getAsJsonArray("requirements");
+                this.json.remove("requirements");
+            }
+            else
+            {
+                reqArray = new JsonArray();
+            }
+            JsonObject req = new JsonObject();
+            req.addProperty("item", item.getItem().getRegistryName().toString());
+            req.addProperty("quantity", item.getCount());
+            reqArray.add(req);
+            this.json.add("requirements", req);
+            return this;
+        }
+
+        /**
+         * Add an effect to the research.  Research Effects are applied on completion,
+         * and remain unless the colony is destroyed or the research is undone.
+         * Multiple Effects are supported.
+         * @param effect    the id of the research effect to apply on completion.
+         * @param level     the strength of the research effect to apply on completion.
+         * @return this
+         */
+        public Research addEffect(final ResourceLocation effect, final int level)
+        {
+            final JsonArray effects;
+            if(this.json.has("effects") && this.json.get("effects").isJsonArray())
+            {
+                effects = this.json.getAsJsonArray("effects");
+                this.json.remove("effects");
+            }
+            else
+            {
+                effects = new JsonArray();
+            }
+            JsonObject eff = new JsonObject();
+            eff.addProperty(effect.toString(), level);
+            effects.add(eff);
+            this.json.add("effects", effects);
+            return this;
+        }
+    }
+
+    /**
+     * A Builder-like class for producing Research Effects.
+     */
+    protected static class ResearchEffect
+    {
+        final public JsonObject       json = new JsonObject();
+        final public ResourceLocation id;
+        /**
+         *  A Translated Name to add to the output language file.
+         */
+        public String translatedName;
+        /**
+         *  A Translated Subtitle to add to the output language file.
+         */
+        public String translatedSubtitle;
+
+        /**
+         * Creates a new instances of a ResearchEffect.
+         * @param id    A unique identifier.  Suggested path format is effects/name.json.
+         */
+        public ResearchEffect(final ResourceLocation id)
+        {
+            this.id = id;
+            this.json.addProperty("effect", true);
+        }
+
+        /**
+         * Create a new instance of a ResearchEffect.
+         * @param id    A unique identifier.  Suggested path format is effects/name.json.
+         * @param type  The type of the research effect.
+         */
+        public ResearchEffect(final ResourceLocation id, final String type)
+        {
+            this.id = id;
+            this.json.addProperty("effect", true);
+            this.json.addProperty("effectType", type);
+        }
+
+        /**
+         * Set the levels of the research effect, starting at level 1.
+         * @param strengths  The strengths of the research effect.
+         * @return this
+         */
+        public ResearchEffect setLevels(final double[] strengths)
+        {
+            JsonArray child = new JsonArray();
+            for(double str : strengths)
+            {
+                child.add(str);
+            }
+            this.json.add("levels", child);
+            return this;
+        }
+
+        /**
+         * Set the research name as a human-readable string.
+         * For translation keys, use setTranslatedName instead.
+         * @param name      The human-readable name.
+         * @return this
+         */
+        public ResearchEffect setName(final String name)
+        {
+            this.json.addProperty("name", name);
+            return this;
+        }
+
+        /**
+         * Set the research name, using an auto-generated translation key, and add a matching translation text to the language output file.
+         * @param name      The human-readable name.
+         * @return this
+         */
+        public ResearchEffect setTranslatedName(final String name)
+        {
+            this.json.addProperty("name", name);
+            return this;
+        }
+
+        public ResearchEffect setSubtitle(final String subtitle)
+        {
+            this.json.addProperty("subtitle", subtitle);
+            return this;
+        }
+    }
+
+    /**
+     * A Builder-like class for producing Research Branches
+     */
+    protected static class ResearchBranch
+    {
+        final public JsonObject       json = new JsonObject();
+        final public ResourceLocation id;
+        /**
+         *  A Translated Name to add to the output language file.
+         */
+        public String translatedName;
+
+        /**
+         * Creates a Research Branch.
+         * @param id    A unique identifier.  Suggested path format is name.json.
+         */
+        public ResearchBranch(final ResourceLocation id)
+        {
+            this.id = id;
+        }
+
+        /**
+         * Sets the Branch name.  This may be a human-readable string.
+         * For translation keys, use setTranslatedBranchName instead.
+         * @param branchName  The human-readable string.
+         * @return this
+         */
+        public ResearchBranch setBranchName(final String branchName)
+        {
+            this.json.addProperty("branch-name", branchName);
+            return this;
+        }
+
+        /**
+         * Sets the Branch Translated name for later recording to the language file, and assigns an an auto-generated translation key.
+         * @param translatedBranchName  The human-readable string.
+         * @return this
+         */
+        public ResearchBranch setTranslatedBranchName(final String translatedBranchName)
+        {
+            this.translatedName = translatedBranchName;
+            this.json.addProperty("branch-name", "com." + id.getNamespace() + ".research." + id.getPath().replaceAll("[ /]",".") + ".name");
+            return this;
+        }
+
+        /**
+         * Sets the Branch Time Multiplier.  This increases or decreases the worker time required
+         * to complete all research on this branch.  Larger numbers go faster, while lower numbers go slower.
+         * Very low values may have unpredictable results.
+         * @param branchTimeMultiplier  The multiplier to set.
+         * @return this
+         */
+        public ResearchBranch setBranchTimeMultiplier(final double branchTimeMultiplier)
+        {
+            this.json.addProperty("base-time", branchTimeMultiplier);
+            return this;
+        }
+    }
+}

@@ -9,10 +9,7 @@ import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -142,33 +139,45 @@ public class LocalResearchTree implements ILocalResearchTree
                 SoundUtils.playSuccessSound(player, player.getPosition());
                 return;
             }
-            if (research.hasEnoughResources(new InvWrapper(player.inventory)))
+            final InvWrapper playerInv = new InvWrapper(player.inventory);
+            if (!research.hasEnoughResources(playerInv))
             {
-                if (!research.getResearchRequirement().isEmpty())
+                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.costnotavailable", research.getName()),
+                  player.getUniqueID());
+                SoundUtils.playErrorSound(player, player.getPosition());
+                return;
+            }
+            if (!research.getResearchRequirement().isEmpty())
+            {
+                for (IResearchRequirement requirement : research.getResearchRequirement())
                 {
-                    for (IResearchRequirement requirement : research.getResearchRequirement())
+                    if (!requirement.isFulfilled(colony))
                     {
-                        if (!requirement.isFulfilled(colony))
-                        {
-                            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.requirementnotmet"), player.getUniqueID());
-                            SoundUtils.playErrorSound(player, player.getPosition());
-                            return;
-                        }
+                        player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.requirementnotmet"), player.getUniqueID());
+                        SoundUtils.playErrorSound(player, player.getPosition());
+                        return;
                     }
                 }
-                // Remove items from player
-                if (!InventoryUtils.tryRemoveStorageFromItemHandler(new InvWrapper(player.inventory), research.getCostList()))
-                {
-                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.costnotavailable", research.getName()),
-                      player.getUniqueID());
-                    SoundUtils.playErrorSound(player, player.getPosition());
-                    return;
-                }
-                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started", research.getName()),
-                  player.getUniqueID());
-                research.startResearch(colony.getResearchManager().getResearchTree());
-                SoundUtils.playSuccessSound(player, player.getPosition());
             }
+            // We know the player has the items, so now we can remove them safely.
+            for(ItemStorage cost : research.getCostList())
+            {
+                final List<Integer> slotsWithMaterial = InventoryUtils.findAllSlotsInItemHandlerWith(playerInv,
+                  stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()));
+                int amount = cost.getAmount();
+                for (Integer slotNum : slotsWithMaterial)
+                {
+                    amount = amount - playerInv.extractItem(slotNum, amount, false).getCount();
+                    if(amount <= 0)
+                    {
+                        break;
+                    }
+                }
+            }
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.started", research.getName()),
+              player.getUniqueID());
+            research.startResearch(colony.getResearchManager().getResearchTree());
+            SoundUtils.playSuccessSound(player, player.getPosition());
         }
         else
         {
@@ -218,13 +227,32 @@ public class LocalResearchTree implements ILocalResearchTree
             if(!player.isCreative())
             {
                 final List<ItemStorage> costList = IGlobalResearchTree.getInstance().getResearchResetCosts();
-
-                if (!InventoryUtils.tryRemoveStorageFromItemHandler(new InvWrapper(player.inventory), costList))
+                final InvWrapper playerInv = new InvWrapper(player.inventory);
+                for (final ItemStorage cost : costList)
                 {
-                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.costnotavailable",
-                        IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()), player.getUniqueID());
-                    SoundUtils.playErrorSound(player, player.getPosition());
-                    return;
+                    final int count = InventoryUtils.getItemCountInItemHandler(playerInv,
+                      stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()));
+                    if (count < cost.getAmount())
+                    {
+                        player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.costnotavailable",
+                          IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()), player.getUniqueID());
+                        SoundUtils.playErrorSound(player, player.getPosition());
+                        return;
+                    }
+                }
+                for (ItemStorage cost : costList)
+                {
+                    final List<Integer> slotsWithMaterial = InventoryUtils.findAllSlotsInItemHandlerWith(playerInv,
+                      stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()));
+                    int amount = cost.getAmount();
+                    for (Integer slotNum : slotsWithMaterial)
+                    {
+                        amount = amount - playerInv.extractItem(slotNum, amount, false).getCount();
+                        if (amount <= 0)
+                        {
+                            break;
+                        }
+                    }
                 }
             }
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.undo",

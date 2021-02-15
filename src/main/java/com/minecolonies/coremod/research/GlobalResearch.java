@@ -119,7 +119,7 @@ public class GlobalResearch implements IGlobalResearch
     private static final String RESEARCH_LEVEL_PROP = "level";
 
     /**
-     * The property name for the research which is only visible when its requirements are completed.
+     * The property name for the research which is only visible when its requirements are fulfilled.
      */
     private static final String RESEARCH_HIDDEN_PROP = "hidden";
 
@@ -130,7 +130,7 @@ public class GlobalResearch implements IGlobalResearch
     private static final String RESEARCH_AUTOSTART_PROP = "autostart";
 
     /**
-     * The property name for instant(ish) completion of research.
+     * The property name for instant(ish) completion of research, when its requirements are completed.
      */
     private static final String RESEARCH_INSTANT_PROP = "instant";
 
@@ -276,7 +276,7 @@ public class GlobalResearch implements IGlobalResearch
     {
         this.id = id;
         final String autogenKey = "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /]",".");
-        this.name = new TranslationTextComponent(autogenKey);
+        this.name = new TranslationTextComponent(autogenKey + ".name");
         this.subtitle = new TranslationTextComponent("");
         this.effects.addAll(effects);
         this.depth = universityLevel;
@@ -368,7 +368,8 @@ public class GlobalResearch implements IGlobalResearch
     {
         for (final ItemStorage cost : costList)
         {
-            final int count = InventoryUtils.getItemCountInItemHandler(inventory, stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(cost.getItemStack()));
+            final int count = InventoryUtils.getItemCountInItemHandler(inventory,
+              stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()));
             if (count < cost.getAmount())
             {
                 return false;
@@ -398,6 +399,7 @@ public class GlobalResearch implements IGlobalResearch
         }
     }
 
+    @NotNull
     @Override
     public ResourceLocation getId()
     {
@@ -413,6 +415,7 @@ public class GlobalResearch implements IGlobalResearch
         return this.subtitle;
     }
 
+    @NotNull
     @Override
     public ResourceLocation getParent()
     {
@@ -834,7 +837,16 @@ public class GlobalResearch implements IGlobalResearch
                 else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_RESEARCH_PROP) &&
                           reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsJsonPrimitive().isString())
                 {
-                    this.requirements.add(new ResearchResearchRequirement(new ResourceLocation(reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsString()), this.name));
+                    if (reqArrayElement.getAsJsonObject().has(RESEARCH_NAME_PROP) &&
+                      reqArrayElement.getAsJsonObject().get(RESEARCH_NAME_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_NAME_PROP).getAsJsonPrimitive().isString())
+                    {
+                        this.requirements.add(new ResearchResearchRequirement(new ResourceLocation(reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsString()),
+                          new TranslationTextComponent(reqArrayElement.getAsJsonObject().get(RESEARCH_NAME_PROP).getAsString())));
+                    }
+                    else
+                    {
+                        this.requirements.add(new ResearchResearchRequirement(new ResourceLocation(reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsString())));
+                    }
                 }
 
                 // Alternate Building Requirements.  Requires at least one building type at a specific level out of all Alternate Buildings.

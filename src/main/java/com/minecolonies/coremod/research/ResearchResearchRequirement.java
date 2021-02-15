@@ -35,9 +35,21 @@ public class ResearchResearchRequirement implements IResearchRequirement
     private final TranslationTextComponent researchName;
 
     /**
-     * Create a building based research requirement.
+     * Create a research-based research requirement, assigning an auto-generation key.
      *
      * @param researchId the required precursor research.
+     */
+    public ResearchResearchRequirement(final ResourceLocation researchId)
+    {
+        this.researchId = researchId;
+        this.researchName = new TranslationTextComponent("com." + researchId.getNamespace() + ".research." + researchId.getPath().replaceAll("[ /]",".") + ".name");
+    }
+
+    /**
+     * Create a research-based research requirement.
+     *
+     * @param researchId the required precursor research.
+     * @param researchName the override name for the required research.
      */
     public ResearchResearchRequirement(final ResourceLocation researchId, final TranslationTextComponent researchName)
     {
@@ -45,6 +57,10 @@ public class ResearchResearchRequirement implements IResearchRequirement
         this.researchName = researchName;
     }
 
+    /**
+     * Create a research-based research requirement from a CompoundNBT.
+     * @param nbt       the nbt containing the research information.
+     */
     public ResearchResearchRequirement(final CompoundNBT nbt)
     {
         this.researchId = new ResourceLocation(nbt.getString(TAG_ID));

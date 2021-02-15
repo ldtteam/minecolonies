@@ -283,33 +283,6 @@ public class InventoryUtils
     }
 
     /**
-     * Checks if an ItemHandler has an ItemStack, including count, optionally checking to match damage and NBT.
-     *
-     * @param handler       ItemHandler to search in.
-     * @param input         ItemStack to search for.
-     * @param matchDamage   If item damage values should be used.
-     * @param matchNBT      If item NBT values should be used.
-     * @return      true if the ItemHandler has the items, false if not.
-     */
-    public static boolean hasItemStackInItemHandler(IItemHandler handler, @NotNull ItemStack input, boolean matchDamage, boolean matchNBT)
-    {
-        int amount = input.getCount();
-        for (int i = 0; i < handler.getSlots(); i++)
-        {
-            if (ItemStackUtils.compareItemStacksIgnoreStackSize(handler.getStackInSlot(i), input, matchDamage, matchNBT))
-            {
-                amount = amount - handler.extractItem(i, amount, false).getCount();
-
-                if (amount <= 0)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
      * Checks if a player has a block in the {@link IItemHandler}. Checked by {@link #getItemCountInItemHandler(IItemHandler, Block)} &gt; 0;
      *
      * @param itemHandler {@link IItemHandler} to scan
@@ -2162,12 +2135,8 @@ public class InventoryUtils
      */
     public static boolean tryRemoveStackFromItemHandler(final IItemHandler handler, final ItemStack input)
     {
-        if(!hasItemStackInItemHandler(handler, input, true, true))
-        {
-            return false;
-        }
-
         int amount = input.getCount();
+
         for (int i = 0; i < handler.getSlots(); i++)
         {
             if (ItemStackUtils.compareItemStacksIgnoreStackSize(handler.getStackInSlot(i), input))
@@ -2180,45 +2149,11 @@ public class InventoryUtils
                 }
             }
         }
-        // This should never happen.
+
+        final ItemStack revertStack = input.copy();
+        revertStack.setCount(input.getCount() - amount);
+        addItemStackToItemHandler(handler, revertStack);
         return false;
-    }
-
-    /**
-     * Tries to remove a group of ItemStorages with its size from a given ItemHandler. Only removes stacks if every stack's full count is present.
-     *
-     * @param handler      the itemHandler.
-     * @param input        the List of ItemStorage to remove.
-     * @return true if removed the stacks
-     */
-    public static boolean tryRemoveStorageFromItemHandler(final IItemHandler handler, final List<ItemStorage> input)
-    {
-        for(final ItemStorage is : input)
-        {
-            if(!hasItemStackInItemHandler(handler, is.getItemStack(), is.ignoreDamageValue(), is.ignoreNBT()))
-            {
-                return false;
-            }
-        }
-
-        for(final ItemStorage is : input)
-        {
-            int amount = is.getItemStack().getCount();
-
-            for (int i = 0; i < handler.getSlots(); i++)
-            {
-                if (ItemStackUtils.compareItemStacksIgnoreStackSize(handler.getStackInSlot(i), is.getItemStack()))
-                {
-                    amount = amount - handler.extractItem(i, amount, false).getCount();
-
-                    if (amount == 0)
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-        return true;
     }
 
     /**
