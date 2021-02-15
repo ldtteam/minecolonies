@@ -822,13 +822,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         // Check some past nodes case we fell behind.
-        Vector3d curr = this.currentPath.getVectorFromIndex(this.entity, curNode);
+        Vec3d curr = this.currentPath.getVectorFromIndex(this.entity, curNode);
         if (entity.getPositionVec().distanceTo(curr) >= 2.0)
         {
             int currentIndex = curNode - 1;
             while (currentIndex > 0)
             {
-                final Vector3d tempoPos = this.currentPath.getVectorFromIndex(this.entity, currentIndex);
+                final Vec3d tempoPos = this.currentPath.getVectorFromIndex(this.entity, currentIndex);
                 if (entity.getPositionVec().distanceTo(tempoPos) <= 1.0)
                 {
                     this.currentPath.setCurrentPathIndex(currentIndex);
