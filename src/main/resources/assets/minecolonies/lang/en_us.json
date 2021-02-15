@@ -5,7 +5,7 @@
   "minecolonies.config.gameplay": "Gameplay Settings",
   "minecolonies.config.gameplay.comment": "All configuration items related to the core gameplay",
   "minecolonies.config.claims": "Claim Settings",
-  "minecolonies.config.claims.comment": "All configuration related to mod compatibility",
+  "minecolonies.config.claims.comment": "All configuration related to colony claims",
   "minecolonies.config.combat": "Combat Settings",
   "minecolonies.config.combat.comment": "All configuration items related to the combat elements of MineColonies",
   "minecolonies.config.permissions": "Permission Settings",
@@ -18,6 +18,9 @@
   "minecolonies.config.requestsystem.comment": "All configurations related to the request system",
   "minecolonies.config.commands": "Command Settings",
   "minecolonies.config.commands.comment": "All configurations related to the MineColonies commands",
+  "minecolonies.config.research": "Research Settings",
+  "minecolonies.config.research.comment": "All configurations related to the research system",
+
   "minecolonies.config.disablecitizenvoices": "Citizen Sounds",
   "minecolonies.config.disablecitizenvoices.comment": "Disable citizen voices.",
 
@@ -35,7 +38,7 @@
   "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, the entire colony should be kept loaded.",
 
   "minecolonies.config.badvisitorchance": "Bad Recruitment Chance",
-  "minecolonies.config.badvisitorchance.comment": "Chance to get an evil Tavern visitor that will run off with the resources you give them. This is a %. [Default: 2]",
+  "minecolonies.config.badvisitorchance.comment": "Chance to get an evil Tavern visitor that will run off with the resources you give them. This is a %.",
 
   "minecolonies.config.listofplantables": "Florist Flowers",
   "minecolonies.config.listofplantables.comment": "The items and item-tags that the Florist can plant.",
@@ -226,7 +229,7 @@
   "minecolonies.config.debuginventories": "Debug Inventories",
   "minecolonies.config.debuginventories.comment": "Enable inventory debugging.",
   "minecolonies.config.luckyores": "List of Lucky Ores",
-  "minecolonies.config.luckyores.comment": "List of ore blocks rarely found magically by miners (see \"Ore Chance\").",
+  "minecolonies.config.luckyores.comment": "List of ore blocks rarely found magically by Miners (see \"Ore Chance\"). Includes the block and its chance, separated by exclamation marks.",
   "minecolonies.config.configlistrecruitmentitems": "List of Recruitment Items",
   "minecolonies.config.configlistrecruitmentitems.comment": "Items requested by Tavern visitors.",
   "minecolonies.config.pathfindingdebugdraw": "Pathfinding Debug Draw",
@@ -335,12 +338,12 @@
 
   "entity.worker.inventoryfullchestfull": "Please make space in my chests/racks. I am not able to dump my inventory.",
 
-  "entity.builder.messagebuildstart": " started building %s.",
-  "entity.builder.messagebuildcomplete": " finished building %s.",
-  "entity.builder.messagebuildcomplete_manual": " finished building %s. You can assign them another task now!",
-  "entity.builder.messagebuildcomplete_generic": "%s finished building %s.",
-  "entity.builder.messagebuildcomplete_generic_manual": "%s finished building %s. You can assign them another task now!",
-  "entity.builder.messageremovalcomplete": " finished deconstructing building %s. §6 To move the building while retaining its current level, use the 'Pick Up' button on the building's 'Build Options' GUI.",
+  "entity.builder.messagebuildstart": ": I've started work on %s!",
+  "entity.builder.messagebuildcomplete": ": I've finished building %s!",
+  "entity.builder.messagebuildcomplete_manual": ": I've finished building %s. You can assign me another task now!",
+  "entity.builder.messageremovalcomplete": ": I've finished deconstructing building %s! §6 To move the building while retaining its current level, use the 'Pick Up' button on the building's 'Build Options' GUI.",
+  "entity.builder.messagedecocomplete": "Builder %s: I've finished building %s!",
+  "entity.builder.messagedecocomplete_manual": "Builder %s: I've finished building %s. You can assign me another task now!",
   "entity.builder.messagebuildtoohigh": "%s is too high! Please lower the building below Y 256.",
   "entity.builder.messagebuildtoolow": "%s is too low! Please raise the building above Y 0.",
   "entity.builder.messageneedmaterial": "I need %s (amount: %d).",
@@ -987,7 +990,7 @@
   "com.minecolonies.coremod.gui.auto.hire.warning": "Turn the hiring mode of this hut (and colony) to manual to fire this worker or hire another one.",
   "com.minecolonies.coremod.citizens.nospace": "Colonists can't arrive at your colony because there is not enough space at pos X:%d Y:%d Z:%d!",
 
-  "com.minecolonies.coremod.builder.manual_mode": "%s: Successfully switched to manual mode. I'll just finish up my current task.",
+  "com.minecolonies.coremod.builder.manual_mode": "Builder %s: Successfully switched to manual mode. I'll just finish up my current task.",
 
   "entity.pirate": "Pirate",
   "entity.archerpirate": "Archer Pirate",
@@ -1127,7 +1130,7 @@
   "com.minecolonies.coremod.enchanter.nodrainingsset": "Please configure some workers I can drain experience from so I can work!",
 
   "minecolonies.config.enchanterexperiencemultiplier": "Enchanter Experience Multiplier",
-  "minecolonies.config.enchanterexperiencemultiplier.comment": "Experience multiplier of the enchanter (how much more experience do they get from a citizen than they drain). [Default: 2.0]",
+  "minecolonies.config.enchanterexperiencemultiplier.comment": "Experience multiplier of the enchanter (how much more experience do they get from a citizen than they drain).",
 
   "minecolonies.config.enchantments": "Enchantments",
   "minecolonies.config.enchantments.comment": "The possible enchantments for the enchanter.",
