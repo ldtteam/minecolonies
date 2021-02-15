@@ -38,7 +38,6 @@ public class DefaultBuildingInstance extends AbstractBuilding
         this.schematicName = schematicName;
         this.entry = entry;
         this.maxBuildingLevel = maxLevel;
-        entry.getBuildingBlock().registerBuildingModules(this);
     }
 
     @Override

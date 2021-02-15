@@ -5,7 +5,9 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
+import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
 import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
@@ -143,6 +145,9 @@ public final class ModBuildingsInitializer
                               .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "citizen", 5, ModBuildings.home))
                               .setBuildingViewProducer(() -> HomeBuildingModule.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOME_ID))
+                              .addBuildingModuleProducer(BedHandlingModule::new)
+                              .addBuildingModuleProducer(HomeBuildingModule::new)
+                              .addBuildingModuleProducer(LivingBuildingModule::new)
                               .createBuildingEntry();
 
         ModBuildings.library = new BuildingEntry.Builder()
@@ -304,6 +309,9 @@ public final class ModBuildingsInitializer
                                 .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "tavern", 3, ModBuildings.tavern))
                                 .setBuildingViewProducer(() -> TavernBuildingModule.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.TAVERN_ID))
+                                .addBuildingModuleProducer(BedHandlingModule::new)
+                                .addBuildingModuleProducer(LivingBuildingModule::new)
+                                .addBuildingModuleProducer(TavernBuildingModule::new)
                                 .createBuildingEntry();
 
         ModBuildings.mechanic = new BuildingEntry.Builder()

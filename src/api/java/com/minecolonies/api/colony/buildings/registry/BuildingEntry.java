@@ -4,12 +4,15 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -24,6 +27,8 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
 
     private final BiFunction<IColony, BlockPos, IBuilding> buildingProducer;
 
+    private List<Supplier<IBuildingModule>> buildingModules;
+
     /**
      * A builder class for {@link BuildingEntry}.
      */
@@ -32,6 +37,7 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
         private AbstractBlockHut<?>                                        buildingBlock;
         private BiFunction<IColony, BlockPos, IBuilding>                   buildingProducer;
         private Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer;
+        private List<Supplier<IBuildingModule>>                            buildingModules = new ArrayList<>();
         private ResourceLocation                                           registryName;
 
         /**
@@ -95,7 +101,18 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
             Validate.notNull(buildingViewProducer);
             Validate.notNull(registryName);
 
-            return new BuildingEntry(buildingBlock, buildingProducer, buildingViewProducer).setRegistryName(registryName);
+            return new BuildingEntry(buildingBlock, buildingProducer, buildingViewProducer, buildingModules).setRegistryName(registryName);
+        }
+
+        /**
+         * Add a building module producer.
+         * @param moduleProducer the module producer.
+         * @return the builder again.
+         */
+        public Builder addBuildingModuleProducer(final Supplier<IBuildingModule> moduleProducer)
+        {
+            buildingModules.add(moduleProducer);
+            return this;
         }
     }
 
@@ -111,15 +128,19 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
         return buildingProducer;
     }
 
+    public List<Supplier<IBuildingModule>> getModuleProducers() { return buildingModules; }
+
     private BuildingEntry(
       final AbstractBlockHut<?> buildingBlock,
       final BiFunction<IColony, BlockPos, IBuilding> buildingProducer,
-      final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer)
+      final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer,
+      List<Supplier<IBuildingModule>> buildingModules)
     {
         super();
         this.buildingBlock = buildingBlock;
         this.buildingProducer = buildingProducer;
         this.buildingViewProducer = buildingViewProducer;
+        this.buildingModules = buildingModules;
     }
 
     public Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> getBuildingViewProducer()
