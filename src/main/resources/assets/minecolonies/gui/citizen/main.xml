@@ -17,8 +17,8 @@
 
     <scrollgroup pos="13 105" size="105 100">
         <view size="100% 13">
-            <label pos="0 1" size="69 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.athletics)"/>
-            <image pos="71 2" size="9 9" onHoverId="athletics_bts" source="minecolonies:textures/entity/skills/small/athletics.png"/>
+            <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.athletics)"/>
+            <image pos="70 2" size="9 9" onHoverId="athletics_bts" source="minecolonies:textures/entity/skills/small/athletics.png"/>
             <label pos="82 1" size="15 12" id="athletics" color="black" textalign="MIDDLE_LEFT"/>
             <view pos="56 0" size="24 13" id="athletics_bts" enabled="false" visible="false">
                 <button id="plus_athletics" size="12 13" pos="0 0" label="+"/>
@@ -26,8 +26,8 @@
             </view>
         </view>
         <view size="100% 13">
-            <label pos="0 1" size="69 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.dexterity)"/>
-            <image pos="71 2" size="9 9" onHoverId="dexterity_bts" source="minecolonies:textures/entity/skills/small/dexterity.png"/>
+            <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.dexterity)"/>
+            <image pos="70 2" size="9 9" onHoverId="dexterity_bts" source="minecolonies:textures/entity/skills/small/dexterity.png"/>
             <label pos="82 1" size="15 12" id="dexterity" color="black" textalign="MIDDLE_LEFT"/>
             <view pos="56 0" size="24 13" id="dexterity_bts" enabled="false" visible="false">
                 <button id="plus_dexterity" size="12 13" pos="0 0" label="+"/>
@@ -35,8 +35,8 @@
             </view>
         </view>
         <view size="100% 13">
-            <label pos="0 1" size="69 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.strength)"/>
-            <image pos="71 2" size="9 9" onHoverId="strength_bts" source="minecolonies:textures/entity/skills/small/strength.png"/>
+            <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.strength)"/>
+            <image pos="70 2" size="9 9" onHoverId="strength_bts" source="minecolonies:textures/entity/skills/small/strength.png"/>
             <label pos="82 1" size="15 12" id="strength" color="black" textalign="MIDDLE_LEFT"/>
             <view pos="56 0" size="24 13" id="strength_bts" enabled="false" visible="false">
                 <button id="plus_strength" size="12 13" pos="0 0" label="+"/>
@@ -44,8 +44,8 @@
             </view>
         </view>
         <view size="100% 13">
-            <label pos="0 1" size="69 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.agility)"/>
-            <image pos="71 2" size="9 9" onHoverId="agility_bts" source="minecolonies:textures/entity/skills/small/agility.png"/>
+            <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.agility)"/>
+            <image pos="70 2" size="9 9" onHoverId="agility_bts" source="minecolonies:textures/entity/skills/small/agility.png"/>
             <label pos="82 1" size="15 12" id="agility" color="black" textalign="MIDDLE_LEFT"/>
             <view pos="56 0" size="24 13" id="agility_bts" enabled="false" visible="false">
                 <button id="plus_agility" size="12 13" pos="0 0" label="+"/>
@@ -53,8 +53,8 @@
             </view>
         </view>
         <view size="100% 13">
-            <label pos="0 1" size="69 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.stamina)"/>
-            <image pos="71 2" size="9 9" onHoverId="stamina_bts" source="minecolonies:textures/entity/skills/small/stamina.png"/>
+            <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.stamina)"/>
+            <image pos="70 2" size="9 9" onHoverId="stamina_bts" source="minecolonies:textures/entity/skills/small/stamina.png"/>
             <label pos="82 1" size="15 12" id="stamina" color="black" textalign="MIDDLE_LEFT"/>
             <view pos="56 0" size="24 13" id="stamina_bts" enabled="false" visible="false">
                 <button id="plus_stamina" size="12 13" pos="0 0" label="+"/>
@@ -62,8 +62,8 @@
             </view>
         </view>
         <view size="100% 13">
-            <label pos="0 1" size="69 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.mana)"/>
-            <image pos="71 2" size="9 9" onHoverId="mana_bts" source="minecolonies:textures/entity/skills/small/mana.png"/>
+            <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.mana)"/>
+            <image pos="70 2" size="9 9" onHoverId="mana_bts" source="minecolonies:textures/entity/skills/small/mana.png"/>
             <label pos="82 1" size="15 12" id="mana" color="black" textalign="MIDDLE_LEFT"/>
             <view pos="56 0" size="24 13" id="mana_bts" enabled="false" visible="false">
                 <button id="plus_mana" size="12 13" pos="0 0" label="+"/>
@@ -71,8 +71,8 @@
             </view>
         </view>
         <view size="100% 13">
-            <label pos="0 1" size="69 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.adaptability)"/>
-            <image pos="71 2" size="9 9" onHoverId="adaptability_bts" source="minecolonies:textures/entity/skills/small/adaptability.png"/>
+            <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.adaptability)"/>
+            <image pos="70 2" size="9 9" onHoverId="adaptability_bts" source="minecolonies:textures/entity/skills/small/adaptability.png"/>
             <label pos="82 1" size="15 12" id="adaptability" color="black" textalign="MIDDLE_LEFT"/>
             <view pos="56 0" size="24 13" id="adaptability_bts" enabled="false" visible="false">
                 <button id="plus_adaptability" size="12 13" pos="0 0" label="+"/>
@@ -80,8 +80,8 @@
             </view>
         </view>
         <view size="100% 13">
-            <label pos="0 1" size="69 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.focus)"/>
-            <image pos="71 2" size="9 9" onHoverId="focus_bts" source="minecolonies:textures/entity/skills/small/focus.png"/>
+            <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.focus)"/>
+            <image pos="70 2" size="9 9" onHoverId="focus_bts" source="minecolonies:textures/entity/skills/small/focus.png"/>
             <label pos="82 1" size="15 12" id="focus" color="black" textalign="MIDDLE_LEFT"/>
             <view pos="56 0" size="24 13" id="focus_bts" enabled="false" visible="false">
                 <button id="plus_focus" size="12 13" pos="0 0" label="+"/>
@@ -89,8 +89,8 @@
             </view>
         </view>
         <view size="100% 13">
-            <label pos="0 1" size="69 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.creativity)"/>
-            <image pos="71 2" size="9 9" onHoverId="creativity_bts" source="minecolonies:textures/entity/skills/small/creativity.png"/>
+            <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.creativity)"/>
+            <image pos="70 2" size="9 9" onHoverId="creativity_bts" source="minecolonies:textures/entity/skills/small/creativity.png"/>
             <label pos="82 1" size="15 12" id="creativity" color="black" textalign="MIDDLE_LEFT"/>
             <view pos="56 0" size="24 13" id="creativity_bts" enabled="false" visible="false">
                 <button id="plus_creativity" size="12 13" pos="0 0" label="+"/>
@@ -98,8 +98,8 @@
             </view>
         </view>
         <view size="100% 13">
-            <label pos="0 1" size="69 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.knowledge)"/>
-            <image pos="71 2" size="9 9" onHoverId="knowledge_bts" source="minecolonies:textures/entity/skills/small/knowledge.png"/>
+            <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.knowledge)"/>
+            <image pos="70 2" size="9 9" onHoverId="knowledge_bts" source="minecolonies:textures/entity/skills/small/knowledge.png"/>
             <label pos="82 1" size="15 12" id="knowledge" color="black" textalign="MIDDLE_LEFT"/>
             <view pos="56 0" size="24 13" id="knowledge_bts" enabled="false" visible="false">
                 <button id="plus_knowledge" size="12 13" pos="0 0" label="+"/>
@@ -107,8 +107,8 @@
             </view>
         </view>
         <view size="100% 13">
-            <label pos="0 1" size="69 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.intelligence)"/>
-            <image pos="71 2" size="9 9" onHoverId="intelligence_bts" source="minecolonies:textures/entity/skills/small/intelligence.png"/>
+            <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.intelligence)"/>
+            <image pos="70 2" size="9 9" onHoverId="intelligence_bts" source="minecolonies:textures/entity/skills/small/intelligence.png"/>
             <label pos="82 1" size="15 12" id="intelligence" color="black" textalign="MIDDLE_LEFT"/>
             <view pos="56 0" size="24 13" id="intelligence_bts" enabled="false" visible="false">
                 <button id="plus_intelligence" size="12 13" pos="0 0" label="+"/>
