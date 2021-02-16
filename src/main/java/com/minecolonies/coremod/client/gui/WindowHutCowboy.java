@@ -37,11 +37,11 @@ public class WindowHutCowboy extends AbstractWindowHerderBuilding<BuildingCowboy
 
         if (building.isMilkCows())
         {
-            buttonMilkCows.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT));
+            buttonMilkCows.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT));
         }
         else
         {
-            buttonMilkCows.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT));
+            buttonMilkCows.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT));
         }
     }
 
@@ -59,14 +59,14 @@ public class WindowHutCowboy extends AbstractWindowHerderBuilding<BuildingCowboy
 
     private void milkCowsClicked()
     {
-        if (buttonMilkCows.getLabel().equals(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT)))
+        if (buttonMilkCows.getTextAsString().equals(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT)))
         {
-            buttonMilkCows.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT));
+            buttonMilkCows.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT));
             building.setMilkCows(false);
         }
         else
         {
-            buttonMilkCows.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT));
+            buttonMilkCows.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT));
             building.setMilkCows(true);
         }
     }

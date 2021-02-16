@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Log;
 import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ScrollingList;
@@ -22,7 +23,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -319,7 +319,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                     logo.setVisible(false);
                     exampleStackDisplay.setVisible(true);
                     exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
-                    rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getString());
+                    rowPane.findPaneOfTypeByID(REQUESTER, Text.class).setText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request));
                 }
                 else
                 {
@@ -328,7 +328,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                     {
                         logo.setVisible(true);
                         logo.setImage(request.getDisplayIcon());
-                        logo.setHoverToolTip(request.getResolverToolTip(colony));
+                        PaneBuilders.tooltipBuilder().hoverPane(logo).build().setText(request.getResolverToolTip(colony));
                     }
                 }
 
@@ -336,13 +336,13 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 {
                     if(!displayStacks.isEmpty())
                     {
-                        rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(
-                          (IFormattableTextComponent) request.getDisplayStacks().get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()).getDisplayName());
+                        rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(
+                          request.getDisplayStacks().get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()).getDisplayName());
                     }
                 }
                 else
                 {
-                    rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(request.getShortDisplayString().getString().replace("§f", ""));
+                    rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(request.getShortDisplayString().getString().replace("§f", ""));
                 }
 
                 if (!cancellable(request))

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Image;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -79,26 +79,25 @@ public class WindowHutDeliveryman extends AbstractWindowWorkerBuilding<BuildingD
 
                 if (parent != null)
                 {
-                    rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                      .setLabelText(request.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), request).getString() + " ->");
-                    rowPane.findPaneOfTypeByID(PARENT, Label.class)
-                      .setLabelText(parent.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), parent).getString());
+                    rowPane.findPaneOfTypeByID(REQUESTER, Text.class)
+                      .setText(request.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), request).getString() + " ->");
+                    rowPane.findPaneOfTypeByID(PARENT, Text.class)
+                      .setText(parent.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), parent));
                 }
                 else
                 {
-                    rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                      .setLabelText(request.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), request).getString());
-                    rowPane.findPaneOfTypeByID(PARENT, Label.class)
-                      .setLabelText("");
+                    rowPane.findPaneOfTypeByID(REQUESTER, Text.class)
+                      .setText(request.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), request));
+                    rowPane.findPaneOfTypeByID(PARENT, Text.class).clearText();
                 }
 
-                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-                  .setLabelText(request.getShortDisplayString().getString().replace("§f", ""));
+                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class)
+                  .setText(request.getShortDisplayString().getString().replace("§f", ""));
 
                 if (request.getRequest() instanceof IDeliverymanRequestable)
                 {
-                    rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Label.class)
-                      .setLabelText(
+                    rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Text.class)
+                      .setText(
                         LanguageHandler.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY) + ((IDeliverymanRequestable) (request.getRequest())).getPriority());
                 }
 

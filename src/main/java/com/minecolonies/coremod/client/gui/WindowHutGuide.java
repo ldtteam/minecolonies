@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 
@@ -29,9 +27,6 @@ public class WindowHutGuide extends AbstractWindowSkeleton
         registerButton(GUIDE_CLOSE, this::closeGuide);
 
         this.building = building;
-        findPaneOfTypeByID("questionmark", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.guide.questionmark"));
-        findPaneOfTypeByID("arrow", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.guide.arrow"));
-        findPaneOfTypeByID("chest", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.guide.chest"));
     }
 
     private void closeGuide()

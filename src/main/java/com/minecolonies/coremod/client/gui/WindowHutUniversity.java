@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.Alignment;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.views.View;
@@ -40,9 +41,11 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
         {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-            button.setLabel(branch);
+            button.setText(branch);
             button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
-            button.setTextColor(SLIGHTLY_BLUE);
+            button.setTextRenderBox(BUTTON_LENGTH, BUTTON_HEIGHT);
+            button.setTextAlignment(Alignment.MIDDLE);
+            button.setColors(SLIGHTLY_BLUE);
             button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
             view.addChild(button);
             branches.add(branch);
@@ -55,7 +58,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
     public void onButtonClicked(@NotNull final Button button)
     {
         super.onButtonClicked(button);
-        final String label = button.getLabel();
+        final String label = button.getTextAsString();
 
         if (branches.contains(label))
         {

@@ -4,7 +4,7 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
@@ -77,7 +77,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
      */
     private final ScrollingList recipeList;
 
-    private final Label recipeStatus;
+    private final Text recipeStatus;
     /**
      * Life count.
      */
@@ -94,7 +94,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.building = (AbstractBuildingWorker.View) c.getBuilding(buildingId);
         recipeList = findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class);
-        recipeStatus = findPaneOfTypeByID(RECIPE_STATUS,Label.class);
+        recipeStatus = findPaneOfTypeByID(RECIPE_STATUS, Text.class);
         updateRecipes();
     }
 
@@ -169,7 +169,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
         {
             lifeCount++;
         }
-        recipeStatus.setLabelText(LanguageHandler.format(TranslationConstants.RECIPE_STATUS,building.getRecipes().size(),building.getMaxRecipes()));
+        recipeStatus.setText(LanguageHandler.format(TranslationConstants.RECIPE_STATUS,building.getRecipes().size(), building.getMaxRecipes()));
         window.findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class).refreshElementPanes();
     }
 

@@ -115,11 +115,11 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
     {
         if (ownBuilding.shouldReplant)
         {
-            button.setLabel(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_ON));
+            button.setText(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_ON));
         }
         else
         {
-            button.setLabel(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_OFF));
+            button.setText(LanguageHandler.format(TOGGLE_REPLANT_SAPLINGS_OFF));
         }
     }
 
@@ -130,7 +130,7 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
      */
     private void setupGiveToolButton(final Button button)
     {
-        button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.lumberjack.gettool"));
+        button.setText(LanguageHandler.format("com.minecolonies.coremod.gui.lumberjack.gettool"));
     }
 
     /**
@@ -140,7 +140,7 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
      */
     private void setupRestrictionButton(final Button button)
     {
-        button.setLabel(LanguageHandler.format(ownBuilding.shouldRestrict
+        button.setText(LanguageHandler.format(ownBuilding.shouldRestrict
                                                  ? "com.minecolonies.coremod.gui.workerHuts.togglerestrictionon"
                                                  : "com.minecolonies.coremod.gui.workerHuts.togglerestrictionoff"));
     }

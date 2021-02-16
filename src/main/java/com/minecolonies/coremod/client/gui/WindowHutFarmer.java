@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -132,14 +132,14 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         final TileEntity entity = world.getTileEntity(field);
         if (entity instanceof ScarecrowTileEntity)
         {
-            if (button.getLabel().equals(RED_X))
+            if (button.getTextAsString().equals(RED_X))
             {
-                button.setLabel(APPROVE);
+                button.setText(APPROVE);
                 building.changeFields(field, false, (ScarecrowTileEntity) entity);
             }
             else
             {
-                button.setLabel(RED_X);
+                button.setText(RED_X);
                 building.changeFields(field, true, (ScarecrowTileEntity) entity);
             }
 
@@ -163,14 +163,14 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      */
     private void assignmentModeClicked(@NotNull final Button button)
     {
-        if (button.getLabel().equals(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF)))
+        if (button.getTextAsString().equals(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF)))
         {
-            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+            button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
             building.setAssignFieldManually(true);
         }
         else
         {
-            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
+            button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
             building.setAssignFieldManually(false);
         }
         window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
@@ -183,14 +183,14 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      */
     private void requestFertilizerClicked(@NotNull final Button button)
     {
-        if (button.getLabel().equals(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF)))
+        if (button.getTextAsString().equals(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF)))
         {
-            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_ON));
+            button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_ON));
             building.setRequestFertilizer(true);
         }
         else
         {
-            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF));
+            button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF));
             building.setRequestFertilizer(false);
         }
     }
@@ -202,20 +202,20 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
 
         if (building.assignFieldManually())
         {
-            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
         }
         else
         {
-            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
+            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
         }
 
         if (building.requestFertilizer())
         {
-            findPaneOfTypeByID(TAG_BUTTON_REQUEST_FERTILIZER, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_ON));
+            findPaneOfTypeByID(TAG_BUTTON_REQUEST_FERTILIZER, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_ON));
         }
         else
         {
-            findPaneOfTypeByID(TAG_BUTTON_REQUEST_FERTILIZER, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF));
+            findPaneOfTypeByID(TAG_BUTTON_REQUEST_FERTILIZER, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF));
         }
 
         fieldList = findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class);
@@ -241,10 +241,10 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                         ? ("<" + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED) + ">")
                         : ((ScarecrowTileEntity) entity).getOwner();
 
-                    rowPane.findPaneOfTypeByID(TAG_WORKER, Label.class).setLabelText(owner);
-                    rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance + "m");
+                    rowPane.findPaneOfTypeByID(TAG_WORKER, Text.class).setText(owner);
+                    rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(distance + "m");
 
-                    rowPane.findPaneOfTypeByID(TAG_DIRECTION, Label.class).setLabelText(direction);
+                    rowPane.findPaneOfTypeByID(TAG_DIRECTION, Text.class).setText(direction);
 
                     final Button assignButton = rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class);
 
@@ -252,11 +252,11 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
 
                     if (((ScarecrowTileEntity) entity).isTaken())
                     {
-                        assignButton.setLabel(RED_X);
+                        assignButton.setText(RED_X);
                     }
                     else
                     {
-                        assignButton.setLabel(APPROVE);
+                        assignButton.setText(APPROVE);
                         if (building.getBuildingLevel() <= building.getAmountOfFields())
                         {
                             assignButton.disable();

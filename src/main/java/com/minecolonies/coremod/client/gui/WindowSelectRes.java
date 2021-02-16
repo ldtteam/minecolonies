@@ -5,7 +5,7 @@ import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
@@ -16,7 +16,6 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.building.AddMinimumStockToBuildingMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,7 +83,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
         registerButton(BUTTON_SELECT, this::selectClicked);
         this.findPaneOfTypeByID("qty", TextField.class).setText("1");
         this.findPaneOfTypeByID("resourceIcon", ItemIcon.class).setItem(new ItemStack(Items.AIR));
-        this.findPaneOfTypeByID("resourceName", Label.class).setLabelText((IFormattableTextComponent) new ItemStack(Items.AIR).getDisplayName());
+        this.findPaneOfTypeByID("resourceName", Text.class).setText(new ItemStack(Items.AIR).getDisplayName());
         this.building = building;
         this.test = test;
     }
@@ -99,7 +98,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
         final int row = this.resourceList.getListElementIndexByPane(button);
         final ItemStack to = this.allItems.get(row);
         this.findPaneOfTypeByID("resourceIcon", ItemIcon.class).setItem(to);
-        this.findPaneOfTypeByID("resourceName", Label.class).setLabelText((IFormattableTextComponent) to.getDisplayName());
+        this.findPaneOfTypeByID("resourceName", Text.class).setText(to.getDisplayName());
     }
 
     /**
@@ -188,11 +187,11 @@ public class WindowSelectRes extends AbstractWindowSkeleton
 
             public void updateElement(int index, @NotNull Pane rowPane)
             {
-                ItemStack resource = tempRes.get(index);
-                Label resourceLabel = rowPane.findPaneOfTypeByID("resourceName", Label.class);
-                resourceLabel.setLabelText((IFormattableTextComponent) resource.getDisplayName());
-                resourceLabel.setColor(WHITE, WHITE);
-                (rowPane.findPaneOfTypeByID("resourceIcon", ItemIcon.class)).setItem(resource);
+                final ItemStack resource = tempRes.get(index);
+                final Text resourceLabel = rowPane.findPaneOfTypeByID("resourceName", Text.class);
+                resourceLabel.setText(resource.getDisplayName());
+                resourceLabel.setColors(WHITE);
+                rowPane.findPaneOfTypeByID("resourceIcon", ItemIcon.class).setItem(resource);
             }
         });
     }

@@ -33,24 +33,24 @@ public abstract class AbstractWindowHerderBuilding<B extends AbstractBuildingHer
 
         if (building.isBreeding())
         {
-            buttonBreeding.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HERDER_BREEDING));
+            buttonBreeding.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HERDER_BREEDING));
         }
         else
         {
-            buttonBreeding.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HERDER_NOTBREEDING));
+            buttonBreeding.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HERDER_NOTBREEDING));
         }
     }
 
     private void breedingClicked()
     {
-        if (buttonBreeding.getLabel().equals(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HERDER_BREEDING)))
+        if (buttonBreeding.getTextAsString().equals(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HERDER_BREEDING)))
         {
-            buttonBreeding.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HERDER_NOTBREEDING));
+            buttonBreeding.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HERDER_NOTBREEDING));
             building.setBreeding(false);
         }
         else
         {
-            buttonBreeding.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HERDER_BREEDING));
+            buttonBreeding.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HERDER_BREEDING));
             building.setBreeding(true);
         }
     }
