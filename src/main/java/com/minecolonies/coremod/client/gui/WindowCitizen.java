@@ -351,12 +351,13 @@ public class WindowCitizen extends AbstractWindowRequestTree
     public static void createSkillContent(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
         final boolean isCreative = Minecraft.getInstance().player.isCreative();
+        final boolean hasButtons = window instanceof WindowCitizen;
         for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
         {
             final String id = entry.getKey().name().toLowerCase(Locale.US);
             window.findPaneOfTypeByID(id, Text.class).setText(new StringTextComponent(Integer.toString(entry.getValue().getA())));
 
-            if (isCreative)
+            if (isCreative && hasButtons)
             {
                 window.findPaneByID(id + "_bts").enable();
             }
