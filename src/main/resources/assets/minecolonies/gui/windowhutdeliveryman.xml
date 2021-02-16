@@ -15,10 +15,10 @@
                     <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="16 16" pos="1 3"/>
 
 
-                    <label id="shortDetail" size="50 12" pos="20 1" color="black"/>
-                    <label id="requester" size="50 12" pos="20 13" color="black"/>
-                    <label id="parent" size="50 12" pos="20 25" color="black"/>
-                    <label id="priority" size="50 12" pos="20 37" color="black"/>
+                    <label id="shortDetail" size="130 12" pos="20 1" color="black"/>
+                    <label id="requester" size="130 12" pos="20 13" color="black"/>
+                    <label id="parent" size="130 12" pos="20 25" color="black"/>
+                    <label id="priority" size="130 12" pos="20 37" color="black"/>
                 </box>
             </list>
         </view>
