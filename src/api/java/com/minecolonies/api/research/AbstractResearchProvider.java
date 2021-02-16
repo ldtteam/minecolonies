@@ -1,12 +1,13 @@
 package com.minecolonies.api.research;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+import com.ldtteam.structurize.generation.DataGeneratorConstants;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +22,9 @@ import java.util.Collection;
  * programmers should make sure that research parents and effects exist, that depth is 1 or one level greater than the parent depth,
  * and that cost and requirement identifiers match real items.
  *
- * Avoid changing research identifiers here unless necessary. If required, see ResearchCompatMap.
+ * Avoid changing research identifiers here unless necessary. If required, update ResearchCompatMap.
  */
-public abstract class AbstractResearchProvider  implements IDataProvider
+public abstract class AbstractResearchProvider implements IDataProvider
 {
     public static final String ASSETS_DIR = "assets/" + Constants.MOD_ID + "/researches";
     private final DataGenerator generator;
@@ -64,21 +65,47 @@ public abstract class AbstractResearchProvider  implements IDataProvider
     @Override
     public void act(@NotNull final DirectoryCache cache) throws IOException
     {
-        for(ResearchBranch branch : getResearchBranchCollection())
+        final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+        final JsonObject langJson = new JsonObject();
+
+        for(final ResearchBranch branch : getResearchBranchCollection())
         {
-            final Path savePath = generator.getOutputFolder().resolve("assets").resolve(branch.id.getNamespace()).resolve("researches").resolve(branch.id.getPath());
-            IDataProvider.save(new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create(), cache, branch.json, savePath);
+            final Path savePath = generator.getOutputFolder().resolve("assets").resolve(branch.id.getNamespace()).resolve("researches").resolve(branch.id.getPath() + ".json");
+            IDataProvider.save(GSON, cache, branch.json, savePath);
+            if(branch.translatedName != null && !branch.translatedName.isEmpty())
+            {
+                langJson.addProperty("com." +branch.id.getNamespace() + ".research." + branch.id.getPath().replaceAll("[/]",".") + ".name", branch.translatedName);
+            }
         }
-        for(ResearchEffect effect : getResearchEffectCollection())
+        for(final ResearchEffect effect : getResearchEffectCollection())
         {
-            final Path savePath = generator.getOutputFolder().resolve("assets").resolve(effect.id.getNamespace()).resolve("researches").resolve(effect.id.getPath());
-            IDataProvider.save(new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create(), cache, effect.json, savePath);
+            final Path savePath = generator.getOutputFolder().resolve("assets").resolve(effect.id.getNamespace()).resolve("researches").resolve(effect.id.getPath() + ".json");
+            IDataProvider.save(GSON, cache, effect.json, savePath);
+            if(effect.translatedName != null && !effect.translatedName.isEmpty())
+            {
+                langJson.addProperty("com." +effect.id.getNamespace() + ".research." + effect.id.getPath().replaceAll("[/]",".") + ".description", effect.translatedName);
+            }
+            if(effect.translatedSubtitle != null && !effect.translatedSubtitle.isEmpty())
+            {
+                langJson.addProperty("com." + effect.id.getNamespace() + ".research." + effect.id.getPath().replaceAll("[/]",".") + ".subtitle", effect.translatedSubtitle);
+            }
         }
-        for(Research research : getResearchCollection())
+        for(final Research research : getResearchCollection())
         {
-            final Path savePath = generator.getOutputFolder().resolve("assets").resolve(research.id.getNamespace()).resolve("researches").resolve(research.id.getPath());
-            IDataProvider.save(new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create(), cache, research.json, savePath);
+            final Path savePath = generator.getOutputFolder().resolve("assets").resolve(research.id.getNamespace()).resolve("researches").resolve(research.id.getPath() + ".json");
+            IDataProvider.save(GSON, cache, research.json, savePath);
+            if(research.translatedName != null && !research.translatedName.isEmpty())
+            {
+                langJson.addProperty("com." +research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".name", research.translatedName);
+            }
+            if(research.translatedSubtitle != null && !research.translatedSubtitle.isEmpty())
+            {
+                langJson.addProperty("com." +research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".subtitle", research.translatedSubtitle);
+
+            }
         }
+        final Path langPath = generator.getOutputFolder().resolve("assets").resolve(Constants.MOD_ID).resolve("research_lang.json");
+        IDataProvider.save(DataGeneratorConstants.GSONLang, cache, langJson, langPath);
     }
 
     @NotNull
@@ -98,7 +125,7 @@ public abstract class AbstractResearchProvider  implements IDataProvider
         /**
          * The university level of the research.
          */
-        public Integer researchLevel;
+        public int researchLevel;
         /**
          *  A Translated Name to add to the output language file.
          */
@@ -116,6 +143,7 @@ public abstract class AbstractResearchProvider  implements IDataProvider
         public Research(final ResourceLocation id, final ResourceLocation branch)
         {
             this.id = id;
+            this.researchLevel = 1;
             this.json.addProperty("branch", branch.toString());
             this.json.addProperty("researchLevel", 1);
         }
@@ -124,15 +152,14 @@ public abstract class AbstractResearchProvider  implements IDataProvider
          * Set the Parent Research.  Parent Research must be unlocked and complete before this research is available.
          * For now, all research above level 1 must have one parent.
          * If not set, assumes level 1.
-         * @param parent              The unique identifier of the parent research.
-         * @param parentResearchLevel The researchLevel of the parent research.
+         * @param parent              The parent research.
          * @return this
          */
-        public Research setParentResearch(final ResourceLocation parent, final int parentResearchLevel)
+        public Research setParentResearch(Research parent)
         {
-            this.json.addProperty("parent", parent.toString());
+            this.json.addProperty("parent", parent.id.toString());
             this.json.remove("researchLevel");
-            this.researchLevel = parentResearchLevel + 1;
+            this.researchLevel = parent.researchLevel + 1;
             this.json.addProperty("researchLevel", this.researchLevel);
             return this;
         }
@@ -269,8 +296,39 @@ public abstract class AbstractResearchProvider  implements IDataProvider
         }
 
         /**
+         * Sets an Item research icon.  This icon will only be displayed after research is completed.
+         * @param item  The item to use as an icon.
+         * @return this
+         */
+        public Research setIcon(final Item item)
+        {
+            if(json.has("icon"))
+            {
+                json.remove("icon");
+            }
+            this.json.addProperty("icon", item.getRegistryName().toString());
+            return this;
+        }
+
+        /**
+         * Sets an Item research icon.  This icon will only be displayed after research is completed.
+         * @param item  The item to use as an icon.
+         * @param count The number to mark the icon.
+         * @return this
+         */
+        public Research setIcon(final Item item, final int count)
+        {
+            if(json.has("icon"))
+            {
+                json.remove("icon");
+            }
+            this.json.addProperty("icon", item.getRegistryName().toString() + ":" + count);
+            return this;
+        }
+
+        /**
          * Sets a texture research icon.  This icon will only be displayed after research is completed.
-         * Overrides ItemStack icons.
+         * Overrides ItemStack and Item icons.
          * @param texture  The location of the texture file to use as an icon.
          * @return this
          */
@@ -304,7 +362,7 @@ public abstract class AbstractResearchProvider  implements IDataProvider
             req.addProperty("building", buildingName);
             req.addProperty("level", level);
             reqArray.add(req);
-            this.json.add("requirements", req);
+            this.json.add("requirements", reqArray);
             return this;
         }
 
@@ -334,7 +392,7 @@ public abstract class AbstractResearchProvider  implements IDataProvider
             req.addProperty("alternate-building", buildingName);
             req.addProperty("level", level);
             reqArray.add(req);
-            this.json.add("requirements", req);
+            this.json.add("requirements", reqArray);
             return this;
         }
 
@@ -361,7 +419,7 @@ public abstract class AbstractResearchProvider  implements IDataProvider
             JsonObject req = new JsonObject();
             req.addProperty("research", researchReq.toString());
             reqArray.add(req);
-            this.json.add("requirements", req);
+            this.json.add("requirements", reqArray);
             return this;
         }
 
@@ -390,7 +448,7 @@ public abstract class AbstractResearchProvider  implements IDataProvider
             req.addProperty("research", researchReq.toString());
             req.addProperty("name", name);
             reqArray.add(req);
-            this.json.add("requirements", req);
+            this.json.add("requirements", reqArray);
             return this;
         }
 
@@ -416,7 +474,34 @@ public abstract class AbstractResearchProvider  implements IDataProvider
             req.addProperty("item", item.getItem().getRegistryName().toString());
             req.addProperty("quantity", item.getCount());
             reqArray.add(req);
-            this.json.add("requirements", req);
+            this.json.add("requirements", reqArray);
+            return this;
+        }
+
+        /**
+         * Adds an item cost to the research.  This will be consumed when beginning the research, and will not be refunded.
+         * Multiple ItemCosts are supported, but for UI reasons it's encouraged to keep to 5 or less.
+         * @param item   The item to require.
+         * @param count  The number of the item to require.
+         * @return this.
+         */
+        public Research addItemCost(final Item item, final int count)
+        {
+            final JsonArray reqArray;
+            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
+            {
+                reqArray = this.json.getAsJsonArray("requirements");
+                this.json.remove("requirements");
+            }
+            else
+            {
+                reqArray = new JsonArray();
+            }
+            JsonObject req = new JsonObject();
+            req.addProperty("item", item.getRegistryName().toString());
+            req.addProperty("quantity", count);
+            reqArray.add(req);
+            this.json.add("requirements", reqArray);
             return this;
         }
 
@@ -446,6 +531,49 @@ public abstract class AbstractResearchProvider  implements IDataProvider
             this.json.add("effects", effects);
             return this;
         }
+
+        /**
+         * Add an unlock building effect to the research.  Research Effects are applied on completion,
+         * and remain unless the colony is destroyed or the research is undone.
+         * See ModBuildings for a list of supported buildings.
+         * Buildings with no applicable research effects loaded do not require research.
+         * Multiple Effects are supported.
+         * @param buildingBlock    the building block to
+         * @param level            the strength of the research effect to apply on completion.
+         *                    Automatically generated effects will unlock up to Building Tier 10 at Level 1.
+         *                    Manually generated effects can limited to individual tiers.
+         * @return this
+         */
+        public Research addEffect(final AbstractBlockHut<?> buildingBlock, int level)
+        {
+            final JsonArray effects;
+            if(this.json.has("effects") && this.json.get("effects").isJsonArray())
+            {
+                effects = this.json.getAsJsonArray("effects");
+                this.json.remove("effects");
+            }
+            else
+            {
+                effects = new JsonArray();
+            }
+            JsonObject eff = new JsonObject();
+            eff.addProperty(buildingBlock.getRegistryName().getNamespace() + ":effects/" + buildingBlock.getRegistryName().getPath(), level);
+            effects.add(eff);
+            this.json.add("effects", effects);
+            return this;
+        }
+
+        /**
+         * Add the Research to a collection, and return the same research.
+         * essentially the same as List.add().
+         * @param list      The list to add the Research onto.
+         * @return this
+         */
+        public Research addToList(final Collection<Research> list)
+        {
+            list.add(this);
+            return this;
+        }
     }
 
     /**
@@ -471,6 +599,16 @@ public abstract class AbstractResearchProvider  implements IDataProvider
         public ResearchEffect(final ResourceLocation id)
         {
             this.id = id;
+            this.json.addProperty("effect", true);
+        }
+
+        /**
+         * Creates a new instances of a ResearchEffect.
+         * @param buildingBlock    A Building hut block.  This will auto-generate an unlock effect ID of effects/blockhutname.json.
+         */
+        public ResearchEffect(final AbstractBlockHut<?> buildingBlock)
+        {
+            this.id = new ResourceLocation(buildingBlock.getRegistryName().getNamespace(), "effects/" + buildingBlock.getRegistryName().getPath());
             this.json.addProperty("effect", true);
         }
 
@@ -521,13 +659,30 @@ public abstract class AbstractResearchProvider  implements IDataProvider
          */
         public ResearchEffect setTranslatedName(final String name)
         {
-            this.json.addProperty("name", name);
+            this.translatedName = name;
             return this;
         }
 
+        /**
+         * Adds a human-readable subtitle to the Research Effect json.
+         * @param subtitle      A human-readable subtitle.  This will only show on tooltips.
+         * @return this
+         */
         public ResearchEffect setSubtitle(final String subtitle)
         {
             this.json.addProperty("subtitle", subtitle);
+            return this;
+        }
+
+        /**
+         * Adds a translated subtitle to the language file, and the translation key to the ResearchEffect json.
+         * @param subtitle      A human-readable subtitle.  This will only show on tooltips.
+         * @return this
+         */
+        public ResearchEffect setTranslatedSubtitle(final String subtitle)
+        {
+            this.translatedSubtitle = subtitle;
+            this.json.addProperty("subtitle", "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[/]",".") + ".subtitle");
             return this;
         }
     }
