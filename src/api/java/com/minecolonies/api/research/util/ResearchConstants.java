@@ -52,7 +52,7 @@ public final class ResearchConstants
     public static final int    LOCK_WIDTH           = 15;
     public static final int    LOCK_HEIGHT          = 17;
     public static final int    OR_X_OFFSET          = 14;
-    public static final int    OR_Y_OFFSET          = 10;
+    public static final int    OR_Y_OFFSET          = 7;
 
     /**
      * Research effects.

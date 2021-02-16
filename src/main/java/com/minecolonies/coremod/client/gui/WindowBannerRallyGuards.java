@@ -4,7 +4,7 @@ import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.guardtype.GuardType;
@@ -96,11 +96,11 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
 
         if (isActive(banner))
         {
-            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_DISMISS));
+            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setText(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_DISMISS));
         }
         else
         {
-            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_RALLY));
+            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setText(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_RALLY));
         }
 
         guardTowerList.setDataProvider(() -> getGuardTowerViews(banner).size(), (index, rowPane) ->
@@ -129,21 +129,19 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
                     exampleStackDisplay.setItem(new ItemStack(Items.BOW));
                 }
 
-                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Label.class)
-                  .setLabelText(LanguageHandler.format(guardTowerView.getGuardType().getJobTranslationKey()) + ": " + guardTowerView.getGuards().size());
+                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class)
+                  .setText(LanguageHandler.format(guardTowerView.getGuardType().getJobTranslationKey()) + ": " + guardTowerView.getGuards().size());
 
-                rowPane.findPaneOfTypeByID(LABEL_POSITION, Label.class)
-                  .setLabelText(guardTower.getFirst().toString());
+                rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(guardTower.getFirst().toString());
             }
             else
             {
                 exampleStackDisplay.setItem(new ItemStack(Items.COOKIE));
 
-                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Label.class)
-                  .setLabelText(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING));
-                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Label.class).setColor(Color.rgbaToInt(255, 0, 0, 1));
-                rowPane.findPaneOfTypeByID(LABEL_POSITION, Label.class)
-                  .setLabelText(guardTower.getFirst().toString());
+                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class)
+                  .setText(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING));
+                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setColors(Color.rgbaToInt(255, 0, 0, 1));
+                rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(guardTower.getFirst().toString());
             }
         });
     }

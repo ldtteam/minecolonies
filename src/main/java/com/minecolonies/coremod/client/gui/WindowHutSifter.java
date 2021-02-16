@@ -5,7 +5,7 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -33,11 +33,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter.View>
 {
-    /**
-     * The mode button id.
-     */
-    private static final String BLOCK_BUTTON = "block";
-
     /**
      * The mode button id.
      */
@@ -94,14 +89,14 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
         registerButton(BUTTON_SAVE, this::save);
         mesh = building.getMesh();
 
-        final Label label = findPaneOfTypeByID("maxSifted", Label.class);
+        final Text label = findPaneOfTypeByID("maxSifted", Text.class);
         if (building.getMaxDailyQuantity() == Integer.MAX_VALUE)
         {
-            label.setLabelText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.sifterinfo.unlimited"));
+            label.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.sifterinfo.unlimited"));
         }
         else
         {
-            label.setLabelText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.sifterinfo", building.getMaxDailyQuantity()));
+            label.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.sifterinfo", building.getMaxDailyQuantity()));
         }
 
         sifterSettingsInput.setText(String.valueOf(building.getDailyQuantity()));
@@ -112,7 +107,7 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
         if (building.hasReachedLimit())
         {
             final ButtonImage button = findPaneOfTypeByID(STOCK_ADD, ButtonImage.class);
-            button.setLabel(LanguageHandler.format(LABEL_LIMIT_REACHED));
+            button.setText(LanguageHandler.format(LABEL_LIMIT_REACHED));
             button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_dark.png"));
         }
 
@@ -152,21 +147,19 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final ItemStack resource = building.getMeshes().get(index).getItemStack();
-                final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
+                final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
 
                 boolean isSet = false;
                 if (resource.isItemEqual(mesh.getItemStack()))
                 {
-                    int green = Color.getByName("green", 0);
-                    resourceLabel.setColor(green, green);
-                    resourceLabel.setLabelText(resource.getDisplayName().getString());
+                    resourceLabel.setColors(Color.getByName("green", 0));
+                    resourceLabel.setText(resource.getDisplayName());
                     isSet = true;
                 }
                 else
                 {
-                    int black = Color.getByName("black", 0);
-                    resourceLabel.setColor(black, black);
-                    resourceLabel.setLabelText(resource.getDisplayName().getString());
+                    resourceLabel.setColors(Color.getByName("black", 0));
+                    resourceLabel.setText(resource.getDisplayName());
                 }
 
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
@@ -293,12 +286,8 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
                 final ItemStack resource = tempRes.get(index).getA().getItemStack().copy();
                 resource.setCount(resource.getMaxStackSize());
 
-                final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-                resourceLabel.setLabelText(resource.getDisplayName().getString());
-
-                final Label quantityLabel = rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Label.class);
-                quantityLabel.setLabelText(String.valueOf(tempRes.get(index).getB()));
-
+                rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(resource.getDisplayName());
+                rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(String.valueOf(tempRes.get(index).getB()));
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }
         });

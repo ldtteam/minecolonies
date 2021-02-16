@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Image;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
@@ -169,11 +169,11 @@ public class WindowClipBoard extends AbstractWindowSkeleton
                 logo.setImage(request.getDisplayIcon());
             }
 
-            rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-              .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getString());
+            rowPane.findPaneOfTypeByID(REQUESTER, Text.class)
+              .setText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request));
 
-            rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-              .setLabelText(request.getShortDisplayString().getString().replace("§f", ""));
+            rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class)
+              .setText(request.getShortDisplayString().getString().replace("§f", ""));
         });
     }
 

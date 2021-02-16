@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -131,7 +131,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
 
                 if (building instanceof LivingBuildingView)
                 {
-                    rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
+                    rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class).setText(citizen.getName());
 
                     final BlockPos work = citizen.getWorkBuilding();
                     String workString = "";
@@ -164,18 +164,18 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
                         }
                     }
 
-                    final Label newLivingLabel = rowPane.findPaneOfTypeByID(CITIZEN_JOB, Label.class);
-                    newLivingLabel.setLabelText(LanguageHandler.format(citizen.getJob()) + workString);
+                    final Text newLivingLabel = rowPane.findPaneOfTypeByID(CITIZEN_JOB, Text.class);
+                    newLivingLabel.setText(LanguageHandler.format(citizen.getJob()) + workString);
                     if (better)
                     {
-                        newLivingLabel.setColor(DARKGREEN, DARKGREEN);
+                        newLivingLabel.setColors(DARKGREEN);
                     }
 
-                    final Label currentLivingLabel = rowPane.findPaneOfTypeByID(CITIZEN_LIVING, Label.class);
-                    currentLivingLabel.setLabelText(homeString);
+                    final Text currentLivingLabel = rowPane.findPaneOfTypeByID(CITIZEN_LIVING, Text.class);
+                    currentLivingLabel.setText(homeString);
                     if (badCurrentLiving)
                     {
-                        currentLivingLabel.setColor(RED, RED);
+                        currentLivingLabel.setColors(RED);
                     }
 
                     final Button done = rowPane.findPaneOfTypeByID(CITIZEN_DONE, Button.class);

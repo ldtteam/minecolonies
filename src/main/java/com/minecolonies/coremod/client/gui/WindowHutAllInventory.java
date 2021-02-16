@@ -132,19 +132,19 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         switch (sortDescriptor)
         {
             case NO_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setLabel("v^");
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("v^");
                 break;
             case ASC_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setLabel("A^");
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("A^");
                 break;
             case DESC_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setLabel("Av");
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("Av");
                 break;
             case COUNT_ASC_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setLabel("1^");
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("1^");
                 break;
             case COUNT_DESC_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setLabel("1v");
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("1v");
                 break;
             default:
                 break;
@@ -263,17 +263,17 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final ItemStorage resource = allItems.get(index);
-                final Label resourceLabel = rowPane.findPaneOfTypeByID("ressourceStackName", Label.class);
+                final Text resourceLabel = rowPane.findPaneOfTypeByID("ressourceStackName", Text.class);
                 final String name = resource.getItemStack().getDisplayName().getString();
-                resourceLabel.setLabelText(name.substring(0, Math.min(17, name.length())));
-                final Label qtys = rowPane.findPaneOfTypeByID("quantities", Label.class);
+                resourceLabel.setText(name.substring(0, Math.min(17, name.length())));
+                final Text qtys = rowPane.findPaneOfTypeByID("quantities", Text.class);
                 if(!Screen.hasShiftDown())
                 {
-                    qtys.setLabelText(Utils.format(resource.getAmount()));
+                    qtys.setText(Utils.format(resource.getAmount()));
                 }
                 else
                 {
-                    qtys.setLabelText(Integer.toString(resource.getAmount()));
+                    qtys.setText(Integer.toString(resource.getAmount()));
                 }
                 final Item imagesrc = resource.getItemStack().getItem();
                 final ItemStack image = new ItemStack(imagesrc, 1);

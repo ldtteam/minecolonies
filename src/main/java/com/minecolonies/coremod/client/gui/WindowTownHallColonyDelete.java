@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.ColonyDeleteOwnMessage;
 import org.jetbrains.annotations.NotNull;
@@ -20,8 +18,6 @@ public class WindowTownHallColonyDelete extends AbstractWindowSkeleton
     public WindowTownHallColonyDelete()
     {
         super(MOD_ID + TOWNHALL_COLONY_DELETE_GUI);
-
-        findPaneOfTypeByID("text", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.colony.delete.sure"));
     }
 
     @Override

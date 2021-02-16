@@ -8,12 +8,9 @@ import com.ldtteam.blockout.views.Box;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -82,19 +79,22 @@ public class WindowInteraction extends AbstractWindowSkeleton
         final Box group = findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
         int y = 0;
         int x = 0;
-        findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setTextAlignment(Alignment.TOP_LEFT);
-        findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setAlignment(Alignment.TOP_LEFT);
-        findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setTextContent(citizen.getName() + ": " + handler.getInquiry().getString());
+        final Text chatText = findPaneOfTypeByID(CHAT_LABEL_ID, Text.class);
+        chatText.setTextAlignment(Alignment.TOP_LEFT);
+        chatText.setAlignment(Alignment.TOP_LEFT);
+        chatText.setText(citizen.getName() + ": " + handler.getInquiry().getString());
         int responseIndex = 1;
         for (final ITextComponent component : handler.getPossibleResponses())
         {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-            button.setLabel((IFormattableTextComponent) component);
             button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
-            button.setTextColor(SLIGHTLY_BLUE);
+            button.setColors(SLIGHTLY_BLUE);
             button.setPosition(x, y);
             button.setID(BUTTON_RESPONSE_ID + responseIndex);
+            button.setTextRenderBox(BUTTON_LENGTH, BUTTON_HEIGHT);
+            button.setTextAlignment(Alignment.MIDDLE);
+            button.setText(component);
             group.addChild(button);
 
             y += button.getHeight();
@@ -122,7 +122,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
             final IInteractionResponseHandler handler = interactions.get(currentInteraction);
             for (final ITextComponent component : handler.getPossibleResponses())
             {
-                if (component.getString().equals(button.getLabel()))
+                if (component.getString().equals(button.getTextAsString()))
                 {
                     if (handler.onClientResponseTriggered(component, Minecraft.getInstance().player, citizen, this))
                     {

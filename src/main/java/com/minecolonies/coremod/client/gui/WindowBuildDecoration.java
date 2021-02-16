@@ -4,7 +4,7 @@ import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.management.StructureName;
@@ -99,7 +99,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         registerButton(BUTTON_CANCEL, this::close);
 
         findPaneOfTypeByID(BUTTON_BUILD, Button.class)
-                .setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.build"));
+                .setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.build"));
         findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).hide();
         findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
         findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).hide();
@@ -283,12 +283,12 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final ItemStorage resource = tempRes.get(index);
-                final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-                final Label quantityLabel = rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
-                resourceLabel.setLabelText(resource.getItemStack().getDisplayName().getString());
-                quantityLabel.setLabelText(Integer.toString(resource.getAmount()));
-                resourceLabel.setColor(WHITE, WHITE);
-                quantityLabel.setColor(WHITE, WHITE);
+                final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
+                final Text quantityLabel = rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class);
+                resourceLabel.setText(resource.getItemStack().getDisplayName().getString());
+                quantityLabel.setText(Integer.toString(resource.getAmount()));
+                resourceLabel.setColors(WHITE);
+                quantityLabel.setColors(WHITE);
                 final ItemStack itemIcon = new ItemStack(resource.getItem(), 1);
                 itemIcon.setTag(resource.getItemStack().getTag());
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(itemIcon);
