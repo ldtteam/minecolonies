@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Alignment;
+import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.SwitchView;
@@ -356,9 +357,10 @@ public class WindowCitizen extends AbstractWindowRequestTree
             final String id = entry.getKey().name().toLowerCase(Locale.US);
             window.findPaneOfTypeByID(id, Text.class).setText(new StringTextComponent(Integer.toString(entry.getValue().getA())));
 
-            if (isCreative)
+            final Pane buttons = window.findPaneByID(id + "_bts");
+            if (buttons != null)
             {
-                window.findPaneByID(id + "_bts").enable();
+                buttons.setEnabled(isCreative);
             }
         }
     }
