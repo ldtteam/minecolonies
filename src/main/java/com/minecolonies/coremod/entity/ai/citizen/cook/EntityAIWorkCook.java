@@ -151,30 +151,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
                 req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(COM_MINECOLONIES_REQUESTS_FOOD))))
         {
-            final Map<String, List<ItemStorage>> allowedItems = getOwnBuilding().getCopyOfAllowedItems();
-            if (allowedItems.containsKey(FOOD_LIST))
-            {
-                final List<ItemStack> requests = IColonyManager.getInstance().getCompatibilityManager().getFood().stream()
-                        .filter(storage -> !allowedItems.get(FOOD_LIST).contains(storage))
-                        .map(ItemStorage::getItemStack)
-                        .collect(Collectors.toList());
-                if (requests.isEmpty())
-                {
-                    if (worker.getCitizenData() != null)
-                    {
-                        worker.getCitizenData()
-                                .triggerInteraction(new StandardInteraction(new TranslationTextComponent(FURNACE_USER_NO_FOOD), ChatPriority.BLOCKING));
-                    }
-                }
-                else
-                {
-                    worker.getCitizenData().createRequestAsync(new StackList(requests, COM_MINECOLONIES_REQUESTS_FOOD, STACKSIZE,1));
-                }
-            }
-            else
-            {
-                worker.getCitizenData().createRequestAsync(getSmeltAbleClass());
-            }
+            worker.getCitizenData().createRequestAsync(getSmeltAbleClass());
         }
     }
 
@@ -342,7 +319,27 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        return new Food(STACKSIZE);
+        final Map<String, List<ItemStorage>> allowedItems = getOwnBuilding().getCopyOfAllowedItems();
+        if (allowedItems.containsKey(FOOD_LIST))
+        {
+            try
+            {
+                return new Food(STACKSIZE, allowedItems.get(FOOD_LIST));
+            }
+            catch (NullPointerException e)
+            {
+                if (worker.getCitizenData() != null)
+                {
+                    worker.getCitizenData()
+                            .triggerInteraction(new StandardInteraction(new TranslationTextComponent(FURNACE_USER_NO_FOOD), ChatPriority.BLOCKING));
+                }
+                return new Food(STACKSIZE);
+            }
+        }
+        else
+        {
+            return new Food(STACKSIZE);
+        }
     }
 
 }
