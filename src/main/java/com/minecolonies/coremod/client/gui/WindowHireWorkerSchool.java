@@ -40,18 +40,4 @@ public class WindowHireWorkerSchool extends WindowHireWorker
                                           || building.getPosition().equals(citizen.getWorkBuilding())).sorted(Comparator.comparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());
     }
-
-    @Override
-    protected String createColor(final Skill primary, final Skill secondary, final Skill current)
-    {
-        if (primary == current || current == Skill.Intelligence)
-        {
-            return TextFormatting.GREEN.toString() + TextFormatting.BOLD.toString();
-        }
-        if (secondary == current)
-        {
-            return TextFormatting.YELLOW.toString() + TextFormatting.ITALIC.toString();
-        }
-        return "";
-    }
 }
