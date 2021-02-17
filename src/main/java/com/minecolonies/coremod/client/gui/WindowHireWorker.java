@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Text;
+import com.ldtteam.blockout.controls.AbstractTextBuilder.TextBuilder;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -19,7 +21,10 @@ import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCiti
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -280,29 +285,30 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
 
-                final StringBuilder attributes = new StringBuilder();
-                final String intermString = " | ";
+                final StringTextComponent intermString = new StringTextComponent(" | ");
+                final TextBuilder textBuilder = PaneBuilders.textBuilder();
+                int skillCount = citizen.getCitizenSkillHandler().getSkills().entrySet().size();
 
-                final List<Map.Entry<Skill, Tuple<Integer, Double>>> list = new ArrayList<>(citizen.getCitizenSkillHandler().getSkills().entrySet());
-                for (int i = 0; i < list.size(); i++)
+                for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
                 {
-                    final Map.Entry<Skill, Tuple<Integer, Double>> entry = list.get(i);
-                    @NotNull final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
-                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US)) + ": " +  entry.getValue().getA());
-                    attributes.append(text).append(intermString);
+                    final String skillName = entry.getKey().name().toLowerCase(Locale.US);
+                    final int skillLevel = entry.getValue().getA();
+                    final Style skillStyle = createColor(primary, secondary, entry.getKey());
+
+                    textBuilder.append(new TranslationTextComponent("com.minecolonies.coremod.gui.citizen.skills." + skillName).setStyle(skillStyle));
+                    textBuilder.append(new StringTextComponent(": " + skillLevel).setStyle(skillStyle));
+                    if (--skillCount > 0)
+                    {
+                        textBuilder.append(intermString);
+                    }
                 }
-                attributes.delete(attributes.length() - intermString.length(), attributes.length());
+                textBuilder.newLine(); // finish the current line
 
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class)
                   .setText((citizen.getJob().isEmpty() ? "" : LanguageHandler.format(citizen.getJob()) + ": ") + citizen.getName());
-                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class).setText(attributes.toString());
+                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class).setText(textBuilder.getText());
             }
         });
-    }
-
-    private static String createAttributeText(final String color, final String text)
-    {
-        return color + text + TextFormatting.RESET.toString();
     }
 
     /**
@@ -313,16 +319,16 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      * @param current   the current skill to compare.
      * @return the modifier string.
      */
-    protected String createColor(final Skill primary, final Skill secondary, final Skill current)
+    protected Style createColor(final Skill primary, final Skill secondary, final Skill current)
     {
         if (primary == current)
         {
-            return TextFormatting.GREEN.toString() + TextFormatting.BOLD.toString();
+            return Style.EMPTY.applyFormatting(TextFormatting.GREEN).applyFormatting(TextFormatting.BOLD);
         }
         if (secondary == current)
         {
-            return TextFormatting.YELLOW.toString() + TextFormatting.ITALIC.toString();
+            return Style.EMPTY.applyFormatting(TextFormatting.YELLOW).applyFormatting(TextFormatting.ITALIC);
         }
-        return "";
+        return Style.EMPTY;
     }
 }
