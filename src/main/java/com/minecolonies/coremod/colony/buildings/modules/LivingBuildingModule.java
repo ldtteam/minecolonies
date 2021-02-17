@@ -51,11 +51,9 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
 
     /**
      * Creates a new home building module.
-     * @param building the building it is assigned to.
      */
-    public LivingBuildingModule(final IBuilding building)
+    public LivingBuildingModule()
     {
-        super(building);
         final Random rand = new Random();
         childCreationTimer = rand.nextInt(CHILD_SPAWN_INTERVAL) + MIN_TIME_BEFORE_SPAWNTRY;
     }
