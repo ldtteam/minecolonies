@@ -598,8 +598,15 @@ public final class StandardRequests
                                                       .getCompatibilityManager()
                                                       .getListOfAllItems()
                                                       .stream()
-                                                      .filter(item -> item.getItem().isFood() && this.getRequest().matches(item))
+                                                      .filter(item -> item.getItem().isFood())
                                                       .collect(Collectors.toList()));
+            }
+
+            if (!this.getRequest().getExclusionList().isEmpty())
+            {
+                return ImmutableList.copyOf(foodExamples.stream()
+                        .filter(item -> this.getRequest().matches(item))
+                        .collect(Collectors.toList()));
             }
 
             return foodExamples;

@@ -203,6 +203,11 @@ public class Food implements IDeliverable
         return result;
     }
 
+    public List<ItemStorage> getExclusionList()
+    {
+        return exclusionList;
+    }
+
     @Override
     public boolean equals(final Object o)
     {
