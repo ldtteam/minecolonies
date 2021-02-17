@@ -32,12 +32,4 @@ public class BlockHutCitizen extends AbstractBlockHut<BlockHutCitizen>
     {
         return ModBuildings.home;
     }
-
-    @Override
-    public void registerBuildingModules(final IBuilding building)
-    {
-        building.registerModule(new BedHandlingModule(building));
-        building.registerModule(new HomeBuildingModule(building));
-        building.registerModule(new LivingBuildingModule(building));
-    }
 }

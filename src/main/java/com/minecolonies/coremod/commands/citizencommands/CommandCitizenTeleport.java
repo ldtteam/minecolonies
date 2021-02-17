@@ -69,6 +69,7 @@ public class CommandCitizenTeleport implements IMCColonyOfficerCommand
         if (context.getSource().getWorld() == entityCitizen.world)
         {
             entityCitizen.setLocationAndAngles(targetPos.getX(), targetPos.getY(), targetPos.getZ(), entityCitizen.getYaw(1F), entityCitizen.getPitch(1F));
+            entityCitizen.getNavigator().clearPath();
         }
 
         return 1;

@@ -768,16 +768,17 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
         }
 
-        this.maxDistanceToWaypoint = 0.75F;
+        this.maxDistanceToWaypoint = 0.5F;
         boolean wentAhead = false;
+
 
         // Look at multiple points, incase we're too fast
         for (int i = this.currentPath.getCurrentPathIndex(); i < Math.min(this.currentPath.getCurrentPathLength(), this.currentPath.getCurrentPathIndex() + 4); i++)
         {
-            Vector3d vec3d2 = this.currentPath.getVectorFromIndex(this.entity, i);
-            if (Math.abs(this.entity.getPosX() - vec3d2.x) < (double) this.maxDistanceToWaypoint - Math.abs(this.entity.getPosY() - (vec3d2.y)) * 0.1
-                  && Math.abs(this.entity.getPosZ() - vec3d2.z) < (double) this.maxDistanceToWaypoint - Math.abs(this.entity.getPosY() - (vec3d2.y)) * 0.1 &&
-                  Math.abs(this.entity.getPosY() - (vec3d2.y - 0.5f)) < 1.0D)
+            Vector3d next = this.currentPath.getVectorFromIndex(this.entity, i);
+            if (Math.abs(this.entity.getPosX() - next.x) < (double) this.maxDistanceToWaypoint - Math.abs(this.entity.getPosY() - (next.y)) * 0.1
+                  && Math.abs(this.entity.getPosZ() - next.z) < (double) this.maxDistanceToWaypoint - Math.abs(this.entity.getPosY() - (next.y)) * 0.1 &&
+                  Math.abs(this.entity.getPosY() - (next.y - 0.5f)) < 1.0D)
             {
                 this.currentPath.incrementPathIndex();
                 wentAhead = true;
@@ -803,14 +804,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return;
         }
 
-        if (curNode >= currentPath.getCurrentPathLength())
+        if (curNode >= currentPath.getCurrentPathLength() || curNode <= 1)
         {
             return;
         }
 
         // Check some past nodes case we fell behind.
-        Vector3d curr = this.currentPath.getVectorFromIndex(this.entity, curNode);
-        if (entity.getPositionVec().distanceTo(curr) >= 2.0)
+        final Vector3d curr = this.currentPath.getVectorFromIndex(this.entity, curNode - 1);
+        final Vector3d next = this.currentPath.getVectorFromIndex(this.entity, curNode);
+
+        if (entity.getPositionVec().distanceTo(curr) >= 2.0 && entity.getPositionVec().distanceTo(next) >= 2.0)
         {
             int currentIndex = curNode - 1;
             while (currentIndex > 0)

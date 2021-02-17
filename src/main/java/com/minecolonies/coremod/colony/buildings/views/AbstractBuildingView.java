@@ -565,7 +565,13 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         try
         {
-            if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()) || getColony().getCitizen(getCitizensByRequest().get(request.getId())) == null)
+            if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()))
+            {
+                return new TranslationTextComponent(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName());
+            }
+
+            final int citizenId = getCitizensByRequest().get(request.getId());
+            if (citizenId == -1 || getColony().getCitizen(citizenId) == null)
             {
                 return new TranslationTextComponent(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName());
             }

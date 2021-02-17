@@ -4,18 +4,16 @@
 
     <image source="minecolonies:textures/gui/citizen/colonist_papper_sketch.png" size="100% 100%"/>
 
-    <label size="164 11" pos="0 13" textalign="MIDDLE" color="black" label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
+    <label size="190 11" pos="0 13" textalign="MIDDLE" color="black" label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
 
-    <itemicon id="requestStack" size="24 24" pos="14 34"/>
-    <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="24 24" pos="14 34" visible="false"/>
+    <itemicon id="requestStack" size="24 24" pos="12 30"/>
+    <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="24 24" pos="12 30" visible="false"/>
 
-    <box id="requestDetail" size="100% 50%" pos="20 70" linewidth="0" color="black">
+    <label id="requester" size="135 9" pos="40 30" color="black"/>
+    <label id="targetLocation" size="135 9" pos="40 40" color="black"/>
+    <label id="resolver" size="135 9" pos="40 50" color="black"/>
 
-    </box>
-
-    <label id="requester" size="50 12" pos="42 30" color="black"/>
-    <label id="targetLocation" size="50 12" pos="42 44" color="black"/>
-    <label id="resolver" size="50 12" pos="42 58" color="black"/>
+    <box id="requestDetail" size="175 40" pos="12 60" linewidth="0" color="black" />
 
     <buttonimage id="back" size="37 16" pos="35 105" textcolor="black"
                  label="$(com.minecolonies.coremod.gui.back)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
