@@ -598,7 +598,7 @@ public final class StandardRequests
                                                       .getCompatibilityManager()
                                                       .getListOfAllItems()
                                                       .stream()
-                                                      .filter(item -> item.getItem().isFood())
+                                                      .filter(item -> item.getItem().isFood() && this.getRequest().matches(item))
                                                       .collect(Collectors.toList()));
             }
 

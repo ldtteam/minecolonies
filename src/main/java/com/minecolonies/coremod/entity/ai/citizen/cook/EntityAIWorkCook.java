@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.cook;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
@@ -317,29 +318,27 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     }
 
     @Override
-    protected IRequestable getSmeltAbleClass()
-    {
+    protected IRequestable getSmeltAbleClass() {
         final Map<String, List<ItemStorage>> allowedItems = getOwnBuilding().getCopyOfAllowedItems();
         if (allowedItems.containsKey(FOOD_LIST))
         {
-            try
-            {
-                return new Food(STACKSIZE, allowedItems.get(FOOD_LIST));
-            }
-            catch (NullPointerException e)
+            List<ItemStorage> list = ImmutableList.copyOf(IColonyManager.getInstance()
+                    .getCompatibilityManager()
+                    .getFood()
+                    .stream()
+                    .filter(item -> !allowedItems.get(FOOD_LIST).contains(item))
+                    .collect(Collectors.toList()));
+            if (list.isEmpty())
             {
                 if (worker.getCitizenData() != null)
                 {
                     worker.getCitizenData()
                             .triggerInteraction(new StandardInteraction(new TranslationTextComponent(FURNACE_USER_NO_FOOD), ChatPriority.BLOCKING));
                 }
-                return new Food(STACKSIZE);
             }
+            return new Food(STACKSIZE, allowedItems.get(FOOD_LIST));
         }
-        else
-        {
-            return new Food(STACKSIZE);
-        }
+        return new Food(STACKSIZE);
     }
 
 }

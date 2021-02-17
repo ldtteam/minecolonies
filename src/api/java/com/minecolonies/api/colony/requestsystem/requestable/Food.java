@@ -114,11 +114,7 @@ public class Food implements IDeliverable
             }
         }
 
-        if (!items.isEmpty())
-        {
-            return new Food(count, result, items);
-        }
-        return new Food(count, result);
+        return new Food(count, result, items);
     }
 
     /**
@@ -139,12 +135,9 @@ public class Food implements IDeliverable
         }
 
         buffer.writeInt(input.exclusionList.size());
-        if (!input.exclusionList.isEmpty())
+        for (ItemStorage item : input.exclusionList)
         {
-            for (ItemStorage item : input.exclusionList)
-            {
-                buffer.writeItemStack(item.getItemStack());
-            }
+            buffer.writeItemStack(item.getItemStack());
         }
     }
 
@@ -160,16 +153,10 @@ public class Food implements IDeliverable
         final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
 
         List<ItemStorage> items = new ArrayList<>();
-        try
+        final int itemsCount = buffer.readInt();
+        for (int i = 0; i < itemsCount; ++i)
         {
-            for (int i = 0; i < buffer.readInt(); ++i)
-            {
-                items.add(new ItemStorage(buffer.readItemStack()));
-            }
-        }
-        catch (Exception e)
-        {
-
+            items.add(new ItemStorage(buffer.readItemStack()));
         }
 
         if (!items.isEmpty())
