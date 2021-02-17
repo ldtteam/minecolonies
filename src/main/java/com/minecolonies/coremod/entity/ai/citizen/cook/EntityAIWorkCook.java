@@ -318,17 +318,12 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     }
 
     @Override
-    protected IRequestable getSmeltAbleClass() {
+    protected IRequestable getSmeltAbleClass()
+    {
         final Map<String, List<ItemStorage>> allowedItems = getOwnBuilding().getCopyOfAllowedItems();
         if (allowedItems.containsKey(FOOD_LIST))
         {
-            List<ItemStorage> list = ImmutableList.copyOf(IColonyManager.getInstance()
-                    .getCompatibilityManager()
-                    .getFood()
-                    .stream()
-                    .filter(item -> !allowedItems.get(FOOD_LIST).contains(item))
-                    .collect(Collectors.toList()));
-            if (list.isEmpty())
+            if (IColonyManager.getInstance().getCompatibilityManager().getFood().size() == allowedItems.get(FOOD_LIST).size())
             {
                 if (worker.getCitizenData() != null)
                 {
