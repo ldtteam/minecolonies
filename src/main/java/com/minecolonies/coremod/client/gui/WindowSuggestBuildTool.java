@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.DirectPlaceMessage;
@@ -51,7 +49,6 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_BUILDTOOL, this::buildToolClicked);
         registerButton(BUTTON_DIRECT, this::directClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
-        findPaneOfTypeByID("text", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.placement.warning"));
     }
 
     /**

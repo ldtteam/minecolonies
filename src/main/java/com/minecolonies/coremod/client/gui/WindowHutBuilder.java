@@ -4,7 +4,7 @@ import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -104,11 +104,11 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         Button buttonManualMode = findPaneOfTypeByID(BUTTON_MANUAL_MODE, Button.class);
         if (building.getManualMode())
         {
-            buttonManualMode.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL));
+            buttonManualMode.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL));
         }
         else
         {
-            buttonManualMode.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_AUTOMATIC));
+            buttonManualMode.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_AUTOMATIC));
         }
     }
 
@@ -192,9 +192,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         //Make sure we have a fresh view
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
 
-        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Label.class).setLabelText(building.getConstructionName());
-        findPaneOfTypeByID(LABEL_CONSTRUCTION_POS, Label.class).setLabelText(building.getConstructionPos());
-        findPaneOfTypeByID(LABEL_PROGRESS, Label.class).setLabelText(building.getProgress());
+        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(building.getConstructionName());
+        findPaneOfTypeByID(LABEL_CONSTRUCTION_POS, Text.class).setText(building.getConstructionPos());
+        findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(building.getProgress());
     }
 
     /**
@@ -206,37 +206,37 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private void updateResourcePane(final int index, @NotNull final Pane rowPane)
     {
         final BuildingBuilderResource resource = resources.get(index);
-        final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-        final Label resourceMissingLabel = rowPane.findPaneOfTypeByID(RESOURCE_MISSING, Label.class);
-        final Label neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Label.class);
+        final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
+        final Text resourceMissingLabel = rowPane.findPaneOfTypeByID(RESOURCE_MISSING, Text.class);
+        final Text neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Text.class);
         final Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
 
         switch (resource.getAvailabilityStatus())
         {
             case DONT_HAVE:
                 addButton.disable();
-                resourceLabel.setColor(RED, RED);
-                resourceMissingLabel.setColor(RED, RED);
-                neededLabel.setColor(RED, RED);
+                resourceLabel.setColors(RED);
+                resourceMissingLabel.setColors(RED);
+                neededLabel.setColors(RED);
                 break;
             case NEED_MORE:
                 addButton.enable();
-                resourceLabel.setColor(ORANGE, ORANGE);
-                resourceMissingLabel.setColor(ORANGE, ORANGE);
-                neededLabel.setColor(ORANGE, ORANGE);
+                resourceLabel.setColors(ORANGE);
+                resourceMissingLabel.setColors(ORANGE);
+                neededLabel.setColors(ORANGE);
                 break;
             case HAVE_ENOUGH:
                 addButton.enable();
-                resourceLabel.setColor(DARKGREEN, DARKGREEN);
-                resourceMissingLabel.setColor(DARKGREEN, DARKGREEN);
-                neededLabel.setColor(DARKGREEN, DARKGREEN);
+                resourceLabel.setColors(DARKGREEN);
+                resourceMissingLabel.setColors(DARKGREEN);
+                neededLabel.setColors(DARKGREEN);
                 break;
             case NOT_NEEDED:
             default:
                 addButton.disable();
-                resourceLabel.setColor(BLACK, BLACK);
-                resourceMissingLabel.setColor(BLACK, BLACK);
-                neededLabel.setColor(BLACK, BLACK);
+                resourceLabel.setColors(BLACK);
+                resourceMissingLabel.setColors(BLACK);
+                neededLabel.setColors(BLACK);
                 break;
         }
 
@@ -245,20 +245,20 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         final int buttonY = rowPane.getHeight() - addButton.getHeight() - 2;
         addButton.setPosition(buttonX, buttonY);
 
-        resourceLabel.setLabelText(resource.getName());
+        resourceLabel.setText(resource.getName());
         final int missing = resource.getMissingFromPlayer();
         if (missing < 0)
         {
-            resourceMissingLabel.setLabelText(Integer.toString(missing));
+            resourceMissingLabel.setText(Integer.toString(missing));
         }
         else
         {
-            resourceMissingLabel.setLabelText("");
+            resourceMissingLabel.clearText();
         }
 
-        neededLabel.setLabelText(resource.getAvailable() + " / " + resource.getAmount());
-        rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
-        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
+        neededLabel.setText(resource.getAvailable() + " / " + resource.getAmount());
+        rowPane.findPaneOfTypeByID(RESOURCE_ID, Text.class).setText(Integer.toString(index));
+        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
         final ItemStack stack = new ItemStack(resource.getItem(), 1);
         stack.setTag(resource.getItemStack().getTag());
@@ -274,11 +274,10 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private void updateAvailableWorkOrders(final int index, @NotNull final Pane rowPane)
     {
         final WorkOrderView order = building.getBuildOrders().get(index);
-        final Label workOrderPosLabel = rowPane.findPaneOfTypeByID(WORK_ORDER_POS, Label.class);
 
-        rowPane.findPaneOfTypeByID(WORK_ORDER_NAME, Label.class).setLabelText(order.get());
-        workOrderPosLabel.setLabelText(order.getPos().getX() + " " + order.getPos().getY() + " " + order.getPos().getZ());
-        rowPane.findPaneOfTypeByID(WORK_ORDER_ID, Label.class).setLabelText(Integer.toString(order.getId()));
+        rowPane.findPaneOfTypeByID(WORK_ORDER_NAME, Text.class).setText(order.get());
+        rowPane.findPaneOfTypeByID(WORK_ORDER_POS, Text.class).setText(order.getPos().getX() + " " + order.getPos().getY() + " " + order.getPos().getZ());
+        rowPane.findPaneOfTypeByID(WORK_ORDER_ID, Text.class).setText(Integer.toString(order.getId()));
     }
 
     /**
@@ -319,8 +318,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     {
         final Pane pane = button.getParent();
         button.disable();
-        final Label idLabel = pane.findPaneOfTypeByID(RESOURCE_ID, Label.class);
-        final int index = Integer.parseInt(idLabel.getLabelText());
+        final Text idLabel = pane.findPaneOfTypeByID(RESOURCE_ID, Text.class);
+        final int index = Integer.parseInt(idLabel.getTextAsString());
         final BuildingBuilderResource res = resources.get(index);
         if (res == null)
         {
@@ -332,8 +331,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             // and use quantity for the size
             @NotNull final ItemStack itemStack = res.getItemStack().copy();
             itemStack.setCount(1);
-            final Label quantityLabel = pane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
-            final int quantity = Integer.parseInt(quantityLabel.getLabelText());
+            final Text quantityLabel = pane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class);
+            final int quantity = Integer.parseInt(quantityLabel.getTextAsString());
             final int needed = res.getAmount() - res.getAvailable();
             res.setAvailable(Math.min(res.getAmount(), res.getAvailable() + res.getPlayerAmount()));
             res.setPlayerAmount(Math.max(0, res.getPlayerAmount() - needed));
@@ -349,14 +348,14 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      */
     private void manualModeClicked(@NotNull final Button button)
     {
-        if (button.getLabel().equals(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL)))
+        if (button.getTextAsString().equals(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL)))
         {
-            button.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_AUTOMATIC));
+            button.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_AUTOMATIC));
             building.setManualMode(false);
         }
         else
         {
-            button.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL));
+            button.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL));
             building.setManualMode(true);
         }
     }
@@ -370,7 +369,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     {
         final Pane pane = button.getParent();
 
-        final int id = Integer.parseInt(pane.findPaneOfTypeByID(WORK_ORDER_ID, Label.class).getLabelText());
+        final int id = Integer.parseInt(pane.findPaneOfTypeByID(WORK_ORDER_ID, Text.class).getTextAsString());
 
         button.disable();
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(building));

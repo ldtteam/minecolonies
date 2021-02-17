@@ -138,6 +138,8 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     @Override
     public void checkForWorkerSpecificRecipes()
     {
+        super.checkForWorkerSpecificRecipes();
+
         final List<IToken<?>> tokens = new ArrayList<>();
         for (final Item item : Tags.Items.SAND.getAllElements())
         {

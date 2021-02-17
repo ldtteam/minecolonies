@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
@@ -40,11 +40,11 @@ public class WindowHutPlantation extends AbstractWindowWorkerBuilding<BuildingPl
     {
         super(building, Constants.MOD_ID + PLANTATION_RESOURCE_SUFFIX);
         final Button plantSettingsButton = findPaneOfTypeByID(BLOCK_BUTTON, Button.class);
-        final Label plantHintLabel = findPaneOfTypeByID(HINT_LABEL, Label.class);
+        final Text plantHintLabel = findPaneOfTypeByID(HINT_LABEL, Text.class);
 
         if (building.getColony().getResearchManager().getResearchEffects().getEffectStrength(PLANT_2) > 0)
         {
-            plantHintLabel.setLabelText(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_PLANTATION_NOT_PLANT));
+            plantHintLabel.setText(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_PLANTATION_NOT_PLANT));
         }
 
         registerButton(BLOCK_BUTTON, this::switchPlantingMode);
@@ -79,7 +79,7 @@ public class WindowHutPlantation extends AbstractWindowWorkerBuilding<BuildingPl
     {
         if (building.getCurrentPhase() != null)
         {
-            plantSettingsButton.setLabel(new ItemStack(building.getCurrentPhase()).getDisplayName().getString());
+            plantSettingsButton.setText(new ItemStack(building.getCurrentPhase()).getDisplayName());
         }
     }
 

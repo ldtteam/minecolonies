@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -74,14 +74,14 @@ public class WindowHutCitizen extends AbstractWindowBuilding<HomeBuildingModule.
                 final ICitizenDataView citizenDataView = home.getColony().getCitizen((home.getResidents().get(index)));
                 if (citizenDataView != null)
                 {
-                    rowPane.findPaneOfTypeByID(LABEL_NAME, Label.class).setLabelText(citizenDataView.getName());
+                    rowPane.findPaneOfTypeByID(LABEL_NAME, Text.class).setText(citizenDataView.getName());
                     rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class).setEnabled(isManualHousing);
 
                     if (citizenDataView.getWorkBuilding() != null)
                     {
                         final BlockPos work = citizenDataView.getWorkBuilding();
                         final double distance2D = BlockPosUtil.getDistance2D(work, home.getPosition());
-                        rowPane.findPaneOfTypeByID(LABEL_DIST, Label.class).setLabelText(LanguageHandler.format(DIST, distance2D));
+                        rowPane.findPaneOfTypeByID(LABEL_DIST, Text.class).setText(LanguageHandler.format(DIST, distance2D));
                     }
                 }
             }
@@ -98,7 +98,7 @@ public class WindowHutCitizen extends AbstractWindowBuilding<HomeBuildingModule.
         final Button buttonAssign = findPaneOfTypeByID(BUTTON_ASSIGN, Button.class);
 
         final int sparePlaces = building.getBuildingLevel() - building.getResidents().size();
-        buttonAssign.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
+        buttonAssign.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
         buttonAssign.setEnabled(sparePlaces > 0 && building.getColony().isManualHousing());
 
         citizen.refreshElementPanes();

@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModuleProvider;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
@@ -52,7 +51,7 @@ import org.jetbrains.annotations.Nullable;
  * All AbstractBlockHut[something] should extend this class.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable, IAnchorBlock, IBuildingModuleProvider
+public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable, IAnchorBlock
 {
     /**
      * Hardness factor of the pvp mode.
@@ -334,11 +333,5 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public boolean needsResearch()
     {
         return needsResearch;
-    }
-
-    @Override
-    public void registerBuildingModules(final IBuilding building)
-    {
-        //todo fire event in the future to allow mods to register modules.
     }
 }

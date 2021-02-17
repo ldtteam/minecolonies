@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import com.minecolonies.coremod.util.AdvancementUtils;
@@ -243,20 +242,20 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
 
             if (citizen.getName().isEmpty())
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, this.getName());
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE, citizen.getName(), this.getName());
             }
             else
             {
                 if (citizen.getWorkBuilding() instanceof BuildingBuilder && ((BuildingBuilder) citizen.getWorkBuilding()).getManualMode())
                 {
                     LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                          COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC_MANUAL,
+                          COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL,
                           citizen.getName(), this.getName());
                 }
                 else
                 {
                     LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                          COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_GENERIC,
+                          COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
                           citizen.getName(), this.getName());
                 }
             }

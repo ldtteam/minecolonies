@@ -82,6 +82,8 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     @Override
     public void checkForWorkerSpecificRecipes()
     {
+        super.checkForWorkerSpecificRecipes();
+
         final List<ItemStack> input = new ArrayList<>();
         input.add(new ItemStack(Items.SAND, 4));
         input.add(new ItemStack(Items.GRAVEL, 4));

@@ -84,11 +84,11 @@ public class WindowHutComposter extends AbstractHutFilterableLists
     {
         if (ownBuilding.retrieveDirtFromCompostBin)
         {
-            button.setLabel(LanguageHandler.format(Blocks.DIRT.getTranslationKey()));
+            button.setText(LanguageHandler.format(Blocks.DIRT.getTranslationKey()));
         }
         else
         {
-            button.setLabel(LanguageHandler.format(ModItems.compost.getTranslationKey(new ItemStack(ModItems.compost))));
+            button.setText(LanguageHandler.format(ModItems.compost.getTranslationKey(new ItemStack(ModItems.compost))));
         }
     }
 

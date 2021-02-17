@@ -39,11 +39,11 @@ public class WindowHutBeekeeper extends AbstractWindowWorkerBuilding<BuildingBee
 
         if (building.isHarvestHoneycombs())
         {
-            buttonHarvestHoneycombs.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT));
+            buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT));
         }
         else
         {
-            buttonHarvestHoneycombs.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT));
+            buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT));
         }
 
         registerButton(BUTTON_GIVE_TOOL, this::givePlayerScepter);
@@ -59,14 +59,14 @@ public class WindowHutBeekeeper extends AbstractWindowWorkerBuilding<BuildingBee
 
     private void harvestHoneycombClicked()
     {
-        if (buttonHarvestHoneycombs.getLabel().equals(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT)))
+        if (buttonHarvestHoneycombs.getTextAsString().equals(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT)))
         {
-            buttonHarvestHoneycombs.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT));
+            buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT));
             building.setHarvestHoneycombs(false);
         }
         else
         {
-            buttonHarvestHoneycombs.setLabel(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT));
+            buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT));
             building.setHarvestHoneycombs(true);
         }
     }

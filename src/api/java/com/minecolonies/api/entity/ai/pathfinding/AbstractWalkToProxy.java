@@ -118,7 +118,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
         final double distanceProxyNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared(currentProxy, target)
                                                 : BlockPosUtil.getDistanceSquared(currentProxy, proxyList.get(0));
 
-            if (distanceToProxy < MIN_DISTANCE || distanceToNextProxy < distanceProxyNextProxy)
+        if (distanceToProxy < MIN_DISTANCE || distanceToNextProxy < distanceProxyNextProxy)
         {
             if (proxyList.isEmpty())
             {
@@ -126,7 +126,6 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
                 return takeTheDirectPath(target, range, onMove);
             }
 
-            entity.getNavigator().clearPath();
             currentProxy = proxyList.get(0);
             proxyList.remove(0);
         }

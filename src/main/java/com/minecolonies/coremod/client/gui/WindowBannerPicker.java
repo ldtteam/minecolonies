@@ -72,8 +72,8 @@ public class WindowBannerPicker extends Screen
                 BannerPattern.SKULL,
                 BannerPattern.CREEPER
             }, { // 4
-                BannerPattern.GLOBE
-                // TODO: 1.16 port - add BannerPattern.PIGLIN here
+                BannerPattern.GLOBE,
+                BannerPattern.PIGLIN
             }, { // 5
                 BannerPattern.MOJANG
             }, { // Excluded completely
