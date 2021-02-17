@@ -877,7 +877,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                     addRecipeToList(recipeToken);
                     colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
                 }
-                else if((forceReplace || newRecipe.getMustExist()) && duplicateFound != recipeToken)
+                else if((forceReplace || newRecipe.getMustExist()) && !(duplicateFound.equals(recipeToken)))
                 {
                     //We found the base recipe for a multi-recipe, replace it with the multi-recipe
                     replaceRecipe(duplicateFound, recipeToken);

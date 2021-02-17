@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -92,15 +92,15 @@ public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnc
                 {
                     text += buildingView.getCustomName().isEmpty() ? buildingView.getSchematicName() : buildingView.getCustomName();
                     text += " " + BlockPosUtil.getDistance2D(building.getPosition(), buildingView.getPosition()) + "m";
-                    rowPane.findPaneOfTypeByID(WORKER_NAME, Label.class).setLabelText(text);
+                    rowPane.findPaneOfTypeByID(WORKER_NAME, Text.class).setText(text);
                     final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
                     if (selectedBuildings.contains(buildingView.getID()))
                     {
-                        switchButton.setLabel(ON);
+                        switchButton.setText(ON);
                     }
                     else
                     {
-                        switchButton.setLabel(OFF);
+                        switchButton.setText(OFF);
                     }
                 }
             }
@@ -115,14 +115,14 @@ public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnc
     private void switchClicked(@NotNull final Button button)
     {
         final int row = workerList.getListElementIndexByPane(button);
-        if (button.getLabel().equals(OFF))
+        if (button.getTextAsString().equals(OFF))
         {
-            button.setLabel(ON);
+            button.setText(ON);
             building.addWorker(allBuildings.get(row).getID());
         }
         else
         {
-            button.setLabel(OFF);
+            button.setText(OFF);
             building.removeWorker(allBuildings.get(row).getID());
         }
         selectedBuildings = building.getBuildingsToGatherFrom();

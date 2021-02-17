@@ -4,7 +4,7 @@ import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structures.helpers.Settings;
@@ -131,7 +131,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         if (building.getBuildingLevel() == 0)
         {
-            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.build"));
+            buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.build"));
             findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).hide();
         }
         else if (building.getBuildingLevel() == building.getBuildingMaxLevel())
@@ -140,12 +140,12 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
         else
         {
-            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.upgrade"));
+            buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.upgrade"));
         }
 
         if (building.isDeconstructed())
         {
-            findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.pickup"));
+            findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.pickup"));
         }
     }
 
@@ -256,7 +256,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         // Ensure the player cannot change a style of an already constructed building
         if (building.getBuildingLevel() > 0 && stylesDropDownList.getSelectedIndex() != -1)
         {
-            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(
+            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setText(
                     LanguageHandler.format(
                             !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
                             && !building.isDeconstructed()
@@ -466,12 +466,12 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final ItemStorage resource = tempRes.get(index);
-                final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-                final Label quantityLabel = rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
-                resourceLabel.setLabelText(resource.getItemStack().getDisplayName().getString());
-                quantityLabel.setLabelText(Integer.toString(resource.getAmount()));
-                resourceLabel.setColor(WHITE, WHITE);
-                quantityLabel.setColor(WHITE, WHITE);
+                final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
+                final Text quantityLabel = rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class);
+                resourceLabel.setText(resource.getItemStack().getDisplayName());
+                quantityLabel.setText(Integer.toString(resource.getAmount()));
+                resourceLabel.setColors(WHITE);
+                quantityLabel.setColors(WHITE);
                 final ItemStack itemIcon = new ItemStack(resource.getItem(), 1);
                 itemIcon.setTag(resource.getItemStack().getTag());
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(itemIcon);
