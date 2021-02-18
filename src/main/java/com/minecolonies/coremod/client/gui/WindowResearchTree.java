@@ -573,17 +573,17 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     private void generateResearchTooltips(final Button tipItem, final IGlobalResearch research, final ResearchButtonState state)
     {
         // have to use a copy of getName, or the TranslationText will also retain and apply the formatting in other contexts.
-        final AbstractTextBuilder.TooltipBuilder hoverPaneBuilder = PaneBuilders.tooltipBuilder().hoverPane(tipItem).append(research.getName()).style(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD));
+        final AbstractTextBuilder.TooltipBuilder hoverPaneBuilder = PaneBuilders.tooltipBuilder().hoverPane(tipItem).append(research.getName().deepCopy()).style(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD));
         if (!research.getSubtitle().getKey().isEmpty())
         {
             hoverPaneBuilder.paragraphBreak().style(Style.EMPTY.setItalic(true).setFormatting(TextFormatting.GRAY)).append(research.getSubtitle());
         }
         for (int txt = 0; txt < research.getEffects().size(); txt++)
         {
-            hoverPaneBuilder.paragraphBreak().append(research.getEffects().get(txt).getDesc()).resetStyle();
+            hoverPaneBuilder.paragraphBreak().append(research.getEffects().get(txt).getDesc());
             if (!research.getEffects().get(txt).getSubtitle().getKey().isEmpty())
             {
-                hoverPaneBuilder.paragraphBreak().append(new StringTextComponent("-")).appendNL(research.getEffects().get(txt).getSubtitle()).resetStyle();
+                hoverPaneBuilder.paragraphBreak().append(new StringTextComponent("-")).append(research.getEffects().get(txt).getSubtitle());
             }
         }
         if (state != ResearchButtonState.FINISHED && state != ResearchButtonState.IN_PROGRESS)
@@ -610,14 +610,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 if (hasMax)
                 {
                     hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).style(Style.EMPTY.setFormatting(TextFormatting.GOLD));
-                    hoverPaneBuilder.resetStyle();
                 }
                 else
                 {
                     hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).style(Style.EMPTY.setFormatting(TextFormatting.RED));
                 }
             }
-            hoverPaneBuilder.resetStyle();
         }
         if (research.isImmutable())
         {
