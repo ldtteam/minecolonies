@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.buildings.modules;
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.*;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -91,15 +90,6 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
      * Penalty for not spawning visitors after a death
      */
     private int noVisitorTime = 10000;
-
-    /**
-     * Creates a new tavern module.
-     * @param building the building it is assigned to.
-     */
-    public TavernBuildingModule(final IBuilding building)
-    {
-        super(building);
-    }
 
     @Override
     public IStat<Integer> getMaxInhabitants()

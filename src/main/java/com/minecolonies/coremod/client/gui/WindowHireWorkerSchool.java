@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.Comparator;
@@ -42,16 +43,12 @@ public class WindowHireWorkerSchool extends WindowHireWorker
     }
 
     @Override
-    protected String createColor(final Skill primary, final Skill secondary, final Skill current)
+    protected Style createColor(final Skill primary, final Skill secondary, final Skill current)
     {
-        if (primary == current || current == Skill.Intelligence)
+        if (current == Skill.Intelligence)
         {
-            return TextFormatting.GREEN.toString() + TextFormatting.BOLD.toString();
+            return Style.EMPTY.applyFormatting(TextFormatting.GREEN).applyFormatting(TextFormatting.BOLD);
         }
-        if (secondary == current)
-        {
-            return TextFormatting.YELLOW.toString() + TextFormatting.ITALIC.toString();
-        }
-        return "";
+        return super.createColor(primary, secondary, current);
     }
 }

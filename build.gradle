@@ -382,22 +382,33 @@ task("createChangelog") {
     }
 }
 
-// Example configuration to allow publishing using the maven-publish task
-// we define a custom artifact that is sourced from the reobfJar output task
-// and then declare that to be published
-// Note you'll need to add a repository here
-def reobfFile = file("$buildDir/reobfJar/output.jar")
-def reobfArtifact = artifacts.add('default', reobfFile) {
-    type 'jar'
-    builtBy 'reobfJar'
+reobf {
+    jar {}
+    apiJar {}
 }
 
 publishing {
+    if (System.getenv().containsKey("LDTTeamJfrogUsername") && System.getenv().containsKey("LDTTeamJfrogPassword")) {
+        project.logger.log(LogLevel.WARN, "Uploading to JFrog enabled.")
+        repositories {
+            maven {
+                name 'LDTTeamJfrog'
+                credentials {
+                    username System.getenv().get("LDTTeamJfrogUsername")
+                    password System.getenv().get("LDTTeamJfrogPassword")
+                }
+                url 'https://ldtteam.jfrog.io/ldtteam/mods-maven'
+            }
+        }
+    }
+    else {
+        project.logger.log(LogLevel.WARN, "Uploading to JFrog disabeled.")
+    }
+
     publications {
         maven(MavenPublication) {
-            groupId = project.group
+            from project.components.java
 
-            artifact reobfArtifact
             artifact packageJavadoc
             artifact sourceJar
             artifact apiJar

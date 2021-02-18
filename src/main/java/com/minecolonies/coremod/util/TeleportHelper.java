@@ -32,7 +32,7 @@ public final class TeleportHelper
 
     public static boolean teleportCitizen(final AbstractEntityCitizen citizen, final World world, final BlockPos location)
     {
-        if (citizen == null || world == null)
+        if (citizen == null || world == null || world.isRemote)
         {
             return false;
         }
