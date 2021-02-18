@@ -77,12 +77,11 @@ public final class ResearchConstants
     public static final int    RESEARCH_ICON_WIDTH  = 30;
     public static final int    RESEARCH_ICON_HEIGHT = 32;
     public static final int    OR_X_OFFSET          = 14;
-    public static final int    OR_Y_OFFSET          = 7;
+    public static final int    OR_Y_OFFSET          = 10;
     public static final int    OR_HEIGHT            = 16;
     public static final int    OR_WIDTH             = 16;
     public static final int    TIME_HEIGHT          = 12;
     public static final int    TIME_WIDTH           = 95;
-
     public static final boolean DRAW_ICONS = false;
 
     public static final int    COLOR_TEXT_NEGATIVE  = Color.rgbaToInt(218, 10, 10, 255);

@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.Alignment;
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ZoomDragView;
 import com.minecolonies.api.IMinecoloniesAPI;
@@ -12,6 +12,7 @@ import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
@@ -70,12 +71,29 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     /**
      * Displaced tooltip text, if present.
      */
-    private List<IFormattableTextComponent> displacedHoverText;
+    private Pane displacedHoverPane;
 
     /**
      * Button that the tooltip text has been displaced from.
      */
     private Button displacedButton;
+
+    /**
+     * The current state of a research button's display status.
+     */
+    enum ResearchButtonState
+    {
+        AVAILABLE,
+        IN_PROGRESS,
+        FINISHED,
+        ABANDONED,
+        MISSING_PARENT,
+        MISSING_REQUIREMENT,
+        MISSING_COST,
+        TOO_MANY_PROGRESS,
+        TOO_LOW_UNIVERSITY,
+        LOCKED
+    }
 
     /**
      * Create the research tree window.
@@ -125,9 +143,9 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 button.getParent().removeChild(icon);
             }
         }
-        if (displacedButton != null && displacedHoverText != null)
+        if (displacedButton != null && displacedHoverPane != null)
         {
-            displacedButton.setHoverToolTip(displacedHoverText);
+            displacedButton.setHoverPane(displacedHoverPane);
         }
 
         // Check for an empty button Id.  These reflect disabled buttons normally
@@ -139,9 +157,14 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             // intentionally empty.
         }
         // Undo just the selected research.
-        else if (button.getID().contains("undo."))
+        else if (button.getID().contains("undo:"))
         {
-            final ResourceLocation undoID = new ResourceLocation(button.getID().split("\\.")[1]);
+            final String undoName = button.getID().substring(button.getID().indexOf(':'));
+            if(!ResourceLocation.isResouceNameValid(undoName))
+            {
+                return;
+            }
+            final ResourceLocation undoID = new ResourceLocation(undoName);
             final ILocalResearch cancelResearch = building.getColony().getResearchManager().getResearchTree().getResearch(branch, undoID);
             if (cancelResearch != null)
             {
@@ -163,7 +186,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 close();
             }
         }
-        else if (IGlobalResearchTree.getInstance().getResearch(branch, new ResourceLocation(button.getID())) != null
+        else if (ResourceLocation.isResouceNameValid(button.getID())
+                   && IGlobalResearchTree.getInstance().getResearch(branch, new ResourceLocation(button.getID())) != null
                    && (building.getBuildingLevel() >= IGlobalResearchTree.getInstance().getResearch(branch, new ResourceLocation(button.getID())).getDepth()
                          || building.getBuildingLevel() == building.getBuildingMaxLevel()))
         {
@@ -290,9 +314,9 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     {
         for (int i = 1; i <= MAX_DEPTH; i++)
         {
-            final Label timeLabel = new Label();
+            final Text timeLabel = new Text();
             timeLabel.setSize(TIME_WIDTH, TIME_HEIGHT);
-            timeLabel.setLabelText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.header",
+            timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.header",
               (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
               (IGlobalResearchTree.getInstance().getBranchTime(branch) * Math.pow(2, i - 1))));
             timeLabel.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING) + GRADIENT_WIDTH / 2 - TIME_WIDTH / 4, TIMELABEL_Y_POSITION);
@@ -305,13 +329,68 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 gradient.setSize(i == MAX_DEPTH ? 400 : GRADIENT_WIDTH + X_SPACING, (maxHeight + 4) * (GRADIENT_HEIGHT + Y_SPACING) + Y_SPACING + TIMELABEL_Y_POSITION);
                 gradient.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING), 0);
                 view.getChildren().add(0,gradient);
-                timeLabel.setColor(COLOR_TEXT_NEGATIVE, COLOR_TEXT_NEGATIVE);
+                timeLabel.setColors(COLOR_TEXT_NEGATIVE);
             }
             else
             {
-                timeLabel.setColor(COLOR_TEXT_LABEL, COLOR_TEXT_LABEL);
+                timeLabel.setColors(COLOR_TEXT_LABEL);
             }
             view.addChild(timeLabel);
+        }
+    }
+
+    /**
+     * Calculates the UI status of a given Research Item.
+     * @param abandoned         if a research, or one of its ancestors, has a Parent with OnlyChild set, and one alternate branch already begun or completed.
+     * @param parentResearched  if the immediate parent research has been completed.
+     * @param research          the global research information for the research.
+     * @param state             the current LocalResearchTree ResearchState of the research for the colony.
+     * @return
+     */
+    private ResearchButtonState getResearchButtonState(final boolean abandoned, final boolean parentResearched, final IGlobalResearch research, final ResearchState state)
+    {
+        // Not available as parent has OnlyChild set, and another child research is complete.
+        if (abandoned)
+        {
+            return ResearchButtonState.ABANDONED;
+        }
+        // Locked, as parent is not completed.
+        else if (!parentResearched)
+        {
+            return ResearchButtonState.MISSING_PARENT;
+        }
+        else if (state == ResearchState.FINISHED)
+        {
+            return ResearchButtonState.FINISHED;
+        }
+        else if (state == ResearchState.IN_PROGRESS)
+        {
+            return ResearchButtonState.IN_PROGRESS;
+        }
+        // If the University too low-level for the research, or if this research is max-level and another max-level research is completed.
+        else if (research.getDepth() > building.getBuildingLevel() || (research.getDepth() > building.getBuildingMaxLevel() && !hasMax
+                    && building.getBuildingLevel() == building.getBuildingMaxLevel()))
+        {
+            return ResearchButtonState.TOO_LOW_UNIVERSITY;
+        }
+        else if(mc.player.isCreative())
+        {
+            return ResearchButtonState.AVAILABLE;
+        }
+        // is missing a requirement, such as a building, alternate building, or research requirement.
+        else if (!IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirement(), building.getColony()))
+        {
+            return ResearchButtonState.MISSING_REQUIREMENT;
+        }
+        // has everything but the item cost requirements.
+        else if (!research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
+        {
+            return ResearchButtonState.MISSING_COST;
+        }
+        // is valid to begin.
+        else
+        {
+            return ResearchButtonState.AVAILABLE;
         }
     }
 
@@ -345,11 +424,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             abandoned = true;
         }
 
-        drawResearchBox(view, offsetX, offsetY, state, research, progress, parentResearched, abandoned);
-        drawResearchLabels(view, offsetX, offsetY, research, state, progress);
-        drawResearchReqsAndCosts(view, offsetX, offsetY, research, state, abandoned);
-        drawResearchIcons(view, offsetX, offsetY, research, state, parentResearched, abandoned);
-        drawResearchButtons(view, offsetX, offsetY, research, state, parentResearched, abandoned);
+        final ResearchButtonState researchState = getResearchButtonState(abandoned, parentResearched, research, state);
+
+        drawResearchBoxes(view, offsetX, offsetY, research, researchState, progress);
+        drawResearchReqsAndCosts(view, offsetX, offsetY, research, researchState);
+        drawResearchIcons(view, offsetX, offsetY, research, researchState);
+        drawResearchTexts(view, offsetX, offsetY, research, researchState, progress);
 
         return abandoned;
     }
@@ -360,96 +440,127 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param view             the view to append it to.
      * @param offsetX          the horizontal offset of the left side of the research block.
      * @param offsetY          the vertical offset of the top side of the research block.
-     * @param state            the status of the selected research.
      * @param research         the research's traits.
+     * @param state            the status of the selected research.
      * @param progress         the progress toward research completion.
-     * @param parentResearched if the parent
-     * @param abandoned        the abandoned status of the research.
      */
-    private void drawResearchBox(
+    private void drawResearchBoxes(
       final ZoomDragView view,
       final int offsetX,
       final int offsetY,
-      final ResearchState state,
       final IGlobalResearch research,
-      final int progress,
-      final boolean parentResearched,
-      final boolean abandoned)
+      final ResearchButtonState state,
+      final int progress)
     {
-        final Image nameBar = new Image();
+        final ButtonImage nameBar = new ButtonImage();
         // Pad the nameBar vertical size a little, to make shadow overlap onto subBar if present.
         nameBar.setSize(NAME_LABEL_WIDTH, NAME_LABEL_HEIGHT + 3);
         nameBar.setPosition(offsetX, offsetY);
 
-        final Image iconBox = new Image();
+        final ButtonImage iconBox = new ButtonImage();
         iconBox.setSize(ICON_WIDTH + ICON_X_OFFSET * 2, ICON_HEIGHT + ICON_Y_OFFSET * 2);
         iconBox.setPosition(offsetX - ICON_X_OFFSET, offsetY - ICON_Y_OFFSET);
-
-        if (state == ResearchState.FINISHED)
-        {
-            nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_light_green.png"));
-            iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_light_green.png"));
-            view.addChild(nameBar);
-            view.addChild(iconBox);
-            return;
-        }
 
         final Image subBar = new Image();
         subBar.setPosition(offsetX + (ICON_WIDTH / 2), offsetY + NAME_LABEL_HEIGHT);
         subBar.setSize(RESEARCH_WIDTH - ICON_X_OFFSET * 2 - TEXT_X_OFFSET, RESEARCH_HEIGHT - NAME_LABEL_HEIGHT);
-        view.addChild(subBar);
-        if (state == ResearchState.IN_PROGRESS)
-        {
-            nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
-            subBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
-            iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_light_green.png"));
-            final Gradient nameGradient = new Gradient();
-            nameGradient.setSize(NAME_LABEL_WIDTH, NAME_LABEL_HEIGHT - ICON_X_OFFSET);
-            nameGradient.setPosition(offsetX, offsetY);
-            view.addChild(nameGradient);
-            nameGradient.setGradientStart(102, 225, 80, 60);
-            nameGradient.setGradientEnd(102, 225, 80, 60);
 
-            // scale down subBar to fit smaller progress text, and make gradients of scale to match progress.
-            final double progressRatio = (progress + 1) / (Math.pow(2, research.getDepth() - 1)
-                                                             * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(branch));
-            subBar.setSize(RESEARCH_WIDTH - ICON_X_OFFSET * 2 - TEXT_X_OFFSET, TIME_HEIGHT);
-            nameGradient.setSize((int) (progressRatio * nameBar.getWidth()), NAME_LABEL_HEIGHT);
-
-            final Gradient subGradient = new Gradient();
-            subGradient.setPosition(offsetX + (ICON_WIDTH / 2), offsetY + NAME_LABEL_HEIGHT);
-            subGradient.setSize(subBar.getWidth(), subBar.getHeight());
-            // remove a little bit of size from the subGradient height to avoid overlapping onto the shadows of subBar.
-            subGradient.setSize((int) (progressRatio * subBar.getWidth()), TIME_HEIGHT - 1);
-            subGradient.setGradientStart(230, 200, 20, 60);
-            subGradient.setGradientEnd(230, 200, 20, 60);
-            view.addChild(subGradient);
-        }
-        else if (abandoned || !parentResearched || (research.getDepth() > building.getBuildingLevel() && !(research.getDepth() > building.getBuildingMaxLevel()
-                                                                                                             && !hasMax
-                                                                                                             && building.getBuildingLevel() == building.getBuildingMaxLevel())))
+        if(state != ResearchButtonState.FINISHED)
         {
-            iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_light_gray.png"));
-            subBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
-            nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_light_gray.png"));
+            view.addChild(subBar);
         }
-        else if (!IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirement(), building.getColony()) ||
-                   !research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
-        {
-            iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_mini.png"));
-            nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
-            subBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
-        }
-        // eligible to begin research.
-        else
-        {
-            iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_blue.png"));
-            subBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
-            nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_blue.png"));
-        }
-        view.addChild(subBar);
         view.addChild(nameBar);
         view.addChild(iconBox);
+
+        switch (state)
+        {
+            case AVAILABLE:
+                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_blue.png"));
+                subBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_sub_medium.png"));
+                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_blue.png"));
+                nameBar.setID(research.getId().toString());
+                iconBox.setID(research.getId().toString());
+                break;
+            case IN_PROGRESS:
+                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_light_green.png"));
+                subBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_sub_thin.png"));
+                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_light_green.png"));
+                nameBar.setID(research.getId().toString());
+                iconBox.setID(research.getId().toString());
+                drawProgressBar(view, offsetX, offsetY, research, progress, subBar);
+                break;
+            case FINISHED:
+                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_light_green.png"));
+                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_light_green.png"));
+                break;
+            case LOCKED:
+            case ABANDONED:
+            case MISSING_PARENT:
+            case TOO_LOW_UNIVERSITY:
+                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_light_gray.png"));
+                subBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_sub_medium.png"));
+                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_light_gray.png"));
+                break;
+            case TOO_MANY_PROGRESS:
+                ButtonImage tooMany1 = new ButtonImage();
+                tooMany1.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_DIS));
+                tooMany1.setText(new TranslationTextComponent("com.minecolonies.coremod.research.research.toomanyinprogress.1"));
+                tooMany1.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
+                tooMany1.setPosition(offsetX + ICON_WIDTH * 2, offsetY + BUTTON_HEIGHT);
+                view.addChild(tooMany1);
+                final ButtonImage tooMany2 = new ButtonImage();
+                tooMany2.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_DIS));
+                tooMany2.setText(new TranslationTextComponent("com.minecolonies.coremod.research.research.toomanyinprogress.2"));
+                tooMany2.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
+                tooMany2.setPosition(offsetX + ICON_WIDTH * 2, offsetY + BUTTON_HEIGHT * 2);
+                view.addChild(tooMany2);
+            case MISSING_REQUIREMENT:
+            case MISSING_COST:
+                nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_plain.png"));
+                subBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_sub_medium.png"));
+                iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini.png"));
+                break;
+            default:
+                Log.getLogger().error("Error in DrawResearchBoxes for " + research.getId() + " state: " + state);
+                break;
+        }
+
+        // HoverTexts can only be assigned /after/ the ButtonImage (or other item) has been added to a Pane.
+        generateResearchTooltips(nameBar, research, state);
+    }
+
+    /**
+     * Draws the progress bar for an in-progress research.
+     * @param view          the view to assign the progressbar onto.
+     * @param offsetX       the horizontal offset of the containing research.
+     * @param offsetY       the vertical offset of the containing research.
+     * @param research      the Global research information.
+     * @param progress      the numeric absolute progress for the research for the colony.
+     * @param subBar        the bar to overlay the gradient over.
+     */
+    private void drawProgressBar(final ZoomDragView view, final int offsetX, final int offsetY, final IGlobalResearch research, final int progress, final Image subBar)
+    {
+        final Gradient nameGradient = new Gradient();
+        nameGradient.setSize(NAME_LABEL_WIDTH, NAME_LABEL_HEIGHT - ICON_X_OFFSET);
+        nameGradient.setPosition(offsetX, offsetY);
+        view.addChild(nameGradient);
+        nameGradient.setGradientStart(102, 225, 80, 60);
+        nameGradient.setGradientEnd(102, 225, 80, 60);
+
+        // scale down subBar to fit smaller progress text, and make gradients of scale to match progress.
+        final double progressRatio = (progress + 1) / (Math.pow(2, research.getDepth() - 1)
+                                                         * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(branch));
+        subBar.setSize(RESEARCH_WIDTH - ICON_X_OFFSET * 2 - TEXT_X_OFFSET, TIME_HEIGHT);
+        nameGradient.setSize((int) (progressRatio * NAME_LABEL_WIDTH), NAME_LABEL_HEIGHT);
+
+        final Gradient subGradient = new Gradient();
+        subGradient.setPosition(offsetX + (ICON_WIDTH / 2), offsetY + NAME_LABEL_HEIGHT);
+        subGradient.setSize(subBar.getWidth(), subBar.getHeight());
+        // remove a little bit of size from the subGradient height to avoid overlapping onto the shadows of subBar.
+        subGradient.setSize((int) (progressRatio * subBar.getWidth()), TIME_HEIGHT - 1);
+        subGradient.setGradientStart(230, 200, 20, 60);
+        subGradient.setGradientEnd(230, 200, 20, 60);
+        view.addChild(subGradient);
     }
 
     /**
@@ -459,63 +570,60 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param research the global research characteristics to draw.
      * @param state    the status of the selected research.
      */
-    private void generateResearchTooltips(final Pane tipItem, final IGlobalResearch research, final ResearchState state)
+    private void generateResearchTooltips(final Button tipItem, final IGlobalResearch research, final ResearchButtonState state)
     {
-        final List<IFormattableTextComponent> hoverTexts = new ArrayList<>();
         // have to use a copy of getName, or the TranslationText will also retain and apply the formatting in other contexts.
-        hoverTexts.add(research.getName().deepCopy().setStyle(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD)));
+        final AbstractTextBuilder.TooltipBuilder hoverPaneBuilder = PaneBuilders.tooltipBuilder().hoverPane(tipItem).append(research.getName()).style(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD));
         if (!research.getSubtitle().getKey().isEmpty())
         {
-            hoverTexts.add(research.getSubtitle().setStyle(Style.EMPTY.setItalic(true).setFormatting(TextFormatting.GRAY)));
+            hoverPaneBuilder.paragraphBreak().style(Style.EMPTY.setItalic(true).setFormatting(TextFormatting.GRAY)).append(research.getSubtitle());
         }
         for (int txt = 0; txt < research.getEffects().size(); txt++)
         {
-            hoverTexts.add(research.getEffects().get(txt).getDesc().deepCopy());
+            hoverPaneBuilder.paragraphBreak().append(research.getEffects().get(txt).getDesc()).resetStyle();
             if (!research.getEffects().get(txt).getSubtitle().getKey().isEmpty())
             {
-                hoverTexts.add(new StringTextComponent("-").append(research.getEffects().get(txt).getSubtitle()));
+                hoverPaneBuilder.paragraphBreak().append(new StringTextComponent("-")).appendNL(research.getEffects().get(txt).getSubtitle()).resetStyle();
             }
         }
-        if (state != ResearchState.FINISHED)
+        if (state != ResearchButtonState.FINISHED && state != ResearchButtonState.IN_PROGRESS)
         {
             for (int txt = 0; txt < research.getResearchRequirement().size(); txt++)
             {
                 if (research.getResearchRequirement().get(txt).isFulfilled(this.building.getColony()))
                 {
-                    hoverTexts.add(new TranslationTextComponent(" - ").append(research.getResearchRequirement()
-                                                                                .get(txt)
-                                                                                .getDesc().deepCopy()
-                                                                                .setStyle(Style.EMPTY.setFormatting(TextFormatting.AQUA))));
+                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent(" - ")).style(Style.EMPTY.setFormatting(TextFormatting.AQUA))
+                      .append(research.getResearchRequirement().get(txt).getDesc());
                 }
                 else
                 {
-                    hoverTexts.add(new TranslationTextComponent(" - ").append(research.getResearchRequirement()
-                                                                                .get(txt)
-                                                                                .getDesc().deepCopy()
-                                                                                .setStyle(Style.EMPTY.setFormatting(TextFormatting.RED))));
+                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent(" - ")).style(Style.EMPTY.setFormatting(TextFormatting.RED))
+                      .append(research.getResearchRequirement().get(txt).getDesc());
                 }
             }
             if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel())
             {
-                hoverTexts.add(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.university.level", research.getDepth()));
+                hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.university.level", research.getDepth()));
             }
             if (research.getDepth() == MAX_DEPTH)
             {
                 if (hasMax)
                 {
-                    hoverTexts.add(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch").setStyle(Style.EMPTY.setFormatting(TextFormatting.GOLD)));
+                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).style(Style.EMPTY.setFormatting(TextFormatting.GOLD));
+                    hoverPaneBuilder.resetStyle();
                 }
                 else
                 {
-                    hoverTexts.add(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch").setStyle(Style.EMPTY.setFormatting(TextFormatting.RED)));
+                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).style(Style.EMPTY.setFormatting(TextFormatting.RED));
                 }
             }
+            hoverPaneBuilder.resetStyle();
         }
         if (research.isImmutable())
         {
-            hoverTexts.add(new TranslationTextComponent("com.minecolonies.coremod.research.limit.immutable").setStyle(Style.EMPTY.setFormatting(TextFormatting.RED)));
+            hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.immutable").setStyle(Style.EMPTY.setFormatting(TextFormatting.RED)));
         }
-        tipItem.setHoverToolTip(hoverTexts);
+        tipItem.setHoverPane(hoverPaneBuilder.build());
     }
 
     /**
@@ -525,23 +633,30 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param offsetX  the horizontal offset of the left side of the research block.
      * @param offsetY  the vertical offset of the top side of the research block.
      * @param research the global research characteristics to draw.
-     * @param state    the local research's state.
+     * @param state    the research's state in the view context.
      * @param progress the progress toward research completion.
      */
-    private void drawResearchLabels(final ZoomDragView view, final int offsetX, final int offsetY, final IGlobalResearch research, final ResearchState state, final int progress)
+    private void drawResearchTexts(final ZoomDragView view, final int offsetX, final int offsetY, final IGlobalResearch research, final ResearchButtonState state, final int progress)
     {
-        final Label nameLabel = new Label();
-        nameLabel.setSize(BUTTON_LENGTH, INITIAL_Y_OFFSET);
-        nameLabel.setLabelText(research.getName());
-        nameLabel.setPosition(offsetX + ICON_WIDTH + TEXT_X_OFFSET, offsetY + TEXT_Y_OFFSET);
-        nameLabel.setColor(COLOR_TEXT_DARK, COLOR_TEXT_DARK);
-        nameLabel.setScale(1.4f);
-        view.addChild(nameLabel);
+        final Text nameText = new Text();
+        nameText.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
+        nameText.setText(research.getName());
+        nameText.setPosition(offsetX + ICON_WIDTH + TEXT_X_OFFSET, offsetY);
+        nameText.setColors(COLOR_TEXT_DARK);
+        nameText.setTextScale(1.4f);
+        view.addChild(nameText);
 
-        if (state == ResearchState.IN_PROGRESS)
+        if (state == ResearchButtonState.IN_PROGRESS)
         {
-            final double progressToGo =
-              (int) (Math.pow(2, research.getDepth() - 1) * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(branch)) - progress;
+            final double progressToGo;
+            if(research.isInstant() || (mc.player.isCreative() && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get()))
+            {
+                progressToGo = 0;
+            }
+            else
+            {
+                progressToGo = (int) (Math.pow(2, research.getDepth() - 1) * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(branch)) - progress;
+            }
             // Write out the rough remaining time for the research.
             // This will necessarily be an estimate, since adjusting for
             // daytime cycles or simple worker travel time would be a nightmare.
@@ -560,65 +675,13 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             {
                 timeRemaining = String.format("%d:%02d", hours, increments * 15);
             }
-            final Label progressLabel = new Label();
+            final Text progressLabel = new Text();
             progressLabel.setSize(BUTTON_LENGTH, INITIAL_Y_OFFSET);
-            progressLabel.setLabelText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.time", timeRemaining));
+            progressLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.time", timeRemaining));
             progressLabel.setPosition(offsetX + ICON_WIDTH + TEXT_X_OFFSET, offsetY + NAME_LABEL_HEIGHT);
-            progressLabel.setColor(COLOR_TEXT_DARK, COLOR_TEXT_DARK);
-            progressLabel.setScale(0.7f);
+            progressLabel.setColors(COLOR_TEXT_DARK);
+            progressLabel.setTextScale(0.7f);
             view.addChild(progressLabel);
-        }
-    }
-
-    /**
-     * Draw the buttons and button images for a given research.
-     *
-     * @param view             the view to append it to.
-     * @param offsetX          the horizontal offset of the left side of the research block.
-     * @param offsetY          the vertical offset of the top side of the research block.
-     * @param research         the global research characteristics to draw.
-     * @param state            the research state.
-     * @param parentResearched if the parent research has been completed.
-     * @param abandoned        if the research or an ancestor research has a completed sibling preventing it from being studied.
-     */
-    private void drawResearchButtons(
-      final ZoomDragView view, final int offsetX, final int offsetY, final IGlobalResearch research,
-      final ResearchState state, final boolean parentResearched, final boolean abandoned)
-    {
-        final Button iconButton = new Button();
-        iconButton.setSize(ICON_WIDTH + ICON_X_OFFSET * 2, ICON_HEIGHT + ICON_Y_OFFSET * 2);
-        iconButton.setPosition(offsetX - ICON_X_OFFSET, offsetY - ICON_Y_OFFSET);
-        view.addChild(iconButton);
-
-        final Button hoverButton = new Button();
-        hoverButton.setSize(RESEARCH_WIDTH + ICON_X_OFFSET, NAME_LABEL_HEIGHT);
-        hoverButton.setPosition(offsetX + INITIAL_X_OFFSET - ICON_X_OFFSET, offsetY);
-        view.addChild(hoverButton);
-        generateResearchTooltips(hoverButton, research, state);
-
-        if (!abandoned && parentResearched && state != ResearchState.IN_PROGRESS && state != ResearchState.FINISHED
-              && building.getBuildingLevel() <= building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size())
-        {
-            ButtonImage tooMany1 = new ButtonImage();
-            tooMany1.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_DIS));
-            tooMany1.setLabel(new TranslationTextComponent("com.minecolonies.coremod.research.research.toomanyinprogress.1"));
-            tooMany1.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
-            tooMany1.setPosition(offsetX + ICON_WIDTH * 2, offsetY + BUTTON_HEIGHT);
-            view.addChild(tooMany1);
-            final ButtonImage tooMany2 = new ButtonImage();
-            tooMany2.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_DIS));
-            tooMany2.setLabel(new TranslationTextComponent("com.minecolonies.coremod.research.research.toomanyinprogress.2"));
-            tooMany2.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
-            tooMany2.setPosition(offsetX + ICON_WIDTH * 2, offsetY + BUTTON_HEIGHT * 2);
-            view.addChild(tooMany2);
-        }
-
-        if (!abandoned && parentResearched &&
-              ((research.getDepth() <= building.getBuildingLevel() || state != ResearchState.NOT_STARTED)
-                 || (!hasMax && research.getDepth() > building.getBuildingMaxLevel() && building.getBuildingLevel() == building.getBuildingMaxLevel())))
-        {
-            iconButton.setID(research.getId().toString());
-            hoverButton.setID(research.getId().toString());
         }
     }
 
@@ -631,20 +694,15 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     private void drawUndoProgressButton(final Button parent)
     {
         undoButton.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-        undoButton.setLabel(new TranslationTextComponent("com.minecolonies.coremod.research.undo.progress"));
+        undoButton.setText(new TranslationTextComponent("com.minecolonies.coremod.research.undo.progress"));
         undoButton.setTextColor(Color.getByName("black", 0));
         undoButton.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
         undoButton.setPosition(parent.getX() + (GRADIENT_WIDTH - BUTTON_LENGTH) / 2, parent.getY() + (GRADIENT_HEIGHT - BUTTON_HEIGHT) / 2);
-        undoButton.setID("undo." + parent.getID());
-        List<IFormattableTextComponent> hoverTexts = new ArrayList<>();
-        hoverTexts.add(new TranslationTextComponent("com.minecolonies.coremod.research.undo.progress.tooltip.1").setStyle(Style.EMPTY.setFormatting(TextFormatting.BOLD)
-                                                                                                                            .setFormatting(TextFormatting.RED)));
-        hoverTexts.add(new TranslationTextComponent("com.minecolonies.coremod.research.undo.progress.tooltip.2").setStyle(Style.EMPTY.setFormatting(TextFormatting.BOLD)
-                                                                                                                            .setFormatting(TextFormatting.RED)));
+        undoButton.setID("undo:" + parent.getID());
         displacedButton = parent;
-        displacedHoverText = new ArrayList<>(parent.getHoverToolTip());
-        parent.getHoverToolTip().clear();
-        parent.setHoverToolTip(hoverTexts);
+        displacedHoverPane = parent.getHoverPane();
+        parent.setHoverPane(PaneBuilders.tooltipBuilder().hoverPane(parent).append(new TranslationTextComponent("com.minecolonies.coremod.research.undo.progress.tooltip").setStyle(Style.EMPTY.setFormatting(TextFormatting.BOLD)
+                                                                                                                                                                    .setFormatting(TextFormatting.RED))).build());
         parent.getParent().addChild(undoButton);
     }
 
@@ -677,30 +735,29 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         undoButton.setTextColor(Color.getByName("black", 0));
         undoButton.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
         undoButton.setPosition(parent.getX() + (GRADIENT_WIDTH - BUTTON_LENGTH) / 2, parent.getY() + (GRADIENT_HEIGHT - BUTTON_HEIGHT) / 2);
-        final List<IFormattableTextComponent> hoverTexts = new ArrayList<>();
-        hoverTexts.add(new TranslationTextComponent("com.minecolonies.coremod.research.undo.remove.tooltip").setStyle(Style.EMPTY.setFormatting(TextFormatting.BOLD)
-                                                                                                                        .setFormatting(TextFormatting.RED)));
+        final AbstractTextBuilder.TooltipBuilder undoTipBuilder = PaneBuilders.tooltipBuilder().hoverPane(parent)
+                                  .append(new TranslationTextComponent("com.minecolonies.coremod.research.undo.remove.tooltip").setStyle(Style.EMPTY.setFormatting(TextFormatting.BOLD)
+                                                                                                                                           .setFormatting(TextFormatting.RED)));
         if (missingItems)
         {
             undoButton.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_DIS));
-            undoButton.setLabel(new TranslationTextComponent("com.minecolonies.coremod.research.research.notenoughresources"));
+            undoButton.setText(new TranslationTextComponent("com.minecolonies.coremod.research.research.notenoughresources"));
             for (ItemStorage cost : costList)
             {
-                hoverTexts.add(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.research",
+                undoTipBuilder.append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.research",
                   cost.getItem().getName()));
             }
         }
         else
         {
             undoButton.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-            undoButton.setLabel(new TranslationTextComponent("com.minecolonies.coremod.research.undo.remove"));
-            undoButton.setID("undo." + parent.getID());
+            undoButton.setText(new TranslationTextComponent("com.minecolonies.coremod.research.undo.remove"));
+            undoButton.setID("undo:" + parent.getID());
         }
 
         displacedButton = parent;
-        displacedHoverText = new ArrayList<>(parent.getHoverToolTip());
-        parent.getHoverToolTip().clear();
-        parent.setHoverToolTip(hoverTexts);
+        displacedHoverPane = parent.getHoverPane();
+        parent.setHoverPane(undoTipBuilder.build());
         parent.getParent().addChild(undoButton);
     }
 
@@ -712,112 +769,111 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param offsetY   the vertical offset of the top side of the research block.
      * @param research  the global research characteristics to draw.
      * @param state     the research's current state.
-     * @param abandoned if the research can not be initiated, because of a completed sibling or ancestor's sibling research.
      */
     public void drawResearchReqsAndCosts(
       final ZoomDragView view,
       final int offsetX,
       final int offsetY,
       final IGlobalResearch research,
-      final ResearchState state,
-      final boolean abandoned)
+      final ResearchButtonState state)
     {
-        if (!abandoned && (state != ResearchState.IN_PROGRESS && state != ResearchState.FINISHED))
+        if (state == ResearchButtonState.ABANDONED || state == ResearchButtonState.IN_PROGRESS || state == ResearchButtonState.FINISHED)
         {
-            int storageXOffset = ICON_WIDTH;
+            return;
+        }
+        int storageXOffset = ICON_WIDTH;
 
-            for (final IResearchRequirement requirement : research.getResearchRequirement())
+        for (final IResearchRequirement requirement : research.getResearchRequirement())
+        {
+            if (requirement instanceof AlternateBuildingResearchRequirement)
             {
-                if (requirement instanceof AlternateBuildingResearchRequirement)
-                {
-                    for (Map.Entry<String, Integer> building : ((AlternateBuildingResearchRequirement) requirement).getBuildings().entrySet())
-                    {
-                        final Item item;
-                        if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
-                          new ResourceLocation(Constants.MOD_ID, building.getKey())))
-                        {
-                            item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
-                              new ResourceLocation(Constants.MOD_ID, building.getKey())).getBuildingBlock().asItem();
-                        }
-                        else
-                        {
-                            item = Items.AIR.asItem();
-                        }
-                        final ItemStack stack = new ItemStack(item);
-                        stack.setCount(building.getValue());
-                        final ItemIcon icon = new ItemIcon();
-                        icon.setItem(stack);
-                        icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT);
-                        icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-                        view.addChild(icon);
-
-                        storageXOffset += COST_OFFSET;
-                    }
-                    // There will only ever be one AlternateBuildingRequirement per research, under the current implementation.
-                    break;
-                }
-            }
-            // If there are more than one requirement, we want a clear divider before normal building research requirements.
-            if (storageXOffset > ICON_WIDTH + COST_OFFSET)
-            {
-                final Image divider = new Image();
-                divider.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_large_stitches.png"));
-                divider.setSize(ICON_X_OFFSET, Y_SPACING);
-                divider.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + 4);
-                view.addChild(divider);
-                storageXOffset += ICON_X_OFFSET;
-            }
-
-            for (final IResearchRequirement requirement : research.getResearchRequirement())
-            {
-                if (requirement instanceof BuildingResearchRequirement)
+                for (Map.Entry<String, Integer> building : ((AlternateBuildingResearchRequirement) requirement).getBuildings().entrySet())
                 {
                     final Item item;
                     if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
-                      new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())))
+                      new ResourceLocation(Constants.MOD_ID, building.getKey())))
                     {
                         item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
-                          new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())).getBuildingBlock().asItem();
+                          new ResourceLocation(Constants.MOD_ID, building.getKey())).getBuildingBlock().asItem();
                     }
                     else
                     {
                         item = Items.AIR.asItem();
                     }
                     final ItemStack stack = new ItemStack(item);
-                    stack.setCount(((BuildingResearchRequirement) requirement).getBuildingLevel());
+                    stack.setCount(building.getValue());
                     final ItemIcon icon = new ItemIcon();
                     icon.setItem(stack);
-                    icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);
+                    icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT);
                     icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
                     view.addChild(icon);
 
                     storageXOffset += COST_OFFSET;
                 }
+                // There will only ever be one AlternateBuildingRequirement per research, under the current implementation.
+                break;
             }
-            // If there are two or more research requirements, we want a clear divider before the cost side.
-            // Again, there can only be one alternate-building requirement, so this would indicate at least two of building or research requirements.
-            if (research.getResearchRequirement().size() >= 2)
-            {
-                final Image divider = new Image();
-                divider.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_large_stitches.png"));
-                divider.setSize(ICON_X_OFFSET, Y_SPACING);
-                divider.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + 4);
-                view.addChild(divider);
-            }
+        }
+        // If there are more than one requirement, we want a clear divider before normal building research requirements.
+        if (storageXOffset > ICON_WIDTH + COST_OFFSET)
+        {
+            final Image divider = new Image();
+            divider.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_large_stitches.png"));
+            divider.setSize(ICON_X_OFFSET, Y_SPACING);
+            divider.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + 4);
+            view.addChild(divider);
+            storageXOffset += ICON_X_OFFSET;
+        }
 
-            storageXOffset = COST_OFFSET;
-            for (final ItemStorage storage : research.getCostList())
+        for (final IResearchRequirement requirement : research.getResearchRequirement())
+        {
+            if (requirement instanceof BuildingResearchRequirement)
             {
-                final ItemStack stack = storage.getItemStack().copy();
-                stack.setCount(storage.getAmount());
+                final Item item;
+                if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
+                  new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())))
+                {
+                    item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
+                      new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())).getBuildingBlock().asItem();
+                }
+                else
+                {
+                    item = Items.AIR.asItem();
+                }
+                final ItemStack stack = new ItemStack(item);
+                stack.setCount(((BuildingResearchRequirement) requirement).getBuildingLevel());
                 final ItemIcon icon = new ItemIcon();
                 icon.setItem(stack);
-                icon.setPosition(offsetX + RESEARCH_WIDTH - storageXOffset - INITIAL_X_OFFSET, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);
+                icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);
                 icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
                 view.addChild(icon);
 
                 storageXOffset += COST_OFFSET;
             }
+        }
+        // If there are two or more research requirements, we want a clear divider before the cost side.
+        // Again, there can only be one alternate-building requirement, so this would indicate at least two of building or research requirements.
+        if (research.getResearchRequirement().size() >= 2)
+        {
+            final Image divider = new Image();
+            divider.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_large_stitches.png"));
+            divider.setSize(ICON_X_OFFSET, Y_SPACING);
+            divider.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + 4);
+            view.addChild(divider);
+        }
+
+        storageXOffset = COST_OFFSET;
+        for (final ItemStorage storage : research.getCostList())
+        {
+            final ItemStack stack = storage.getItemStack().copy();
+            stack.setCount(storage.getAmount());
+            final ItemIcon icon = new ItemIcon();
+            icon.setItem(stack);
+            icon.setPosition(offsetX + RESEARCH_WIDTH - storageXOffset - INITIAL_X_OFFSET, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);
+            icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+            view.addChild(icon);
+
+            storageXOffset += COST_OFFSET;
         }
     }
 
@@ -828,19 +884,15 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param offsetY           Vertical offset for the reserach.
      * @param research          Global research information.
      * @param state             State of the local research, if begun.
-     * @param parentResearched  If the parent research has been completed.
-     * @param abandoned         If a sibling or ancestor research blocks this research.
      */
     public void drawResearchIcons(
       final ZoomDragView view,
       final int offsetX,
       final int offsetY,
       final IGlobalResearch research,
-      final ResearchState state,
-      final boolean parentResearched,
-      final boolean abandoned)
+      final ResearchButtonState state)
     {
-        if (research.isImmutable() && state != ResearchState.FINISHED)
+        if (research.isImmutable() && state != ResearchButtonState.FINISHED)
         {
             final Image immutIcon = new Image();
             immutIcon.setImage(new ResourceLocation("minecraft", "textures/block/redstone_torch.png"));
@@ -848,75 +900,74 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             immutIcon.setPosition(offsetX + GRADIENT_WIDTH - DEFAULT_COST_SIZE, offsetY);
             view.addChild(immutIcon);
         }
-        if (state == ResearchState.FINISHED && DRAW_ICONS)
+
+        switch (state)
         {
-            if (!research.getIconTextureResourceLocation().getPath().isEmpty())
-            {
+            case LOCKED:
+            case ABANDONED:
+            case TOO_MANY_PROGRESS:
+            case MISSING_PARENT:
+            case MISSING_REQUIREMENT:
+            case TOO_LOW_UNIVERSITY:
+                final Image lockIcon = new Image();
+                lockIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/locked_icon_light_gray.png"));
+                lockIcon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+                lockIcon.setPosition(offsetX, offsetY);
+                view.addChild(lockIcon);
+                break;
+            case MISSING_COST:
+                final Image unlockIcon = new Image();
+                unlockIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/locked_icon_unlocked_blue.png"));
+                unlockIcon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+                unlockIcon.setPosition(offsetX, offsetY);
+                view.addChild(unlockIcon);
+                break;
+            case AVAILABLE:
                 final Image icon = new Image();
-                icon.setImage(research.getIconTextureResourceLocation());
+                icon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_start.png"));
                 icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
                 icon.setPosition(offsetX, offsetY);
                 view.addChild(icon);
-            }
-            else if (!research.getIconItemStack().isEmpty())
-            {
-                ItemIcon iconItem = new ItemIcon();
-                iconItem.setItem(research.getIconItemStack());
-                iconItem.setPosition(offsetX, offsetY);
-                iconItem.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-                view.addChild(iconItem);
-            }
-        }
-        else if (state == ResearchState.FINISHED)
-        {
-            final Image icon = new Image();
-            icon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_check.png"));
-            icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-            icon.setPosition(offsetX, offsetY);
-            view.addChild(icon);
-        }
-        else if (state == ResearchState.IN_PROGRESS)
-        {
-            final Image icon = new Image();
-            icon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_cancel.png"));
-            icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-            icon.setPosition(offsetX, offsetY);
-            view.addChild(icon);
-        }
-        // requires another research be started or reset.
-        else if (!parentResearched || abandoned)
-        {
-            final Image lockIcon = new Image();
-            lockIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/locked_icon_light_gray.png"));
-            lockIcon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-            lockIcon.setPosition(offsetX, offsetY);
-            view.addChild(lockIcon);
-        }
-        // is missing a required building or research.
-        else if (!IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirement(), building.getColony()))
-        {
-            final Image lockIcon = new Image();
-            lockIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/locked_icon_light_gray.png"));
-            lockIcon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-            lockIcon.setPosition(offsetX, offsetY);
-            view.addChild(lockIcon);
-        }
-        // has everything but the item cost requirements.
-        else if (!research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
-        {
-            final Image lockIcon = new Image();
-            lockIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/locked_icon_unlocked_blue.png"));
-            lockIcon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-            lockIcon.setPosition(offsetX, offsetY);
-            view.addChild(lockIcon);
-        }
-        else
-        {
-            final Image icon = new Image();
-            icon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_start.png"));
-            icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-            icon.setPosition(offsetX, offsetY);
-            view.addChild(icon);
+                break;
+            case IN_PROGRESS:
+                final Image playIcon = new Image();
+                playIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_cancel.png"));
+                playIcon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+                playIcon.setPosition(offsetX, offsetY);
+                view.addChild(playIcon);
+                break;
+            case FINISHED:
+                if(DRAW_ICONS)
+                {
+                    if (!research.getIconTextureResourceLocation().getPath().isEmpty())
+                    {
+                        final Image iconTex = new Image();
+                        iconTex.setImage(research.getIconTextureResourceLocation());
+                        iconTex.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+                        iconTex.setPosition(offsetX, offsetY);
+                        view.addChild(iconTex);
+                    }
+                    else if (!research.getIconItemStack().isEmpty())
+                    {
+                        ItemIcon iconItem = new ItemIcon();
+                        iconItem.setItem(research.getIconItemStack());
+                        iconItem.setPosition(offsetX, offsetY);
+                        iconItem.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+                        view.addChild(iconItem);
+                    }
+                }
+                else
+                {
+                    final Image checkIcon = new Image();
+                    checkIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_check.png"));
+                    checkIcon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+                    checkIcon.setPosition(offsetX, offsetY);
+                    view.addChild(checkIcon);
+                }
+                break;
+            default:
+                Log.getLogger().error("Error with DrawIcons :" + research.getId());
+                break;
         }
     }
 
@@ -981,10 +1032,10 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             {
                 if (IGlobalResearchTree.getInstance().getResearch(branch, parentResearch).hasOnlyChild())
                 {
-                    final Label orLabel = new Label();
+                    final Text orLabel = new Text();
                     orLabel.setSize(OR_WIDTH, OR_HEIGHT);
-                    orLabel.setColor(Color.getByName("black", 0), Color.getByName("black", 0));
-                    orLabel.setLabelText(new TranslationTextComponent("com.minecolonies.coremod.research.research.or"));
+                    orLabel.setColors(Color.getByName("black", 0));
+                    orLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.research.research.or"));
                     orLabel.setPosition(offsetX + INITIAL_X_OFFSET, offsetY + TEXT_Y_OFFSET);
                     view.addChild(orLabel);
 

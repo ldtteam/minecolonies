@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Color;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ButtonImage;
-import com.ldtteam.blockout.controls.Gradient;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.Alignment;
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneBuilders;
+import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.View;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
@@ -53,16 +53,17 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
             List<IFormattableTextComponent> requirements = getHidingRequirementDesc(branch);
             if(requirements.isEmpty())
             {
+
                 final ButtonImage button = new ButtonImage();
                 button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-                button.setLabel(IGlobalResearchTree.getInstance().getBranchName(branch));
                 button.setID(branch.toString());
+                button.setText(IGlobalResearchTree.getInstance().getBranchName(branch));
                 button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
-                button.setTextColor(SLIGHTLY_BLUE);
+                button.setTextRenderBox(BUTTON_LENGTH, BUTTON_HEIGHT);
+                button.setTextAlignment(Alignment.MIDDLE);
+                button.setColors(SLIGHTLY_BLUE);
                 button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
                 view.addChild(button);
-
-                offset += button.getHeight() + BUTTON_PADDING;
             }
             else
             {
@@ -71,18 +72,22 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
                 gradient.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
                 gradient.setGradientStart(239, 230, 215, 255);
                 gradient.setGradientEnd(239, 230, 215, 255);
-                gradient.setHoverToolTip(requirements);
+                final AbstractTextBuilder.TooltipBuilder reqBuilder = PaneBuilders.tooltipBuilder();
+                for(IFormattableTextComponent req : requirements)
+                {
+                    reqBuilder.append(req).paragraphBreak();
+                }
+                gradient.setHoverPane(reqBuilder.build());
                 view.addChild(gradient);
                 final ButtonImage button = new ButtonImage();
                 button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-                button.setLabel(new TranslationTextComponent("-----------"));
+                button.setText(new TranslationTextComponent("-----------"));
                 button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
                 button.setTextColor(SLIGHTLY_BLUE);
                 button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
                 view.addChild(button);
-
-                offset += button.getHeight() + BUTTON_PADDING;
             }
+            offset += BUTTON_HEIGHT + BUTTON_PADDING;
         }
         updateResearchCount(0);
     }
@@ -166,16 +171,16 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
      */
     public void updateResearchCount(final int offset)
     {
-        this.findPaneOfTypeByID("maxresearchwarn", Label.class)
-          .setLabelText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.countinprogress",
+        this.findPaneOfTypeByID("maxresearchwarn", Text.class)
+          .setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.countinprogress",
             building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset, building.getBuildingLevel()));
         if(building.getBuildingLevel() <= building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset)
         {
-            this.findPaneOfTypeByID("maxresearchwarn", Label.class).setColor(Color.getByName("red", 0), Color.getByName("red", 0));
+            this.findPaneOfTypeByID("maxresearchwarn", Text.class).setColors(Color.getByName("red", 0));
         }
         else
         {
-            this.findPaneOfTypeByID("maxresearchwarn", Label.class).setColor(Color.getByName("black", 0), Color.getByName("black", 0));
+            this.findPaneOfTypeByID("maxresearchwarn", Text.class).setColors(Color.getByName("black", 0));
         }
     }
 

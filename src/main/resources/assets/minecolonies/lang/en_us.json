@@ -40,7 +40,6 @@
   "minecolonies.config.badvisitorchance": "Bad Recruitment Chance",
   "minecolonies.config.badvisitorchance.comment": "Chance to get an evil Tavern visitor that will run off with the resources you give them. This is a %.",
 
-  "minecolonies.config.research": "Research-Related Settings",
   "minecolonies.config.researchcreativecompletion": "Research Creative Completion",
   "minecolonies.config.researchcreativecompletion.comment": "Allows automatic and (near) instant completion of research for players in creative mode.  If false, creative players will still be able to begin researches, but will have normal progress rates.",
 
@@ -1324,7 +1323,7 @@
   "com.minecolonies.coremod.gui.research.title": "Research Branches",
   "com.minecolonies.coremod.gui.research.tier.header": "Level %d (%d hr)",
   "com.minecolonies.coremod.gui.research.time": "%s remaining",
-  "com.minecolonies.coremod.gui.research.countinprogress": "%d/%d research in progress",
+  "com.minecolonies.coremod.gui.research.countinprogress": "%d/%d Research in Progress",
   "com.minecolonies.coremod.research.research.toomanyinprogress.1": "Too many researches",
   "com.minecolonies.coremod.research.research.toomanyinprogress.2": "already in progress",
   "com.minecolonies.coremod.research.research.notenoughresources": "Missing Resources",
@@ -1354,8 +1353,7 @@
   "com.minecolonies.coremod.research.available": "Your colonists have found the precursors to '%s' research.",
   "com.minecolonies.coremod.research.locked": "Locked.",
   "com.minecolonies.coremod.research.undo.progress": "Cancel Research?",
-  "com.minecolonies.coremod.research.undo.progress.tooltip.1": "A canceled research will lose all progress",
-  "com.minecolonies.coremod.research.undo.progress.tooltip.2": "and will NOT refund items.",
+  "com.minecolonies.coremod.research.undo.progress.tooltip": "A canceled research will lose all progress and will NOT refund items.",
   "com.minecolonies.coremod.research.undo.remove": "Undo Research?",
   "com.minecolonies.coremod.research.undo.remove.tooltip": "Undoing this research will NOT refund items.",
   "com.minecolonies.coremod.info.builder.0.name": "Introduction",

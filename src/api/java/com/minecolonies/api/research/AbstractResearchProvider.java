@@ -177,7 +177,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
 
         /**
-         * Set the Translated Name.  This will use the autogeneration key, add a matching translation text to the language output file.
+         * Set the Translated Name.  This will use the auto-generation key, and add a matching translation text to the language output file.
          * @param translatedName    The research's human-readable name.
          * @return this
          */
@@ -224,7 +224,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
 
         /**
-         * Sets only child status.  OnlyChild research will allow only one descendant
+         * Sets only child status.  OnlyChild research will allow at most one descendant
          * to be completed at a time, and makes any descendant research resettable.
          * Only applies to research with multiple immediate descendants.
          * @return this
@@ -236,7 +236,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
 
         /**
-         * Sets NoReset status.  NoReset research can not be undone once complete.
+         * Sets NoReset status.  NoReset research can not be undone once complete, even if level 6 or descending from an onlyChild research.
          * This is most relevant for researches that may cause inconsistent or incoherent behavior if reset.
          * Only required when a Research is level 6, or where it or an ancestor research is onlyChild.
          * @return this
@@ -259,7 +259,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
 
         /**
-         * Sets instant status.  Once begun, this research will complete Soon(tm), regardless of branch time multipliers.
+         * Sets instant status.  Once begun, this research will complete Soon(tm), regardless of branch time multipliers or research depth.
          * @return this
          */
         public Research setInstant()
@@ -270,8 +270,8 @@ public abstract class AbstractResearchProvider implements IDataProvider
 
         /**
          * Sets hidden status.  Hidden research will not be visible in the University Window until all requirements are met.
-         * Research branches were all research is hidden or a descendant of a hidden research will be locked until at least one research is available.
-         * Locked branches will notify what requirements will unlock the branch.
+         * Research branches where all research is hidden or a descendant of a hidden research will be locked until at least one research is available.
+         * Locked branches will notify what requirements will unlock the branch on mouseover.
          * @return this
          */
         public Research setHidden()
@@ -340,8 +340,9 @@ public abstract class AbstractResearchProvider implements IDataProvider
 
         /**
          * Adds a building research requirement.  The colony must have at least as many levels of this building to begin the research
-         * cumulative across all buildings of that type.  (ie, guardtower 8 is fulfilled by eight level-1 guard towers, four level-2 guard towers, three level-3 guard towers, etc)
-         * Multiple different buildings can be added as different BuildingRequirements.
+         * cumulative across all buildings of that type.  (ie, guardtower 8 is fulfilled by eight level-1 guard towers, four level-2 guard towers, two level-3 and a level-2 guard tower, etc)
+         * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String <BUILDINGNAME>_ID constants from ModBuildings.
+         * Multiple different buildings can be added as different BuildingRequirements, and all must be fulfilled to begin research.
          * @param buildingName  The name of the building to require.  Derived from SchematicName.
          * @param level         The required sum of levels across the colony.
          * @return this
@@ -371,6 +372,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
          * The colony must have at least as many levels of at least one alternate building to begin the research,
          * cumulative across all buildings of that type.  Ie, AlternateBuildingRequirement of Tavern 3 / CitizenHouse 2 / University 2
          * would be fulfilled by any one of those buildings level 3, or by two citizen houses.
+         * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String <BUILDINGNAME>_ID constants from ModBuildings.
          * Only one of all added Alternate Buildings is required.  AlternateBuildingRequirements do not bypass normal BuildingRequirements.
          * @param buildingName          The required building.
          * @param level                 The required sum of levels across the colony.
@@ -397,7 +399,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
 
         /**
-         * The non-parent required research, which will prevent starting this research until it is completed.
+         * The non-parent required research, which must be completed in addition to Parent research to begin this research.
          * This uses an auto-generated language key.  To override, add an additional string parameter.
          * Multiple ResearchRequirements are supported.  ResearchRequirements can apply from other branches.
          * If the research requirement does not exist, it is fulfilled automatically.
@@ -424,7 +426,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
 
         /**
-         * The non-parent required research, which will prevent starting this research until it is completed.
+         * The non-parent required research, which must be completed in addition to Parent research to begin this research.
          * This manually sets a requirement description.  To use the auto-generated key from the research itself, remove the String param.
          * Multiple ResearchRequirements are supported.  ResearchRequirements can apply from other branches.
          * If the research requirement does not exist, it is fulfilled automatically.
@@ -535,13 +537,13 @@ public abstract class AbstractResearchProvider implements IDataProvider
         /**
          * Add an unlock building effect to the research.  Research Effects are applied on completion,
          * and remain unless the colony is destroyed or the research is undone.
-         * See ModBuildings for a list of supported buildings.
-         * Buildings with no applicable research effects loaded do not require research.
+         * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String <BUILDINGNAME>_ID constants from ModBuildings
+         * Buildings with no applicable research effects loaded default to unlocked.
          * Multiple Effects are supported.
-         * @param buildingBlock    the building block to
+         * @param buildingBlock    the building block to lock behind this research.
          * @param level            the strength of the research effect to apply on completion.
          *                    Automatically generated effects will unlock up to Building Tier 10 at Level 1.
-         *                    Manually generated effects can limited to individual tiers.
+         *                    Manually generated effects can limited to individual tiers based on strength.
          * @return this
          */
         public Research addEffect(final AbstractBlockHut<?> buildingBlock, int level)
@@ -565,7 +567,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
 
         /**
          * Add the Research to a collection, and return the same research.
-         * essentially the same as List.add().
+         * essentially the same as List.add() with a useful return.
          * @param list      The list to add the Research onto.
          * @return this
          */
@@ -603,7 +605,8 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
 
         /**
-         * Creates a new instances of a ResearchEffect.
+         * Creates a new instances of a ResearchEffect that locks and unlocks a Building
+         * See ModBuildings for a list of supported buildings.
          * @param buildingBlock    A Building hut block.  This will auto-generate an unlock effect ID of effects/blockhutname.json.
          */
         public ResearchEffect(final AbstractBlockHut<?> buildingBlock)
@@ -613,7 +616,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
 
         /**
-         * Create a new instance of a ResearchEffect.
+         * Create a new instance of a ResearchEffect with an effectType.
          * @param id    A unique identifier.  Suggested path format is effects/name.json.
          * @param type  The type of the research effect.
          */
@@ -626,6 +629,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
 
         /**
          * Set the levels of the research effect, starting at level 1.
+         * Level 0 will be automatically populated during JsonLoad on the server, and set to a value of zero.
          * @param strengths  The strengths of the research effect.
          * @return this
          */
@@ -721,7 +725,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
 
         /**
-         * Sets the Branch Translated name for later recording to the language file, and assigns an an auto-generated translation key.
+         * Sets the Branch Translated name for later recording to the language file, and assigns an auto-generated translation key.
          * @param translatedBranchName  The human-readable string.
          * @return this
          */
@@ -734,7 +738,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
 
         /**
          * Sets the Branch Time Multiplier.  This increases or decreases the worker time required
-         * to complete all research on this branch.  Larger numbers go faster, while lower numbers go slower.
+         * to complete all research on this branch.  Larger numbers go slower, while lower numbers go faster.
          * Very low values may have unpredictable results.
          * @param branchTimeMultiplier  The multiplier to set.
          * @return this
