@@ -986,7 +986,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         for (int i = 2; i <= 10; i++)
         {
             final BlockState below = world.getBlockState(pos.down(i));
-            if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE && i <= 4 || below.getMaterial().isLiquid())
+            if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE && i <= 3 || below.getMaterial().isLiquid())
             {
                 //  Level path
                 return pos.getY() - i + 1;
