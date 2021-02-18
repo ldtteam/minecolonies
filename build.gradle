@@ -449,22 +449,38 @@ publishing {
 
             //Replace all deobf dependencies with normal jar references.
             pom.withXml { xmlProvider ->
-                NodeList dependencies = asNode().dependencies
-                NodeList allDeps = dependencies.'*';
+                final Element document = xmlProvider.asElement()
 
-                // Remove forge deps
-                allDeps.findAll() { Node el ->
-                    el.artifactId.text() == 'forge' && el.groupId.text() == 'net.minecraftforge'
-                }.forEach() { Node el ->
-                    el.parent().remove(el)
+                //Remove all deobf deps.
+                final NodeList groupIdNodes = document.getElementsByTagName("groupId")
+                groupIdNodes.each { groupIdNodeObject ->
+                    final Node groupIdNode = (Node) groupIdNodeObject
+                    final String groupId = groupIdNode.getFirstChild().getTextContent().trim()
+                    groupIdNode.setTextContent(groupId.replace("deobf.", ""))
                 }
-                //remove forgegradle's mapped suffix from versions & set as optional so anyone else doesn't inherit them
-                allDeps.findAll() { Node el ->
-                    el.version.text().contains('_mapped_')
-                }.each { Node el ->
-                    NodeList version = el.version
-                    version.each {
-                        it.setValue(it.text().substring(0, it.text().indexOf('_mapped_')))
+
+                //Remove MC Forge.
+                final NodeList dependencies = document.getElementsByTagName("dependency")
+                final List<Node> dependencyCache = new ArrayList<>()
+                dependencies.each { dep -> dependencyCache.add(dep) }
+
+                dependencyCache.each {dependencyNode ->
+                    final Element dependencyElement = (Element) dependencyNode
+
+                    final NodeList groupIdNodesInDependency = dependencyElement.getElementsByTagName("groupId")
+                    groupIdNodesInDependency.each {groupIdNodeInDep ->
+                        final String groupId = groupIdNodeInDep.getFirstChild().getTextContent().trim()
+                        if (groupId == "net.minecraftforge")
+                        {
+                            final NodeList artifactIdNodesInDependency = dependencyElement.getElementsByTagName("artifactId")
+                            artifactIdNodesInDependency.each { artifactIdNodeInDep ->
+                                final String artifactId = artifactIdNodeInDep.getFirstChild().getTextContent().trim()
+                                if (artifactId == "forge")
+                                {
+                                    dependencyNode.getParentNode().removeChild(dependencyNode)
+                                }
+                            }
+                        }
                     }
                 }
             }
