@@ -16,15 +16,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class HomeBuildingModule extends AbstractBuildingModule implements IDefinesCoreBuildingStatsModule
 {
-    /**
-     * Creates a new home building module.
-     * @param building the building it is assigned to.
-     */
-    public HomeBuildingModule(final IBuilding building)
-    {
-        super(building);
-    }
-
     @Override
     public IStat<Integer> getMaxInhabitants()
     {

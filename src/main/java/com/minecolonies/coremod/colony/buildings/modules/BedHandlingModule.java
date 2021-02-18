@@ -28,15 +28,6 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
     @NotNull
     private final Set<BlockPos> bedList = new HashSet<>();
 
-    /**
-     * Creates a new home building module.
-     * @param building the building it is assigned to.
-     */
-    public BedHandlingModule(final IBuilding building)
-    {
-        super(building);
-    }
-
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {

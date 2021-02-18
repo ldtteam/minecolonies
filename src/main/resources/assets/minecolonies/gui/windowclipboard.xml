@@ -13,8 +13,8 @@
             <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="16 16" pos="1 3" visible="false"/>
             <!--Request name-->
             <buttonimage id="detail" size="16 16" pos="1 23" source="minecolonies:textures/gui/citizen/detail_button.png"/>
-            <label id="shortDetail" size="130 12" pos="20 1" color="black"/>
-            <label id="requester" size="130 12" pos="20 13" color="black"/>
+            <label id="shortDetail" size="130 9" pos="20 2" color="black"/>
+            <label id="requester" size="130 9" pos="20 13" color="black"/>
             <!-- button to cancel the request-->
             <buttonimage id="cancel" size="37 16" pos="50 23" textcolor="black"
                          label="$(com.minecolonies.coremod.gui.citizen.requestsCancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>

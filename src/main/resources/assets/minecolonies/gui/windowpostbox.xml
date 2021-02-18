@@ -1,12 +1,12 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="440 244" pause="false"
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
-    <image source="minecolonies:textures/gui/citizen/colonist_papper.png" size="440 244" pos="-120 0"/>
+    <image source="minecolonies:textures/gui/citizen/colonist_papper.png" size="440 244" pos="0 0"/>
 
-    <label id="desc" size="130 11" pos="-60 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.citizen.stacks)"/>
-    <input id="name" size="150 18" pos="-70 30" maxlength="25"/>
+    <label id="desc" size="130 11" pos="60 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.citizen.stacks)"/>
+    <input id="name" size="150 18" pos="50 30" maxlength="25"/>
 
-    <list id="resources" size="215 136" pos="-87 50">
+    <list id="resources" size="215 136" pos="33 50">
         <box size="100% 18" linewidth="2">
             <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
             <label id="resourceName" size="100 12" pos="20 1" color="black"/>
@@ -17,9 +17,9 @@
         </box>
     </list>
 
-    <label size="158 11" pos="116 28" textalign="MIDDLE" color="black"
+    <label size="158 11" pos="236 28" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
-    <list id="requests" size="158 184" pos="136 44">
+    <list id="requests" size="158 184" pos="256 44">
         <box id="requestx" size="100% 40" linewidth="2">
             <!--Item icon -->
             <itemicon id="requestStack" size="16 16" pos="1 3"/>
@@ -40,10 +40,8 @@
         </box>
     </list>
 
-    <button id="deliverAvailable" pos="-40 195" size="40 15"/>
-    <label id="test" pos="-10 195" size="158 11" textalign="MIDDLE" color="black"
-           label="Deliver what's available"/>
-    <buttonimage id="inventory" size="86 17" pos="52 210" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                 label="$(container.inventory)"/>
+    <button id="deliverAvailable" pos="42 195" size="40 15"/>
+    <label id="test" pos="90 195" size="158 11" color="black" label="Deliver what's available"/>
+    <buttonimage id="inventory" size="86 17" pos="97 210" textcolor="black" label="$(container.inventory)"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
 </window>
