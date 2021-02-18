@@ -80,7 +80,7 @@ ___
 * Carlansor - Medieval Styles
 * Cugo24 - Dark Oak, Birch, and Warped
 * JohnReiher - Acacia, Jungle, and Space Wars
-* Thaylar - Asian
+* Thaylar - Asian and Caledonia
 * Ravenbuilder934 - Minor Fixes
 
 ### Voice Actors

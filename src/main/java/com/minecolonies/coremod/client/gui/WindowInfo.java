@@ -1,11 +1,18 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.Alignment;
+import com.ldtteam.blockout.PaneBuilders;
+import com.ldtteam.blockout.controls.Text;
+import com.ldtteam.blockout.controls.AbstractTextBuilder.TextBuilder;
+import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import java.util.Arrays;
+import java.util.function.Supplier;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_INFO_PREFIX;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -18,23 +25,6 @@ public class WindowInfo extends AbstractWindowSkeleton
     private static final String WINDOW_RESOURCE = ":gui/windowinfo.xml";
 
     /**
-     * The view of the current building.
-     */
-    private final IBuildingView building;
-
-    /**
-     * The current info page.
-     */
-    private int infoIndex;
-
-    private final Label  name;
-    private final Label  info;
-    private final Button infoNextPage;
-    private final Button infoPrevPage;
-
-    private final String translationPrefix;
-
-    /**
      * Constructor for the skeleton class of the windows.
      *
      * @param building The building the info window is for.
@@ -43,65 +33,44 @@ public class WindowInfo extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + WINDOW_RESOURCE);
 
-        this.building = building;
-        this.translationPrefix = COM_MINECOLONIES_INFO_PREFIX + building.getSchematicName() + ".";
+        registerButton(BUTTON_EXIT, () -> building.openGui(false));
 
-        registerButton(BUTTON_EXIT, this::exitClicked);
-        registerButton(BUTTON_INFO_NEXT_PAGE, this::nextPage);
-        registerButton(BUTTON_INFO_PREV_PAGE, this::prevPage);
+        final String translationPrefix = COM_MINECOLONIES_INFO_PREFIX + building.getSchematicName() + ".";
+        final Supplier<TextBuilder> nameBuilder = () -> PaneBuilders.textBuilder().colorName("red");
+        final Supplier<TextBuilder> textBuilder = () -> PaneBuilders.textBuilder().colorName("black");
+        final Supplier<View> pageBuilder = () -> {
+            final View ret = new View();
+            ret.setSize(switchView.getWidth(), switchView.getHeight());
+            return ret;
+        };
 
-        this.infoNextPage = findPaneOfTypeByID(BUTTON_INFO_NEXT_PAGE, Button.class);
-        this.infoPrevPage = findPaneOfTypeByID(BUTTON_INFO_PREV_PAGE, Button.class);
-        this.name = findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class);
-        this.info = findPaneOfTypeByID(LABEL_INFO, Label.class);
-
-        this.infoIndex = 0;
-        refreshPage();
-    }
-
-    private void exitClicked()
-    {
-        building.openGui(false);
-    }
-
-    private void refreshPage()
-    {
-        if (I18n.hasKey(this.translationPrefix + (this.infoIndex + 1)) && !I18n.format(this.translationPrefix + (this.infoIndex + 1)).equals(""))
+        for (int i = 0;; i++)
         {
-            this.infoNextPage.enable();
-        }
-        else
-        {
-            this.infoNextPage.disable();
-        }
+            if (!I18n.hasKey(translationPrefix + i))
+            {
+                break;
+            }
 
-        if (I18n.hasKey(this.translationPrefix + (this.infoIndex - 1)) && !I18n.format(this.translationPrefix + (this.infoIndex - 1)).equals(""))
-        {
-            this.infoPrevPage.enable();
-        }
-        else
-        {
-            this.infoPrevPage.disable();
+            final View view = pageBuilder.get();
+            switchView.addChild(view);
+
+            final Text name = nameBuilder.get().append(new TranslationTextComponent(translationPrefix + i + ".name")).build();
+            name.setPosition(30, 0);
+            name.setSize(90, 11);
+            name.setTextAlignment(Alignment.MIDDLE);
+            name.putInside(view);
+
+            final TextBuilder preText = textBuilder.get();
+            Arrays.stream(LanguageHandler.format(translationPrefix + i).split("\\n"))
+                .map(StringTextComponent::new)
+                .forEach(preText::appendNL);
+            final Text text = preText.build();
+            text.setPosition(0, 16);
+            text.setSize(150, 194);
+            text.setTextAlignment(Alignment.TOP_LEFT);
+            text.putInside(view);
         }
 
-        pageNum.setLabelText(Integer.toString(this.infoIndex));
-        this.name.setLabelText(LanguageHandler.format(this.translationPrefix + this.infoIndex + ".name"));
-
-        //We replace escaped newlines to real ones because we want them to be usable and I18n escapes all newlines sadly.
-        this.info.setLabelText(LanguageHandler.format(this.translationPrefix + this.infoIndex).replace("\\n", "\n"));
-    }
-
-    private void nextPage()
-    {
-        this.infoIndex++;
-
-        refreshPage();
-    }
-
-    private void prevPage()
-    {
-        this.infoIndex--;
-
-        refreshPage();
+        setPage(false, 0);
     }
 }

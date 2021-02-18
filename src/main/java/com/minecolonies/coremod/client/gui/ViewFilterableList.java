@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.View;
@@ -112,7 +112,7 @@ public class ViewFilterableList
         this.id = id;
 
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-        window.findPaneOfTypeByID(DESC_LABEL, Label.class).setLabelText(desc);
+        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(desc);
         this.building = building;
         this.isInverted = isInverted;
         this.parent = parent;
@@ -139,9 +139,9 @@ public class ViewFilterableList
     private void switchClicked(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        if (button.getLabel().equals(ON))
+        if (button.getTextAsString().equals(ON))
         {
-            button.setLabel(OFF);
+            button.setText(OFF);
             if (isInverted)
             {
                 building.addItem(id, allItems.get(row));
@@ -153,7 +153,7 @@ public class ViewFilterableList
         }
         else
         {
-            button.setLabel(ON);
+            button.setText(ON);
             if (isInverted)
             {
                 building.removeItem(id, allItems.get(row));
@@ -249,20 +249,20 @@ public class ViewFilterableList
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final ItemStack resource = tempRes.get(index).getItemStack();
-                final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-                resourceLabel.setLabelText(resource.getDisplayName().getString());
-                resourceLabel.setColor(WHITE, WHITE);
+                final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
+                resourceLabel.setText(resource.getDisplayName());
+                resourceLabel.setColors(WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
 
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
                 if ((isInverted && !building.isAllowedItem(id, new ItemStorage(resource))) || (!isInverted && building.isAllowedItem(id, new ItemStorage(resource))))
                 {
-                    switchButton.setLabel(ON);
+                    switchButton.setText(ON);
                 }
                 else
                 {
-                    switchButton.setLabel(OFF);
+                    switchButton.setText(OFF);
                 }
             }
         });

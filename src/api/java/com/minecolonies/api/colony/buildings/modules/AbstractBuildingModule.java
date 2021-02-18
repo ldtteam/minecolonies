@@ -15,16 +15,7 @@ public abstract class AbstractBuildingModule implements IBuildingModule
     /**
      * The building this module belongs to.
      */
-    protected final IBuilding building;
-
-    /**
-     * Instantiates a new citizen hut.
-     * @param building the building it is registered too.
-     */
-    public AbstractBuildingModule(final IBuilding building)
-    {
-        this.building = building;
-    }
+    protected IBuilding building;
 
     @Override
     public void markDirty()
@@ -42,5 +33,12 @@ public abstract class AbstractBuildingModule implements IBuildingModule
     public boolean checkDirty()
     {
         return this.isDirty;
+    }
+
+    @Override
+    public IBuildingModule setBuilding(final IBuilding building)
+    {
+        this.building = building;
+        return this;
     }
 }

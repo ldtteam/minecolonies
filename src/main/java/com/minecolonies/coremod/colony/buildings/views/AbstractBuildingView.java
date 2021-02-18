@@ -25,7 +25,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -566,7 +565,13 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         try
         {
-            if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()) || getColony().getCitizen(getCitizensByRequest().get(request.getId())) == null)
+            if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()))
+            {
+                return new TranslationTextComponent(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName());
+            }
+
+            final int citizenId = getCitizensByRequest().get(request.getId());
+            if (citizenId == -1 || getColony().getCitizen(citizenId) == null)
             {
                 return new TranslationTextComponent(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName());
             }

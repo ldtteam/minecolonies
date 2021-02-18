@@ -18,7 +18,7 @@ public class ClientConfiguration extends AbstractConfiguration
     protected ClientConfiguration(final ForgeConfigSpec.Builder builder)
     {
         createCategory(builder, "gameplay");
-        citizenVoices = defineBoolean(builder, "citizenvoices", true);
+        citizenVoices = defineBoolean(builder, "disablecitizenvoices", true);
 
         swapToCategory(builder, "pathfinding");
         pathfindingDebugDraw = defineBoolean(builder, "pathfindingdebugdraw", false);

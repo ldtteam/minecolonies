@@ -63,7 +63,7 @@ public class WindowsBarracksSpies extends Window implements ButtonHandler
         this.buildingView = buildingView;
 
         findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setItem(Items.GOLD_INGOT.getDefaultInstance());
-        findPaneOfTypeByID(GOLD_COST_LABEL, Label.class).setLabelText("x5");
+        findPaneOfTypeByID(GOLD_COST_LABEL, Text.class).setText("x5");
 
         final IItemHandler rackInv = ((TileEntityRack) buildingView.getColony().getWorld().getTileEntity(buildingPos)).getInventory();
         final IItemHandler playerInv = new InvWrapper(Minecraft.getInstance().player.inventory);
@@ -74,7 +74,7 @@ public class WindowsBarracksSpies extends Window implements ButtonHandler
         {
             findPaneOfTypeByID(BUTTON_HIRE, ButtonImage.class).disable();
         }
-        findPaneOfTypeByID(TEXT_ID, Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.barracks.spies.desc"));
+        findPaneOfTypeByID(TEXT_ID, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.barracks.spies.desc"));
     }
 
     @Override

@@ -43,6 +43,7 @@ public class ModTagsInitializer
     private static final ResourceLocation CONCRETE_BLOCK  = new ResourceLocation(MOD_ID, "concrete");
     private static final ResourceLocation PATHING_BLOCKS = new ResourceLocation(MOD_ID, "pathblocks");
     private static final ResourceLocation COMPOSTABLES = new ResourceLocation(MOD_ID, "compostables");
+    private static final ResourceLocation FLORIST_FLOWERS_EXCLUDED = new ResourceLocation(MOD_ID, "florist_flowers_excluded");
     private static final ResourceLocation ORECHANCEBLOCKS = new ResourceLocation(MOD_ID, "orechanceblocks");
     private static final ResourceLocation COLONYPROTECTIONEXCEPTION = new ResourceLocation(MOD_ID, "protectionexception");
     private static final ResourceLocation FUNGI = new ResourceLocation(MOD_ID, "fungi");
@@ -63,6 +64,7 @@ public class ModTagsInitializer
         ModTags.concreteBlock = getBlockTags(CONCRETE_BLOCK);
         ModTags.pathingBlocks = getBlockTags(PATHING_BLOCKS);
         ModTags.compostables = getItemTags(COMPOSTABLES);
+        ModTags.floristFlowersExcluded = getItemTags(FLORIST_FLOWERS_EXCLUDED);
         ModTags.fungi = getItemTags(FUNGI);
         ModTags.oreChanceBlocks = getBlockTags(ORECHANCEBLOCKS);
         ModTags.colonyProtectionException = getBlockTags(COLONYPROTECTIONEXCEPTION);

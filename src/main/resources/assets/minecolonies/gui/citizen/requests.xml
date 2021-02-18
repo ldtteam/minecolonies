@@ -14,8 +14,8 @@
 
             <!--Request name-->
             <buttonimage id="detail" size="16 16" pos="1 23" source="minecolonies:textures/gui/citizen/detail_button.png"/>
-            <label id="shortDetail" size="50 12" pos="20 1" color="black"/>
-            <label id="requester" size="50 12" pos="20 13" color="black"/>
+            <label id="shortDetail" size="130 12" pos="20 1" color="black"/>
+            <label id="requester" size="130 12" pos="20 13" color="black"/>
 
             <!-- Color green if possible? -->
             <buttonimage id="fulfill" size="37 16" pos="20 23" textcolor="black"

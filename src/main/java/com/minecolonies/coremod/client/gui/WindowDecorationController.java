@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -94,17 +94,17 @@ public class WindowDecorationController extends AbstractWindowSkeleton
                 {
                     if (controller.getLevel() == 0)
                     {
-                        buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelBuild"));
+                        buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelBuild"));
                     }
                     else
                     {
-                        buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelUpgrade"));
+                        buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelUpgrade"));
                     }
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
                 else if (wo.get().getType() == WorkOrderType.BUILD)
                 {
-                    buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelRepair"));
+                    buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelRepair"));
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
             }
@@ -141,7 +141,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         }
         else
         {
-            findPaneOfTypeByID("nameLabel", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.deco.namescan"));
+            findPaneOfTypeByID("nameLabel", Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.deco.namescan"));
         }
     }
 

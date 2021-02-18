@@ -5,7 +5,7 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -79,7 +79,7 @@ public class WindowHutBaker extends AbstractHutFilterableLists
         if (building.hasReachedLimit())
         {
             final ButtonImage button = findPaneOfTypeByID(STOCK_ADD, ButtonImage.class);
-            button.setLabel(LanguageHandler.format(LABEL_LIMIT_REACHED));
+            button.setText(LanguageHandler.format(LABEL_LIMIT_REACHED));
             button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_dark.png"));
         }
 
@@ -175,11 +175,11 @@ public class WindowHutBaker extends AbstractHutFilterableLists
                 final ItemStack resource = tempRes.get(index).getA().getItemStack().copy();
                 resource.setCount(resource.getMaxStackSize());
 
-                final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-                resourceLabel.setLabelText(resource.getDisplayName().getString());
+                final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
+                resourceLabel.setText(resource.getDisplayName());
 
-                final Label quantityLabel = rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Label.class);
-                quantityLabel.setLabelText(String.valueOf(tempRes.get(index).getB()));
+                final Text quantityLabel = rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class);
+                quantityLabel.setText(String.valueOf(tempRes.get(index).getB()));
 
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }

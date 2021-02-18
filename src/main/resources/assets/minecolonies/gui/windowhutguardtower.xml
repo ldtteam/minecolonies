@@ -66,8 +66,8 @@
                 <box size="100% 30" linewidth="2">
                     <button id="prioUp" size="15 15" label="↥" pos="0 0"/>
                     <button id="prioDown" size="15 15" label="↧" pos="0 15"/>
-                    <label id="name" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
-                    <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOn)"/>
+                    <label id="name" size="120 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
+                    <button id="switch" size="100 13" pos="5 1" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOn)"/>
                 </box>
             </list>
             <buttonimage id="getTool" size="129 17" pos="30 200" textcolor="black"

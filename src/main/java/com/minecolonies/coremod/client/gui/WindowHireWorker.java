@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
+import com.ldtteam.blockout.controls.AbstractTextBuilder.TextBuilder;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -19,7 +21,10 @@ import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCiti
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -127,7 +132,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      */
     private void setupSettings(final Button settingsButton)
     {
-        settingsButton.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.hiringmode." + building.getHiringMode().name().toLowerCase(Locale.ENGLISH)));
+        settingsButton.setText(LanguageHandler.format("com.minecolonies.coremod.gui.hiringmode." + building.getHiringMode().name().toLowerCase(Locale.ENGLISH)));
     }
 
     /**
@@ -214,7 +219,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     public void onOpened()
     {
         updateCitizens();
-        findPaneOfTypeByID(AUTO_HIRE_WARN, Label.class).off();
+        findPaneOfTypeByID(AUTO_HIRE_WARN, Text.class).off();
 
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -264,11 +269,11 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     if ((!building.getColony().isManualHiring() && building.getHiringMode() == HiringMode.DEFAULT) || (building.getHiringMode() == HiringMode.AUTO))
                     {
                         rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).disable();
-                        findPaneOfTypeByID(AUTO_HIRE_WARN, Label.class).on();
+                        findPaneOfTypeByID(AUTO_HIRE_WARN, Text.class).on();
                     }
 
                     isPaused.on();
-                    isPaused.setLabel(LanguageHandler.format(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
+                    isPaused.setText(LanguageHandler.format(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
                 }
 
                 if (citizen.isPaused())
@@ -280,40 +285,30 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
 
-                StringBuilder attributes = new StringBuilder();
-                final String intermString = " | ";
+                final StringTextComponent intermString = new StringTextComponent(" | ");
+                final TextBuilder textBuilder = PaneBuilders.textBuilder();
+                int skillCount = citizen.getCitizenSkillHandler().getSkills().entrySet().size();
 
-                final List<Map.Entry<Skill, Tuple<Integer, Double>>> list = new ArrayList<>(citizen.getCitizenSkillHandler().getSkills().entrySet());
-                for (int i = 0; i < 5; i++)
+                for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
                 {
-                    final Map.Entry<Skill, Tuple<Integer, Double>> entry = list.get(i);
-                    @NotNull final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
-                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US), entry.getValue().getA()));
-                    attributes.append(text).append(intermString);
-                }
-                attributes.delete(attributes.length() - intermString.length(), attributes.length());
+                    final String skillName = entry.getKey().name().toLowerCase(Locale.US);
+                    final int skillLevel = entry.getValue().getA();
+                    final Style skillStyle = createColor(primary, secondary, entry.getKey());
 
-                StringBuilder attributes2 = new StringBuilder();
-                for (int i = 5; i < list.size(); i++)
-                {
-                    final Map.Entry<Skill, Tuple<Integer, Double>> entry = list.get(i);
-                    @NotNull final String text = createAttributeText(createColor(primary, secondary, entry.getKey()),
-                      LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills." + entry.getKey().name().toLowerCase(Locale.US), entry.getValue().getA()));
-                    attributes2.append(text).append(intermString);
+                    textBuilder.append(new TranslationTextComponent("com.minecolonies.coremod.gui.citizen.skills." + skillName).setStyle(skillStyle));
+                    textBuilder.append(new StringTextComponent(": " + skillLevel).setStyle(skillStyle));
+                    if (--skillCount > 0)
+                    {
+                        textBuilder.append(intermString);
+                    }
                 }
-                attributes2.delete(attributes2.length() - intermString.length(), attributes2.length());
+                textBuilder.newLine(); // finish the current line
 
-                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class)
-                  .setLabelText((citizen.getJob().isEmpty() ? "" : LanguageHandler.format(citizen.getJob()) + ": ") + citizen.getName());
-                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes.toString());
-                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL2, Label.class).setLabelText(attributes2.toString());
+                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class)
+                  .setText((citizen.getJob().isEmpty() ? "" : LanguageHandler.format(citizen.getJob()) + ": ") + citizen.getName());
+                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class).setText(textBuilder.getText());
             }
         });
-    }
-
-    private static String createAttributeText(final String color, final String text)
-    {
-        return color + text + TextFormatting.RESET.toString();
     }
 
     /**
@@ -324,16 +319,16 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      * @param current   the current skill to compare.
      * @return the modifier string.
      */
-    protected String createColor(final Skill primary, final Skill secondary, final Skill current)
+    protected Style createColor(final Skill primary, final Skill secondary, final Skill current)
     {
         if (primary == current)
         {
-            return TextFormatting.GREEN.toString() + TextFormatting.BOLD.toString();
+            return Style.EMPTY.applyFormatting(TextFormatting.GREEN).applyFormatting(TextFormatting.BOLD);
         }
         if (secondary == current)
         {
-            return TextFormatting.YELLOW.toString() + TextFormatting.ITALIC.toString();
+            return Style.EMPTY.applyFormatting(TextFormatting.YELLOW).applyFormatting(TextFormatting.ITALIC);
         }
-        return "";
+        return Style.EMPTY;
     }
 }
