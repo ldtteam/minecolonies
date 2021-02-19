@@ -1074,6 +1074,7 @@
 
   "com.minecolonies.coremod.gui.workerhuts.siftersettings": "Daily limit",
   "com.minecolonies.coremod.gui.workerhuts.sifterinfo": "of %d allowed",
+  "com.minecolonies.coremod.gui.workerhuts.sifterinfo.unlimited": "of Unlimited",
 
   "com.minecolonies.coremod.gui.workerhuts.sifter": "Sifter",
   "com.minecolonies.coremod.sifter.meshbroke": "My current mesh broke and I started to work with the default mesh again!",

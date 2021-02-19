@@ -75,19 +75,25 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
     }
 
     /**
-     * The crushing process.
+     * The sifting process.
      *
      * @return the next AiState to go to.
      */
     protected IAIState sift()
     {
+        final BuildingSifter sifterBuilding = getOwnBuilding();
+
+        // Go idle if we can't do any more today
+        if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity())
+        {
+            return IDLE;
+        }
+
         if (walkToBuilding())
         {
             return getState();
         }
         WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
-
-        final BuildingSifter sifterBuilding = getOwnBuilding();
 
         if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
         {
