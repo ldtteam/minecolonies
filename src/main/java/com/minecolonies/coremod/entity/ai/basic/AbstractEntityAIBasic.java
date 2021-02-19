@@ -34,18 +34,15 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
-import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -1658,12 +1655,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
         else if (percent < WANDER_CHANCE)
         {
-            Vector3d Vector3d = RandomPositionGenerator.getLandPos(worker, 10, 7);
-            if (Vector3d != null)
-            {
-                Vector3d = new Vector3d(Vector3d.x, BlockPosUtil.getValidHeight(Vector3d, CompatibilityUtils.getWorldFromCitizen(worker)), Vector3d.z);
-                worker.getNavigator().tryMoveToXYZ(Vector3d.x, Vector3d.y, Vector3d.z, DEFAULT_SPEED);
-            }
+            worker.getNavigator().moveToRandomPos(10, DEFAULT_SPEED);
         }
 
         return null;
