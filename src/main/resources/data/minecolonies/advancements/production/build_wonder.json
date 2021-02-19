@@ -1,0 +1,25 @@
+{
+  "parent": "minecolonies:production/root",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhutwonder"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.wonder.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.build.wonder.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "warehouse": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "wonder",
+        "level": 1
+      }
+    }
+  }
+}

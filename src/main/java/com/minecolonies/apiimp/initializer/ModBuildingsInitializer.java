@@ -349,6 +349,13 @@ public final class ModBuildingsInitializer
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BEEKEEPER_ID))
                                    .createBuildingEntry();
 
+        ModBuildings.wonder = new BuildingEntry.Builder()
+                .setBuildingBlock(ModBlocks.blockHutWonder)
+                .setBuildingProducer(BuildingWonder::new)
+                .setBuildingViewProducer(() -> BuildingWonder.View::new)
+                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.WONDER_ID)) //TODO TG
+                .createBuildingEntry();
+
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
@@ -394,5 +401,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.rabbitHutch);
         reg.register(ModBuildings.concreteMixer);
         reg.register(ModBuildings.beekeeper);
+        reg.register(ModBuildings.wonder);
     }
 }

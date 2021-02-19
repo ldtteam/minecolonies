@@ -1248,6 +1248,8 @@
   "advancements.minecolonies.check_out_guide.description": "Right-click the Builder's Hut to see how things work",
   "advancements.minecolonies.build.herders.title": "Unherd Of",
   "advancements.minecolonies.build.herders.description": "Build one of every herder hut. Remember to bring animals to their huts!",
+  "advancements.minecolonies.build.wonder.title": "I can see my house from here",
+  "advancements.minecolonies.build.wonder.description": "Build a wonderful wonder",
 
   "advancements.minecolonies.max_fields.title": "Green Thumbs",
   "advancements.minecolonies.max_fields.description": "Assign the maximum number of fields to a single Farmer",
