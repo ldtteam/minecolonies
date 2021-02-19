@@ -40,7 +40,6 @@ public class ItemScrollBuff extends AbstractItemScroll
     @Override
     protected ItemStack onItemUseSuccess(final ItemStack itemStack, final World world, final ServerPlayerEntity player)
     {
-        itemStack.shrink(1);
         if (world.rand.nextInt(8) > 0)
         {
             for (final LivingEntity entity : world.getLoadedEntitiesWithinAABB(EntityCitizen.class, player.getBoundingBox().grow(15, 2, 15)))
@@ -62,6 +61,7 @@ public class ItemScrollBuff extends AbstractItemScroll
             SoundUtils.playSoundForPlayer(player, SoundEvents.ITEM_TOTEM_USE, 0.04f, 1.0f);
         }
 
+        itemStack.shrink(1);
         return itemStack;
     }
 

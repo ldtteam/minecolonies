@@ -19,10 +19,11 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.Half;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -361,6 +362,11 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             //  Tax the cost for jumping, dropping
             cost *= pathingOptions.jumpDropCost * Math.abs(dPos.getY());
+        }
+
+        if (world.getBlockState(blockPos).hasProperty(BlockStateProperties.OPEN))
+        {
+            cost *= pathingOptions.traverseToggleAbleCost;
         }
 
         if (onPath)
