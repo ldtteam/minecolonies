@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:production/root",
+  "parent": "minecolonies:minecolonies/build_builder",
   "display": {
     "icon": {
       "item": "minecolonies:blockhutwonder"

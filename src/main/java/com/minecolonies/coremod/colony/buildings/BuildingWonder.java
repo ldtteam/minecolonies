@@ -99,4 +99,16 @@ public class BuildingWonder extends AbstractBuilding implements IWonder
             return new WindowHutWonder(this);
         }
     }
+
+    @Override
+    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
+    {
+        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.WONDER_RESEARCH, UnlockBuildingResearchEffect.class);
+        if (effect == null)
+        {
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
+            return;
+        }
+        super.requestUpgrade(player, builder);
+    }
 }
