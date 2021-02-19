@@ -13,8 +13,8 @@
 		"15": "item/bucket",
 		"16": "block/oak_planks",
 		"17": "block/water_still",
-		"18": "minecolonies:block/tallgrass"
-		"particle": "item/bucket_empty"
+		"18": "minecolonies:blocks/tallgrass",
+		"particle": "item/bucket"
 	},
 	"elements": [
 		{
