@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.buildings.workerbuildings;
+package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
