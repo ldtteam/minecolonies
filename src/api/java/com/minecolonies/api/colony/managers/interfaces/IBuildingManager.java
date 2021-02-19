@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IWonder;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -99,11 +100,25 @@ public interface IBuildingManager
     ITownHall getTownHall();
 
     /**
+     * Get the maximum level among built wonders
+     *
+     * @return the max level among all wonders or zero if no wonders built
+     */
+    int getWonderMaxBuildingLevel();
+
+    /**
      * Check if the colony has a placed warehouse.
      *
      * @return true if so.
      */
     boolean hasWarehouse();
+
+    /**
+     * Check if the colony has a placed wonder.
+     *
+     * @return true if so.
+     */
+    boolean hasWonder();
 
     /**
      * Check if the colony has a placed townhall.
@@ -239,6 +254,20 @@ public interface IBuildingManager
      * @return the warehouse.
      */
     List<IWareHouse> getWareHouses();
+
+    /**
+     * Removes a warehouse from the BuildingManager
+     *
+     * @param wonder the warehouse to remove.
+     */
+    void removeWonder(final IWonder wonder);
+
+    /**
+     * Get a list of the wonder in this colony.
+     *
+     * @return the warehouse.
+     */
+    List<IWonder> getWonders();
 
     /**
      * Checks whether we're allowed to place the block for a new building

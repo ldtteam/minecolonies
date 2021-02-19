@@ -460,6 +460,7 @@
   "com.minecolonies.coremod.gui.workerhuts.tavern": "Tavern",
   "com.minecolonies.coremod.gui.workerhuts.buildershut": "Builder's Hut",
   "com.minecolonies.coremod.gui.workerhuts.lumberjackhut": "Forester's Hut",
+  "com.minecolonies.coremod.gui.workerhuts.wonder": "Wonder",
 
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",
   "com.minecolonies.coremod.gui.workerhuts.buildtype": "Building Style:",
@@ -1553,6 +1554,7 @@
   "com.minecolonies.coremod.gui.townhall.happiness.security": "Guards in the Colony",
   "com.minecolonies.coremod.gui.townhall.happiness.social": "Social Factor",
   "com.minecolonies.coremod.gui.townhall.happiness.saturation": "Hunger",
+  "com.minecolonies.coremod.gui.townhall.happiness.wonder": "Wonder",
 
   "com.minecolonies.coremod.gui.townhall.happiness.damage": "Injuries",
   "com.minecolonies.coremod.gui.townhall.happiness.death": "Deaths",
