@@ -73,7 +73,7 @@ public class EntityAIMournCitizen extends Goal
         this.speed = speed;
         this.setMutexFlags(EnumSet.of(Flag.MOVE));
 
-        stateMachine = new TickRateStateMachine<>(MourningState.IDLE, e -> Log.getLogger().warn("Eating AI threw exception:", e));
+        stateMachine = new TickRateStateMachine<>(MourningState.IDLE, e -> Log.getLogger().warn("Mourning AI threw exception:", e));
 
         stateMachine.addTransition(new TickingTransition<>(this::shouldMourn, () -> MourningState.IDLE, 20));
         stateMachine.addTransition(new TickingTransition<>(MourningState.IDLE, () -> true, this::decide, 20));
