@@ -14,6 +14,9 @@
     "#forge:sandstone",
     "minecraft:chiseled_quartz_block",
     "minecraft:quartz_pillar",
-    "minecraft:quartz_bricks"
+    "minecraft:quartz_bricks",
+    "structurize:cream_bricks",
+    "structurize:brown_bricks",
+    "structurize:beige_bricks"
   ]
 }

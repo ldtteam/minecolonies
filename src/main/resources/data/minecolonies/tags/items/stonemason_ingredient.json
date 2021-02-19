@@ -14,6 +14,9 @@
     "minecraft:polished_blackstone",
     "minecraft:polished_blackstone_slab",
     "minecraft:polished_blackstone_bricks",
-    "minecraft:basalt"
+    "minecraft:basalt",
+    "structurize:cream_bricks",
+    "structurize:brown_bricks",
+    "structurize:beige_bricks"
   ]
 }
