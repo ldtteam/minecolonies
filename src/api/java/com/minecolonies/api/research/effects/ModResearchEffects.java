@@ -5,7 +5,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.util.ResourceLocation;
 
 /**
- *  Contains
+ *  Contains a list of research effects by type.  Currently only supports absolute modifiers through Global Research Effect.
  */
 public class ModResearchEffects
 {

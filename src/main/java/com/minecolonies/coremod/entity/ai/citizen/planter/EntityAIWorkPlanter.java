@@ -199,6 +199,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
                 return PLANTATION_PLANT;
             }
         }
+
         return START_WORKING;
     }
 

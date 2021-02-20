@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.Color;
-import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ZoomDragView;
@@ -64,19 +62,14 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     private final ButtonImage undoButton = new ButtonImage();
 
     /**
+     * The undo text, if one is present
+     */
+    private final Text undoText = new Text();
+
+    /**
      * The undo cost icons, if one is present.
      */
     private ItemIcon[] undoCostIcons = new ItemIcon[0];
-
-    /**
-     * Displaced tooltip text, if present.
-     */
-    private Pane displacedHoverPane;
-
-    /**
-     * Button that the tooltip text has been displaced from.
-     */
-    private Button displacedButton;
 
     /**
      * The current state of a research button's display status.
@@ -143,9 +136,9 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 button.getParent().removeChild(icon);
             }
         }
-        if (displacedButton != null && displacedHoverPane != null)
+        if (button.getParent().getChildren().contains(undoText))
         {
-            displacedButton.setHoverPane(displacedHoverPane);
+            button.getParent().removeChild(undoText);
         }
 
         // Check for an empty button Id.  These reflect disabled buttons normally
@@ -261,7 +254,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param abandoned    if abandoned child.
      * @return the next y offset.
      */
-    public int drawTree(
+    private int drawTree(
       final int height,
       final int depth,
       final ZoomDragView view,
@@ -345,7 +338,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param parentResearched  if the immediate parent research has been completed.
      * @param research          the global research information for the research.
      * @param state             the current LocalResearchTree ResearchState of the research for the colony.
-     * @return
+     * @return                  the current set state of the research for display purposes.
      */
     private ResearchButtonState getResearchButtonState(final boolean abandoned, final boolean parentResearched, final IGlobalResearch research, final ResearchState state)
     {
@@ -492,6 +485,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             case FINISHED:
                 nameBar.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_medium_light_green.png"));
                 iconBox.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_mini_light_green.png"));
+                nameBar.setID(research.getId().toString());
+                iconBox.setID(research.getId().toString());
                 break;
             case LOCKED:
             case ABANDONED:
@@ -525,7 +520,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 break;
         }
 
-        // HoverTexts can only be assigned /after/ the ButtonImage (or other item) has been added to a Pane.
+        // Tooltips can only be assigned /after/ the ButtonImage (or other item) has been added to a Pane.
         generateResearchTooltips(nameBar, research, state);
     }
 
@@ -576,7 +571,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         final AbstractTextBuilder.TooltipBuilder hoverPaneBuilder = PaneBuilders.tooltipBuilder().hoverPane(tipItem).append(research.getName().deepCopy()).bold().color(COLOR_TEXT_NAME);
         if (!research.getSubtitle().getKey().isEmpty())
         {
-            hoverPaneBuilder.paragraphBreak().style(Style.EMPTY.setItalic(true).setFormatting(TextFormatting.GRAY)).append(research.getSubtitle());
+            hoverPaneBuilder.paragraphBreak().italic().colorName("GRAY").append(research.getSubtitle());
         }
         for (int txt = 0; txt < research.getEffects().size(); txt++)
         {
@@ -642,6 +637,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         nameText.setPosition(offsetX + ICON_WIDTH + TEXT_X_OFFSET, offsetY);
         nameText.setColors(COLOR_TEXT_DARK);
         nameText.setTextScale(1.4f);
+        nameText.setEnabled(false);
         view.addChild(nameText);
 
         if (state == ResearchButtonState.IN_PROGRESS)
@@ -685,22 +681,24 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
     /**
      * Draw an undo button in the middle of the parent research, and manages associated tooltips for in-progress research. This function sets normal button and tooltip information
-     * into the displacedButton and displacedHoverText fields, to allow switch back to normal functionality without having to redraw the entire tree.
+     * into the displacedButton fields, to allow switch back to normal functionality without having to redraw the entire tree.
      *
      * @param parent the parent button to attach it to.
      */
     private void drawUndoProgressButton(final Button parent)
     {
         undoButton.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-        undoButton.setText(new TranslationTextComponent("com.minecolonies.coremod.research.undo.progress"));
-        undoButton.setTextColor(Color.getByName("black", 0));
         undoButton.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
-        undoButton.setPosition(parent.getX() + (GRADIENT_WIDTH - BUTTON_LENGTH) / 2, parent.getY() + (GRADIENT_HEIGHT - BUTTON_HEIGHT) / 2);
+        undoButton.setPosition(parent.getX() + (GRADIENT_WIDTH - BUTTON_LENGTH) / 2, parent.getY() + TEXT_Y_OFFSET + (GRADIENT_HEIGHT - BUTTON_HEIGHT) / 2);
         undoButton.setID("undo:" + parent.getID());
         parent.getParent().addChild(undoButton);
-        displacedButton = parent;
-        displacedHoverPane = parent.getHoverPane();
-        parent.setHoverPane(PaneBuilders.tooltipBuilder().hoverPane(parent).append(new TranslationTextComponent("com.minecolonies.coremod.research.undo.progress.tooltip")).color(COLOR_TEXT_UNFULFILLED).bold().build());
+        undoText.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
+        undoText.setPosition(parent.getX() + TEXT_X_OFFSET + (GRADIENT_WIDTH - BUTTON_LENGTH) / 2, parent.getY() + (GRADIENT_HEIGHT - BUTTON_HEIGHT) / 2);
+        undoText.setColors(COLOR_TEXT_DARK);
+        undoText.setText(new TranslationTextComponent("com.minecolonies.coremod.research.undo.progress"));
+        undoText.disable();
+        parent.getParent().addChild(undoText);
+        PaneBuilders.tooltipBuilder().hoverPane(undoButton).append(new TranslationTextComponent("com.minecolonies.coremod.research.undo.progress.tooltip")).color(COLOR_TEXT_UNFULFILLED).bold().build();
     }
 
     /**
@@ -713,7 +711,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     {
         final List<ItemStorage> costList = IGlobalResearchTree.getInstance().getResearchResetCosts();
         undoCostIcons = new ItemIcon[costList.size()];
-        boolean missingItems = false;
+        final List<ItemStorage> missingItems = new ArrayList<>();
         for (int i = 0; i < costList.size(); i++)
         {
             final ItemStorage is = costList.get(i);
@@ -721,40 +719,41 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.inventory),
               stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(is.getItemStack())) < is.getAmount())
             {
-                missingItems = true;
+                missingItems.add(is);
             }
             undoCostIcons[i].setItem(is.getItemStack());
             undoCostIcons[i].setPosition(parent.getX() + (GRADIENT_WIDTH - BUTTON_LENGTH) / 2 + BUTTON_LENGTH + DEFAULT_COST_SIZE * i,
-              parent.getY() + (GRADIENT_HEIGHT - BUTTON_HEIGHT) / 2);
+              parent.getY()  + TEXT_Y_OFFSET + (GRADIENT_HEIGHT - BUTTON_HEIGHT) / 2);
             undoCostIcons[i].setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
             parent.getParent().addChild(undoCostIcons[0]);
         }
-        undoButton.setTextColor(Color.getByName("black", 0));
         undoButton.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
-        undoButton.setPosition(parent.getX() + (GRADIENT_WIDTH - BUTTON_LENGTH) / 2, parent.getY() + (GRADIENT_HEIGHT - BUTTON_HEIGHT) / 2);
-        final AbstractTextBuilder.TooltipBuilder undoTipBuilder = PaneBuilders.tooltipBuilder().hoverPane(parent)
-                                  .append(new TranslationTextComponent("com.minecolonies.coremod.research.undo.remove.tooltip").setStyle(Style.EMPTY.setFormatting(TextFormatting.BOLD)
-                                                                                                                                           .setFormatting(TextFormatting.RED)));
-        if (missingItems)
+        undoButton.setPosition(parent.getX() + (GRADIENT_WIDTH - BUTTON_LENGTH) / 2, parent.getY()  + TEXT_Y_OFFSET + (GRADIENT_HEIGHT - BUTTON_HEIGHT) / 2);
+        final AbstractTextBuilder.TooltipBuilder undoTipBuilder = PaneBuilders.tooltipBuilder().hoverPane(undoButton)
+                                  .append(new TranslationTextComponent("com.minecolonies.coremod.research.undo.remove.tooltip")).bold().color(COLOR_TEXT_UNFULFILLED);
+        undoText.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
+        undoText.setPosition(parent.getX() + TEXT_X_OFFSET + (GRADIENT_WIDTH - BUTTON_LENGTH) / 2, parent.getY() + (GRADIENT_HEIGHT - BUTTON_HEIGHT) / 2);
+        undoText.setColors(COLOR_TEXT_DARK);
+        if (!missingItems.isEmpty())
         {
             undoButton.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_DIS));
-            undoButton.setText(new TranslationTextComponent("com.minecolonies.coremod.research.research.notenoughresources"));
-            for (ItemStorage cost : costList)
+            undoText.setText(new TranslationTextComponent("com.minecolonies.coremod.research.research.notenoughresources"));
+            for (ItemStorage cost : missingItems)
             {
-                undoTipBuilder.append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.research",
-                  cost.getItem().getName()));
+                undoTipBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.research",
+                  cost.getItem().getName())).color(COLOR_TEXT_UNFULFILLED);
             }
         }
         else
         {
             undoButton.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-            undoButton.setText(new TranslationTextComponent("com.minecolonies.coremod.research.undo.remove"));
             undoButton.setID("undo:" + parent.getID());
+            undoText.setText(new TranslationTextComponent("com.minecolonies.coremod.research.undo.remove"));
         }
-
-        displacedButton = parent;
-        displacedHoverPane = parent.getHoverPane();
+        undoText.disable();
         parent.getParent().addChild(undoButton);
+        parent.getParent().addChild(undoText);
+        undoTipBuilder.build();
     }
 
     /**
@@ -766,7 +765,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param research  the global research characteristics to draw.
      * @param state     the research's current state.
      */
-    public void drawResearchReqsAndCosts(
+    private void drawResearchReqsAndCosts(
       final ZoomDragView view,
       final int offsetX,
       final int offsetY,
@@ -881,7 +880,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param research          Global research information.
      * @param state             State of the local research, if begun.
      */
-    public void drawResearchIcons(
+    private void drawResearchIcons(
       final ZoomDragView view,
       final int offsetX,
       final int offsetY,
@@ -979,7 +978,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param nextHeight       height of the next arrow target.
      * @param parentHeight     height of the parent arrow target.
      */
-    public void drawArrows(
+    private void drawArrows(
       final ZoomDragView view,
       final int offsetX,
       final int offsetY,
@@ -1030,7 +1029,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 {
                     final Text orLabel = new Text();
                     orLabel.setSize(OR_WIDTH, OR_HEIGHT);
-                    orLabel.setColors(Color.getByName("black", 0));
+                    orLabel.setColors(COLOR_TEXT_DARK);
                     orLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.research.research.or"));
                     orLabel.setPosition(offsetX + INITIAL_X_OFFSET, offsetY + TEXT_Y_OFFSET);
                     view.addChild(orLabel);
