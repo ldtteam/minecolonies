@@ -6,7 +6,7 @@
             <layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
         </view>
         <view id="pageFields" size="100% 100%">
-            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
             <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
                    label="$(com.minecolonies.coremod.gui.workerhuts.farmerhut.fields):"/>
             <label id="AssignmentModeLabel" size="164 11" pos="13 29" color="black" textalign="MIDDLE"
@@ -25,7 +25,7 @@
             </list>
         </view>
         <view>
-            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
             <label id="RequestFertilizerLabel" size="164 18" pos="13 29" color="black" textalign="MIDDLE"
                    label="$(com.minecolonies.coremod.gui.workerhuts.farmerhut.requestfertilizer)"/>
             <button id="requestFert" size="60 15" pos="65 50"

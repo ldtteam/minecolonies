@@ -6,7 +6,7 @@
             <layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
         </view>
         <view id="pageBranches" size="100% 100%">
-            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
             <label id="title" size="130 11" pos="30 13" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.research.title)"/>
 
         </view>
