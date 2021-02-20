@@ -4,6 +4,7 @@ import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.util.BlockUtils;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
@@ -39,7 +40,8 @@ public class RackPlacementHandler implements IPlacementHandler
       @NotNull final BlockState blockState,
       @Nullable final CompoundNBT tileEntityData,
       final boolean complete,
-      final BlockPos centerPos)
+      final BlockPos centerPos,
+      final PlacementSettings settings)
     {
         if (world.getBlockState(pos).getBlock() == ModBlocks.blockRack)
         {
@@ -56,7 +58,7 @@ public class RackPlacementHandler implements IPlacementHandler
             world.setBlockState(pos, blockState, UPDATE_FLAG);
             if (tileEntityData != null)
             {
-                handleTileEntityPlacement(tileEntityData, world, pos);
+                handleTileEntityPlacement(tileEntityData, world, pos, settings);
             }
 
             entity = world.getTileEntity(pos);
