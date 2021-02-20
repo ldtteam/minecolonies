@@ -31,7 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURRENT_DAILY;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DAILY;
 
 /**
  * Class of the sifter building.

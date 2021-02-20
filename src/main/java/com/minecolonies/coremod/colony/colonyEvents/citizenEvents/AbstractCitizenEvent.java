@@ -7,7 +7,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN_NAME;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_POS;
 
 /**
  * Event for something happening to a citizen.

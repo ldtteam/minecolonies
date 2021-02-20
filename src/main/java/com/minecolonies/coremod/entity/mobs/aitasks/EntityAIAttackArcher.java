@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.mobs.aitasks;
 
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.LivingEntity;

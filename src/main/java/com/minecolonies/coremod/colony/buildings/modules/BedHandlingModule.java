@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
+import com.minecolonies.api.colony.buildings.modules.IModuleWithExternalBlocks;
+import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
