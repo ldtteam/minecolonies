@@ -34,6 +34,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingArchery::new)
                                  .setBuildingViewProducer(() -> BuildingArchery.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ARCHERY_ID))
+                                 .addBuildingModuleProducer(BedHandlingModule::new)
                                  .createBuildingEntry();
 
         ModBuildings.bakery = new BuildingEntry.Builder()
@@ -55,6 +56,7 @@ public final class ModBuildingsInitializer
                                        .setBuildingProducer(BuildingBarracksTower::new)
                                        .setBuildingViewProducer(() -> BuildingBarracksTower.View::new)
                                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BARRACKS_TOWER_ID))
+                                       .addBuildingModuleProducer(BedHandlingModule::new)
                                        .createBuildingEntry();
 
         ModBuildings.blacksmith = new BuildingEntry.Builder()
@@ -83,6 +85,7 @@ public final class ModBuildingsInitializer
                                        .setBuildingProducer(BuildingCombatAcademy::new)
                                        .setBuildingViewProducer(() -> BuildingCombatAcademy.View::new)
                                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMBAT_ACADEMY_ID))
+                                       .addBuildingModuleProducer(BedHandlingModule::new)
                                        .createBuildingEntry();
 
         ModBuildings.composter = new BuildingEntry.Builder()
@@ -139,6 +142,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingGuardTower::new)
                                     .setBuildingViewProducer(() -> BuildingGuardTower.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GUARD_TOWER_ID))
+                                    .addBuildingModuleProducer(BedHandlingModule::new)
                                     .createBuildingEntry();
 
         ModBuildings.home = new BuildingEntry.Builder()
