@@ -401,6 +401,8 @@ public class RecipeStorage implements IRecipeStorage
             return false;
         }
 
+        final List<ItemStack> extracted = new ArrayList<>();
+
         for (final ItemStorage storage : getCleanedInput())
         {
             final ItemStack stack = storage.getItemStack();
@@ -435,6 +437,7 @@ public class RecipeStorage implements IRecipeStorage
                         slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler,
                           itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, true));
                     }
+                    extracted.add(extractedStack);
                 }
 
                 // stop looping handlers if we have what we need
@@ -450,7 +453,7 @@ public class RecipeStorage implements IRecipeStorage
             }
         }
 
-        insertCraftedItems(handlers, getPrimaryOutput(), context);
+        insertCraftedItems(handlers, getPrimaryOutput(), context, extracted);
         return true;
     }
 
@@ -465,7 +468,7 @@ public class RecipeStorage implements IRecipeStorage
      *
      * @param handlers the handlers.
      */
-    private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context)
+    private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context, List<ItemStack> extractedItems)
     {
         if(!ItemStackUtils.isEmpty(outputStack))
         {
@@ -490,7 +493,34 @@ public class RecipeStorage implements IRecipeStorage
             secondaryStacks.addAll(loot.generate(context));
         }
 
-        secondaryStacks.addAll(secondaryOutputs);
+        // Propagate and damage tools, rather than recreate them. 
+        Random rand = new Random();
+        for(final ItemStack stack : secondaryOutputs)
+        {
+            if(stack.isDamageable())
+            {
+                boolean found = false;
+                for(ItemStack extracted : extractedItems)
+                {
+                    if(ItemStackUtils.compareItemStacksIgnoreStackSize(extracted, stack, false, true))
+                    {
+                        final ItemStack damaged = extracted.copy();
+                        damaged.attemptDamageItem(1, rand, null);
+                        secondaryStacks.add(damaged);
+                        break;
+                    }
+                }
+                if(!found)
+                {
+                    secondaryStacks.add(stack);
+                }
+            }
+            else
+            {
+                secondaryStacks.add(stack);
+            }
+        }
+        
         for (final ItemStack stack : secondaryStacks)
         {
             for (final IItemHandler handler : handlers)
