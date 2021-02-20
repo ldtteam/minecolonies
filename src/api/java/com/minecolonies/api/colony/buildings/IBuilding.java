@@ -37,18 +37,26 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
 {
     /**
      * Check if the building has a particular module.
-     * @param clazz the module of the class to check.
+     * @param clazz the class or interface of the module to check.
      * @return true if so.
      */
     boolean hasModule(final Class<? extends IBuildingModule> clazz);
 
     /**
-     * Get the module with a particular class.
-     * @param clazz the modules class.
-     * @return the module or null of not existant.
+     * Get the first module with a particular class or interface.
+     * @param clazz the module's class or interface.
+     * @return the module or empty if not existent.
      */
     @NotNull
     <T extends IBuildingModule> Optional<T> getModule(Class<T> clazz);
+
+    /**
+     * Get all modules with a particular class or interface.
+     * @param clazz the module's interface (or class, but prefer getModule in that case)
+     * @return the list of modules or empty if none match.
+     */
+    @NotNull
+    <T extends IBuildingModule> List<T> getModules(Class<T> clazz);
 
     /**
      * Register a specific module to the building.
