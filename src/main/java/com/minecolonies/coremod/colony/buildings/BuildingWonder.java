@@ -17,6 +17,7 @@ import com.minecolonies.coremod.client.gui.WindowHutComposter;
 import com.minecolonies.coremod.client.gui.WindowHutWonder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.research.ResearchInitializer;
@@ -79,7 +80,7 @@ public class BuildingWonder extends AbstractBuilding implements IWonder
     /**
      * The client side representation of the building.
      */
-    public static class View extends AbstractFilterableListsView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiates the view of the building.
