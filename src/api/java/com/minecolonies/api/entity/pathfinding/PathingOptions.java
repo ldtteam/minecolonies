@@ -36,6 +36,11 @@ public class PathingOptions
     public double swimCostEnter = 25D;
 
     /**
+     * Cost to traverse trap doors
+     */
+    public double traverseToggleAbleCost = 2D;
+
+    /**
      * Whether to use minecart rail pathing
      */
     private boolean canUseRails  = false;
@@ -128,6 +133,12 @@ public class PathingOptions
     public PathingOptions withRailExitCost(final double railExitCost)
     {
         railsExitCost = railExitCost;
+        return this;
+    }
+
+    public PathingOptions withToggleCost(final double toggleCost)
+    {
+        traverseToggleAbleCost = toggleCost;
         return this;
     }
 }

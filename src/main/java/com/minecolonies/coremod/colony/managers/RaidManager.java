@@ -56,7 +56,7 @@ public class RaidManager implements IRaiderManager
     /**
      * Min distance to keep while spawning near buildings
      */
-    private static final int MIN_BUILDING_SPAWN_DIST = 25;
+    private static final int MIN_BUILDING_SPAWN_DIST = 35;
 
     /**
      * Different biome ids.
@@ -506,22 +506,18 @@ public class RaidManager implements IRaiderManager
             // Additional raid protection for certain buildings, towers can be used now to deal with unlucky - inwall spawns
             if (building instanceof BuildingGuardTower)
             {
-                // 32/39/48/55/62
                 minDist += building.getBuildingLevel() * 7;
             }
             else if (building.hasModule(LivingBuildingModule.class))
             {
-                // 39/43/47/51/55
                 minDist += building.getBuildingLevel() * 4;
             }
             else if (building instanceof BuildingTownHall)
             {
-                // 43/51/59/67/75
                 minDist += building.getBuildingLevel() * 8;
             }
             else
             {
-                // 37/39/41/43/45
                 minDist += building.getBuildingLevel() * 2;
             }
 

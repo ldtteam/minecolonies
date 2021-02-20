@@ -355,6 +355,7 @@ public class CitizenManager implements ICitizenManager
         }
 
         calculateMaxCitizens();
+        markDirty();
         colony.markDirty();
     }
 
