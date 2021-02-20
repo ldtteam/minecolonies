@@ -353,10 +353,9 @@ public class BuildingManager implements IBuildingManager
         {
             for(final IWonder wonder : wonders)
             {
-                int wonderLevel = wonder.getBuildingLevel();
-                if(wonderLevel > maxLevel)
+                if(wonder.getBuildingLevel() > maxLevel)
                 {
-                    maxLevel = wonderLevel;
+                    maxLevel = wonder.getBuildingLevel();
                 }
             }
         }
