@@ -350,8 +350,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 return getState();
             }
             //Get ladder orientation
-            final BlockState metadata = getBlockState(safeStand);
-
+            final BlockState metadata = Blocks.LADDER.getDefaultState()
+                                          .with(HorizontalBlock.HORIZONTAL_FACING,
+                                            Direction.getFacingFromVector(nextLadder.getX() - nextCobble.getX(), 0, nextLadder.getZ() - nextCobble.getZ()));
             setBlockFromInventory(nextLadder, Blocks.LADDER, metadata);
             return getState();
         }
@@ -975,7 +976,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             getInventory().extractItem(slot, 1, false);
             //Flag 1+2 is needed for updates
-            world.setBlockState(location, metadata, 0x03);
+            WorldUtil.setBlockState(world, location, metadata);
         }
     }
 

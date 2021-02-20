@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.*;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.pathfinding.GroundPathNavigator;
@@ -34,7 +35,7 @@ public class EntityAIInteractToggleAble extends Goal
     /**
      * The min distance the gate has to be from the citizen.
      */
-    private static final double MIN_DISTANCE = 2.25D;
+    private static final double MIN_DISTANCE = 4D;
 
     /**
      * The max distance the gate has to be from the citizen.
@@ -47,7 +48,6 @@ public class EntityAIInteractToggleAble extends Goal
     public static final ToggleAble FENCE_TOGGLE = new FenceToggle();
     public static final ToggleAble TRAP_TOGGLE  = new TrapToggle();
     public static final ToggleAble DOOR_TOGGLE  = new DoorToggle();
-
 
     /**
      * Our citizen.
@@ -143,45 +143,68 @@ public class EntityAIInteractToggleAble extends Goal
         }
 
         final int maxLengthToCheck = Math.min(path.getCurrentPathIndex() + LENGTH_TO_CHECK, path.getCurrentPathLength());
-        for (int i = Math.max(0, path.getCurrentPathIndex() - 1); i < maxLengthToCheck; ++i)
+        for (int i = Math.max(0, path.getCurrentPathIndex() - 1); i < maxLengthToCheck; i++)
         {
-            final PathPoint pathpoint = path.getPathPointFromIndex(i);
+            if (i == path.getCurrentPathLength() - 1)
+            {
+                // Reached path end
+                return;
+            }
 
+            // We need current + next to determine the move direction to find out whether sth is blocking in that way
+            final PathPoint current = path.getPathPointFromIndex(i);
+            final PathPoint next = path.getPathPointFromIndex(i + 1);
+
+            // Skip same nodes
+            if (next.x == current.x && next.y == current.y && next.z == current.z)
+            {
+                continue;
+            }
+
+            // Find the moving direction
+            final Direction dir;
+            if (current.x == next.x && current.z == next.z)
+            {
+                // Up/Down we just use east
+                dir = Direction.EAST;
+            }
+            else
+            {
+                dir = Direction.getFacingFromVector(next.x - current.x, 0, next.z - current.z);
+            }
+
+            // Check necessary height levels
             for (int level = 0; level < getHeightToCheck(path, i); level++)
             {
-                BlockPos pos = new BlockPos(pathpoint.x, pathpoint.y + level, pathpoint.z);
-                BlockState state = entity.world.getBlockState(pos);
-                if (this.entity.getDistanceSq(pos.getX(), this.entity.getPosY(), pos.getZ()) <= MIN_DISTANCE && isValidBlockState(state))
-                {
-                    if (i < path.getCurrentPathLength() - 1)
-                    {
-                        final PathPoint next = path.getPathPointFromIndex(i + 1);
+                checkPosAndAdd(entity, dir, new BlockPos(current.x, current.y + level, current.z));
+                checkPosAndAdd(entity, dir, new BlockPos(next.x, next.y + level, next.z));
+            }
+        }
+    }
 
-                        // Skip same nodes
-                        if (next.x == pathpoint.x && next.y == pathpoint.y && next.z == pathpoint.z)
-                        {
-                            continue;
-                        }
+    /**
+     * Checks if the pos has a toggleable hindering movement in the given direction and adds it to our toggle positions
+     *
+     * @param entity entity to check for
+     * @param dir    Direction to check in
+     * @param pos    position to check
+     */
+    private void checkPosAndAdd(final Entity entity, Direction dir, final BlockPos pos)
+    {
+        if (toggleAblePositions.containsKey(pos))
+        {
+            return;
+        }
 
-                        final Direction dir;
-                        if (pathpoint.x == next.x && pathpoint.z == next.z)
-                        {
-                            // Up/Down we just use east
-                            dir = Direction.EAST;
-                        }
-                        else
-                        {
-                            dir = Direction.getFacingFromVector(pathpoint.x - next.x, 0, pathpoint.z - next.z).rotateY();
-                        }
-
-                        // See if collision shape can fit our entity in
-                        final VoxelShape collisionShape = state.getCollisionShape(entity.world, pos);
-                        if (collisionShape.getStart(dir.getAxis()) + 0.1 < entity.getWidth() && collisionShape.getEnd(dir.getAxis()) + 0.1 + entity.getWidth() > 1)
-                        {
-                            toggleAblePositions.put(pos, state.get(BlockStateProperties.OPEN));
-                        }
-                    }
-                }
+        final BlockState state = entity.world.getBlockState(pos);
+        if (this.entity.getDistanceSq(pos.getX(), this.entity.getPosY(), pos.getZ()) <= MIN_DISTANCE && isValidBlockState(state))
+        {
+            // See if current pos collision shape can fit our entity in
+            final VoxelShape collisionShape = state.getCollisionShape(entity.world, pos);
+            dir = dir.rotateY();
+            if (collisionShape.getStart(dir.getAxis()) + 0.1 < entity.getWidth() && collisionShape.getEnd(dir.getAxis()) + 0.1 + entity.getWidth() > 1)
+            {
+                toggleAblePositions.put(pos, state.get(BlockStateProperties.OPEN));
             }
         }
     }
@@ -496,8 +519,7 @@ public class EntityAIInteractToggleAble extends Goal
         @Override
         public void toggleBlockClosed(final BlockState state, final World world, final BlockPos pos)
         {
-            ((DoorBlock) state.getBlock()).openDoor(world, state, pos,false);
+            ((DoorBlock) state.getBlock()).openDoor(world, state, pos, false);
         }
     }
-
 }

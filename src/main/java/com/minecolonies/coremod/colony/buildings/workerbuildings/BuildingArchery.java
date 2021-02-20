@@ -19,8 +19,6 @@ import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.state.properties.BedPart;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -37,7 +35,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Building class for the Archery.
  */
-public class BuildingArchery extends AbstractBuildingWorker implements IBuildingBedProvider, IWorkerLivingBuilding
+public class BuildingArchery extends AbstractBuildingWorker
 {
     /**
      * The Schematic name.
@@ -60,12 +58,6 @@ public class BuildingArchery extends AbstractBuildingWorker implements IBuilding
     private final List<BlockPos> shootingTargets = new ArrayList<>();
 
     /**
-     * List of all beds.
-     */
-    @NotNull
-    private final List<BlockPos> bedList = new ArrayList<>();
-
-    /**
      * The abstract constructor of the building.
      *
      * @param c the colony
@@ -81,13 +73,6 @@ public class BuildingArchery extends AbstractBuildingWorker implements IBuilding
     public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobArcherTraining(citizen);
-    }
-
-    @NotNull
-    @Override
-    public List<BlockPos> getBedList()
-    {
-        return new ArrayList<>(bedList);
     }
 
     @Override
@@ -145,17 +130,6 @@ public class BuildingArchery extends AbstractBuildingWorker implements IBuilding
 
         final ListNBT standTagList = compound.getList(TAG_ARCHERY_STANDS, Constants.NBT.TAG_COMPOUND);
         shootingStands.addAll(NBTUtils.streamCompound(standTagList).map(targetCompound -> BlockPosUtil.read(targetCompound, TAG_STAND)).collect(Collectors.toList()));
-
-        final ListNBT bedTagList = compound.getList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < bedTagList.size(); ++i)
-        {
-            final CompoundNBT bedCompound = bedTagList.getCompound(i);
-            final BlockPos bedPos = NBTUtil.readBlockPos(bedCompound);
-            if (!bedList.contains(bedPos))
-            {
-                bedList.add(bedPos);
-            }
-        }
     }
 
     @Override
@@ -168,16 +142,6 @@ public class BuildingArchery extends AbstractBuildingWorker implements IBuilding
 
         final ListNBT standTagList = shootingStands.stream().map(target -> BlockPosUtil.write(new CompoundNBT(), TAG_STAND, target)).collect(NBTUtils.toListNBT());
         compound.put(TAG_ARCHERY_STANDS, standTagList);
-        
-        if (!bedList.isEmpty())
-        {
-            @NotNull final ListNBT bedTagList = new ListNBT();
-            for (@NotNull final BlockPos pos : bedList)
-            {
-                bedTagList.add(NBTUtil.writeBlockPos(pos));
-            }
-            compound.put(TAG_BEDS, bedTagList);
-        }
 
         return compound;
     }
@@ -254,53 +218,10 @@ public class BuildingArchery extends AbstractBuildingWorker implements IBuilding
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
-    {
-        super.registerBlockPosition(blockState, pos, world);
-
-        BlockPos registrationPosition = pos;
-        if (blockState.getBlock() instanceof BedBlock)
-        {
-            if (blockState.get(BedBlock.PART) == BedPart.FOOT)
-            {
-                registrationPosition = registrationPosition.offset(blockState.get(BedBlock.HORIZONTAL_FACING));
-            }
-
-            if (!bedList.contains(registrationPosition))
-            {
-                bedList.add(registrationPosition);
-            }
-        }
-    }    
-
-    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.archery;
     }
-
-    @Override
-    public void onWakeUp()
-    {
-        super.onWakeUp();
-        
-        final World world = getColony().getWorld();
-        if (world == null)
-        {
-            return;
-        }
-
-        for (final BlockPos pos : bedList)
-        {
-            final BlockState state = world.getBlockState(pos);
-            if (state.getBlock() instanceof BedBlock
-                  && state.get(BedBlock.OCCUPIED)
-                  && state.get(BedBlock.PART).equals(BedPart.HEAD))
-            {
-                world.setBlockState(pos, state.with(BedBlock.OCCUPIED, false), 0x03);
-            }
-        }
-    }    
 
     /**
      * The client view for the bakery building.

@@ -61,11 +61,6 @@ public class EntityAIEatTask extends Goal
     private static final int MIN_DISTANCE_TO_RESTAURANT = 10;
 
     /**
-     * Max distance from the restaurant block the citizen should eat in x/z.
-     */
-    private static final int PLACE_TO_EAT_DISTANCE = 5;
-
-    /**
      * Time required to eat in seconds.
      */
     private static final int REQUIRED_TIME_TO_EAT = 5;
