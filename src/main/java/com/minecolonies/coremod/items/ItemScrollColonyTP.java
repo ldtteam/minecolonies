@@ -46,8 +46,6 @@ public class ItemScrollColonyTP extends AbstractItemScroll
     @Override
     protected ItemStack onItemUseSuccess(final ItemStack itemStack, final World world, final ServerPlayerEntity player)
     {
-        itemStack.shrink(1);
-
         if (world.rand.nextInt(10) == 0)
         {
             // Fail
@@ -79,6 +77,7 @@ public class ItemScrollColonyTP extends AbstractItemScroll
             SoundUtils.playSoundForPlayer(player, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 0.6f, 1.0f);
         }
 
+        itemStack.shrink(1);
         return itemStack;
     }
 

@@ -15,6 +15,7 @@
 /.idea/*
 !/.idea
 !/.idea/inspectionProfiles/
+!/.idea/gradle.xml
 /classes
 
 # gradle
@@ -48,3 +49,4 @@ src/main/generated/resources/.cache/cache
 
 logs/
 !/.idea/inspectionProfiles
+!/.idea/gradle.xml

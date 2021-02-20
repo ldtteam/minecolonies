@@ -18,13 +18,11 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
     /**
      * The tickrate at which the Target should be called, e.g. tickRate = 20 means call function every 20 Ticks
      */
-    @NotNull
     private int tickRate;
 
     /**
      * The random offset for Ticks, so that AITargets get more distributed activations on server ticks
      */
-    @NotNull
     private final int tickOffset;
 
     /**
@@ -46,13 +44,13 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
       @NotNull final S state,
       @NotNull final BooleanSupplier condition,
       @NotNull final Supplier<S> nextState,
-      @NotNull final int tickRate)
+      final int tickRate)
     {
         super(state, condition, nextState);
 
         // Limit rates
-        this.tickRate = tickRate > MAX_TICKRATE ? MAX_TICKRATE : tickRate;
-        this.tickRate = this.tickRate < 1 ? 1 : this.tickRate;
+        this.tickRate = Math.min(tickRate, MAX_TICKRATE);
+        this.tickRate = Math.max(this.tickRate, 1);
 
         // Calculate offSet % tickRate already to not have redundant calculations later
         this.tickOffset = tickOffsetVariant % this.tickRate;
@@ -71,16 +69,16 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
      * @param nextState The next state this transition leads into
      * @param tickRate  The expected tickrate at which this transition should be checked.
      */
-    protected TickingTransition(
+    public TickingTransition(
       @NotNull final BooleanSupplier condition,
       @NotNull final Supplier<S> nextState,
-      @NotNull final int tickRate)
+      final int tickRate)
     {
         super(condition, nextState);
 
         // Limit rates
-        this.tickRate = tickRate > MAX_TICKRATE ? MAX_TICKRATE : tickRate;
-        this.tickRate = this.tickRate < 1 ? 1 : this.tickRate;
+        this.tickRate = Math.min(tickRate, MAX_TICKRATE);
+        this.tickRate = Math.max(this.tickRate, 1);
 
         // Calculate offSet % tickRate already to not have redundant calculations later
         this.tickOffset = tickOffsetVariant % this.tickRate;
@@ -109,7 +107,7 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
      * @param tickRate rate at which the AITarget should tick
      */
     @Override
-    public void setTickRate(@NotNull final int tickRate)
+    public void setTickRate(final int tickRate)
     {
         this.tickRate = tickRate;
     }

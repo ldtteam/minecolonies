@@ -144,7 +144,6 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
                     Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutputs, false));
                 }
             }
-            closeScreen();
         }
     }
 

@@ -57,6 +57,7 @@ public class WorldUtil
 
     /**
      * Mark a chunk at a position dirty if loaded.
+     *
      * @param world the world to mark it dirty in.
      * @param pos   the position within the chunk.
      */
@@ -155,6 +156,7 @@ public class WorldUtil
 
     /**
      * Check if a world is of the overworld type.
+     *
      * @param world the world to check.
      * @return true if so.
      */
@@ -165,6 +167,7 @@ public class WorldUtil
 
     /**
      * Check if a world is of the nether type.
+     *
      * @param world the world to check.
      * @return true if so.
      */
@@ -175,8 +178,9 @@ public class WorldUtil
 
     /**
      * Check if a world has a specific dimension type.
+     *
      * @param world the world to check.
-     * @param type the type to compare.
+     * @param type  the type to compare.
      * @return true if it matches.
      */
     public static boolean isOfWorldType(@NotNull final World world, @NotNull final RegistryKey<DimensionType> type)
@@ -197,10 +201,10 @@ public class WorldUtil
     }
 
     /**
-     * Check to see if the world is peaceful. 
-     * 
-     * There are several checks performed here, currently both gamerule and difficulty. 
-     * 
+     * Check to see if the world is peaceful.
+     * <p>
+     * There are several checks performed here, currently both gamerule and difficulty.
+     *
      * @param world world to check
      * @return true if peaceful
      */
@@ -224,13 +228,7 @@ public class WorldUtil
             return world.setBlockState(pos, state, 3);
         }
 
-        final boolean result = world.setBlockState(pos, state, 1);
-        if (result)
-        {
-            ((ServerWorld) world).getChunkProvider().markBlockChanged(pos);
-        }
-
-        return result;
+        return setBlockState(world, pos, state, 3);
     }
 
     /**
@@ -251,13 +249,8 @@ public class WorldUtil
         if ((flags & 2) != 0)
         {
             flags -= 2;
-            final boolean result = world.setBlockState(pos, state, flags);
-            if (result)
-            {
-                ((ServerWorld) world).getChunkProvider().markBlockChanged(pos);
-            }
-
-            return result;
+            ((ServerWorld) world).getChunkProvider().markBlockChanged(pos);
+            return world.setBlockState(pos, state, flags);
         }
         else
         {
@@ -267,11 +260,12 @@ public class WorldUtil
 
     /**
      * Get all entities within a building.
-     * @param world the world to check this for.
-     * @param clazz the entity class.
-     * @param building the building to check the range for.
+     *
+     * @param world     the world to check this for.
+     * @param clazz     the entity class.
+     * @param building  the building to check the range for.
      * @param predicate the predicate to check
-     * @param <T> the type of the predicate.
+     * @param <T>       the type of the predicate.
      * @return a list of all within those borders.
      */
     public static <T extends Entity> List<T> getEntitiesWithinBuilding(
@@ -292,9 +286,9 @@ public class WorldUtil
         List<T> list = Lists.newArrayList();
         AbstractChunkProvider abstractchunkprovider = world.getChunkProvider();
 
-        for(int x = minX; x <= maxX; ++x)
+        for (int x = minX; x <= maxX; ++x)
         {
-            for(int z = minZ; z <= maxZ; ++z)
+            for (int z = minZ; z <= maxZ; ++z)
             {
                 if (isEntityChunkLoaded(world, x, z))
                 {
