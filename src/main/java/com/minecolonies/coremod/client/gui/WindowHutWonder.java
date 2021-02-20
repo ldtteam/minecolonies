@@ -20,38 +20,30 @@ public class WindowHutWonder extends AbstractWindowBuilding<BuildingWonder.View>
     private final BuildingWonder.View wonder;
 
     /**
+     * The name of the specific one.
+     */
+    private final String name;
+
+    /**
      * Creates the Window object.
      *
      * @param building View of the home building.
      */
-    public WindowHutWonder(final BuildingWonder.View building)
+    public WindowHutWonder(final BuildingWonder.View building, final String name)
     {
         super(building, Constants.MOD_ID + WONDER_BUILDING_RESOURCE_SUFFIX);
         this.wonder = building;
+        this.name = name;
     }
 
-    @Override
-    public void onOpened()
-    {
-        super.onOpened();
-        refreshView();
-    }
-
-    /**
-     * Refresh the view.
-     */
-    private void refreshView()
-    {
-    }
     /**
      * Returns the name of a building.
      *
      * @return Name of a building.
      */
-    @NotNull
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.wonderhut";
+        return "com.minecolonies.coremod.gui.workerhuts." + name;
     }
 }

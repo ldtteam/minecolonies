@@ -468,7 +468,7 @@
 
   "com.minecolonies.coremod.gui.buildtool.wrongcolony": "The building was picked up in colony %d. You can only place it in that colony now!",
   "com.minecolonies.coremod.gui.buildtool.nohutininventory": "The hut block was not found in your inventory.",
-    "com.minecolonies.coremod.buildtool.indestructible": "Failed to place the hut block! The block at its intended position is indestructible!",
+  "com.minecolonies.coremod.buildtool.indestructible": "Failed to place the hut block! The block at its intended position is indestructible!",
 
   "com.minecolonies.coremod.job.lumberjack": "Forester",
   "com.minecolonies.coremod.job.swineherder": "Swineherd",

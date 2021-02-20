@@ -96,7 +96,7 @@ public class BuildingWonder extends AbstractBuilding implements IWonder
         @Override
         public Window getWindow()
         {
-            return new WindowHutWonder(this);
+            return new WindowHutWonder(this, WONDER);
         }
     }
 
