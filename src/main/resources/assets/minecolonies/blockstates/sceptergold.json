@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "minecolonies:items/scepterGold.png"
+    "layer0": "minecolonies:items/sceptergold.png"
   },
   "display": {
     "thirdperson": {

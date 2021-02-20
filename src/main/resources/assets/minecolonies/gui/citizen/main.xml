@@ -1,6 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244"
         xsi:noNamespaceSchemaLocation="file:../../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
-    <image source="minecolonies:textures/gui/citizen/colonist_papper_sketch.png" size="190 244"/>
+    <image source="minecolonies:textures/gui/citizen/colonist_paper_sketch.png" size="190 244"/>
 
     <label id="name" size="164 11" color="black" pos="13 14" textalign="MIDDLE"/>
     <image id="deco1" size="82 16" source="minecolonies:textures/gui/citizen/colonist_text_decor_down.png" pos="54 29"/>
