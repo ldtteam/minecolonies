@@ -2,6 +2,7 @@ package com.minecolonies.coremod.items;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
@@ -45,15 +46,19 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
     @Override
     protected ItemStack onItemUseSuccess(final ItemStack itemStack, final World world, final ServerPlayerEntity player)
     {
-        itemStack.shrink(1);
-
         if (world.rand.nextInt(10) == 0)
         {
             // Fail chance
             player.sendStatusMessage(new TranslationTextComponent("minecolonies.scroll.failed" + (world.rand.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.setFormatting(
               TextFormatting.GOLD)), true);
-            player.dropItem(itemStack.copy(), true, false);
-            itemStack.setCount(0);
+
+            itemStack.shrink(1);
+            if (!ItemStackUtils.isEmpty(itemStack))
+            {
+                player.dropItem(itemStack.copy(), true, false);
+                itemStack.setCount(0);
+            }
+
             for (final ServerPlayerEntity sPlayer : getAffectedPlayers(player))
             {
                 SoundUtils.playSoundForPlayer(sPlayer, SoundEvents.ENTITY_EVOKER_PREPARE_SUMMON, 0.3f, 1.0f);
@@ -66,6 +71,8 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
                 doTeleport(sPlayer, getColony(itemStack), itemStack);
                 SoundUtils.playSoundForPlayer(sPlayer, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 0.1f, 1.0f);
             }
+
+            itemStack.shrink(1);
         }
 
         return itemStack;
